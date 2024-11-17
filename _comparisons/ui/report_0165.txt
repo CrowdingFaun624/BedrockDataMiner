@@ -1,0 +1,3181 @@
+Difference of "ui" between "1.16.0.55" (beta of "1.16.0") and "1.16.0.57" (beta of "1.16.0").
+
+Total namespace: 209 (+5, -0)
+Added namespace "account_banned":
+	element "Hammer_animation":
+		field "anim_type": "flip_book"
+		field "initial_uv": [0, 0]
+		field "frame_count": 7
+		field "frame_step": 7
+		field "fps": 14
+		field "reversible": false
+		field "easing": "linear"
+	element "Hammer_image":
+		field "type": "image"
+		field "texture": "textures/ui/hammersmashedits"
+		field "size": [140, 109]
+		field "uv_size": [140, 109]
+		field "uv": "@account_banned.Hammer_animation"
+		field "disable_anim_fast_forward": true
+	element "account_banned_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "$variables": variable "$screen_content": "account_banned.screen_dialog"
+	element "animation_panel":
+		field "type": "stack_panel"
+		field "controls":
+			control:
+				element "animated_layer@account_banned.Hammer_image":
+					field "size": ["100%", "78%"]
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+	element "banner_fill":
+		field "type": "image"
+		field "texture": "textures/ui/Banners"
+	element "description_label_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "line1":
+					field "type": "label"
+					field "size": ["100%", "default"]
+					field "text": "playfab.account.banned.body"
+					field "font_type": "smooth"
+					field "color": "$body_text_color"
+		field "$variables": variable "$font_scale": 1.2
+	element "description_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "100%"]
+		field "layer": 1
+		field "controls":
+			control:
+				element "hammer_animation_panel@account_banned.animation_panel":
+					field "size": ["30%", "100%"]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "size": ["70%", "100%"]
+					field "$variables":
+						variable "$show_background": false
+						variable "$scroll_box_visible_touch": true
+						variable "$scrolling_content": "account_banned.description_label_panel"
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100%"
+						variable "$scrolling_pane_size":
+							item 0: "100% - 1px"
+							item 1: "100%"
+						variable "$scrolling_pane_offset":
+							item 0: 1
+							item 1: 0
+						variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+	element "dialog_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 4px", "100% - 4px"]
+		field "controls":
+			control:
+				element "content_panel@account_banned.description_panel":
+					field "size": ["100%", "fill"]
+					field "orientation": "horizontal"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+			control:
+				element "more_info_panel@account_banned.more_info_panel":
+					field "size": ["100%", "20%"]
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "$variables": variable "$show_background": true
+	element "more_info_panel":
+		field "type": "stack_panel"
+		field "layer": 1
+		field "controls": control: element "view_info_button@view_more_info_button": empty
+	element "padding":
+		field "type": "panel"
+		field "size": ["100%", 2]
+	element "screen_dialog@common_dialogs.main_panel_no_buttons":
+		field "size": ["50%", "50%"]
+		field "$variables":
+			variable "$text_name": "playfab.account.banned.title"
+			variable "$child_control": "account_banned.dialog_content"
+			variable "$show_close_button": true
+	element "view_more_info_button@common_buttons.hyperlink_button":
+		field "property_bag": field "#hyperlink": "https://aka.ms/MCBanned"
+		field "$variables": variable "$button_text": "playfab.account.banned.body.button"
+Changed namespace "anvil":
+	Changed element "cost_label@anvil.generic_label":
+		Changed field "shadow" from false to true.
+		Added field "layer" of 2.
+		Added field "controls":
+			control:
+				element "gray@resource_packs.gray_image":
+					field "layer": -1
+					field "size": ["110%", "110%"]
+					field "alpha": 0.3
+Changed namespace "auto_save_info":
+	Changed element "main_panel":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "message_label":
+					Unchanged field "type": "label"
+					Changed field "variables":
+						Total variable: 4 (+1, -1)
+						Removed variable:
+							field "requires": "$is_berwick"
+							field "$variables": variable "$auto_save_info_message": "autosave.info.berwick"
+						Added variable:
+							field "requires": "$is_ps4"
+							field "$variables": variable "$auto_save_info_message": "autosave.info.berwick"
+Changed namespace "beacon":
+	Changed element "usable_items_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 9 (+2, -0)
+			Changed control:
+				Changed element "iron@beacon.item_renderer":
+					Changed field "offset":
+						Changed item 0 from 66 to 88.
+						Unchanged item 1: 0
+			Changed control:
+				Changed element "gold@beacon.item_renderer":
+					Changed field "offset":
+						Changed item 0 from 44 to 66.
+						Unchanged item 1: 0
+			Changed control:
+				Changed element "diamond@beacon.item_renderer":
+					Changed field "offset":
+						Changed item 0 from 22 to 44.
+						Unchanged item 1: 0
+			Changed control:
+				Changed element "emerald@beacon.item_renderer":
+					Changed field "offset":
+						Changed item 0 from 0 to 22.
+						Unchanged item 1: 0
+			Added control:
+				element "netherite@beacon.item_renderer":
+					field "offset": [0, 0]
+					field "property_bag": field "#item_id_aux": 48627712
+			Added control element "item_seperator_3@beacon.item_seperator": field "offset": [82, 0].
+		Changed field "size":
+			Changed item 0 from 82 to 104.
+			Unchanged item 1: 18
+Changed namespace "beacon_pocket":
+	Changed element "usable_items_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 9 (+2, -0)
+			Changed control:
+				Changed element "iron@beacon_pocket.item_renderer":
+					Changed field "offset":
+						Changed item 0 from 66 to 88.
+						Unchanged item 1: 0
+			Changed control:
+				Changed element "gold@beacon_pocket.item_renderer":
+					Changed field "offset":
+						Changed item 0 from 44 to 66.
+						Unchanged item 1: 0
+			Changed control:
+				Changed element "diamond@beacon_pocket.item_renderer":
+					Changed field "offset":
+						Changed item 0 from 22 to 44.
+						Unchanged item 1: 0
+			Changed control:
+				Changed element "emerald@beacon_pocket.item_renderer":
+					Changed field "offset":
+						Changed item 0 from 0 to 22.
+						Unchanged item 1: 0
+			Added control:
+				element "netherite@beacon_pocket.item_renderer":
+					field "offset": [0, 0]
+					field "property_bag": field "#item_id_aux": 48627712
+			Added control element "item_seperator_3@beacon_pocket.item_seperator": field "offset": [82, 0].
+		Changed field "size":
+			Changed item 0 from 82 to 104.
+			Unchanged item 1: 18
+Changed namespace "coin_purchase":
+	Total element: 17 (+1, -0)
+	Changed element "bonus_coins_stack":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "currency_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "currency_price_panel":
+								Unchanged field "type": "image"
+								Changed field "controls":
+									Total control: 2 (+2, -1)
+									Removed control:
+										element "price":
+											field "type": "label"
+											field "size": ["default", 10]
+											field "color": "$coin_bonus_price_color"
+											field "text": "#price_text"
+											field "layer": 5
+											field "text_alignment": "center"
+											field "font_type": "smooth"
+											field "bindings":
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "coin_purchase_grid"
+													field "binding_name": "#price_text"
+									Added control:
+										element "price@coin_purchase.price":
+											field "$variables":
+												variable "$price_color": "$coin_bonus_price_color"
+												variable "$price_visible": "(not #debug_price_visible)"
+									Added control:
+										element "debug_price@coin_purchase.price":
+											field "$variables":
+												variable "$price_color": "$c_color_format"
+												variable "$price_visible": "#debug_price_visible"
+	Added element "price":
+		field "type": "label"
+		field "size": ["default", 10]
+		field "color": "$price_color"
+		field "text": "#price_text"
+		field "layer": 5
+		field "text_alignment": "center"
+		field "font_type": "smooth"
+		field "bindings":
+			binding:
+				field "binding_name": "$price_visible"
+				field "binding_name_override": "#visible"
+				field "binding_collection_name": "coin_purchase_grid"
+				field "binding_type": "collection"
+			binding:
+				field "binding_type": "collection"
+				field "binding_collection_name": "coin_purchase_grid"
+				field "binding_name": "#price_text"
+Changed namespace "common":
+	Changed element "filtered_item_renderer":
+		Unchanged field "type": "custom"
+		Changed field "bindings":
+			Total binding: 10 (+1, -0)
+			Added binding:
+				field "binding_name": "#item_lodestone_tracking_handle"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$item_collection_name"
+	Changed element "item_renderer":
+		Unchanged field "type": "custom"
+		Changed field "bindings":
+			Total binding: 12 (+1, -0)
+			Added binding:
+				field "binding_name": "#item_lodestone_tracking_handle"
+				field "binding_condition": "visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$item_collection_name"
+Changed namespace "disconnect":
+	Changed element "check_store_button@disconnect.menu_button_template":
+		Changed field "ignored" from "($is_holographic or $nx_os or $is_berwick)" to "($is_holographic or $nx_os or $is_ps4)".
+Changed namespace "general_section":
+	Total element: 83 (+3, -0)
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 76 (+1, -1)
+			Removed control:
+				element "option_toggle_12@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_useRetailXboxSandbox"
+						variable "$option_binding_name": "#dev_use_retail_xbox_sandbox"
+						variable "$option_enabled_binding_name": "#dev_use_retail_xbox_sandbox_enabled"
+						variable "$toggle_name": "dev_use_retail_xbox_sandbox"
+			Added control element "xbox_sandbox_panel@general_section.xbox_sandbox_panel": empty.
+	Added element "dev_xbox_environment_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#dev_xbox_environment_radio_retail"
+						field "$radio_label_text": "options.dev_xbox_environment.retail"
+				item 1:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#dev_xbox_environment_radio_dev"
+						field "$radio_label_text": "options.dev_xbox_environment.dev"
+				item 2:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#dev_xbox_environment_radio_dev_achievement"
+						field "$radio_label_text": "options.dev_xbox_environment.dev_achievement"
+	Changed element "left_button_label@common.minecraftTenLabel":
+		Changed field "$variables":
+			Moved variable "$left_button_bindings|default" to "$left_button_label_bindings|default".
+		Changed field "bindings" from "$left_button_bindings" to "$left_button_label_bindings".
+	Added element "override_xbox_options_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "override_xbox_options":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["90%", "100%c"]
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "controls":
+						control:
+							element "option_dropdown_xbox@settings_common.option_dropdown":
+								field "$variables":
+									variable "$option_label": "options.dev_xboxEnvironment"
+									variable "$dropdown_content": "general_section.dev_xbox_environment_dropdown_content"
+									variable "$dropdown_area": "content_area"
+									variable "$dropdown_name": "dev_xbox_environment_dropdown"
+									variable "$options_dropdown_toggle_label_binding": "#dev_xbox_environment_dropdown_toggle_label"
+									variable "$option_enabled_binding_name": "#dev_xbox_environment_dropdown_enabled"
+									variable "$dropdown_scroll_content_size":
+										item 0: "100%"
+										item 1: "200%"
+					field "$variables": variable "$enabled": true
+		field "bindings":
+			binding:
+				field "binding_name": "#override_xbox_sandbox_visible"
+				field "binding_name_override": "#visible"
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 31 (+1, -0)
+			Changed control:
+				Changed element "unlink_msa_account@settings_common.action_button":
+					Changed field "ignored" from "((not $is_pregame) or ($is_publish and (not $is_berwick)))" to "((not $is_pregame) or ($is_publish and (not $is_ps4)))".
+			Added control:
+				element "only_allow_trusted_skins_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.onlyTrustedSkinsAllowed"
+						variable "$option_binding_name": "#only_trusted_skins_allowed"
+						variable "$option_enabled_binding_name": "#only_trusted_skins_allowed_enabled"
+						variable "$toggle_name": "only_trusted_skins_allowed"
+	Changed element "realms_button_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 5 (+1, -1)
+			Removed control:
+				element "left_button@common_buttons.light_content_button":
+					field "size": ["49%", "100%"]
+					field "bindings": "$left_button_bindings"
+					field "$variables":
+						variable "$button_content": "general_section.left_button_label"
+						variable "$pressed_button_name": "$left_pressed_button_name"
+						variable "$left_button_bindings|default":
+							item 0:
+								field "binding_name": "#left_button_visible"
+								field "binding_name_override": "#visible"
+								field "binding_type": "collection"
+								field "binding_collection_name": "$realm_collection_name"
+								field "binding_condition": "once"
+							item 1:
+								field "binding_collection_name": "$realm_collection_name"
+								field "binding_type": "collection_details"
+			Added control:
+				element "left_button_panel":
+					field "type": "panel"
+					field "size": ["49%", "100%"]
+					field "controls":
+						control:
+							element "left_button@common_buttons.light_content_button":
+								field "bindings":
+									binding:
+										field "binding_name": "#realm_price_loaded"
+										field "binding_name_override": "#visible"
+									binding:
+										field "binding_collection_name": "$realm_collection_name"
+										field "binding_type": "collection_details"
+								field "$variables":
+									variable "$button_content": "general_section.left_button_label"
+									variable "$pressed_button_name": "$left_pressed_button_name"
+						control:
+							element "left_button_loading@common_store.progress_loading":
+								field "size": ["100%", "100%"]
+								field "layer": 3
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "bindings":
+									binding:
+										field "binding_name": "(not #realm_price_loaded)"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$hide_failure_text": true
+									variable "$hide_progress_loading_outline": true
+					field "bindings": "$left_button_visible_bindings"
+					field "$variables":
+						variable "$left_button_visible_bindings|default":
+							item 0:
+								field "binding_name": "#left_button_visible"
+								field "binding_name_override": "#visible"
+								field "binding_type": "collection"
+								field "binding_collection_name": "$realm_collection_name"
+							item 1:
+								field "binding_collection_name": "$realm_collection_name"
+								field "binding_type": "collection_details"
+	Changed element "view_subscriptions_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "additional_realms_buy_offer@general_section.realms_subscription_main":
+					Changed field "$variables":
+						Total variable: 12 (+1, -0)
+						Moved variable "$left_button_bindings" to "$left_button_label_bindings".
+						Added empty variable "$left_button_visible_bindings".
+			Changed control:
+				Changed element "realms_plus_buy_offer@general_section.realms_subscription_main":
+					Changed field "$variables":
+						Total variable: 11 (+1, -0)
+						Moved variable "$left_button_bindings" to "$left_button_label_bindings".
+						Added empty variable "$left_button_visible_bindings".
+	Added element "xbox_sandbox_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "padding0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "display_override_xbox_sandbox_toggle_windows@settings_common.option_toggle":
+					field "bindings":
+						binding:
+							field "binding_name": "#override_xbox_sandbox_on_windows"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.dev_overrideXboxEnvironmentWindows"
+						variable "$option_binding_name": "#dev_override_xbox_sandbox"
+						variable "$option_enabled_binding_name": "#dev_override_xbox_sandbox_enabled"
+						variable "$toggle_name": "dev_override_xbox_sandbox"
+			control:
+				element "display_override_xbox_sandbox_toggle@settings_common.option_toggle":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #override_xbox_sandbox_on_windows)"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.dev_overrideXboxEnvironment"
+						variable "$option_binding_name": "#dev_override_xbox_sandbox"
+						variable "$option_enabled_binding_name": "#dev_override_xbox_sandbox_enabled"
+						variable "$toggle_name": "dev_override_xbox_sandbox"
+			control: element "override_xbox_options_panel@general_section.override_xbox_options_panel": empty
+Changed namespace "how_to_play":
+	Changed element "multiplayer_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Changed control:
+				Changed element "paragraph_6@how_to_play_common.paragraph":
+					Changed field "ignored" from "($education_edition or $nx_os or $is_berwick)" to "($education_edition or $nx_os or $is_ps4)".
+			Changed control:
+				Changed element "paragraph_3_nx@how_to_play_common.paragraph":
+					Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+			Changed control:
+				Changed element "paragraph_3@how_to_play_common.paragraph":
+					Changed field "ignored" from "($nx_os or $is_berwick)" to "($nx_os or $is_ps4)".
+	Changed element "section_content_panels":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "general_tips_sections":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 72 (+2, -2)
+						Removed control element "realms_section@how_to_play.realms_section": field "ignored": "($education_edition or (not $is_realms_enabled and $nx_os) or (not $is_realms_enabled and $is_berwick))".
+						Removed control element "servers_section@how_to_play.servers_section": field "ignored": "($education_edition or ($ignore_3rd_party_servers and $nx_os) or ($ignore_3rd_party_servers and $is_berwick))".
+						Added control element "realms_section@how_to_play.realms_section": field "ignored": "($education_edition or (not $is_realms_enabled and $nx_os) or (not $is_realms_enabled and $is_ps4))".
+						Added control element "servers_section@how_to_play.servers_section": field "ignored": "($education_edition or ($ignore_3rd_party_servers and $nx_os) or ($ignore_3rd_party_servers and $is_ps4))".
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "how_to_play_selector_pane":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "realms_button@how_to_play.realms_button":
+								Changed field "ignored" from "($education_edition or (not $is_realms_enabled and $nx_os) or (not $is_realms_enabled and $is_berwick))" to "($education_edition or (not $is_realms_enabled and $nx_os) or (not $is_realms_enabled and $is_ps4))".
+						Changed control:
+							Changed element "servers_button@how_to_play.servers_button":
+								Changed field "ignored" from "($education_edition or ($ignore_3rd_party_servers and $nx_os) or ($ignore_3rd_party_servers and $is_berwick))" to "($education_edition or ($ignore_3rd_party_servers and $nx_os) or ($ignore_3rd_party_servers and $is_ps4))".
+Added namespace "invalid_account":
+	element "content_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "main_panel@common_dialogs.main_panel_two_buttons":
+					field "size": [250, 200]
+					field "$variables":
+						variable "$text_name": "store.invalidAccount.title"
+						variable "$child_control": "invalid_account.message"
+						variable "$top_button_panel": "invalid_account.get_help_button"
+						variable "$bottom_button_panel": "invalid_account.go_back_button"
+	element "get_help_button@common_buttons.hyperlink_button":
+		field "property_bag": field "#hyperlink": "https://aka.ms/MCWin10Purchases"
+		field "$variables": variable "$button_text": "store.invalidAccount.getHelp"
+	element "go_back_button@common_buttons.light_text_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.go_back"
+			variable "$button_text": "gui.goBack"
+	element "invalid_account_for_purchase_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "force_render_below": true
+		field "$variables":
+			variable "$screen_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+				item 2: "@common.screen_entrance_animation_push_fade"
+				item 3: "@common.screen_entrance_animation_pop_fade"
+			variable "$background_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+				item 2: "@common.screen_entrance_animation_push_fade"
+				item 3: "@common.screen_entrance_animation_pop_fade"
+			variable "$screen_background_control": "coin_purchase.background"
+			variable "$screen_content": "invalid_account.content_panel"
+	element "message":
+		field "type": "label"
+		field "size": ["100% - 4px", "100%"]
+		field "text": "store.invalidAccount.description"
+		field "color": "$body_text_color"
+Changed namespace "invite":
+	Changed element "msa_friend_button_layout":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "platform_icon_spacer":
+					Unchanged field "type": "panel"
+					Changed field "ignored" from "(not $is_berwick or not $is_inviting_to_realm)" to "(not $is_ps4 or not $is_inviting_to_realm)".
+	Changed element "platform_friend_button_layout":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "platform_icon_spacer":
+					Unchanged field "type": "panel"
+					Changed field "ignored" from "(not $is_berwick or not $is_inviting_to_realm)" to "(not $is_ps4 or not $is_inviting_to_realm)".
+Added namespace "jigsaw_editor":
+	element "common_text_label":
+		field "type": "label"
+		field "size": ["default", 10]
+		field "color": "$main_header_text_color"
+		field "layer": 1
+	element "data_item_title_and_edit":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control: element "data_title@jigsaw_editor.common_text_label": field "text": "$data_title"
+			control:
+				element "data_text_edit@jigsaw_editor.text_edit_box":
+					field "$variables":
+						variable "$text_box_name": "$data_text_box_name"
+						variable "$text_edit_box_content_binding_name": "$data_text_box_value"
+	element "data_item_title_and_toggle":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "100%cm"]
+		field "controls":
+			control:
+				element "title_holder":
+					field "type": "panel"
+					field "size": ["100%c", 0]
+					field "inherit_max_sibling_height": true
+					field "controls": control: element "data_title@jigsaw_editor.common_text_label": field "text": "$data_title"
+			control: element "buffer_1@jigsaw_editor.horizontal_buffer": empty
+			control:
+				element "data_toggle@jigsaw_editor.text_change_toggle":
+					field "size": ["fill", 20]
+					field "$variables":
+						variable "$button_text_binding_type": "global"
+						variable "$button_text": "#joint_type_toggle_text"
+						variable "$toggle_name": "toggle.joint_type_toggle"
+						variable "$toggle_binding_type": "global"
+						variable "$toggle_state_binding_name": "#joint_type_toggle_state"
+	element "exit_buttons":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "100%cm"]
+		field "controls":
+			control:
+				element "done_button@common_buttons.light_text_button":
+					field "size": ["fill", 20]
+					field "$variables":
+						variable "$button_text": "jigsaw.exit.done"
+						variable "$pressed_button_name": "button.exit_done"
+			control: element "buffer_1@jigsaw_editor.horizontal_buffer": empty
+			control:
+				element "cancel_button@common_buttons.light_text_button":
+					field "size": ["fill", 20]
+					field "$variables":
+						variable "$button_text": "jigsaw.exit.cancel"
+						variable "$pressed_button_name": "button.menu_exit"
+	element "horizontal_buffer":
+		field "type": "panel"
+		field "size": [10, 0]
+	element "jigsaw_editor_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 20px", "100% - 20px"]
+		field "max_size": [292, "100%"]
+		field "controls":
+			control:
+				element "target_pool_title_and_edit@jigsaw_editor.data_item_title_and_edit":
+					field "$variables":
+						variable "$data_title": "jigsaw.title.target_pool"
+						variable "$data_text_box_name": "text_box.target_pool_text_box"
+						variable "$data_text_box_value": "#target_pool_text_box_value"
+			control: element "buffer_1@jigsaw_editor.vertical_buffer": empty
+			control:
+				element "name_title_and_edit@jigsaw_editor.data_item_title_and_edit":
+					field "$variables":
+						variable "$data_title": "jigsaw.title.name"
+						variable "$data_text_box_name": "text_box.name_text_box"
+						variable "$data_text_box_value": "#name_text_box_value"
+			control: element "buffer_2@jigsaw_editor.vertical_buffer": empty
+			control:
+				element "target_title_and_edit@jigsaw_editor.data_item_title_and_edit":
+					field "$variables":
+						variable "$data_title": "jigsaw.title.target"
+						variable "$data_text_box_name": "text_box.target_text_box"
+						variable "$data_text_box_value": "#target_text_box_value"
+			control: element "buffer_3@jigsaw_editor.vertical_buffer": empty
+			control:
+				element "final_block_title_and_edit@jigsaw_editor.data_item_title_and_edit":
+					field "$variables":
+						variable "$data_title": "jigsaw.title.final_block"
+						variable "$data_text_box_name": "text_box.final_block_text_box"
+						variable "$data_text_box_value": "#final_block_text_box_value"
+			control: element "buffer_4@jigsaw_editor.vertical_buffer": empty
+			control:
+				element "joing_type_title_and_toggle@jigsaw_editor.data_item_title_and_toggle":
+					field "$variables":
+						variable "$data_title": "jigsaw.title.joint_type"
+						variable "$toggle_name": "toggle.joint_type_toggle,"
+						variable "$toggle_state_binding_name": "#joint_type_toggle_state"
+			control:
+				element "lower_buffer":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+			control: element "exit_buttons@jigsaw_editor.exit_buttons": empty
+	element "jigsaw_editor_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_tab_left"
+				field "to_button_id": "button.menu_tab_left"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_tab_right"
+				field "to_button_id": "button.menu_tab_right"
+				field "mapping_type": "global"
+				field "scope": "view"
+		field "$variables":
+			variable "$screen_content": "jigsaw_editor.jigsaw_editor_content"
+			variable "$screen_bg_content": "common.screen_background"
+	element "text_change_toggle@common_toggles.light_text_toggle":
+		field "$variables":
+			variable "$checked_control": "common_toggles.toggle_unchecked"
+			variable "$checked_hover_control": "common_toggles.toggle_unchecked_hover"
+	element "text_edit_box@common.text_edit_box":
+		field "size": ["100%", 22]
+		field "max_length": 40
+	element "vertical_buffer":
+		field "type": "panel"
+		field "size": [0, 10]
+Changed namespace "permissions":
+	Total element: 57 (+4, -0)
+	Added element "ban_button@common_buttons.light_text_button":
+		field "size": ["100%", 28]
+		field "focus_change_down": "FOCUS_OVERRIDE_STOP"
+		field "layer": 2
+		field "bindings":
+			binding:
+				field "binding_name": "#ban_button_visible"
+				field "binding_name_override": "#visible"
+				field "binding_type": "global"
+			binding:
+				field "binding_name": "#ban_button_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.ban"
+			variable "$button_text": "permissionsScreen.ban"
+			variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+	Added element "kick_button@common_buttons.light_text_button":
+		field "size": ["100%", 28]
+		field "focus_change_down": "button.ban"
+		field "layer": 2
+		field "bindings":
+			binding:
+				field "binding_name": "#kick_button_visible"
+				field "binding_name_override": "#visible"
+				field "binding_type": "global"
+			binding:
+				field "binding_name": "#kick_button_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.kick"
+			variable "$button_text": "permissionsScreen.kick"
+			variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+	Added element "permissions_ban_button_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls": control: element "ban_button@permissions.ban_button": empty
+	Added element "permissions_kick_button_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls": control: element "kick_button@permissions.kick_button": empty
+	Changed element "permissions_options_grid":
+		Unchanged field "type": "grid"
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_name": "#permission_options_grid_visible"
+				field "binding_name_override": "#visible"
+	Changed element "permissions_options_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 11 (+4, -0)
+			Added control element "permissions_kick_button_panel@permissions.permissions_kick_button_panel": empty.
+			Added control:
+				element "permissions_padding_4":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			Added control element "permissions_ban_button_panel@permissions.permissions_ban_button_panel": empty.
+			Added control:
+				element "permissions_padding_5":
+					field "type": "panel"
+					field "size": ["100%", 4]
+	Changed element "title_label":
+		Unchanged field "type": "label"
+		Changed field "layer" from 2 to 3.
+	Changed element "top_bar":
+		Unchanged field "type": "image"
+		Added field "layer" of 1.
+Changed namespace "persona":
+	Total element: 201 (+2, -1)
+	Changed element "cape_grid_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "grid_stack":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "cape_piece_offer_grid":
+								Unchanged field "type": "grid"
+								Changed field "$variables":
+									Total variable: 5 (+0, -1)
+									Removed variable "$persona_piece_size":
+										item 0: "25%"
+										item 1: 40
+	Changed element "cape_section_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "none_piece_option_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "none_piece_option_button@common_buttons.light_text_button":
+								Added field "bindings":
+									binding:
+										field "binding_name": "#is_none_option_enabled"
+										field "binding_name_override": "#enabled"
+									binding:
+										field "binding_name": "#is_none_option_enabled"
+										field "binding_name_override": "#focus_enabled"
+	Added element "emote_scroll_panel@persona.scroll_section" of field "$variables": variable "$scrolling_content": "persona.emotes_slot_grid".
+	Changed element "emote_wheel_screen@common.base_screen":
+		Changed field "button_mappings":
+			Total button mapping: 5 (+1, -0)
+			Added button mapping:
+				field "from_button_id": "key.emote"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+	Changed element "emotes_section@persona.dialog_background_object":
+		Changed field "$variables":
+			Total variable: 1 (+0, -0)
+			Changed variable "$persona_dialog_content" from "persona.emotes_slots_panel" to "persona.emote_scroll_panel".
+		Added field "ignored" of "(not $is_persona_features_enabled)".
+	Added element "emotes_slot_grid":
+		field "type": "grid"
+		field "size": ["100% - 4px", "100%c"]
+		field "anchor_to": "top_middle"
+		field "anchor_from": "top_middle"
+		field "grid_dimension_binding": "$emote_slot_dimension_binding"
+		field "grid_item_template": "persona.emote_slot_grid_item"
+		field "collection_name": "$subcategory_collection_name"
+		field "bindings": binding: field "binding_name": "$emote_slot_dimension_binding"
+		field "$variables":
+			variable "$subcategory_collection_prefix|default": "persona_emote_slot"
+			variable "$subcategory_collection_name|default": "persona_emote_slot_collection"
+			variable "$subcategory_button_focus_id": "emote_slot_grid_item"
+			variable "$emote_slot_dimension_binding": "#emote_slot_dimension_binding"
+	Removed element "emotes_slots_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "slot_grid":
+					field "type": "grid"
+					field "size": ["100% - 4px", "100%c"]
+					field "anchor_to": "top_middle"
+					field "anchor_from": "top_middle"
+					field "grid_dimension_binding": "$emote_slot_dimension_binding"
+					field "grid_item_template": "persona.emote_slot_grid_item"
+					field "collection_name": "$subcategory_collection_name"
+					field "bindings": binding: field "binding_name": "$emote_slot_dimension_binding"
+					field "$variables":
+						variable "$subcategory_collection_prefix|default": "persona_emote_slot"
+						variable "$subcategory_collection_name|default": "persona_emote_slot_collection"
+						variable "$subcategory_button_focus_id": "emote_slot_grid_item"
+						variable "$emote_slot_dimension_binding": "#emote_slot_dimension_binding"
+	Changed element "offer_state_info":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "offer_state_info_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 7 (+1, -1)
+						Removed control:
+							element "unlocked_icon@persona.icon_image":
+								field "size": [12, 11]
+								field "layer": 20
+								field "anchor_to": "bottom_right"
+								field "anchor_from": "bottom_right"
+								field "texture": "textures/ui/icon_unlocked"
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "$offer_state_info_collection_name"
+										field "binding_name": "#is_offer_unlocked"
+										field "binding_name_override": "#visible"
+						Added control:
+							element "achievement_icons@persona.icon_image":
+								field "size": [12, 11]
+								field "layer": 20
+								field "anchor_to": "bottom_right"
+								field "anchor_from": "bottom_right"
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "$offer_state_info_collection_name"
+										field "binding_name": "#is_offer_achievement"
+										field "binding_name_override": "#visible"
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "$offer_state_info_collection_name"
+										field "binding_name": "#achievement_offer_lock_state_texture"
+										field "binding_name_override": "#texture"
+	Changed element "persona_emote_offer_scroll_content":
+		Unchanged field "type": "panel"
+		Changed field "$variables":
+			Changed variable "$persona_piece_size":
+				Changed item 0 from "25%" to "25% - 2px".
+	Changed element "persona_piece_offer":
+		Unchanged field "type": "panel"
+		Changed field "$variables":
+			Changed variable "$persona_piece_size|default":
+				Changed item 0 from "25%" to "25% - 2px".
+	Changed element "persona_piece_offer_grid":
+		Unchanged field "type": "grid"
+		Changed field "size":
+			Changed item 0 from "100% - 4px" to "100%".
+			Unchanged item 1: "100%c"
+	Changed element "piece_offer_scroll_section@persona.scroll_section":
+		Changed field "$variables":
+			Total variable: 1 (+0, -1)
+			Removed variable "$scroll_view_port_offset":
+				item 0: 2
+				item 1: 0
+Changed namespace "play":
+	Total element: 238 (+21, -4)
+	Changed element "add_friend_and_invite_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "padding_1":
+					Unchanged field "type": "panel"
+					Changed field "ignored" from "((not $supports_add_friend) or $nx_os or $is_berwick)" to "((not $supports_add_friend) or $nx_os or $is_ps4)".
+			Changed control:
+				Changed element "add_friend_button@play.add_friend_button":
+					Changed field "ignored" from "((not $supports_add_friend) or $nx_os or $is_berwick)" to "((not $supports_add_friend) or $nx_os or $is_ps4)".
+	Removed element "add_server_button@common_buttons.light_text_button":
+		field "layer": 2
+		field "bindings":
+			binding:
+				field "binding_name": "#cross_platform_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_network_add_external"
+			variable "$button_text": "networkWorld.add_server"
+			variable "$button_focus_precedence": 10
+			variable "$focus_override_up": "close_button"
+	Added element "add_server_info_panel@play.common_scroll_pane":
+		field "controls":
+			control:
+				element "server_info_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%- 2px", "100%c + 1px"]
+					field "visible": "(not $is_console)"
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "controls":
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["100%", 4]
+						control:
+							element "add_server_title":
+								field "type": "label"
+								field "text": "externalServerScreen.addServerTitle"
+								field "color": "$body_text_color"
+								field "text_alignment": "left"
+								field "size": ["100%", 10]
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "add_server_description":
+								field "type": "label"
+								field "text": "externalServerScreen.addServerDescription"
+								field "color": "$body_text_color"
+								field "font_type": "smooth"
+								field "font_scale_factor": 0.8
+								field "text_alignment": "left"
+								field "size": ["100%", "default"]
+	Added element "add_server_toggle_button@common_toggles.light_text_toggle":
+		field "visible": "(not $is_console)"
+		field "size": ["100%", 20]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "layer": 2
+		field "bindings":
+			binding:
+				field "binding_name": "#add_server_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$button_text": "networkWorld.add_server"
+			variable "$focus_override_up": "close_button"
+			variable "$radio_toggle_group": true
+			variable "$toggle_name": "server_navigation_toggle"
+			variable "$toggle_view_binding_name": "add_server_toggle_button"
+			variable "$toggle_state_binding_name": "#toggle_state"
+			variable "$toggle_on_hover_binding_type": "global"
+			variable "$toggle_on_hover_binding_name": "#toggle_on_hover"
+			variable "$toggle_tab_focus_binding_type": "global"
+			variable "$toggle_tab_focus_binding_name": "#navigation_tab_focus_precedence"
+			variable "$toggle_group_forced_index": 100
+	Added element "additional_server_info_panel@play.common_scroll_pane":
+		field "bindings":
+			binding:
+				field "binding_name": "#is_network_available_and_multiplayer_visible"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "server_info_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%- 2px", "100%c + 1px"]
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "controls":
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "server_name@play.world_list_text":
+								field "text": "#info_additional_server_name"
+								field "localize": false
+								field "color": "$main_header_text_color"
+								field "font_type": "smooth"
+								field "text_alignment": "left"
+								field "size": ["100%", 10]
+								field "bindings": binding: field "binding_name": "#info_additional_server_name"
+						control:
+							element "padding_2":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "player_count@play.text_icon_number_panel":
+								field "$variables":
+									variable "$text_icon_number_text": "networkWorld.online"
+									variable "$text_icon_number_icon": "#server_player_count_icon"
+									variable "$text_icon_number_number": "#info_additional_server_player_count"
+									variable "$icon_size":
+										item 0: 5
+										item 1: 5
+						control:
+							element "padding_3":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "ping@play.text_icon_number_panel":
+								field "$variables":
+									variable "$text_icon_number_text": "networkWorld.current_ping"
+									variable "$text_icon_number_icon": "#info_additional_server_ping_texture_name"
+									variable "$text_icon_number_number": "#info_additional_server_ping"
+									variable "$icon_size":
+										item 0: 8
+										item 1: 8
+									variable "$ping_bindings":
+										item 0:
+											field "binding_name": "#ping_ready_thirdparty"
+											field "binding_name_override": "#visible"
+									variable "$progress_panel": "play.small_progress_panel"
+									variable "$number_bindings":
+										item 0: field "binding_name": "$text_icon_number_number"
+										item 1:
+											field "binding_name": "#ping_ready_external"
+											field "binding_name_override": "#visible"
+						control:
+							element "padding_4":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "join_server_button@common_buttons.light_text_button":
+								field "size": ["100%", 20]
+								field "$variables":
+									variable "$pressed_button_name": "button.menu_network_world_item"
+									variable "$button_text": "networkWorld.join_server"
+	Added element "additional_server_toggle_base@common_toggles.dark_image_toggle_collection":
+		field "size": ["100%", "100%"]
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "#cross_platform_enabled"
+				field "binding_name_override": "#enabled"
+			binding:
+				field "binding_type": "collection"
+				field "binding_name": "#additional_server_toggle_index"
+				field "binding_collection_name": "third_party_server_network_worlds"
+		field "$variables":
+			variable "$radio_toggle_group": true
+			variable "$toggle_name": "server_navigation_toggle"
+			variable "$toggle_grid_collection_name": "$collection_name"
+			variable "$toggle_tab_focus_binding_type": "global"
+			variable "$toggle_state_binding_name": "#toggle_state"
+			variable "$toggle_tab_focus_binding_name": "#navigation_tab_focus_precedence"
+			variable "$toggle_on_hover_binding_type": "global"
+			variable "$toggle_on_hover_binding_name": "#toggle_on_hover"
+			variable "$focus_override_right": "right_panel"
+			variable "$button_content": "play.additional_server_toggle_content"
+			variable "$toggle_group_forced_index": "#additional_server_toggle_index"
+	Moved element "more_servers_world_item_button_content" to "additional_server_toggle_content".
+	Changed element "additional_server_toggle_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control element "ping_rate_panel@play.ping_rate_panel": empty.
+		Changed field "variables":
+			Total variable: 5 (+5, -4)
+			Removed variable:
+				field "requires": "$default_state"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+			Removed variable:
+				field "requires": "$hover_state"
+				field "$variables": variable "$border_texture": "textures/ui/world_screenshot_focus_border"
+			Removed variable:
+				field "requires": "$pressed_state"
+				field "$variables": variable "$border_texture": "textures/ui/world_screenshot_focus_border"
+			Removed variable:
+				field "requires": "$locked_state"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+			Added variable:
+				field "requires": "$toggle_unchecked"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+			Added variable:
+				field "requires": "$toggle_unchecked_hover"
+				field "$variables": variable "$border_texture": "textures/ui/world_screenshot_focus_border"
+			Added variable:
+				field "requires": "$toggle_checked_hover"
+				field "$variables": variable "$border_texture": "textures/ui/world_screenshot_focus_border"
+			Added variable:
+				field "requires": "$toggle_checked"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+			Added variable:
+				field "requires": "$toggle_locked"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+		Added field "$variables" of variable "$secondary_text_color": "$dark_button_secondary_default_text_color".
+	Changed element "blocked_multiplayer_privileges_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "background@play.label_background":
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "label_panel_layout":
+								field "type": "panel"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "size": ["100%-8px", "100%c + 8px"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$dark_button_default_text_color"
+											field "size": ["100%", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "layer": 1
+											field "shadow": false
+											field "visible": false
+											field "text": "#privilegesBlockedText"
+											field "bindings":
+												binding:
+													field "binding_name": "#privilegesBlockedText"
+													field "binding_type": "global"
+													field "binding_condition": "always_when_visible"
+			Added control:
+				element "background@play.dark_label_background":
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "label_panel_layout":
+								field "type": "panel"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "size": ["100%-8px", "100%c + 8px"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$dark_button_default_text_color"
+											field "size": ["100%", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "layer": 1
+											field "shadow": false
+											field "visible": false
+											field "text": "#privilegesBlockedText"
+											field "bindings":
+												binding:
+													field "binding_name": "#privilegesBlockedText"
+													field "binding_type": "global"
+													field "binding_condition": "always_when_visible"
+	Moved element "crossplatform_disabled_panel@play.label_background" to "crossplatform_disabled_panel@play.dark_label_background".
+	Changed element "crossplatform_disabled_panel@play.dark_label_background":
+		Changed field "controls":
+			Changed control:
+				Changed element "disable_text":
+					Unchanged field "type": "label"
+					Added field "font_type" of "smooth".
+	Added element "dark_label_background":
+		field "type": "image"
+		field "texture": "textures/ui/BannersLight"
+	Added element "description_section_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control: element "divider_0@common.horizontal_divider": empty
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "description_label":
+					field "type": "label"
+					field "size": ["100%", 11]
+					field "color": "$body_text_color"
+					field "text": "networkWorld.description"
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "read_more_panel":
+					field "type": "image"
+					field "texture": "textures/ui/screen_background"
+					field "alpha": 0.6
+					field "size": ["100%", "100%c + 4px"]
+					field "controls":
+						control:
+							element "description_text_small@play.description_text_panel":
+								field "type": "panel"
+								field "size": ["100% - 5px", "100%c"]
+								field "offset": [0, 2]
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "bindings":
+									binding:
+										field "binding_name": "#description_is_read_more"
+										field "binding_name_override": "#visible"
+						control:
+							element "description_text_full@play.description_text_panel":
+								field "type": "panel"
+								field "size": ["100% - 5px", "100%c"]
+								field "offset": [0, 2]
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "bindings":
+									binding:
+										field "binding_name": "#description_is_read_less"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$description_max_size":
+										item 0: "100% - 2px"
+										item 1: "default"
+						control:
+							element "description_read_more_button_panel@common_buttons.read_button":
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "bindings":
+									binding:
+										field "binding_name": "#description_is_read_more"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$offset":
+										item 0: -6
+										item 1: -2.5
+									variable "$single_line_label_text": "store.mashup.readMore"
+									variable "$pressed_button_name": "button.description_read_toggle"
+									variable "$bindings":
+										item 0:
+											field "binding_type": "view"
+											field "source_property_name": "#using_ellipses"
+											field "target_property_name": "#visible"
+						control:
+							element "description_read_less_button_panel@common_buttons.read_button":
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "$variables":
+									variable "$offset":
+										item 0: -6
+										item 1: -2.5
+									variable "$single_line_label_text": "store.mashup.readLess"
+									variable "$pressed_button_name": "button.description_read_toggle"
+									variable "$bindings":
+										item 0:
+											field "binding_name": "#description_is_read_less"
+											field "binding_name_override": "#visible"
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	Added element "description_text_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "contents_description":
+					field "type": "label"
+					field "size": ["100% - 2px", "default"]
+					field "max_size": "$description_max_size"
+					field "offset": [2, 0]
+					field "layer": 1
+					field "color": "$body_text_color"
+					field "font_type": "smooth"
+					field "enable_profanity_filter": false
+					field "text": "#description_label"
+					field "notify_on_ellipses": control: "description_read_more_button_panel"
+					field "bindings": binding: field "binding_name": "#description_label"
+		field "$variables":
+			variable "$description_max_size|default":
+				item 0: "100% - 2px"
+				item 1: 40
+	Changed element "featured_server_world_item":
+		Unchanged field "type": "panel"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from 30 to 40.
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "server_button@play.third_party_server_button": empty.
+			Added control element "server_button@play.third_party_server_toggle_base": empty.
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "switch_find_cross_platform_friend_button@play.add_friend_button":
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+						Changed control:
+							Changed element "no_friends_grid_message@play.label_content_template":
+								Changed field "variables":
+									Total variable: 2 (+1, -1)
+									Removed variable:
+										field "requires": "$is_berwick"
+										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
+									Added variable:
+										field "requires": "$is_ps4"
+										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
+						Changed control:
+							Changed element "no_cross_platform_friends_grid_message@play.label_content_template":
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+						Changed control:
+							Changed element "cross_platform_friends_grid@play.label_content_template":
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+						Changed control:
+							Changed element "add_friend_button_padding":
+								Unchanged field "type": "panel"
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+						Changed control:
+							Changed element "friends_grid@play.label_content_template":
+								Changed field "variables":
+									Total variable: 2 (+1, -1)
+									Removed variable:
+										field "requires": "$is_berwick"
+										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
+									Added variable:
+										field "requires": "$is_ps4"
+										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
+	Added element "games_factory_object":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "games_factory_panel":
+					field "type": "image"
+					field "size": ["100%", "100%c"]
+					field "texture": "textures/ui/screen_background"
+					field "alpha": 0.6
+					field "layer": 1
+					field "controls":
+						control:
+							element "top_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100% - 8px", 40]
+								field "offset": [0, 2]
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "layer": 2
+								field "controls":
+									control:
+										element "game_image_panel":
+											field "type": "panel"
+											field "size": ["50%", "100%"]
+											field "controls":
+												control:
+													element "game_image":
+														field "type": "image"
+														field "size": ["100%", "100%"]
+														field "offset": [0, -4]
+														field "bindings":
+															binding:
+																field "binding_name": "#available_game_image"
+																field "binding_name_override": "#texture"
+																field "binding_type": "collection"
+																field "binding_collection_name": "server_games_collection"
+															binding:
+																field "binding_name": "#available_game_image_visible"
+																field "binding_name_override": "#visible"
+																field "binding_type": "collection"
+																field "binding_collection_name": "server_games_collection"
+															binding:
+																field "binding_name": "#third_party_server_logo_resource_location"
+																field "binding_name_override": "#texture_file_system"
+															binding:
+																field "binding_name": "#third_party_server_logo_resource_location"
+																field "binding_type": "collection"
+																field "binding_name_override": "#texture_file_system"
+																field "binding_collection_name": "server_games_collection"
+									control:
+										element "padding":
+											field "type": "panel"
+											field "size": [4, "100%"]
+									control:
+										element "game_title_panel":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "size": ["fill", "100%"]
+											field "controls":
+												control:
+													element "game_title":
+														field "type": "label"
+														field "size": ["100%", "default"]
+														field "color": "$body_text_color"
+														field "font_type": "smooth"
+														field "text": "#available_game_title"
+														field "bindings":
+															binding:
+																field "binding_name": "#available_game_title"
+																field "binding_type": "collection"
+																field "binding_collection_name": "server_games_collection"
+												control:
+													element "game_subtitle":
+														field "type": "label"
+														field "size": ["100%", "default"]
+														field "color": "$body_text_color"
+														field "font_type": "smooth"
+														field "font_scale_factor": 0.8
+														field "text": "#available_game_subtitle"
+														field "bindings":
+															binding:
+																field "binding_name": "#available_game_subtitle"
+																field "binding_type": "collection"
+																field "binding_collection_name": "server_games_collection"
+						control:
+							element "bottom_panel":
+								field "type": "panel"
+								field "size": ["100% - 8px", "100%c"]
+								field "anchor_from": "bottom_middle"
+								field "anchor_to": "bottom_middle"
+								field "offset": [0, -4]
+								field "layer": 2
+								field "controls":
+									control:
+										element "bottom_panel":
+											field "type": "label"
+											field "size": ["100%", "default"]
+											field "color": "$body_text_color"
+											field "font_type": "smooth"
+											field "font_scale_factor": 0.8
+											field "text": "#available_game_description"
+											field "bindings":
+												binding:
+													field "binding_name": "#available_game_description"
+													field "binding_type": "collection"
+													field "binding_collection_name": "server_games_collection"
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	Added element "games_section_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control: element "divider_0@common.horizontal_divider": empty
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "description_label":
+					field "type": "label"
+					field "size": ["100%", 11]
+					field "color": "$body_text_color"
+					field "text": "networkWorld.available_games"
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "games_factory_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100% - 2px", "100%c"]
+					field "factory":
+						field "name": "available_games_factory"
+						field "control_name": "play.games_factory_object"
+					field "collection_name": "server_games_collection"
+					field "bindings":
+						binding:
+							field "binding_name": "#games_collection_length"
+							field "binding_name_override": "#collection_length"
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	Added element "grey_bar_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["fill", "100%"]
+		field "controls":
+			control:
+				element "grey_bar":
+					field "type": "image"
+					field "size": ["100% - 1px", "100%"]
+					field "texture": "textures/ui/white_background"
+					field "keep_ratio": false
+					field "tiled": true
+					field "color": "$servers_screenshot"
+					field "bindings":
+						binding:
+							field "binding_name": "(not #this_screenshot_selected)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "server_screenshot_collection"
+			control:
+				element "green_bar":
+					field "type": "image"
+					field "size": ["100% - 1px", "100%"]
+					field "texture": "textures/ui/white_background"
+					field "keep_ratio": false
+					field "tiled": true
+					field "color": "$servers_current_screenshot"
+					field "bindings":
+						binding:
+							field "binding_name": "#this_screenshot_selected"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "server_screenshot_collection"
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [1, "100%"]
+	Changed element "information_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "background@play.label_background":
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "label_panel_layout":
+								field "type": "panel"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "size": ["100%-8px", "100%c + 8px"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$dark_button_default_text_color"
+											field "size": ["100%", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "layer": 1
+											field "shadow": false
+											field "text": "$information_panel_label_text"
+											field "bindings":
+												binding:
+													field "binding_name": "$information_panel_label_text"
+													field "binding_type": "$information_panel_label_text_binding_type"
+													field "binding_condition": "$information_panel_label_text_binding_condition"
+											field "$variables":
+												variable "$information_panel_label_text_binding_type|default": "none"
+												variable "$information_panel_label_text_binding_condition|default": "none"
+			Added control:
+				element "background@play.dark_label_background":
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "label_panel_layout":
+								field "type": "panel"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "size": ["100%-8px", "100%c + 8px"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "font_type": "$information_label_font"
+											field "color": "$dark_button_default_text_color"
+											field "size": ["100%", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "layer": 1
+											field "shadow": false
+											field "text": "$information_panel_label_text"
+											field "bindings":
+												binding:
+													field "binding_name": "$information_panel_label_text"
+													field "binding_type": "$information_panel_label_text_binding_type"
+													field "binding_condition": "$information_panel_label_text_binding_condition"
+											field "$variables":
+												variable "$information_label_font|default": "default"
+												variable "$information_panel_label_text_binding_type|default": "none"
+												variable "$information_panel_label_text_binding_condition|default": "none"
+	Added element "left_arrow_icon":
+		field "type": "image"
+		field "size": [7, 7]
+		field "texture": "textures/ui/arrow_left_white"
+		field "color": "$text_color"
+	Changed element "legacy_world_content_status_area_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "world_storage_background@play.divider":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "color": "$dark_glyph_toggle_default_color"
+	Changed element "more_servers_world_item":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "more_servers_world_item_button@play.more_servers_world_item_button":
+					field "size": ["fill", "100% + 1px"]
+					field "layer": 1
+			Added control:
+				element "additional_server_toggle_base@play.additional_server_toggle_base":
+					field "size": ["fill", "100% + 1px"]
+					field "layer": 1
+	Removed element "more_servers_world_item_button@common_buttons.dark_content_button":
+		field "size": ["100%", "100%"]
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "#cross_platform_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_network_world_item"
+			variable "$button_content": "play.more_servers_world_item_button_content"
+	Added element "news_section_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control: element "divider_0@common.horizontal_divider": empty
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "news_label":
+					field "type": "label"
+					field "color": "$body_text_color"
+					field "size": ["100%", 11]
+					field "text": "networkWorld.news"
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "read_more_panel":
+					field "type": "image"
+					field "texture": "textures/ui/screen_background"
+					field "alpha": 0.6
+					field "size": ["100%", "100%c + 4px"]
+					field "controls":
+						control:
+							element "text_stack_panel":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "size": ["100% - 7px", "100%c"]
+								field "offset": [0, 2]
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "controls":
+									control:
+										element "news_title_text":
+											field "type": "label"
+											field "size": ["100%", 11]
+											field "color": "$body_text_color"
+											field "font_type": "smooth"
+											field "text": "#news_label"
+											field "layer": 5
+											field "bindings": binding: field "binding_name": "#news_label"
+									control:
+										element "divider_panel":
+											field "type": "panel"
+											field "size": ["100%", 4]
+											field "layer": 5
+											field "controls": control: element "divider_0@common.horizontal_divider": empty
+									control:
+										element "news_text_small@play.news_text_panel":
+											field "type": "panel"
+											field "size": ["100%", "100%c"]
+											field "bindings":
+												binding:
+													field "binding_name": "#news_is_read_more"
+													field "binding_name_override": "#visible"
+									control:
+										element "news_text_full@play.news_text_panel":
+											field "type": "panel"
+											field "size": ["100%", "100%c"]
+											field "bindings":
+												binding:
+													field "binding_name": "#news_is_read_less"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$news_max_size":
+													item 0: "100% - 2px"
+													item 1: "default"
+						control:
+							element "news_read_more_button_panel@common_buttons.read_button":
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "bindings":
+									binding:
+										field "binding_name": "#news_is_read_more"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$offset":
+										item 0: -6
+										item 1: -2.5
+									variable "$single_line_label_text": "store.mashup.readMore"
+									variable "$pressed_button_name": "button.news_read_toggle"
+									variable "$bindings":
+										item 0:
+											field "binding_type": "view"
+											field "source_property_name": "#using_ellipses"
+											field "target_property_name": "#visible"
+						control:
+							element "news_read_less_button_panel@common_buttons.read_button":
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "$variables":
+									variable "$offset":
+										item 0: -6
+										item 1: -2.5
+									variable "$single_line_label_text": "store.mashup.readLess"
+									variable "$pressed_button_name": "button.news_read_toggle"
+									variable "$bindings":
+										item 0:
+											field "binding_name": "#news_is_read_less"
+											field "binding_name_override": "#visible"
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	Added element "news_text_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "contents_news":
+					field "type": "label"
+					field "size": ["100% - 2px", "default"]
+					field "max_size": "$news_max_size"
+					field "offset": [2, 0]
+					field "layer": 1
+					field "color": "$body_text_color"
+					field "font_type": "smooth"
+					field "font_scale_factor": 0.8
+					field "enable_profanity_filter": false
+					field "text": "#news_text"
+					field "notify_on_ellipses": control: "news_read_more_button_panel"
+					field "bindings": binding: field "binding_name": "#news_text"
+		field "$variables":
+			variable "$news_max_size|default":
+				item 0: "100% - 2px"
+				item 1: 40
+	Changed element "progress_loading_bars":
+		Unchanged field "type": "image"
+		Changed field "color" from [0.7, 0.7, 0.7, 1.0] to "$dark_button_secondary_default_text_color".
+	Added element "right_arrow_icon":
+		field "type": "image"
+		field "size": [7, 7]
+		field "texture": "textures/ui/arrow_right_white"
+		field "color": "$text_color"
+	Added element "screenshots_section_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control: element "divider_0@common.horizontal_divider": empty
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "screenshots_label":
+					field "type": "label"
+					field "size": ["100%", 11]
+					field "color": "$body_text_color"
+					field "text": "networkWorld.screenshots"
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "screenshots":
+					field "type": "image"
+					field "size": ["100%", "56.25%x"]
+					field "bindings":
+						binding:
+							field "binding_name": "#screenshot_texture"
+							field "binding_name_override": "#texture"
+						binding:
+							field "binding_name": "#third_party_server_logo_resource_location"
+							field "binding_name_override": "#texture_file_system"
+						binding:
+							field "binding_name": "#third_party_server_logo_resource_location"
+							field "binding_type": "collection"
+							field "binding_name_override": "#texture_file_system"
+							field "binding_collection_name": "server_games_collection"
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			control:
+				element "nagivation_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 15]
+					field "controls":
+						control:
+							element "left_arrow_button@common_buttons.light_content_button":
+								field "size": [15, "100%"]
+								field "$variables":
+									variable "$pressed_button_name": "button.navigate_screenshots_left"
+									variable "$button_content": "play.left_arrow_icon"
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": [4, "100%"]
+						control:
+							element "navigation_bar":
+								field "type": "panel"
+								field "size": ["fill", 5]
+								field "controls":
+									control:
+										element "grey_bar":
+											field "type": "image"
+											field "size": ["100%", "100%"]
+											field "offset": [0, 5]
+											field "texture": "textures/ui/Black"
+											field "layer": 1
+											field "controls":
+												control:
+													element "grey_bar_factory_panel":
+														field "type": "stack_panel"
+														field "orientation": "horizontal"
+														field "size": ["100% - 1px", 3]
+														field "anchor_from": "right_middle"
+														field "anchor_to": "right_middle"
+														field "layer": 2
+														field "factory":
+															field "name": "grey_bar_factory"
+															field "control_name": "play.grey_bar_panel"
+														field "collection_name": "server_screenshot_collection"
+														field "bindings":
+															binding:
+																field "binding_name": "#screenshot_collection_length"
+																field "binding_name_override": "#collection_length"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": [4, "100%"]
+						control:
+							element "right_arrow_button@common_buttons.light_content_button":
+								field "size": [15, "100%"]
+								field "$variables":
+									variable "$pressed_button_name": "button.navigate_screenshots_right"
+									variable "$button_content": "play.right_arrow_icon"
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	Added element "server_button_content_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%"]
+		field "variables":
+			variable:
+				field "requires": "$toggle_unchecked"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+			variable:
+				field "requires": "$toggle_unchecked_hover"
+				field "$variables": variable "$border_texture": "textures/ui/world_screenshot_focus_border"
+			variable:
+				field "requires": "$toggle_checked_hover"
+				field "$variables": variable "$border_texture": "textures/ui/world_screenshot_focus_border"
+			variable:
+				field "requires": "$toggle_checked"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+			variable:
+				field "requires": "$toggle_locked"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+		field "controls":
+			control:
+				element "top_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "50%"]
+					field "controls":
+						control:
+							element "third_party_server_screenshot@play.third_party_server_screenshot":
+								field "bindings":
+									binding:
+										field "binding_name": "#third_party_screenshot_visible"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$collection_name"
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": [6, "100%"]
+						control:
+							element "title_panel":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "third_party_server_name@play.world_list_text":
+											field "text": "#third_party_server_name"
+											field "localize": false
+											field "color": "$text_color"
+											field "font_type": "smooth"
+											field "size": ["100%", "100%"]
+											field "anchor_from": "left_middle"
+											field "anchor_to": "left_middle"
+											field "offset": [0, 2]
+											field "bindings":
+												binding:
+													field "binding_name": "#third_party_server_name"
+													field "binding_type": "collection"
+													field "binding_collection_name": "$collection_name"
+												binding:
+													field "binding_type": "collection"
+													field "binding_name": "#is_server_info_available_collection"
+													field "binding_name_override": "#visible"
+													field "binding_collection_name": "third_party_server_network_worlds"
+									control:
+										element "progress@progress.progress_loading_bars":
+											field "size": ["100% - 8px", "100% - 4px"]
+											field "layer": 5
+											field "color": "$text_color"
+											field "anchor_from": "left_middle"
+											field "anchor_to": "left_middle"
+											field "offset": [0, 0]
+											field "bindings":
+												binding:
+													field "binding_type": "collection"
+													field "binding_name": "(not #is_server_info_available_collection)"
+													field "binding_name_override": "#visible"
+													field "binding_collection_name": "third_party_server_network_worlds"
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "bottom_panel":
+					field "type": "panel"
+					field "size": ["100%", "50% - 2px"]
+					field "controls":
+						control:
+							element "third_party_server_message@play.world_list_text":
+								field "text": "#third_party_server_message"
+								field "localize": false
+								field "color": "$dark_button_default_text_color"
+								field "font_type": "smooth"
+								field "size": ["100% - 4px", "100%"]
+								field "offset": [2, 1]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+								field "bindings":
+									binding:
+										field "binding_name": "#third_party_server_message"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$collection_name"
+									binding:
+										field "binding_type": "collection"
+										field "binding_name": "(not #is_network_available)"
+										field "binding_name_override": "#visible"
+										field "binding_collection_name": "third_party_server_network_worlds"
+	Added element "server_content_area":
+		field "type": "panel"
+		field "size": ["50% - 4px", "100%"]
+		field "layer": 1
+		field "focus_container": true
+		field "use_last_focus": false
+		field "focus_nagivation_mode_down": "$focus_nagivation_mode_override_down"
+		field "focus_nagivation_mode_up": "$focus_nagivation_mode_override_up"
+		field "focus_nagivation_mode_left": "$focus_nagivation_mode_override_left"
+		field "focus_nagivation_mode_right": "$focus_nagivation_mode_override_right"
+		field "bindings":
+			binding:
+				field "binding_name": "#is_network_available_and_multiplayer_visible"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "third_party_scrolling_panel@play.scrolling_offsets":
+					field "size": ["100%", "100% - 4px"]
+					field "offset": [0, 2]
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "#is_third_party_server_selected"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$scrolling_content": "play.third_party_server_info_panel"
+			control:
+				element "additional_server_scrolling_panel@play.scrolling_offsets":
+					field "size": ["100%", "100% - 4px"]
+					field "offset": [0, 2]
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "#is_additional_server_selected"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$scrolling_content": "play.additional_server_info_panel"
+			control:
+				element "add_server_pane@play.add_server_info_panel":
+					field "bindings":
+						binding:
+							field "binding_type": "view"
+							field "source_control_name": "add_server_toggle_button"
+							field "source_property_name": "#toggle_state"
+							field "target_property_name": "#visible"
+		field "$variables":
+			variable "$focus_id": "right_panel"
+			variable "$focus_nagivation_mode_override_down|default": "contained"
+			variable "$focus_nagivation_mode_override_up|default": "contained"
+			variable "$focus_nagivation_mode_override_left|default": ""
+			variable "$focus_nagivation_mode_override_right|default": ""
+	Changed element "server_scroll_content@play.common_content":
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control:
+				element "scrolling_panel@play.scrolling_offsets":
+					field "layer": 1
+					field "$variables": variable "$scrolling_content": "play.server_scroll_panel"
+			Added control:
+				element "show_servers_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "controls":
+						control:
+							element "left_panel":
+								field "type": "panel"
+								field "size": ["50% - 1px", "100%"]
+								field "focus_container": true
+								field "use_last_focus": true
+								field "focus_nagivation_mode_down": "$focus_nagivation_mode_override_down"
+								field "focus_nagivation_mode_up": "$focus_nagivation_mode_override_up"
+								field "focus_nagivation_mode_left": "$focus_nagivation_mode_override_left"
+								field "focus_nagivation_mode_right": "$focus_nagivation_mode_override_right"
+								field "controls":
+									control:
+										element "scrolling_panel@play.scrolling_offsets":
+											field "size": ["100%", "100% - 4px"]
+											field "offset": [0, 2]
+											field "layer": 1
+											field "$variables": variable "$scrolling_content": "play.server_scroll_panel"
+								field "$variables":
+									variable "$focus_nagivation_mode_override_down|default": "contained"
+									variable "$focus_nagivation_mode_override_up|default": "contained"
+									variable "$focus_nagivation_mode_override_left|default": ""
+									variable "$focus_nagivation_mode_override_right|default": ""
+						control:
+							element "divider_panel":
+								field "type": "panel"
+								field "size": [3, "100%"]
+								field "controls":
+									control:
+										element "main_divider":
+											field "type": "image"
+											field "size": [3, "100% - 4px"]
+											field "tiled": "y"
+											field "texture": "textures/ui/HowToPlayDivider"
+											field "layer": 10
+						control: element "right_panel@play.server_content_area": empty
+			Added control:
+				element "feature_server_message_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100% - 10px", "100%c"]
+					field "offset": [0, 2]
+					field "anchor_to": "top_middle"
+					field "anchor_from": "top_middle"
+					field "bindings":
+						binding:
+							field "binding_name": "#feature_server_message_visible"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "featured_servers_label@common.minecraftTenLabel":
+								field "size": ["default", "default"]
+								field "text": "thirdPartyWorld.Featured"
+								field "color": "$dark_button_default_text_color"
+						control:
+							element "pad":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "feature_server_message_panel@play.dark_label_background":
+								field "size": ["100%", "100%c"]
+								field "controls":
+									control:
+										element "label_panel_layout":
+											field "type": "panel"
+											field "size": ["100%", "100%c + 8px"]
+											field "controls":
+												control:
+													element "label":
+														field "type": "label"
+														field "font_type": "smooth"
+														field "color": "$dark_button_default_text_color"
+														field "size": ["100%", "default"]
+														field "text_alignment": "center"
+														field "layer": 1
+														field "shadow": false
+														field "text": "#feature_server_message_text"
+														field "bindings": binding: field "binding_name": "#feature_server_message_text"
+														field "$variables": variable "$information_label_font|default": "default"
+		Added field "size" of ["100% - 4px", "100% - 4px"].
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c + 1px"]
+					field "controls":
+						control:
+							element "padding_0":
+								field "ignored": "$ignore_add_servers"
+								field "visible": "(not $is_console)"
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "add_server_button@play.add_server_button":
+								field "ignored": "$ignore_add_servers"
+								field "visible": "(not $is_console)"
+								field "size": ["100%", 30]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 2]
+								field "ignored": "$education_edition"
+						control: element "servers_crossplatform_disabled_panel@play.crossplatform_disabled_panel": field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.servers"
+						control: element "servers_crossplatform_disable_spacer@play.crossplatform_disable_spacer": empty
+						control:
+							element "featured_servers_panel":
+								field "type": "stack_panel"
+								field "size": ["100%", "100%c"]
+								field "controls":
+									control:
+										element "third_party_featured_label@play.world_list_label_panel":
+											field "ignored": "$education_edition"
+											field "$variables": variable "$label_text": "$third_party_featured_servers"
+									control:
+										element "loading_featured_panel@play.label_background":
+											field "size": ["100%", 40]
+											field "controls":
+												control: element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
+												control: element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+											field "bindings":
+												binding:
+													field "binding_name": "#loading_servers_progress_visible"
+													field "binding_name_override": "#visible"
+									control:
+										element "featured_server_message_panel@play.label_background":
+											field "size": ["100%", "100%c + 4px"]
+											field "controls":
+												control:
+													element "featured_server_message_label@play.light_centered_loading_label":
+														field "max_size": ["100% - 4px", "default"]
+														field "$variables": variable "$label_text": "#feature_server_message_text"
+											field "bindings":
+												binding:
+													field "binding_name": "#feature_server_message_visible"
+													field "binding_name_override": "#visible"
+									control: element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
+									control:
+										element "padding_2":
+											field "type": "panel"
+											field "size": ["100%", 2]
+								field "bindings":
+									binding:
+										field "binding_name": "(#is_network_available_and_multiplayer_visible or $ignore_3rd_party_servers)"
+										field "binding_name_override": "#visible"
+								field "$variables": variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
+						control:
+							element "no_featured_server_connection@play.label_content_template":
+								field "ignored": "(not $is_berwick)"
+								field "bindings":
+									binding:
+										field "binding_name": "(not #is_network_available)"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "thirdPartyWorld.Featured"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#internet_connection_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+									variable "$tts_section_header": "$label_content_label"
+						control:
+							element "featured_server_multiplayer_blocked_panel@play.label_content_template":
+								field "visible": false
+								field "ignored": "$ignore_3rd_party_servers"
+								field "bindings":
+									binding:
+										field "binding_name": "#multiplayer_blocked_panel_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "thirdPartyWorld.Featured"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#multiplayer_blocked_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+									variable "$tts_section_header": "$label_content_label"
+						control:
+							element "more_servers_panel":
+								field "type": "stack_panel"
+								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+								field "size": ["100%", "100%c"]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_network_available_and_multiplayer_visible"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "more_servers_label@play.world_list_label_panel":
+											field "bindings":
+												binding:
+													field "binding_name": "#servers_grid_visible"
+													field "binding_name_override": "#visible"
+											field "$variables": variable "$label_text": "$tts_section_header"
+									control: element "more_servers_grid@play.more_servers_grid": empty
+									control:
+										element "padding_3":
+											field "type": "panel"
+											field "size": ["100%", 2]
+											field "bindings":
+												binding:
+													field "binding_name": "#servers_grid_visible"
+													field "binding_name_override": "#visible"
+								field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
+						control:
+							element "server_multiplayer_privileges_blocked@play.label_content_template":
+								field "visible": false
+								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+								field "bindings":
+									binding:
+										field "binding_name": "#multiplayer_blocked_panel_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.more_servers"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#multiplayer_blocked_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+									variable "$tts_section_header": "$label_content_label"
+			Added control:
+				element "stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%- 3px", "100%c + 1px"]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "controls":
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["100%", 3]
+						control: element "servers_crossplatform_disabled_panel@play.crossplatform_disabled_panel": field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.servers"
+						control:
+							element "no_featured_server_connection@play.information_panel":
+								field "ignored": "(not $is_ps4)"
+								field "bindings":
+									binding:
+										field "binding_name": "(not #is_network_available)"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$information_label_font": "smooth"
+									variable "$information_panel_label_text": "#internet_connection_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+						control:
+							element "server_multiplayer_privileges_blocked@play.information_panel":
+								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+								field "bindings":
+									binding:
+										field "binding_name": "#multiplayer_blocked_panel_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$information_label_font": "smooth"
+									variable "$information_panel_label_text": "#multiplayer_blocked_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 3]
+						control:
+							element "featured_servers_panel":
+								field "type": "stack_panel"
+								field "size": ["100%", "100%c"]
+								field "ignored": "$ignore_3rd_party_servers"
+								field "controls":
+									control:
+										element "loading_featured_panel@play.label_background":
+											field "size": ["100%", 40]
+											field "controls":
+												control: element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
+												control: element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+											field "bindings":
+												binding:
+													field "binding_name": "#loading_servers_progress_visible"
+													field "binding_name_override": "#visible"
+									control:
+										element "padding_1":
+											field "type": "panel"
+											field "size": ["100%", 2]
+									control: element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
+									control:
+										element "padding_2":
+											field "type": "panel"
+											field "size": ["100%", 2]
+								field "bindings":
+									binding:
+										field "binding_name": "#featured_servers_visible_and_available"
+										field "binding_name_override": "#visible"
+								field "$variables": variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
+						control:
+							element "more_servers_panel":
+								field "type": "stack_panel"
+								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+								field "size": ["100%", "100%c"]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_network_available_and_multiplayer_visible"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control: element "more_servers_divider@common.horizontal_divider": empty
+									control:
+										element "padding_0":
+											field "type": "panel"
+											field "size": ["100%", 2]
+									control:
+										element "more_servers_label@common.minecraftTenLabel":
+											field "size": ["default", "default"]
+											field "text": "thirdPartyWorld.Additional"
+											field "color": "$dark_button_default_text_color"
+											field "bindings":
+												binding:
+													field "binding_name": "#is_additional_server_label_visible"
+													field "binding_name_override": "#visible"
+									control:
+										element "padding_1":
+											field "type": "panel"
+											field "size": ["100%", 2]
+									control: element "more_servers_grid@play.more_servers_grid": empty
+									control:
+										element "padding_3":
+											field "type": "panel"
+											field "size": ["100%", 4]
+											field "bindings":
+												binding:
+													field "binding_name": "#servers_grid_visible"
+													field "binding_name_override": "#visible"
+								field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
+						control: element "add_server_button@play.add_server_toggle_button": empty
+						control:
+							element "focus_reset_input_panel":
+								field "type": "input_panel"
+								field "focus_enabled": true
+								field "size": ["100%", 4]
+	Added element "small_progress_panel@progress.progress_loading_bars":
+		field "size": [20, 10]
+		field "layer": 5
+		field "color": "$dark_button_default_text_color"
+		field "bindings":
+			binding:
+				field "binding_name": "(not #ping_ready_thirdparty)"
+				field "binding_name_override": "#visible"
+	Added element "text_icon_number_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", 10]
+		field "controls":
+			control:
+				element "text":
+					field "type": "label"
+					field "size": ["default", "default"]
+					field "color": "$main_header_text_color"
+					field "font_type": "smooth"
+					field "text_alignment": "left"
+					field "text": "$text_icon_number_text"
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": [3, "100%"]
+			control:
+				element "stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%c", "100%"]
+					field "bindings": "$ping_bindings"
+					field "controls":
+						control:
+							element "icon_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "controls":
+									control:
+										element "icon":
+											field "type": "image"
+											field "size": "$icon_size"
+											field "bindings":
+												binding:
+													field "binding_name": "$text_icon_number_icon"
+													field "binding_name_override": "#texture"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": [4, "100%"]
+						control:
+							element "number":
+								field "type": "label"
+								field "size": ["default", "default"]
+								field "color": "$main_header_text_color"
+								field "font_type": "smooth"
+								field "text_alignment": "left"
+								field "text": "$text_icon_number_number"
+								field "bindings": "$number_bindings"
+			control: element "$progress_panel@$progress_panel": empty
+		field "$variables":
+			variable "$ping_bindings|default": empty
+			variable "$progress_bindings|default": empty
+			variable "$progress_panel|default": "play.empty_panel"
+			variable "$number_bindings|default": item 0: field "binding_name": "$text_icon_number_number"
+	Removed element "third_party_server_button@common_buttons.light_content_button":
+		field "size": ["100%", "100%"]
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "#cross_platform_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.connect_to_third_party_server"
+			variable "$button_content": "play.third_party_server_content_panel"
+	Changed element "third_party_server_content_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 1 (+0, -5)
+			Removed control:
+				element "third_party_server_screenshot@play.third_party_server_screenshot":
+					field "bindings":
+						binding:
+							field "binding_name": "#third_party_screenshot_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_name"
+			Removed control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": [2, "100%"]
+			Removed control element "third_party_server_text_panel@play.third_party_server_text_panel": field "size": ["fill", "100%"].
+			Removed control:
+				element "progress@progress.progress_loading_bars":
+					field "size": [32, "100%"]
+					field "layer": 5
+					field "color": "$text_color"
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_name": "#is_network_available_and_ping_loading"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "third_party_server_network_worlds"
+			Removed control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [2, "100%"]
+		Removed field "variables":
+			variable:
+				field "requires": "$default_state"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+			variable:
+				field "requires": "$hover_state"
+				field "$variables": variable "$border_texture": "textures/ui/world_screenshot_focus_border"
+			variable:
+				field "requires": "$pressed_state"
+				field "$variables": variable "$border_texture": "textures/ui/world_screenshot_focus_border"
+			variable:
+				field "requires": "$locked_state"
+				field "$variables": variable "$border_texture": "textures/ui/default_indent"
+	Added element "third_party_server_info_panel@play.common_scroll_pane":
+		field "bindings":
+			binding:
+				field "binding_name": "#featured_servers_visible_and_available"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "server_info_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%- 2px", "100%c + 1px"]
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "bindings":
+						binding:
+							field "binding_name": "#is_server_info_available"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["100%", 4]
+						control:
+							element "server_screenshot":
+								field "type": "image"
+								field "layer": 1
+								field "size": ["100%", "56.25%x"]
+								field "bindings":
+									binding:
+										field "binding_name": "#info_third_party_server_logo_texture_path"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#third_party_server_logo_resource_location"
+										field "binding_name_override": "#texture_file_system"
+									binding:
+										field "binding_name": "#third_party_server_logo_resource_location"
+										field "binding_type": "collection"
+										field "binding_name_override": "#texture_file_system"
+										field "binding_collection_name": "server_games_collection"
+									binding:
+										field "binding_name": "#info_third_party_screenshot_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "server_name@play.world_list_text":
+								field "text": "#info_third_party_server_name"
+								field "localize": false
+								field "color": "$main_header_text_color"
+								field "font_type": "smooth"
+								field "text_alignment": "left"
+								field "size": ["100%", 10]
+								field "bindings": binding: field "binding_name": "#info_third_party_server_name"
+						control:
+							element "padding_2":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "player_count@play.text_icon_number_panel":
+								field "$variables":
+									variable "$text_icon_number_text": "networkWorld.online"
+									variable "$text_icon_number_icon": "#server_player_count_icon"
+									variable "$text_icon_number_number": "#info_third_party_server_player_count"
+									variable "$icon_size":
+										item 0: 5
+										item 1: 5
+						control:
+							element "padding_3":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "ping@play.text_icon_number_panel":
+								field "$variables":
+									variable "$text_icon_number_text": "networkWorld.current_ping"
+									variable "$text_icon_number_icon": "#info_ping_texture_name"
+									variable "$text_icon_number_number": "#info_server_ping"
+									variable "$icon_size":
+										item 0: 8
+										item 1: 8
+									variable "$ping_bindings":
+										item 0:
+											field "binding_name": "#ping_ready_thirdparty"
+											field "binding_name_override": "#visible"
+									variable "$progress_panel": "play.small_progress_panel"
+						control:
+							element "padding_4":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "join_server_button@common_buttons.light_text_button":
+								field "size": ["100%", 20]
+								field "$variables":
+									variable "$pressed_button_name": "button.connect_to_third_party_server"
+									variable "$button_text": "networkWorld.join_server"
+						control:
+							element "padding_5":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "screenshots_section@play.screenshots_section_panel":
+								field "bindings":
+									binding:
+										field "binding_name": "#server_has_screenshots"
+										field "binding_name_override": "#visible"
+						control:
+							element "description_section@play.description_section_panel":
+								field "bindings":
+									binding:
+										field "binding_name": "#server_has_description"
+										field "binding_name_override": "#visible"
+						control:
+							element "games_section@play.games_section_panel":
+								field "bindings":
+									binding:
+										field "binding_name": "#server_has_games"
+										field "binding_name_override": "#visible"
+						control:
+							element "news_section@play.news_section_panel":
+								field "bindings":
+									binding:
+										field "binding_name": "#server_has_news"
+										field "binding_name_override": "#visible"
+			control:
+				element "progress@progress.progress_loading_bars":
+					field "size": ["100% - 8px", 15]
+					field "offset": [0, 8]
+					field "layer": 5
+					field "color": "$dark_button_default_text_color"
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "bindings":
+						binding:
+							field "binding_name": "(not #is_server_info_available)"
+							field "binding_name_override": "#visible"
+	Changed element "third_party_server_screenshot":
+		Unchanged field "type": "image"
+		Changed field "controls":
+			Changed control:
+				Changed element "picture":
+					Unchanged field "type": "image"
+					Changed field "bindings":
+						Total binding: 3 (+1, -0)
+						Added binding:
+							field "binding_name": "#third_party_server_logo_resource_location"
+							field "binding_name_override": "#texture_file_system"
+					Changed field "size":
+						Changed item 0 from "177.77%y" to "177.78%y".
+						Unchanged item 1: "100% - 2px"
+		Changed field "size":
+			Changed item 0 from "100%c + 2.25px" to "100%c + 2px".
+			Unchanged item 1: "100%"
+	Removed element "third_party_server_text_panel":
+		field "type": "panel"
+		field "size": ["100% - 4px", "100% - 4px"]
+		field "offset": [1, 0]
+		field "controls":
+			control:
+				element "third_party_server_name@play.world_list_text":
+					field "text": "#third_party_server_name"
+					field "localize": false
+					field "color": "$text_color"
+					field "size": ["100%", "50%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "bindings":
+						binding:
+							field "binding_name": "#third_party_server_name"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_name"
+			control:
+				element "third_party_server_message@play.world_list_text":
+					field "text": "#third_party_server_message"
+					field "localize": false
+					field "color": "$text_color"
+					field "size": ["100%", "50%"]
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "bindings":
+						binding:
+							field "binding_name": "#third_party_server_message"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_name"
+	Added element "third_party_server_toggle_base@common_toggles.dark_image_toggle_collection":
+		field "size": ["100%", "100% - 2px"]
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "#cross_platform_enabled"
+				field "binding_name_override": "#enabled"
+			binding:
+				field "binding_type": "collection"
+				field "binding_name": "#is_server_info_available_collection"
+				field "binding_name_override": "#enabled"
+				field "binding_collection_name": "third_party_server_network_worlds"
+			binding:
+				field "binding_type": "collection"
+				field "binding_name": "#third_party_toggle_index"
+				field "binding_collection_name": "third_party_server_network_worlds"
+		field "$variables":
+			variable "$radio_toggle_group": true
+			variable "$toggle_name": "server_navigation_toggle"
+			variable "$toggle_grid_collection_name": "$collection_name"
+			variable "$toggle_tab_focus_binding_type": "global"
+			variable "$toggle_state_binding_name": "#toggle_state"
+			variable "$toggle_tab_focus_binding_name": "#navigation_tab_focus_precedence"
+			variable "$toggle_on_hover_binding_type": "global"
+			variable "$toggle_on_hover_binding_name": "#toggle_on_hover"
+			variable "$focus_override_right": "right_panel"
+			variable "$button_content": "play.server_button_content_panel"
+			variable "$toggle_group_forced_index": "#third_party_toggle_index"
+Changed namespace "profile_card":
+	Changed element "xbl_dialog_scrolling_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "dropdown_visibility_panel":
+					Unchanged field "type": "panel"
+					Changed field "ignored" from "($is_current_profile or $nx_os or $is_berwick)" to "($is_current_profile or $nx_os or $is_ps4)".
+			Changed control:
+				Changed element "add_friend_button@common_buttons.light_text_button":
+					Changed field "variables":
+						Total variable: 1 (+1, -1)
+						Removed variable:
+							field "requires": "($nx_os or $is_berwick)"
+							field "$variables": variable "$focus_override_down": "mute_option"
+						Added variable:
+							field "requires": "($nx_os or $is_ps4)"
+							field "$variables": variable "$focus_override_down": "mute_option"
+			Changed control:
+				Changed element "remove_friend_button@common_buttons.light_text_button":
+					Changed field "ignored" from "($is_current_profile or (not $nx_os and not $is_berwick))" to "($is_current_profile or (not $nx_os and not $is_ps4))".
+Changed namespace "realmsPlus":
+	Changed element "tab_button_text@common.minecraftTenLabel":
+		Changed field "variables":
+			Changed variable:
+				Changed field "requires" from "(not $is_low_memory_device and not $is_berwick)" to "(not $is_low_memory_device and not $is_ps4)".
+Changed namespace "realms_whitelist":
+	Changed element "xbl_user_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "platform_icon_positioner":
+					Unchanged field "type": "panel"
+					Changed field "ignored" from "(not $is_berwick)" to "(not $is_ps4)".
+Added namespace "smithing_table":
+	element "arrow_icon":
+		field "type": "image"
+		field "texture": "textures/ui/arrow_large"
+		field "size": [18, 12]
+	element "cross_out_icon":
+		field "type": "image"
+		field "texture": "textures/ui/crossout"
+		field "size": [18, 12]
+		field "bindings":
+			binding:
+				field "binding_name": "#cross_out_icon"
+				field "binding_name_override": "#visible"
+	element "icon_and_text_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["65%", "40%"]
+		field "offset": [0, "5%"]
+		field "controls": control: element "upgrade_label@smithing_table.upgrade_label": empty
+	element "plus_sign_icon":
+		field "type": "image"
+		field "texture": "textures/ui/smithing-table-plus"
+		field "size": [13, 13]
+	element "recipe_grid":
+		field "type": "grid"
+		field "size": ["83.5%", "90%"]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "grid_dimensions": [5, 1]
+		field "controls":
+			control:
+				element "input_item_slot@smithing_table.smithing_table_item_slot":
+					field "grid_position": [0, 0]
+					field "$variables":
+						variable "$item_collection_name": "smithing_table_input_items"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "smithing_table_input"
+						variable "$focus_override_right_binding_type": "none"
+						variable "$focus_override_right": "smithing_table_material"
+			control:
+				element "plus":
+					field "type": "panel"
+					field "grid_position": [1, 0]
+					field "controls": control: element "plus_sign_icon@smithing_table.plus_sign_icon": empty
+			control:
+				element "material_item_slot@smithing_table.smithing_table_item_slot":
+					field "grid_position": [2, 0]
+					field "$variables":
+						variable "$item_collection_name": "smithing_table_material_items"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "smithing_table_material"
+						variable "$focus_override_left_binding_type": "none"
+						variable "$focus_override_left": "smithing_table_input"
+						variable "$focus_override_right_binding_type": "none"
+						variable "$focus_override_right": "smithing_table_result"
+			control:
+				element "yields":
+					field "type": "panel"
+					field "grid_position": [3, 0]
+					field "controls":
+						control: element "arrow_icon@smithing_table.arrow_icon": empty
+						control: element "cross_out_icon@smithing_table.cross_out_icon": field "layer": 1
+			control:
+				element "result_item_slot@smithing_table.smithing_table_item_slot":
+					field "grid_position": [4, 0]
+					field "$variables":
+						variable "$item_collection_name": "smithing_table_result_items"
+						variable "$button_ref": "smithing_table.smithing_table_output_slot_button"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "smithing_table_result"
+						variable "$focus_override_left_binding_type": "none"
+						variable "$focus_override_left": "smithing_table_material"
+	element "recipe_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "60%"]
+		field "offset": [0, "40%"]
+		field "controls": control: element "recipe_grid@smithing_table.recipe_grid": empty
+	element "smithing_table_item_slot":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "container_item@common.container_item":
+					field "anchor_to": "center"
+					field "anchor_from": "center"
+	element "smithing_table_output_slot_button@common.container_slot_button_prototype":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.smithing_table_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.smithing_table_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.smithing_table_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "button.smithing_table_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_auto_place"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop"
+				field "to_button_id": "button.drop_one"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop_all"
+				field "to_button_id": "button.drop_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.smithing_table_coalesce_stack"
+				field "mapping_type": "double_pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.smithing_table_coalesce_stack"
+				field "mapping_type": "double_pressed"
+			button mapping:
+				field "to_button_id": "button.container_slot_hovered"
+				field "mapping_type": "pressed"
+	element "smithing_table_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "container_gamepad_helpers@common.container_gamepad_helpers": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": field "layer": 8
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+			control:
+				element "root_panel@common.root_panel":
+					field "layer": 1
+					field "controls":
+						control: element "common_panel@common.common_panel": empty
+						control:
+							element "smithing_table_screen_inventory":
+								field "type": "panel"
+								field "layer": 2
+								field "controls":
+									control: element "top_half_panel@smithing_table.top_half_panel": empty
+									control: element "inventory_panel_bottom_half_with_label@common.inventory_panel_bottom_half_with_label": empty
+									control: element "hotbar_grid@common.hotbar_grid_template": empty
+									control: element "inventory_take_progress_icon_button@common.inventory_take_progress_icon_button": empty
+						control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+						control: element "gamepad_cursor@common.gamepad_cursor_button": empty
+	element "smithing_table_screen@common.inventory_screen_common":
+		field "close_on_player_hurt": "$close_on_player_hurt"
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables":
+					variable "$screen_content": "smithing_table.smithing_table_panel"
+					variable "$screen_bg_content": "common.screen_background"
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables": variable "$screen_content": "smithing_table_pocket.smithing_table_panel"
+		field "$variables": variable "$close_on_player_hurt|default": true
+	element "top_half_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100% - 14px", "50% - 14px"]
+		field "offset": [7, 7]
+		field "controls":
+			control: element "icon_and_text_panel@smithing_table.icon_and_text_panel": empty
+			control: element "recipe_panel@smithing_table.recipe_panel": empty
+	element "upgrade_label":
+		field "type": "label"
+		field "color": "$title_text_color"
+		field "layer": 1
+		field "text": "container.smithing_table.upgrade"
+Added namespace "smithing_table_pocket":
+	element "arrow_icon":
+		field "type": "image"
+		field "texture": "textures/ui/arrow_icon"
+		field "size": [24, 16]
+	element "background_image":
+		field "type": "image"
+		field "size": ["100%", "100%"]
+		field "texture": "textures/ui/background_panel"
+	element "half_screen":
+		field "type": "input_panel"
+		field "size": ["50%", "100%-31px"]
+		field "offset": [0, 27]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+	element "header":
+		field "type": "panel"
+		field "size": ["100%", 28]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "controls":
+			control:
+				element "header_background":
+					field "type": "image"
+					field "texture": "textures/ui/header_bar"
+			control: element "legacy_pocket_close_button@common.legacy_pocket_close_button": empty
+			control:
+				element "panel":
+					field "type": "panel"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "controls":
+						control:
+							element "title_label@smithing_table_pocket.upgrade_label":
+								field "text": "tile.smithing_table.name"
+								field "layer": 1
+	element "inventory_content":
+		field "type": "panel"
+		field "size": ["80%", "95%"]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls":
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "layer": 1
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100%"
+							item 1: "100%-2px"
+						variable "$scrolling_content": "smithing_table_pocket.inventory_grid"
+						variable "$scroll_box_mouse_image_control": "common-classic.button_state_default"
+						variable "$scroll_size":
+							item 0: "8px"
+							item 1: "100%"
+	element "inventory_grid":
+		field "type": "grid"
+		field "grid_rescaling_type": "horizontal"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "size": ["100%", "default"]
+		field "maximum_grid_items": 36
+		field "collection_name": "combined_hotbar_and_inventory_items"
+		field "grid_item_template": "common.pocket_ui_container_item"
+		field "$variables": variable "$item_collection_name": "combined_hotbar_and_inventory_items"
+	element "inventory_half_screen@smithing_table_pocket.half_screen":
+		field "size": ["32%", "100%-35px"]
+		field "offset": [9, 31]
+		field "controls": control: element "inventory_content@smithing_table_pocket.inventory_content": empty
+	element "slots_panel":
+		field "type": "panel"
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "controls":
+			control:
+				element "input_slot@common.pocket_ui_large_container_item":
+					field "offset": [0, 0]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "$variables": variable "$item_collection_name": "smithing_table_input_items"
+			control:
+				element "material_slot@common.pocket_ui_large_container_item":
+					field "offset": [48, 0]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "$variables": variable "$item_collection_name": "smithing_table_material_items"
+			control:
+				element "result_slot@common.pocket_ui_large_container_item":
+					field "offset": [109, 0]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "$variables":
+						variable "$item_collection_name": "smithing_table_result_items"
+						variable "$button_ref": "smithing_table.smithing_table_output_slot_button"
+			control:
+				element "plus_sign@smithing_table_pocket.upgrade_label":
+					field "text": "+"
+					field "offset": [38, 0]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "layer": 1
+			control:
+				element "arrow":
+					field "type": "image"
+					field "texture": "textures/ui/arrow_inactive"
+					field "size": [22, 15]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "offset": [83, 0]
+					field "controls":
+						control:
+							element "cross_out":
+								field "type": "image"
+								field "layer": 1
+								field "texture": "textures/ui/crossout"
+								field "bindings":
+									binding:
+										field "binding_name": "#cross_out_icon"
+										field "binding_name_override": "#visible"
+	element "smithing_table_contents_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control: element "slots_panel@smithing_table_pocket.slots_panel": field "offset": [0, -2]
+			control: element "smithing_table_title_and_text_panel@smithing_table_pocket.smithing_table_title_and_text_panel": field "offset": [-108, -30]
+	element "smithing_table_half_screen@smithing_table_pocket.half_screen":
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "size": ["68%", "default"]
+		field "offset": [10, 0]
+		field "controls": control: element "smithing_table_contents_panel@smithing_table_pocket.smithing_table_contents_panel": field "layer": 2
+	element "smithing_table_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "header@smithing_table_pocket.header": field "layer": 2
+			control: element "bg@smithing_table_pocket.background_image": empty
+			control: element "root_panel@common.root_panel": empty
+			control:
+				element "inventory@smithing_table_pocket.inventory_half_screen":
+					field "layer": 1
+					field "$variables":
+						variable "$container_size": 36
+						variable "$pane_collection": "combined_hotbar_and_inventory_items"
+			control: element "smithing_table_half_screen@smithing_table_pocket.smithing_table_half_screen": empty
+			control: element "container_gamepad_helpers@common.container_gamepad_helpers": field "layer": 2
+			control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+			control: element "hold_icon@common.inventory_take_progress_icon_button": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": empty
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+	element "smithing_table_title_and_text_panel":
+		field "type": "panel"
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "controls":
+			control:
+				element "upgrade_label@smithing_table_pocket.upgrade_label":
+					field "layer": 1
+					field "offset": [5, -8]
+	element "upgrade_label":
+		field "type": "label"
+		field "color": "$pocket_title_text_color"
+		field "layer": 1
+		field "text": "container.smithing_table.upgrade"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+Changed namespace "start":
+	Changed element "online_buttons_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_column":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "gamertag_pic_and_label":
+								Unchanged field "type": "stack_panel"
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+						Changed control:
+							Changed element "xbl_btn@start.column_frame":
+								Changed field "ignored" from "($nx_os or $is_berwick)" to "($nx_os or $is_ps4)".
+						Changed control:
+							Changed element "platform_signin_btn@start.column_frame":
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+Changed namespace "world_section":
+	Changed element "debug_spawn_biome_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Changed variable "$radio_buttons":
+				Changed item 1:
+					Changed field "@settings_common.radio_with_label":
+						Changed field "$toggle_state_binding_name" from "#debug_spawn_in_soulsand_valley" to "#debug_spawn_in_basalt_deltas".
+						Changed field "$radio_label_text" from "soulsand_valley" to "basalt_deltas".
+				Changed item 2:
+					Changed field "@settings_common.radio_with_label":
+						Changed field "$toggle_state_binding_name" from "#debug_spawn_in_crimson_forest" to "#debug_spawn_in_soulsand_valley".
+						Changed field "$radio_label_text" from "crimson_forest" to "soulsand_valley".
+				Changed item 3:
+					Changed field "@settings_common.radio_with_label":
+						Changed field "$toggle_state_binding_name" from "#debug_spawn_in_warped_forest" to "#debug_spawn_in_crimson_forest".
+						Changed field "$radio_label_text" from "warped_forest" to "crimson_forest".
+				Changed item 4:
+					Changed field "@settings_common.radio_with_label":
+						Changed field "$toggle_state_binding_name" from "#debug_spawn_in_hell" to "#debug_spawn_in_warped_forest".
+						Changed field "$radio_label_text" from "hell" to "warped_forest".
+				Changed item 5:
+					Changed field "@settings_common.radio_with_label":
+						Changed field "$toggle_state_binding_name" from "#debug_spawn_in_plains" to "#debug_spawn_in_hell".
+						Changed field "$radio_label_text" from "plains" to "hell".
+				Added item 73:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#debug_spawn_in_plains"
+						field "$radio_label_text": "plains"
+	Changed element "multiplayer_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "xbl_settings_dropdown@settings_common.option_dropdown":
+					Changed field "variables":
+						Total variable: 1 (+1, -1)
+						Removed variable:
+							field "requires": "($nx_os or $is_berwick)"
+							field "$variables":
+								variable "$option_label": "options.xboxliveBroadcastSettingsForCrossplatform"
+								variable "$show_option_label": true
+						Added variable:
+							field "requires": "($nx_os or $is_ps4)"
+							field "$variables":
+								variable "$option_label": "options.xboxliveBroadcastSettingsForCrossplatform"
+								variable "$show_option_label": true
+			Changed control:
+				Changed element "platform_multiplayer_warning_label@world_section.cross_platform_warning_label":
+					Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+			Changed control:
+				Changed element "platform_settings_dropdown@settings_common.option_dropdown":
+					Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+Changed namespace "xbl_console_signin_succeeded":
+	Changed element "main_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 7 (+1, -1)
+			Changed control:
+				Changed element "padding_2":
+					Unchanged field "type": "panel"
+					Changed field "ignored" from "($nx_os or $is_berwick)" to "($nx_os or $is_ps4)".
+			Changed control:
+				Changed element "padding_1":
+					Unchanged field "type": "panel"
+					Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+			Changed control:
+				Changed element "new_account_text_panel@xbl_console_signin_succeeded.new_account_text_panel":
+					Changed field "ignored" from "($nx_os or $is_berwick" to "($nx_os or $is_ps4".
+			Removed control element "third_party_legal_text_panel@xbl_console_signin_succeeded.third_party_platform_legal_text": field "ignored": "(not $nx_os and not $is_berwick)".
+			Added control element "third_party_legal_text_panel@xbl_console_signin_succeeded.third_party_platform_legal_text": field "ignored": "(not $nx_os and not $is_ps4)".
+Changed namespace "xbl_friend_finder":
+	Changed element "dialog@common_dialogs.form_fitting_main_panel_no_buttons":
+		Changed field "variables":
+			Total variable: 1 (+1, -1)
+			Removed variable:
+				field "requires": "($nx_os or $is_berwick)"
+				field "$variables": variable "$text_name": "networkWorld.find_cross_platform_friends"
+			Added variable:
+				field "requires": "($nx_os or $is_ps4)"
+				field "$variables": variable "$text_name": "networkWorld.find_cross_platform_friends"

@@ -1,0 +1,870 @@
+Difference of "ui" between "1.2.0.2" (beta of "1.2.0") and "1.2.0.7" (beta of "1.2.0").
+
+Changed namespace "anvil_pocket":
+	Changed element "generic_label":
+		Unchanged field "type": "label"
+		Removed field "shadow" of true.
+	Changed element "slots_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "plus_sign@anvil_pocket.generic_label":
+					Removed field "shadow" of true.
+	Changed element "title_label@anvil_pocket.generic_label":
+		Removed field "shadow" of true.
+Changed namespace "beacon_pocket":
+	Changed element "beacon_background":
+		Unchanged field "type": "image"
+		Changed field "texture" from "textures/ui/beacon_background_pocket" to "textures/ui/effect_background".
+	Changed element "beacon_power_label":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "label@beacon_pocket.generic_label":
+					Added field "color" of "$beacon_power_title_text_color".
+	Changed element "generic_label":
+		Unchanged field "type": "label"
+		Changed field "color" from "$beacon_power_title_text_color" to "$pocket_title_text_color".
+		Removed field "shadow" of true.
+Changed namespace "brewing_stand_pocket":
+	Changed element "generic_label":
+		Unchanged field "type": "label"
+		Removed field "shadow" of true.
+Changed namespace "common":
+	Changed element "container_item":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "item_cell@common.cell_image":
+					Changed field "controls":
+						Total control: 2 (+1, -1)
+						Changed control:
+							Changed element "item":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Total control: 2 (+1, -1)
+									Changed control:
+										Changed element "$item_renderer@$item_renderer":
+											Changed field "layer" from 4 to 10.
+									Removed control element "stack_count_label@common.stack_count_label": field "layer": 6.
+									Added control element "stack_count_label@common.stack_count_label": field "layer": 11.
+						Removed control element "durability_bar@common.durability_bar": field "layer": 8.
+						Added control element "durability_bar@common.durability_bar": field "layer": 15.
+	Changed element "durability_bar":
+		Unchanged field "type": "custom"
+		Changed field "size" from [12, 1] to "$durability_bar_size".
+		Changed field "offset" from [0, 5] to "$durability_bar_offset".
+		Added field "$variables":
+			variable "$durability_bar_size|default":
+				item 0: 12
+				item 1: 1
+			variable "$durability_bar_offset|default":
+				item 0: 0
+				item 1: 5
+	Changed element "highlight_slot_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "highlight@common.highlight_slot":
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "hover_text@common.hover_text":
+								field "layer": 29
+								field "bindings":
+									binding:
+										field "binding_name": "#hover_text"
+										field "binding_condition": "visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$item_collection_name"
+						Added control:
+							element "hover_text@common.hover_text":
+								field "layer": 29
+								field "bindings":
+									binding:
+										field "binding_name": "$hover_text_binding_name"
+										field "binding_name_override": "#hover_text"
+										field "binding_condition": "visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$item_collection_name"
+								field "$variables": variable "$hover_text_binding_name|default": "#hover_text"
+	Changed element "slider":
+		Unchanged field "type": "slider"
+		Removed field "sounds":
+			sound:
+				field "sound_name": "random.click"
+				field "sound_volume": 1.0
+				field "sound_pitch": 1.0
+				field "event_type": "slider_change_event"
+				field "min_seconds_between_plays": 0.05
+	Changed element "stack_count_label":
+		Unchanged field "type": "label"
+		Changed field "bindings":
+			Changed binding:
+				Added field "binding_condition" of "$stack_count_binding_condition".
+		Changed field "$variables":
+			Total variable: 2 (+1, -0)
+			Added variable "$stack_count_binding_condition|default" of "none".
+Changed namespace "common_toggles":
+	Changed element "light_ui_toggle":
+		Unchanged field "type": "panel"
+		Changed field "$variables":
+			Total variable: 44 (+1, -0)
+			Added variable "$button_mappings|default":
+				item 0:
+					field "from_button_id": "button.menu_select"
+					field "to_button_id": "button.menu_select"
+					field "mapping_type": "pressed"
+				item 1:
+					field "from_button_id": "button.menu_ok"
+					field "to_button_id": "button.menu_ok"
+					field "mapping_type": "focused"
+				item 2:
+					field "ignored": "(not $enable_directional_toggling)"
+					field "from_button_id": "button.menu_left"
+					field "to_button_id": "$toggle_off_button"
+					field "mapping_type": "pressed"
+					field "input_mode_condition": "gamepad_and_not_gaze"
+				item 3:
+					field "ignored": "(not $enable_directional_toggling)"
+					field "from_button_id": "button.menu_right"
+					field "to_button_id": "$toggle_on_button"
+					field "mapping_type": "pressed"
+					field "input_mode_condition": "gamepad_and_not_gaze"
+		Changed field "controls":
+			Changed control:
+				Changed element "$toggle_view_binding_name@common.toggle":
+					Added field "button_mappings" of "$button_mappings".
+Changed namespace "crafting":
+	Total element: 98 (+1, -0)
+	Changed element "container_cell_images":
+		Unchanged field "type": "panel"
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_condition" from "visible" to "$cell_images_binding_condition".
+		Added field "$variables" of variable "$cell_images_binding_condition|default": "visible".
+	Added element "crafting_container_cell_images@crafting.container_cell_images" of field "$variables": variable "$cell_images_binding_condition": "always".
+	Changed element "crafting_input_grid_item@crafting.inventory_container_item":
+		Changed field "$variables":
+			Total variable: 3 (+2, -0)
+			Added variable "$background_images" of "crafting.crafting_container_cell_images".
+			Added variable "$item_renderer_binding_condition" of "always".
+	Changed element "filter_toggle@common_toggles.switch_toggle":
+		Changed field "$variables":
+			Total variable: 10 (+1, -0)
+			Added variable "$button_mappings":
+				item 0:
+					field "to_button_id": "button.filter_toggle_hovered"
+					field "mapping_type": "pressed"
+				item 1:
+					field "from_button_id": "button.menu_select"
+					field "to_button_id": "button.menu_select"
+					field "mapping_type": "pressed"
+				item 2:
+					field "from_button_id": "button.menu_ok"
+					field "to_button_id": "button.menu_ok"
+					field "mapping_type": "focused"
+				item 3:
+					field "ignored": "(not $enable_directional_toggling)"
+					field "from_button_id": "button.menu_left"
+					field "to_button_id": "$toggle_off_button"
+					field "mapping_type": "pressed"
+					field "input_mode_condition": "gamepad_and_not_gaze"
+				item 4:
+					field "ignored": "(not $enable_directional_toggling)"
+					field "from_button_id": "button.menu_right"
+					field "to_button_id": "$toggle_on_button"
+					field "mapping_type": "pressed"
+					field "input_mode_condition": "gamepad_and_not_gaze"
+	Changed element "grid_item_for_recipe_construction@crafting.creative_container_item":
+		Changed field "$variables":
+			Total variable: 5 (+1, -0)
+			Added variable "$hover_text_binding_name" of "#recipe_hover_text".
+	Changed element "grid_item_for_recipe_equipment@crafting.creative_container_item":
+		Changed field "$variables":
+			Total variable: 5 (+1, -0)
+			Added variable "$hover_text_binding_name" of "#recipe_hover_text".
+	Changed element "grid_item_for_recipe_items@crafting.creative_container_item":
+		Changed field "$variables":
+			Total variable: 5 (+1, -0)
+			Added variable "$hover_text_binding_name" of "#recipe_hover_text".
+	Changed element "grid_item_for_recipe_nature@crafting.creative_container_item":
+		Changed field "$variables":
+			Total variable: 5 (+1, -0)
+			Added variable "$hover_text_binding_name" of "#recipe_hover_text".
+	Changed element "inventory_container_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "item_cell":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 4 (+2, -2)
+						Changed control:
+							Changed element "item":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Total control: 2 (+1, -1)
+									Changed control:
+										Changed element "$item_renderer@$item_renderer":
+											Changed field "layer" from 4 to 10.
+									Removed control element "stack_count_label@common.stack_count_label": field "layer": 6.
+									Added control element "stack_count_label@common.stack_count_label": field "layer": 11.
+						Removed control element "durability_bar@common.durability_bar": field "layer": 8.
+						Removed control element "$overlay_image_control_name@$overlay_images": field "layer": 10.
+						Added control element "durability_bar@common.durability_bar": field "layer": 14.
+						Added control element "$overlay_image_control_name@$overlay_images": field "layer": 14.
+	Changed element "output_grid_2x2":
+		Unchanged field "type": "grid"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "work_bench_output@crafting.inventory_container_item":
+					field "$variables":
+						variable "$item_collection_name": "crafting_output_items"
+						variable "$button_ref": "crafting.output_no_coalesce_container_slot_button"
+						variable "$focus_override_up": "FOCUS_OVERRIDE_STOP"
+			Added control:
+				element "work_bench_output@crafting.inventory_container_item":
+					field "$variables":
+						variable "$item_collection_name": "crafting_output_items"
+						variable "$button_ref": "crafting.output_no_coalesce_container_slot_button"
+						variable "$background_images": "crafting.crafting_container_cell_images"
+						variable "$item_renderer_binding_condition": "always"
+						variable "$stack_count_binding_condition": "always"
+						variable "$focus_override_up": "FOCUS_OVERRIDE_STOP"
+	Changed element "output_grid_3x3":
+		Unchanged field "type": "grid"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "work_bench_output@crafting.inventory_container_item":
+					field "$variables":
+						variable "$cell_image_size":
+							item 0: 26
+							item 1: 26
+						variable "$item_collection_name": "crafting_output_items"
+						variable "$button_ref": "crafting.output_no_coalesce_container_slot_button"
+			Added control:
+				element "work_bench_output@crafting.inventory_container_item":
+					field "$variables":
+						variable "$cell_image_size":
+							item 0: 26
+							item 1: 26
+						variable "$item_collection_name": "crafting_output_items"
+						variable "$button_ref": "crafting.output_no_coalesce_container_slot_button"
+						variable "$stack_count_binding_condition": "always"
+						variable "$item_renderer_binding_condition": "always"
+						variable "$background_images": "crafting.crafting_container_cell_images"
+	Changed element "search_tab_content@crafting.tab_content_search_bar":
+		Changed field "$variables":
+			Total variable: 2 (+0, -1)
+			Removed variable "$label_text" of "craftingScreen.tab.search".
+	Changed element "tab_content_search_bar":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+1, -1)
+			Removed control element "creative_label@crafting.creative_label": empty.
+			Added control:
+				element "creative_label@crafting.creative_label":
+					field "text": "#search_tab_label_text"
+					field "bindings": binding: field "binding_name": "#search_tab_label_text"
+Changed namespace "crafting_pocket":
+	Changed element "crafting_input_grid_item@crafting.inventory_container_item":
+		Changed field "$variables":
+			Total variable: 8 (+2, -0)
+			Added variable "$background_images" of "crafting.crafting_container_cell_images".
+			Added variable "$item_renderer_binding_condition" of "always".
+	Changed element "hotbar_grid_item@common.container_item":
+		Changed field "$variables":
+			Total variable: 9 (+2, -0)
+			Added variable "$durability_bar_size":
+				item 0: 18
+				item 1: 1
+			Added variable "$durability_bar_offset":
+				item 0: 0
+				item 1: 8
+	Changed element "output_grid":
+		Unchanged field "type": "grid"
+		Changed field "controls":
+			Changed control:
+				Changed element "work_bench_output@crafting.inventory_container_item":
+					Changed field "$variables":
+						Total variable: 10 (+3, -0)
+						Added variable "$background_images" of "crafting.crafting_container_cell_images".
+						Added variable "$item_renderer_binding_condition" of "always".
+						Added variable "$stack_count_binding_condition" of "always".
+	Changed element "pocket_armor_tab_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "size":
+			Changed item 0 from "100%" to "100% - 12px".
+			Changed item 1 from "100%" to "100% - 12px".
+		Changed field "orientation" from "horizontal" to "vertical".
+		Changed field "controls":
+			Total control: 2 (+2, -3)
+			Removed control:
+				element "buffer_panel":
+					field "type": "panel"
+					field "size": [10, "100%"]
+			Removed control:
+				element "equipment":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%cm", "100%"]
+					field "controls":
+						control:
+							element "buffer_panel_1":
+								field "type": "panel"
+								field "size": [28, 10]
+						control:
+							element "armor_grid":
+								field "type": "grid"
+								field "layer": 1
+								field "size": [28, "80% - 10px"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "grid_dimensions": [1, 4]
+								field "collection_name": "$item_collection_name"
+								field "controls":
+									control:
+										element "head_grid_item@common.container_item":
+											field "size": [28, 28]
+											field "grid_position": [0, 0]
+											field "$variables":
+												variable "$cell_image_size":
+													item 0: 28
+													item 1: 28
+												variable "$cell_overlay_ref": "crafting.armor_overlay_helmet"
+									control:
+										element "chest_grid_item@common.container_item":
+											field "size": [28, 28]
+											field "grid_position": [0, 1]
+											field "$variables":
+												variable "$cell_image_size":
+													item 0: 28
+													item 1: 28
+												variable "$cell_overlay_ref": "crafting.armor_overlay_chest"
+									control:
+										element "legs_grid_item@common.container_item":
+											field "size": [28, 28]
+											field "grid_position": [0, 2]
+											field "$variables":
+												variable "$cell_image_size":
+													item 0: 28
+													item 1: 28
+												variable "$cell_overlay_ref": "crafting.armor_overlay_legs"
+									control:
+										element "feet_grid_item@common.container_item":
+											field "size": [28, 28]
+											field "grid_position": [0, 3]
+											field "$variables":
+												variable "$cell_image_size":
+													item 0: 28
+													item 1: 28
+												variable "$cell_overlay_ref": "crafting.armor_image_feet"
+								field "$variables":
+									variable "$item_collection_name": "armor_items"
+									variable "$item_renderer_panel_size":
+										item 0: 28
+										item 1: 28
+									variable "$item_renderer_size":
+										item 0: 24
+										item 1: 24
+									variable "$item_renderer_offset":
+										item 0: 4
+										item 1: 4
+									variable "$highlight_control": "crafting_pocket.highlight_slot_panel_pocket"
+									variable "$armor_overlay_size":
+										item 0: 24
+										item 1: 24
+						control:
+							element "offhand_grid":
+								field "type": "grid"
+								field "layer": 1
+								field "size": [28, "20% - 10px"]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "grid_dimensions": [1, 1]
+								field "collection_name": "$item_collection_name"
+								field "controls":
+									control:
+										element "offhand_grid_item@common.container_item":
+											field "size": [28, 28]
+											field "grid_position": [0, 0]
+											field "$variables":
+												variable "$cell_image_size":
+													item 0: 28
+													item 1: 28
+												variable "$cell_overlay_ref": "crafting.armor_overlay_shield"
+								field "$variables":
+									variable "$item_collection_name": "offhand_items"
+									variable "$item_renderer_panel_size":
+										item 0: 28
+										item 1: 28
+									variable "$item_renderer_size":
+										item 0: 24
+										item 1: 24
+									variable "$item_renderer_offset":
+										item 0: 4
+										item 1: 4
+									variable "$highlight_control": "crafting_pocket.highlight_slot_panel_pocket"
+									variable "$offhand_overlay_size":
+										item 0: 24
+										item 1: 24
+						control:
+							element "buffer_panel_2":
+								field "type": "panel"
+								field "size": [28, 10]
+			Removed control:
+				element "pocket_player_armor_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["fill", "100%"]
+					field "anchor_to": "top_middle"
+					field "anchor_from": "top_middle"
+					field "controls":
+						control:
+							element "fill_panel_0":
+								field "type": "panel"
+								field "size": ["100%", 10]
+						control:
+							element "label_panel":
+								field "type": "panel"
+								field "size": ["100%", 10]
+								field "controls":
+									control:
+										element "armor_label":
+											field "type": "label"
+											field "layer": 2
+											field "text": "craftingScreen.tab.armor"
+											field "color": "$title_text_color"
+											field "anchor_to": "top_middle"
+											field "anchor_from": "top_middle"
+						control:
+							element "renderer_panel":
+								field "type": "panel"
+								field "size": ["100%", 15]
+								field "controls":
+									control:
+										element "armor_renderer":
+											field "type": "custom"
+											field "size": [1, 1]
+											field "offset": [-40, -5]
+											field "layer": 2
+											field "renderer": "armor_renderer"
+											field "anchor_to": "top_middle"
+											field "anchor_from": "top_middle"
+						control:
+							element "fill_panel_2":
+								field "type": "panel"
+								field "size": ["100%", 10]
+						control:
+							element "armor_panel":
+								field "type": "panel"
+								field "size": ["100%", "fill"]
+								field "controls":
+									control:
+										element "armor_and_player":
+											field "type": "panel"
+											field "size": ["80%", "80%"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "controls":
+												control:
+													element "player_preview_border":
+														field "type": "image"
+														field "texture": "textures/ui/player_preview_border"
+														field "size": ["100%", "100%"]
+														field "layer": 2
+														field "anchor_from": "center"
+														field "anchor_to": "center"
+														field "controls":
+															control:
+																element "player_bg":
+																	field "type": "image"
+																	field "texture": "textures/ui/Black"
+																	field "size": ["100% - 2px", "100% - 2px"]
+																	field "layer": 2
+																	field "controls":
+																		control:
+																			element "player_renderer":
+																				field "type": "custom"
+																				field "renderer": "live_player_renderer"
+																				field "size": ["40%", "40%"]
+																				field "layer": 20
+																				field "anchor_from": "center"
+																				field "anchor_to": "center"
+																				field "offset": ["20%", 0]
+			Added control:
+				element "label_and_renderer":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+					field "controls":
+						control:
+							element "label_panel":
+								field "type": "panel"
+								field "size": ["100%", 10]
+								field "offset": [0, -10]
+								field "anchor_to": "center"
+								field "anchor_from": "center"
+								field "controls":
+									control:
+										element "armor_label":
+											field "type": "label"
+											field "layer": 2
+											field "text": "craftingScreen.tab.armor"
+											field "color": "$title_text_color"
+											field "anchor_to": "top_middle"
+											field "anchor_from": "top_middle"
+						control:
+							element "renderer_panel":
+								field "type": "panel"
+								field "size": ["100%", 15]
+								field "offset": [0, 5]
+								field "anchor_to": "center"
+								field "anchor_from": "center"
+								field "controls":
+									control:
+										element "armor_renderer":
+											field "type": "custom"
+											field "size": [1, 1]
+											field "offset": [-40, -5]
+											field "layer": 2
+											field "renderer": "armor_renderer"
+											field "anchor_to": "top_middle"
+											field "anchor_from": "top_middle"
+			Added control:
+				element "equipment_and_renderer":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 140]
+					field "controls":
+						control:
+							element "equipment":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "size": [28, "100%"]
+								field "controls":
+									control:
+										element "armor_grid":
+											field "type": "grid"
+											field "layer": 1
+											field "size": [28, 112]
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "grid_dimensions": [1, 4]
+											field "collection_name": "$item_collection_name"
+											field "controls":
+												control:
+													element "head_grid_item@common.container_item":
+														field "size": [28, 28]
+														field "grid_position": [0, 0]
+														field "$variables":
+															variable "$cell_image_size":
+																item 0: 28
+																item 1: 28
+															variable "$cell_overlay_ref": "crafting.armor_overlay_helmet"
+												control:
+													element "chest_grid_item@common.container_item":
+														field "size": [28, 28]
+														field "grid_position": [0, 1]
+														field "$variables":
+															variable "$cell_image_size":
+																item 0: 28
+																item 1: 28
+															variable "$cell_overlay_ref": "crafting.armor_overlay_chest"
+												control:
+													element "legs_grid_item@common.container_item":
+														field "size": [28, 28]
+														field "grid_position": [0, 2]
+														field "$variables":
+															variable "$cell_image_size":
+																item 0: 28
+																item 1: 28
+															variable "$cell_overlay_ref": "crafting.armor_overlay_legs"
+												control:
+													element "feet_grid_item@common.container_item":
+														field "size": [28, 28]
+														field "grid_position": [0, 3]
+														field "$variables":
+															variable "$cell_image_size":
+																item 0: 28
+																item 1: 28
+															variable "$cell_overlay_ref": "crafting.armor_image_feet"
+											field "$variables":
+												variable "$item_collection_name": "armor_items"
+												variable "$item_renderer_panel_size":
+													item 0: 28
+													item 1: 28
+												variable "$item_renderer_size":
+													item 0: 24
+													item 1: 24
+												variable "$item_renderer_offset":
+													item 0: 4
+													item 1: 4
+												variable "$durability_bar_size":
+													item 0: 18
+													item 1: 1
+												variable "$durability_bar_offset":
+													item 0: 0
+													item 1: 8
+												variable "$highlight_control": "crafting_pocket.highlight_slot_panel_pocket"
+												variable "$armor_overlay_size":
+													item 0: 24
+													item 1: 24
+									control:
+										element "offhand_grid":
+											field "type": "grid"
+											field "layer": 1
+											field "size": [28, 28]
+											field "anchor_from": "bottom_left"
+											field "anchor_to": "bottom_left"
+											field "grid_dimensions": [1, 1]
+											field "collection_name": "$item_collection_name"
+											field "controls":
+												control:
+													element "offhand_grid_item@common.container_item":
+														field "size": [28, 28]
+														field "grid_position": [0, 0]
+														field "$variables":
+															variable "$cell_image_size":
+																item 0: 28
+																item 1: 28
+															variable "$cell_overlay_ref": "crafting.armor_overlay_shield"
+											field "$variables":
+												variable "$item_collection_name": "offhand_items"
+												variable "$item_renderer_panel_size":
+													item 0: 28
+													item 1: 28
+												variable "$item_renderer_size":
+													item 0: 24
+													item 1: 24
+												variable "$item_renderer_offset":
+													item 0: 4
+													item 1: 4
+												variable "$durability_bar_size":
+													item 0: 18
+													item 1: 1
+												variable "$durability_bar_offset":
+													item 0: 0
+													item 1: 8
+												variable "$highlight_control": "crafting_pocket.highlight_slot_panel_pocket"
+												variable "$offhand_overlay_size":
+													item 0: 24
+													item 1: 24
+						control:
+							element "armor_panel":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "armor_and_player":
+											field "type": "panel"
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "controls":
+												control:
+													element "player_preview_border":
+														field "type": "image"
+														field "texture": "textures/ui/player_preview_border"
+														field "size": ["100%", "100%"]
+														field "layer": 2
+														field "anchor_from": "center"
+														field "anchor_to": "center"
+														field "controls":
+															control:
+																element "player_bg":
+																	field "type": "image"
+																	field "texture": "textures/ui/Black"
+																	field "size": ["100% - 2px", "100% - 2px"]
+																	field "layer": 2
+																	field "controls":
+																		control:
+																			element "player_renderer":
+																				field "type": "custom"
+																				field "renderer": "live_player_renderer"
+																				field "size": ["40%", "40%"]
+																				field "layer": 20
+																				field "anchor_from": "center"
+																				field "anchor_to": "center"
+																				field "offset": ["20%", 0]
+		Changed field "anchor_to" from "top_middle" to "center".
+		Changed field "anchor_from" from "top_middle" to "center".
+Changed namespace "debug_screen":
+	Changed element "debug_screen@common.base_screen":
+		Added field "low_frequency_rendering" of true.
+Changed namespace "furnace_pocket":
+	Changed element "generic_label":
+		Unchanged field "type": "label"
+		Removed field "shadow" of true.
+Changed namespace "general_section":
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 29 (+1, -0)
+			Added control:
+				element "option_toggle_dev_show_tcui_replacement@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_show_tcui_replacement"
+						variable "$option_binding_name": "#dev_show_tcui_replacement"
+						variable "$option_enabled_binding_name": "#dev_show_tcui_replacement_enabled"
+						variable "$toggle_name": "dev_show_tcui_replacement"
+Changed namespace "play":
+	Total element: 196 (+1, -0)
+	Changed element "friends_navigation_tab_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "icon_section_nobounce":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "icon@$tab_icon_nobounce":
+								Changed field "layer" from 1 to 2.
+			Changed control:
+				Changed element "icon_section":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "icon@$tab_icon":
+								Changed field "layer" from 1 to 2.
+	Added element "sync_legacy_worlds_button@common_buttons.light_text_button":
+		field "layer": 2
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_sync_legacy_worlds"
+			variable "$button_text": "playscreen.syncLegacyWorlds"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 19 (+2, -0)
+			Changed control:
+				Changed element "loading_legacy_worlds_panel_padding":
+					Unchanged field "type": "panel"
+					Removed field "bindings":
+						binding:
+							field "binding_name": "#loading_legacy_worlds_grid_visible"
+							field "binding_name_override": "#visible"
+					Added field "ignored" of "(not $supports_legacy_worlds)".
+			Added control:
+				element "legacy_worlds_label@play.world_list_label_panel":
+					field "ignored": "(not $supports_legacy_worlds)"
+					field "$variables": variable "$label_text": "playscreen.dontSeeLegacyWorlds"
+			Added control:
+				element "sync_legacy_worlds_button_panel":
+					field "ignored": "(not $supports_legacy_worlds)"
+					field "type": "panel"
+					field "layer": 1
+					field "size": ["100%", "100%c + 4px"]
+					field "controls":
+						control:
+							element "button@play.sync_legacy_worlds_button":
+								field "layer": 1
+								field "size": ["100%", 30]
+Changed namespace "pocket_containers":
+	Changed element "generic_label":
+		Unchanged field "type": "label"
+		Removed field "shadow" of true.
+Changed namespace "realms_whitelist":
+	Changed element "link_url_text":
+		Unchanged field "type": "label"
+		Added field "layer" of 1.
+	Changed element "popup_dialog__share_by_link@popup_dialog.modal_input_panel":
+		Changed field "controls":
+			Total control: 3 (+3, -3)
+			Removed control element "share_popup_background@realms_whitelist.share_popup_background": empty.
+			Removed control element "gamepad_helpers@common.gamepad_helpers_a_and_b": field "offset": [0, "-5px"].
+			Removed control element "share_popup_content@realms_whitelist.share_popup_content": empty.
+			Added control element "share_popup_background@realms_whitelist.share_popup_background": field "layer": 0.
+			Added control:
+				element "gamepad_helpers@common.gamepad_helpers_a_and_b":
+					field "layer": 0
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": [0, "31px"]
+			Added control element "share_popup_content@realms_whitelist.share_popup_content": field "layer": 1.
+Changed namespace "skin_picker":
+	Changed element "pack_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "bg@banner_fill":
+					Changed field "controls":
+						Changed control:
+							Changed element "right@cycle_pack_right_button":
+								Changed field "button_mappings":
+									Total button mapping: 1 (+0, -1)
+									Removed button mapping:
+										field "from_button_id": "button.menu_tab_right"
+										field "to_button_id": "button.cycle_pack_right"
+										field "mapping_type": "global"
+										field "scope": "controller"
+										field "consume_event": false
+						Changed control:
+							Changed element "left@cycle_pack_left_button":
+								Changed field "button_mappings":
+									Total button mapping: 1 (+0, -1)
+									Removed button mapping:
+										field "from_button_id": "button.menu_tab_left"
+										field "to_button_id": "button.cycle_pack_left"
+										field "mapping_type": "global"
+										field "scope": "controller"
+										field "consume_event": false
+	Changed element "premium_skin_button@skin_picker.skin_button":
+		Changed field "button_mappings":
+			Total button mapping: 6 (+2, -0)
+			Added button mapping:
+				field "from_button_id": "button.menu_tab_left"
+				field "to_button_id": "button.controller_cycle_pack_left"
+				field "mapping_type": "focused"
+				field "scope": "controller"
+				field "consume_event": false
+			Added button mapping:
+				field "from_button_id": "button.menu_tab_right"
+				field "to_button_id": "button.controller_cycle_pack_right"
+				field "mapping_type": "focused"
+				field "scope": "controller"
+				field "consume_event": false
+Changed namespace "trade_pocket":
+	Changed element "result_item_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "output_item_name":
+					Unchanged field "type": "label"
+					Changed field "color" from "$body_text_color" to "$dark_body_text_color".
+Changed namespace "xbl_profile_card":
+	Changed element "dialog_content_with_skin":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "divider_padding":
+					Unchanged field "type": "panel"
+					Changed field "size":
+						Changed item 0 from 5 to 6.
+						Unchanged item 1: "100%"
+	Changed element "dialog_scrolling_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 16 (+1, -0)
+			Changed control:
+				Changed element "title_presence_info":
+					Unchanged field "type": "label"
+					Changed field "bindings":
+						Total binding: 2 (+1, -0)
+						Added binding:
+							field "binding_name": "#currently_playing_visible"
+							field "binding_name_override": "#visible"
+			Changed control:
+				Changed element "padding_2":
+					Unchanged field "type": "panel"
+					Added field "bindings":
+						binding:
+							field "binding_name": "#currently_playing_visible"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "padding_7":
+					field "type": "panel"
+					field "size": ["100%", 2]
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from "100%c + 2px" to "100%c".

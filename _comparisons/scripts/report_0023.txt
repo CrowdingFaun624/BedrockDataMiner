@@ -1,0 +1,145 @@
+Difference of "scripts" between "1.17.41" and "1.18.0.20" (beta of "1.18.0").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 26 (+1, -0)
+	Changed script "BigMobTests.js":
+		Total line: 90 (+5, -5)
+		        '''
+		        ...
+		 6  6   const BIGMOB_REQUIRE = false;
+		 7  7   
+		 8  8   const MOBTOTEST = ["zoglin", "ravager", "iron_golem", "spider", "horse"];
+		 9  9   
+		10 10   function _descending(test, wallSide, entityType) {
+		   11 +   const zOffset = wallSide == "RIGHT" ? -0.55 : 0.55;
+		11    -   const zOffset = wallSide == "RIGHT" ? -0.25 : 0.25;
+		12 12     const spawnType = "minecraft:" + entityType;
+		   13 +   const mob = test.spawnWithoutBehaviorsAtLocation(spawnType, new Location(0.75, 6, 1.65 + zOffset));
+		13    -   const mob = test.spawnWithoutBehaviorsAtLocation(spawnType, new Location(0.5, 6, 1.5 + zOffset));
+		14 14     const targetPos = new BlockLocation(7, 2, 1);
+		15 15     test.walkTo(mob, targetPos, 1);
+		16 16     test.succeedWhenEntityPresent(spawnType, targetPos, true);
+		17 17   }
+		18 18   
+		19 19   function createDescendingTest(wallSide, entityType) {
+		20 20     const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
+		21 21     const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_descend_" + entityType;
+		22 22   
+		23 23     // Iron golems and Ravagers every so often get stucks when they are spawned
+		   24 +   if (entityType == "horse" || entityType == "iron_golem" || entityType == "ravager") {
+		24    -   if (entityType == "horse") {
+		25 25       GameTest.register("BigMobTests", testName, (test) => {
+		26 26         _descending(test, wallSide, entityType);
+		27 27       })
+		28 28         .structureName(structureName)
+		29 29         .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		        ...
+		46 46   
+		47 47   function _ascending(test, wallSide, entityType) {
+		48 48     const spawnType = "minecraft:" + entityType;
+		49 49     const targetPos = new BlockLocation(0, 6, 1);
+		50 50     const targetLocPos = new Location(0.5, 6, 1.5);
+		   51 +   const zOffset = wallSide == "RIGHT" ? 0.0 : 0.20;
+		   52 +   const mob = test.spawnWithoutBehaviorsAtLocation(spawnType, new Location(7.75, 2, 2.0 + zOffset));
+		51    -   const zOffset = wallSide == "RIGHT" ? -0.25 : 0.25;
+		52    -   const mob = test.spawnWithoutBehaviorsAtLocation(spawnType, new Location(7, 2, 1.5 + zOffset));
+		53 53     test.walkToLocation(mob, targetLocPos, 1);
+		54 54     test.succeedWhenEntityPresent(spawnType, targetPos, true);
+		55 55   }
+		56 56   
+		57 57   function createAscendingTest(wallSide, entityType) {
+		        ...
+		        '''
+	Changed script "BlockTests.js":
+		Total line: 280 (+16, -0)
+		          '''
+		          ...
+		260 260     test.succeedWhen(() => {
+		261 261       testEx.assertBlockProperty("lit", 1, new BlockLocation(0, 2, 0));
+		262 262       testEx.assertBlockProperty("lit", 1, new BlockLocation(0, 2, 2));
+		263 263     });
+		264 264   }).tag(GameTest.Tags.suiteDefault);
+		    265 + 
+		    266 + GameTest.register("BlockTests", "put_out_candles", (test) => {
+		    267 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		    268 +   const testEx = new GameTestExtensions(test);
+		    269 +   const candlePos = new BlockLocation(0, 2, 0);
+		    270 + 
+		    271 +   test
+		    272 +     .startSequence()
+		    273 +     .thenExecuteAfter(5, () => {
+		    274 +       player.interactWithBlock(candlePos);
+		    275 +     })
+		    276 +     .thenWait(() => {
+		    277 +       testEx.assertBlockProperty("lit", 0, candlePos);
+		    278 +     })
+		    279 +     .thenSucceed();
+		    280 + }).tag(GameTest.Tags.suiteDefault);
+		          '''
+	Changed script "Main.js":
+		Total line: 25 (+1, -0)
+		        '''
+		        ...
+		20 20   import "scripts/WaterPathfindingTests.js";
+		21 21   import "scripts/SmallMobTests.js";
+		22 22   import "scripts/BigMobTests.js";
+		23 23   import "scripts/RedstoneTests.js";
+		24 24   import "scripts/SimulatedPlayerTests.js";
+		   25 + import "scripts/RespawnAnchorTests.js";
+		        '''
+	Added script "RespawnAnchorTests.js":
+		'''
+		import * as GameTest from "mojang-gametest";
+		import { BlockLocation, MinecraftBlockTypes } from "mojang-minecraft";
+		
+		let respawnanchor_explosion = (test) => {
+		  const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 2));
+		  const anchorPos = new BlockLocation(1, 2, 2);
+		  const woolPos = anchorPos.above();
+		
+		  test
+		    .startSequence()
+		    .thenExecute(() => {
+		      test.assertBlockPresent(MinecraftBlockTypes.respawnAnchor, anchorPos);
+		      test.assertBlockPresent(MinecraftBlockTypes.wool, woolPos);
+		    })
+		    .thenExecuteAfter(5, () => {
+		      player.interactWithBlock(anchorPos)
+		    })
+		    .thenWait(() => {
+		      test.assertBlockPresent(MinecraftBlockTypes.water, anchorPos);
+		      test.assertBlockPresent(MinecraftBlockTypes.wool, woolPos);
+		    })
+		    .thenSucceed();
+		};
+		
+		GameTest.register("RespawnAnchorTests", "inwater_explosion_not_destructive", (test) => respawnanchor_explosion(test))
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("RespawnAnchorTests", "waterlogged_neighbour_explosion", (test) => respawnanchor_explosion(test))
+		  // Having waterlogged neighbour blocks counts as being in water
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("RespawnAnchorTests", "onland_explosion_destructive", (test) => {
+		  const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 1));
+		  const anchorPos = new BlockLocation(1, 2, 1);
+		  const woolPos = anchorPos.above();
+		
+		  test
+		    .startSequence()
+		    .thenExecute(() => {
+		      test.assertBlockPresent(MinecraftBlockTypes.respawnAnchor, anchorPos);
+		      test.assertBlockPresent(MinecraftBlockTypes.wool, woolPos);
+		    })
+		    .thenExecuteAfter(5, () => {
+		      player.interactWithBlock(anchorPos)
+		    })
+		    .thenWait(() => {
+		      test.assertBlockState(anchorPos, (block) => {
+		        return block.type == MinecraftBlockTypes.air || block.type == MinecraftBlockTypes.fire
+		      })
+		      test.assertBlockPresent(MinecraftBlockTypes.air, woolPos);
+		    })
+		    .thenSucceed();
+		}).tag(GameTest.Tags.suiteDefault);
+		'''

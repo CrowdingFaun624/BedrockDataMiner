@@ -1,0 +1,97 @@
+Difference of "shaders_resource_packs" between "a0.15.0_build1" (beta of "a0.15.0") and "a0.15.0_build2" (beta of "a0.15.0").
+
+Changed resource pack "stitch_blit.fragment":
+	Changed file "vanilla":
+		Total line: 74 (+34, -6)
+		        '''
+		        ...
+		 6  6   // varying to out when in vertex shaders or in when in fragment shaders
+		 7  7   // defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+		 8  8   // texture2D to texture
+		 9  9   #if __VERSION__ >= 300
+		10 10   
+		   11 + 	// version 300 code
+		   12 + 
+		   13 + 	#ifdef MSAA_FRAMEBUFFER_ENABLED
+		   14 + 		#define _centroid centroid
+		   15 + 	#else
+		   16 + 		#define _centroid
+		   17 + 	#endif
+		   18 + 
+		   19 + 	_centroid in vec2 uv;
+		   20 + 	#define varying in
+		   21 + 	#define texture2D texture
+		   22 + 	out vec4 FragColor;
+		   23 + 	#define gl_FragColor FragColor
+		   24 + 
+		   25 + #else
+		   26 + 	// version 100 code
+		   27 + 	varying vec2 uv;
+		   28 + #endif
+		   29 + 
+		   30 + 
+		   31 + #ifndef BLUR_RADIUS
+		   32 + 	#define BLUR_RADIUS 1 //base size
+		   33 + #endif
+		   34 + 
+		   35 + //HACK do not build higher res versions on gles2
+		   36 + #if __VERSION__ < 300 && BLUR_RADIUS > 2
+		   37 + 	#undef BLUR_RADIUS
+		   38 + 	#define BLUR_RADIUS 2
+		   39 + #endif
+		   40 + 
+		   41 + const int R = BLUR_RADIUS / 2;
+		11    - // version 300 code
+		12 42   
+		13    - #ifdef MSAA_FRAMEBUFFER_ENABLED
+		14    - #define _centroid centroid
+		   43 + uniform vec3 TEXTURE_DIMENSIONS;
+		   44 + uniform vec4 CURRENT_COLOR;
+		   45 + uniform sampler2D TEXTURE_0;
+		15    - #else
+		16    - #define _centroid
+		17    - #endif
+		18 46   
+		19    - _centroid in vec2 uv;
+		20    - #define varying in
+		   47 + void main()
+		   48 + {
+		   49 +     vec2 pixelSide = vec2(1.0 / TEXTURE_DIMENSIONS.xy);
+		21    - #define texture2D texture
+		22    - out vec4 FragColor;
+		23    - #define gl_FragColor FragColor
+		24 50   
+		   51 +     #if BLUR_RADIUS == 1
+		   52 +         vec4 color = texture2D( TEXTURE_0, uv);
+		   53 +     #else
+		25    - #else
+		   54 +         vec4 color = vec4(0.0);
+		   55 +         for(int i = -R; i < R; ++i) {
+		   56 +             for(int j = -R; j < R; ++j) {
+		   57 +                 vec2 sampleUV = uv + pixelSide * vec2(j, i);
+		   58 +     			sampleUV = mod(sampleUV, vec2(1.0));
+		   59 +     
+		   60 +                 color += texture2D( TEXTURE_0, sampleUV);
+		   61 +             }
+		   62 +         }
+		26    - 
+		27    - // version 100 code
+		28    - varying vec2 uv;
+		29    - 
+		30    - #endif
+		31    - 
+		32    - uniform vec4 CURRENT_COLOR;
+		33    - uniform sampler2D TEXTURE_0;
+		34 63   
+		   64 +         color /= float(BLUR_RADIUS * BLUR_RADIUS);
+		35    - void main()
+		36    - {
+		   65 +     #endif
+		37    - 	vec4 color = texture2D( TEXTURE_0, uv );
+		38 66   
+		39 67   	color.rgb = mix(color.rgb, CURRENT_COLOR.rgb * color.rgb, color.a * CURRENT_COLOR.a);
+		40 68       if(CURRENT_COLOR.a > 0.0) {
+		41 69           //the alpha in diffuse is a mask
+		42 70           color.a = 1.0;
+		        ...
+		        '''

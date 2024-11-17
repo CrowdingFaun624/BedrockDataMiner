@@ -1,0 +1,186 @@
+Difference of "ui" between "a0.15.3" and "a0.15.4".
+
+Total namespace: 51 (+1, -0)
+Changed namespace "common":
+	Changed element "inventory_panel_bottom_half_with_label@common.inventory_panel_bottom_half":
+		Changed field "controls":
+			Changed control:
+				Changed element "inventory_label@section_heading_label":
+					Added field "layer" of 5.
+Added namespace "common_art":
+	element "splash_text":
+		field "type": "custom"
+		field "renderer": "splash_text_renderer"
+		field "size": [0.1, 0.1]
+		field "layer": 2
+		field "anchor_from": "bottom_right"
+		field "anchor_to": "bottom_right"
+	element "title_panel_content":
+		field "type": "panel"
+		field "variables":
+			variable:
+				field "requires": "$win10_edition"
+				field "$variables": variable "$title_panel": "title_panel_win10"
+			variable:
+				field "requires": "$osx_edition"
+				field "$variables": variable "$title_panel": "title_panel_win10"
+			variable:
+				field "requires": "$education_edition"
+				field "$variables": variable "$title_panel": "title_panel_edu"
+			variable:
+				field "requires": "$pocket_edition"
+				field "$variables": variable "$title_panel": "title_panel_pocket"
+			variable:
+				field "requires": "$gear_vr"
+				field "$variables": variable "$title_panel": "title_panel_vr"
+		field "controls": control: element "@$title_panel": empty
+	element "title_panel_edu":
+		field "type": "panel"
+		field "size": ["55%", "13.35%x"]
+		field "offset": [0, "10%"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "controls":
+			control:
+				element "title_image":
+					field "type": "image"
+					field "layer": 1
+					field "texture": "gui/titleEdu.png"
+					field "uv": [0, 0]
+					field "uv_size": [1938, 472]
+			control: element "@splash_text": field "offset": ["-3.5%", "-9.25%x"]
+	element "title_panel_pocket":
+		field "type": "panel"
+		field "offset": [0, "10%"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["100%", "12.5%x"]
+		field "controls":
+			control:
+				element "title_image":
+					field "type": "image"
+					field "layer": 1
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "texture": "gui/title.png"
+					field "uv": [0, 0]
+					field "uv_size": [512, 64]
+			control: element "@splash_text": field "offset": ["-28%", "-4%x"]
+	element "title_panel_vr":
+		field "type": "panel"
+		field "size": ["100%", "12.5%x"]
+		field "offset": [0, "10%"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "controls":
+			control:
+				element "title_image":
+					field "type": "image"
+					field "layer": 1
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "texture": "gui/titleVR.png"
+					field "uv": [0, 0]
+					field "uv_size": [512, 64]
+			control: element "@splash_text": field "offset": ["-28%", "-4%x"]
+	element "title_panel_win10":
+		field "type": "panel"
+		field "size": ["55%", "10.6%x"]
+		field "offset": [0, "10%"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "controls":
+			control:
+				element "title_image":
+					field "type": "image"
+					field "layer": 1
+					field "texture": "gui/titleOriginal.png"
+					field "uv": [0, 0]
+					field "uv_size": [1936, 375]
+			control: element "@splash_text": field "offset": [0, "-6.25%x"]
+Changed namespace "horse":
+	Changed element "horse_label@common.section_heading_label":
+		Added field "layer" of 5.
+Changed namespace "hud":
+	Changed element "root_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 17 (+1, -1)
+			Removed control:
+				element "chat_g@chat_grid":
+					field "offset": "$chat_offset"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "$variables":
+						variable "$chat_offset|default":
+							item 0: 0
+							item 1: 10
+			Added control:
+				element "chat_stack":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls":
+						control:
+							element "chat_padding":
+								field "type": "panel"
+								field "size": [1, 240]
+								field "visible": "#chat_padding"
+								field "bindings":
+									binding:
+										field "binding_name": "#chat_padding"
+										field "binding_name_override": "#visible"
+						control:
+							element "chat_g@chat_grid":
+								field "offset": "$chat_offset"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "$variables":
+									variable "$chat_offset|default":
+										item 0: 0
+										item 1: 10
+Changed namespace "start":
+	Changed element "online_buttons_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_column":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "xbl_btn@column_frame":
+								Removed field "ignored" of "$win10_edition".
+Changed namespace "xbl_first_launch":
+	Total element: 8 (+0, -2)
+	Removed element "splash_text":
+		field "type": "custom"
+		field "renderer": "splash_text_renderer"
+		field "size": [0.1, 0.1]
+		field "layer": 2
+		field "anchor_from": "bottom_right"
+		field "anchor_to": "bottom_right"
+	Removed element "title_panel_pocket":
+		field "type": "panel"
+		field "offset": [0, "10%"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["100%", "12.5%x"]
+		field "controls":
+			control:
+				element "title_image":
+					field "type": "image"
+					field "layer": 1
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "texture": "gui/title.png"
+					field "uv": [0, 0]
+					field "uv_size": [512, 64]
+			control: element "@splash_text": field "offset": ["-28%", "-4%x"]
+	Changed element "xbl_first_launch_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "@title_panel_pocket": empty.
+			Added control element "@common_art.title_panel_content": empty.

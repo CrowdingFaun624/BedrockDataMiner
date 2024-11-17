@@ -1,0 +1,1977 @@
+Difference of "scripts" between "1.19.2" and "1.19.10.20" (beta of "1.19.10").
+
+Total behavior pack: 2 (+1, -0)
+Added behavior pack "agent_gametest":
+	script "AgentTest.js":
+		'''
+		import {
+		  BlockLocation,
+		  BlockType,
+		  Direction,
+		  IEntityComponent,
+		  ItemType,
+		  ItemStack,
+		  Location,
+		  MinecraftBlockTypes,
+		  MinecraftItemTypes,
+		} from "mojang-minecraft";
+		import { Test } from "mojang-gametest";
+		import * as GameTest from "mojang-gametest";
+		import { Agent, GameTestAgentExtensions } from "./GameTestAgentExtensions.js";
+		import GameTestExtensions from "./GameTestExtensions.js";
+		
+		class HealthComponent extends IEntityComponent {
+		  /** @type {number} */
+		  current = 0;
+		
+		  /** @type {number} */
+		  value = 0;
+		}
+		
+		class AttackTestOptions {
+		  /**
+		   * @type {Direction}
+		   */
+		  dir = Direction.north;
+		  /**
+		   * @type {BlockLocation}
+		   */
+		  entityOffset = new BlockLocation(0, 0, 1);
+		}
+		
+		class CollectTestItem {
+		  /**
+		   *
+		   * @param {Location} offset
+		   * @param {ItemType} item
+		   * @param {number} count
+		   * @param {bool} stillPresentAfterCollect
+		   */
+		  constructor(offset, item, count, stillPresentAfterCollect) {
+		    /** @type {Location} */
+		    this.posOffset = offset || new Location(0.0, 0.0, 0.0);
+		    /** @type {ItemType} */
+		    this.item = item || new ItemType();
+		    /** @type {number} */
+		    this.count = count || 0;
+		    /** @type {bool} */
+		    this.stillPresentAfterCollect = stillPresentAfterCollect || false;
+		  }
+		}
+		
+		class CollectTestOptions {
+		  /**
+		   *
+		   * @param {BlockLocation} origin
+		   * @param {BlockLocation} lookAtOffset
+		   * @param {string} spec
+		   * @param {CollectTestItem[]} items
+		   */
+		  constructor(origin, lookAtOffset, spec, items) {
+		    /** @type {BlockLocation} */
+		    this.origin = origin;
+		    /** @type {BlockLocation} */
+		    this.lookAtOffset = lookAtOffset;
+		    /** @type {string} */
+		    this.spec = spec;
+		    /** @type {CollectTestItem[]} */
+		    this.items = items;
+		  }
+		}
+		
+		class DestroyTestOptions {
+		  /**
+		   *
+		   * @param {Direction} dir
+		   * @param {BlockType} block
+		   */
+		  constructor(dir, block) {
+		    /** @type {Direction} */
+		    this.dir = dir || Direction.north;
+		
+		    /** @type {BlockLocation} */
+		    this.posOffset = GameTestAgentExtensions.directionToLocationOffset(this.dir);
+		
+		    /** @type {BlockType} */
+		    this.block = block || null;
+		  }
+		}
+		
+		class DropAllTestItem {
+		  /**
+		   *
+		   * @param {Direction} dir
+		   * @param {ItemType} item
+		   * @param {number} slot
+		   * @param {number} quantity
+		   */
+		  constructor(dir, item, slot, quantity) {
+		    /** @type {Location} */
+		    this.posOffset = GameTestAgentExtensions.directionToLocationOffset(dir);
+		    /** @type {ItemType} */
+		    this.item = item || null;
+		    /** @type {number} */
+		    this.slot = slot || 0;
+		    /** @type {number} */
+		    this.quantity = quantity || 0;
+		  }
+		}
+		
+		class DropTestItem extends DropAllTestItem {
+		  /**
+		   *
+		   * @param {Direction} dir
+		   * @param {ItemType} item
+		   * @param {number} slot
+		   * @param {number} quantity
+		   */
+		  constructor(dir, item, slot, quantity) {
+		    super(dir, item, slot, quantity);
+		    /** @type {Direction} */
+		    this.dir = dir;
+		  }
+		}
+		
+		class DropAllTestOptions {
+		  /**
+		   *
+		   * @param {BlockLocation} origin
+		   * @param {BlockLocation} lookAtOffset
+		   * @param {DropAllTestItem[]} items
+		   * @param {Direction} dir
+		   */
+		   constructor(origin, lookAtOffset, items, dir) {
+		    /** @type {BlockLocation} */
+		    this.origin = origin;
+		    /** @type {BlockLocation} */
+		    this.lookAtOffset = lookAtOffset;
+		    /** @type {DropAllTestItem[]} */
+		    this.items = items;
+		    /** @type {Direction} */
+		    this.dir = dir;
+		  }
+		}
+		
+		class DropTestOptions {
+		  /** @type {DropTestItem[]} */
+		  items = [];
+		}
+		
+		class InteractTestItem {
+		  /**
+		   *
+		   * @param {Direction} dir
+		   * @param {BlockLocation} posOffset
+		   * @param {boolean} usesRedstone
+		   * @param {number} redstonePower
+		   */
+		  constructor(dir, posOffset, usesRedstone, redstonePower) {
+		    this.dir = dir;
+		    this.posOffset = posOffset;
+		    this.usesRedstone = usesRedstone;
+		    this.redstonePower = redstonePower || 15;
+		  }
+		}
+		
+		class InteractOptions {
+		  /**
+		   *
+		   * @param {BlockLocation} origin
+		   * @param {InteractTestItem[]} items
+		   */
+		  constructor(origin, items) {
+		    /** @type {InteractTestItem[]} */
+		    this.origin = origin || new BlockLocation(0, 0, 0);
+		    /** @type {InteractTestItem[]} */
+		    this.items = items || [];
+		  }
+		}
+		
+		class MoveTestItems {
+		  /**
+		   *
+		   * @param {Direction} dir
+		   * @param {BlockLocation} expectedLocation
+		   */
+		  constructor(dir, expectedLocation) {
+		    /** @type {Direction} */
+		    this.dir = dir;
+		    /** @type {BlockLocation} */
+		    this.expectedLocation = expectedLocation;
+		  }
+		}
+		
+		class MoveTestOptions {
+		  /**
+		   *
+		   * @param {BlockLocation} origin
+		   * @param {BlockLocation} lookAtOffset
+		   * @param {MoveTestItems[]} items
+		   */
+		  constructor(origin, lookAtOffset, items) {
+		    /** @type {BlockLocation} */
+		    this.origin = origin;
+		    /** @type {BlockLocation} */
+		    this.lookAtOffset = lookAtOffset;
+		    /** @type {MoveTestItems[]} */
+		    this.items = items;
+		  }
+		}
+		
+		class PlaceTestItem {
+		  /**
+		   *
+		   * @param {string} blockName
+		   * @param {string} blockKey
+		   * @param {number} slot
+		   * @param {numebr} quantity
+		   * @param {Direction} dir
+		   * @param {BlockLocation} expectedLocation
+		   */
+		  constructor(blockName, blockKey, slot, quantity, dir, expectedLocation) {
+		    /** @type {number} */
+		    this.slot = slot || 0;
+		    /** @type {number} */
+		    this.quantity = quantity || 0;
+		    /** @type {BlockLocation} */
+		    this.expectedLocation = expectedLocation || new BlockLocation(0, 0, 0);
+		    /** @type {Direction} */
+		    this.dir = dir;
+		    /** @type {string} */
+		    this.blockName = blockName || "";
+		    /** @type {BlockType} */
+		    this.block = MinecraftBlockTypes[blockKey];
+		    /** @type {ItemType} */
+		    this.item = MinecraftItemTypes[blockKey];
+		  }
+		}
+		
+		class PlaceTestOptions {
+		  /**
+		   *
+		   * @param {BlockLocation} origin
+		   * @param {BlockLocation} lookAtOffset
+		   * @param {PlaceTestItem[]} items
+		   */
+		  constructor(origin, lookAtOffset, items) {
+		    /** @type {BlockLocation} */
+		    this.origin = origin;
+		    /** @type {BlockLocation} */
+		    this.lookAtOffset = lookAtOffset;
+		    /** @type {PlaceTestItem[]} */
+		    this.items = items;
+		  }
+		}
+		
+		class AttackTester {
+		  /**
+		   *
+		   * @param {AttackTestOptions[]} tests
+		   */
+		  constructor(tests) {
+		    /** @type {AttackTestOptions[]} */
+		    this.tests = tests;
+		    /** @type {string} */
+		    this.batchId = GameTestAgentExtensions.generateGuid();
+		    /** @type {number} */
+		    this.maxTicks = 15 + this.tests.length * 30;
+		  }
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {Agent} agent
+		   * @param {BlockLocation} origin
+		   * @param {AttackTestOptions} options
+		   */
+		  runTest = async (test, agent, origin, options) => {
+		    const spawnLoc = origin.offset(options.entityOffset.x, options.entityOffset.y, options.entityOffset.z);
+		    const cow = test.spawn("minecraft:cow<minecraft:ageable_grow_up>", spawnLoc);
+		
+		    /** @type {HealthComponent} */
+		    const health = cow.getComponent("health");
+		    test.assert(health.current == health.value, "Health should be full before attacking");
+		
+		    agent.attack(options.dir);
+		    await test.idle(5);
+		
+		    test.assert(health.current < health.value, "Health should not be full after attacking");
+		    cow.kill();
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   */
+		  test = async (test) => {
+		    const testOrigin = new BlockLocation(3, 2, 3);
+		    const testOriginLookOffset = new BlockLocation(0, 0, 1);
+		    const player = test.spawnSimulatedPlayer(new BlockLocation(0, 0, -1), "Sim Player");
+		    const agent = await Agent.createAgent(test, player, testOrigin, testOriginLookOffset);
+		
+		    for (let testItem of this.tests) {
+		      await this.runTest(test, agent, testOrigin, testItem);
+		    }
+		
+		    agent.kill();
+		
+		    test.succeed();
+		  };
+		}
+		
+		class CollectTester {
+		  /**
+		   *
+		   * @param {CollectTestOptions} tests
+		   */
+		  constructor(testsOptions) {
+		    /** @type {CollectTestOptions} */
+		    this.options = testsOptions;
+		    /** @type {string} */
+		    this.batchId = GameTestAgentExtensions.generateGuid();
+		    /** @type {number} */
+		    this.maxTicks = 15 + this.options.items.length * 10;
+		  }
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {Agent} agent
+		   * @param {BlockLocation} origin
+		   * @param {CollectTestOptions} options
+		   */
+		  runTest = async (test, agent, origin, options) => {
+		    const itemEntityId = "minecraft:item";
+		    let originLoc = new Location(origin.x, origin.y, origin.z);
+		    for (let item of options.items) {
+		      let itemLoc = new Location(
+		        originLoc.x + item.posOffset.x + 0.5,
+		        originLoc.y + item.posOffset.y,
+		        originLoc.z + item.posOffset.z + 0.5
+		      );
+		      test.spawnItem(new ItemStack(item.item, item.count), itemLoc);
+		    }
+		    await test.idle(2);
+		
+		    agent.collect(options.spec);
+		    await test.idle(5);
+		
+		    for (let item of options.items) {
+		      let itemLoc = origin.offset(item.posOffset.x, item.posOffset.y, item.posOffset.z);
+		      test.assertEntityPresent(itemEntityId, itemLoc, item.stillPresentAfterCollect);
+		    }
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   */
+		  test = async (test) => {
+		    const testOrigin = this.options.origin;
+		    const testOriginLookOffset = this.options.lookAtOffset;
+		    const player = test.spawnSimulatedPlayer(new BlockLocation(0, 0, -1), "Sim Player");
+		    const agent = await Agent.createAgent(test, player, testOrigin, testOriginLookOffset);
+		
+		    await this.runTest(test, agent, testOrigin, this.options);
+		
+		    agent.kill();
+		
+		    test.succeed();
+		  };
+		}
+		
+		class DestroyTester {
+		  /**
+		   *
+		   * @param {DestroyTestOptions} tests
+		   */
+		  constructor(tests) {
+		    /** @type {DestroyTestOptions} */
+		    this.tests = tests;
+		    /** @type {string} */
+		    this.batchId = GameTestAgentExtensions.generateGuid();
+		    /** @type {number} */
+		    this.maxTicks = 15 + this.tests.length * 12;
+		  }
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {Agent} agent
+		   * @param {BlockLocation} origin
+		   * @param {DestroyTestOptions} options
+		   */
+		  runTest = async (test, agent, origin, options) => {
+		    const blockLoc = origin.offset(options.posOffset.x, options.posOffset.y, options.posOffset.z);
+		    test.setBlockType(options.block, blockLoc);
+		    await test.idle(1);
+		
+		    agent.destroy(options.dir);
+		    await test.idle(5);
+		
+		    test.assertBlockPresent(options.block, blockLoc, false);
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   */
+		  test = async (test) => {
+		    const testOrigin = new BlockLocation(1, 2, 1);
+		    const testOriginLookOffset = new BlockLocation(0, 0, 1);
+		    const player = test.spawnSimulatedPlayer(new BlockLocation(0, 0, -1), "Sim Player");
+		    const agent = await Agent.createAgent(test, player, testOrigin, testOriginLookOffset);
+		
+		    for (let testItem of this.tests) {
+		      await this.runTest(test, agent, testOrigin, testItem);
+		    }
+		
+		    agent.kill();
+		
+		    test.succeed();
+		  };
+		}
+		
+		class DropAllTester {
+		  /**
+		   *
+		   * @param {DropAllTestOptions} testsOptions
+		   */
+		  constructor(testsOptions) {
+		    /** @type {DropAllTestOptions} */
+		    this.options = testsOptions;
+		    /** @type {string} */
+		    this.batchId = GameTestAgentExtensions.generateGuid();
+		    /** @type {number} */
+		    this.maxTicks = 15 + this.options.items.length * 10;
+		  }
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {GameTestAgentExtensions} testEx
+		   * @param {Agent} agent
+		   * @param {BlockLocation} origin
+		   * @param {DropAllTestOptions} options
+		   */
+		  runTest = async (test, testEx, agent, origin, options) => {
+		    const itemEntityId = "minecraft:item";
+		    for (let item of options.items) {
+		      let itemLoc = origin.offset(item.posOffset.x, item.posOffset.y, item.posOffset.z);
+		      test.assertEntityPresent(itemEntityId, itemLoc, false);
+		
+		      const stack = new ItemStack(item.item, item.quantity);
+		      agent.container().setItem(item.slot, stack);
+		    }
+		    await test.idle(2);
+		
+		    agent.dropAll(options.dir);
+		    await test.idle(5);
+		
+		    let dirOffset = GameTestAgentExtensions.directionToLocationOffset(options.dir);
+		    let dropAllLocation = origin.offset(dirOffset.x, dirOffset.y, dirOffset.z);
+		    testEx.teleportItems(test.worldBlockLocation(dropAllLocation));
+		    await test.idle(5);
+		
+		    for (let item of options.items) {
+		      const slotItem = agent.container().getItem(item.slot);
+		      test.assert(!slotItem || slotItem.amount === 0, "Should have dropped all items in slot");
+		      let itemLoc = origin.offset(item.posOffset.x, item.posOffset.y, item.posOffset.z);
+		      test.assertEntityPresent(itemEntityId, itemLoc, true);
+		    }
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   */
+		  test = async (test) => {
+		    const player = test.spawnSimulatedPlayer(new BlockLocation(0, 0, -1), "Sim Player");
+		    const agent = await Agent.createAgent(test, player, this.options.origin, this.options.lookAtOffset);
+		
+		    await this.runTest(test, agent._testEx, agent, this.options.origin, this.options);
+		
+		    agent.kill();
+		
+		    test.succeed();
+		  };
+		}
+		
+		class DropTester {
+		  /**
+		   *
+		   * @param {DropTestOptions} testsOptions
+		   */
+		  constructor(testsOptions) {
+		    /** @type {DropTestOptions} */
+		    this.options = testsOptions;
+		    /** @type {string} */
+		    this.batchId = GameTestAgentExtensions.generateGuid();
+		    /** @type {number} */
+		    this.maxTicks = 15 + this.options.items.length * 10;
+		  }
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {Agent} agent
+		   * @param {BlockLocation} origin
+		   * @param {DropTestOptions} options
+		   */
+		  runTest = async (test, agent, origin, options) => {
+		    const itemEntityId = "minecraft:item";
+		    for (let item of options.items) {
+		      let itemLoc = origin.offset(item.posOffset.x, item.posOffset.y, item.posOffset.z);
+		      test.assertEntityPresent(itemEntityId, itemLoc, false);
+		
+		      const stack = new ItemStack(item.item, item.quantity);
+		      agent.container().setItem(item.slot, stack);
+		
+		      await test.idle(2);
+		
+		      agent.drop(item.slot + 1, item.quantity, item.dir);
+		      await test.idle(5);
+		
+		      const slotItem = agent.container().getItem(item.slot);
+		      test.assert(!slotItem || slotItem.amount === 0, "Should have dropped all items in slot");
+		
+		      test.assertEntityPresent(itemEntityId, itemLoc, true);
+		    }
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   */
+		  test = async (test) => {
+		    const testOrigin = new BlockLocation(1, 2, 1);
+		    const testOriginLookOffset = new BlockLocation(0, 0, 1);
+		    const player = test.spawnSimulatedPlayer(new BlockLocation(0, 0, -1), "Sim Player");
+		    const agent = await Agent.createAgent(test, player, testOrigin, testOriginLookOffset);
+		
+		    await this.runTest(test, agent, testOrigin, this.options);
+		
+		    agent.kill();
+		
+		    test.succeed();
+		  };
+		}
+		
+		class InteractTester {
+		  /**
+		   *
+		   * @param {DropTestOptions} testsOptions
+		   */
+		  constructor(testsOptions) {
+		    /** @type {DropTestOptions} */
+		    this.options = testsOptions;
+		    /** @type {string} */
+		    this.batchId = GameTestAgentExtensions.generateGuid();
+		    /** @type {number} */
+		    this.maxTicks = 15 + this.options.items.length * 10;
+		  }
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {Agent} agent
+		   * @param {BlockLocation} origin
+		   * @param {DropTestOptions} options
+		   */
+		  runTest = async (test, agent, origin, options) => {
+		    const testEx = new GameTestExtensions(test);
+		    const openBitProperty = "open_bit";
+		
+		    for (let item of options.items) {
+		      let outputPos = item.posOffset;
+		      if (item.usesRedstone) {
+		        test.assertRedstonePower(outputPos, 0);
+		      } else {
+		        testEx.assertBlockProperty(openBitProperty, false, outputPos);
+		      }
+		    }
+		
+		    for (let item of options.items) {
+		      agent.interact(item.dir);
+		      await test.idle(3);
+		    }
+		    await test.idle(10);
+		
+		    for (let item of options.items) {
+		      let outputPos = item.posOffset;
+		      if (item.usesRedstone) {
+		        test.assertRedstonePower(outputPos, item.redstonePower);
+		      } else {
+		        testEx.assertBlockProperty(openBitProperty, true, outputPos);
+		      }
+		    }
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   */
+		  test = async (test) => {
+		    const testOrigin = this.options.origin;
+		    const testOriginLookOffset = new BlockLocation(0, 0, 1);
+		    const player = test.spawnSimulatedPlayer(new BlockLocation(0, 0, -1), "Sim Player");
+		    const agent = await Agent.createAgent(test, player, testOrigin, testOriginLookOffset);
+		
+		    await this.runTest(test, agent, testOrigin, this.options);
+		
+		    agent.kill();
+		
+		    test.succeed();
+		  };
+		}
+		
+		class MoveTester {
+		  /**
+		   *
+		   * @param {MoveTestOptions} testsOptions
+		   */
+		  constructor(testsOptions) {
+		    /** @type {MoveTestOptions} */
+		    this.options = testsOptions;
+		    /** @type {string} */
+		    this.batchId = GameTestAgentExtensions.generateGuid();
+		    /** @type {number} */
+		    this.maxTicks = 25 + this.options.items.length * 10;
+		  }
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {Agent} agent
+		   * @param {BlockLocation} origin
+		   * @param {MoveTestOptions} options
+		   */
+		  runTest = async (test, agent, origin, options) => {
+		    let currentPos = origin;
+		    let agentLoc = agent.blockLocation();
+		    test.assert(currentPos.equals(agentLoc), "Agent isn't at origin");
+		    for (let item of options.items) {
+		      agent.move(item.dir);
+		      await test.idle(7);
+		      currentPos = currentPos.offset(item.expectedLocation.x, item.expectedLocation.y, item.expectedLocation.z);
+		      agentLoc = agent.blockLocation();
+		      test.assert(
+		        currentPos.equals(agentLoc),
+		        `Agent isn't at expected location: <${currentPos.x}, ${currentPos.y}, ${currentPos.z}>`
+		      );
+		    }
+		    await test.idle(7);
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   */
+		  test = async (test) => {
+		    const testOrigin = this.options.origin;
+		    const testOriginLookOffset = this.options.lookAtOffset;
+		    const player = test.spawnSimulatedPlayer(new BlockLocation(0, 0, -1), "Sim Player");
+		    const agent = await Agent.createAgent(test, player, testOrigin, testOriginLookOffset);
+		
+		    await this.runTest(test, agent, testOrigin, this.options);
+		
+		    agent.kill();
+		
+		    test.succeed();
+		  };
+		}
+		
+		class PlaceTester {
+		  /**
+		   *
+		   * @param {PlaceTestOptions} testsOptions
+		   */
+		  constructor(testsOptions) {
+		    /** @type {PlaceTestOptions} */
+		    this.options = testsOptions;
+		    /** @type {string} */
+		    this.batchId = GameTestAgentExtensions.generateGuid();
+		    /** @type {number} */
+		    this.maxTicks = 25 + this.options.items.length * 5;
+		  }
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {Agent} agent
+		   * @param {BlockLocation} origin
+		   * @param {PlaceTestOptions} options
+		   */
+		  runTest = async (test, agent, origin, options) => {
+		    for (let item of options.items) {
+		      const stack = new ItemStack(item.item, item.quantity);
+		      const container = agent.container();
+		      container.setItem(item.slot, stack);
+		    }
+		
+		    for (let item of options.items) {
+		      const pos = origin.offset(item.expectedLocation.x, item.expectedLocation.y, item.expectedLocation.z);
+		      test.assertBlockPresent(item.block, pos, false);
+		
+		      agent.place(item.slot + 1, item.dir);
+		      await test.idle(3);
+		
+		      test.assertBlockPresent(item.block, pos, true);
+		    }
+		
+		    await test.idle(7);
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   */
+		  test = async (test) => {
+		    const testOrigin = this.options.origin;
+		    const testOriginLookOffset = this.options.lookAtOffset;
+		    const player = test.spawnSimulatedPlayer(new BlockLocation(0, 0, -1), "Sim Player");
+		    const agent = await Agent.createAgent(test, player, testOrigin, testOriginLookOffset);
+		
+		    await this.runTest(test, agent, testOrigin, this.options);
+		
+		    agent.kill();
+		
+		    test.succeed();
+		  };
+		}
+		
+		// Attack tests
+		{
+		  /** @type {AttackTestOptions[]} */
+		  const attackOptions = [
+		    {
+		      dir: Direction.north,
+		      entityOffset: new BlockLocation(0, 0, 1),
+		    },
+		    {
+		      dir: Direction.east,
+		      entityOffset: new BlockLocation(-1, 0, 0),
+		    },
+		    {
+		      dir: Direction.south,
+		      entityOffset: new BlockLocation(0, 0, -1),
+		    },
+		    {
+		      dir: Direction.west,
+		      entityOffset: new BlockLocation(1, 0, 0),
+		    },
+		  ];
+		  const tester = new AttackTester(attackOptions);
+		
+		  GameTest.registerAsync("agent_test", "attack", async (test) => await tester.test(test))
+		    .batch(tester.batchId)
+		    .tag(GameTest.Tags.suiteDefault)
+		    .tag("suite:edu")
+		    .maxTicks(tester.maxTicks);
+		}
+		
+		// Collect tests
+		{
+		  // Collect specific test
+		  {
+		    const items = [];
+		    items.push(new CollectTestItem(new Location(0, 0, 1), MinecraftItemTypes.netheriteHelmet, 1, true));
+		    items.push(new CollectTestItem(new Location(-1, 0, 0), MinecraftItemTypes.apple, 2, false));
+		
+		    let origin = new BlockLocation(1, 2, 1);
+		    const originLookOffset = new BlockLocation(0, 0, 1);
+		    /** @type {CollectTestOptions} */
+		    const options = new CollectTestOptions(origin, originLookOffset, "apple", items);
+		    const tester = new CollectTester(options);
+		
+		    GameTest.registerAsync("agent_test", "collect_apple", async (test) => await tester.test(test))
+		      .structureName("agent_test:collect")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		
+		  // Collect all test
+		  {
+		    const items = [];
+		    items.push(new CollectTestItem(new Location(0, 0, 1), MinecraftItemTypes.netheriteHelmet, 1, false));
+		    items.push(new CollectTestItem(new Location(-1, 0, 0), MinecraftItemTypes.apple, 2, false));
+		
+		    let origin = new BlockLocation(1, 2, 1);
+		    const originLookOffset = new BlockLocation(0, 0, 1);
+		    /** @type {CollectTestOptions} */
+		    const options = new CollectTestOptions(origin, originLookOffset, "all", items);
+		    const tester = new CollectTester(options);
+		
+		    GameTest.registerAsync("agent_test", "collect_all", async (test) => await tester.test(test))
+		      .structureName("agent_test:collect")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		}
+		
+		// Destroy Block tests
+		{
+		  // Destroy Blocks test
+		  {
+		    /** @type {DestroyTestOptions[]} */
+		    const targets = [];
+		    targets.push(new DestroyTestOptions(Direction.north, MinecraftBlockTypes.stone));
+		    targets.push(new DestroyTestOptions(Direction.east, MinecraftBlockTypes.grass));
+		    targets.push(new DestroyTestOptions(Direction.south, MinecraftBlockTypes.goldBlock));
+		    targets.push(new DestroyTestOptions(Direction.west, MinecraftBlockTypes.diamondBlock));
+		    const tester = new DestroyTester(targets);
+		
+		    GameTest.registerAsync("agent_test", "destroy_blocks", async (test) => await tester.test(test))
+		      .structureName("agent_test:destroy")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		
+		  // Destroy Block Objects test
+		  {
+		    /** @type {DestroyTestOptions[]} */
+		    const targets = [];
+		    targets.push(new DestroyTestOptions(Direction.north, MinecraftBlockTypes.bed));
+		    targets.push(new DestroyTestOptions(Direction.east, MinecraftBlockTypes.lectern));
+		    targets.push(new DestroyTestOptions(Direction.south, MinecraftBlockTypes.lever));
+		    targets.push(new DestroyTestOptions(Direction.west, MinecraftBlockTypes.lantern));
+		    const tester = new DestroyTester(targets);
+		
+		    GameTest.registerAsync("agent_test", "destroy_block_items", async (test) => await tester.test(test))
+		      .structureName("agent_test:destroy")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		}
+		
+		// DropAll Items tests
+		{
+		  let origin = new BlockLocation(2, 2, 2);
+		  const originLookOffset = new BlockLocation(0, 0, 1);
+		  // DropAll Items (Block) test
+		  {
+		    const dir = Direction.north;
+		    const items = [];
+		    items.push(new DropAllTestItem(dir, MinecraftItemTypes.stone, 0, 32));
+		    items.push(new DropAllTestItem(dir, MinecraftItemTypes.grass, 1, 16));
+		    items.push(new DropAllTestItem(dir, MinecraftItemTypes.goldBlock, 2, 8));
+		    items.push(new DropAllTestItem(dir, MinecraftItemTypes.diamondBlock, 3, 4));
+		
+		    const options = new DropAllTestOptions(origin, originLookOffset, items, dir);
+		    const tester = new DropAllTester(options);
+		
+		    GameTest.registerAsync("agent_test", "drop_all_blocks", async (test) => await tester.test(test))
+		      .structureName("agent_test:drop")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      // Still working on details for this one so it can be consistant
+		      // There is an issue where the items are pushed in to a new space which would fail the test.
+		      .tag(GameTest.Tags.suiteDisabled)
+		      .requiredSuccessfulAttempts(1)
+		      .maxTicks(tester.maxTicks);
+		  }
+		
+		  // DropAll Items (Block Objects) test
+		  {
+		    const dir = Direction.north;
+		    const items = [];
+		    items.push(new DropAllTestItem(dir, MinecraftItemTypes.bed, 0, 1));
+		    items.push(new DropAllTestItem(dir, MinecraftItemTypes.lectern, 1, 1));
+		    items.push(new DropAllTestItem(dir, MinecraftItemTypes.lever, 2, 8));
+		    items.push(new DropAllTestItem(dir, MinecraftItemTypes.lantern, 3, 4));
+		
+		    const options = new DropAllTestOptions(origin, originLookOffset, items, dir);
+		    const tester = new DropAllTester(options);
+		
+		    GameTest.registerAsync("agent_test", "drop_all_block_items", async (test) => await tester.test(test))
+		      .structureName("agent_test:drop")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		}
+		
+		// Drop Item tests
+		{
+		  // Drop Item (Block) test
+		  {
+		    const items = [];
+		    items.push(new DropTestItem(Direction.north, MinecraftItemTypes.stone, 0, 32));
+		    items.push(new DropTestItem(Direction.east, MinecraftItemTypes.grass, 1, 16));
+		    items.push(new DropTestItem(Direction.south, MinecraftItemTypes.goldBlock, 2, 8));
+		    items.push(new DropTestItem(Direction.west, MinecraftItemTypes.diamondBlock, 3, 4));
+		
+		    const options = new DropTestOptions();
+		    options.items = items;
+		    const tester = new DropTester(options);
+		
+		    GameTest.registerAsync("agent_test", "drop_blocks", async (test) => await tester.test(test))
+		      .structureName("agent_test:drop")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		
+		  // Drop Item (Block Object) test
+		  {
+		    const items = [];
+		    items.push(new DropTestItem(Direction.north, MinecraftItemTypes.bed, 0, 1));
+		    items.push(new DropTestItem(Direction.east, MinecraftItemTypes.lectern, 1, 1));
+		    items.push(new DropTestItem(Direction.south, MinecraftItemTypes.lever, 2, 8));
+		    items.push(new DropTestItem(Direction.west, MinecraftItemTypes.lantern, 3, 4));
+		
+		    const options = new DropTestOptions();
+		    options.items = items;
+		    const tester = new DropTester(options);
+		
+		    GameTest.registerAsync("agent_test", "drop_block_items", async (test) => await tester.test(test))
+		      .structureName("agent_test:drop")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		}
+		
+		// Interact tests
+		{
+		  // Interact (Switches) test
+		  {
+		    const items = [];
+		    items.push(new InteractTestItem(Direction.north, new BlockLocation(0, 2, 0), true, 13));
+		    items.push(new InteractTestItem(Direction.east, new BlockLocation(2, 2, 0), true, 15));
+		    items.push(new InteractTestItem(Direction.south, new BlockLocation(4, 2, 0), true, 15));
+		    items.push(new InteractTestItem(Direction.up, new BlockLocation(6, 2, 0), true, 15));
+		
+		    const options = new InteractOptions(new BlockLocation(3, 3, 5), items);
+		    const tester = new InteractTester(options);
+		
+		    GameTest.registerAsync("agent_test", "interact_switches", async (test) => await tester.test(test))
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		
+		  // Interact (Trapdoors) test
+		  {
+		    const origin = new BlockLocation(2, 3, 2);
+		    const offsetOrigin = (x, y, z) => {
+		      return origin.offset(x, y, z);
+		    };
+		
+		    const items = [];
+		    items.push(new InteractTestItem(Direction.north, offsetOrigin(0, 0, 1), false));
+		    items.push(new InteractTestItem(Direction.east, offsetOrigin(-1, 0, 0), false));
+		    items.push(new InteractTestItem(Direction.south, offsetOrigin(0, 0, -1), false));
+		    items.push(new InteractTestItem(Direction.west, offsetOrigin(1, 0, 0), false));
+		    items.push(new InteractTestItem(Direction.up, offsetOrigin(0, 1, 0), false));
+		    items.push(new InteractTestItem(Direction.down, offsetOrigin(0, -1, 0), false));
+		
+		    const options = new InteractOptions(origin, items);
+		    const tester = new InteractTester(options);
+		
+		    GameTest.registerAsync("agent_test", "interact_trapdoors", async (test) => await tester.test(test))
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		
+		  // Interact (Doors) test
+		  {
+		    const origin = new BlockLocation(2, 4, 2);
+		    const offsetOrigin = (x, y, z) => {
+		      return origin.offset(x, y, z);
+		    };
+		
+		    const items = [];
+		    items.push(new InteractTestItem(Direction.north, offsetOrigin(0, 0, 1), false));
+		    items.push(new InteractTestItem(Direction.east, offsetOrigin(-1, 0, 0), false));
+		    items.push(new InteractTestItem(Direction.south, offsetOrigin(0, 0, -1), false));
+		    items.push(new InteractTestItem(Direction.west, offsetOrigin(1, 0, 0), false));
+		    items.push(new InteractTestItem(Direction.down, offsetOrigin(0, -2, 0), false));
+		
+		    const options = new InteractOptions(origin, items);
+		    const tester = new InteractTester(options);
+		
+		    GameTest.registerAsync("agent_test", "interact_doors", async (test) => await tester.test(test))
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		}
+		
+		// Move tests
+		{
+		  // Move (No blocked moves) test
+		  {
+		    const items = [];
+		    items.push(new MoveTestItems(Direction.up, new BlockLocation(0, 1, 0)));
+		    items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 0, 1)));
+		    items.push(new MoveTestItems(Direction.east, new BlockLocation(-1, 0, 0)));
+		    items.push(new MoveTestItems(Direction.south, new BlockLocation(0, 0, -1)));
+		    items.push(new MoveTestItems(Direction.west, new BlockLocation(1, 0, 0)));
+		    items.push(new MoveTestItems(Direction.down, new BlockLocation(0, -1, 0)));
+		
+		    let origin = new BlockLocation(1, 2, 0);
+		    const originLookOffset = new BlockLocation(0, 0, 1);
+		    const options = new MoveTestOptions(origin, originLookOffset, items);
+		    const tester = new MoveTester(options);
+		
+		    GameTest.registerAsync("agent_test", "move_no_obstacles", async (test) => await tester.test(test))
+		      .structureName("agent_test:move")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		
+		    origin = new BlockLocation(5, 2, 2);
+		    const carpet_options = new MoveTestOptions(origin, originLookOffset, items);
+		    const carpet_tester = new MoveTester(carpet_options);
+		
+		    GameTest.registerAsync("agent_test", "move_carpet", async (test) => await carpet_tester.test(test))
+		      .structureName("agent_test:move")
+		      .batch(carpet_tester.batchId)
+		      .maxTicks(carpet_tester.maxTicks)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		
+		  // Move (blocked moves) test
+		  {
+		    const items = [];
+		    items.push(new MoveTestItems(Direction.up, new BlockLocation(0, 0, 0)));
+		    items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 0, 1)));
+		    items.push(new MoveTestItems(Direction.east, new BlockLocation(-1, 0, 0)));
+		    items.push(new MoveTestItems(Direction.south, new BlockLocation(0, 0, -1)));
+		    items.push(new MoveTestItems(Direction.west, new BlockLocation(1, 0, 0)));
+		    items.push(new MoveTestItems(Direction.down, new BlockLocation(0, 0, 0)));
+		
+		    let origin = new BlockLocation(1, 2, 5);
+		    const originLookOffset = new BlockLocation(0, 0, 1);
+		    {
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_capped", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		
+		    origin = new BlockLocation(5, 2, 0);
+		    {
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		      GameTest.registerAsync("agent_test", "move_carpet_capped", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		
+		    origin = new BlockLocation(5, 2, 1);
+		    {
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		      GameTest.registerAsync("agent_test", "move_carpet_capped_mixed", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		  }
+		
+		  // Move (Transition carpet / no carpet)
+		  {
+		    // Capped
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(1, 0, 0)));
+		
+		      let origin = new BlockLocation(3, 2, 0);
+		      const originLookOffset = new BlockLocation(1, 0, 0);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_carpet_transition_capped", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		
+		    // Uncapped
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(1, 0, 0)));
+		
+		      let origin = new BlockLocation(3, 2, 1);
+		      const originLookOffset = new BlockLocation(1, 0, 0);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_carpet_transition_uncapped", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		  }
+		
+		  // Move (Trapdoor) test
+		  {
+		    // Uncapped trapdoor on floor
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 0, 1)));
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 0, 1)));
+		
+		      let origin = new BlockLocation(2, 2, 2);
+		      const originLookOffset = new BlockLocation(0, 0, 1);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_trapdoor_uncapped", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		
+		    // Capped trapdoor on floor blocked
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 0, 0)));
+		
+		      let origin = new BlockLocation(1, 2, 2);
+		      const originLookOffset = new BlockLocation(0, 0, 1);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_trapdoor_capped_blocked", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		
+		    // Capped trapdoor on ceiling blocked
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 0, 0)));
+		
+		      let origin = new BlockLocation(0, 2, 2);
+		      const originLookOffset = new BlockLocation(0, 0, 1);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_trapdoor_ceiling_blocked", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		
+		    // Trapdoor (closed) on ceiling 1 block upwards blocked
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 0, 0)));
+		
+		      let origin = new BlockLocation(0, 2, 2);
+		      const originLookOffset = new BlockLocation(0, 0, 1);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync(
+		        "agent_test",
+		        "move_trapdoor_ceiling_upward_closed",
+		        async (test) => await tester.test(test)
+		      )
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		
+		    // Trapdoor (open) on ceiling 1 block upwards unblocked
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 1, 0)));
+		
+		      let origin = new BlockLocation(1, 2, 2);
+		      const originLookOffset = new BlockLocation(0, 0, 1);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_trapdoor_ceiling_upward_open", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        // .tag(GameTest.Tags.suiteDefault)
+		        // .tag("suite:edu")
+		        // This should work, but there need to be further improvements to the collision logic
+		        // To accomidate a space where a trapdoor is on a wall and open
+		        .tag(GameTest.Tags.suiteDisabled)
+		        .maxTicks(tester.maxTicks);
+		    }
+		
+		    // Trapdoor (closed) on as floor 1 block unblocked
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(-1, 0, 0)));
+		
+		      let origin = new BlockLocation(1, 2, 4);
+		      const originLookOffset = new BlockLocation(-1, 0, 0);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_trapdoor_floor_closed", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        .tag(GameTest.Tags.suiteDefault)
+		        .tag("suite:edu")
+		        .maxTicks(tester.maxTicks);
+		    }
+		  }
+		
+		  // Move (Door) test
+		  {
+		    // Door (open) unblocked
+		    {
+		      const items = [];
+		      items.push(new MoveTestItems(Direction.north, new BlockLocation(0, 0, 1)));
+		      items.push(new MoveTestItems(Direction.east, new BlockLocation(-1, 0, 0)));
+		      items.push(new MoveTestItems(Direction.south, new BlockLocation(0, 0, -1)));
+		      items.push(new MoveTestItems(Direction.west, new BlockLocation(1, 0, 0)));
+		
+		      let origin = new BlockLocation(5, 4, 0);
+		      const originLookOffset = new BlockLocation(0, 0, 1);
+		      const options = new MoveTestOptions(origin, originLookOffset, items);
+		      const tester = new MoveTester(options);
+		
+		      GameTest.registerAsync("agent_test", "move_door_open", async (test) => await tester.test(test))
+		        .structureName("agent_test:move")
+		        .batch(tester.batchId)
+		        // .tag(GameTest.Tags.suiteDefault)
+		        // .tag("suite:edu")
+		        // This should work, but there need to be further improvements to the collision logic
+		        // To accomidate a space where a door behind the agent
+		        .tag(GameTest.Tags.suiteDisabled)
+		        .maxTicks(tester.maxTicks);
+		    }
+		  }
+		}
+		
+		{
+		  // Place (Blocks) test
+		  {
+		    const items = [];
+		    items.push(new PlaceTestItem("stone", "stone", 0, 1, Direction.north, new BlockLocation(0, 0, 1)));
+		    items.push(new PlaceTestItem("grass", "grass", 1, 1, Direction.east, new BlockLocation(-1, 0, 0)));
+		    items.push(new PlaceTestItem("gold_block", "goldBlock", 2, 1, Direction.south, new BlockLocation(0, 0, -1)));
+		    items.push(new PlaceTestItem("diamond_block", "diamondBlock", 3, 1, Direction.west, new BlockLocation(1, 0, 0)));
+		
+		    let origin = new BlockLocation(2, 2, 2);
+		    const originLookOffset = new BlockLocation(0, 0, 1);
+		    const options = new PlaceTestOptions(origin, originLookOffset, items);
+		    const tester = new PlaceTester(options);
+		
+		    GameTest.registerAsync("agent_test", "place_blocks", async (test) => await tester.test(test))
+		      .structureName("agent_test:place")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		
+		  // Place (in air) test
+		  {
+		    const items = [];
+		    items.push(new PlaceTestItem("stone", "stone", 0, 1, Direction.north, new BlockLocation(0, 0, 1)));
+		    items.push(new PlaceTestItem("grass", "grass", 1, 1, Direction.east, new BlockLocation(-1, 0, 0)));
+		    items.push(new PlaceTestItem("gold_block", "goldBlock", 2, 1, Direction.south, new BlockLocation(0, 0, -1)));
+		    items.push(new PlaceTestItem("diamond_block", "diamondBlock", 3, 1, Direction.west, new BlockLocation(1, 0, 0)));
+		    items.push(new PlaceTestItem("dirt", "dirt", 4, 1, Direction.down, new BlockLocation(0, -1, 0)));
+		    items.push(new PlaceTestItem("basalt", "basalt", 5, 1, Direction.up, new BlockLocation(0, 1, 0)));
+		
+		    let origin = new BlockLocation(2, 3, 2);
+		    const originLookOffset = new BlockLocation(0, 0, 1);
+		    const options = new PlaceTestOptions(origin, originLookOffset, items);
+		    const tester = new PlaceTester(options);
+		
+		    GameTest.registerAsync("agent_test", "place_blocks_in_air", async (test) => await tester.test(test))
+		      .structureName("agent_test:place")
+		      .batch(tester.batchId)
+		      .tag(GameTest.Tags.suiteDefault)
+		      .tag("suite:edu")
+		      .maxTicks(tester.maxTicks);
+		  }
+		}
+		'''
+	script "GameTestAgentExtensions.js":
+		'''
+		import { Block, BlockLocation, Direction, Entity, InventoryComponentContainer, Location } from "mojang-minecraft";
+		import { SimulatedPlayer, Test } from "mojang-gametest";
+		
+		class GameTestAgentExtensions {
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {SimulatedPlayer} player
+		   */
+		  constructor(test, player) {
+		    this._test = test;
+		    this._player = player;
+		  }
+		
+		  /**
+		   *
+		   * @param {string} command
+		   * @returns
+		   */
+		  agentCommand = (command) => {
+		    return this._player.runCommand(`agent ${command}`);
+		  };
+		
+		  _command = (command) => {
+		    return this._player.runCommand(command);
+		  };
+		
+		  /**
+		   *
+		   * @param {BlockLocation} itemPos
+		   * @param {number} searchRadius
+		   * @returns {*}
+		   */
+		  teleportItems = (itemPos, searchRadius = 5) => {
+		    let tpCommand = `tp @e[type=item,x=${itemPos.x},y=${itemPos.y},z=${itemPos.z},r=${searchRadius}] ${itemPos.x} ${itemPos.y} ${itemPos.z}`;
+		    return this._command(tpCommand);
+		  };
+		
+		  /**
+		   *
+		   * @param {Direction} direction
+		   * @returns {"up" | "down" | "left" | "right" | "forward" | "back"}
+		   */
+		  static directionToAgentDir = (direction) => {
+		    switch (direction) {
+		      case Direction.up:
+		        return "up";
+		      case Direction.down:
+		        return "down";
+		      case Direction.north:
+		        return "forward";
+		      case Direction.south:
+		        return "back";
+		      case Direction.west:
+		        return "left";
+		      case Direction.east:
+		        return "right";
+		    }
+		    return "";
+		  };
+		
+		  /**
+		   *
+		   * @param {BlockLocation} direction
+		   */
+		  static directionToLocationOffset = (direction) => {
+		    switch (direction) {
+		      case Direction.north:
+		        return new BlockLocation(0, 0, 1);
+		      case Direction.south:
+		        return new BlockLocation(0, 0, -1);
+		      case Direction.east:
+		        return new BlockLocation(-1, 0, 0);
+		      case Direction.west:
+		        return new BlockLocation(1, 0, 0);
+		      case Direction.up:
+		        return new BlockLocation(0, 1, 0);
+		      case Direction.down:
+		        return new BlockLocation(0, -1, 0);
+		      default:
+		        return new BlockLocation(0, 0, 0);
+		    }
+		  };
+		
+		  static generateGuid = () => {
+		    return `${new Date().getTime().toString(16)}${Math.floor(1e7 * Math.random()).toString(16)}`;
+		  };
+		}
+		
+		export default class Agent {
+		  constructor(test, player) {
+		    /** @type {Test} */
+		    this._test = test;
+		    /** @type {SimulatedPlayer} */
+		    this._player = player;
+		    /** @type {GameTestAgentExtensions} */
+		    this._testEx = new GameTestAgentExtensions(test, player);
+		    /** @type {Entity[]} */
+		    this.entities = null;
+		  }
+		
+		  /**
+		   * @param {Direction} direction
+		   */
+		  attack = (direction) => {
+		    let dir = GameTestAgentExtensions.directionToAgentDir(direction);
+		    return this._testEx.agentCommand(`attack ${dir}`);
+		  };
+		
+		  /**
+		   *
+		   * @returns {BlockLocation}
+		   */
+		  blockLocation = () => {
+		    let loc = this.entity().location;
+		    let blockPos = new BlockLocation(Math.floor(loc.x), Math.floor(loc.y), Math.floor(loc.z));
+		    return this._test.relativeBlockLocation(blockPos);
+		  };
+		
+		  /**
+		   * @param {string|"all"} mode
+		   */
+		  collect = (mode) => {
+		    return this._testEx.agentCommand(`collect ${mode}`);
+		  };
+		
+		  /**
+		   *
+		   * @returns {InventoryComponentContainer}
+		   */
+		  container = () => {
+		    return this.entity().getComponent("inventory").container;
+		  };
+		
+		  /**
+		   * @param {Direction} direction
+		   */
+		  destroy = (direction) => {
+		    let dir = GameTestAgentExtensions.directionToAgentDir(direction);
+		    return this._testEx.agentCommand(`destroy ${dir}`);
+		  };
+		
+		  destroySequence = (sequence, directions) => {
+		    for (let dir of directions) {
+		      sequence = sequence.thenWaitAfter(5, () => {
+		        this.destroy(dir);
+		      });
+		    }
+		    return sequence;
+		  };
+		
+		  /**
+		   *
+		   * @returns {Entity}
+		   */
+		  entity = () => {
+		    return this._entity;
+		  };
+		
+		  /**
+		   *
+		   * @param {number} slot
+		   * @param {number} quantity
+		   * @param {Direction} direction
+		   * @returns
+		   */
+		  drop = (slot, quantity, direction) => {
+		    let dir = GameTestAgentExtensions.directionToAgentDir(direction);
+		    return this._testEx.agentCommand(`drop ${slot} ${quantity} ${dir}`);
+		  };
+		
+		  dropAll = (direction) => {
+		    let dir = GameTestAgentExtensions.directionToAgentDir(direction);
+		    return this._testEx.agentCommand(`dropall ${dir}`);
+		  };
+		
+		  interact = (direction) => {
+		    let dir = GameTestAgentExtensions.directionToAgentDir(direction);
+		    return this._testEx.agentCommand(`interact ${dir}`);
+		  };
+		
+		  interactSequence = (sequence, directions) => {
+		    for (let dir of directions) {
+		      sequence = sequence.thenWaitAfter(5, () => {
+		        this.interact(dir);
+		      });
+		    }
+		    return sequence;
+		  };
+		
+		  kill = () => {
+		    this._entity.kill();
+		    this._entity = null;
+		  };
+		
+		  /**
+		   *
+		   * @param {number} slot
+		   * @param {Direction} direction
+		   * @returns
+		   */
+		  place = (slot, direction) => {
+		    let dir = GameTestAgentExtensions.directionToAgentDir(direction);
+		    return this._testEx.agentCommand(`place ${slot} ${dir}`);
+		  };
+		
+		  /**
+		   *
+		   * @returns {Location}
+		   */
+		  location = () => {
+		    return this._test.relativeLocation(this.entity().location);
+		  };
+		
+		  /**
+		   *
+		   * @param {Direction} direction
+		   * @returns {*}
+		   */
+		  move = (direction) => {
+		    let dir = GameTestAgentExtensions.directionToAgentDir(direction);
+		    return this._testEx.agentCommand(`move ${dir}`);
+		  };
+		
+		  moveSequence = (sequence, directions) => {
+		    for (let move of directions) {
+		      sequence = sequence.thenWaitAfter(8, () => {
+		        this.move(move);
+		      });
+		    }
+		    return sequence;
+		  };
+		
+		  spawn = () => {
+		    return this._testEx.agentCommand("create");
+		  };
+		
+		  /**
+		   *
+		   * @param {BlockLocation} loc
+		   * @param {BlockLocation} facing
+		   * @returns
+		   */
+		  tp = (loc, facing) => {
+		    let cmd = `tp ${loc.x} ${loc.y} ${loc.z}`;
+		    if (facing) {
+		      cmd = `${cmd} facing ${facing.x} ${facing.y} ${facing.z}`;
+		    }
+		    return this._testEx.agentCommand(cmd);
+		  };
+		
+		  /**
+		   *
+		   * @param {Test} test
+		   * @param {SimulatedPlayer} player
+		   * @param {BlockLocation} loc
+		   * @param {BlockLocation} facing
+		   * @returns
+		   */
+		  static createAgent = async (test, player, loc, facing) => {
+		    const agent = new Agent(test, player);
+		    agent.spawn();
+		    await test.idle(5);
+		
+		    const wLoc = test.worldBlockLocation(loc);
+		    const wStartLocLookAt = test.worldBlockLocation(loc.offset(facing.x, facing.y, facing.z));
+		    agent.tp(wLoc, wStartLocLookAt);
+		
+		    await test.idle(5);
+		    agent._entity = test.getDimension().getEntitiesAtBlockLocation(wLoc)[0];
+		    return agent;
+		  };
+		}
+		
+		export { Agent, GameTestAgentExtensions };
+		'''
+	script "GameTestExtensions.js":
+		'''
+		import { BlockLocation, Location } from "mojang-minecraft";
+		
+		export default class GameTestExtensions {
+		  constructor(test) {
+		    this.test = test;
+		  }
+		
+		  assertBlockProperty(propertyName, value, blockLocation) {
+		    this.test.assertBlockState(blockLocation, (block) => {
+		      return block.permutation.getProperty(propertyName).value == value;
+		    });
+		  }
+		
+		  static toBlockLocation = (pos) => {
+		    return new BlockLocation(pos.x, pos.y, pos.z);
+		  };
+		
+		  static toLocation = (pos) => {
+		    return new Location(pos.x, pos.y, pos.z);
+		  };
+		}
+		'''
+	script "Main.js":
+		'''
+		import "scripts/AgentTest.js";
+		'''
+Changed behavior pack "vanilla_gametest":
+	Changed script "APITests.js":
+		Total line: 1868 (+16, -0)
+		            '''
+		            ...
+		1848 1848     test.succeed();
+		1849 1849   })
+		1850 1850     .maxTicks(400)
+		1851 1851     .structureName("ComponentTests:animal_pen")
+		1852 1852     .tag(GameTest.Tags.suiteDefault);
+		     1853 + 
+		     1854 + GameTest.registerAsync("APITests", "teleport_keep_velocity", async (test) => {
+		     1855 +   const arrow = test.spawn("arrow", new BlockLocation(2, 4, 1));
+		     1856 +   // The arrow should fall 1 block before hitting the target
+		     1857 +   arrow.setVelocity(new Vector(0, 0, 1.2));
+		     1858 +   const lampLoc = new BlockLocation(2, 3, 7);
+		     1859 +   await test.idle(2);
+		     1860 +   let arrowLoc = arrow.location;
+		     1861 +   arrowLoc.x -= 1;
+		     1862 +   arrow.teleport(arrowLoc, arrow.dimension, 0, 0, true);
+		     1863 +   await test.idle(20);
+		     1864 +   test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		     1865 +   test.succeed();
+		     1866 + })
+		     1867 +   .structureName("SimulatedPlayerTests:target_practice")
+		     1868 +   .tag(GameTest.Tags.suiteDefault);
+		            '''
+	Changed script "DebugTests.js":
+		Total line: 29 (+18, -4)
+		        '''
+		 1  1   import * as GameTest from "mojang-gametest";
+		    2 + import { BlockLocation, MinecraftItemTypes, ItemStack, world } from "mojang-minecraft";
+		    3 + 
+		    4 + GameTest.register("DebugTests", "always_fail", (test) => {
+		    5 +   // Do nothing, let the test time out
+		    6 + })
+		    7 +   .maxTicks(50)
+		    8 +   .tag(GameTest.Tags.suiteDebug);
+		 2  9   
+		   10 + GameTest.register("DebugTests", "always_succeed", (test) => {
+		   11 +   test.runAfterDelay(40, () => {
+		   12 +     test.succeed();
+		 3    - GameTest.register("DebugTests", "always_fail", (test) => {
+		   13 +   });
+		 4    -   // Do nothing, let the test time out
+		 5 14   })
+		 6 15     .maxTicks(50)
+		 7 16     .tag(GameTest.Tags.suiteDebug);
+		 8 17   
+		   18 + GameTest.register("DebugTests", "stack_overflow", (test) => {
+		   19 +   let player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1), "stack_overflow");
+		   20 +   let apple = new ItemStack(MinecraftItemTypes.apple);
+		 9    - GameTest.register("DebugTests", "always_succeed", (test) => {
+		   21 +   let eventCallback = world.events.beforeItemUse.subscribe((eventData) => {
+		   22 +     player.useItem(apple);
+		10    -   test.runAfterDelay(40, () => {
+		11    -     test.succeed();
+		12 23     });
+		   24 +   player.useItem(apple);
+		   25 +   world.events.beforeItemUse.unsubscribe(eventCallback);
+		   26 +   test.succeed();
+		13 27   })
+		   28 +   .tag(GameTest.Tags.suiteDebug)
+		   29 +   .structureName("ComponentTests:platform");
+		14    -   .maxTicks(50)
+		15    -   .tag(GameTest.Tags.suiteDebug);
+		        '''
+	Changed script "ItemEnchantmentsTests.js":
+		Total line: 62 (+24, -16)
+		        '''
+		 1  1   import * as GameTest from "mojang-gametest";
+		    2 + import { MinecraftItemTypes, ItemStack, MinecraftEnchantmentTypes, Enchantment } from "mojang-minecraft";
+		    3 + 
+		    4 + GameTest.register("ItemEnchantmentsTests", "item_get_enchantments_component", (test) => {
+		    5 +   const itemStack = new ItemStack(MinecraftItemTypes.ironSword);
+		    6 +   const enchantsComponent = itemStack.getComponent("minecraft:enchantments");
+		    7 + 
+		    8 +   test.assert(enchantsComponent != undefined, "Enchantments component should not be null");
+		    9 +   test.succeed();
+		   10 + })
+		   11 +   .structureName("ComponentTests:platform")
+		   12 +   .tag(GameTest.Tags.suiteDefault);
+		   13 + 
+		   14 + GameTest.register("ItemEnchantmentsTests", "item_can_have_enchantments_applied", (test) => {
+		   15 +   const itemStack = new ItemStack(MinecraftItemTypes.ironSword);
+		   16 +   const enchantsComponent = itemStack.getComponent("minecraft:enchantments");
+		   17 +   const enchantments = enchantsComponent.enchantments;
+		   18 + 
+		   19 +   let addSuccess = enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.fireAspect, 2));
+		   20 +   test.assert(addSuccess, "Should have been able to add fire aspect enchantment to empty list");
+		 2    - import {
+		 3    -   BlockLocation,
+		 4    -   MinecraftBlockTypes,
+		 5    -   Direction,
+		 6    -   MinecraftItemTypes,
+		 7    -   ItemStack,
+		 8    -   Location,
+		 9    -   world,
+		10    -   MinecraftEnchantmentTypes,
+		11    -   Enchantment,
+		12    -   EnchantmentSlot
+		13 21   
+		   22 +   test.succeed();
+		   23 + })
+		   24 +   .structureName("ComponentTests:platform")
+		   25 +   .tag(GameTest.Tags.suiteDefault);
+		14    - } from "mojang-minecraft";
+		15    - 
+		16 26   
+		   27 + GameTest.register("ItemEnchantmentsTests", "item_enchantments_conflict_prevent_adding", (test) => {
+		17    - GameTest.register("ItemEnchantmentsTests", "item_get_enchantments_component", (test) => {
+		18 28     const itemStack = new ItemStack(MinecraftItemTypes.ironSword);
+		19 29     const enchantsComponent = itemStack.getComponent("minecraft:enchantments");
+		   30 +   const enchantments = enchantsComponent.enchantments;
+		20 31   
+		21    -   test.assert(enchantsComponent != undefined, "Enchantments component should not be null");
+		22    -   test.succeed();
+		23    - })
+		   32 +   enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.fireAspect, 2));
+		   33 +   let addSuccess = enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.aquaAffinity, 1));
+		24    - .structureName("ComponentTests:platform")
+		25    - .tag(GameTest.Tags.suiteDefault);
+		26 34   
+		27    - GameTest.register("ItemEnchantmentsTests", "item_can_have_enchantments_applied", (test) => {
+		28    -   const itemStack = new ItemStack(MinecraftItemTypes.ironSword);
+		29    -   const enchantsComponent = itemStack.getComponent("minecraft:enchantments");
+		   35 +   test.assert(addSuccess == false, "Expected failure to add armor enchantment to sword");
+		30    -   const enchantments = enchantsComponent.enchantments;
+		31 36   
+		   37 +   test.succeed();
+		   38 + })
+		   39 +   .structureName("ComponentTests:platform")
+		32    -   let addSuccess = enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.fireAspect, 2));
+		   40 +   .tag(GameTest.Tags.suiteDefault);
+		33    -   test.assert(addSuccess, "Should have been able to add fire aspect enchantment to empty list");  
+		34 41   
+		   42 + GameTest.register("ItemEnchantmentsTests", "get_all_enchantments", (test) => {
+		   43 +   const itemStack = new ItemStack(MinecraftItemTypes.ironSword);
+		35    -   test.succeed();
+		36    - })
+		   44 +   const enchantsComponent = itemStack.getComponent("minecraft:enchantments");
+		   45 +   const enchantments = enchantsComponent.enchantments;
+		37    - .structureName("ComponentTests:platform")
+		38    - .tag(GameTest.Tags.suiteDefault);
+		39 46   
+		   47 +   enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.fireAspect, 1));
+		   48 +   enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.baneOfArthropods, 2));
+		40    - GameTest.register("ItemEnchantmentsTests", "item_enchantments_conflict_prevent_adding", (test) => {
+		41    -   const itemStack = new ItemStack(MinecraftItemTypes.ironSword);
+		   49 +   enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.knockback));
+		42    -   const enchantsComponent = itemStack.getComponent("minecraft:enchantments");
+		43    -   const enchantments = enchantsComponent.enchantments;
+		44 50   
+		   51 +   let allEnchantments = Array.from(enchantments); // test the iterator
+		   52 +   test.assert(allEnchantments.length == 3, "Expected 3 enchantments");
+		   53 +   test.assert(allEnchantments[0].type.id == "fireAspect", "Expected fire aspect enchantment");
+		   54 +   test.assert(allEnchantments[0].level == 1, "Expected fire aspect enchantment level 1");
+		   55 +   test.assert(allEnchantments[1].type.id == "baneOfArthropods", "Expected bane of arthropods enchantment");
+		   56 +   test.assert(allEnchantments[1].level == 2, "Expected bane of arthropods enchantment level 2");
+		   57 +   test.assert(allEnchantments[2].type.id == "knockback", "Expected knockback enchantment");
+		   58 +   test.assert(allEnchantments[2].level == 1, "Expected knockback enchantment level 1");
+		45    -   enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.fireAspect, 2));
+		46    -   let addSuccess = enchantments.addEnchantment(new Enchantment(MinecraftEnchantmentTypes.aquaAffinity, 1));
+		47    - 
+		48    -   test.assert(addSuccess == false, "Expected failure to add armor enchantment to sword");
+		49    - 
+		50 59     test.succeed();
+		51 60   })
+		   61 +   .structureName("ComponentTests:platform")
+		52    - .structureName("ComponentTests:platform")
+		53    - .tag(GameTest.Tags.suiteDefault);
+		   62 +   .tag(GameTest.Tags.suiteDefault);
+		54    - 
+		        '''
+	Changed script "SculkTests.js":
+		Total line: 721 (+31, -7)
+		          '''
+		          ...
+		222 222       .maxTicks(TicksPerSecond * 10)
+		223 223       .padding(TEST_PADDING)
+		224 224       .tag(GameTest.Tags.suiteDefault);
+		225 225   
+		226 226   GameTest.register("SculkTests", "vein_consume_blocks", (test) => {
+		    227 +     const TEST_AREA_SIZE_X = 10;
+		    228 +     const TEST_AREA_SIZE_Z = 5;
+		    229 +     const CONSUME_ROW_DELAY = TEST_AREA_SIZE_X * 2;
+		    230 +     const CONSUME_ROW_CHARGE = TEST_AREA_SIZE_X;
+		    231 + 
+		    232 +     const sculkCatalystPos = new BlockLocation(4, 2, 2);
+		    233 +     test.assertBlockPresent(MinecraftBlockTypes.sculkCatalyst, sculkCatalystPos);
+		    234 +     const sculkSpreader = test.getSculkSpreader(sculkCatalystPos);
+		    235 +     test.assert(sculkSpreader != undefined, "No Sculk Spreader has been retrieved!");
+		    236 + 
+		    237 +     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 4, 0), /* faceMask (down) = */ 1, CONSUME_ROW_CHARGE);
+		    238 +     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 2, 1), /* faceMask (up) = */ 1 << 1, CONSUME_ROW_CHARGE);
+		    239 +     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 4, 2), /* faceMask (down) = */ 1, CONSUME_ROW_CHARGE);
+		    240 +     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 2, 3), /* faceMask (up) = */ 1 << 1, CONSUME_ROW_CHARGE);
+		    241 +     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 4, 4), /* faceMask (down) = */ 1, CONSUME_ROW_CHARGE);
+		    242 + 
+		    243 +     test.startSequence().thenExecuteAfter(CONSUME_ROW_DELAY, () => {
+		    244 +         for (var x = 0; x < TEST_AREA_SIZE_X; x++) {
+		    245 +             for (var z = 0; z < TEST_AREA_SIZE_Z; z++) {
+		    246 +                 const testPos = new BlockLocation(x, 3, z);
+		    247 +                 var blockID = test.getBlock(testPos).type.id.valueOf();
+		    248 +                 test.assert(blockID == "minecraft:sculk", blockID + " is expected to be consumed by sculk.");
+		    249 +             }
+		    250 +         }
+		    251 +     }).thenSucceed();
+		    252 + })
+		    253 +     .padding(TEST_PADDING)
+		    254 +     .tag(GameTest.Tags.suiteDefault);
+		227     -     const TEST_AREA_SIZE_X = 9;
+		228     -     const TEST_AREA_SIZE_Z = 5;
+		229     -     const CONSUME_ROW_DELAY = TEST_AREA_SIZE_X * 2;
+		230     -     const CONSUME_ROW_CHARGE = TEST_AREA_SIZE_X;
+		231     - 
+		232     -     const sculkCatalystPos = new BlockLocation(4, 2, 2);
+		233     -     test.assertBlockPresent(MinecraftBlockTypes.sculkCatalyst, sculkCatalystPos);
+		234     -     const sculkSpreader = test.getSculkSpreader(sculkCatalystPos);
+		235     -     test.assert(sculkSpreader != undefined, "No Sculk Spreader has been retrieved!");
+		236 255   
+		    256 + GameTest.register("SculkTests", "vein_spread_blocks", (test) => {
+		    257 +     test.spawn("minecraft:creeper", new BlockLocation(2, 4, 2)).kill();
+		237     -     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 4, 0), /* faceMask (down) = */ 1, CONSUME_ROW_CHARGE);
+		    258 +     test.spawn("minecraft:creeper", new BlockLocation(0, 4, 0)).kill();
+		    259 +     test.spawn("minecraft:creeper", new BlockLocation(0, 4, 4)).kill();
+		    260 +     test.spawn("minecraft:creeper", new BlockLocation(4, 4, 0)).kill();
+		    261 +     test.spawn("minecraft:creeper", new BlockLocation(4, 4, 4)).kill();
+		238     -     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 2, 1), /* faceMask (up) = */ 1 << 1, CONSUME_ROW_CHARGE);
+		239     -     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 4, 2), /* faceMask (down) = */ 1, CONSUME_ROW_CHARGE);
+		240     -     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 2, 3), /* faceMask (up) = */ 1 << 1, CONSUME_ROW_CHARGE);
+		241     -     placeSculkVeinAndSpread(test, sculkSpreader, sculkCatalystPos, new BlockLocation(0, 4, 4), /* faceMask (down) = */ 1, CONSUME_ROW_CHARGE);
+		242 262   
+		    263 +     test.succeedWhen(() => {
+		243     -     test.startSequence().thenExecuteAfter(CONSUME_ROW_DELAY, () => {
+		244     -         for (var x = 0; x < TEST_AREA_SIZE_X; x++) {
+		    264 +         for (var x = 0; x < 5; ++x) {
+		    265 +             for (var z = 0; z < 5; ++z) {
+		    266 +                 const isSculk = test.getBlock(new BlockLocation(x, 3, z)).id == "minecraft:sculk" || test.getBlock(new BlockLocation(x, 4, z)).id == "minecraft:sculk_vein";
+		    267 +                 test.assert(isSculk, "Sculk failed to spread to [" + x + ", " + z + "]!");
+		245     -             for (var z = 0; z < TEST_AREA_SIZE_Z; z++) {
+		246     -                 const testPos = new BlockLocation(x, 3, z);
+		247     -                 var blockID = test.getBlock(testPos).type.id.valueOf();
+		248     -                 test.assert(blockID == "minecraft:sculk", blockID + " is expected to be consumed by sculk.");
+		249 268               }
+		    269 +         };
+		    270 +     });
+		250     -         }
+		251     -     }).thenSucceed();
+		252 271   })
+		    272 +     .maxTicks(TicksPerSecond * 10)
+		253 273       .padding(TEST_PADDING)
+		254 274       .tag(GameTest.Tags.suiteDefault);
+		255 275   
+		    276 + GameTest.register("SculkTests", "vein_spread_blocks_replaceable", (test) => {
+		    277 +     test.spawn("minecraft:creeper", new BlockLocation(1, 3, 1)).kill();
+		    278 +     test.spawn("minecraft:creeper", new BlockLocation(1, 3, 3)).kill();
+		    279 +     test.spawn("minecraft:creeper", new BlockLocation(4, 3, 1)).kill();
+		    280 +     test.spawn("minecraft:creeper", new BlockLocation(4, 3, 3)).kill();
+		    281 +     test.spawn("minecraft:creeper", new BlockLocation(6, 3, 1)).kill();
+		    282 +     test.spawn("minecraft:creeper", new BlockLocation(6, 3, 3)).kill();
+		    283 +     test.spawn("minecraft:creeper", new BlockLocation(9, 3, 1)).kill();
+		    284 +     test.spawn("minecraft:creeper", new BlockLocation(9, 3, 3)).kill();
+		256     - GameTest.register("SculkTests", "vein_spread_blocks", (test) => {
+		257     -     test.spawn("minecraft:creeper", new BlockLocation(2, 4, 2)).kill();
+		258     -     test.spawn("minecraft:creeper", new BlockLocation(0, 4, 0)).kill();
+		259     -     test.spawn("minecraft:creeper", new BlockLocation(0, 4, 4)).kill();
+		260     -     test.spawn("minecraft:creeper", new BlockLocation(4, 4, 0)).kill();
+		261     -     test.spawn("minecraft:creeper", new BlockLocation(4, 4, 4)).kill();
+		262 285   
+		263 286       test.succeedWhen(() => {
+		    287 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, new BlockLocation(1, 2, 1));
+		    288 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, new BlockLocation(1, 2, 3));
+		    289 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, new BlockLocation(3, 2, 1));
+		264     -         for (var x = 0; x < 5; ++x) {
+		    290 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, new BlockLocation(3, 2, 3));
+		    291 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, new BlockLocation(7, 2, 1));
+		    292 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, new BlockLocation(7, 2, 3));
+		    293 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, new BlockLocation(9, 2, 1));
+		    294 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, new BlockLocation(9, 2, 3));
+		265     -             for (var z = 0; z < 5; ++z) {
+		266     -                 const isSculk = test.getBlock(new BlockLocation(x, 3, z)).id == "minecraft:sculk" || test.getBlock(new BlockLocation(x, 4, z)).id == "minecraft:sculk_vein";
+		267     -                 test.assert(isSculk, "Sculk failed to spread to [" + x + ", " + z + "]!");
+		268     -             }
+		269     -         };
+		270 295       });
+		271 296   })
+		272     -     .maxTicks(TicksPerSecond * 10)
+		273 297       .padding(TEST_PADDING)
+		274 298       .tag(GameTest.Tags.suiteDefault);
+		275 299   
+		276 300   GameTest.register("SculkTests", "vein_non_spread_blocks", (test) => {
+		277 301       test.spawn("minecraft:creeper", new BlockLocation(1, 4, 1)).kill();
+		          ...
+		          '''
+	Changed script "WardenTests.js":
+		Total line: 132 (+32, -0)
+		          '''
+		          ...
+		 96  96           .thenWait(() => {
+		 97  97               test.assertEntityPresent(wardenEntityType, startPosSnowball, true);
+		 98  98           })
+		 99  99           .thenSucceed();
+		100 100   }).maxTicks(TicksPerSecond * 10).padding(WARDEN_TESTS_PADDING); //timeout after 10 seconds
+		    101 + 
+		    102 + GameTest.register("WardenTests", "warden_path_lava", (test) => {
+		    103 +     const wardenEntityType = "minecraft:warden";
+		    104 +     const pigEntityType = "minecraft:pig";
+		    105 +     const startPosWarden = new BlockLocation(1, 3, 2);
+		    106 +     const startPosPig = new Location(7, 3, 2);
+		    107 +     test.spawn(wardenEntityType, startPosWarden.above());
+		    108 +     test.spawnWithoutBehaviorsAtLocation(pigEntityType, startPosPig);
+		    109 + 
+		    110 +     test
+		    111 +         .startSequence()
+		    112 +         .thenWait(() => {
+		    113 +             test.assertEntityPresentInArea("minecraft:pig", false);
+		    114 +         })
+		    115 +         .thenSucceed();
+		    116 + }).maxTicks(TicksPerSecond * 60).tag(GameTest.Tags.suiteDefault).padding(WARDEN_TESTS_PADDING); //timeout after 60 seconds
+		    117 + 
+		    118 + GameTest.register("WardenTests", "warden_path_water", (test) => {
+		    119 +     const wardenEntityType = "minecraft:warden";
+		    120 +     const pigEntityType = "minecraft:pig";
+		    121 +     const startPosWarden = new BlockLocation(1, 3, 2);
+		    122 +     const startPosPig = new Location(7, 3, 2);
+		    123 +     test.spawn(wardenEntityType, startPosWarden.above());
+		    124 +     test.spawnWithoutBehaviorsAtLocation(pigEntityType, startPosPig);
+		    125 + 
+		    126 +     test
+		    127 +         .startSequence()
+		    128 +         .thenWait(() => {
+		    129 +             test.assertEntityPresentInArea("minecraft:pig", false);
+		    130 +         })
+		    131 +         .thenSucceed();
+		    132 + }).maxTicks(TicksPerSecond * 60).tag(GameTest.Tags.suiteDefault).padding(WARDEN_TESTS_PADDING); //timeout after 60 seconds
+		          '''

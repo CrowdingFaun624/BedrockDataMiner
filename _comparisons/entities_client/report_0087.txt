@@ -1,9 +1,8 @@
 Difference of "entities_client" between "1.18.30.30" (beta of "1.18.30") and "1.18.30.32" (beta of "1.18.30").
 
 Total entity: 163 (+1, -0)
-Added entity "warden.entity":
+Added entity "warden.entity.json":
 	resource pack "experimental":
-		field "defined_in": resource pack: "experimental_wild_update"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -38,18 +37,6 @@ Added entity "warden.entity":
 					render controller: "controller.render.warden_ears"
 					render controller: "controller.render.warden_heart"
 				field "scripts":
-					field "animate":
-						script: "base_pose"
-						script: script item "move": "!(query.is_emerging || query.is_digging)"
-						script: "shiver_controller"
-						script: "bob"
-						script: script item "emerge": "query.is_emerging"
-						script: "sniff_controller"
-						script: script item "dig": "query.is_digging"
-						script: "roar_controller"
-						script: script item "look_at_target": "!(query.is_emerging || query.is_digging)"
-						script: "melee_attack_controller"
-						script: script item "swimming": "query.swim_amount > 0.0"
 					field "pre_animation":
 						script: "variable.animation_speed = Math.min(0.5, 3.0 * query.modified_move_speed);"
 						script: "variable.anim_pos_mod = 49.388962;"
@@ -76,6 +63,18 @@ Added entity "warden.entity":
 						script: "variable.spots_2_alpha = math.max(0.0, 1.0 - 0.25 * math.cos(variable.bob * 2.578 + 180.0));"
 						script: "variable.ears_alpha = math.max(1.0 - variable.tendril_animation, 0.0);"
 						script: "variable.heart_alpha = query.heartbeat_phase;"
+					field "animate":
+						script: "base_pose"
+						script: script item "move": "!(query.is_emerging || query.is_digging)"
+						script: "shiver_controller"
+						script: "bob"
+						script: script item "emerge": "query.is_emerging"
+						script: "sniff_controller"
+						script: script item "dig": "query.is_digging"
+						script: "roar_controller"
+						script: script item "look_at_target": "!(query.is_emerging || query.is_digging)"
+						script: "melee_attack_controller"
+						script: script item "swimming": "query.swim_amount > 0.0"
 				field "sound_effects":
 					sound effect "clicking": "mob.warden.clicking"
 					sound effect "dig": "mob.warden.dig"

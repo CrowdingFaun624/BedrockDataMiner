@@ -1,0 +1,313 @@
+Difference of "ui" between "1.19.30.25" (beta of "1.19.30") and "1.19.30".
+
+Changed namespace "play":
+	Total element: 273 (+9, -0)
+	Changed element "create_new_world_button@common_buttons.light_text_button":
+		Changed field "variables":
+			Total variable: 3 (+1, -0)
+			Added variable:
+				field "requires": "$is_editor_mode_enabled"
+				field "$variables": variable "$button_text": "playscreen.editor.create"
+	Added element "editor_play_screen_panel@play.play_screen_panel":
+		field "$variables":
+			variable "$navigation_tab": "play.editor_tab_navigation_panel_layout"
+			variable "$tab_content_panel": "play.editor_tab_content_panel_layout"
+	Added element "editor_server_content_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control: element "lan_servers_panel@play.lan_servers_scroll_content": empty
+			control:
+				element "servers_divider@common.horizontal_divider":
+					field "bindings":
+						binding:
+							field "binding_name": "#lan_grid_visible"
+							field "binding_name_override": "#visible"
+			control: element "more_servers_panel@play.manually_added_servers_scrolling_content": empty
+		field "$variables": variable "$focus_id": "left_panel"
+	Added element "editor_settings_image_content":
+		field "type": "image"
+		field "size": [14, 14]
+		field "layer": 2
+		field "texture": "textures/ui/icon_setting"
+		field "color": "white"
+	Added element "editor_settings_menu_button@common_buttons.light_content_button":
+		field "layer": 1
+		field "offset": [0, -3]
+		field "size": [24, 24]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "focus_identifier": "close_button"
+		field "focus_change_left": "FOCUS_OVERRIDE_STOP"
+		field "focus_change_up": "FOCUS_OVERRIDE_STOP"
+		field "focus_change_right": "FOCUS_OVERRIDE_STOP"
+		field "$variables":
+			variable "$pressed_button_name": "button.editor_settings"
+			variable "$button_content": "play.editor_settings_image_content"
+	Added element "editor_tab_content_panel_layout@play.common_tab_content_panel_type":
+		field "controls":
+			control: element "worlds_tab_content@play.worlds_tab_content_panel": empty
+			control: element "server_tab_content_panel@play.server_tab_content_panel": empty
+		field "$variables": variable "$server_scroll_panel_content": "play.editor_server_content_panel"
+	Added element "editor_tab_navigation_panel_layout@play.common_tab_navigation_panel_layout":
+		field "controls":
+			control: element "world_navigation_tab@play.world_navigation_tab": field "size": ["33%", "100%"]
+			control: element "server_navigation_tab@play.server_navigation_tab": field "size": ["33%", "100%"]
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 15 (+1, -1)
+						Removed control:
+							element "lan_grid@play.label_content_template":
+								field "bindings":
+									binding:
+										field "binding_name": "#lan_grid_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.lan_label"
+									variable "$label_content_content": "play.network_world_item_grid"
+									variable "$network_world_grid_item_template": "play.network_world_item"
+									variable "$network_world_icon": "play.lan_icon"
+									variable "$network_world_item_grid_dimension_binding": "#lan_network_world_item_grid_dimension"
+									variable "$collection_name": "lan_network_worlds"
+									variable "$tts_section_header": "$label_content_label"
+						Added control element "lan_grid@play.lan_servers_scroll_content": empty.
+	Added element "lan_servers_scroll_content@play.label_content_template":
+		field "bindings":
+			binding:
+				field "binding_name": "#lan_grid_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$label_content_label": "networkWorld.lan_label"
+			variable "$label_content_content": "play.network_world_item_grid"
+			variable "$network_world_grid_item_template": "play.network_world_item"
+			variable "$network_world_icon": "play.lan_icon"
+			variable "$network_world_item_grid_dimension_binding": "#lan_network_world_item_grid_dimension"
+			variable "$collection_name": "lan_network_worlds"
+			variable "$tts_section_header": "$label_content_label"
+	Added element "manually_added_servers_scrolling_content":
+		field "type": "stack_panel"
+		field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+		field "size": ["100%", "100%c"]
+		field "bindings":
+			binding:
+				field "binding_name": "#is_network_available_and_multiplayer_visible"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "more_servers_label@common.minecraftTenLabel":
+					field "size": ["default", "default"]
+					field "text": "thirdPartyWorld.Additional"
+					field "color": "$dark_button_default_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#is_additional_server_label_visible"
+							field "binding_name_override": "#visible"
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control: element "more_servers_grid@play.more_servers_grid": empty
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 4]
+					field "bindings":
+						binding:
+							field "binding_name": "#servers_grid_visible"
+							field "binding_name_override": "#visible"
+		field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
+	Changed element "play_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "variables":
+			Total variable: 3 (+3, -2)
+			Removed variable:
+				field "requires": "(not $education_edition)"
+				field "$variables": variable "$main_panel": "play.default_play_screen_panel"
+			Removed variable:
+				field "requires": "$education_edition"
+				field "$variables": variable "$main_panel": "play.edu_play_screen_panel"
+			Added variable:
+				field "requires": "(not $education_edition and not $is_editor_mode_enabled)"
+				field "$variables": variable "$main_panel": "play.default_play_screen_panel"
+			Added variable:
+				field "requires": "($education_edition and not $is_editor_mode_enabled)"
+				field "$variables": variable "$main_panel": "play.edu_play_screen_panel"
+			Added variable:
+				field "requires": "(not $education_edition and $is_editor_mode_enabled)"
+				field "$variables": variable "$main_panel": "play.editor_play_screen_panel"
+	Changed element "server_scroll_content@play.common_content":
+		Changed field "controls":
+			Changed control:
+				Changed element "feature_server_message_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "feature_server_message_panel@play.dark_label_background":
+								Changed field "controls":
+									Total control: 1 (+1, -1)
+									Removed control:
+										element "label_panel_layout":
+											field "type": "panel"
+											field "size": ["100%", "100%c + 8px"]
+											field "controls":
+												control:
+													element "label":
+														field "type": "label"
+														field "font_type": "smooth"
+														field "color": "$dark_button_default_text_color"
+														field "size": ["100%", "default"]
+														field "text_alignment": "center"
+														field "layer": 1
+														field "shadow": false
+														field "text": "#feature_server_message_text"
+														field "bindings": binding: field "binding_name": "#feature_server_message_text"
+														field "$variables": variable "$information_label_font|default": "default"
+									Added control:
+										element "label_panel_layout":
+											field "type": "panel"
+											field "size": ["97%", "100%c + 8px"]
+											field "controls":
+												control:
+													element "label":
+														field "type": "label"
+														field "font_type": "smooth"
+														field "color": "$dark_button_default_text_color"
+														field "size": ["100%", "default"]
+														field "layer": 1
+														field "shadow": false
+														field "text": "#feature_server_message_text"
+														field "bindings": binding: field "binding_name": "#feature_server_message_text"
+														field "$variables": variable "$information_label_font|default": "default"
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Added field "$variables" of variable "$server_scroll_panel_content|default": "play.servers_content_panel".
+	Added element "servers_content_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "featured_servers_panel":
+					field "type": "stack_panel"
+					field "size": ["100%", "100%c"]
+					field "ignored": "$ignore_3rd_party_servers"
+					field "controls":
+						control:
+							element "loading_featured_panel@play.label_background":
+								field "size": ["100%", 40]
+								field "controls":
+									control: element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
+									control: element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+								field "bindings":
+									binding:
+										field "binding_name": "#loading_servers_progress_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "featured_servers_label@common.minecraftTenLabel":
+								field "size": ["default", "default"]
+								field "text": "thirdPartyWorld.Featured"
+								field "color": "$dark_button_default_text_color"
+						control:
+							element "padding_2":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control: element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
+						control:
+							element "padding_3":
+								field "type": "panel"
+								field "size": ["100%", 2]
+					field "bindings":
+						binding:
+							field "binding_name": "#featured_servers_visible_and_available"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
+						variable "$focus_id": "featured_servers_panel"
+			control: element "more_servers_divider@common.horizontal_divider": empty
+			control: element "more_servers_panel@play.manually_added_servers_scrolling_content": empty
+		field "$variables": variable "$focus_id": "left_panel"
+	Changed element "sync_legacy_worlds_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Changed variable "$button_text" from "playscreen.syncLegacyWorlds" to "#sync_legacy_button_text".
+			Added variable "$button_text_binding_type" of "global".
+	Changed element "tab_navigation_panel_layout":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "close_navigation_tab@play.close_navigation_tab": field "size": ["100%y", "100%"].
+			Added control:
+				element "close_navigation_tab":
+					field "size": ["100%y", "100%"]
+					field "type": "panel"
+					field "variables":
+						variable:
+							field "requires": "$is_editor_mode_enabled"
+							field "$variables": variable "$end_tab_control": "play.editor_settings_menu_button"
+					field "controls": control: element "close_button@$end_tab_control": empty
+					field "$variables": variable "$end_tab_control|default": "play.close_navigation_tab"
+	Changed element "world_list_label_with_color_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "list_label":
+					Unchanged field "type": "label"
+					Added field "bindings":
+						binding:
+							field "binding_type": "$label_binding_type"
+							field "binding_name": "$label_text"
+							field "binding_name_override": "$label_text"
+					Added field "$variables":
+						variable "$label_text|default": "b"
+						variable "$label_binding_type|default": "none"
+	Changed element "world_navigation_tab@play.top_tab":
+		Added field "variables":
+			variable:
+				field "requires": "$is_editor_mode_enabled"
+				field "$variables": variable "$tab_text_name": "playscreen.editor.worlds"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 24 (+1, -1)
+			Changed control:
+				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
+					Changed field "$variables":
+						Total variable: 2 (+0, -0)
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "worlds_label@play.world_list_label_with_color_panel":
+					Changed field "variables":
+						Total variable: 2 (+2, -1)
+						Removed variable:
+							field "requires": "$pre_release"
+							field "$variables": variable "$label_text": "playscreen.beta_worlds"
+						Added variable:
+							field "requires": "($pre_release and not $is_editor_mode_enabled)"
+							field "$variables": variable "$label_text": "playscreen.beta_worlds"
+						Added variable:
+							field "requires": "$is_editor_mode_enabled"
+							field "$variables": variable "$label_text": "playscreen.editor.worlds"
+			Changed control:
+				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
+					Changed field "$variables":
+						Total variable: 1 (+0, -0)
+						Changed variable "$label_text" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Changed control:
+				Changed element "legacy_world_item_grid@play.legacy_world_item_grid":
+					Changed field "$variables":
+						Total variable: 1 (+0, -0)
+						Changed variable "$tts_section_header" from "playscreen.upgradeLegacyWorlds" to "#upgrade_legacy_text".
+			Removed control element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid": field "$variables": variable "$tts_section_header": "playscreen.upgradeLegacyWorlds".
+			Added control element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid": field "$variables": variable "$tts_section_header": "#upgrade_legacy_text".

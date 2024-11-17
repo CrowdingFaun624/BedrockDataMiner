@@ -1,0 +1,127 @@
+Difference of "ui" between "1.2.9" and "1.2.10".
+Unable to create data files for 1 file between: "1.2.10.1"
+
+Changed namespace "coin_purchase":
+	Total element: 13 (+2, -0)
+	Added element "coin_purchase_panel":
+		field "type": "stack_panel"
+		field "layer": 1
+		field "size": ["100%", "100%"]
+		field "orientation": "vertical"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "not_enough_coins_panel":
+					field "type": "panel"
+					field "ignored": "#needs_more_coins"
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "size": ["100%", "100%c"]
+					field "visible": "$show_need_more_coins_string"
+					field "controls": control: element "not_enough_coins@coin_purchase.not_enough_coins": empty
+			control:
+				element "coin_purchase_grid":
+					field "type": "grid"
+					field "grid_item_template": "coin_purchase.offer_grid_item"
+					field "grid_dimension_binding": "#coin_offer_size"
+					field "collection_name": "coin_purchase_grid"
+					field "size": ["100%", "100%"]
+					field "bindings":
+						binding: field "binding_name": "#coin_offer_size"
+						binding:
+							field "binding_name": "#has_coin_offers"
+							field "binding_name_override": "#visible"
+	Changed element "coin_purchase_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "dialog@common_dialogs.main_panel_no_buttons":
+					Changed field "$variables":
+						Total variable: 5 (+0, -0)
+						Changed variable "$text_name" from "#current_coin_amount" to "#window_title_text".
+	Changed element "main_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Changed control:
+				Changed element "no_offers_panel":
+					Unchanged field "type": "label"
+					Removed field "visible" of "#visible".
+			Removed control:
+				element "coin_purchase_grid":
+					field "type": "grid"
+					field "grid_item_template": "coin_purchase.offer_grid_item"
+					field "grid_dimension_binding": "#coin_offer_size"
+					field "collection_name": "coin_purchase_grid"
+					field "size": ["100%", "100%"]
+					field "bindings":
+						binding: field "binding_name": "#coin_offer_size"
+						binding:
+							field "binding_name": "#has_coin_offers"
+							field "binding_name_override": "#visible"
+			Added control element "coin_purchase_panel@coin_purchase.coin_purchase_panel": field "layer": 2.
+		Added field "size" of ["100%", "100%"].
+	Added element "not_enough_coins":
+		field "type": "label"
+		field "size": ["100%", "default"]
+		field "color": "$generic_button_text_color"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "text_alignment": "center"
+		field "layer": 3
+		field "text": "#coins_text"
+		field "bindings":
+			binding:
+				field "binding_name": "#coins_required_for_purchase"
+				field "binding_name_override": "#coins_text"
+	Changed element "offer_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "size" from ["fill", "100%"] to "$grid_item_size".
+		Added field "variables":
+			variable:
+				field "requires": "$show_need_more_coins_string"
+				field "$variables":
+					variable "$grid_item_size":
+						item 0: "fill"
+						item 1: "100% - 11px"
+			variable:
+				field "requires": "(not $show_need_more_coins_string)"
+				field "$variables":
+					variable "$grid_item_size":
+						item 0: "fill"
+						item 1: "100%"
+Changed namespace "controls_section":
+	Changed element "controller_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 14 (+1, -0)
+			Added control:
+				element "gamepad_cursor_sensitivity_option_slider@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#gamepad_cursor_sensitivity_slider_label"
+						variable "$slider_name": "gamepad_cursor_sensitivity"
+						variable "$slider_value_binding_name": "#gamepad_cursor_sensitivity"
+						variable "$option_enabled_binding_name": "#gamepad_cursor_sensitivity_enabled"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+						variable "$label_bindings": item 0: field "binding_name": "#gamepad_cursor_sensitivity_slider_label"
+Changed namespace "patch_notes":
+	Changed element "continue_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Added variable "$button_focus_precedence" of 1.
+Changed namespace "world_section":
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 42 (+1, -0)
+			Added control:
+				element "server_sim_distance_slider@settings_common.option_slider":
+					field "ignored": "($is_holographic)"
+					field "$variables":
+						variable "$option_label": "#server_sim_distance_slider_label"
+						variable "$slider_name": "server_sim_distance"
+						variable "$slider_value_binding_name": "#server_sim_distance"
+						variable "$option_enabled_binding_name": "#server_sim_distance_enabled"
+						variable "$slider_steps_binding_name": "#server_sim_distance_steps"
+						variable "$label_bindings": item 0: field "binding_name": "#server_sim_distance_slider_label"

@@ -1,0 +1,472 @@
+Difference of "shaders_resource_packs" between "a0.12.3" and "a0.13.0_build1" (beta of "a0.13.0").
+
+Changed resource pack "color_texture.fragment":
+	Changed file "vanilla":
+		Total line: 55 (+16, -7)
+		        '''
+		        ...
+		 5  5   uniform vec4 CHANGE_COLOR;
+		 6  6   
+		 7  7   varying vec4 color;
+		 8  8   varying vec2 uv;
+		 9  9   
+		   10 + #ifdef ENABLE_FOG
+		   11 + varying vec4 fogColor;
+		   12 + #endif
+		   13 + 
+		   14 + #ifdef GLINT
+		   15 + 	varying vec2 layer1UV;
+		   16 + 	varying vec2 layer2UV;
+		   17 + 
+		   18 + 	vec4 glintBlend(vec4 dest, vec4 source) {
+		   19 + 		return vec4(source.rgb * source.rgb, 0.0) + dest;
+		   20 + 	}
+		   21 + #endif
+		10    - #ifdef GLINT
+		11    - 	varying vec2 layer1UV;
+		12    - 	varying vec2 layer2UV;
+		13 22   
+		   23 + void main()
+		   24 + {
+		14    - 	vec4 glintBlend(vec4 dest, vec4 source) {
+		15    - 		return vec4(source.rgb * source.rgb, 0.0) + dest;
+		16    - 	}
+		   25 + 	vec4 diffuse = texture2D( TEXTURE_0,  uv );
+		17    - #endif
+		18 26   
+		   27 + #ifdef ALPHA_TEST
+		   28 + 	if(diffuse.a < 0.5)
+		19    - void main()
+		   29 + 	 	discard;
+		   30 + #endif
+		20    - {
+		21    - 	vec4 diffuse = texture2D( TEXTURE_0,  uv );
+		22 31   
+		   32 + #ifdef GLINT
+		   33 + 	vec4 layer1 = texture2D(TEXTURE_1, layer1UV).rgbr * CHANGE_COLOR;
+		   34 + 	vec4 layer2 = texture2D(TEXTURE_1, layer2UV).rgbr * CHANGE_COLOR;
+		   35 + 	vec4 glint = (layer1 + layer2);
+		23    - #ifdef ALPHA_TEST
+		24    - 	if(diffuse.a < 0.5)
+		25    - 	 	discard;
+		26    - #endif
+		27 36   
+		   37 + 	#ifdef INVENTORY
+		   38 + 		diffuse = glint;
+		   39 + 	#else
+		   40 + 		diffuse = glintBlend(diffuse, glint);
+		   41 + 	#endif
+		   42 + #endif
+		28    - #ifdef GLINT
+		29    - 	vec4 layer1 = texture2D(TEXTURE_1, layer1UV).rgbr * CHANGE_COLOR;
+		30    - 	vec4 layer2 = texture2D(TEXTURE_1, layer2UV).rgbr * CHANGE_COLOR;
+		31    - 	vec4 glint = (layer1 + layer2);
+		32 43   
+		33    - 	#ifdef INVENTORY
+		34    - 		diffuse = glint;
+		   44 + #ifdef USE_OVERLAY
+		   45 + 	//use either the diffuse or the OVERLAY_COLOR
+		   46 + 	diffuse.rgb = mix(diffuse, OVERLAY_COLOR, OVERLAY_COLOR.a).rgb;
+		35    - 	#else
+		36    - 		diffuse = glintBlend(diffuse, glint);
+		37    - 	#endif
+		38 47   #endif
+		39 48   
+		   49 + #ifdef ENABLE_FOG
+		40    - #ifdef USE_OVERLAY
+		   50 + 	//apply fog
+		   51 + 	diffuse.rgb = mix( diffuse.rgb, fogColor.rgb, fogColor.a );
+		41    - 	//use either the diffuse or the OVERLAY_COLOR
+		42    - 	diffuse.rgb = mix(diffuse, OVERLAY_COLOR, OVERLAY_COLOR.a).rgb;
+		43 52   #endif
+		44 53   
+		45 54   	gl_FragColor = diffuse * color;
+		46 55   }
+		        '''
+Changed resource pack "color_uv.vertex":
+	Changed file "vanilla":
+		Total line: 57 (+15, -2)
+		        '''
+		        ...
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   uniform vec2 UV_OFFSET;
+		 6  6   uniform vec2 UV_ROTATION;
+		 7  7   uniform vec2 GLINT_UV_SCALE;
+		    8 + uniform vec4 FOG_COLOR;
+		    9 + uniform vec2 FOG_CONTROL;
+		   10 + uniform float RENDER_DISTANCE;
+		   11 + 
+		   12 + attribute mediump vec4 POSITION;
+		   13 + attribute vec4 COLOR;
+		   14 + attribute vec2 TEXCOORD_0;
+		 8 15   
+		 9    - attribute mediump vec4 POSITION;
+		   16 + varying vec4 color;
+		   17 + varying vec2 uv;
+		10    - attribute vec4 COLOR;
+		11    - attribute vec2 TEXCOORD_0;
+		12 18   
+		   19 + #ifdef ENABLE_FOG
+		13    - varying vec4 color;
+		   20 + varying vec4 fogColor;
+		14    - varying vec2 uv;
+		   21 + #endif
+		15 22   
+		16 23   #ifdef GLINT
+		17 24   varying vec2 layer1UV;
+		18 25   varying vec2 layer2UV;
+		19 26   
+		        ...
+		31 38   #endif
+		32 39   
+		33 40   void main()
+		34 41   {
+		35 42   	gl_Position = WORLDVIEWPROJ * POSITION;
+		   43 + 
+		   44 + 	color = COLOR;
+		   45 + 	uv = TEXCOORD_0;
+		36 46   
+		   47 + #ifdef ENABLE_FOG
+		   48 + 	//fog
+		   49 +     fogColor.rgb = FOG_COLOR.rgb;
+		37    - 	color = COLOR;
+		   50 +     fogColor.a = clamp(((gl_Position.z / RENDER_DISTANCE) - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		   51 + #endif
+		38    - 	uv = TEXCOORD_0;
+		39 52   
+		40 53   #ifdef GLINT
+		41 54   	layer1UV = calculateLayerUV(UV_OFFSET.x, UV_ROTATION.x);
+		42 55   	layer2UV = calculateLayerUV(UV_OFFSET.y, UV_ROTATION.y);
+		43 56   #endif
+		        ...
+		        '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 118 (+2, -0)
+		          '''
+		          ...
+		 45  45   
+		 46  46   float lightIntensity() {
+		 47  47   #ifdef FANCY
+		 48  48       vec3 N = normalize( WORLD * NORMAL ).xyz;
+		 49  49   
+		     50 +     N.y *= TILE_LIGHT_COLOR.w; //TILE_LIGHT_COLOR.w contains the direction of the light
+		     51 + 
+		 50  52       //take care of double sided polygons on materials without culling
+		 51  53   #ifdef FLIP_BACKFACES
+		 52  54       vec3 viewDir = normalize((WORLD * POSITION).xyz);
+		 53  55       if( dot(N, viewDir) > 0.0 )
+		 54  56           N *= -1.0;
+		          ...
+		          '''
+Added resource pack "hologram_sr.fragment":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		
+		varying vec4 color;
+		
+		void main()
+		{
+			gl_FragColor = color;
+		}
+		'''
+Added resource pack "hologram_sr.vertex":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		
+		uniform MAT4 WORLDVIEWPROJ;
+		
+		attribute mediump vec4 POSITION;
+		attribute vec4 COLOR;
+		
+		varying vec4 color;
+		
+		void main()
+		{
+		    gl_Position = WORLDVIEWPROJ * POSITION;
+		
+		    color = COLOR;
+		}
+		'''
+Added resource pack "hologram_texture_stereo.fragment":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for HoloWall, which currently runs only on DX11 compatible devices
+		
+		
+		void main()
+		{
+		
+			gl_FragColor = vec4(1,0,1,1);
+		}
+		'''
+Added resource pack "holoroom_inner_skirt.fragment":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		
+		varying vec4 color;
+		
+		void main()
+		{
+			gl_FragColor = color;
+		}
+		'''
+Added resource pack "holoroom_inner_skirt.vertex":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		
+		uniform MAT4 WORLDVIEWPROJ;
+		
+		attribute mediump vec4 POSITION;
+		attribute vec4 COLOR;
+		
+		varying vec4 color;
+		
+		void main()
+		{
+		    gl_Position = WORLDVIEWPROJ * POSITION;
+		
+		    color = COLOR;
+		}
+		'''
+Added resource pack "holoroom_tableSurface.fragment":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		
+		varying vec4 color;
+		
+		void main()
+		{
+			gl_FragColor = color;
+		}
+		'''
+Added resource pack "holoroom_tableSurface.vertex":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		
+		uniform MAT4 WORLDVIEWPROJ;
+		
+		attribute mediump vec4 POSITION;
+		attribute vec4 COLOR;
+		
+		varying vec4 color;
+		
+		void main()
+		{
+		    gl_Position = WORLDVIEWPROJ * POSITION;
+		
+		    color = COLOR;
+		}
+		'''
+Added resource pack "holoroom_terrain_endcap.fragment":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		
+		varying vec4 color;
+		
+		void main()
+		{
+			gl_FragColor = color;
+		}
+		'''
+Added resource pack "holoroom_terrain_endcap.vertex":
+	file "vanilla":
+		'''
+		#version 100
+		//This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		
+		uniform MAT4 WORLDVIEWPROJ;
+		
+		attribute mediump vec4 POSITION;
+		attribute vec4 COLOR;
+		
+		varying vec4 color;
+		
+		void main()
+		{
+		    gl_Position = WORLDVIEWPROJ * POSITION;
+		
+		    color = COLOR;
+		}
+		'''
+Changed resource pack "rain_snow.fragment":
+	Changed file "vanilla":
+		Total line: 42 (+5, -0)
+		        '''
+		        ...
+		 3  3   uniform sampler2D TEXTURE_1;
+		 4  4   
+		 5  5   varying vec2 uv;
+		 6  6   varying vec4 color;
+		 7  7   varying vec4 worldPosition;
+		    8 + varying vec4 fogColor;
+		 8  9   
+		 9 10   void main()
+		10 11   {
+		11 12   	vec4 albedo = texture2D( TEXTURE_0, uv);
+		12 13   
+		        ...
+		29 30   	}
+		30 31   
+		31 32   	float mixAmount = clamp ( (worldPosition.y - occlusionTexture.a)*0.1, 0.0, 1.0);
+		32 33   	vec3 lighting = mix(occlusionTexture.rgb, color.rgb, mixAmount);
+		33 34   	gl_FragColor = albedo;
+		   35 + 	gl_FragColor.rgb *= lighting.rgb;
+		   36 + 
+		   37 + 	//apply fog
+		   38 + 	gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor.rgb, fogColor.a );
+		34    - 	gl_FragColor.rgb *= lighting.rgb;
+		   39 + 
+		35 40   }
+		36 41   
+		37 42   
+		        '''
+Changed resource pack "rain_snow.vertex":
+	Changed file "vanilla":
+		Total line: 73 (+21, -13)
+		        '''
+		        ...
+		 7  7   uniform vec4	SIZE_SCALE;
+		 8  8   uniform vec4	LIGHTING;
+		 9  9   uniform vec4	FORWARD;
+		10 10   uniform vec4	UV_INFO;
+		11 11   uniform vec4	PARTICLE_BOX;
+		   12 + uniform vec4	FOG_COLOR;
+		   13 + uniform vec2	FOG_CONTROL;
+		   14 + uniform float	RENDER_DISTANCE;
+		   15 + 
+		   16 + attribute mediump vec4 POSITION;
+		   17 + attribute vec2 TEXCOORD_0;
+		   18 + attribute vec4 COLOR;
+		   19 + 
+		   20 + varying vec2 uv;
+		   21 + varying vec4 color;
+		   22 + varying vec4 worldPosition;
+		   23 + varying vec4 fogColor;
+		12 24   
+		   25 + void main()
+		   26 + {
+		   27 + 	float spriteSelector = COLOR.x*255.0;
+		   28 + 	uv = UV_INFO.xy + (TEXCOORD_0 * UV_INFO.zw);
+		   29 + 	uv.x += spriteSelector * UV_INFO.z;
+		13    - attribute mediump vec4 POSITION;
+		14    - attribute vec2 TEXCOORD_0;
+		15    - attribute vec4 COLOR;
+		16 30   
+		   31 + 	vec3 pos = POSITION.xyz;
+		   32 + 		
+		17    - varying vec2 uv;
+		   33 + 	// subtract the offset then fmod into (0.0f, PARTICLE_BOX)
+		   34 + 	pos.xyz += POSITION_OFFSET.xyz;
+		18    - varying vec4 color;
+		19    - varying vec4 worldPosition;
+		20    - 
+		   35 + 	pos.xyz = mod(pos.xyz, PARTICLE_BOX.xyz);
+		   36 + 	
+		   37 + 	// centre box on origin
+		   38 + 	pos.xyz -= PARTICLE_BOX.xyz * 0.5;
+		   39 + 	
+		   40 + 	// push along view vector so box is positioned more infront of camera
+		   41 + 	pos.xyz += FORWARD.xyz;
+		   42 + 	
+		21    - void main()
+		22    - {
+		23    - 	float spriteSelector = COLOR.x*255.0;
+		24    - 	uv = UV_INFO.xy + (TEXCOORD_0 * UV_INFO.zw);
+		25    - 	uv.x += spriteSelector * UV_INFO.z;
+		26    - 
+		27    - 	vec3 pos = POSITION.xyz;
+		28    - 		
+		   43 + 	// get world position
+		   44 + 	vec4 worldPositionBottom = vec4(pos.xyz, 1.0);
+		   45 + 	vec4 worldPositionTop = vec4(worldPositionBottom.xyz + (VELOCITY.xyz * SIZE_SCALE.y), 1.0);
+		   46 + 
+		   47 + 	// get projected positions of top and bottom of particle, and top of particle in previous frame
+		   48 + 	vec4 bottom = WORLDVIEWPROJ * worldPositionBottom;
+		   49 + 	vec4 top = WORLDVIEWPROJ * worldPositionTop;
+		29    - 	// subtract the offset then fmod into (0.0f, PARTICLE_BOX)
+		30    - 	pos.xyz += POSITION_OFFSET.xyz;
+		31    - 	pos.xyz = mod(pos.xyz, PARTICLE_BOX.xyz);
+		32    - 	
+		33    - 	// centre box on origin
+		34    - 	pos.xyz -= PARTICLE_BOX.xyz * 0.5;
+		35 50   	
+		   51 + 	// get 2d vector in screenspace between top and bottom of particle
+		36    - 	// push along view vector so box is positioned more infront of camera
+		   52 + 	vec2 dir = normalize((top.xy/top.w) - (bottom.xy/bottom.w));
+		37    - 	pos.xyz += FORWARD.xyz;
+		38 53   	
+		   54 + 	// get 2d vector perpendicular to velocity
+		39    - 	// get world position
+		40    - 	vec4 worldPositionBottom = vec4(pos.xyz, 1.0);
+		   55 + 	vec2 dirPerp = normalize(vec2(-dir.y, dir.x));
+		41    - 	vec4 worldPositionTop = vec4(worldPositionBottom.xyz + (VELOCITY.xyz * SIZE_SCALE.y), 1.0);
+		42 56   
+		   57 + 	// choose either the top or bottom projected position using uv.y
+		43    - 	// get projected positions of top and bottom of particle, and top of particle in previous frame
+		44    - 	vec4 bottom = WORLDVIEWPROJ * worldPositionBottom;
+		   58 + 	gl_Position = mix(top, bottom, TEXCOORD_0.y);
+		   59 + 	 	
+		   60 + 	// offset the position of each side of the particle using uv.x 
+		   61 + 	gl_Position.xy += (0.5 - TEXCOORD_0.x) * dirPerp * SIZE_SCALE.x;
+		45    - 	vec4 top = WORLDVIEWPROJ * worldPositionTop;
+		46    - 	
+		47    - 	// get 2d vector in screenspace between top and bottom of particle
+		48    - 	vec2 dir = normalize((top.xy/top.w) - (bottom.xy/bottom.w));
+		49 62   	
+		   63 + 	color = ALPHA.rgba;
+		50    - 	// get 2d vector perpendicular to velocity
+		51    - 	vec2 dirPerp = normalize(vec2(-dir.y, dir.x));
+		52 64   
+		53    - 	// choose either the top or bottom projected position using uv.y
+		54    - 	gl_Position = mix(top, bottom, TEXCOORD_0.y);
+		55    - 	 	
+		   65 + 	//fog
+		   66 +     fogColor.rgb = FOG_COLOR.rgb;
+		56    - 	// offset the position of each side of the particle using uv.x 
+		57    - 	gl_Position.xy += (0.5 - TEXCOORD_0.x) * dirPerp * SIZE_SCALE.x;
+		58    - 	
+		   67 +     fogColor.a = clamp(((bottom.z / RENDER_DISTANCE) - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		59    - 	color = ALPHA.rgba;
+		60 68   
+		61 69   	worldPositionBottom.xz *= 1.0 / 64.0;	// Scale by 1/TextureDimensions to get values between
+		62 70   	worldPositionBottom.xz += 0.5;			// Offset so that center of view is in the center of occlusion texture
+		63 71   	worldPositionBottom.y += VIEW_POSITION.y - 0.5;
+		64 72   	worldPosition = worldPositionBottom;
+		        ...
+		        '''
+Removed resource pack "uv1.vertex":
+	file "vanilla":
+		'''
+		#version 100
+		
+		uniform MAT4 WORLDVIEWPROJ;
+		
+		attribute mediump vec4 POSITION;
+		attribute vec2 TEXCOORD_1;
+		
+		varying vec2 uv;
+		
+		void main()
+		{
+		    gl_Position = WORLDVIEWPROJ * POSITION;
+		
+		    uv = TEXCOORD_1;
+		}
+		'''

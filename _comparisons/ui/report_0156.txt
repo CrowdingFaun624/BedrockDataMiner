@@ -1,0 +1,196 @@
+Difference of "ui" between "1.14.30" and "1.14.60".
+Unable to create data files for 1 file between: "1.14.41"
+
+Changed namespace "common_dialogs":
+	Total element: 23 (+2, -0)
+	Added element "dialog_background_hollow_6@common_dialogs.dialog_background_hollow_common:":
+		field "size": ["100%", "100%c"]
+		field "texture": "dialog_background_hollow_6"
+	Added element "main_panel_three_buttons":
+		field "type": "panel"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "controls":
+			control: element "common_panel@common.common_panel": field "$variables": variable "$dialog_background": "dialog_background_hollow_6"
+			control: element "title_label@common_dialogs.title_label": empty
+			control:
+				element "panel_indent":
+					field "type": "panel"
+					field "size": ["100% - 16px", "100% - 131px"]
+					field "offset": [0, 23]
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "controls": control: element "inside_header_panel@$child_control": empty
+			control:
+				element "top_button_panel@$top_button_panel":
+					field "size": ["100% - 14px", 30]
+					field "offset": [0, -71]
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+			control:
+				element "middle_button_panel@$middle_button_panel":
+					field "size": ["100% - 14px", 30]
+					field "offset": [0, -39]
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+			control:
+				element "bottom_button_panel@$bottom_button_panel":
+					field "size": ["100% - 14px", 30]
+					field "offset": [0, -7]
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+		field "$variables":
+			variable "$text_name|default": ""
+			variable "$top_button_panel|default": "common.empty_panel"
+			variable "$middle_button_panel|default": "common.empty_panel"
+			variable "$bottom_button_panel|default": "common.empty_panel"
+Changed namespace "general_section":
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 74 (+1, -0)
+			Added control:
+				element "reset_online_safety_option@settings_common.action_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.dev_reset_online_safety_option"
+						variable "$button_text": "Reset Online Safety Dialog Option"
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 31 (+1, -0)
+			Changed control:
+				Changed element "unlink_msa_account@settings_common.action_button":
+					Changed field "ignored" from "(not $is_pregame) or ($is_publish and (not $is_berwick))" to "((not $is_pregame) or ($is_publish and (not $is_berwick)))".
+			Added control:
+				element "only_allow_trusted_skins_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.onlyTrustedSkinsAllowed"
+						variable "$option_binding_name": "#only_trusted_skins_allowed"
+						variable "$option_enabled_binding_name": "#only_trusted_skins_allowed_enabled"
+						variable "$toggle_name": "only_trusted_skins_allowed"
+Changed namespace "play":
+	Changed element "label_content_template":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "label_panel":
+					Unchanged field "type": "panel"
+					Changed field "$variables":
+						Changed variable "$label_size|default":
+							Changed item 1 from 10 to "default".
+					Removed field "variables":
+						variable:
+							field "requires": "$use_expanded_label_size"
+							field "$variables":
+								variable "$label_size":
+									item 0: "100%"
+									item 1: 13
+	Changed element "no_local_worlds_switch_setting":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "bg@play.label_background":
+					Changed field "controls":
+						Changed control:
+							Changed element "no_local_worlds_switch_setting@play.label_content_template":
+								Changed field "$variables":
+									Total variable: 4 (+0, -1)
+									Removed variable "$label_size":
+										item 0: "100%"
+										item 1: "default"
+Changed namespace "progress":
+	Total element: 67 (+6, -0)
+	Added element "do_not_show_checkbox@common.checkbox":
+		field "size": ["100%", 30]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "tts_control_type_order_priority": 100
+		field "tts_value_order_priority": 101
+		field "controls":
+			control:
+				element "header_description_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls":
+						control:
+							element "checkbox_visuals@common.toggle_visuals":
+								field "size": [30, "100%"]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+						control:
+							element "buffer_panel":
+								field "type": "panel"
+								field "layer": 3
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$light_button_default_text_color"
+											field "text": "onlinePlay.doNotShowAgain"
+											field "size": ["default", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+						control:
+							element "another_panel":
+								field "type": "panel"
+								field "size": [30, "100%"]
+		field "$variables":
+			variable "$toggle_name": "online_safety_do_not_show_again"
+			variable "$toggle_state_binding_name": "#online_safety_do_not_show_again"
+			variable "$toggle_enabled_binding_type": "global"
+	Added element "online_safety_back_button@popup_dialog.popup_dialog_button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.back"
+			variable "$button_text": "onlinePlay.Back"
+	Added element "online_safety_description":
+		field "type": "label"
+		field "size": ["100%-4px", "default"]
+		field "color": "$body_text_color"
+		field "text": "onlinePlay.message"
+	Added element "online_safety_dialog@common_dialogs.main_panel_three_buttons":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$text_name": "onlinePlay.notRated"
+			variable "$description_text": "onlinePlay.message"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$show_close_button": false
+			variable "$child_control": "progress.online_safety_label_panel"
+			variable "$top_button_panel": "progress.do_not_show_checkbox"
+			variable "$middle_button_panel": "progress.online_safety_proceed_button"
+			variable "$bottom_button_panel": "progress.online_safety_back_button"
+	Added element "online_safety_label_panel@common.scrolling_panel":
+		field "layer": 1
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "$variables":
+			variable "$scrolling_pane_size":
+				item 0: "100% - 1px"
+				item 1: "100% - 3px"
+			variable "$scrolling_pane_offset":
+				item 0: 2
+				item 1: 2
+			variable "$scrolling_content": "progress.online_safety_description"
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100% - 4px"
+			variable "$show_background": false
+			variable "$always_handle_scrolling": true
+	Added element "online_safety_proceed_button@popup_dialog.popup_dialog_button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.proceed"
+			variable "$button_text": "onlinePlay.proceed"
+	Changed element "popup_dialog_factory":
+		Unchanged field "type": "factory"
+		Changed field "control_ids":
+			Total control id: 8 (+1, -0)
+			Added control id "online_safety_dialog" of "online_safety_dialog@progress.online_safety_dialog".

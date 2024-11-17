@@ -1,0 +1,76 @@
+Difference of "shaders_resource_packs" between "a0.10.0_build4" (beta of "a0.10.0") and "a0.10.0_build5" (beta of "a0.10.0").
+
+Changed resource pack "cloud.vertex":
+	Changed file "vanilla":
+		Total line: 26 (+1, -1)
+		        '''
+		        ...
+		15 15   const vec3 inverseLightDirection = vec3(0.62, 0.78, 0.0);
+		16 16   const float ambient = 0.7;
+		17 17   
+		18 18   void main()
+		19 19   {
+		   20 +     POS4 pos = WORLDVIEWPROJ * POSITION;
+		20    -     vec4 pos = WORLDVIEWPROJ * POSITION;
+		   21 +  	gl_Position = pos;
+		21 22   
+		22 23    	float fog = clamp(pos.z / RENDER_DISTANCE - fogNear, 0.0, 0.9);
+		23 24   
+		24    -  	gl_Position = pos;
+		25 25       color = mix( COLOR * CURRENT_COLOR, FOG_COLOR, fog + 0.1 );
+		26 26   }
+		        '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 72 (+0, -0)
+		        '''
+		        ...
+		46 46   #endif
+		47 47   }
+		48 48   
+		49 49   void main()
+		50 50   {
+		   51 +     POS4 pos = WORLDVIEWPROJ * POSITION;
+		51    -     vec4 pos = WORLDVIEWPROJ * POSITION;
+		52 52       gl_Position = pos;
+		53 53       
+		54 54       float L = lightIntensity();
+		55 55   
+		56 56   #ifdef USE_OVERLAY
+		        ...
+		        '''
+Changed resource pack "renderchunk.vertex":
+	Changed file "vanilla":
+		Total line: 88 (+0, -10)
+		        '''
+		 1  1   
+		 2    - //would be nice to make this a "header"
+		 3    - #ifdef LOW_PRECISION
+		 4    - 	#define POSITIONP mediump
+		 5    - #else
+		 6    - 	#define POSITIONP highp
+		 7    - #endif
+		 8    - 
+		 9    - #define POS3 POSITIONP vec3
+		10    - #define POS4 POSITIONP vec4
+		11    - 
+		12  2   uniform MAT4 WORLDVIEWPROJ;
+		13  3   uniform vec4 FOG_COLOR;
+		14  4   uniform vec2 FOG_CONTROL;
+		15  5   uniform float RENDER_DISTANCE;
+		16  6   uniform vec2 VIEWPORT_DIMENSION;
+		        ...
+		37 27   const vec3 UNIT_Y = vec3(0,1,0);
+		38 28   const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+		39 29   
+		40 30   void main()
+		41 31   {
+		   32 +     POS4 pos = WORLDVIEWPROJ * POSITION;
+		42    -     vec4 pos = WORLDVIEWPROJ * POSITION;
+		43 33       gl_Position = pos;
+		44 34   
+		45 35       uv0 = TEXCOORD_0;
+		46 36       uv1 = TEXCOORD_1;
+		47 37   	color = COLOR;
+		        ...
+		        '''

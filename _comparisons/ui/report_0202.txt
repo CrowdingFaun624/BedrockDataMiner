@@ -1,0 +1,334 @@
+Difference of "ui" between "1.16.210.59" (beta of "1.16.210") and "1.16.210.60" (beta of "1.16.210").
+
+Changed namespace "general_section":
+	Total element: 100 (+4, -0)
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 80 (+4, -5)
+			Removed control:
+				element "option_toggle_default_font_override@settings_common.option_toggle":
+					field "bindings":
+						binding:
+							field "binding_name": "#dev_toggle_default_font_overrides_visible"
+							field "binding_condition": "always"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.dev_toggle_default_font_overrides"
+						variable "$option_binding_name": "#dev_toggle_default_font_overrides"
+						variable "$toggle_name": "dev_toggle_default_font_overrides"
+						variable "$show_option_label": "#dev_toggle_default_font_overrides_visible"
+			Removed control:
+				element "option_toggle_dev_show_tcui_replacement@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_show_tcui_replacement"
+						variable "$option_binding_name": "#dev_show_tcui_replacement"
+						variable "$option_enabled_binding_name": "#dev_show_tcui_replacement_enabled"
+						variable "$toggle_name": "dev_show_tcui_replacement"
+			Removed control:
+				element "padding_core_ui":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Removed control:
+				element "open_core_ui_tests@settings_common.action_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#show_core_ui_shortcuts"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$pressed_button_name": "button.open_core_ui_tests"
+						variable "$button_text": "#dev_open_core_ui_tests_button_text"
+						variable "$button_text_binding_type": "global"
+						variable "$button_binding_condition": "visible"
+			Removed control:
+				element "open_core_ui_docs@settings_common.action_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#show_core_ui_shortcuts"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$pressed_button_name": "button.open_core_ui_docs"
+						variable "$button_text": "#dev_open_core_ui_docs_button_text"
+						variable "$button_text_binding_type": "global"
+						variable "$button_binding_condition": "visible"
+			Added control:
+				element "feature_toggles_label":
+					field "type": "label"
+					field "text": "Feature Toggles (governed by FeatureToggles.cpp)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+			Added control:
+				element "feature_toggles_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Added control:
+				element "end_of_feature_toggles_label":
+					field "type": "label"
+					field "text": "Other Options (not governed by FeatureToggles.cpp)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+			Added control:
+				element "end_of_feature_toggles_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+	Changed element "dev_sunsetting_tier_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Changed variable "$radio_buttons":
+				Changed item 1:
+					Removed field "sunsetting_not_pending@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#sunsetting_not_pending"
+						field "$radio_label_text": "options.dev_sunsetting_tier.not_pending"
+					Added field "sunsetting_tier2@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#sunsetting_tier2"
+						field "$radio_label_text": "options.dev_sunsetting_tier.two"
+				Added item 2:
+					field "sunsetting_not_pending@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#sunsetting_not_pending"
+						field "$radio_label_text": "options.dev_sunsetting_tier.not_pending"
+	Changed element "flighting_debug_button@settings_common.section_toggle_base":
+		Changed field "$variables":
+			Changed variable "$toggle_property_bag":
+				Changed field "#panel_title" from "options.debugTitle" to "options.flighting_debug".
+	Added element "new_achievements_grid_item@settings_common.radio_with_label":
+		field "bindings":
+			binding:
+				field "binding_name": "#default_focus_precedence"
+				field "binding_type": "collection"
+				field "binding_condition": "visible"
+				field "binding_collection_name": "dev_new_achievements_screens_radio"
+		field "$variables":
+			variable "$toggle_state_binding_name": "#initial_selected"
+			variable "$radio_label_text": "#description"
+			variable "$radio_label_bindings":
+				item 0:
+					field "binding_name": "#description"
+					field "binding_type": "collection"
+					field "binding_condition": "once"
+					field "binding_collection_name": "dev_new_achievements_screens_radio"
+			variable "$radio_toggle_group": true
+			variable "$toggle_binding_type": "collection"
+			variable "$toggle_name": "dev_new_achievements_screens_radio"
+			variable "$toggle_grid_collection_name": "dev_new_achievements_screens_radio"
+			variable "$option_enabled_binding_name": ""
+	Added element "ui_debug_button@settings_common.section_toggle_base":
+		field "$variables":
+			variable "$toggle_view_binding_name": "ui_debug_button_toggle"
+			variable "$glyph_texture": "textures/ui/focus_border_white"
+			variable "$glyph_color_texture": "textures/ui/right_split_panel_default"
+			variable "$glyph_size":
+				item 0: 15
+				item 1: 15
+			variable "$button_text": "UI Debug"
+			variable "$toggle_property_bag": field "#panel_title": "UI Debug"
+	Added element "ui_debug_section":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "ui_debug_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control:
+				element "ui_feature_toggles_label":
+					field "type": "label"
+					field "text": "UI-related Feature Toggles (governed by FeatureToggles.cpp)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+			control:
+				element "ui_feature_toggles_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			control:
+				element "ui_feature_toggles":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "factory":
+						field "name": "ui_feature_toggle_factory"
+						field "control_name": "general_section.ui_feature_toggle"
+					field "collection_name": "ui_feature_toggles"
+					field "bindings":
+						binding:
+							field "binding_name": "#ui_feature_toggle_count"
+							field "binding_name_override": "#collection_length"
+			control:
+				element "end_of_ui_feature_toggles_label":
+					field "type": "label"
+					field "text": "Other Options (not governed by FeatureToggles.cpp)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+			control:
+				element "end_of_ui_feature_toggles_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			control:
+				element "new_achievements_screens_radio_label":
+					field "type": "label"
+					field "text": "New Achievements Screens (requires the infrastructure)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#visible"
+			control:
+				element "new_achievements_screens_radio_label_disabled":
+					field "type": "label"
+					field "text": "New Achievements Screens (requires the infrastructure)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "alpha": 0.5
+					field "bindings":
+						binding:
+							field "binding_name": "(not #core_ui_enabled)"
+							field "binding_name_override": "#visible"
+			control:
+				element "new_achievements_screens_radio_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			control:
+				element "new_achievements_screens_radio_button":
+					field "type": "grid"
+					field "size": ["100%", "100%c"]
+					field "grid_item_template": "general_section.new_achievements_grid_item"
+					field "grid_dimension_binding": "#dev_new_achievements_screens_radio_dimension"
+					field "collection_name": "dev_new_achievements_screens_radio"
+					field "bindings":
+						binding:
+							field "binding_name": "#dev_new_achievements_screens_radio_dimension"
+							field "binding_condition": "visible"
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+			control:
+				element "new_achievements_screens_radio_button_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			control:
+				element "option_toggle_default_font_override@settings_common.option_toggle":
+					field "bindings":
+						binding:
+							field "binding_name": "#dev_toggle_default_font_overrides_visible"
+							field "binding_condition": "always"
+							field "binding_name_override": "#enabled"
+					field "$variables":
+						variable "$option_label": "Enable Default Font Overrides (requires loading from font_metadata.json)"
+						variable "$option_binding_name": "#dev_toggle_default_font_overrides"
+						variable "$toggle_name": "dev_toggle_default_font_overrides"
+						variable "$show_option_label": "#dev_toggle_default_font_overrides_visible"
+			control:
+				element "option_toggle_dev_show_tcui_replacement@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "Show TCUI replacement"
+						variable "$option_binding_name": "#dev_show_tcui_replacement"
+						variable "$option_enabled_binding_name": "#dev_show_tcui_replacement_enabled"
+						variable "$toggle_name": "dev_show_tcui_replacement"
+			control:
+				element "ui_feature_toggles_spacer":
+					field "type": "panel"
+					field "size": ["100%", 7]
+			control:
+				element "open_core_ui_label":
+					field "type": "label"
+					field "text": "Core UI developer pages"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#visible"
+			control:
+				element "open_core_ui_label_disabled":
+					field "type": "label"
+					field "text": "Core UI developer pages"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "alpha": 0.5
+					field "bindings":
+						binding:
+							field "binding_name": "(not #core_ui_enabled)"
+							field "binding_name_override": "#visible"
+			control:
+				element "open_core_ui_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+			control:
+				element "open_core_ui_docs@settings_common.action_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+					field "$variables":
+						variable "$pressed_button_name": "button.open_core_ui_docs"
+						variable "$button_text": "Open Core UI Docs"
+			control:
+				element "open_core_ui_tests@settings_common.action_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+					field "$variables":
+						variable "$pressed_button_name": "button.open_core_ui_tests"
+						variable "$button_text": "Open Core UI Tests"
+	Added element "ui_feature_toggle@settings_common.option_toggle":
+		field "bindings":
+			binding:
+				field "binding_name": "#feature_toggle_enabled"
+				field "binding_type": "collection"
+				field "binding_name_override": "#enabled"
+				field "binding_collection_name": "ui_feature_toggles"
+		field "$variables":
+			variable "$line_size":
+				item 0: "100%"
+				item 1: "100%c - 9px"
+			variable "$option_label": "#text"
+			variable "$toggle_tts_header_binding_type": "collection"
+			variable "$toggle_tts_header_binding_collection_name": "ui_feature_toggles"
+			variable "$toggle_name": "ui_feature_toggle"
+			variable "$toggle_state_binding_name": "#feature_toggle_state"
+			variable "$option_binding_name": "#feature_toggle_state"
+			variable "$toggle_binding_type": "collection"
+			variable "$toggle_grid_collection_name": "ui_feature_toggles"
+			variable "$toggle_collection_details_type": "collection_details"
+			variable "$toggle_collection_detail_name": "ui_feature_toggles"
+			variable "$label_bindings":
+				item 0:
+					field "binding_name": "#feature_toggle_text"
+					field "binding_name_override": "#text"
+					field "binding_type": "collection"
+					field "binding_collection_name": "ui_feature_toggles"
+Changed namespace "settings":
+	Changed element "section_content_panels":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "general_and_controls_sections":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 17 (+1, -0)
+						Added control:
+							element "ui_debug_section@general_section.ui_debug_section":
+								field "ignored": "$is_publish"
+								field "visible": false
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "controls_and_settings_selector_pane":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 19 (+1, -0)
+						Added control:
+							element "ui_debug_button@general_section.ui_debug_button":
+								field "ignored": "$is_publish"
+								field "$variables":
+									variable "$toggle_group_forced_index": "$ui_debug_forced_index"
+									variable "$tts_section_header": "$general_section_header"

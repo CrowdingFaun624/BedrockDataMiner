@@ -1,1010 +1,1726 @@
-Difference of "entities" between "1.20.62" and "1.20.70.20" (beta of "1.20.71").
+Difference of "entities" between "1.20.73" and "1.20.80.20" (beta of "1.20.80").
 
-Changed entity "armadillo":
-	Changed behavior pack "experimental":
-		Changed field "format_version" from "1.20.60" to "1.20.70".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:baby_relaxed":
-					Changed component "minecraft:behavior.follow_parent":
-						Changed field "speed_multiplier" from 1.1 to 1.25.
-				Changed component group "minecraft:relaxed":
-					Total component: 6 (+1, -0)
-					Added component "minecraft:damage_sensor":
-						field "triggers":
-							field "on_damage":
-								field "event": "minecraft:threat_detected"
-								field "filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "mob"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
-				Changed component group "minecraft:rolled_up":
-					Changed component "minecraft:damage_sensor":
-						Changed field "triggers":
-							Removed field "on_damage":
-								field "event": "minecraft:relax"
-								field "target": "self"
-							Added field "damage_modifier" of -1.0.
-							Added field "damage_multiplier" of 0.5.
-			Changed field "components":
-				Changed component "minecraft:entity_sensor":
-					Changed field "subsensors":
-						Changed subsensor:
-							Unchanged field "event": "minecraft:no_threat_detected"
-							Changed field "event_filters":
-								Changed filter property "all_of":
-									Changed filter:
-										Changed filter property "any_of":
-											Changed filter:
-												Changed filter property "all_of":
-													Changed filter:
-														Changed filter property "any_of":
-															Total filter: 3 (+1, -0)
-															Added filter:
-																filter property "subject": "other"
-																filter property "test": "was_last_hurt_by"
-							Changed field "range" from 7.0 to [7.0, 2.0].
-						Changed subsensor:
-							Unchanged field "event": "minecraft:threat_detected"
-							Changed field "event_filters":
-								Changed filter property "all_of":
-									Changed filter:
-										Changed filter property "any_of":
-											Changed filter:
-												Changed filter property "all_of":
-													Changed filter:
-														Changed filter property "any_of":
-															Total filter: 3 (+1, -0)
-															Added filter:
-																filter property "subject": "other"
-																filter property "test": "was_last_hurt_by"
-							Changed field "range" from 7.0 to [7.0, 2.0].
-					Removed field "relative_range" of false.
-				Changed component "minecraft:behavior.panic":
-					Added field "ignore_mob_damage" of true.
-			Changed field "events":
-				Changed event "minecraft:roll_up":
-					Removed field "add" of field "component_groups": component group: "minecraft:rolled_up".
-					Removed field "emit_vibration" of field "vibration": "entity_act".
-					Removed field "remove":
-						field "component_groups":
-							component group: "minecraft:relaxed"
-							component group: "minecraft:baby_relaxed"
-							component group: "minecraft:adult_relaxed"
-					Added field "sequence":
-						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:rolled_up"
-							field "emit_vibration": field "vibration": "entity_act"
-							field "filters":
-								filter property "operator": ">"
-								filter property "subject": "self"
-								filter property "test": "actor_health"
-								filter property "value": 0
-							field "remove":
-								field "component_groups":
-									component group: "minecraft:relaxed"
-									component group: "minecraft:baby_relaxed"
-									component group: "minecraft:adult_relaxed"
-							field "set_property": property "minecraft:is_rolled_up": true
-					Removed field "set_property" of property "minecraft:is_rolled_up": true.
-Changed entity "cave_spider":
-	Added behavior pack "experimental":
-		field "defined_in": behavior pack: "experimental_armadillo"
-		field "format_version": "1.20.70"
+Changed entity "armadillo.json":
+	Added behavior pack "core":
+		field "format_version": "1.20.80"
 		field "minecraft:entity":
 			field "description":
-				description "identifier": "minecraft:cave_spider"
+				description "identifier": "minecraft:armadillo"
 				description "is_spawnable": true
 				description "is_summonable": true
+				description "properties":
+					property "minecraft:armadillo_state":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "unrolled"
+						field "values":
+							possible property: "unrolled"
+							possible property: "rolled_up"
+							possible property: "rolled_up_peeking"
+							possible property: "rolled_up_relaxing"
+							possible property: "rolled_up_unrolling"
 			field "component_groups":
-				component group "minecraft:spider_angry":
-					component "minecraft:angry":
-						field "calm_event":
-							field "event": "minecraft:on_calm"
+				component group "minecraft:adult":
+					component "minecraft:breedable":
+						field "love_filters":
+							filter property "test": "enum_property"
+							filter property "domain": "minecraft:armadillo_state"
+							filter property "value": "unrolled"
+						field "require_tame": false
+						field "breeds_with":
+							entity:
+								field "mate_type": "minecraft:armadillo"
+								field "baby_type": "minecraft:armadillo"
+								field "breed_event":
+									field "event": "minecraft:entity_born"
+									field "target": "baby"
+						field "breed_items": item: "spider_eye"
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "brush"
+								field "play_sounds": "mob.armadillo.brush"
+								field "interact_text": "action.interact.brush"
+								field "hurt_item": 16
+								field "swing": true
+								field "spawn_items": field "table": "loot_tables/entities/armadillo_brush.json"
+					component "minecraft:spawn_entity":
+						field "entities":
+							field "min_wait_time": 300
+							field "max_wait_time": 600
+							field "spawn_sound": "mob.armadillo.scute_drop"
+							field "spawn_item": "armadillo_scute"
+				component group "minecraft:adult_unrolled":
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+				component group "minecraft:baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "interact_filters":
+							filter property "test": "enum_property"
+							filter property "domain": "minecraft:armadillo_state"
+							filter property "value": "unrolled"
+						field "feed_items": "spider_eye"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-						field "duration": 10
-						field "duration_delta": 3
-					component "minecraft:behavior.leap_at_target":
-						field "must_be_on_ground": false
-						field "priority": 4
-						field "yd": 0.4
-					component "minecraft:behavior.melee_box_attack":
-						field "priority": 3
-						field "track_target": true
-					component "minecraft:behavior.nearest_attackable_target":
-						field "attack_interval": 10
-						field "entity_types":
-							entity type:
-								field "filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "snowgolem"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "irongolem"
-								field "max_dist": 16
-						field "must_see": true
-						field "priority": 2
-				component group "minecraft:spider_hostile":
-					component "minecraft:environment_sensor":
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.6
+				component group "minecraft:baby_unrolled":
+					component "minecraft:behavior.follow_parent":
+						field "priority": 5
+						field "speed_multiplier": 1.25
+				component group "minecraft:rolled_up":
+					component "minecraft:damage_sensor":
 						field "triggers":
-							field "event": "minecraft:become_neutral"
-							field "filters":
-								filter property "operator": ">"
-								filter property "test": "is_brightness"
-								filter property "value": 0.49
-					component "minecraft:behavior.leap_at_target":
-						field "must_be_on_ground": false
-						field "priority": 4
-						field "yd": 0.4
-					component "minecraft:behavior.melee_box_attack":
-						field "priority": 3
-						field "random_stop_interval": 100
-						field "track_target": true
-					component "minecraft:behavior.nearest_attackable_target":
-						field "attack_interval": 5
-						field "entity_types":
-							entity type:
-								field "filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "snowgolem"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "irongolem"
-								field "max_dist": 16
-						field "must_see": true
-						field "priority": 2
-				component group "minecraft:spider_jockey":
-					component "minecraft:addrider": field "entity_type": "minecraft:skeleton"
-					component "minecraft:rideable":
-						field "family_types": family: "skeleton"
-						field "seat_count": 1
-						field "seats": field "position": [0.0, 0.3, -0.1]
-				component group "minecraft:spider_neutral":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "event": "minecraft:become_hostile"
-							field "filters":
-								filter property "operator": "<"
-								filter property "test": "is_brightness"
-								filter property "value": 0.49
-					component "minecraft:on_target_acquired": field "event": "minecraft:become_angry"
-				component group "minecraft:spider_poison_easy":
-					component "minecraft:attack":
-						field "damage": 2
-						field "effect_duration": 0
-						field "effect_name": "poison"
-				component group "minecraft:spider_poison_hard":
-					component "minecraft:attack":
-						field "damage": 2
-						field "effect_duration": 15
-						field "effect_name": "poison"
-				component group "minecraft:spider_poison_normal":
-					component "minecraft:attack":
-						field "damage": 2
-						field "effect_duration": 7
-						field "effect_name": "poison"
-				component group "minecraft:spider_stray_jockey":
-					component "minecraft:addrider": field "entity_type": "minecraft:skeleton.stray"
-					component "minecraft:rideable":
-						field "family_types": family: "skeleton"
-						field "seat_count": 1
-						field "seats": field "position": [0.0, 0.3, -0.1]
-				component group "minecraft:spider_wither_jockey":
-					component "minecraft:addrider": field "entity_type": "minecraft:skeleton.wither"
-					component "minecraft:rideable":
-						field "family_types": family: "skeleton"
-						field "seat_count": 1
-						field "seats": field "position": [0.0, 0.25, -0.1]
-			field "components":
-				component "minecraft:breathable":
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "height": 0.5
-					field "width": 0.7
-				component "minecraft:conditional_bandwidth_optimization": empty
-				component "minecraft:despawn": field "despawn_from_distance": empty
-				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 : 0"
-				component "minecraft:health":
-					field "max": 12
-					field "value": 12
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:is_hidden_when_invisible": empty
-				component "minecraft:jump.static": empty
-				component "minecraft:loot": field "table": "loot_tables/entities/spider.json"
-				component "minecraft:movement": field "value": 0.3
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.climb": field "can_path_over_water": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:rideable":
-					field "family_types": family: "zombie"
-					field "seat_count": 1
-					field "seats": field "position": [0.0, 0.3, 0.0]
-				component "minecraft:type_family":
-					field "family":
-						family: "cavespider"
-						family: "monster"
-						family: "arthropod"
-						family: "mob"
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "armadillo"
-									filter:
-										filter property "domain": "minecraft:is_rolled_up"
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "bool_property"
-							field "max_dist": 6
-							field "sprint_speed_multiplier": 1.2
-					field "priority": 2
-				component "minecraft:behavior.float": field "priority": 1
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 7
-					field "probability": 0.02
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 5
-					field "speed_multiplier": 1.25
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.random_look_around": field "priority": 7
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.8
-			field "events":
-				event "minecraft:become_angry":
-					field "sequence":
-						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:spider_angry"
-							field "remove": field "component_groups": component group: "minecraft:spider_neutral"
-						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_easy"
-							field "filters":
-								filter property "test": "is_difficulty"
-								filter property "value": "easy"
-							field "remove":
-								field "component_groups":
-									component group: "minecraft:spider_poison_hard"
-									component group: "minecraft:spider_poison_normal"
-						sequence item 2:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_normal"
-							field "filters":
-								filter property "test": "is_difficulty"
-								filter property "value": "normal"
-							field "remove":
-								field "component_groups":
-									component group: "minecraft:spider_poison_easy"
-									component group: "minecraft:spider_poison_hard"
-						sequence item 3:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_hard"
-							field "filters":
-								filter property "test": "is_difficulty"
-								filter property "value": "hard"
-							field "remove":
-								field "component_groups":
-									component group: "minecraft:spider_poison_easy"
-									component group: "minecraft:spider_poison_normal"
-				event "minecraft:become_hostile":
-					field "sequence":
-						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:spider_hostile"
-							field "remove": field "component_groups": component group: "minecraft:spider_neutral"
-						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_easy"
-							field "filters":
-								filter property "test": "is_difficulty"
-								filter property "value": "easy"
-							field "remove":
-								field "component_groups":
-									component group: "minecraft:spider_poison_hard"
-									component group: "minecraft:spider_poison_normal"
-						sequence item 2:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_normal"
-							field "filters":
-								filter property "test": "is_difficulty"
-								filter property "value": "normal"
-							field "remove":
-								field "component_groups":
-									component group: "minecraft:spider_poison_easy"
-									component group: "minecraft:spider_poison_hard"
-						sequence item 3:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_hard"
-							field "filters":
-								filter property "test": "is_difficulty"
-								filter property "value": "hard"
-							field "remove":
-								field "component_groups":
-									component group: "minecraft:spider_poison_easy"
-									component group: "minecraft:spider_poison_normal"
-				event "minecraft:become_neutral":
-					field "add": field "component_groups": component group: "minecraft:spider_neutral"
-					field "remove": field "component_groups": component group: "minecraft:spider_hostile"
-				event "minecraft:entity_spawned":
-					field "randomize":
-						randomize item:
-							field "weight": 1
-							field "randomize":
-								randomize item:
-									field "weight": 80
-									field "add":
-										field "component_groups":
-											component group: "minecraft:spider_stray_jockey"
-											component group: "minecraft:spider_neutral"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "test": "is_daytime"
-												filter property "value": false
-											filter:
-												filter property "test": "is_snow_covered"
-												filter property "value": true
-											filter:
-												filter property "test": "is_underground"
-												filter property "value": false
-									field "remove": empty
-								randomize item:
-									field "weight": 80
-									field "add":
-										field "component_groups":
-											component group: "minecraft:spider_wither_jockey"
-											component group: "minecraft:spider_neutral"
-									field "filters":
-										filter property "test": "is_biome"
-										filter property "value": "the_nether"
-									field "remove": empty
-								randomize item:
-									field "weight": 20
-									field "add":
-										field "component_groups":
-											component group: "minecraft:spider_jockey"
-											component group: "minecraft:spider_neutral"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "test": "is_daytime"
-												filter property "value": false
-											filter:
-												filter property "test": "is_underground"
-												filter property "value": true
-									field "remove": empty
-						randomize item:
-							field "weight": 99
-							field "add": field "component_groups": component group: "minecraft:spider_neutral"
-							field "remove": empty
-				event "minecraft:on_calm":
-					field "add": field "component_groups": component group: "minecraft:spider_neutral"
-					field "remove": field "component_groups": component group: "minecraft:spider_angry"
-Changed entity "spider":
-	Added behavior pack "experimental":
-		field "defined_in": behavior pack: "experimental_armadillo"
-		field "format_version": "1.20.70"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:spider"
-				description "is_spawnable": true
-				description "is_summonable": true
-			field "component_groups":
-				component group "minecraft:spider_angry":
-					component "minecraft:angry":
-						field "calm_event":
-							field "event": "minecraft:become_calm"
-							field "target": "self"
-						field "duration": 10
-						field "duration_delta": 3
-					component "minecraft:behavior.leap_at_target":
-						field "must_be_on_ground": false
-						field "priority": 4
-						field "yd": 0.4
-					component "minecraft:behavior.melee_box_attack":
-						field "priority": 3
-						field "track_target": true
-				component group "minecraft:spider_hostile":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "event": "minecraft:become_neutral"
-							field "filters":
-								filter property "operator": ">"
-								filter property "test": "is_brightness"
-								filter property "value": 0.49
-					component "minecraft:on_target_acquired": field "event": "minecraft:become_angry"
-					component "minecraft:behavior.nearest_attackable_target":
-						field "attack_interval": 5
-						field "entity_types":
-							entity type:
-								field "filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "snowgolem"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "irongolem"
-								field "max_dist": 16
-						field "must_see": true
-						field "priority": 2
-				component group "minecraft:spider_jockey":
-					component "minecraft:addrider": field "entity_type": "minecraft:skeleton"
-					component "minecraft:rideable":
-						field "family_types": family: "skeleton"
-						field "seat_count": 1
-						field "seats": field "position": [0.0, 0.54, 0.0]
-				component group "minecraft:spider_neutral":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "event": "minecraft:become_hostile"
-							field "filters":
-								filter property "operator": "<"
-								filter property "test": "is_brightness"
-								filter property "value": 0.49
-					component "minecraft:on_target_acquired": field "event": "minecraft:become_angry"
-				component group "minecraft:spider_stray_jockey":
-					component "minecraft:addrider": field "entity_type": "minecraft:skeleton.stray"
-					component "minecraft:rideable":
-						field "family_types": family: "skeleton"
-						field "seat_count": 1
-						field "seats": field "position": [0.0, 0.54, 0.0]
-				component group "minecraft:spider_wither_jockey":
-					component "minecraft:addrider": field "entity_type": "minecraft:skeleton.wither"
-					component "minecraft:rideable":
-						field "family_types": family: "skeleton"
-						field "seat_count": 1
-						field "seats": field "position": [0.0, 0.54, 0.0]
-			field "components":
-				component "minecraft:attack": field "damage": 2
-				component "minecraft:breathable":
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "height": 0.9
-					field "width": 1.4
-				component "minecraft:conditional_bandwidth_optimization": empty
-				component "minecraft:despawn": field "despawn_from_distance": empty
-				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 : 0"
-				component "minecraft:health":
-					field "max": 16
-					field "value": 16
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:is_hidden_when_invisible": empty
-				component "minecraft:jump.static": empty
-				component "minecraft:loot": field "table": "loot_tables/entities/spider.json"
-				component "minecraft:movement": field "value": 0.3
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.climb": field "can_path_over_water": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:rideable":
-					field "family_types": family: "zombie"
-					field "seat_count": 1
-					field "seats": field "position": [0.0, 0.54, -0.1]
-				component "minecraft:type_family":
-					field "family":
-						family: "spider"
-						family: "monster"
-						family: "mob"
-						family: "arthropod"
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "armadillo"
-									filter:
-										filter property "domain": "minecraft:is_rolled_up"
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "bool_property"
-							field "max_dist": 6
-							field "sprint_speed_multiplier": 1.2
-					field "priority": 2
-				component "minecraft:behavior.float": field "priority": 1
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6.0
-					field "priority": 7
-					field "probability": 0.02
-				component "minecraft:behavior.mount_pathing":
-					field "priority": 5
-					field "speed_multiplier": 1.25
-					field "target_dist": 0.0
-					field "track_target": true
-				component "minecraft:behavior.random_look_around": field "priority": 7
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 0.8
-			field "events":
-				event "minecraft:become_angry": field "add": field "component_groups": component group: "minecraft:spider_angry"
-				event "minecraft:become_calm": field "remove": field "component_groups": component group: "minecraft:spider_angry"
-				event "minecraft:become_hostile":
-					field "add": field "component_groups": component group: "minecraft:spider_hostile"
-					field "remove": field "component_groups": component group: "minecraft:spider_neutral"
-				event "minecraft:become_neutral":
-					field "add": field "component_groups": component group: "minecraft:spider_neutral"
-					field "remove": field "component_groups": component group: "minecraft:spider_hostile"
-				event "minecraft:entity_spawned":
-					field "randomize":
-						randomize item:
-							field "weight": 1
-							field "randomize":
-								randomize item:
-									field "weight": 80
-									field "add":
-										field "component_groups":
-											component group: "minecraft:spider_stray_jockey"
-											component group: "minecraft:spider_neutral"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "test": "is_daytime"
-												filter property "value": false
-											filter:
-												filter property "test": "is_snow_covered"
-												filter property "value": true
-											filter:
-												filter property "test": "is_underground"
-												filter property "value": false
-									field "remove": empty
-								randomize item:
-									field "weight": 80
-									field "add":
-										field "component_groups":
-											component group: "minecraft:spider_wither_jockey"
-											component group: "minecraft:spider_neutral"
-									field "filters":
-										filter property "test": "is_biome"
-										filter property "value": "the_nether"
-									field "remove": empty
-								randomize item:
-									field "weight": 20
-									field "add":
-										field "component_groups":
-											component group: "minecraft:spider_jockey"
-											component group: "minecraft:spider_neutral"
+							trigger:
+								field "on_damage":
 									field "filters":
 										filter property "any_of":
 											filter:
-												filter property "test": "is_daytime"
-												filter property "value": false
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "mob"
 											filter:
-												filter property "test": "is_underground"
-												filter property "value": true
-									field "remove": empty
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+									field "event": "minecraft:threat_detected"
+								field "damage_multiplier": 0.5
+								field "damage_modifier": -1.0
+							trigger:
+								field "damage_multiplier": 0.5
+								field "damage_modifier": -1.0
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "any_of":
+										filter: filter property "test": "on_fire"
+										filter: filter property "test": "in_water"
+										filter: filter property "test": "is_panicking"
+										filter: filter property "test": "is_leashed"
+										filter: filter property "test": "is_riding"
+								field "event": "minecraft:unroll"
+					component "minecraft:movement": field "value": 0.0
+				component group "minecraft:rolled_up_with_threats":
+					component "minecraft:behavior.timer_flag_1":
+						field "priority": 0
+						field "cooldown_range": 2.5
+						field "duration_range": [5.0, 20.0]
+						field "on_start": field "event": "minecraft:stop_peeking"
+						field "on_end": field "event": "minecraft:start_peeking"
+				component group "minecraft:rolled_up_without_threats":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 4
+						field "randomInterval": false
+						field "time_down_event": field "event": "minecraft:unroll"
+					component "minecraft:behavior.timer_flag_1":
+						field "priority": 0
+						field "cooldown_range": 2.5
+						field "duration_range": 1.5
+						field "on_start": field "event": "minecraft:start_unrolling"
+				component group "minecraft:unrolled":
+					component "minecraft:ambient_sound_interval": empty
+					component "minecraft:damage_sensor":
+						field "triggers":
+							field "on_damage":
+								field "filters":
+									filter property "any_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "mob"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "player"
+								field "event": "minecraft:threat_detected"
+					component "minecraft:movement": field "value": 0.14
+					component "minecraft:behavior.look_at_player":
+						field "priority": 7
+						field "target_distance": 6.0
+						field "probability": 0.02
+						field "min_look_time": 40
+						field "max_look_time": 80
+					component "minecraft:behavior.random_look_around": field "priority": 8
+					component "minecraft:behavior.random_stroll":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.tempt":
+						field "priority": 3
+						field "speed_multiplier": 1.25
+						field "can_tempt_vertically": true
+						field "items": item: "spider_eye"
+			field "components":
+				component "minecraft:balloonable": empty
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.7
+					field "height": 0.65
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:entity_sensor":
+					field "subsensors":
+						subsensor:
+							field "event": "minecraft:no_threat_detected"
+							field "cooldown": 0.2
+							field "range": [7.0, 2.0]
+							field "minimum_count": 0
+							field "maximum_count": 0
+							field "event_filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "undead"
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "any_of":
+													filter:
+														filter property "test": "was_last_hurt_by"
+														filter property "subject": "other"
+													filter:
+														filter property "test": "is_sprinting"
+														filter property "subject": "other"
+													filter:
+														filter property "test": "is_riding"
+														filter property "subject": "other"
+						subsensor:
+							field "event": "minecraft:threat_detected"
+							field "cooldown": 0.2
+							field "range": [7.0, 2.0]
+							field "minimum_count": 1
+							field "event_filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "undead"
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "any_of":
+													filter:
+														filter property "test": "was_last_hurt_by"
+														filter property "subject": "other"
+													filter:
+														filter property "test": "is_sprinting"
+														filter property "subject": "other"
+													filter:
+														filter property "test": "is_riding"
+														filter property "subject": "other"
+				component "minecraft:health": field "value": 12
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_damage_blocks": true
+					field "avoid_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "armadillo"
+						family: "mob"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "ignore_mob_damage": true
+					field "speed_multiplier": 2.0
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:adult"
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:baby"
+									component group: "minecraft:baby_unrolled"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:adult_unrolled"
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "unrolled"
+				event "minecraft:entity_born": field "trigger": "minecraft:spawn_baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
 						randomize item:
-							field "weight": 99
-							field "add": field "component_groups": component group: "minecraft:spider_neutral"
-							field "remove": empty
-Changed entity "wolf":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 11 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.20.50"
-			Added behavior pack "vanilla_1.20.70".
-		Changed field "format_version" from "1.18.10" to "1.20.70".
-		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:wolf"
-				Removed description "is_experimental" of false.
-				Added description "properties":
-					property "minecraft:has_increased_max_health":
-						field "type": "bool"
-						field "client_sync": false
-						field "default": false
-			Changed field "component_groups":
-				Total component group: 6 (+1, -0)
-				Added component group "minecraft:wolf_increased_max_health":
-					component "minecraft:health":
-						field "max": 40
-						field "value": 40
-				Changed component group "minecraft:wolf_tame":
-					Total component: 10 (+0, -1)
-					Removed component "minecraft:health":
-						field "max": 20
-						field "value": 20
-			Changed field "components":
-				Total component: 30 (+1, -0)
-				Added component "minecraft:environment_sensor":
-					field "triggers":
-						trigger:
-							field "event": "minecraft:increase_max_health"
+							field "trigger": "minecraft:spawn_adult"
+							field "weight": 95
+						randomize item:
+							field "trigger": "minecraft:spawn_baby"
+							field "weight": 5
+				event "minecraft:no_threat_detected":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:rolled_up_without_threats"
 							field "filters":
 								filter property "all_of":
 									filter:
-										filter property "domain": "minecraft:has_increased_max_health"
-										filter property "operator": "!="
-										filter property "test": "bool_property"
+										filter property "any_of":
+											filter:
+												filter property "test": "enum_property"
+												filter property "domain": "minecraft:armadillo_state"
+												filter property "value": "rolled_up"
+											filter:
+												filter property "test": "enum_property"
+												filter property "domain": "minecraft:armadillo_state"
+												filter property "value": "rolled_up_peeking"
+									filter:
+										filter property "test": "on_fire"
+										filter property "value": false
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+							field "remove": field "component_groups": component group: "minecraft:rolled_up_with_threats"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_relaxing"
+				event "minecraft:roll_up":
+					field "sequence":
+						sequence item 0:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:rolled_up"
+									component group: "minecraft:rolled_up_with_threats"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "rolled_up"
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "rolled_up_peeking"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:unrolled"
+									component group: "minecraft:baby_unrolled"
+									component group: "minecraft:adult_unrolled"
+									component group: "minecraft:rolled_up_without_threats"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up"
+						sequence item 1:
+							field "emit_vibration": field "vibration": "entity_act"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+				event "minecraft:spawn_adult":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:adult"
+							component group: "minecraft:adult_unrolled"
+							component group: "minecraft:unrolled"
+							component group: "minecraft:scanning"
+				event "minecraft:spawn_baby":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:baby"
+							component group: "minecraft:baby_unrolled"
+							component group: "minecraft:unrolled"
+							component group: "minecraft:scanning"
+				event "minecraft:start_peeking":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_peeking"
+				event "minecraft:start_unrolling":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up_relaxing"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_unrolling"
+				event "minecraft:stop_peeking":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up_peeking"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up"
+				event "minecraft:threat_detected":
+					field "sequence":
+						sequence item 0:
+							field "trigger": "minecraft:roll_up"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "on_ground"
+										filter property "value": true
+									filter:
+										filter property "test": "on_fire"
+										filter property "value": false
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:rolled_up_with_threats"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "rolled_up_relaxing"
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "rolled_up_unrolling"
+							field "remove": field "component_groups": component group: "minecraft:rolled_up_without_threats"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up"
+				event "minecraft:unroll":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:unrolled"
+							field "emit_vibration": field "vibration": "entity_act"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:rolled_up"
+									component group: "minecraft:rolled_up_with_threats"
+									component group: "minecraft:rolled_up_without_threats"
+							field "set_property": property "minecraft:armadillo_state": "unrolled"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:baby_unrolled"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
 									filter:
 										filter property "test": "has_component"
-										filter property "value": "minecraft:is_tamed"
-				Changed component "minecraft:healable":
-					Changed field "items":
-						Total item: 18 (+18, -18)
-						Removed item:
-							field "heal_amount": 3
-							field "item": "porkchop"
-						Removed item:
-							field "heal_amount": 8
-							field "item": "cooked_porkchop"
-						Removed item:
-							field "heal_amount": 2
-							field "item": "fish"
-						Removed item:
-							field "heal_amount": 2
-							field "item": "salmon"
-						Removed item:
-							field "heal_amount": 1
-							field "item": "clownfish"
-						Removed item:
-							field "heal_amount": 1
-							field "item": "pufferfish"
-						Removed item:
-							field "heal_amount": 5
-							field "item": "cooked_fish"
-						Removed item:
-							field "heal_amount": 6
-							field "item": "cooked_salmon"
-						Removed item:
-							field "heal_amount": 3
-							field "item": "beef"
-						Removed item:
-							field "heal_amount": 8
-							field "item": "cooked_beef"
-						Removed item:
-							field "heal_amount": 2
-							field "item": "chicken"
-						Removed item:
-							field "heal_amount": 6
-							field "item": "cooked_chicken"
-						Removed item:
-							field "heal_amount": 2
-							field "item": "muttonRaw"
-						Removed item:
-							field "heal_amount": 6
-							field "item": "muttonCooked"
-						Removed item:
-							field "heal_amount": 4
-							field "item": "rotten_flesh"
-						Removed item:
-							field "heal_amount": 3
-							field "item": "rabbit"
-						Removed item:
-							field "heal_amount": 5
-							field "item": "cooked_rabbit"
-						Removed item:
-							field "heal_amount": 10
-							field "item": "rabbit_stew"
-						Added item:
-							field "heal_amount": 6
-							field "item": "porkchop"
-						Added item:
-							field "heal_amount": 16
-							field "item": "cooked_porkchop"
-						Added item:
-							field "heal_amount": 4
-							field "item": "fish"
-						Added item:
-							field "heal_amount": 4
-							field "item": "salmon"
-						Added item:
-							field "heal_amount": 2
-							field "item": "clownfish"
-						Added item:
-							field "heal_amount": 2
-							field "item": "pufferfish"
-						Added item:
-							field "heal_amount": 10
-							field "item": "cooked_fish"
-						Added item:
-							field "heal_amount": 12
-							field "item": "cooked_salmon"
-						Added item:
-							field "heal_amount": 6
-							field "item": "beef"
-						Added item:
-							field "heal_amount": 16
-							field "item": "cooked_beef"
-						Added item:
-							field "heal_amount": 4
-							field "item": "chicken"
-						Added item:
-							field "heal_amount": 12
-							field "item": "cooked_chicken"
-						Added item:
-							field "heal_amount": 4
-							field "item": "muttonRaw"
-						Added item:
-							field "heal_amount": 12
-							field "item": "muttonCooked"
-						Added item:
-							field "heal_amount": 8
-							field "item": "rotten_flesh"
-						Added item:
-							field "heal_amount": 6
-							field "item": "rabbit"
-						Added item:
-							field "heal_amount": 10
-							field "item": "cooked_rabbit"
-						Added item:
-							field "heal_amount": 20
-							field "item": "rabbit_stew"
-			Changed field "events":
-				Total event: 12 (+5, -0)
-				Changed event "minecraft:entity_born":
-					Added field "trigger" of "minecraft:spawn_tame_baby".
-					Removed field "add":
-						field "component_groups":
-							component group: "minecraft:wolf_baby"
-							component group: "minecraft:wolf_tame"
-					Removed empty field "remove".
-				Changed event "minecraft:entity_spawned":
-					Changed field "randomize":
-						Total randomize item: 2 (+2, -2)
-						Removed randomize item:
-							field "weight": 9
+										filter property "value": "minecraft:is_baby"
+						sequence item 2:
+							field "add": field "component_groups": component group: "minecraft:adult_unrolled"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+									filter:
+										filter property "test": "has_component"
+										filter property "operator": "not"
+										filter property "value": "minecraft:is_baby"
+	Removed behavior pack "experimental":
+		field "format_version": "1.20.70"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:armadillo"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:armadillo_state":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "unrolled"
+						field "values":
+							possible property: "unrolled"
+							possible property: "rolled_up"
+							possible property: "rolled_up_peeking"
+							possible property: "rolled_up_relaxing"
+							possible property: "rolled_up_unrolling"
+			field "component_groups":
+				component group "minecraft:adult":
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "brush"
+								field "play_sounds": "mob.armadillo.brush"
+								field "interact_text": "action.interact.brush"
+								field "hurt_item": 16
+								field "swing": true
+								field "spawn_items": field "table": "loot_tables/entities/armadillo_brush.json"
+					component "minecraft:spawn_entity":
+						field "entities":
+							field "min_wait_time": 300
+							field "max_wait_time": 600
+							field "spawn_sound": "mob.armadillo.scute_drop"
+							field "spawn_item": "armadillo_scute"
+				component group "minecraft:adult_unrolled":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "breeds_with":
+							entity:
+								field "mate_type": "minecraft:armadillo"
+								field "baby_type": "minecraft:armadillo"
+								field "breed_event":
+									field "event": "minecraft:entity_born"
+									field "target": "baby"
+						field "breed_items": item: "spider_eye"
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+				component group "minecraft:baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "interact_filters":
+							filter property "test": "enum_property"
+							filter property "domain": "minecraft:armadillo_state"
+							filter property "value": "unrolled"
+						field "feed_items": "spider_eye"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.6
+				component group "minecraft:baby_unrolled":
+					component "minecraft:behavior.follow_parent":
+						field "priority": 5
+						field "speed_multiplier": 1.25
+				component group "minecraft:rolled_up":
+					component "minecraft:damage_sensor":
+						field "triggers":
+							trigger:
+								field "on_damage":
+									field "filters":
+										filter property "any_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "mob"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+									field "event": "minecraft:threat_detected"
+								field "damage_multiplier": 0.5
+								field "damage_modifier": -1.0
+							trigger:
+								field "damage_multiplier": 0.5
+								field "damage_modifier": -1.0
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "any_of":
+										filter: filter property "test": "on_fire"
+										filter: filter property "test": "in_water"
+										filter: filter property "test": "is_panicking"
+										filter: filter property "test": "is_leashed"
+										filter: filter property "test": "is_riding"
+								field "event": "minecraft:unroll"
+					component "minecraft:movement": field "value": 0.0
+				component group "minecraft:rolled_up_with_threats":
+					component "minecraft:behavior.timer_flag_1":
+						field "priority": 0
+						field "cooldown_range": 2.5
+						field "duration_range": [5.0, 20.0]
+						field "on_start": field "event": "minecraft:stop_peeking"
+						field "on_end": field "event": "minecraft:start_peeking"
+				component group "minecraft:rolled_up_without_threats":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 4
+						field "randomInterval": false
+						field "time_down_event": field "event": "minecraft:unroll"
+					component "minecraft:behavior.timer_flag_1":
+						field "priority": 0
+						field "cooldown_range": 2.5
+						field "duration_range": 1.5
+						field "on_start": field "event": "minecraft:start_unrolling"
+				component group "minecraft:unrolled":
+					component "minecraft:ambient_sound_interval": empty
+					component "minecraft:damage_sensor":
+						field "triggers":
+							field "on_damage":
+								field "filters":
+									filter property "any_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "mob"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "player"
+								field "event": "minecraft:threat_detected"
+					component "minecraft:movement": field "value": 0.14
+					component "minecraft:behavior.look_at_player":
+						field "priority": 7
+						field "target_distance": 6.0
+						field "probability": 0.02
+						field "min_look_time": 40
+						field "max_look_time": 80
+					component "minecraft:behavior.random_look_around": field "priority": 8
+					component "minecraft:behavior.random_stroll":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.tempt":
+						field "priority": 3
+						field "speed_multiplier": 1.25
+						field "can_tempt_vertically": true
+						field "items": item: "spider_eye"
+			field "components":
+				component "minecraft:balloonable": empty
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.7
+					field "height": 0.65
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:entity_sensor":
+					field "subsensors":
+						subsensor:
+							field "event": "minecraft:no_threat_detected"
+							field "cooldown": 0.2
+							field "range": [7.0, 2.0]
+							field "minimum_count": 0
+							field "maximum_count": 0
+							field "event_filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "undead"
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "any_of":
+													filter:
+														filter property "test": "was_last_hurt_by"
+														filter property "subject": "other"
+													filter:
+														filter property "test": "is_sprinting"
+														filter property "subject": "other"
+													filter:
+														filter property "test": "is_riding"
+														filter property "subject": "other"
+						subsensor:
+							field "event": "minecraft:threat_detected"
+							field "cooldown": 0.2
+							field "range": [7.0, 2.0]
+							field "minimum_count": 1
+							field "event_filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "undead"
+									filter:
+										filter property "all_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "any_of":
+													filter:
+														filter property "test": "was_last_hurt_by"
+														filter property "subject": "other"
+													filter:
+														filter property "test": "is_sprinting"
+														filter property "subject": "other"
+													filter:
+														filter property "test": "is_riding"
+														filter property "subject": "other"
+				component "minecraft:health": field "value": 12
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_damage_blocks": true
+					field "avoid_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "armadillo"
+						family: "mob"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "ignore_mob_damage": true
+					field "speed_multiplier": 2.0
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:adult"
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:baby"
+									component group: "minecraft:baby_unrolled"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:adult_unrolled"
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "unrolled"
+				event "minecraft:entity_born": field "trigger": "minecraft:spawn_baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "trigger": "minecraft:spawn_adult"
+							field "weight": 95
+						randomize item:
+							field "trigger": "minecraft:spawn_baby"
+							field "weight": 5
+				event "minecraft:no_threat_detected":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:rolled_up_without_threats"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "enum_property"
+												filter property "domain": "minecraft:armadillo_state"
+												filter property "value": "rolled_up"
+											filter:
+												filter property "test": "enum_property"
+												filter property "domain": "minecraft:armadillo_state"
+												filter property "value": "rolled_up_peeking"
+									filter:
+										filter property "test": "on_fire"
+										filter property "value": false
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+							field "remove": field "component_groups": component group: "minecraft:rolled_up_with_threats"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_relaxing"
+				event "minecraft:roll_up":
+					field "sequence":
+						sequence item 0:
 							field "add":
 								field "component_groups":
-									component group: "minecraft:wolf_adult"
-									component group: "minecraft:wolf_wild"
-							field "remove": empty
-						Removed randomize item:
-							field "weight": 1
-							field "add":
+									component group: "minecraft:rolled_up"
+									component group: "minecraft:rolled_up_with_threats"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "rolled_up"
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "rolled_up_peeking"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+							field "remove":
 								field "component_groups":
-									component group: "minecraft:wolf_baby"
-									component group: "minecraft:wolf_wild"
-							field "remove": empty
-						Added randomize item:
-							field "trigger": "minecraft:spawn_wild_adult"
-							field "weight": 9
-						Added randomize item:
-							field "trigger": "minecraft:spawn_wild_baby"
-							field "weight": 1
-				Added event "minecraft:increase_max_health":
-					field "add": field "component_groups": component group: "minecraft:wolf_increased_max_health"
-					field "set_property": property "minecraft:has_increased_max_health": true
-				Added event "minecraft:spawn_tame_adult":
+									component group: "minecraft:unrolled"
+									component group: "minecraft:baby_unrolled"
+									component group: "minecraft:adult_unrolled"
+									component group: "minecraft:rolled_up_without_threats"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up"
+						sequence item 1:
+							field "emit_vibration": field "vibration": "entity_act"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+				event "minecraft:spawn_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_adult"
-							component group: "minecraft:wolf_tame"
-				Added event "minecraft:spawn_tame_baby":
+							component group: "minecraft:adult"
+							component group: "minecraft:adult_unrolled"
+							component group: "minecraft:unrolled"
+							component group: "minecraft:scanning"
+				event "minecraft:spawn_baby":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_baby"
-							component group: "minecraft:wolf_tame"
-				Added event "minecraft:spawn_wild_adult":
-					field "add":
-						field "component_groups":
-							component group: "minecraft:wolf_adult"
-							component group: "minecraft:wolf_wild"
-				Added event "minecraft:spawn_wild_baby":
-					field "add":
-						field "component_groups":
-							component group: "minecraft:wolf_baby"
-							component group: "minecraft:wolf_wild"
+							component group: "minecraft:baby"
+							component group: "minecraft:baby_unrolled"
+							component group: "minecraft:unrolled"
+							component group: "minecraft:scanning"
+				event "minecraft:start_peeking":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_peeking"
+				event "minecraft:start_unrolling":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up_relaxing"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_unrolling"
+				event "minecraft:stop_peeking":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up_peeking"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up"
+				event "minecraft:threat_detected":
+					field "sequence":
+						sequence item 0:
+							field "trigger": "minecraft:roll_up"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "on_ground"
+										filter property "value": true
+									filter:
+										filter property "test": "on_fire"
+										filter property "value": false
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:rolled_up_with_threats"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "rolled_up_relaxing"
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "rolled_up_unrolling"
+							field "remove": field "component_groups": component group: "minecraft:rolled_up_without_threats"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up"
+				event "minecraft:unroll":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:unrolled"
+							field "emit_vibration": field "vibration": "entity_act"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:rolled_up"
+									component group: "minecraft:rolled_up_with_threats"
+									component group: "minecraft:rolled_up_without_threats"
+							field "set_property": property "minecraft:armadillo_state": "unrolled"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:baby_unrolled"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+									filter:
+										filter property "test": "has_component"
+										filter property "value": "minecraft:is_baby"
+						sequence item 2:
+							field "add": field "component_groups": component group: "minecraft:adult_unrolled"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+									filter:
+										filter property "test": "has_component"
+										filter property "operator": "not"
+										filter property "value": "minecraft:is_baby"
+Changed entity "cave_spider.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.20.80".
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:cave_spider"
+				Removed description "is_experimental" of false.
+			Changed field "components":
+				Total component: 26 (+1, -0)
+				Added component "minecraft:behavior.avoid_mob_type":
+					field "priority": 2
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "armadillo"
+									filter:
+										filter property "test": "enum_property"
+										filter property "subject": "other"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
 	Changed behavior pack "experimental":
-		Changed field "format_version" from "1.20.60" to "1.20.70".
+		Changed field "format_version" from "1.20.70" to "1.20.80".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.hurt_by_target":
+					Added field "entity_types":
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "operator": "!="
+								filter property "value": "breeze"
+Changed entity "spider.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.18.20" to "1.20.80".
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:spider"
+				Removed description "is_experimental" of false.
+			Changed field "components":
+				Total component: 27 (+1, -0)
+				Added component "minecraft:behavior.avoid_mob_type":
+					field "priority": 2
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "armadillo"
+									filter:
+										filter property "test": "enum_property"
+										filter property "subject": "other"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+							field "max_dist": 6
+							field "sprint_speed_multiplier": 1.2
+	Changed behavior pack "experimental":
+		Changed field "format_version" from "1.20.70" to "1.20.80".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.hurt_by_target":
+					Added field "entity_types":
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "operator": "!="
+								filter property "value": "breeze"
+Changed entity "wolf.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.20.70" to "1.20.80".
 		Changed field "minecraft:entity":
 			Changed field "description":
 				Unchanged description "identifier": "minecraft:wolf"
-				Removed description "is_experimental" of false.
 				Changed description "properties":
-					Total property: 3 (+1, -0)
-					Added property "minecraft:has_increased_max_health":
+					Total property: 2 (+1, -0)
+					Added property "minecraft:is_armorable":
 						field "type": "bool"
 						field "client_sync": false
 						field "default": false
 			Changed field "component_groups":
 				Total component group: 7 (+1, -0)
-				Added component group "minecraft:wolf_increased_max_health":
-					component "minecraft:health":
-						field "max": 40
-						field "value": 40
-				Changed component group "minecraft:wolf_tame":
-					Total component: 10 (+0, -1)
-					Removed component "minecraft:health":
-						field "max": 20
-						field "value": 20
+				Added component group "minecraft:wolf_armorable":
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "self"
+												filter property "domain": "armor"
+												filter property "operator": "not"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "is_owner"
+												filter property "subject": "other"
+												filter property "value": true
+											filter:
+												filter property "test": "is_sneak_held"
+												filter property "subject": "other"
+												filter property "value": false
+									field "target": "self"
+								field "equip_item_slot": "slot.armor.chest"
+								field "play_sounds": "armor.equip_wolf"
+								field "interact_text": "action.interact.equipwolfarmor"
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "self"
+												filter property "domain": "armor"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "shears"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "is_owner"
+												filter property "subject": "other"
+												filter property "value": true
+											filter:
+												filter property "test": "is_sneak_held"
+												filter property "subject": "other"
+												filter property "value": false
+									field "target": "self"
+								field "hurt_item": 1
+								field "drop_item_slot": "slot.armor.chest"
+								field "play_sounds": "armor.unequip_wolf"
+								field "interact_text": "action.interact.removewolfarmor"
+								field "vibration": "shear"
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "is_sitting"
+												filter property "subject": "self"
+											filter:
+												filter property "test": "has_damaged_equipment"
+												filter property "subject": "self"
+												filter property "domain": "armor"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "is_owner"
+												filter property "subject": "other"
+												filter property "value": true
+											filter:
+												filter property "test": "is_sneak_held"
+												filter property "subject": "other"
+												filter property "value": false
+											filter:
+												filter property "test": "has_equipment"
+												filter property "domain": "hand"
+												filter property "subject": "other"
+												filter property "value": "armadillo_scute"
+									field "target": "self"
+								field "repair_entity_item":
+									field "slot": "slot.armor.chest"
+									field "amount": 8
+								field "use_item": true
+								field "play_sounds": "armor.repair_wolf"
+								field "interact_text": "action.interact.repairwolfarmor"
 			Changed field "components":
 				Changed component "minecraft:environment_sensor":
 					Changed field "triggers":
 						Total trigger: 2 (+1, -0)
 						Added trigger:
-							field "event": "minecraft:increase_max_health"
 							field "filters":
 								filter property "all_of":
 									filter:
-										filter property "domain": "minecraft:has_increased_max_health"
-										filter property "operator": "!="
 										filter property "test": "bool_property"
+										filter property "operator": "!="
+										filter property "domain": "minecraft:is_armorable"
+									filter:
+										filter property "test": "has_component"
+										filter property "operator": "!="
+										filter property "value": "minecraft:is_baby"
 									filter:
 										filter property "test": "has_component"
 										filter property "value": "minecraft:is_tamed"
-				Changed component "minecraft:healable":
-					Changed field "items":
-						Total item: 18 (+18, -18)
-						Removed item:
-							field "heal_amount": 3
-							field "item": "porkchop"
-						Removed item:
-							field "heal_amount": 8
-							field "item": "cooked_porkchop"
-						Removed item:
-							field "heal_amount": 2
-							field "item": "fish"
-						Removed item:
-							field "heal_amount": 2
-							field "item": "salmon"
-						Removed item:
-							field "heal_amount": 1
-							field "item": "clownfish"
-						Removed item:
-							field "heal_amount": 1
-							field "item": "pufferfish"
-						Removed item:
-							field "heal_amount": 5
-							field "item": "cooked_fish"
-						Removed item:
-							field "heal_amount": 6
-							field "item": "cooked_salmon"
-						Removed item:
-							field "heal_amount": 3
-							field "item": "beef"
-						Removed item:
-							field "heal_amount": 8
-							field "item": "cooked_beef"
-						Removed item:
-							field "heal_amount": 2
-							field "item": "chicken"
-						Removed item:
-							field "heal_amount": 6
-							field "item": "cooked_chicken"
-						Removed item:
-							field "heal_amount": 2
-							field "item": "muttonRaw"
-						Removed item:
-							field "heal_amount": 6
-							field "item": "muttonCooked"
-						Removed item:
-							field "heal_amount": 4
-							field "item": "rotten_flesh"
-						Removed item:
-							field "heal_amount": 3
-							field "item": "rabbit"
-						Removed item:
-							field "heal_amount": 5
-							field "item": "cooked_rabbit"
-						Removed item:
-							field "heal_amount": 10
-							field "item": "rabbit_stew"
-						Added item:
-							field "heal_amount": 6
-							field "item": "porkchop"
-						Added item:
-							field "heal_amount": 16
-							field "item": "cooked_porkchop"
-						Added item:
-							field "heal_amount": 4
-							field "item": "fish"
-						Added item:
-							field "heal_amount": 4
-							field "item": "salmon"
-						Added item:
-							field "heal_amount": 2
-							field "item": "clownfish"
-						Added item:
-							field "heal_amount": 2
-							field "item": "pufferfish"
-						Added item:
-							field "heal_amount": 10
-							field "item": "cooked_fish"
-						Added item:
-							field "heal_amount": 12
-							field "item": "cooked_salmon"
-						Added item:
-							field "heal_amount": 6
-							field "item": "beef"
-						Added item:
-							field "heal_amount": 16
-							field "item": "cooked_beef"
-						Added item:
-							field "heal_amount": 4
-							field "item": "chicken"
-						Added item:
-							field "heal_amount": 12
-							field "item": "cooked_chicken"
-						Added item:
-							field "heal_amount": 4
-							field "item": "muttonRaw"
-						Added item:
-							field "heal_amount": 12
-							field "item": "muttonCooked"
-						Added item:
-							field "heal_amount": 8
-							field "item": "rotten_flesh"
-						Added item:
-							field "heal_amount": 6
-							field "item": "rabbit"
-						Added item:
-							field "heal_amount": 10
-							field "item": "cooked_rabbit"
-						Added item:
-							field "heal_amount": 20
-							field "item": "rabbit_stew"
+							field "event": "minecraft:become_armorable"
 			Changed field "events":
-				Total event: 15 (+1, -0)
-				Added event "minecraft:increase_max_health":
+				Total event: 13 (+1, -0)
+				Added event "minecraft:become_armorable":
+					field "add": field "component_groups": component group: "minecraft:wolf_armorable"
+					field "set_property": property "minecraft:is_armorable": true
+	Removed behavior pack "experimental":
+		field "format_version": "1.20.70"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:wolf"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:has_armor":
+						field "type": "bool"
+						field "client_sync": true
+						field "default": false
+					property "minecraft:has_increased_max_health":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
+					property "minecraft:is_armorable":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
+			field "component_groups":
+				component group "minecraft:wolf_adult":
+					component "minecraft:breedable":
+						field "require_tame": true
+						field "require_full_health": true
+						field "breeds_with":
+							field "mate_type": "minecraft:wolf"
+							field "baby_type": "minecraft:wolf"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+						field "breed_items":
+							item: "chicken"
+							item: "cooked_chicken"
+							item: "beef"
+							item: "cooked_beef"
+							item: "muttonRaw"
+							item: "muttonCooked"
+							item: "porkchop"
+							item: "cooked_porkchop"
+							item: "rabbit"
+							item: "cooked_rabbit"
+							item: "rotten_flesh"
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/wolf.json"
+				component group "minecraft:wolf_angry":
+					component "minecraft:angry":
+						field "duration": 25
+						field "broadcast_anger": true
+						field "broadcast_range": 20
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+					component "minecraft:on_target_acquired": empty
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family: "zombie"
+						field "seats": field "position": [0.0, 0.675, -0.1]
+				component group "minecraft:wolf_armorable":
+					component "minecraft:equippable":
+						field "slots":
+							slot:
+								field "slot": 0
+								field "accepted_items": item: "invalid_item"
+							slot:
+								field "slot": 1
+								field "item": "wolf_armor"
+								field "accepted_items": item: "wolf_armor"
+								field "on_equip": field "event": "minecraft:on_armor_equip"
+								field "on_unequip": field "event": "minecraft:on_armor_unequip"
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "self"
+												filter property "domain": "inventory"
+												filter property "operator": "not"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "is_owner"
+												filter property "subject": "other"
+												filter property "value": true
+											filter:
+												filter property "test": "is_sneak_held"
+												filter property "subject": "other"
+												filter property "value": false
+									field "target": "self"
+								field "equip_item_slot": 1
+								field "play_sounds": "armor.equip_wolf"
+								field "interact_text": "action.interact.equipwolfarmor"
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "self"
+												filter property "domain": "inventory"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "shears"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "is_owner"
+												filter property "subject": "other"
+												filter property "value": true
+											filter:
+												filter property "test": "is_sneak_held"
+												filter property "subject": "other"
+												filter property "value": false
+									field "target": "self"
+								field "cooldown": 2.5
+								field "use_item": false
+								field "hurt_item": 1
+								field "drop_item_slot": 1
+								field "play_sounds": "armor.unequip_wolf"
+								field "interact_text": "action.interact.removewolfarmor"
+								field "vibration": "shear"
+					component "minecraft:inventory": field "inventory_size": 2
+				component group "minecraft:wolf_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item: "chicken"
+							item: "cooked_chicken"
+							item: "beef"
+							item: "cooked_beef"
+							item: "muttonRaw"
+							item: "muttonCooked"
+							item: "porkchop"
+							item: "cooked_porkchop"
+							item: "rabbit"
+							item: "cooked_rabbit"
+							item: "rotten_flesh"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+				component group "minecraft:wolf_increased_max_health":
+					component "minecraft:health":
+						field "value": 40
+						field "max": 40
+				component group "minecraft:wolf_tame":
+					component "minecraft:attack": field "damage": 4
+					component "minecraft:color": field "value": 14
+					component "minecraft:is_dyeable": field "interact_text": "action.interact.dye"
+					component "minecraft:is_tamed": empty
+					component "minecraft:sittable": empty
+					component "minecraft:behavior.breed":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.follow_owner":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+						field "start_distance": 10
+						field "stop_distance": 2
+					component "minecraft:behavior.nearest_attackable_target":
+						field "priority": 5
+						field "must_see": true
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "value": "skeleton"
+								field "max_dist": 16
+					component "minecraft:behavior.owner_hurt_by_target": field "priority": 1
+					component "minecraft:behavior.owner_hurt_target": field "priority": 2
+				component group "minecraft:wolf_wild":
+					component "minecraft:on_target_acquired":
+						field "event": "minecraft:become_angry"
+						field "target": "self"
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family: "zombie"
+						field "seats": field "position": [0.0, 0.675, -0.1]
+					component "minecraft:tameable":
+						field "probability": 0.33
+						field "tame_items": "bone"
+						field "tame_event":
+							field "event": "minecraft:on_tame"
+							field "target": "self"
+					component "minecraft:behavior.avoid_mob_type":
+						field "priority": 3
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "value": "llama"
+								field "max_dist": 24
+								field "walk_speed_multiplier": 1.5
+								field "sprint_speed_multiplier": 1.5
+						field "probability_per_strength": 0.14
+					component "minecraft:behavior.nearest_attackable_target":
+						field "priority": 4
+						field "reselect_targets": true
+						field "must_see": true
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "any_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "skeleton"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "sheep"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "rabbit"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "fox"
+								field "max_dist": 16
+							entity type:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "baby_turtle"
+										filter:
+											filter property "test": "in_water"
+											filter property "subject": "other"
+											filter property "operator": "!="
+											filter property "value": true
+								field "max_dist": 16
+							entity type:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "skeleton"
+										filter:
+											filter property "test": "is_underwater"
+											filter property "subject": "other"
+											filter property "operator": "!="
+											filter property "value": true
+								field "max_dist": 16
+			field "components":
+				component "minecraft:attack": field "damage": 3
+				component "minecraft:balloonable": field "mass": 0.8
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.6
+					field "height": 0.8
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:environment_sensor":
+					field "triggers":
+						trigger:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "bool_property"
+										filter property "operator": "!="
+										filter property "domain": "minecraft:has_increased_max_health"
+									filter:
+										filter property "test": "has_component"
+										filter property "value": "minecraft:is_tamed"
+							field "event": "minecraft:increase_max_health"
+						trigger:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "bool_property"
+										filter property "operator": "!="
+										filter property "domain": "minecraft:is_armorable"
+									filter:
+										filter property "test": "has_component"
+										filter property "operator": "!="
+										filter property "value": "minecraft:is_baby"
+									filter:
+										filter property "test": "has_component"
+										filter property "value": "minecraft:is_tamed"
+							field "event": "minecraft:become_armorable"
+				component "minecraft:healable":
+					field "items":
+						item:
+							field "item": "porkchop"
+							field "heal_amount": 6
+						item:
+							field "item": "cooked_porkchop"
+							field "heal_amount": 16
+						item:
+							field "item": "fish"
+							field "heal_amount": 4
+						item:
+							field "item": "salmon"
+							field "heal_amount": 4
+						item:
+							field "item": "clownfish"
+							field "heal_amount": 2
+						item:
+							field "item": "pufferfish"
+							field "heal_amount": 2
+						item:
+							field "item": "cooked_fish"
+							field "heal_amount": 10
+						item:
+							field "item": "cooked_salmon"
+							field "heal_amount": 12
+						item:
+							field "item": "beef"
+							field "heal_amount": 6
+						item:
+							field "item": "cooked_beef"
+							field "heal_amount": 16
+						item:
+							field "item": "chicken"
+							field "heal_amount": 4
+						item:
+							field "item": "cooked_chicken"
+							field "heal_amount": 12
+						item:
+							field "item": "muttonRaw"
+							field "heal_amount": 4
+						item:
+							field "item": "muttonCooked"
+							field "heal_amount": 12
+						item:
+							field "item": "rotten_flesh"
+							field "heal_amount": 8
+						item:
+							field "item": "rabbit"
+							field "heal_amount": 6
+						item:
+							field "item": "cooked_rabbit"
+							field "heal_amount": 10
+						item:
+							field "item": "rabbit_stew"
+							field "heal_amount": 20
+				component "minecraft:health":
+					field "value": 8
+					field "max": 8
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "wolf"
+						family: "mob"
+				component "minecraft:behavior.beg":
+					field "priority": 9
+					field "look_distance": 8
+					field "look_time": [2, 4]
+					field "items":
+						item: "bone"
+						item: "porkchop"
+						item: "cooked_porkchop"
+						item: "chicken"
+						item: "cooked_chicken"
+						item: "beef"
+						item: "cooked_beef"
+						item: "rotten_flesh"
+						item: "muttonraw"
+						item: "muttoncooked"
+						item: "rabbit"
+						item: "cooked_rabbit"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 3
+				component "minecraft:behavior.leap_at_target":
+					field "priority": 4
+					field "target_dist": 0.4
+				component "minecraft:behavior.look_at_player":
+					field "priority": 6
+					field "target_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.melee_box_attack": field "priority": 5
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+					field "target_dist": 0
+					field "track_target": true
+				component "minecraft:behavior.random_stroll":
+					field "priority": 8
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.stay_while_sitting": field "priority": 3
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group: "minecraft:wolf_adult"
+					field "remove": field "component_groups": component group: "minecraft:wolf_baby"
+				event "minecraft:ageable_set_baby":
+					field "add": field "component_groups": component group: "minecraft:wolf_baby"
+					field "remove": field "component_groups": component group: "minecraft:wolf_adult"
+				event "minecraft:become_angry":
+					field "add": field "component_groups": component group: "minecraft:wolf_angry"
+					field "remove": field "component_groups": component group: "minecraft:wolf_wild"
+				event "minecraft:become_armorable":
+					field "add": field "component_groups": component group: "minecraft:wolf_armorable"
+					field "set_property": property "minecraft:is_armorable": true
+				event "minecraft:entity_born": field "trigger": "minecraft:spawn_tame_baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "trigger": "minecraft:spawn_wild_adult"
+							field "weight": 9
+						randomize item:
+							field "trigger": "minecraft:spawn_wild_baby"
+							field "weight": 1
+				event "minecraft:increase_max_health":
 					field "add": field "component_groups": component group: "minecraft:wolf_increased_max_health"
 					field "set_property": property "minecraft:has_increased_max_health": true
+				event "minecraft:on_armor_equip": field "set_property": property "minecraft:has_armor": true
+				event "minecraft:on_armor_unequip": field "set_property": property "minecraft:has_armor": false
+				event "minecraft:on_calm":
+					field "add": field "component_groups": component group: "minecraft:wolf_wild"
+					field "remove": field "component_groups": component group: "minecraft:wolf_angry"
+				event "minecraft:on_tame":
+					field "add": field "component_groups": component group: "minecraft:wolf_tame"
+					field "remove": field "component_groups": component group: "minecraft:wolf_wild"
+				event "minecraft:spawn_tame_adult":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:wolf_adult"
+							component group: "minecraft:wolf_tame"
+				event "minecraft:spawn_tame_baby":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:wolf_baby"
+							component group: "minecraft:wolf_tame"
+				event "minecraft:spawn_wild_adult":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:wolf_adult"
+							component group: "minecraft:wolf_wild"
+				event "minecraft:spawn_wild_baby":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:wolf_baby"
+							component group: "minecraft:wolf_wild"

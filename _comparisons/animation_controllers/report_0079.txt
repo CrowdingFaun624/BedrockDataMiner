@@ -1,36 +1,17 @@
-Difference of "animation_controllers" between "1.19.73" and "1.19.80.20" (beta of "1.19.80").
+Difference of "animation_controllers" between "1.19.83" and "1.20.0.20" (beta of "1.20.0").
 
-Changed file "camel.animation_controllers":
+Changed file "camel.animation_controllers.json":
 	Changed resource pack "experimental":
 		Changed field "animation_controllers":
+			Total animation controller: 2 (+0, -1)
 			Changed animation controller "controller.animation.camel.general":
 				Changed field "states":
-					Changed state "dashing":
+					Changed state "stand_up":
 						Changed field "transitions":
-							Total transition list: 2 (+2, -2)
-							Removed transition list transition "idling": "(query.is_on_ground || query.is_in_water) && !variable.moving".
-							Removed transition list transition "moving": "(query.is_on_ground || query.is_in_water) && variable.moving".
-							Added transition list transition "idling": "(query.is_on_ground || query.is_in_water || query.is_riding) && !variable.moving".
-							Added transition list transition "moving": "(query.is_on_ground || query.is_in_water || query.is_riding) && variable.moving".
-					Changed state "idling":
-						Changed field "transitions":
-							Total transition list: 3 (+1, -1)
-							Removed transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water".
-							Added transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_riding".
-					Changed state "moving":
-						Changed field "transitions":
-							Total transition list: 3 (+1, -1)
-							Removed transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water".
-							Added transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water && !query.is_riding".
-Changed file "player.animation_controllers":
-	Changed resource pack "experimental":
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.player.root":
-				Changed field "states":
-					Changed state "third_person":
-						Changed field "animations":
-							Total animation dict: 27 (+2, -2)
-							Removed animation dict animation "attack.positions": "variable.attack_time >= 0.0 && query.get_equipped_item_name != 'brush'".
-							Removed animation dict animation "attack.rotations": "variable.attack_time >= 0.0 && query.get_equipped_item_name != 'brush'".
-							Added animation dict animation "attack.positions": "variable.attack_time >= 0.0".
-							Added animation dict animation "attack.rotations": "variable.attack_time >= 0.0".
+							Total transition list: 3 (+1, -0)
+							Added transition list transition "idling": "query.all_animations_finished".
+			Removed animation controller "controller.animation.camel.look_at_player":
+				field "initial_state": "looking_at_player"
+				field "states": state "looking_at_player": field "animations": animation dict: "look_at_player"
+Changed file "sniffer.animation_controllers.json":
+	Moved resource pack "experimental" to "core".

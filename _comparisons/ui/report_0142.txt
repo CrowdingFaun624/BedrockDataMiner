@@ -1,0 +1,600 @@
+Difference of "ui" between "1.14.0.2" (beta of "1.14.0") and "1.14.0.3" (beta of "1.14.0").
+
+Changed namespace "general_section":
+	Changed element "global_texture_pack_section@resource_packs.selected_stack_panel":
+		Changed field "$variables":
+			Total variable: 65 (+3, -0)
+			Moved variable "$button.store_home" to "$button.expand_unowned".
+			Changed variable "$button.expand_unowned" from "button.store_home_global" to "button.expand_unowned_global".
+			Added variable "$unowned_visible" of true.
+			Added variable "$platform_locked" of "#platform_locked_global".
+			Added variable "$no_unowned_packs_visibility_binding" of "#no_unowned_packs_visibility_global".
+Changed namespace "pdp":
+	Moved element "static_tooltip_notification_panel@common.button" to "dynamic_tooltip_notification_panel@common.button".
+	Changed element "dynamic_tooltip_notification_panel@common.button":
+		Changed field "controls":
+			Total control: 3 (+2, -2)
+			Removed control element "hover@common.static_tooltip_popup_with_image_and_text": empty.
+			Removed control element "pressed@common.static_tooltip_popup_with_image_and_text": empty.
+			Added control element "hover@common.dynamic_tooltip_popup_with_image_and_text": empty.
+			Added control element "pressed@common.dynamic_tooltip_popup_with_image_and_text": empty.
+	Changed element "summary_update_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "static_tooltip_notification_panel@pdp.static_tooltip_notification_panel": field "layer": 2.
+			Added control element "dynamic_tooltip_notification_panel@pdp.dynamic_tooltip_notification_panel": field "layer": 2.
+Changed namespace "persona":
+	Total element: 174 (+2, -0)
+	Changed element "offer_real_money_purchase_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 8 (+1, -0)
+			Added variable "$focus_id" of "offer_real_money_purchase_button".
+	Added element "persona_restricted_skin_pack_panel":
+		field "type": "panel"
+		field "size": ["100%", 58]
+		field "controls":
+			control:
+				element "background_image":
+					field "type": "image"
+					field "texture": "textures/ui/dressing_room_banner"
+					field "color": "$dressing_room_skin_picker_dark_bg_color"
+					field "alpha": "$dressing_room_panel_alpha"
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "size": ["100%", 45]
+			control:
+				element "pack_label":
+					field "type": "label"
+					field "offset": [2, 5]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": ["100%", 16]
+					field "text": "#pack_title"
+					field "color": "$dressing_room_right_side_default_text_color"
+					field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_type": "$persona_skin_pack_binding_type"
+							field "binding_collection_name": "$persona_skin_pack_collection_name"
+							field "binding_name": "#pack_title"
+	Changed element "persona_sections":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "style_un_selected@persona_category_select_button_panel":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_override_down" of "piece_offer_button".
+	Changed element "persona_skin_pack_grid":
+		Unchanged field "type": "grid"
+		Changed field "grid_item_template" from "persona.persona_skin_pack_panel" to "persona.persona_skin_pack_panel_controller".
+	Added element "persona_skin_pack_panel_controller":
+		field "type": "panel"
+		field "size": ["100%", 58]
+		field "controls":
+			control:
+				element "standard_panel@persona.persona_skin_pack_panel":
+					field "bindings":
+						binding:
+							field "binding_type": "$persona_skin_pack_binding_type"
+							field "binding_collection_name": "$persona_skin_pack_collection_name"
+							field "binding_name": "(not #is_skin_pack_multiplayer_restricted)"
+							field "binding_name_override": "#visible"
+			control:
+				element "restricted_panel@persona.persona_restricted_skin_pack_panel":
+					field "bindings":
+						binding:
+							field "binding_type": "$persona_skin_pack_binding_type"
+							field "binding_collection_name": "$persona_skin_pack_collection_name"
+							field "binding_name": "(#is_skin_pack_multiplayer_restricted)"
+							field "binding_name_override": "#visible"
+	Changed element "purchase_buttons":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "real_money_purchase_panel@persona.purchase_button_panel":
+					Changed field "$variables":
+						Total variable: 3 (+0, -1)
+						Removed variable "$focus_override_right" of "FOCUS_OVERRIDE_STOP".
+	Changed element "right_panel_bottom_buttons":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "see_pack_in_store@common_buttons.light_text_button":
+					Changed field "$variables":
+						Total variable: 7 (+1, -0)
+						Added variable "$focus_override_left" of "offer_real_money_purchase_button".
+		Added field "focus_container" of true.
+		Added field "use_last_focus" of false.
+		Added field "focus_nagivation_mode_right" of "stop".
+	Changed element "right_side_bottom_buttons":
+		Unchanged field "type": "stack_panel"
+		Added field "focus_container" of true.
+		Added field "use_last_focus" of false.
+		Added field "focus_nagivation_mode_right" of "stop".
+Changed namespace "profile":
+	Changed element "profile_screen@common.base_screen":
+		Changed field "button_mappings":
+			Changed button mapping:
+				Changed field "to_button_id" from "button.menu_exit" to "button.try_exiting".
+	Changed element "profile_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "main_panel@common_store.store_header_with_coins": field "$variables": variable "$child_control": "profile.profile_screen_main_panel".
+			Added control:
+				element "main_panel@common_store.store_header_with_coins":
+					field "$variables":
+						variable "$child_control": "profile.profile_screen_main_panel"
+						variable "$back_button_pressed_button_name": "button.try_exiting"
+Changed namespace "resource_packs":
+	Total element: 121 (+13, -0)
+	Changed element "selected_pack_movement_button@common_buttons.light_glyph_button":
+		Changed field "bindings":
+			Total binding: 3 (+1, -0)
+			Added binding:
+				field "binding_collection_name": "$button_collection_name"
+				field "binding_name": "$enabled_binding_name"
+				field "binding_name_override": "#enabled"
+				field "binding_type": "$enabled_binding_type"
+		Changed field "$variables":
+			Total variable: 5 (+2, -0)
+			Added variable "$enabled_binding_name|default" of "#is_selected".
+			Added variable "$enabled_binding_type|default" of "collection".
+		Changed field "variables":
+			Total variable: 2 (+1, -0)
+			Added variable:
+				field "requires": "($enabled_binding_name = '' and $enabled_binding_type = collection)"
+				field "$variables": variable "$enabled_binding_type": "none"
+	Changed element "selected_pack_plus_button@resource_packs.selected_pack_movement_button":
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$enabled_binding_name" of "(not $platform_locked)".
+	Added element "selected_pack_store_button_fill@resource_packs.selected_pack_movement_button":
+		field "size": ["fill", 18]
+		field "default_focus_precedence": 1
+		field "$variables":
+			variable "$pressed_button_name": "$button.store"
+			variable "$button_content": "resource_packs.store_text"
+			variable "$visible_binding_name": "#can_go_to_store"
+	Changed element "selected_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 12 (+3, -0)
+			Changed control:
+				Changed element "realms_packs_section":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 3 (+0, -1)
+						Removed control element "invalid_pack_grid@resource_packs.invalid_pack_grid": field "size": ["100%", "default"].
+			Changed control:
+				Changed element "available_packs_section":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "empty_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "to_store_button@common_buttons.light_text_button":
+											Changed field "$variables":
+												Total variable: 2 (+0, -0)
+												Changed variable "$pressed_button_name" from "$button.store_home" to "$button.more_suggested_content_offers".
+			Added control:
+				element "offset_4":
+					field "type": "panel"
+					field "size": ["100%", "6px"]
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$realms_pack_items"
+							field "binding_name": "#realms_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+			Added control element "unowned_packs_title_button@resource_packs.unowned_packs_title_button": field "visible": "$unowned_visible".
+			Added control:
+				element "unowned_packs_section":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "offset":
+								field "type": "panel"
+								field "size": ["100%", "6px"]
+								field "bindings":
+									binding:
+										field "binding_name": "(not $no_unowned_packs_visibility_binding)"
+										field "binding_name_override": "#visible"
+						control:
+							element "unowned_pack_grid@resource_packs.unowned_pack_grid":
+								field "size": ["100%", "default"]
+								field "$variables":
+									variable "$unowned_grid_visible_binding_name": "(not $no_unowned_packs_visibility_binding)"
+									variable "$unowned_grid_visible_binding_type": "global"
+						control:
+							element "to_store_button@common_buttons.light_text_button":
+								field "size": ["100%", 15]
+								field "$variables":
+									variable "$button_text": "resourcePack.suggestedContent.button.viewMore"
+									variable "$pressed_button_name": "$button.more_suggested_content_offers"
+						control:
+							element "offset_4":
+								field "type": "panel"
+								field "size": ["100%", "10px"]
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$unowned_pack_items"
+							field "binding_name": "#unowned_grid_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+	Added element "unowned_file_size_label@resource_packs.selected_file_size_label" of field "$variables": variable "$size_collection_name": "$unowned_pack_items".
+	Added element "unowned_icon_image@resource_packs.icon_image" of field "$variables": variable "$icon_collection_name": "$unowned_pack_items".
+	Added element "unowned_pack_button@resource_packs.common_pack_button":
+		field "controls":
+			control: element "default@resource_packs.unowned_pack_button_layout": empty
+			control: element "pressed@resource_packs.unowned_pack_button_layout_hover": empty
+			control: element "hover@resource_packs.unowned_pack_button_layout_hover": empty
+		field "bindings":
+			binding:
+				field "binding_collection_name": "$unowned_pack_items"
+				field "binding_type": "collection_details"
+		field "$variables": variable "$pressed_button_name": "$button.unowned_pack"
+	Added element "unowned_pack_button_layout":
+		field "type": "panel"
+		field "size": ["100%", "100%cm + 2px"]
+		field "controls":
+			control:
+				element "unowned_icon_image@resource_packs.unowned_icon_image":
+					field "layer": 4
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": [42, 42]
+					field "offset": [1, 0]
+			control:
+				element "text_panel_small@resource_packs.unowned_text_panel":
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_type": "collection_details"
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_name": "#is_read_more"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+			control:
+				element "text_panel_full@resource_packs.unowned_text_panel":
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_type": "collection_details"
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_name": "#is_read_less"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+					field "$variables":
+						variable "$size":
+							item 0: "100% - 60px"
+							item 1: "default"
+			control:
+				element "read_more_button_panel@common_buttons.read_button":
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_type": "collection_details"
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_name": "#is_read_more"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+					field "$variables":
+						variable "$single_line_label_text": "store.mashup.readMore"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$bindings":
+							item 0:
+								field "binding_collection_name": "$name_collection_name"
+								field "binding_type": "collection_details"
+							item 1:
+								field "binding_type": "view"
+								field "source_property_name": "#using_ellipses"
+								field "target_property_name": "#visible"
+			control:
+				element "read_less_button_panel@common_buttons.read_button":
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "$variables":
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$single_line_label_text": "store.mashup.readLess"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$bindings":
+							item 0:
+								field "binding_collection_name": "$name_collection_name"
+								field "binding_type": "collection_details"
+							item 1:
+								field "binding_collection_name": "$name_collection_name"
+								field "binding_name": "#is_read_less"
+								field "binding_name_override": "#visible"
+								field "binding_type": "collection"
+		field "$variables": variable "$name_collection_name": "$unowned_pack_items"
+	Added element "unowned_pack_button_layout_hover":
+		field "type": "panel"
+		field "size": ["100%", "100%cm"]
+		field "controls":
+			control:
+				element "hover_small@common.focus_border_white":
+					field "size": ["100%", 44]
+					field "offset": [0, -1]
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_type": "collection_details"
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_name": "#is_read_more"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+			control:
+				element "unowned_icon_image@resource_packs.unowned_icon_image":
+					field "layer": 4
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": [42, 42]
+					field "offset": [1, 0]
+			control:
+				element "text_panel_small@resource_packs.unowned_text_panel":
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_type": "collection_details"
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_name": "#is_read_more"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+			control:
+				element "text_panel_full_hover":
+					field "type": "panel"
+					field "size": ["100%", "100%c + 2px"]
+					field "controls":
+						control:
+							element "text_panel_full@resource_packs.unowned_text_panel":
+								field "bindings":
+									binding:
+										field "binding_collection_name": "$name_collection_name"
+										field "binding_type": "collection_details"
+									binding:
+										field "binding_collection_name": "$name_collection_name"
+										field "binding_name": "#is_read_less"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+								field "$variables":
+									variable "$size":
+										item 0: "100% - 60px"
+										item 1: "default"
+			control:
+				element "read_more_button_panel@common_buttons.read_button":
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_type": "collection_details"
+						binding:
+							field "binding_collection_name": "$name_collection_name"
+							field "binding_name": "#is_read_more"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+					field "$variables":
+						variable "$single_line_label_text": "store.mashup.readMore"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$bindings":
+							item 0:
+								field "binding_collection_name": "$name_collection_name"
+								field "binding_type": "collection_details"
+							item 1:
+								field "binding_type": "view"
+								field "source_property_name": "#using_ellipses"
+								field "target_property_name": "#visible"
+			control:
+				element "read_less_button_panel@common_buttons.read_button":
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "$variables":
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$single_line_label_text": "store.mashup.readLess"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$bindings":
+							item 0:
+								field "binding_collection_name": "$name_collection_name"
+								field "binding_type": "collection_details"
+							item 1:
+								field "binding_collection_name": "$name_collection_name"
+								field "binding_name": "#is_read_less"
+								field "binding_name_override": "#visible"
+								field "binding_type": "collection"
+		field "$variables": variable "$name_collection_name": "$unowned_pack_items"
+	Added element "unowned_pack_description_label@resource_packs.selected_pack_description_label" of field "$variables": variable "$desc_collection_name": "$unowned_pack_items".
+	Added element "unowned_pack_grid":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "visible": false
+		field "factory":
+			field "name": "unowned_pack_factory"
+			field "control_name": "resource_packs.unowned_pack_panel"
+		field "collection_name": "$unowned_pack_items"
+		field "bindings":
+			binding:
+				field "binding_name": "$unowned_grid_dimensions"
+				field "binding_name_override": "#collection_length"
+			binding:
+				field "binding_name": "$unowned_grid_visible_binding_name"
+				field "binding_name_override": "#visible"
+				field "binding_type": "$unowned_grid_visible_binding_type"
+		field "$variables":
+			variable "$unowned_grid_visible_binding_name|default": ""
+			variable "$unowned_grid_visible_binding_type|default": "none"
+	Added element "unowned_pack_name_label@resource_packs.selected_pack_name_label" of field "$variables": variable "$name_collection_name": "$unowned_pack_items".
+	Added element "unowned_pack_panel":
+		field "type": "stack_panel"
+		field "size": ["100%-2px", "100%c"]
+		field "min_size": ["100% - 2px", "50px"]
+		field "controls":
+			control: element "unowned_pack_button@resource_packs.unowned_pack_button": field "layer": 1
+			control:
+				element "pad_0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "center_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "realms_pack_direction_buttons@resource_packs.input_button_panel": empty
+			control:
+				element "divider@common.horizontal_divider":
+					field "bindings":
+						binding:
+							field "binding_collection_name": "$button_collection_name"
+							field "binding_name": "(not #direction_button_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+			control:
+				element "pad_1":
+					field "type": "panel"
+					field "size": ["100%", 4]
+		field "$variables":
+			variable "$button_collection_name": "$unowned_pack_items"
+			variable "$resource_pack_button_1": "resource_packs.selected_pack_store_button_fill"
+	Added element "unowned_packs_title_button@common_buttons.light_content_button":
+		field "size": ["100%", 20]
+		field "$variables":
+			variable "$button_content": "resource_packs.unowned_packs_title_content"
+			variable "$pressed_button_name": "$button.expand_unowned"
+	Added element "unowned_packs_title_content@resource_packs.selected_packs_title_content":
+		field "$variables":
+			variable "$title_text": "$unowned_label_text"
+			variable "$icon_texture": "textures/blocks/grass_side_carried"
+			variable "$count_name": "#unowned_count"
+			variable "$name_collection_name": "$unowned_pack_items"
+			variable "$grid_visible": "#unowned_grid_visible"
+	Added element "unowned_text_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "offset": [-1, 1]
+		field "size": ["100% - 48px", "100%c"]
+		field "controls":
+			control:
+				element "name_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "10px"]
+					field "controls":
+						control:
+							element "unowned_pack_name_label@resource_packs.unowned_pack_name_label":
+								field "layer": 5
+								field "size": ["fill", 10]
+						control:
+							element "unowned_file_size_label@resource_packs.unowned_file_size_label":
+								field "layer": 5
+								field "size": ["default", 10]
+			control:
+				element "description_panel":
+					field "layer": 4
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "unowned_pack_description_label@resource_packs.unowned_pack_description_label":
+								field "layer": 1
+								field "size": "$size"
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+		field "$variables":
+			variable "$size|default":
+				item 0: "100% - 60px"
+				item 1: 32
+Changed namespace "token_faq":
+	Changed element "main_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 9 (+4, -4)
+			Removed control:
+				element "faq_question_2@realmsPlus_faq.image_right_faq_question_body":
+					field "$variables":
+						variable "$faq_question": "store.token_faq.question2"
+						variable "$faq_answer": "store.token_faq.answer2"
+						variable "$repo_image_texture ": "creeper_forward"
+			Removed control:
+				element "faq_question_3@realmsPlus_faq.image_left_faq_question_body":
+					field "$variables":
+						variable "$faq_question": "store.token_faq.question3"
+						variable "$faq_answer": "store.token_faq.answer3"
+						variable "$repo_image_texture ": "pig_forward"
+			Removed control:
+				element "faq_question_4@realmsPlus_faq.image_right_faq_question_body":
+					field "$variables":
+						variable "$faq_question": "store.token_faq.question4"
+						variable "$faq_answer": "store.token_faq.answer4"
+						variable "$repo_image_texture ": "wolf_forward"
+			Removed control:
+				element "faq_question_5@realmsPlus_faq.image_left_faq_question_body":
+					field "$variables":
+						variable "$faq_question": "store.token_faq.question5"
+						variable "$faq_answer": "store.token_faq.answer5"
+						variable "$repo_image_texture ": "steve_forward"
+			Added control:
+				element "faq_question_2@realmsPlus_faq.image_right_faq_question_body":
+					field "$variables":
+						variable "$faq_question": "store.token_faq.question2"
+						variable "$faq_answer": "store.token_faq.answer2"
+						variable "$repo_image_texture": "creeper_forward"
+			Added control:
+				element "faq_question_3@realmsPlus_faq.image_left_faq_question_body":
+					field "$variables":
+						variable "$faq_question": "store.token_faq.question3"
+						variable "$faq_answer": "store.token_faq.answer3"
+						variable "$repo_image_texture": "pig_forward"
+			Added control:
+				element "faq_question_4@realmsPlus_faq.image_right_faq_question_body":
+					field "$variables":
+						variable "$faq_question": "store.token_faq.question4"
+						variable "$faq_answer": "store.token_faq.answer4"
+						variable "$repo_image_texture": "wolf_forward"
+			Added control:
+				element "faq_question_5@realmsPlus_faq.image_left_faq_question_body":
+					field "$variables":
+						variable "$faq_question": "store.token_faq.question5"
+						variable "$faq_answer": "store.token_faq.answer5"
+						variable "$repo_image_texture": "steve_forward"
+Changed namespace "world_section":
+	Changed element "addon_section@resource_packs.selected_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "$variables":
+			Total variable: 65 (+3, -0)
+			Moved variable "$button.store_home" to "$button.expand_unowned".
+			Changed variable "$button.expand_unowned" from "button.store_home_addon" to "button.expand_unowned_addon".
+			Added variable "$unowned_visible" of false.
+			Added variable "$platform_locked" of "#platform_locked_addon".
+			Added variable "$no_unowned_packs_visibility_binding" of "#no_unowned_packs_visibility_addon".
+	Changed element "level_texture_pack_section@resource_packs.selected_stack_panel":
+		Changed field "$variables":
+			Total variable: 66 (+3, -0)
+			Moved variable "$button.store_home" to "$button.expand_unowned".
+			Changed variable "$button.expand_unowned" from "button.store_home_level" to "button.expand_unowned_level".
+			Added variable "$unowned_visible" of true.
+			Added variable "$platform_locked" of "#platform_locked_level".
+			Added variable "$no_unowned_packs_visibility_binding" of "#no_unowned_packs_visibility_level".

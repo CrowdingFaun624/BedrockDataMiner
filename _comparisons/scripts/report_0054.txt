@@ -1,0 +1,203 @@
+Difference of "scripts" between "1.19.30.20" (beta of "1.19.30") and "1.19.30.21" (beta of "1.19.30").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 39 (+1, -0)
+	Added script "EnchantmentTests.js":
+		'''
+		import * as GameTest from "mojang-gametest";
+		import {
+			BlockLocation,
+			Direction,
+			ItemStack,
+			Location,
+			MinecraftBlockTypes,
+			MinecraftItemTypes,
+			world,
+		} from "mojang-minecraft";
+		import GameTestExtensions from "./GameTestExtensions.js";
+		
+		
+		const ticksPerSecond = 20;
+		
+		GameTest.register("EnchantmentTests", "frostwalker_freezes_water", (test) => {
+				
+			const spawnLoc = new BlockLocation(5, 5, 2);
+			const landLoc = new BlockLocation(5, 3, 2);
+			const iceLoc = new BlockLocation(3, 2, 2);
+			const playerName = "Test Player";
+			const player = test.spawnSimulatedPlayer(spawnLoc, playerName);	
+		
+			test
+		    .startSequence()
+			.thenIdle(10) //Frostwalker boots added here through a dispenser
+			.thenExecute(() => {
+				player.move(-1, 0);
+			})
+		    .thenExecuteAfter(ticksPerSecond, () => {
+				test.assertBlockPresent(MinecraftBlockTypes.frostedIce, iceLoc, true);
+		    })
+		    .thenSucceed();
+		})
+			.structureName("EnchantmentTests:FrostWalkerFreezesWater")
+			.maxTicks(ticksPerSecond * 3)
+			.tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("EnchantmentTests", "spectator_with_frostwalker_doesnt_freeze_water", (test) => {
+				
+			const spawnLoc = new BlockLocation(5, 5, 2);
+			const landLoc = new BlockLocation(5, 3, 2);
+			const waterLoc = new BlockLocation(3, 2, 2);
+			const playerName = "Test Player";
+			const player = test.spawnSimulatedPlayer(spawnLoc, playerName);	
+		
+			test
+		    .startSequence()
+			.thenIdle(60) //Frostwalker boots added here through a dispenser
+			.thenExecute(() => {
+				player.runCommand("gamemode spectator");
+				player.move(-1, 0);
+			})
+			.thenIdle(10)
+			.thenExecute(() => {
+				player.setGameMode(1);
+				player.stopMoving();
+			})
+		    .thenExecuteAfter(ticksPerSecond, () => {
+				test.assertBlockPresent(MinecraftBlockTypes.water, waterLoc, true);
+		    })
+		    .thenSucceed();
+		})
+			.structureName("EnchantmentTests:SpecFrstWlkFreeze")
+			.maxTicks(ticksPerSecond * 5)
+			//remove this when deexperimentifying
+			//.tag(GameTest.Tags.suiteDefault);
+		
+		'''
+	Changed script "Main.js":
+		Total line: 38 (+1, -0)
+		        '''
+		        ...
+		33 33   import "scripts/PlaceSeedsTests.js";
+		34 34   import "scripts/ItemTests.js";
+		35 35   import "scripts/ItemEnchantmentsTests.js";
+		36 36   import "scripts/SculkTests.js";
+		37 37   import "scripts/VibrationTests.js";
+		   38 + import "scripts/EnchantmentTests.js";
+		        '''
+	Changed script "RedstoneTests.js":
+		Total line: 1032 (+14, -15)
+		            '''
+		            ...
+		 571  571   })
+		 572  572     .structureName("RedstoneTests:repeater_clock")
+		 573  573     .maxTicks(80)
+		 574  574     .tag(GameTest.Tags.suiteDefault);
+		 575  575   
+		      576 + GameTest.register("RedstoneTests", "torch_nor", async (test) => {
+		 576      - GameTest.register("RedstoneTests", "torch_nor", (test) => {
+		 577  577     const testEx = new GameTestExtensions(test);
+		 578  578     const inputA = new BlockLocation(4, 2, 0);
+		 579  579     const inputB = new BlockLocation(0, 2, 0);
+		 580  580     const output = new BlockLocation(2, 3, 0);
+		 581  581     const FlatNorthSouth = 0;
+		 582  582     const FlatEastWest = 1;
+		 583  583   
+		      584 +   test.pullLever(inputA);
+		 584      -   test
+		 585      -     .startSequence()
+		 586      -     .thenExecute(() => test.pullLever(inputA))
+		      585 +   await test.idle(1);
+		      586 +   await test.until(() => {
+		 587      -     .thenIdle(2)
+		 588      -     .thenWait(() => {
+		 589  587         testEx.assertBlockProperty("open_bit", FlatEastWest, output);
+		      588 +   });
+		      589 +   
+		 590      -     })
+		      590 +   test.pullLever(inputA);
+		      591 +   await test.idle(1);
+		      592 +   await test.until(() => {
+		 591      -     .thenExecute(() => test.pullLever(inputA))
+		 592      -     .thenIdle(2)
+		 593      -     .thenWait(() => {
+		 594  593         testEx.assertBlockProperty("open_bit", FlatEastWest, output);
+		      594 +   });
+		      595 +       
+		 595      -     })
+		 596      - 
+		      596 +   test.pullLever(inputB);
+		      597 +   await test.idle(1);
+		      598 +   await test.until(() => {
+		 597      -     .thenExecute(() => test.pullLever(inputB))
+		 598      -     .thenIdle(2)
+		 599      -     .thenWait(() => {
+		 600  599         testEx.assertBlockProperty("open_bit", FlatNorthSouth, output);
+		      600 +   });
+		      601 +         
+		 601      -     })
+		      602 +   test.pullLever(inputB);
+		      603 +   await test.idle(1);
+		      604 +   await test.until(() => {
+		 602      -     .thenExecute(() => test.pullLever(inputB))
+		 603      -     .thenIdle(2)
+		 604      -     .thenWait(() => {
+		 605  605         testEx.assertBlockProperty("open_bit", FlatEastWest, output);
+		      606 +   });
+		 606      -     })
+		 607      - 
+		 608      -     .thenExecute(() => {
+		      607 +   
+		      608 +   test.pullLever(inputA);
+		      609 +   await test.idle(1);
+		      610 +   test.pullLever(inputB);
+		      611 +   await test.idle(1);
+		      612 +   await test.until(() => {
+		 609      -       test.pullLever(inputA);
+		 610      -       test.pullLever(inputB);
+		 611      -     })
+		 612      - 
+		 613      -     .thenIdle(2)
+		 614      -     .thenWait(() => {
+		 615  613         testEx.assertBlockProperty("open_bit", FlatNorthSouth, output);
+		      614 +   });
+		      615 +   
+		 616      -     })
+		 617      -     .thenExecute(() => {
+		      616 +   test.pullLever(inputA);
+		      617 +   await test.idle(1);
+		      618 +   test.pullLever(inputB);    
+		      619 +   await test.idle(1)
+		      620 +   await test.until(() => {
+		 618      -       test.pullLever(inputA);
+		 619      -       test.pullLever(inputB);
+		 620      -     })
+		 621      -     .thenIdle(2)
+		 622      -     .thenWait(() => {
+		 623  621         testEx.assertBlockProperty("open_bit", FlatEastWest, output);
+		      622 +   })
+		      623 +   
+		 624      -     })
+		      624 +   test.succeed();
+		      625 + }).tag(GameTest.Tags.suiteDisabled); // test has 50% pass rate due to "timing" issues.
+		 625      -     .thenSucceed();
+		 626      - }).tag(GameTest.Tags.suiteDefault);
+		 627  626   
+		 628  627   GameTest.register("RedstoneTests", "rs_latch", (test) => {
+		 629  628     const testEx = new GameTestExtensions(test);
+		 630  629     const r = new BlockLocation(1, 2, 0);
+		 631  630     const s = new BlockLocation(2, 2, 5);
+		            ...
+		1020 1019               sideMusicPlayerComp.clearRecord();
+		1021 1020             } else {
+		1022 1021               sideMusicPlayerComp.setRecord(sideRecord);
+		1023 1022             }
+		1024 1023           })
+		     1024 +         .thenWaitAfter(3, () => {
+		1025      -         .thenWaitAfter(4, () => {
+		1026 1025             test.assertRedstonePower(output, value);
+		1027 1026           });
+		1028 1027       }
+		1029 1028     }
+		1030 1029     sequence.thenSucceed();
+		            ...
+		            '''

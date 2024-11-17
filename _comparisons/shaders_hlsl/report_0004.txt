@@ -1,0 +1,119 @@
+Difference of "shaders" between "a0.12.1_build12" (beta of "a0.12.1") and "a0.12.1_build13" (beta of "a0.12.1").
+
+Changed file "entity.fragment.hlsl":
+	Total line: 89 (+6, -7)
+	        '''
+	 1  1   #include "ShaderConstants.fxh"
+	 2  2   
+	 3    - // be sure to change the shader type to pertex shader and shader model to ps_40 (in visual studio)
+	 4    - 
+	    3 + struct PS_Input {
+	 5    - struct PS_Input
+	 6    - {
+	    4 + 	float4 position : SV_Position;
+	 7    -     float4 position : SV_Position;
+	 8  5   
+	    6 + 	float4 light : LIGHT;
+	    7 + 	float4 fogColor : FOG_COLOR;
+	 9    -     float4 light : LIGHT;
+	10    -     float4 fogColor : FOG_COLOR;
+	11    - 
+	12    -     float2 uv : TEXCOORD_0;
+	13  8   
+	    9 + #ifdef GLINT
+	   10 + 	// there is some alignment issue on the Windows Phone 1320 that causes the position
+	   11 + 	// to get corrupted if this is two floats and last in the struct memory wise
+	   12 + 	float4 layerUV : GLINT_UVS;
+	14    - #ifdef USE_OVERLAY
+	15    -     float4 overlayColor : OVERLAY_COLOR;
+	16 13   #endif
+	17 14   
+	   15 + #ifdef USE_OVERLAY
+	18    - #ifdef GLINT
+	19    - 	float2 layer1UV : UV_1;
+	   16 + 	float4 overlayColor : OVERLAY_COLOR;
+	20    - 	float2 layer2UV : UV_2;
+	21 17   #endif
+	   18 + 
+	   19 + 	float2 uv : TEXCOORD_0;
+	   20 + 
+	22 21   };
+	23 22   
+	24 23   struct PS_Output
+	25 24   {
+	26 25       float4 color : SV_Target;
+	        ...
+	53 52   #endif
+	54 53   
+	55 54   #ifdef USE_COLOR_MASK
+	56 55   	#ifdef GLINT
+	57 56   		// Applies color mask to glint texture instead and blends with original color
+	   57 + 		float4 layer1 = TEXTURE_1.Sample(TextureSampler1, frac(PSInput.layerUV.xy)).rgbr * CHANGE_COLOR;
+	   58 + 		float4 layer2 = TEXTURE_1.Sample(TextureSampler1, frac(PSInput.layerUV.zw)).rgbr * CHANGE_COLOR;
+	58    - 		float4 layer1 = TEXTURE_1.Sample(TextureSampler1, frac(PSInput.layer1UV)).rgbr * CHANGE_COLOR;
+	59    - 		float4 layer2 = TEXTURE_1.Sample(TextureSampler1, frac(PSInput.layer2UV)).rgbr * CHANGE_COLOR;
+	60 59   		float4 glint = (layer1 + layer2) * TILE_LIGHT_COLOR;
+	61 60   	#else
+	62 61   		color.rgb = lerp( color, color * CHANGE_COLOR, color.a ).rgb;
+	63 62   		color.a = 1.0;
+	64 63   	#endif
+	        ...
+	        '''
+Changed file "entity.vertex.hlsl":
+	Total line: 118 (+5, -4)
+	          '''
+	  1   1   #include "ShaderConstants.fxh"
+	  2   2   
+	  3     - 
+	  4   3   struct VS_Input
+	  5   4   {
+	  6   5       float3 position : POSITION;
+	  7   6       float4 normal : NORMAL;
+	  8   7       float2 texCoords : TEXCOORD_0;
+	          ...
+	 16  15   {
+	 17  16       float4 position : SV_Position;
+	 18  17   
+	 19  18       float4 light : LIGHT;
+	 20  19       float4 fogColor : FOG_COLOR;
+	 21     - 
+	 22     -     float2 uv : TEXCOORD_0;
+	 23  20   
+	     21 + #ifdef GLINT
+	     22 + 	// there is some alignment issue on the Windows Phone 1320 that causes the position
+	     23 + 	// to get corrupted if this is two floats and last in the struct memory wise
+	     24 + 	float4 layerUV : GLINT_UVS;
+	 24     - #ifdef USE_OVERLAY
+	 25     -     float4 overlayColor : OVERLAY_COLOR;
+	 26  25   #endif
+	     26 + 
+	     27 + #ifdef USE_OVERLAY
+	 27     - #ifdef GLINT
+	 28     - 	float2 layer1UV : UV_1;
+	     28 + 	float4 overlayColor : OVERLAY_COLOR;
+	 29     - 	float2 layer2UV : UV_2;
+	 30  29   #endif
+	     30 + 
+	     31 +     float2 uv : TEXCOORD_0;
+	 31  32   };
+	 32  33   
+	 33  34   static const float AMBIENT = 0.45;
+	 34  35   
+	 35  36   static const float XFAC = -0.1;
+	          ...
+	104 105   #ifdef USE_UV_ANIM
+	105 106   	PSInput.uv.xy += UV_ANIM.xy;
+	106 107   #endif
+	107 108   
+	108 109   #ifdef GLINT
+	    110 + 	PSInput.layerUV.xy = calculateLayerUV(VSInput.texCoords, UV_OFFSET.x, UV_ROTATION.x);
+	    111 + 	PSInput.layerUV.zw = calculateLayerUV(VSInput.texCoords, UV_OFFSET.y, UV_ROTATION.y);
+	109     - 	PSInput.layer1UV = calculateLayerUV(VSInput.texCoords, UV_OFFSET.x, UV_ROTATION.x);
+	110     - 	PSInput.layer2UV = calculateLayerUV(VSInput.texCoords, UV_OFFSET.y, UV_ROTATION.y);
+	111 112   #endif
+	112 113   
+	113 114       //fog
+	114 115       PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	115 116       PSInput.fogColor.a = clamp( ( ( PSInput.position.z / RENDER_DISTANCE ) - FOG_CONTROL.x ) / ( FOG_CONTROL.y - FOG_CONTROL.x ), 0.0, 1.0 );
+	          ...
+	          '''

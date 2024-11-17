@@ -1,0 +1,659 @@
+Difference of "ui" between "1.16.230.52" (beta of "1.17.0") and "1.16.230.54" (beta of "1.17.0").
+
+Changed namespace "coin_purchase":
+	Changed element "coin_purchase_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "not_enough_coins_panel":
+					Unchanged field "type": "panel"
+					Removed field "ignored" of "#needs_more_coins".
+Changed namespace "persona":
+	Total element: 209 (+5, -0)
+	Changed element "category_featured_offer_panel":
+		Unchanged field "type": "panel"
+		Changed field "$variables":
+			Changed variable "$category_featured_offer_size|default":
+				Changed item 0 from "20%" to "20% - 2px".
+	Changed element "info_bulb_icon@persona.icon_image":
+		Changed field "texture" from "textures/ui/infobulb_darkborder_small" to "textures/ui/infobulb".
+	Changed element "right_panel_classic_skin_default_pack_information":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+3, -2)
+			Removed control:
+				element "right_panel_default_classic_skins":
+					field "type": "label"
+					field "layer": 2
+					field "offset": [7, 0]
+					field "size": ["100% - 8px", "100% - 4px"]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "text": "#right_panel_description"
+					field "font_type": "smooth"
+					field "color": "$dressing_room_right_side_default_text_color"
+					field "bindings": binding: field "binding_name": "#right_panel_description"
+			Removed control:
+				element "select_custom_skin@common_buttons.light_content_button":
+					field "ignored": "$ignore_choose_skin"
+					field "size": ["50%", 22]
+					field "offset": [5, "100%y - 6px"]
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "$variables":
+						variable "$ignore_choose_skin|default": true
+						variable "$button_offset":
+							item 0: 0
+							item 1: -2
+						variable "$pressed_button_name": "button.choose_custom_skin"
+						variable "$button_content": "persona.minecraft_ten_button_label"
+						variable "$persona_minecraft_ten_button_label_text": "dr.classic_skins.choose_custom_skin"
+			Added control element "usage_limited@persona.usage_limited_bulb": empty.
+			Added control element "stack@persona.usage_limited_vertical_stack": empty.
+			Added control element "select_skin@persona.select_custom_skin": empty.
+	Added element "select_custom_skin@common_buttons.light_content_button":
+		field "ignored": "$ignore_choose_skin"
+		field "size": ["50%", 22]
+		field "offset": [5, "100%y - 6px"]
+		field "anchor_from": "bottom_left"
+		field "anchor_to": "bottom_left"
+		field "$variables":
+			variable "$ignore_choose_skin|default": true
+			variable "$button_offset":
+				item 0: 0
+				item 1: -2
+			variable "$pressed_button_name": "button.choose_custom_skin"
+			variable "$button_content": "persona.minecraft_ten_button_label"
+			variable "$persona_minecraft_ten_button_label_text": "dr.classic_skins.choose_custom_skin"
+	Added element "usage_limited_bulb@persona.info_bulb_icon":
+		field "offset": [7, 8]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+	Added element "usage_limited_right_panel_text":
+		field "type": "label"
+		field "layer": 2
+		field "size": ["100% - 23px", "default"]
+		field "text": "#right_panel_description"
+		field "font_type": "smooth"
+		field "font_scale_factor": 0.85
+		field "color": "$dressing_room_right_side_default_text_color"
+		field "bindings": binding: field "binding_name": "#right_panel_description"
+	Added element "usage_limited_settings_profile_button@common_buttons.underline_button":
+		field "layer": 2
+		field "$variables":
+			variable "$pressed_button_name": "button.show_profile_settings"
+			variable "$single_label_size":
+				item 0: "default"
+				item 1: 10
+			variable "$single_line_label_offset":
+				item 0: 0
+				item 1: 0
+			variable "$single_line_font_scale_factor": 1
+			variable "$single_line_label_color": "$right_side_default_text_color"
+			variable "$single_line_label_text": "dr.go_to_profile_settings_text"
+	Added element "usage_limited_vertical_stack":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "offset": [18, 7]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control: element "text@persona.usage_limited_right_panel_text": empty
+			control: element "text_button_for_settings@usage_limited_settings_profile_button": empty
+Changed namespace "play":
+	Total element: 250 (+2, -2)
+	Changed element "friends_navigation_tab@play.top_tab":
+		Changed field "$variables":
+			Total variable: 13 (+2, -0)
+			Changed variable "$visibility_binding_override_name" from "#friends_tab_bouncing" to "#friends_tab_show_bouncing".
+			Changed variable "$visibility_binding_override_name_nobounce" from "(not #friends_tab_bouncing)" to "#friends_tab_show_not_bouncing".
+			Added variable "$tab_icon_notification" of "invite_icon".
+			Added variable "$visibility_binding_override_name_notification" of "#friends_tab_show_invites".
+	Changed element "friends_navigation_tab_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 7 (+1, -0)
+			Added control:
+				element "icon_section_notification":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "bindings":
+						binding:
+							field "binding_name": "$visibility_binding_override_name_notification"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "icon@$tab_icon_notification":
+								field "layer": 3
+								field "offset": [-0.5, -1]
+	Added element "invite_icon":
+		field "type": "image"
+		field "texture": "textures/ui/invite_base"
+		field "size": [20, 20]
+	Removed element "invite_notification_icon":
+		field "type": "image"
+		field "texture": "$invite_texture"
+		field "size": [16, 16]
+	Changed element "notification_button_text_layout":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "image@play.invite_notification_icon": field "layer": 1.
+			Removed control:
+				element "count@play.common_button_text":
+					field "layer": 2
+					field "offset": [8, 8]
+					field "text": "#realms_notification_count"
+					field "bindings": binding: field "binding_name": "#realms_notification_count"
+			Added control element "image@play.invite_icon": field "layer": 1.
+			Added control element "count@start.notification_button_text_panel": field "offset": [-0.5, 0].
+	Removed element "notification_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "default@play.notification_button_text_layout":
+					field "ignored": "(not $default_state)"
+					field "$variables": variable "$invite_texture": "textures/ui/invite_base"
+			control:
+				element "hover@play.notification_button_text_layout":
+					field "ignored": "(not $hover_state)"
+					field "$variables": variable "$invite_texture": "textures/ui/invite_hover"
+			control:
+				element "pressed@play.notification_button_text_layout":
+					field "ignored": "(not $pressed_state)"
+					field "$variables": variable "$invite_texture": "textures/ui/invite_pressed"
+			control:
+				element "locked@play.notification_button_text_layout":
+					field "ignored": "(not $locked_state)"
+					field "$variables": variable "$invite_texture": "textures/ui/invite_base"
+	Added empty element "notification_content@play.notification_button_text_layout".
+Changed namespace "realmsPlus_landing":
+	Changed element "info_section_stack":
+		Unchanged field "type": "stack_panel"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from "fill" to "100%cm".
+	Changed element "info_section_text_1@realmsPlus_landing.info_section_text":
+		Changed field "controls":
+			Total control: 5 (+3, -3)
+			Removed control element "info_text_bullet_1@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info1.line1".
+			Removed control element "info_text_bullet_2@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info1.line2".
+			Removed control element "info_text_bullet_3@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info1.line3".
+			Added control element "info_text_bullet_1@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info1.line1".
+			Added control element "info_text_bullet_2@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info1.line2".
+			Added control element "info_text_bullet_3@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info1.line3".
+	Changed element "info_section_text_2@realmsPlus_landing.info_section_text":
+		Changed field "controls":
+			Total control: 7 (+4, -4)
+			Removed control element "info_text_bullet_1@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info2.line1".
+			Removed control element "info_text_bullet_2@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info2.line2".
+			Removed control:
+				element "info_text_bullet_4@realmsPlus_landing.info_text_bullet":
+					field "text": "store.realmsPlus.landing.info2.line3"
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_plus_one_month_free_trial_visible"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "info_text_bullet_5@realmsPlus_landing.info_text_bullet":
+					field "text": "#landing_info_line_4"
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_plus_one_month_free_trial_not_visible"
+							field "binding_name_override": "#visible"
+						binding: field "binding_name": "#landing_info_line_4"
+			Added control element "info_text_bullet_1@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info2.line1".
+			Added control element "info_text_bullet_2@realmsPlus_landing.info_text_bullet": field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info2.line2".
+			Added control:
+				element "info_text_bullet_4@realmsPlus_landing.info_text_bullet":
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_plus_one_month_free_trial_visible"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$info_text_line": "store.realmsPlus.landing.info2.line3"
+			Added control:
+				element "info_text_bullet_5@realmsPlus_landing.info_text_bullet":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #realms_plus_one_month_free_trial_visible)"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$info_text_line": "#landing_info_line_4"
+						variable "$text_bindings": item 0: field "binding_name": "#landing_info_line_4"
+	Changed element "info_stack":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "info_description_stack@realmsPlus_landing.info_description_stack": field "size": ["fill", "100%sm"].
+			Added control element "info_description_stack@realmsPlus_landing.info_description_stack": field "size": ["fill", "100%c"].
+	Changed element "info_text_bullet":
+		field "type": "label"
+		field "text": "$info_text_line"
+		field "size": ["100%", "default"]
+		field "font_type": "smooth"
+		field "color": "$store_white_text_color"
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "100%cm"]
+		field "controls":
+			control:
+				element "info_text_bullet_bullet":
+					field "type": "label"
+					field "text": "-"
+					field "size": [4, "default"]
+					field "font_type": "smooth"
+					field "color": "$store_white_text_color"
+			control:
+				element "info_text_bullet_body":
+					field "type": "label"
+					field "text": "$info_text_line"
+					field "size": ["fill", "default"]
+					field "font_type": "smooth"
+					field "color": "$store_white_text_color"
+					field "bindings": "$text_bindings"
+		field "$variables": variable "$text_bindings|default": empty
+	Changed element "title_stack":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 7 (+1, -1)
+			Changed control:
+				Changed element "gradient_panel2":
+					Unchanged field "type": "panel"
+					Changed field "bindings":
+						Total binding: 1 (+1, -1)
+						Removed binding:
+							field "binding_name": "#realms_plus_one_month_free_trial_not_visible"
+							field "binding_name_override": "#visible"
+						Added binding:
+							field "binding_name": "(not #realms_plus_one_month_free_trial_visible)"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "vertical_space2@realmsPlus_landing.vertical_small_spacer":
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_plus_one_month_free_trial_not_visible"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "vertical_space2@realmsPlus_landing.vertical_small_spacer":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #realms_plus_one_month_free_trial_visible)"
+							field "binding_name_override": "#visible"
+Changed namespace "start":
+	Total element: 57 (+4, -0)
+	Added element "invite_notification_button@common_buttons.light_content_button":
+		field "size": [24, 24]
+		field "$variables": variable "$button_content": "start.invite_notification_icon"
+	Changed element "invite_notification_icon":
+		Unchanged field "type": "image"
+		Changed field "texture" from "$invite_texture" to "textures/ui/invite_base".
+		Changed field "size":
+			Changed item 0 from 16 to 20.
+			Changed item 1 from 16 to 20.
+	Added element "notification_button_text":
+		field "type": "label"
+		field "color": "$tab_secondary_unchecked_text_color"
+		field "shadow": false
+		field "text": "#realms_notification_count"
+		field "bindings": binding: field "binding_name": "#realms_notification_count"
+	Added element "notification_button_text_background":
+		field "type": "image"
+		field "texture": "textures/ui/invite_number_background"
+	Added element "notification_button_text_panel":
+		field "type": "panel"
+		field "anchor_from": "top_right"
+		field "anchor_to": "center"
+		field "controls":
+			control:
+				element "text@start.notification_button_text":
+					field "layer": 9
+					field "controls":
+						control:
+							element "background@start.notification_button_text_background":
+								field "layer": -1
+								field "size": ["100%+4px", "100%"]
+								field "offset": [-0.5, 0]
+	Changed element "online_buttons_panel":
+		field "type": "panel"
+		field "anchor_to": "bottom_left"
+		field "anchor_from": "bottom_left"
+		field "size": ["50% - 75px", 32]
+		field "offset": [0, "-10%"]
+		field "controls":
+			control:
+				element "stacked_column":
+					field "type": "stack_panel"
+					field "size": ["100%", "100%"]
+					field "offset": ["5%", 0]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "orientation": "horizontal"
+					field "controls":
+						control:
+							element "gamertag_pic_and_label":
+								field "ignored": "(not $nx_os and not $is_ps4)"
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%c", 16]
+								field "controls":
+									control:
+										element "gamerpic_with_border":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "controls":
+												control:
+													element "gamerpic":
+														field "type": "image"
+														field "size": [16, 16]
+														field "layer": 1
+														field "bindings":
+															binding:
+																field "binding_name": "#gamerpic_texture_path"
+																field "binding_name_override": "#texture"
+															binding:
+																field "binding_name": "#gamerpic_texture_location_type"
+																field "binding_name_override": "#texture_file_system"
+												control:
+													element "border_white@common.focus_border_white":
+														field "layer": 3
+														field "size": [16, 16]
+									control:
+										element "spacer":
+											field "type": "panel"
+											field "size": [1, 0]
+									control:
+										element "label_panel":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "controls":
+												control:
+													element "gamertag_label":
+														field "type": "label"
+														field "color": "$main_header_text_color"
+														field "layer": 1
+														field "text": "#gamertag_label"
+														field "locked_alpha": 0.5
+														field "size": ["default", "100%"]
+														field "offset": [0, "25%"]
+														field "bindings": binding: field "binding_name": "#gamertag_label"
+								field "bindings":
+									binding:
+										field "binding_name": "#gamertag_pic_and_label_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "feedback_padding":
+								field "type": "panel"
+								field "size": ["5%", 0]
+								field "bindings":
+									binding:
+										field "binding_name": "#feedback_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "feedback_btn@start.column_frame":
+								field "ignored": "$feedback_ignored"
+								field "size": [28, 32]
+								field "controls": control: element "feedback_button@start.feedback_button": empty
+								field "bindings":
+									binding:
+										field "binding_name": "#feedback_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "xbl_btn@start.column_frame":
+								field "ignored": "($nx_os or $is_ps4)"
+								field "size": [94, 32]
+								field "max_size": ["95%", 32]
+								field "controls": control: element "xbl_signin_button@start.xbl_signin_button": empty
+								field "bindings":
+									binding:
+										field "binding_name": "#sign_in_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "platform_signin_btn@start.column_frame":
+								field "ignored": "(not $nx_os and not $is_ps4)"
+								field "size": ["90% - 6px", 32]
+								field "controls": control: element "platform_signin_button@start.platform_signin_button": empty
+								field "bindings":
+									binding:
+										field "binding_name": "#sign_in_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "signingin":
+								field "size": ["default", "100%"]
+								field "max_size": [150, "100%"]
+								field "type": "label"
+								field "color": "$main_header_text_color"
+								field "text": "#signingin_text"
+								field "bindings":
+									binding:
+										field "binding_name": "#signingin_visible"
+										field "binding_name_override": "#visible"
+									binding: field "binding_name": "#signingin_text"
+		field "bindings":
+			binding:
+				field "binding_name": "#online_buttons_visible"
+				field "binding_name_override": "#visible"
+		field "type": "stack_panel"
+		field "anchor_to": "bottom_left"
+		field "anchor_from": "bottom_left"
+		field "size": ["50% - 75px", "100%c"]
+		field "offset": [0, "-10%"]
+		field "controls":
+			control:
+				element "stacked_column":
+					field "type": "stack_panel"
+					field "size": ["100%", 32]
+					field "offset": ["5%", 0]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "orientation": "horizontal"
+					field "controls":
+						control:
+							element "gamertag_pic_and_label":
+								field "ignored": "(not $nx_os and not $is_ps4)"
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%c", 16]
+								field "controls":
+									control:
+										element "gamerpic_with_border":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "controls":
+												control:
+													element "gamerpic":
+														field "type": "image"
+														field "size": [16, 16]
+														field "layer": 1
+														field "bindings":
+															binding:
+																field "binding_name": "#gamerpic_texture_path"
+																field "binding_name_override": "#texture"
+															binding:
+																field "binding_name": "#gamerpic_texture_location_type"
+																field "binding_name_override": "#texture_file_system"
+												control:
+													element "border_white@common.focus_border_white":
+														field "layer": 3
+														field "size": [16, 16]
+									control:
+										element "spacer":
+											field "type": "panel"
+											field "size": [1, 0]
+									control:
+										element "label_panel":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "controls":
+												control:
+													element "gamertag_label":
+														field "type": "label"
+														field "color": "$main_header_text_color"
+														field "layer": 1
+														field "text": "#gamertag_label"
+														field "locked_alpha": 0.5
+														field "size": ["default", "100%"]
+														field "offset": [0, "25%"]
+														field "bindings": binding: field "binding_name": "#gamertag_label"
+								field "bindings":
+									binding:
+										field "binding_name": "#gamertag_pic_and_label_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "feedback_padding":
+								field "type": "panel"
+								field "size": ["5%", 0]
+								field "bindings":
+									binding:
+										field "binding_name": "#feedback_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "feedback_btn@start.column_frame":
+								field "ignored": "$feedback_ignored"
+								field "size": [28, 32]
+								field "controls": control: element "feedback_button@start.feedback_button": empty
+								field "bindings":
+									binding:
+										field "binding_name": "#feedback_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "xbl_btn@start.column_frame":
+								field "ignored": "($nx_os or $is_ps4)"
+								field "size": [94, 32]
+								field "max_size": ["95%", 32]
+								field "controls": control: element "xbl_signin_button@start.xbl_signin_button": empty
+								field "bindings":
+									binding:
+										field "binding_name": "#sign_in_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "platform_signin_btn@start.column_frame":
+								field "ignored": "(not $nx_os and not $is_ps4)"
+								field "size": ["90% - 6px", 32]
+								field "controls": control: element "platform_signin_button@start.platform_signin_button": empty
+								field "bindings":
+									binding:
+										field "binding_name": "#sign_in_visible"
+										field "binding_name_override": "#visible"
+						control:
+							element "signingin":
+								field "size": ["default", "100%"]
+								field "max_size": [150, "100%"]
+								field "type": "label"
+								field "color": "$main_header_text_color"
+								field "text": "#signingin_text"
+								field "bindings":
+									binding:
+										field "binding_name": "#signingin_visible"
+										field "binding_name_override": "#visible"
+									binding: field "binding_name": "#signingin_text"
+						control:
+							element "invite_btn_other@start.column_frame":
+								field "ignored": "($nx_os or $is_ps4)"
+								field "size": [28, 32]
+								field "controls": control: element "invite_button@start.realms_pending_invite_panel": empty
+			control:
+				element "invite_btn_nx_ps4@start.column_frame":
+					field "ignored": "(not $nx_os and not $is_ps4)"
+					field "size": [32, 32]
+					field "controls":
+						control:
+							element "invite_button@start.realms_pending_invite_panel":
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "offset": [8, -16]
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_notification_visible"
+							field "binding_name_override": "#visible"
+		field "bindings":
+			binding:
+				field "binding_name": "#online_buttons_visible"
+				field "binding_name_override": "#visible"
+	Changed element "realms_pending_invite_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control:
+				element "button@common.button":
+					field "size": [20, 20]
+					field "offset": [2, 2]
+					field "controls":
+						control: element "default@start.invite_notification_icon": field "$variables": variable "$invite_texture": "textures/ui/invite_base"
+						control: element "hover@start.invite_notification_icon": field "$variables": variable "$invite_texture": "textures/ui/invite_hover"
+						control: element "pressed@start.invite_notification_icon": field "$variables": variable "$invite_texture": "textures/ui/invite_pressed"
+					field "$variables":
+						variable "$pressed_button_name": "button.menu_invite_notification"
+						variable "$button_tts_header": "realmsInvitationScreen.shareTitle"
+			Added control:
+				element "button@start.invite_notification_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.menu_invite_notification"
+						variable "$button_tts_header": "realmsInvitationScreen.shareTitle"
+			Added control element "count@start.notification_button_text_panel": field "offset": [-2.5, 2].
+	Changed element "start_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+1, -2)
+			Removed control element "online_buttons_panel@start.online_buttons_panel": empty.
+			Removed control:
+				element "realms_pending_invite_panel@start.realms_pending_invite_panel":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+			Added control element "online_buttons_panel@start.online_buttons_panel": empty.
+Changed namespace "structure_editor":
+	Total element: 62 (+2, -0)
+	Added element "animation_mode_dropdown@settings_common.option_dropdown":
+		field "$variables":
+			variable "$option_label": "structure_block.animation_mode"
+			variable "$dropdown_content": "structure_editor.animation_mode_dropdown_content"
+			variable "$dropdown_area": "scrolling_panel"
+			variable "$dropdown_name": "animation_mode_dropdown"
+			variable "$option_enabled_binding_name": "#animation_mode_dropdown_enabled"
+			variable "$options_dropdown_toggle_label_binding": "#animation_mode_dropdown_toggle_label"
+			variable "$dropdown_scroll_content_size":
+				item 0: "100%"
+				item 1: "165%"
+	Added element "animation_mode_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$show_option_label": false
+			variable "$radio_buttons":
+				item 0:
+					field "structure_animation_none@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#structure_animation_none"
+						field "$radio_label_text": "structure_block.place_by_none"
+				item 1:
+					field "structure_animation_layers@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#structure_animation_layers"
+						field "$radio_label_text": "structure_block.place_by_layer"
+				item 2:
+					field "structure_animation_blocks@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#structure_animation_blocks"
+						field "$radio_label_text": "structure_block.place_by_block"
+	Changed element "load_mode_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 20 (+3, -0)
+			Added control element "animation_mode@structure_editor.animation_mode_dropdown": empty.
+			Added control:
+				element "animation_time_label":
+					field "type": "label"
+					field "text": "structure_block.animation_time"
+					field "color": "$main_header_text_color"
+			Added control:
+				element "animation_time_field@structure_editor.text_edit_control":
+					field "size": ["100% - 4px", 20]
+					field "max_length": 10
+					field "$variables":
+						variable "$text_edit_box_text_type": "NumberChars"
+						variable "$text_box_name": "#animation_time_field"
+						variable "$text_edit_box_content_binding_name": "#animation_time_content_edit_box"
+						variable "$place_holder_text": "structure_block.animation_time_tip"
+Changed namespace "vr_align_screen":
+	Changed element "vr_align_screen@common.base_screen":
+		Changed field "button_mappings":
+			Total button mapping: 4 (+1, -0)
+			Added button mapping:
+				field "ignored": "($can_quit)"
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_cancel"
+				field "mapping_type": "global"

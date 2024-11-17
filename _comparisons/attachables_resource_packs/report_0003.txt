@@ -1,0 +1,23 @@
+Difference of "attachables_resource_packs" between "1.20.73" and "1.20.80.20" (beta of "1.20.80").
+
+Added attachable "wolf_armor.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "minecraft:attachable":
+			field "description":
+				field "identifier": "minecraft:wolf_armor"
+				field "geometry": geometry "default": "geometry.wolf.armor"
+				field "materials": material "default": "wolf_armor"
+				field "render_controllers": render controller: "controller.render.wolf_armor"
+				field "scripts":
+					situation "pre_animation":
+						script: "variable.is_dyed = query.armor_color_slot(1, 0) != 1.0 || query.armor_color_slot(1, 1) != 1.0 || query.armor_color_slot(1, 2) != 1.0 || query.armor_color_slot(1, 3) != 1.0;"
+						script: "variable.damage = query.armor_damage_slot(1);"
+						script: "variable.cracks_index = variable.damage < 4 ? 0 : (variable.damage < 20 ? 1 : (variable.damage < 44 ? 2 : 3));"
+				field "textures":
+					texture "cracked_high": "textures/entity/wolf/wolf_armor_cracked_high"
+					texture "cracked_low": "textures/entity/wolf/wolf_armor_cracked_low"
+					texture "cracked_medium": "textures/entity/wolf/wolf_armor_cracked_medium"
+					texture "cracked_none": "textures/entity/wolf/wolf_armor_cracked_none"
+					texture "default": "textures/entity/wolf/wolf_armor"
+					texture "dyed": "textures/entity/wolf/wolf_armor_dyed"

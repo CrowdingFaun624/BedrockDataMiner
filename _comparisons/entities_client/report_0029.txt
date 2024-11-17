@@ -1,7 +1,7 @@
 Difference of "entities_client" between "1.12.1" and "1.13.0.1" (beta of "1.13.0").
 
 Total entity: 126 (+11, -0)
-Changed entity "armor_stand.entity":
+Changed entity "armor_stand.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -15,13 +15,13 @@ Changed entity "armor_stand.entity":
 					Added animation "controller.wiggling" of "controller.animation.armor_stand.wiggle".
 				Unchanged field "identifier": "minecraft:armor_stand"
 				Added field "scripts":
-					field "animate":
-						script: "controller.pose"
-						script: "controller.wiggling"
 					field "initialize":
 						script: "variable.armor_stand.pose_index = 0;"
 						script: "variable.armor_stand.hurt_time = 0;"
-Changed entity "arrow.entity":
+					field "animate":
+						script: "controller.pose"
+						script: "controller.wiggling"
+Changed entity "arrow.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
@@ -30,9 +30,8 @@ Changed entity "arrow.entity":
 					Added field "pre_animation":
 						script: "variable.shake = query.shake_time - query.frame_alpha;"
 						script: "variable.shake_power = variable.shake > 0.0 ? -Math.sin(variable.shake * 200.0) * variable.shake : 0.0;"
-Added entity "balloon.entity":
+Added entity "balloon.entity.json":
 	resource pack "education":
-		field "defined_in": resource pack: "chemistry"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -43,7 +42,7 @@ Added entity "balloon.entity":
 				field "textures":
 					texture "default": "textures/entity/balloon"
 					texture "rope": "textures/entity/lead_rope"
-Changed entity "creeper.entity":
+Changed entity "creeper.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
@@ -55,7 +54,7 @@ Changed entity "creeper.entity":
 						Removed script "variable.swelling_scale2 = Math.pow(Math.clamp(query.swell_amount, 0.0, 1.0), 4.0) * 0.1 + 1.0;".
 						Added script "variable.swelling_scale1 = (Math.pow(Math.clamp(query.swell_amount, 0.0, 1.0), 4.0) * 0.4 + 1.0) * variable.wobble;".
 						Added script "variable.swelling_scale2 = (Math.pow(Math.clamp(query.swell_amount, 0.0, 1.0), 4.0) * 0.1 + 1.0) / variable.wobble;".
-Changed entity "creeper.v1.0.entity":
+Changed entity "creeper.v1.0.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
@@ -67,7 +66,7 @@ Changed entity "creeper.v1.0.entity":
 						Removed script "variable.swelling_scale2 = Math.pow(Math.clamp(query.swell_amount, 0.0, 1.0), 4.0) * 0.1 + 1.0;".
 						Added script "variable.swelling_scale1 = (Math.pow(Math.clamp(query.swell_amount, 0.0, 1.0), 4.0) * 0.4 + 1.0) * variable.wobble;".
 						Added script "variable.swelling_scale2 = (Math.pow(Math.clamp(query.swell_amount, 0.0, 1.0), 4.0) * 0.1 + 1.0) / variable.wobble;".
-Changed entity "donkey.entity":
+Changed entity "donkey.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -93,15 +92,6 @@ Changed entity "donkey.entity":
 				Added field "min_engine_version" of "1.8.0".
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -127,6 +117,15 @@ Changed entity "donkey.entity":
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
 					field "scale": "0.87"
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				Changed field "textures":
 					Total texture: 21 (+0, -0)
 					Changed texture "armor_diamond" from "textures/entity/horse/armor/horse_armor_diamond" to "textures/entity/horse2/armor/horse_armor_diamond".
@@ -150,9 +149,8 @@ Changed entity "donkey.entity":
 					Changed texture "mule" from "textures/entity/horse/mule" to "textures/entity/horse2/mule".
 					Changed texture "skeleton" from "textures/entity/horse/horse_skeleton" to "textures/entity/horse2/horse_skeleton".
 					Changed texture "zombie" from "textures/entity/horse/horse_zombie" to "textures/entity/horse2/horse_zombie".
-Added entity "donkey.v1.0.entity":
+Added entity "donkey.v1.0.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -173,14 +171,6 @@ Added entity "donkey.v1.0.entity":
 					materials "horse_saddle": "horse_saddle"
 				field "render_controllers": render controller: "controller.render.horse"
 				field "scripts":
-					field "animate":
-						script: "setup"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -206,6 +196,14 @@ Added entity "donkey.v1.0.entity":
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
 					field "scale": "0.87"
+					field "animate":
+						script: "setup"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 30
@@ -231,8 +229,8 @@ Added entity "donkey.v1.0.entity":
 					texture "mule": "textures/entity/horse/mule"
 					texture "skeleton": "textures/entity/horse/horse_skeleton"
 					texture "zombie": "textures/entity/horse/horse_zombie"
-Moved entity "donkey_v2.entity" to "donkey.v1.2.6.entity".
-Changed entity "donkey.v1.2.6.entity":
+Moved entity "donkey_v2.entity.json" to "donkey.v1.2.6.entity.json".
+Changed entity "donkey.v1.2.6.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -254,15 +252,6 @@ Changed entity "donkey.v1.2.6.entity":
 					materials "horse_saddle": "horse_saddle"
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -288,7 +277,16 @@ Changed entity "donkey.v1.2.6.entity":
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
 					field "scale": "0.87"
-Changed entity "elder_guardian.entity":
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
+Changed entity "elder_guardian.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -310,12 +308,6 @@ Changed entity "elder_guardian.entity":
 				Added field "min_engine_version" of "1.8.0".
 				Added field "render_controllers" of render controller: "controller.render.guardian".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "spikes"
-						script: "swim"
-						script: "look_at_target"
-						script: "move_eye"
 					field "pre_animation":
 						script: "variable.spike_shake = Math.sin(query.life_time * 2000)/50;"
 						script: "variable.spike_animation_speed = query.life_time < 0.1 ? 0.0 : (!query.is_in_water ? (Math.round(Math.sin(query.life_time * 2000)) == 0.0 ? (Math.random(0.0, 1.0)) : (variable.spike_animation_speed)) : (query.is_moving ? (variable.spike_animation_speed - variable.spike_animation_speed * 0.06) : (variable.spike_animation_speed + (1.0 - variable.spike_animation_speed) * 0.06)));"
@@ -324,9 +316,14 @@ Changed entity "elder_guardian.entity":
 						script: "variable.tail_swim = query.life_time < 0.1 ? 0.0 : (variable.tail_swim + variable.tail_animation_speed);"
 						script: "variable.tail_base_angle = Math.sin(variable.tail_swim*20.0);"
 					field "scale": "2.35"
-Added entity "elder_guardian.entity.v1.0":
+					field "animate":
+						script: "setup"
+						script: "spikes"
+						script: "swim"
+						script: "look_at_target"
+						script: "move_eye"
+Added entity "elder_guardian.entity.v1.0.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -345,12 +342,6 @@ Added entity "elder_guardian.entity.v1.0":
 					materials "ghost": "guardian_ghost"
 				field "render_controllers": render controller: "controller.render.guardian"
 				field "scripts":
-					field "animate":
-						script: "setup"
-						script: "spikes"
-						script: "swim"
-						script: "look_at_target"
-						script: "move_eye"
 					field "pre_animation":
 						script: "variable.spike_shake = Math.sin(query.life_time * 2000)/50;"
 						script: "variable.spike_animation_speed = query.life_time < 0.1 ? 0.0 : (!query.is_in_water ? (Math.round(Math.sin(query.life_time * 2000)) == 0.0 ? (Math.random(0.0, 1.0)) : (variable.spike_animation_speed)) : (query.is_moving ? (variable.spike_animation_speed - variable.spike_animation_speed * 0.06) : (variable.spike_animation_speed + (1.0 - variable.spike_animation_speed) * 0.06)));"
@@ -359,6 +350,12 @@ Added entity "elder_guardian.entity.v1.0":
 						script: "variable.tail_swim = query.life_time < 0.1 ? 0.0 : (variable.tail_swim + variable.tail_animation_speed);"
 						script: "variable.tail_base_angle = Math.sin(variable.tail_swim*20.0);"
 					field "scale": "2.35"
+					field "animate":
+						script: "setup"
+						script: "spikes"
+						script: "swim"
+						script: "look_at_target"
+						script: "move_eye"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 36
@@ -366,9 +363,8 @@ Added entity "elder_guardian.entity.v1.0":
 					texture "beam": "textures/entity/guardian_beam"
 					texture "default": "textures/entity/guardian"
 					texture "elder": "textures/entity/guardian_elder"
-Added entity "fishing_hook.entity":
+Added entity "fishing_hook.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -377,9 +373,8 @@ Added entity "fishing_hook.entity":
 				field "materials": materials "default": "fishing_hook"
 				field "render_controllers": render controller: "controller.render.fishing_hook"
 				field "textures": texture "default": "textures/entity/fishhook"
-Added entity "fox.entity":
+Added entity "fox.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -410,7 +405,7 @@ Added entity "fox.entity":
 				field "textures":
 					texture "arctic": "textures/entity/fox/arctic_fox"
 					texture "red": "textures/entity/fox/fox"
-Changed entity "guardian.entity":
+Changed entity "guardian.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -432,12 +427,6 @@ Changed entity "guardian.entity":
 				Added field "min_engine_version" of "1.8.0".
 				Added field "render_controllers" of render controller: "controller.render.guardian".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "spikes"
-						script: "swim"
-						script: "look_at_target"
-						script: "move_eye"
 					field "pre_animation":
 						script: "variable.spike_shake = Math.sin(query.life_time * 2000)/50;"
 						script: "variable.spike_animation_speed = query.life_time < 0.1 ? 0.0 : (!query.is_in_water ? (Math.round(Math.sin(query.life_time * 2000)) == 0.0 ? (Math.random(0.0, 1.0)) : (variable.spike_animation_speed)) : (query.is_moving ? (variable.spike_animation_speed - variable.spike_animation_speed * 0.06) : (variable.spike_animation_speed + (1.0 - variable.spike_animation_speed) * 0.06)));"
@@ -445,9 +434,14 @@ Changed entity "guardian.entity":
 						script: "variable.tail_animation_speed = query.life_time < 0.1 ? 0.0 : (!query.is_in_water ? 2.0 : query.is_moving ? (variable.tail_animation_speed < 0.5 ? 4.0 : variable.tail_animation_speed + (0.5 - variable.tail_animation_speed) * 0.1) : variable.tail_animation_speed + (0.125 - variable.tail_animation_speed) * 0.2);"
 						script: "variable.tail_swim = query.life_time < 0.1 ? 0.0 : (variable.tail_swim + variable.tail_animation_speed);"
 						script: "variable.tail_base_angle = Math.sin(variable.tail_swim*20.0);"
-Added entity "guardian.entity.v1.0":
+					field "animate":
+						script: "setup"
+						script: "spikes"
+						script: "swim"
+						script: "look_at_target"
+						script: "move_eye"
+Added entity "guardian.entity.v1.0.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -466,12 +460,6 @@ Added entity "guardian.entity.v1.0":
 					materials "ghost": "guardian_ghost"
 				field "render_controllers": render controller: "controller.render.guardian"
 				field "scripts":
-					field "animate":
-						script: "setup"
-						script: "spikes"
-						script: "swim"
-						script: "look_at_target"
-						script: "move_eye"
 					field "pre_animation":
 						script: "variable.spike_shake = Math.sin(query.life_time * 2000)/50;"
 						script: "variable.spike_animation_speed = query.life_time < 0.1 ? 0.0 : (!query.is_in_water ? (Math.round(Math.sin(query.life_time * 2000)) == 0.0 ? (Math.random(0.0, 1.0)) : (variable.spike_animation_speed)) : (query.is_moving ? (variable.spike_animation_speed - variable.spike_animation_speed * 0.06) : (variable.spike_animation_speed + (1.0 - variable.spike_animation_speed) * 0.06)));"
@@ -479,6 +467,12 @@ Added entity "guardian.entity.v1.0":
 						script: "variable.tail_animation_speed = query.life_time < 0.1 ? 0.0 : (!query.is_in_water ? 2.0 : query.is_moving ? (variable.tail_animation_speed < 0.5 ? 4.0 : variable.tail_animation_speed + (0.5 - variable.tail_animation_speed) * 0.1) : variable.tail_animation_speed + (0.125 - variable.tail_animation_speed) * 0.2);"
 						script: "variable.tail_swim = query.life_time < 0.1 ? 0.0 : (variable.tail_swim + variable.tail_animation_speed);"
 						script: "variable.tail_base_angle = Math.sin(variable.tail_swim*20.0);"
+					field "animate":
+						script: "setup"
+						script: "spikes"
+						script: "swim"
+						script: "look_at_target"
+						script: "move_eye"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 26
@@ -486,7 +480,7 @@ Added entity "guardian.entity.v1.0":
 					texture "beam": "textures/entity/guardian_beam"
 					texture "default": "textures/entity/guardian"
 					texture "elder": "textures/entity/guardian_elder"
-Changed entity "horse.entity":
+Changed entity "horse.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -512,15 +506,6 @@ Changed entity "horse.entity":
 				Added field "min_engine_version" of "1.8.0".
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -545,6 +530,15 @@ Changed entity "horse.entity":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				Changed field "textures":
 					Total texture: 22 (+1, -0)
 					Changed texture "armor_diamond" from "textures/entity/horse/armor/horse_armor_diamond" to "textures/entity/horse2/armor/horse_armor_diamond".
@@ -569,9 +563,8 @@ Changed entity "horse.entity":
 					Changed texture "mule" from "textures/entity/horse/mule" to "textures/entity/horse2/mule".
 					Changed texture "skeleton" from "textures/entity/horse/horse_skeleton" to "textures/entity/horse2/horse_skeleton".
 					Changed texture "zombie" from "textures/entity/horse/horse_zombie" to "textures/entity/horse2/horse_zombie".
-Added entity "horse.v1.0.entity":
+Added entity "horse.v1.0.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -592,14 +585,6 @@ Added entity "horse.v1.0.entity":
 					materials "horse_saddle": "horse_saddle"
 				field "render_controllers": render controller: "controller.render.horse"
 				field "scripts":
-					field "animate":
-						script: "setup"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -624,6 +609,14 @@ Added entity "horse.v1.0.entity":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
+					field "animate":
+						script: "setup"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 23
@@ -649,8 +642,8 @@ Added entity "horse.v1.0.entity":
 					texture "mule": "textures/entity/horse/mule"
 					texture "skeleton": "textures/entity/horse/horse_skeleton"
 					texture "zombie": "textures/entity/horse/horse_zombie"
-Moved entity "horse_v2.entity" to "horse.v1.2.6.entity".
-Changed entity "horse.v1.2.6.entity":
+Moved entity "horse_v2.entity.json" to "horse.v1.2.6.entity.json".
+Changed entity "horse.v1.2.6.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -672,15 +665,6 @@ Changed entity "horse.v1.2.6.entity":
 					materials "horse_saddle": "horse_saddle"
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -705,10 +689,19 @@ Changed entity "horse.v1.2.6.entity":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				Changed field "textures":
 					Total texture: 22 (+1, -0)
 					Added texture "default" of "textures/entity/horse2/horse_brown".
-Changed entity "mule.entity":
+Changed entity "mule.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -734,15 +727,6 @@ Changed entity "mule.entity":
 				Added field "min_engine_version" of "1.8.0".
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -768,6 +752,15 @@ Changed entity "mule.entity":
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
 					field "scale": "0.92"
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				Changed field "textures":
 					Total texture: 21 (+0, -0)
 					Changed texture "armor_diamond" from "textures/entity/horse/armor/horse_armor_diamond" to "textures/entity/horse2/armor/horse_armor_diamond".
@@ -791,9 +784,8 @@ Changed entity "mule.entity":
 					Changed texture "mule" from "textures/entity/horse/mule" to "textures/entity/horse2/mule".
 					Changed texture "skeleton" from "textures/entity/horse/horse_skeleton" to "textures/entity/horse2/horse_skeleton".
 					Changed texture "zombie" from "textures/entity/horse/horse_zombie" to "textures/entity/horse2/horse_zombie".
-Added entity "mule.v1.0.entity":
+Added entity "mule.v1.0.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -814,14 +806,6 @@ Added entity "mule.v1.0.entity":
 					materials "horse_saddle": "horse_saddle"
 				field "render_controllers": render controller: "controller.render.horse"
 				field "scripts":
-					field "animate":
-						script: "setup"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -847,6 +831,14 @@ Added entity "mule.v1.0.entity":
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
 					field "scale": "0.92"
+					field "animate":
+						script: "setup"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 31
@@ -872,8 +864,8 @@ Added entity "mule.v1.0.entity":
 					texture "mule": "textures/entity/horse/mule"
 					texture "skeleton": "textures/entity/horse/horse_skeleton"
 					texture "zombie": "textures/entity/horse/horse_zombie"
-Moved entity "mule_v2.entity" to "mule.v1.2.6.entity".
-Changed entity "mule.v1.2.6.entity":
+Moved entity "mule_v2.entity.json" to "mule.v1.2.6.entity.json".
+Changed entity "mule.v1.2.6.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -895,15 +887,6 @@ Changed entity "mule.v1.2.6.entity":
 					materials "horse_saddle": "horse_saddle"
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -929,9 +912,17 @@ Changed entity "mule.v1.2.6.entity":
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
 					field "scale": "0.92"
-Added entity "player.entity":
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
+Added entity "player.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -987,14 +978,6 @@ Added entity "player.entity":
 					materials "default": "entity_alphatest"
 				field "render_controllers": render controller: "controller.render.player"
 				field "scripts":
-					field "animate":
-						script: script item "humanoid_base_pose": "variable.is_third_person"
-						script: script item "base_controller": "variable.is_third_person"
-						script: script item "first_person_attack_rotation": "!variable.is_third_person && variable.attack_time > 0.0f && query.get_equipped_item_name != 'map'"
-						script: script item "first_person_base_pose": "!variable.is_third_person && query.get_equipped_item_name != 'map'"
-						script: script item "first_person_walk": "!variable.is_third_person && variable.bob_animation"
-						script: script item "first_person_map_controller": "!variable.is_third_person && (query.get_equipped_item_name == 'map' || query.get_equipped_item_name(1) == 'map')"
-						script: script item "first_person_crossbow_equipped": "!variable.is_third_person && query.get_equipped_item_name == 'crossbow' && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)"
 					field "pre_animation":
 						script: "variable.tcos0 = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
 						script: "variable.tcos1 = -variable.tcos0;"
@@ -1018,16 +1001,24 @@ Added entity "player.entity":
 						script: "variable.item_use_normalized = query.main_hand_item_use_duration / query.main_hand_item_max_duration;"
 						script: "variable.sleep_x = 24.0 * math.cos(query.body_y_rotation);"
 						script: "variable.sleep_y = 24.0 * math.sin(query.body_y_rotation);"
+					field "animate":
+						script: script item "humanoid_base_pose": "variable.is_third_person"
+						script: script item "base_controller": "variable.is_third_person"
+						script: script item "first_person_attack_rotation": "!variable.is_third_person && variable.attack_time > 0.0f && query.get_equipped_item_name != 'map'"
+						script: script item "first_person_base_pose": "!variable.is_third_person && query.get_equipped_item_name != 'map'"
+						script: script item "first_person_walk": "!variable.is_third_person && variable.bob_animation"
+						script: script item "first_person_map_controller": "!variable.is_third_person && (query.get_equipped_item_name == 'map' || query.get_equipped_item_name(1) == 'map')"
+						script: script item "first_person_crossbow_equipped": "!variable.is_third_person && query.get_equipped_item_name == 'crossbow' && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0)"
 				field "textures":
 					texture "cape": "textures/entity/cape_invisible"
 					texture "default": "textures/entity/steve"
-Changed entity "sheep.entity":
+Changed entity "sheep.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
 				Unchanged field "identifier": "minecraft:sheep"
 				Removed field "particle_emitters" of particle emitter "flame": "animation.blaze.flame".
-Changed entity "skeleton_horse.entity":
+Changed entity "skeleton_horse.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -1053,15 +1044,6 @@ Changed entity "skeleton_horse.entity":
 				Added field "min_engine_version" of "1.8.0".
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -1086,6 +1068,15 @@ Changed entity "skeleton_horse.entity":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				Changed field "textures":
 					Total texture: 21 (+0, -0)
 					Changed texture "armor_diamond" from "textures/entity/horse/armor/horse_armor_diamond" to "textures/entity/horse2/armor/horse_armor_diamond".
@@ -1109,9 +1100,8 @@ Changed entity "skeleton_horse.entity":
 					Changed texture "mule" from "textures/entity/horse/mule" to "textures/entity/horse2/mule".
 					Changed texture "skeleton" from "textures/entity/horse/horse_skeleton" to "textures/entity/horse2/horse_skeleton".
 					Changed texture "zombie" from "textures/entity/horse/horse_zombie" to "textures/entity/horse2/horse_zombie".
-Added entity "skeleton_horse.v1.0.entity":
+Added entity "skeleton_horse.v1.0.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -1132,14 +1122,6 @@ Added entity "skeleton_horse.v1.0.entity":
 					materials "horse_saddle": "horse_saddle"
 				field "render_controllers": render controller: "controller.render.horse"
 				field "scripts":
-					field "animate":
-						script: "setup"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -1164,6 +1146,14 @@ Added entity "skeleton_horse.v1.0.entity":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
+					field "animate":
+						script: "setup"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 32
@@ -1189,8 +1179,8 @@ Added entity "skeleton_horse.v1.0.entity":
 					texture "mule": "textures/entity/horse/mule"
 					texture "skeleton": "textures/entity/horse/horse_skeleton"
 					texture "zombie": "textures/entity/horse/horse_zombie"
-Moved entity "skeleton_horse_v2.entity" to "skeleton_horse.v1.2.6.entity".
-Changed entity "skeleton_horse.v1.2.6.entity":
+Moved entity "skeleton_horse_v2.entity.json" to "skeleton_horse.v1.2.6.entity.json".
+Changed entity "skeleton_horse.v1.2.6.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -1212,15 +1202,6 @@ Changed entity "skeleton_horse.v1.2.6.entity":
 					materials "horse_saddle": "horse_saddle"
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -1245,7 +1226,16 @@ Changed entity "skeleton_horse.v1.2.6.entity":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
-Changed entity "villager_v2.entity":
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
+Changed entity "villager_v2.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
@@ -1259,7 +1249,7 @@ Changed entity "villager_v2.entity":
 					Total texture: 33 (+2, -0)
 					Added texture "level_emerald" of "textures/entity/villager2/levels/level_emerald".
 					Added texture "level_stone" of "textures/entity/villager2/levels/level_stone".
-Changed entity "zombie_horse.entity":
+Changed entity "zombie_horse.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -1285,15 +1275,6 @@ Changed entity "zombie_horse.entity":
 				Added field "min_engine_version" of "1.8.0".
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -1318,6 +1299,15 @@ Changed entity "zombie_horse.entity":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				Changed field "textures":
 					Total texture: 21 (+0, -0)
 					Changed texture "armor_diamond" from "textures/entity/horse/armor/horse_armor_diamond" to "textures/entity/horse2/armor/horse_armor_diamond".
@@ -1341,9 +1331,8 @@ Changed entity "zombie_horse.entity":
 					Changed texture "mule" from "textures/entity/horse/mule" to "textures/entity/horse2/mule".
 					Changed texture "skeleton" from "textures/entity/horse/horse_skeleton" to "textures/entity/horse2/horse_skeleton".
 					Changed texture "zombie" from "textures/entity/horse/horse_zombie" to "textures/entity/horse2/horse_zombie".
-Added entity "zombie_horse.v1.0.entity":
+Added entity "zombie_horse.v1.0.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -1364,14 +1353,6 @@ Added entity "zombie_horse.v1.0.entity":
 					materials "horse_saddle": "horse_saddle"
 				field "render_controllers": render controller: "controller.render.horse"
 				field "scripts":
-					field "animate":
-						script: "setup"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -1396,6 +1377,14 @@ Added entity "zombie_horse.v1.0.entity":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
+					field "animate":
+						script: "setup"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 33
@@ -1421,8 +1410,8 @@ Added entity "zombie_horse.v1.0.entity":
 					texture "mule": "textures/entity/horse/mule"
 					texture "skeleton": "textures/entity/horse/horse_skeleton"
 					texture "zombie": "textures/entity/horse/horse_zombie"
-Moved entity "zombie_horse_v2.entity" to "zombie_horse.v1.2.6".
-Changed entity "zombie_horse.v1.2.6":
+Moved entity "zombie_horse_v2.entity.json" to "zombie_horse.v1.2.6.json".
+Changed entity "zombie_horse.v1.2.6.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -1444,15 +1433,6 @@ Changed entity "zombie_horse.v1.2.6":
 					materials "horse_saddle": "horse_saddle"
 				Added field "render_controllers" of render controller: "controller.render.horse".
 				Added field "scripts":
-					field "animate":
-						script: "setup"
-						script: "head_realignment"
-						script: "stand"
-						script: "eat"
-						script: "walk"
-						script: "saddle"
-						script: "tail"
-						script: script item "baby_transform": "query.is_baby"
 					field "pre_animation":
 						script: "variable.horse.tail_random_trigger = (Math.Random(0.0, 200.0) < 1.0);"
 						script: "variable.horse.tail_counter = query.life_time > 0.0 ? (variable.horse.tail_random_trigger ? 8.0 : (variable.horse.tail_counter > 0.0 ? (variable.horse.tail_counter - 1.0) : 0.0)) : 0.0;"
@@ -1477,3 +1457,12 @@ Changed entity "zombie_horse.v1.2.6":
 						script: "variable.horse.baby_body_scale = 1.0;"
 						script: "variable.horse.baby_body_pos = 5.0;"
 						script: "variable.horse.baby_leg_scale = 1.5;"
+					field "animate":
+						script: "setup"
+						script: "head_realignment"
+						script: "stand"
+						script: "eat"
+						script: "walk"
+						script: "saddle"
+						script: "tail"
+						script: script item "baby_transform": "query.is_baby"

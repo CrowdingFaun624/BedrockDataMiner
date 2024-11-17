@@ -1,0 +1,212 @@
+Difference of "shaders_resource_packs" between "1.4.4" and "1.5.0.0" (beta of "1.5.0").
+
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 93 (+8, -15)
+		          '''
+		          ...
+		 24  24   
+		 25  25   #ifdef FOG
+		 26  26   varying vec4 fogColor;
+		 27  27   #endif
+		 28  28   
+		 29     - #ifdef NEAR_WATER
+		 30     - varying float cameraDist;
+		 31     - #endif
+		 32     - 
+		 33  29   #include "shaders/uniformShaderConstants.h"
+		 34  30   #include "shaders/util.h"
+		 35  31   
+		 36  32   LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 37  33   LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		          ...
+		 47  43   #if USE_TEXEL_AA
+		 48  44   	vec4 diffuse = texture2D_AA(TEXTURE_0, uv0);
+		 49  45   #else
+		 50  46   	vec4 diffuse = texture2D(TEXTURE_0, uv0);
+		 51  47   #endif
+		 52     - 
+		 53     - 	vec4 inColor = color;
+		 54  48   	
+		 55  49   #ifdef SEASONS_FAR
+		 56  50   	diffuse.a = 1.0;
+		 57  51   #endif
+		 58  52   
+		 59  53   #if USE_ALPHA_TEST
+		 60  54   	#ifdef ALPHA_TO_COVERAGE
+		 61  55   	#define ALPHA_THRESHOLD 0.05
+		 62  56   	#else
+		     57 + 	#define ALPHA_THRESHOLD 0.5
+		     58 + 	#endif
+		     59 + 	if(diffuse.a < ALPHA_THRESHOLD)
+		 63     - 	#define ALPHA_THRESHOLD 0.5
+		     60 + 		discard;
+		     61 + #endif
+		 64     - 	#endif
+		     62 + 	
+		     63 + vec4 inColor = color;
+		     64 + 
+		     65 + #if defined(BLEND)
+		     66 + 	diffuse.a *= inColor.a;
+		 65     - 	if(diffuse.a < ALPHA_THRESHOLD)
+		 66     - 		discard;
+		 67  67   #endif
+		     68 + 
+		 68     - 	
+		 69  69   #if !defined(ALWAYS_LIT)
+		     70 + 	diffuse *= texture2D( TEXTURE_1, uv1 );
+		 70     - 	diffuse = diffuse * texture2D( TEXTURE_1, uv1 );
+		 71  71   #endif
+		 72  72   
+		 73  73   #ifndef SEASONS
+		 74     - 
+		     74 + 	#if !USE_ALPHA_TEST && !defined(BLEND)
+		 75     - #if !USE_ALPHA_TEST && !defined(BLEND)
+		 76     - 	diffuse.a = inColor.a;
+		 77     - #elif defined(BLEND)
+		 78     - 	#ifdef NEAR_WATER
+		 79  75   		diffuse.a = inColor.a;
+		 80     - 		float alphaFadeOut = clamp(cameraDist, 0.0, 1.0);
+		 81     - 		diffuse.a = mix(diffuse.a, 1.0, alphaFadeOut);
+		 82  76   	#endif
+		 83     - #endif	
+		 84  77   	
+		 85  78   	diffuse.rgb *= inColor.rgb;
+		 86  79   #else
+		 87  80   	vec2 uv = inColor.xy;
+		 88  81   	diffuse.rgb *= mix(vec3(1.0,1.0,1.0), texture2D( TEXTURE_2, uv).rgb*2.0, inColor.b);
+		          ...
+		 93  86   #ifdef FOG
+		 94  87   	diffuse.rgb = mix( diffuse.rgb, fogColor.rgb, fogColor.a );
+		 95  88   #endif
+		 96  89   
+		 97  90   	gl_FragColor = diffuse;
+		     91 + 	
+		 98     - 
+		 99  92   #endif // BYPASS_PIXEL_SHADER
+		100  93   }
+		          '''
+Changed resource pack "renderchunk.vertex":
+	Changed file "vanilla":
+		Total line: 117 (+10, -9)
+		          '''
+		          ...
+		 20  20   
+		 21  21   #ifdef FOG
+		 22  22   	varying vec4 fogColor;
+		 23  23   #endif
+		 24  24   
+		 25     - #ifdef NEAR_WATER
+		 26     - 	varying float cameraDist;
+		 27     - #endif
+		 28     - 
+		 29  25   #include "shaders/uniformWorldConstants.h"
+		 30  26   #include "shaders/uniformPerFrameConstants.h"
+		 31  27   #include "shaders/uniformShaderConstants.h"
+		 32  28   #include "shaders/uniformRenderChunkConstants.h"
+		 33  29   
+		          ...
+		 65  61   	color = COLOR;
+		 66  62   #endif
+		 67  63   
+		 68  64   ///// find distance from the camera
+		 69  65   
+		     66 + #if defined(FOG) || defined(BLEND)
+		 70     - #if defined(FOG) || defined(NEAR_WATER)
+		 71  67   	#ifdef FANCY
+		 72  68   		vec3 relPos = -worldPos.xyz;
+		 73  69   		float cameraDepth = length(relPos);
+		 74     - 		#ifdef NEAR_WATER
+		 75     - 			cameraDist = cameraDepth / FAR_CHUNKS_DISTANCE;
+		 76     - 		#endif
+		 77  70   	#else
+		 78  71   		float cameraDepth = pos.z;
+		     72 + 	#endif
+		     73 + #endif
+		     74 + 
+		     75 + ///// apply fog
+		     76 + 
+		     77 + #ifdef FOG
+		     78 + 	float len = cameraDepth / RENDER_DISTANCE;
+		 79     - 		#ifdef NEAR_WATER
+		 80     - 			vec3 relPos = -worldPos.xyz;
+		 81     - 			float camDist = length(relPos);
+		 82     - 			cameraDist = camDist / FAR_CHUNKS_DISTANCE;
+		     79 + 	#ifdef ALLOW_FADE
+		     80 + 		len += RENDER_CHUNK_FOG_ALPHA;
+		 83     - 		#endif
+		 84  81   	#endif
+		     82 + 
+		     83 +     fogColor.rgb = FOG_COLOR.rgb;
+		     84 + 	fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		 85  85   #endif
+		 86     - 
+		 87     - ///// apply fog
+		 88  86   
+		     87 + ///// blended layer (mostly water) magic
+		     88 + #ifdef BLEND
+		 89     - #ifdef FOG
+		     89 + 	//Mega hack: only things that become opaque are allowed to have vertex-driven transparency in the Blended layer...
+		     90 + 	//to fix this we'd need to find more space for a flag in the vertex format. color.a is the only unused part
+		     91 + 	bool shouldBecomeOpaqueInTheDistance = color.a < 0.95;
+		     92 + 	if(shouldBecomeOpaqueInTheDistance) {
+		     93 + 		#ifdef FANCY  /////enhance water
+		     94 + 			float cameraDist = cameraDepth / FAR_CHUNKS_DISTANCE;
+		     95 + 			color = COLOR;
+		 90     - 	float len = cameraDepth / RENDER_DISTANCE;
+		 91     - 	#ifdef ALLOW_FADE
+		 92     - 		len += RENDER_CHUNK_FOG_ALPHA;
+		 93     - 	#endif
+		 94     - 
+		 95     -     fogColor.rgb = FOG_COLOR.rgb;
+		     96 + 		#else
+		     97 + 			// Completely insane, but if I don't have these two lines in here, the water doesn't render on a Nexus 6
+		     98 + 			vec4 surfColor = vec4(color.rgb, 1.0);
+		     99 + 			color = surfColor;
+		    100 + 				
+		    101 + 			vec3 relPos = -worldPos.xyz;
+		    102 + 			float camDist = length(relPos);
+		    103 + 			float cameraDist = camDist / FAR_CHUNKS_DISTANCE;
+		    104 + 		#endif //FANCY
+		    105 + 		
+		    106 + 		float alphaFadeOut = clamp(cameraDist, 0.0, 1.0);
+		    107 + 		color.a = mix(color.a, 1.0, alphaFadeOut);
+		    108 + 	}
+		 96     - 	fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		 97     - #endif
+		 98     - 
+		 99     - ///// water magic
+		100     - #ifdef NEAR_WATER
+		101     - 	#ifdef FANCY  /////enhance water
+		102     - 		color = COLOR;
+		103     - 	#else
+		104     - 		// Completely insane, but if I don't have these two lines in here, the water doesn't render on a Nexus 6
+		105     - 		vec4 surfColor = vec4(color.rgb, 1.0);
+		106     - 		color = surfColor;
+		107     - 	#endif //FANCY
+		108 109   #endif
+		109 110   
+		110 111   #ifndef BYPASS_PIXEL_SHADER
+		111 112   	#ifndef FOG
+		112 113   		// If the FOG_COLOR isn't used, the reflection on NVN fails to compute the correct size of the constant buffer as the uniform will also be gone from the reflection data
+		          ...
+		          '''
+Changed resource pack "util.h":
+	Changed file "vanilla":
+		Total line: 60 (+0, -0)
+		        '''
+		        ...
+		23 23   const float TEXEL_AA_LOD_MAX = 0.0;
+		24 24   
+		25 25   vec4 texture2D_AA(in sampler2D source, in highp vec2 originalUV) {
+		26 26   
+		27 27   	highp vec2 dUV_dX = dFdx(originalUV) * TEXTURE_DIMENSIONS.xy;
+		   28 + 	highp vec2 dUV_dY = dFdy(originalUV) * TEXTURE_DIMENSIONS.xy;
+		28    - 	highp vec2 dUV_dY = dFdx(originalUV) * TEXTURE_DIMENSIONS.xy;
+		29 29   
+		30 30   	highp vec2 delU = vec2(dUV_dX.x, dUV_dY.x);
+		31 31   	highp vec2 delV = vec2(dUV_dX.y, dUV_dY.y);
+		32 32   
+		33 33   	highp vec2 gradientMagnitudes = vec2(length(delU), length(delV));
+		        ...
+		        '''

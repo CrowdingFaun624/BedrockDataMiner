@@ -1,0 +1,129 @@
+Difference of "shaders" between "1.16.40" and "1.16.100.50" (beta of "1.16.100").
+Unable to create data files for 4 files between: "1.16.42", "1.16.50", "1.16.60", "1.16.61"
+
+Changed file "CohShadeGeometry.ihlsl":
+	Total line: 97 (+13, -6)
+	          '''
+	          ...
+	 38  38   #define DISTANCE_FIELD_MULTIPLIER_DIV2 3.984375f
+	 39  39   #define DISTANCE_FIELD_THRESHOLD 0.50196078431f
+	 40  40   
+	 41  41   #define SHOW_DF 0
+	 42  42   
+	     43 + float GetLuminance(float3 color)
+	     44 + {
+	     45 + 	return 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
+	     46 + }
+	 43     - #define SAMPLE2D(tex, uv) tex.Sample(TextureSampler0, uv)
+	 44     - #define COH_A8_SAMPLE_MASK .r
+	 45  47   
+	     48 + void ShadeGeometry(in PS_Input input, inout float4 outColor, inout float alpha)
+	     49 + {
+	     50 + 	// Rect/stroke rect
+	     51 + 	if (SHADER_TYPE == 0)
+	     52 + 	{
+	     53 + 		alpha = min(1.0, input.Additional.z * input.Additional.w);
+	     54 + 	}
+	 46     - float GetLuminance(float3 color)
+	 47     - {
+	 48     - 	return 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
+	 49     - }
+	 50     - 
+	 51     - void ShadeGeometry(in PS_Input input, inout float4 outColor, inout float alpha)
+	 52     - {
+	     55 + 	// Image
+	     56 + 	else if (SHADER_TYPE == 3)
+	 53     - 	// Rect/stroke rect
+	 54     - 	if (SHADER_TYPE == 0)
+	 55  57   	{
+	     58 + 		outColor = TEXTURE_0.Sample(TextureSampler0, input.Additional.xy);
+	     59 + 		alpha = input.Color.a * saturate(input.Additional.z);
+	 56     - 		alpha = min(1.0, input.Additional.z * input.Additional.w);
+	 57  60   	}
+	 58     - 	// Image
+	     61 + 	else if (SHADER_TYPE == 17)
+	 59     - 	else if (SHADER_TYPE == 3)
+	 60  62   	{
+	     63 + 		// Raster text
+	     64 + 		float dfValue = TEXTURE_1.Sample(TextureSampler1, input.Additional.xy).r;
+	     65 + 
+	     66 + 		if (BITMAP >= 0.5f) {
+	     67 + 			float4 fragColor = float4(dfValue, dfValue, dfValue, dfValue);
+	     68 + 
+	     69 + 			const float center = 0.4;
+	     70 + 			const float radius = 0.1;
+	     71 + 			fragColor = smoothstep(center - radius, center + radius, fragColor);
+	 61     - 		outColor = SAMPLE2D(TEXTURE_0, input.Additional.xy);
+	 62     - 		alpha = input.Color.a * saturate(input.Additional.z);
+	 63     - 	}
+	 64     - 	else if (SHADER_TYPE == 17)
+	 65     - 	{
+	 66     - 		// Raster text
+	 67  72   
+	     73 + 			outColor = input.Color * fragColor;
+	     74 + 		} else {
+	 68     - 		float dfValue = SAMPLE2D(TEXTURE_1, input.Additional.xy) COH_A8_SAMPLE_MASK;
+	     75 + 			const float lum = GetLuminance(input.Color.xyz);
+	     76 + 			outColor = input.Color * pow(dfValue, 1.45f - lum);
+	 69     - 		const float lum = GetLuminance(input.Color.xyz);
+	 70     - 		outColor = input.Color * pow(dfValue, 1.45f - lum);
+	     77 + 		}
+	 71  78   	}
+	 72  79   	else if (SHADER_TYPE == 18)
+	 73  80   	{
+	 74  81   		// SDF Text
+	 75  82   
+	     83 + 		float dfValue = TEXTURE_2.Sample(TextureSampler2, input.Additional.xy).r;
+	 76     - 		float dfValue = SAMPLE2D(TEXTURE_2, input.Additional.xy) COH_A8_SAMPLE_MASK;
+	 77  84   	#if SHOW_DF
+	 78  85   		outColor = float4(dfValue.xxx, 1);
+	 79  86   		return;
+	 80  87   	#endif
+	 81  88   		// Values should be in [-4, 4]
+	          ...
+	          '''
+Changed file "CohShadeGeometryRare.ihlsl":
+	Total line: 180 (+1, -1)
+	          '''
+	          ...
+	124 124   		outColor.g = dot(baseColor, COEFFICIENTS[1]);
+	125 125   		outColor.b = dot(baseColor, COEFFICIENTS[2]);
+	126 126   		outColor.a = dot(baseColor, PIXEL_OFFSETS[0]);
+	127 127   		outColor += PIXEL_OFFSETS[1];
+	128 128   
+	    129 + 		alpha = outColor.a * input.Color.a * saturate(input.Additional.z);
+	129     - 		alpha = outColor.a * input.Color.a;
+	130 130   		outColor.a = 1;
+	131 131   	}
+	132 132   	// YUV2RGB (9) YUVA2RGB (12)
+	133 133   	else if (SHADER_TYPE == 9 || SHADER_TYPE == 12)
+	134 134   	{
+	          ...
+	139 139   
+	140 140   		YCbCr -= float3(0.0625, 0.5, 0.5);
+	141 141   		float3x3 yuv2rgb = float3x3(float3(1.164, 0, 1.596), float3(1.164, -0.391, -0.813), float3(1.164, 2.018, 0));
+	142 142   		float3 rgb = mul(yuv2rgb, YCbCr);
+	143 143   
+	    144 + 		alpha = input.Color.a * saturate(input.Additional.z);
+	144     - 		alpha = input.Color.a;
+	145 145   		outColor = float4(rgb, 1.0f);
+	146 146   
+	147 147   		if (SHADER_TYPE == 12)
+	148 148   		{
+	149 149   			float a = SAMPLE2D(TEXTURE_3, input.Additional.xy) COH_A8_SAMPLE_MASK;
+	          ...
+	          '''
+Changed file "ShaderConstants.fxh":
+	Total line: 274 (+4, -0)
+	          '''
+	          ...
+	266 266       float4 RENOIR_SHADER_PS_PROPS_0;
+	267 267       float4 RENOIR_SHADER_PS_PROPS_1;
+	268 268       float4 RENOIR_SHADER_PS_PROPS_2;
+	269 269       float4 RENOIR_SHADER_PS_PROPS_3;
+	270 270   };
+	    271 + 
+	    272 + cbuffer UITextPSConstants {
+	    273 +     float BITMAP;
+	    274 + };
+	          '''

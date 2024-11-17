@@ -1,6 +1,6 @@
 Difference of "materials" between "a0.17.0.2" (beta of "1.0.0") and "a1.0.0.0" (beta of "1.0.0").
 
-Changed material "entity":
+Changed material "entity.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "entity_alphatest_change_color:entity_change_color":
@@ -11,10 +11,10 @@ Changed material "entity":
 					Removed statement "PolygonOffset".
 				Removed field "polygonOffsetLevel" of 0.1.
 				Added field "depthBias" of 100.0.
-				Added field "depthBiasOGL" of 0.5.
 				Added field "slopeScaledDepthBias" of 0.1.
+				Added field "depthBiasOGL" of 0.5.
 				Added field "slopeScaledDepthBiasOGL" of 0.5.
-Changed material "hologram":
+Changed material "hologram.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "hololens_UICursor_ingame_mainpart":
@@ -23,8 +23,8 @@ Changed material "hologram":
 					Removed statement "PolygonOffset".
 				Removed field "polygonOffsetLevel" of 2.
 				Added field "depthBias" of 2000.
-				Added field "depthBiasOGL" of 10.
 				Added field "slopeScaledDepthBias" of 2.
+				Added field "depthBiasOGL" of 10.
 				Added field "slopeScaledDepthBiasOGL" of 10.
 			Changed material "hololens_UICursor_ingame_pseudoshadow":
 				Changed field "states":
@@ -32,10 +32,10 @@ Changed material "hologram":
 					Removed statement "PolygonOffset".
 				Removed field "polygonOffsetLevel" of 1.
 				Added field "depthBias" of 1000.0.
-				Added field "depthBiasOGL" of 5.0.
 				Added field "slopeScaledDepthBias" of 1.0.
+				Added field "depthBiasOGL" of 5.0.
 				Added field "slopeScaledDepthBiasOGL" of 5.0.
-Changed material "terrain":
+Changed material "terrain.material":
 	Total resource pack: 2 (+1, -0)
 	Changed resource pack "core":
 		Changed field "materials":
@@ -46,8 +46,8 @@ Changed material "terrain":
 					Removed statement "PolygonOffset".
 				Removed field "polygonOffsetLevel" of 0.1.
 				Added field "depthBias" of 100.0.
-				Added field "depthBiasOGL" of 0.5.
 				Added field "slopeScaledDepthBias" of 0.1.
+				Added field "depthBiasOGL" of 0.5.
 				Added field "slopeScaledDepthBiasOGL" of 0.5.
 			Added material "terrain_opaque_fog_no_cull:terrain_opaque_fog" of field "states": statement: "DisableCulling".
 			Changed material "terrain_water:terrain_blend":
@@ -56,17 +56,19 @@ Changed material "terrain":
 					Removed statement "PolygonOffset".
 				Removed field "polygonOffsetLevel" of 0.1.
 				Added field "depthBias" of 100.0.
-				Added field "depthBiasOGL" of 0.5.
 				Added field "slopeScaledDepthBias" of 0.1.
+				Added field "depthBiasOGL" of 0.5.
 				Added field "slopeScaledDepthBiasOGL" of 0.5.
 	Added resource pack "vanity":
-		field "defined_in": resource pack: "festivemashup2016"
 		field "materials":
 			material "terrain_alpha_seasons:terrain_opaque":
 				field "defines":
 					definition: "ALPHA_TEST"
 					definition: "SEASONS"
 					definition: "CHANGE_COLOR_MASK"
+				field "states":
+					statement: "DisableCulling"
+					statement: "EnableAlphaToCoverage"
 				field "fragmentShader": "shaders/festive_foliage.fragment"
 				field "samplerStates":
 					sampler state:
@@ -78,13 +80,11 @@ Changed material "terrain":
 					sampler state:
 						field "samplerIndex": 2
 						field "textureFilter": "Point"
-				field "states":
-					statement: "DisableCulling"
-					statement: "EnableAlphaToCoverage"
 			material "terrain_alpha_single_side:terrain_opaque":
 				field "defines":
 					definition: "ALPHA_TEST"
 					definition: "CHANGE_COLOR_MASK"
+				field "states": statement: "EnableAlphaToCoverage"
 				field "fragmentShader": "shaders/festive_foliage.fragment"
 				field "samplerStates":
 					sampler state:
@@ -93,17 +93,16 @@ Changed material "terrain":
 					sampler state:
 						field "samplerIndex": 1
 						field "textureFilter": "Bilinear"
-				field "states": statement: "EnableAlphaToCoverage"
-Changed material "ui":
+Changed material "ui.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Total material: 22 (+0, -6)
 			Removed material "stitch_mip0":
-				field "fragmentShader": "shaders/stitch_blit.fragment"
 				field "states":
 					statement: "DisableDepthTest"
 					statement: "DisableCulling"
 				field "vertexShader": "shaders/stitch_blit.vertex"
+				field "fragmentShader": "shaders/stitch_blit.fragment"
 			Removed material "stitch_mip1:stitch_mip0" of field "defines": definition: "BLUR_RADIUS 2".
 			Removed material "stitch_mip2:stitch_mip0" of field "defines": definition: "BLUR_RADIUS 4".
 			Removed material "stitch_mip3:stitch_mip0" of field "defines": definition: "BLUR_RADIUS 8".
@@ -114,7 +113,7 @@ Changed material "ui":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
-Changed material "ui3D":
+Changed material "ui3D.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "block_overlay":
@@ -124,28 +123,28 @@ Changed material "ui3D":
 					Removed statement "PolygonOffset".
 					Added statement "StencilWrite".
 				Removed field "polygonOffsetLevel" of 0.5.
-				Added field "backFace":
-					field "stencilDepthFailOp": "Keep"
-					field "stencilFailOp": "Keep"
-					field "stencilFunc": "NotEqual"
-					field "stencilPassOp": "Replace"
 				Added field "depthBias" of 100.0.
-				Added field "depthBiasOGL" of 100.0.
-				Added field "frontFace":
-					field "stencilDepthFailOp": "Keep"
-					field "stencilFailOp": "Keep"
-					field "stencilFunc": "NotEqual"
-					field "stencilPassOp": "Replace"
 				Added field "slopeScaledDepthBias" of 15.0.
+				Added field "depthBiasOGL" of 100.0.
 				Added field "slopeScaledDepthBiasOGL" of 20.0.
-				Added field "stencilReadMask" of 2.
+				Added field "frontFace":
+					field "stencilFunc": "NotEqual"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Replace"
+				Added field "backFace":
+					field "stencilFunc": "NotEqual"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Replace"
 				Added field "stencilRef" of 2.
+				Added field "stencilReadMask" of 2.
 				Added field "stencilWriteMask" of 2.
 			Changed material "sign_text":
 				Changed field "states":
 					Total statement: 1 (+0, -1)
 					Removed statement "PolygonOffset".
 				Added field "depthBias" of 2000.0.
-				Added field "depthBiasOGL" of 10.0.
 				Added field "slopeScaledDepthBias" of 2.0.
+				Added field "depthBiasOGL" of 10.0.
 				Added field "slopeScaledDepthBiasOGL" of 10.0.

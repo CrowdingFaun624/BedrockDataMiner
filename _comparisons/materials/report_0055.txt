@@ -1,32 +1,70 @@
-Difference of "materials" between "1.2.13.12" (beta of "1.4.0") and "1.2.14.2" (beta of "1.4.0").
+Difference of "materials" between "1.4.4" and "1.5.0.0" (beta of "1.5.0").
 
-Changed material "entity":
-	Total resource pack: 2 (+1, -0)
+Changed material "terrain.material":
 	Changed resource pack "core":
 		Changed field "materials":
-			Total material: 144 (+6, -0)
-			Added empty material "clownfish:entity_alphatest".
-			Moved material "drowned:entity_alphatest" to "cod:entity_alphatest".
-			Added empty material "drowned:entity_emissive_alpha".
-			Added material "entity_multitexture_multiplicative_blend:entity":
-				field "+defines":
-					definition: "ALPHA_TEST"
-					definition: "USE_COLOR_MASK"
-					definition: "MULTIPLICATIVE_TINT"
-					definition: "MULTIPLICATIVE_TINT_COLOR"
-					definition: "USE_OVERLAY"
+			Total material: 14 (+0, -2)
+			Changed material "terrain_blend:terrain_base":
+				Changed field "+variants":
+					Total variant: 2 (+1, -1)
+					Removed variant:
+						material "underwater":
+							field "+states":
+								statement: "InvertCulling"
+								statement: "EnableStencilTest"
+					Added variant material "underwater": empty.
+			Removed material "terrain_water:terrain_blend":
+				field "+defines": definition: "NEAR_WATER"
+				field "+states": statement: "Blending"
+				field "depthBias": 0.0
+				field "slopeScaledDepthBias": 0.1
+				field "depthBiasOGL": 0.0
+				field "slopeScaledDepthBiasOGL": 0.5
+				field "+variants":
+					variant:
+						material "underwater":
+							field "+states":
+								statement: "InvertCulling"
+								statement: "EnableStencilTest"
+					variant:
+						material "fog.underwater":
+							field "+states":
+								statement: "InvertCulling"
+								statement: "EnableStencilTest"
+			Removed material "terrain_water_below_stencil":
+				field "vertexShader": "shaders/renderchunk.vertex"
+				field "vrGeometryShader": "shaders/renderchunk.geometry"
+				field "fragmentShader": "shaders/renderchunk.fragment"
+				field "+states":
+					statement: "InvertCulling"
+					statement: "DisableDepthWrite"
+					statement: "EnableStencilTest"
+					statement: "StencilWrite"
+					statement: "DisableColorWrite"
+				field "+defines": definition: "BYPASS_PIXEL_SHADER"
 				field "+samplerStates":
 					sampler state:
 						field "samplerIndex": 0
-						field "textureWrap": "Clamp"
+						field "textureFilter": "TexelAA"
 					sampler state:
 						field "samplerIndex": 1
-						field "textureWrap": "Clamp"
-				field "+states": statement: "DisableCulling"
-			Added empty material "pufferfish:entity_alphatest".
-			Added empty material "salmon:entity_alphatest".
-			Added empty material "tropicalfish:entity_multitexture_multiplicative_blend".
-	Added resource pack "education":
-		field "version": "1.0.0"
-		field "defined_in": resource pack: "chemistry"
-		field "materials": material "balloon:entity_change_color": empty
+						field "textureFilter": "Bilinear"
+				field "msaaSupport": "Both"
+				field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "UV1"
+					vertex field: field "field": "Color"
+					vertex field: field "field": "UV0"
+				field "frontFace":
+					field "stencilFunc": "Always"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Replace"
+				field "backFace":
+					field "stencilFunc": "Always"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Replace"
+				field "stencilRef": 2
+				field "stencilReadMask": 255
+				field "stencilWriteMask": 2

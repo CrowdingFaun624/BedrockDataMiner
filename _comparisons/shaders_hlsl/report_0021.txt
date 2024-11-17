@@ -1,0 +1,1239 @@
+Difference of "shaders" between "1.4.4" and "1.5.0.0" (beta of "1.5.0").
+
+Changed file "ShaderConstants.fxh":
+	Total line: 172 (+0, -59)
+	          '''
+	  1   1   // These [aren't but] should be grouped in a way that they require the least amount of updating (world data in one, model data in another, part of model data in another one, etc)
+	  2   2   
+	  3     - // This define specifies our uber root signature so that it can be 
+	  4     - // included at shader compile time, which speeds up PSO creation time.
+	  5     - // https://msdn.microsoft.com/en-us/library/windows/desktop/dn913202(v=vs.85).aspx
+	  6     - #define MinecraftRootSignature "RootFlags(ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT | DENY_DOMAIN_SHADER_ROOT_ACCESS | DENY_GEOMETRY_SHADER_ROOT_ACCESS | DENY_HULL_SHADER_ROOT_ACCESS), " \
+	  7     - 	"DescriptorTable(SRV(t0)), " \
+	  8     - 	"DescriptorTable(SRV(t1)), " \
+	  9     - 	"DescriptorTable(SRV(t2)), " \
+	 10     - 	"DescriptorTable(SRV(t3)), " \
+	 11     - 	"DescriptorTable(SRV(t4)), " \
+	 12     - 	"DescriptorTable(SRV(t5)), " \
+	 13     - 	"DescriptorTable(SRV(t6)), " \
+	 14     - 	"DescriptorTable(SRV(t7)), " \
+	 15     - 	"DescriptorTable(SRV(t8)), " \
+	 16     - 	"DescriptorTable(SRV(t9)), " \
+	 17     - 	"DescriptorTable(SRV(t10)), " \
+	 18     - 	"DescriptorTable(SRV(t11)), " \
+	 19     - 	"DescriptorTable(SRV(t12)), " \
+	 20     - 	"DescriptorTable(SRV(t13)), " \
+	 21     - 	"DescriptorTable(SRV(t14)), " \
+	 22     - 	"DescriptorTable(SRV(t15)), " \
+	 23     - 	"DescriptorTable(Sampler(s0)), " \
+	 24     - 	"DescriptorTable(Sampler(s1)), " \
+	 25     - 	"DescriptorTable(Sampler(s2)), " \
+	 26     - 	"DescriptorTable(Sampler(s3)), " \
+	 27     - 	"DescriptorTable(Sampler(s4)), " \
+	 28     - 	"DescriptorTable(Sampler(s5)), " \
+	 29     - 	"DescriptorTable(Sampler(s6)), " \
+	 30     - 	"DescriptorTable(Sampler(s7)), " \
+	 31     - 	"DescriptorTable(Sampler(s8)), " \
+	 32     - 	"DescriptorTable(Sampler(s9)), " \
+	 33     - 	"DescriptorTable(Sampler(s10)), " \
+	 34     - 	"DescriptorTable(Sampler(s11)), " \
+	 35     - 	"DescriptorTable(Sampler(s12)), " \
+	 36     - 	"DescriptorTable(Sampler(s13)), " \
+	 37     - 	"DescriptorTable(Sampler(s14)), " \
+	 38     - 	"DescriptorTable(Sampler(s15)), " \
+	 39     - 	"CBV(b0, visibility=SHADER_VISIBILITY_PIXEL), " \
+	 40     - 	"CBV(b1, visibility=SHADER_VISIBILITY_PIXEL), " \
+	 41     - 	"CBV(b2, visibility=SHADER_VISIBILITY_PIXEL), " \
+	 42     - 	"CBV(b3, visibility=SHADER_VISIBILITY_PIXEL), " \
+	 43     - 	"CBV(b4, visibility=SHADER_VISIBILITY_PIXEL), " \
+	 44     - 	"CBV(b5, visibility=SHADER_VISIBILITY_PIXEL), " \
+	 45     - 	"CBV(b0, visibility=SHADER_VISIBILITY_VERTEX), " \
+	 46     - 	"CBV(b1, visibility=SHADER_VISIBILITY_VERTEX), " \
+	 47     - 	"CBV(b2, visibility=SHADER_VISIBILITY_VERTEX), " \
+	 48     - 	"CBV(b3, visibility=SHADER_VISIBILITY_VERTEX), " \
+	 49     - 	"CBV(b4, visibility=SHADER_VISIBILITY_VERTEX), " \
+	 50     - 	"CBV(b5, visibility=SHADER_VISIBILITY_VERTEX)"
+	 51     - 
+	 52     - // HLSL root signatures require SM 5.0 or higher.  We only use SM 5.0
+	 53     - // or higher when the Feature Level is 11_0 or above.  Specifying a 
+	 54     - // root signature when compiling for DX11 silently ignores the root
+	 55     - // signature.
+	 56     - #if (VERSION >= 0xb000) 
+	 57     - #define ROOT_SIGNATURE [RootSignature(MinecraftRootSignature)]
+	 58     - #else
+	 59     - #define ROOT_SIGNATURE 
+	 60     - #endif
+	 61     - 
+	 62   3   #if (defined(USE_STEREO_TEXTURE_ARRAY) || defined(ARRAY_TEXTURE_0)) && (VERSION >= 0xa000)
+	 63   4   Texture2DArray TEXTURE_0 : register (t0);
+	 64   5   #else
+	 65   6   Texture2DMS<float4> TEXTURE_0_MS : register(t0);
+	 66   7   Texture2D TEXTURE_0 : register(t0);
+	          ...
+	          '''
+Changed file "Template.fragment.hlsl":
+	Total line: 17 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	   14 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	15    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16       PSOutput.color = PSInput.color;
+	18 17   }
+	        '''
+Changed file "Template.vertex.hlsl":
+	Total line: 29 (+1, -1)
+	        '''
+	        ...
+	14 14   {
+	15 15       float4 position : SV_Position;
+	16 16       float4 color : COLOR;
+	17 17   };
+	18 18   
+	   19 + 
+	19    - ROOT_SIGNATURE
+	   20 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	20    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	21 21   {
+	22 22       PSInput.color = VSInput.color;
+	23 23   #ifdef INSTANCEDSTEREO
+	24 24   	int i = VSInput.instanceID;
+	25 25   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], VSInput.position );
+	        ...
+	        '''
+Changed file "banner.fragment.hlsl":
+	Total line: 55 (+0, -1)
+	        '''
+	        ...
+	20 20   struct PS_Output
+	21 21   {
+	22 22   	float4 color : SV_Target;
+	23 23   };
+	24 24   
+	25    - ROOT_SIGNATURE
+	   25 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	26    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	27 26   {
+	28 27   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.texCoords.xy);
+	29 28   	float4 base = TEXTURE_0.Sample(TextureSampler0, PSInput.texCoords.zw);
+	30 29   
+	31 30   #ifndef DISABLE_TINTING
+	        ...
+	        '''
+Changed file "banner.vertex.hlsl":
+	Total line: 124 (+0, -2)
+	          '''
+	          ...
+	 78  78   #else
+	 79  79   	return 1.0;
+	 80  80   #endif
+	 81  81   }
+	 82  82   
+	 83     - ROOT_SIGNATURE
+	     83 + void main(in VS_Input VSInput, out PS_Input PSInput) {
+	 84     - void main(in VS_Input VSInput, out PS_Input PSInput)
+	 85     - {
+	 86  84   #ifdef INSTANCEDSTEREO
+	 87  85   	int i = VSInput.instanceID;
+	 88  86   	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	 89  87   #ifdef GEOMETRY_INSTANCEDSTEREO
+	 90  88   	PSInput.instanceID = i;
+	          ...
+	          '''
+Changed file "blur.fragment.hlsl":
+	Total line: 369 (+2, -2)
+	          '''
+	          ...
+	217 217   
+	218 218   struct PS_Output {
+	219 219   	float4 color : SV_Target;
+	220 220   };
+	221 221   
+	    222 + 
+	222     - ROOT_SIGNATURE
+	    223 + void main(in PS_Input PSInput, out PS_Output PSOutput) {
+	223     - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	    224 + 
+	224     - {
+	225 225   #if defined(GAUSSIAN_H) || defined(GAUSSIAN_V)
+	226 226   
+	227 227   #ifdef GAUSSIAN_H
+	228 228   	float2 texOffset = float2(1.0f, 0.0f) / TEXTURE_DIMENSIONS.xy;
+	229 229   #else //GAUSSIAN_V
+	          ...
+	          '''
+Changed file "cloud.vertex.hlsl":
+	Total line: 54 (+0, -1)
+	        '''
+	        ...
+	26 26   static const float fogNear = 0.9;
+	27 27   
+	28 28   static const float3 inverseLightDirection = float3( 0.62, 0.78, 0.0 );
+	29 29   static const float ambient = 0.7;
+	30 30   
+	31    - ROOT_SIGNATURE
+	   31 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	32    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	33 32   {
+	34 33   #ifdef INSTANCEDSTEREO
+	35 34   	int i = VSInput.instanceID;
+	36 35   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	37 36   	float3 worldPos = mul(WORLD_STEREO, float4(VSInput.position, 1));
+	        ...
+	        '''
+Changed file "color.fragment.hlsl":
+	Total line: 17 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	   14 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	15    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16       PSOutput.color = PSInput.color;
+	18 17   }
+	        '''
+Changed file "color.vertex.hlsl":
+	Total line: 41 (+1, -1)
+	        '''
+	        ...
+	20 20   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21 21   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22 22   #endif
+	23 23   };
+	24 24   
+	   25 + 
+	25    - ROOT_SIGNATURE
+	   26 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27 27   {
+	28 28       PSInput.color = VSInput.color;
+	29 29   #ifdef INSTANCEDSTEREO
+	30 30   	int i = VSInput.instanceID;
+	31 31   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	        ...
+	        '''
+Changed file "color_ex.fragment.hlsl":
+	Total line: 18 (+0, -1)
+	        '''
+	        ...
+	10 10   struct PS_Output
+	11 11   {
+	12 12       float4 color : SV_Target;
+	13 13   };
+	14 14   
+	15    - ROOT_SIGNATURE
+	   15 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	16    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	17 16   {
+	18 17       PSOutput.color = PSInput.color * CURRENT_COLOR;
+	19 18   }
+	        '''
+Changed file "color_grayscale.fragment.hlsl":
+	Total line: 28 (+1, -2)
+	        '''
+	        ...
+	 9  9   
+	10 10   struct PS_Output {
+	11 11   	float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	   14 + void main(in PS_Input PSInput, out PS_Output PSOutput) {
+	15    - void main(in PS_Input PSInput, out PS_Output PSOutput) 
+	16    - {
+	17 15   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
+	   16 + 
+	18 17   
+	19 18   #ifdef ALPHA_TEST
+	20 19   	if (diffuse.a < 0.5) {
+	21 20   		discard;
+	22 21   	}
+	        ...
+	        '''
+Changed file "color_texture.fragment.hlsl":
+	Total line: 95 (+0, -1)
+	        '''
+	        ...
+	23 23   struct PS_Output
+	24 24   {
+	25 25   	float4 color : SV_Target;
+	26 26   };
+	27 27   
+	28    - ROOT_SIGNATURE
+	   28 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	29    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	30 29   {
+	31 30   #ifdef EFFECTS_OFFSET
+	32 31   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv + EFFECT_UV_OFFSET);
+	33 32   #else
+	34 33   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
+	        ...
+	        '''
+Changed file "color_uv.vertex.hlsl":
+	Total line: 82 (+1, -1)
+	        '''
+	        ...
+	45 45   
+	46 46   	return uv * GLINT_UV_SCALE;
+	47 47   }
+	48 48   #endif
+	49 49   
+	   50 + 
+	50    - ROOT_SIGNATURE
+	   51 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	51    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	52 52   {
+	53 53       PSInput.color = VSInput.color;
+	54 54   #ifdef INSTANCEDSTEREO
+	55 55   	int i = VSInput.instanceID;
+	56 56   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	        ...
+	        '''
+Changed file "current_color.fragment.hlsl":
+	Total line: 25 (+0, -1)
+	        '''
+	        ...
+	13 13   	float depth : SV_Depth;
+	14 14   #endif
+	15 15   
+	16 16   };
+	17 17   
+	18    - ROOT_SIGNATURE
+	   18 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	19    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	20 19   {
+	21 20   	PSOutput.color = CURRENT_COLOR;
+	22 21   
+	23 22   #ifdef FORCE_DEPTH_ZERO
+	24 23   	PSOutput.depth = 0.0;
+	        ...
+	        '''
+Changed file "depth_downsample.fragment.hlsl":
+	Total line: 43 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11   	float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	15 14   void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16   	PSOutput.color = float4(0.0, 0.0, 0.0, 1.0);	//If we don't initialize this, compiler complaints :(
+	18 17   #if (VERSION >= 0xa100 /*D3D_FEATURE_LEVEL_10_1*/)
+	19 18   
+	        ...
+	        '''
+Changed file "depth_of_field.fragment.hlsl":
+	Total line: 66 (+0, -1)
+	        '''
+	        ...
+	13 13   struct PS_Output
+	14 14   {
+	15 15   	float4 color : SV_Target;
+	16 16   };
+	17 17   
+	18    - ROOT_SIGNATURE
+	19 18   void main(in PS_Input PSInput, out PS_Output PSOutput)
+	20 19   {
+	21 20   #ifdef GAUSSIAN_DOF
+	22 21   
+	23 22   	const float centerDepth = MakeDepthLinear(TEXTURE_1.Sample(TextureSampler1, float2(0.5f, 0.5f)).r, 0.025f, FAR_CHUNKS_DISTANCE, false);
+	        ...
+	        '''
+Changed file "end_portal.fragment.hlsl":
+	Total line: 59 (+0, -2)
+	        '''
+	        ...
+	22 22   	float4 color : SV_Target;
+	23 23   };
+	24 24   
+	25 25   static const float MAX_LAYER_DEPTH = 32.0;
+	26 26   
+	27    - ROOT_SIGNATURE
+	   27 + void main( in PS_Input PSInput, out PS_Output PSOutput ) {
+	28    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	29    - {
+	30 28   	#ifdef BYPASS_PIXEL_SHADER
+	31 29   		PSOutput.color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	32 30   	#else
+	33 31   		///// Decode Input Values
+	34 32   		// Decode parallax plane data
+	        ...
+	        '''
+Changed file "end_portal.vertex.hlsl":
+	Total line: 124 (+0, -2)
+	          '''
+	          ...
+	 39  39   
+	 40  40   static const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+	 41  41   
+	 42  42   static const float MAX_LAYER_DEPTH = 32.0;
+	 43  43   
+	 44     - ROOT_SIGNATURE
+	     44 + void main(in VS_Input VSInput, out PS_Input PSInput) {
+	 45     - void main(in VS_Input VSInput, out PS_Input PSInput)
+	 46     - {
+	 47  45   	///// Vertex Transformation
+	 48  46   	float3 worldPos = (VSInput.position.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
+	 49  47   	float3 viewRay = worldPos.xyz;
+	 50  48   
+	 51  49   	#ifdef INSTANCEDSTEREO
+	          ...
+	          '''
+Changed file "entity.fragment.hlsl":
+	Total line: 159 (+0, -1)
+	          '''
+	          ...
+	 47  47   float4 glintBlend(float4 dest, float4 source) {
+	 48  48   	// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+	 49  49   	return float4(source.rgb * source.rgb, source.a) + float4(dest.rgb, 0.0);
+	 50  50   }
+	 51  51   
+	 52     - ROOT_SIGNATURE
+	     52 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	 53     - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	 54  53   {
+	 55  54   	float4 color = float4( 1.0f, 1.0f, 1.0f, 1.0f );
+	 56  55   
+	 57  56   #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	 58  57   
+	          ...
+	          '''
+Changed file "entity.vertex.hlsl":
+	Total line: 156 (+0, -2)
+	          '''
+	          ...
+	102 102   
+	103 103   	return uv * GLINT_UV_SCALE;
+	104 104   }
+	105 105   #endif
+	106 106   
+	107     - ROOT_SIGNATURE
+	    107 + void main(in VS_Input VSInput, out PS_Input PSInput) {
+	108     - void main(in VS_Input VSInput, out PS_Input PSInput)
+	109     - {
+	110 108   #ifdef INSTANCEDSTEREO
+	111 109   	int i = VSInput.instanceID;
+	112 110   	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	113 111   #else
+	114 112   	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	          ...
+	          '''
+Changed file "flat_white.fragment.hlsl":
+	Total line: 16 (+0, -1)
+	        '''
+	        ...
+	 8  8   struct PS_Output
+	 9  9   {
+	10 10       float4 color : SV_Target;
+	11 11   };
+	12 12   
+	13    - ROOT_SIGNATURE
+	   13 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	14    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	15 14   {
+	16 15       PSOutput.color = float4(1,1,1,1);
+	17 16   }
+	        '''
+Changed file "hologram_texture_stereo.fragment.hlsl":
+	Total line: 27 (+0, -1)
+	        '''
+	        ...
+	13 13   struct PS_Output
+	14 14   {
+	15 15   	float4 color : SV_Target;
+	16 16   };
+	17 17   
+	18    - ROOT_SIGNATURE
+	   18 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	19    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	20 19   {
+	21 20   #ifdef INSTANCEDSTEREO
+	22 21   	float3 uvr = float3(PSInput.uv, PSInput.instanceID); // 3rd element selects the texture
+	23 22   #else
+	24 23   	int eyeIndex = 0;	//TODO: Right now this code will render mono if we were to implement non-instanced stereo rendering
+	        ...
+	        '''
+Changed file "iteminhand.fragment.hlsl":
+	Total line: 21 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	   14 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	15    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16       float4 color = lerp( float4( 1, 1, 1, 1 ), PSInput.light, PSInput.light.a );
+	18 17   
+	19 18       color.rgb = lerp( color, OVERLAY_COLOR, OVERLAY_COLOR.a ).rgb;
+	20 19   
+	        ...
+	        '''
+Changed file "levelstage_copy_vr.fragment.hlsl":
+	Total line: 23 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	   14 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	15    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16   	// when copying the levelstage texture for the rift overlay, we need to ensure alpha is 1, and
+	18 17   	// convert from linear space to SRGB
+	19 18   
+	20 19       PSOutput.color = TEXTURE_0.Sample( TextureSampler0, PSInput.uv );
+	        ...
+	        '''
+Changed file "normal_as_color.vertex.hlsl":
+	Total line: 42 (+1, -1)
+	        '''
+	        ...
+	20 20   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21 21   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22 22   #endif
+	23 23   };
+	24 24   
+	   25 + 
+	25    - ROOT_SIGNATURE
+	   26 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27 27   {
+	28 28   #ifdef INSTANCEDSTEREO
+	29 29   	int i = VSInput.instanceID;
+	30 30   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	31 31   #else
+	        ...
+	        '''
+Changed file "position.vertex.hlsl":
+	Total line: 38 (+1, -1)
+	        '''
+	        ...
+	18 18   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	19 19   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	20 20   #endif
+	21 21   };
+	22 22   
+	   23 + 
+	23    - ROOT_SIGNATURE
+	   24 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	24    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	25 25   {
+	26 26   #ifdef INSTANCEDSTEREO
+	27 27   	int i = VSInput.instanceID;
+	28 28   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	29 29   #else
+	        ...
+	        '''
+Changed file "rain_snow.fragment.hlsl":
+	Total line: 56 (+0, -1)
+	        '''
+	        ...
+	10 10   
+	11 11   struct PS_Output {
+	12 12   	float4 color : SV_Target;
+	13 13   };
+	14 14   
+	15    - ROOT_SIGNATURE
+	   15 + void main( in PS_Input PSInput, out PS_Output PSOutput ) {
+	   16 + 	
+	16    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	17    - {	
+	18 17   	PSOutput.color = TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
+	19 18   
+	20 19   	PSOutput.color.a *= PSInput.color.a;
+	21 20   
+	22 21   	float2 uv = PSInput.worldPosition.xz;
+	        ...
+	        '''
+Changed file "rain_snow.vertex.hlsl":
+	Total line: 98 (+0, -1)
+	        '''
+	        ...
+	21 21   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	22 22   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	23 23   #endif
+	24 24   };
+	25 25   
+	26    - ROOT_SIGNATURE
+	27 26   void main(in VS_Input VSInput, out PS_Input PSInput)
+	28 27   {
+	29 28   	float spriteSelector = VSInput.color.x*255.0f;
+	30 29   	PSInput.uv = UV_INFO.xy + (VSInput.uv0 * UV_INFO.zw);
+	31 30   #ifndef NO_VARIETY
+	        ...
+	        '''
+Changed file "renderchunk.fragment.hlsl":
+	Total line: 85 (+4, -12)
+	        '''
+	        ...
+	 9  9   	lpfloat4 color : COLOR;
+	10 10   	snorm float2 uv0 : TEXCOORD_0_FB_MSAA;
+	11 11   	snorm float2 uv1 : TEXCOORD_1_FB_MSAA;
+	12 12   #endif
+	13 13   
+	14    - #ifdef NEAR_WATER
+	15    - 	float cameraDist : TEXCOORD_2;
+	16    - #endif
+	17    - 
+	18 14   #ifdef FOG
+	19 15   	float4 fogColor : FOG_COLOR;
+	20 16   #endif
+	21 17   };
+	22 18   
+	23 19   struct PS_Output
+	24 20   {
+	25 21   	float4 color : SV_Target;
+	26 22   };
+	27 23   
+	28    - ROOT_SIGNATURE
+	   24 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	29    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	30 25   {
+	31 26   #ifdef BYPASS_PIXEL_SHADER
+	32 27       PSOutput.color = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	33 28       return;
+	34 29   #else
+	        ...
+	43 38   	diffuse.a = 1.0f;
+	44 39   #endif
+	45 40   
+	46 41   #if USE_ALPHA_TEST
+	47 42   	#ifdef ALPHA_TO_COVERAGE
+	   43 + 		#define ALPHA_THRESHOLD 0.05
+	48    - 	#define ALPHA_THRESHOLD 0.05
+	49 44   	#else
+	   45 + 		#define ALPHA_THRESHOLD 0.5
+	   46 + 	#endif
+	   47 + 	if(diffuse.a < ALPHA_THRESHOLD)
+	50    - 	#define ALPHA_THRESHOLD 0.5
+	   48 + 		discard;
+	   49 + #endif
+	51    - 	#endif
+	   50 + 
+	   51 + #if defined(BLEND)
+	   52 + 	diffuse.a *= PSInput.color.a;
+	52    - 	if(diffuse.a < ALPHA_THRESHOLD)
+	53    - 		discard;
+	54 53   #endif
+	55 54   
+	56 55   #if !defined(ALWAYS_LIT)
+	57 56   	diffuse = diffuse * TEXTURE_1.Sample(TextureSampler1, PSInput.uv1);
+	58 57   #endif
+	59 58   
+	60 59   #ifndef SEASONS
+	61    - 
+	   60 + 	#if !USE_ALPHA_TEST && !defined(BLEND)
+	62    - #if !USE_ALPHA_TEST && !defined(BLEND)
+	63    - 	diffuse.a = PSInput.color.a;
+	64    - #elif defined(BLEND)
+	65    - #ifdef NEAR_WATER	
+	   61 + 		diffuse.a = PSInput.color.a;
+	66    - 	diffuse.a = PSInput.color.a;
+	67    - 	float alphaFadeOut = saturate(PSInput.cameraDist.x);
+	68    - 	diffuse.a = lerp(diffuse.a, 1.0f, alphaFadeOut);
+	   62 + 	#endif	
+	69    - #endif
+	70 63   
+	71    - #endif	
+	72 64   	diffuse.rgb *= PSInput.color.rgb;
+	73 65   #else
+	74 66   	float2 uv = PSInput.color.xy;
+	75 67   	diffuse.rgb *= lerp(1.0f, TEXTURE_2.Sample(TextureSampler2, uv).rgb*2.0f, PSInput.color.b);
+	76 68   	diffuse.rgb *= PSInput.color.aaa;
+	        ...
+	        '''
+Changed file "renderchunk.vertex.hlsl":
+	Total line: 124 (+21, -15)
+	          '''
+	          ...
+	 18  18   	lpfloat4 color : COLOR;
+	 19  19   	snorm float2 uv0 : TEXCOORD_0_FB_MSAA;
+	 20  20   	snorm float2 uv1 : TEXCOORD_1_FB_MSAA;
+	 21  21   #endif
+	 22  22   
+	     23 + #ifdef FOG
+	     24 + 	float4 fogColor : FOG_COLOR;
+	     25 + #endif
+	     26 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	     27 + 	uint instanceID : SV_InstanceID;
+	 23     - #ifdef NEAR_WATER
+	 24     - 	float cameraDist : TEXCOORD_2;
+	 25  28   #endif
+	     29 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	 26     - 
+	 27     - #ifdef FOG
+	     30 + 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	 28     - 	float4 fogColor : FOG_COLOR;
+	 29  31   #endif
+	     32 + };
+	     33 + 
+	 30     - #ifdef GEOMETRY_INSTANCEDSTEREO
+	     34 + 
+	     35 + static const float rA = 1.0;
+	     36 + static const float rB = 1.0;
+	     37 + static const float3 UNIT_Y = float3(0, 1, 0);
+	     38 + static const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+	     39 + 
+	 31     - 	uint instanceID : SV_InstanceID;
+	 32     - #endif
+	 33     - #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	 34     - 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	 35     - #endif
+	 36     - };
+	 37  40   
+	     41 + void main(in VS_Input VSInput, out PS_Input PSInput) {
+	 38  42   
+	     43 + #ifndef BYPASS_PIXEL_SHADER
+	 39     - static const float rA = 1.0;
+	     44 + 	PSInput.uv0 = VSInput.uv0;
+	     45 + 	PSInput.uv1 = VSInput.uv1;
+	     46 + 	PSInput.color = VSInput.color;
+	     47 + #endif
+	 40     - static const float rB = 1.0;
+	 41     - static const float3 UNIT_Y = float3(0, 1, 0);
+	 42     - static const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+	 43     - 
+	 44  48   
+	     49 + #ifdef AS_ENTITY_RENDERER
+	 45     - ROOT_SIGNATURE
+	 46     - void main(in VS_Input VSInput, out PS_Input PSInput)
+	 47     - {
+	     50 + 	#ifdef INSTANCEDSTEREO
+	 48     - #ifndef BYPASS_PIXEL_SHADER
+	     51 + 		int i = VSInput.instanceID;
+	     52 + 		PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	     53 + 	#else
+	     54 + 		PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	     55 + 	#endif
+	 49     - 	PSInput.uv0 = VSInput.uv0;
+	 50     - 	PSInput.uv1 = VSInput.uv1;
+	 51     - 	PSInput.color = VSInput.color;
+	 52     - #endif
+	     56 + 		float3 worldPos = PSInput.position;
+	 53     - 
+	     57 + #else
+	     58 + 		float3 worldPos = (VSInput.position.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
+	     59 + 	
+	     60 + 		// Transform to view space before projection instead of all at once to avoid floating point errors
+	     61 + 		// Not required for entities because they are already offset by camera translation before rendering
+	     62 + 		// World position here is calculated above and can get huge
+	     63 + 	#ifdef INSTANCEDSTEREO
+	     64 + 		int i = VSInput.instanceID;
+	 54     - #ifdef AS_ENTITY_RENDERER
+	 55     - 	#ifdef INSTANCEDSTEREO
+	 56     - 		int i = VSInput.instanceID;
+	 57     - 		PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	 58     - 	#else
+	 59     - 		PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	 60     - 	#endif
+	 61     - 		float3 worldPos = PSInput.position;
+	     65 + 	
+	     66 + 		PSInput.position = mul(WORLDVIEW_STEREO[i], float4(worldPos, 1 ));
+	     67 + 		PSInput.position = mul(PROJ_STEREO[i], PSInput.position);
+	 62     - #else
+	 63     - 		float3 worldPos = (VSInput.position.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
+	 64  68   	
+	     69 + 	#else
+	 65     - 		// Transform to view space before projection instead of all at once to avoid floating point errors
+	     70 + 		PSInput.position = mul(WORLDVIEW, float4( worldPos, 1 ));
+	     71 + 		PSInput.position = mul(PROJ, PSInput.position);
+	     72 + 	#endif
+	     73 + 
+	     74 + #endif
+	     75 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	     76 + 		PSInput.instanceID = VSInput.instanceID;
+	 66     - 		// Not required for entities because they are already offset by camera translation before rendering
+	 67     - 		// World position here is calculated above and can get huge
+	 68     - 	#ifdef INSTANCEDSTEREO
+	 69     - 		int i = VSInput.instanceID;
+	 70     - 	
+	 71     - 		PSInput.position = mul(WORLDVIEW_STEREO[i], float4(worldPos, 1 ));
+	 72     - 		PSInput.position = mul(PROJ_STEREO[i], PSInput.position);
+	 73     - 	
+	     77 + #endif 
+	     78 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	     79 + 		PSInput.renTarget_id = VSInput.instanceID;
+	     80 + #endif
+	 74     - 	#else
+	 75     - 		PSInput.position = mul(WORLDVIEW, float4( worldPos, 1 ));
+	 76     - 		PSInput.position = mul(PROJ, PSInput.position);
+	 77     - 	#endif
+	     81 + ///// find distance from the camera
+	 78  82   
+	     83 + #if defined(FOG) || defined(BLEND)
+	     84 + 	#ifdef FANCY
+	     85 + 		float3 relPos = -worldPos;
+	     86 + 		float cameraDepth = length(relPos);
+	     87 + 	#else
+	     88 + 		float cameraDepth = PSInput.position.z;
+	     89 + 	#endif
+	 79     - #endif
+	 80     - #ifdef GEOMETRY_INSTANCEDSTEREO
+	 81     - 		PSInput.instanceID = VSInput.instanceID;
+	 82     - #endif 
+	 83     - #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	 84     - 		PSInput.renTarget_id = VSInput.instanceID;
+	 85  90   #endif
+	     91 + 
+	     92 + 	///// apply fog
+	 86     - ///// find distance from the camera
+	 87  93   
+	 88     - #if defined(FOG) || defined(NEAR_WATER)
+	     94 + #ifdef FOG
+	 89     - 	#ifdef FANCY
+	 90     - 		float3 relPos = -worldPos;
+	     95 + 	float len = cameraDepth / RENDER_DISTANCE;
+	     96 + #ifdef ALLOW_FADE
+	     97 + 	len += RENDER_CHUNK_FOG_ALPHA.r;
+	     98 + #endif
+	 91     - 		float cameraDepth = length(relPos);
+	 92     - 		#ifdef NEAR_WATER
+	 93     - 			PSInput.cameraDist = cameraDepth / FAR_CHUNKS_DISTANCE;
+	 94     - 		#endif
+	     99 + 
+	    100 + 	PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	    101 + 	PSInput.fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	    102 + 
+	    103 + #endif
+	    104 + 
+	    105 + ///// blended layer (mostly water) magic
+	    106 + #ifdef BLEND
+	    107 + 	//Mega hack: only things that become opaque are allowed to have vertex-driven transparency in the Blended layer...
+	    108 + 	//to fix this we'd need to find more space for a flag in the vertex format. color.a is the only unused part
+	    109 + 	bool shouldBecomeOpaqueInTheDistance = VSInput.color.a < 0.95;
+	    110 + 	if(shouldBecomeOpaqueInTheDistance) {
+	    111 + 		#ifdef FANCY  /////enhance water
+	    112 + 			float cameraDist = cameraDepth / FAR_CHUNKS_DISTANCE;
+	    113 + 		#else
+	    114 + 			float3 relPos = -worldPos.xyz;
+	    115 + 			float camDist = length(relPos);
+	    116 + 			float cameraDist = camDist / FAR_CHUNKS_DISTANCE;
+	    117 + 		#endif //FANCY
+	    118 + 		
+	    119 + 		float alphaFadeOut = clamp(cameraDist, 0.0, 1.0);
+	    120 + 		PSInput.color.a = lerp(VSInput.color.a, 1.0, alphaFadeOut);
+	    121 + 	}
+	 95     - 	#else
+	 96     - 		float cameraDepth = PSInput.position.z;
+	 97     - 		#ifdef NEAR_WATER
+	 98     - 			float3 relPos = -worldPos;
+	 99     - 			float cameraDist = length(relPos);
+	100     - 			PSInput.cameraDist = cameraDist / FAR_CHUNKS_DISTANCE;
+	101     - 		#endif
+	102     - 	#endif
+	103     - #endif
+	104     - 
+	105     - 	///// apply fog
+	106     - 
+	107     - #ifdef FOG
+	108     - 	float len = cameraDepth / RENDER_DISTANCE;
+	109     - #ifdef ALLOW_FADE
+	110     - 	len += RENDER_CHUNK_FOG_ALPHA.r;
+	111     - #endif
+	112     - 
+	113     - 	PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	114     - 	PSInput.fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	115     - 
+	116 122   #endif
+	117 123   
+	118 124   }
+	          '''
+Changed file "resolve_depth.fragment.hlsl":
+	Total line: 36 (+0, -1)
+	        '''
+	        ...
+	12 12   #if (VERSION <= 0xa000 /*D3D_FEATURE_LEVEL_10_0*/)
+	13 13   	float4 dx9dummy : SV_Target;
+	14 14   #endif
+	15 15   };
+	16 16   
+	17    - ROOT_SIGNATURE
+	   17 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	18    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	19 18   {
+	20 19   #ifdef MSAA_FRAMEBUFFER_ENABLED
+	21 20   	float depth = 0.0f;
+	22 21       int sampleCount = MSAA_SAMPLECOUNT;
+	23 22   	for (int i = 0; i < sampleCount; ++i )
+	        ...
+	        '''
+Changed file "selection_box.vertex.hlsl":
+	Total line: 41 (+1, -1)
+	        '''
+	        ...
+	18 18   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	19 19   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	20 20   #endif
+	21 21   };
+	22 22   
+	   23 + 
+	23    - ROOT_SIGNATURE
+	   24 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	24    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	25 25   {
+	26 26   #ifdef INSTANCEDSTEREO
+	27 27   	int i = VSInput.instanceID;
+	28 28   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	29 29   #ifdef GEOMETRY_INSTANCEDSTEREO
+	        ...
+	        '''
+Changed file "shadow_stencil_overlay.fragment.hlsl":
+	Total line: 19 (+0, -1)
+	        '''
+	        ...
+	10 10   struct PS_Output
+	11 11   {
+	12 12       float4 color : SV_Target;
+	13 13   };
+	14 14   
+	15    - ROOT_SIGNATURE
+	   15 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	16    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	17 16   {
+	18 17     PSOutput.color.rgb = lerp(PSInput.color.rgb, CURRENT_COLOR.rgb, PSInput.color.a);
+	19 18     PSOutput.color.a = 1;
+	20 19   }
+	        '''
+Changed file "simple.vertex.hlsl":
+	Total line: 32 (+1, -1)
+	        '''
+	        ...
+	16 16   #ifdef INSTANCEDSTEREO
+	17 17   	uint instanceID : SV_InstanceID;
+	18 18   #endif
+	19 19   };
+	20 20   
+	   21 + 
+	21    - ROOT_SIGNATURE
+	   22 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	22    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	23 23   {
+	24 24       PSInput.color = CURRENT_COLOR;
+	25 25   #ifdef INSTANCEDSTEREO
+	26 26   	int i = VSInput.instanceID;
+	27 27   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	        ...
+	        '''
+Changed file "sky.vertex.hlsl":
+	Total line: 42 (+1, -1)
+	        '''
+	        ...
+	20 20   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21 21   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22 22   #endif
+	23 23   };
+	24 24   
+	   25 + 
+	25    - ROOT_SIGNATURE
+	   26 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27 27   {
+	28 28   #ifdef INSTANCEDSTEREO
+	29 29   	int i = VSInput.instanceID;
+	30 30   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	31 31   #else
+	        ...
+	        '''
+Changed file "stars.fragment.hlsl":
+	Total line: 18 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	   14 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	15    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16       PSOutput.color = PSInput.color;
+	18 17       PSOutput.color.rgb *= CURRENT_COLOR.rgb * PSInput.color.a;
+	19 18   }
+	        '''
+Changed file "text.fragment.hlsl":
+	Total line: 67 (+0, -1)
+	        '''
+	        ...
+	16 16       return max(min(a, b), min(max(a, b), c));
+	17 17   }
+	18 18   
+	19 19   static const float GLYPH_UV_SIZE = 1.0 / 16.0;
+	20 20   
+	21    - ROOT_SIGNATURE
+	22 21   void main(in PS_Input PSInput, out PS_Output PSOutput)
+	23 22   {
+	24 23       float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
+	25 24   
+	26 25   #ifdef SMOOTH
+	        ...
+	        '''
+Changed file "texture.fragment.hlsl":
+	Total line: 43 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	15 14   void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16   #ifdef STEREO_LEFT_EYE_ONLY
+	18 17       PSOutput.color = TEXTURE_0.Sample(TextureSampler0, float3(PSInput.uv, 0.0f));
+	19 18   #elif defined(DEPTH_TEXTURE)
+	        ...
+	        '''
+Changed file "texture_blend.fragment.hlsl":
+	Total line: 29 (+0, -1)
+	        '''
+	        ...
+	10 10   struct PS_Output
+	11 11   {
+	12 12   	float4 color : SV_Target;
+	13 13   };
+	14 14   
+	15    - ROOT_SIGNATURE
+	16 15   void main(in PS_Input PSInput, out PS_Output PSOutput)
+	17 16   {
+	18 17   	float4 color = TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
+	19 18   	float4 color1 = TEXTURE_0.Sample(TextureSampler0, PSInput.uv1);
+	20 19   
+	        ...
+	        '''
+Changed file "texture_ccolor.fragment.hlsl":
+	Total line: 40 (+0, -1)
+	        '''
+	        ...
+	10 10   struct PS_Output
+	11 11   {
+	12 12       float4 color : SV_Target;
+	13 13   };
+	14 14   
+	15    - ROOT_SIGNATURE
+	   15 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	16    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	17 16   {
+	18 17   #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE) || (VERSION < 0xa000 /*D3D_FEATURE_LEVEL_10_0*/) 
+	19 18   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
+	20 19   #else
+	21 20   	float4 diffuse = texture2D_AA(TEXTURE_0, TextureSampler0, PSInput.uv);
+	        ...
+	        '''
+Changed file "texture_cutout.fragment.hlsl":
+	Total line: 25 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	   14 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	15    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16       float4 diffuse = TEXTURE_0.Sample( TextureSampler0, PSInput.uv );
+	18 17   
+	19 18   
+	20 19       if( diffuse.a < 0.5 )
+	        ...
+	        '''
+Changed file "texture_raw_alphatest.fragment.hlsl":
+	Total line: 31 (+0, -1)
+	        '''
+	        ...
+	10 10   struct PS_Output
+	11 11   {
+	12 12       float4 color : SV_Target;
+	13 13   };
+	14 14   
+	15    - ROOT_SIGNATURE
+	   15 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	16    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	17 16   {
+	18 17   #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE) || (VERSION < 0xa000 /*D3D_FEATURE_LEVEL_10_0*/) 
+	19 18   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
+	20 19   #else
+	21 20   	float4 diffuse = texture2D_AA(TEXTURE_0, TextureSampler0, PSInput.uv);
+	        ...
+	        '''
+Changed file "uv.vertex.hlsl":
+	Total line: 41 (+1, -1)
+	        '''
+	        ...
+	20 20   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21 21   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22 22   #endif
+	23 23   };
+	24 24   
+	   25 + 
+	25    - ROOT_SIGNATURE
+	   26 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27 27   {
+	28 28       PSInput.uv = VSInput.uv;
+	29 29   #ifdef INSTANCEDSTEREO
+	30 30   	int i = VSInput.instanceID;
+	31 31   	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	        ...
+	        '''
+Changed file "uv_as_color.fragment.hlsl":
+	Total line: 17 (+0, -1)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	14    - ROOT_SIGNATURE
+	   14 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	15    - void main(in PS_Input PSInput, out PS_Output PSOutput)
+	16 15   {
+	17 16       PSOutput.color = float4( PSInput.uv.xy, 0, 1 );
+	18 17   }
+	        '''
+Changed file "uv_blend.vertex.hlsl":
+	Total line: 45 (+1, -1)
+	        '''
+	        ...
+	23 23   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	24 24   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	25 25   #endif
+	26 26   };
+	27 27   
+	   28 + 
+	28    - ROOT_SIGNATURE
+	29 29   void main(in VS_Input VSInput, out PS_Input PSInput)
+	30 30   {
+	31 31   	PSInput.uv = VSInput.uv;
+	32 32   	PSInput.uv1 = VSInput.uv1;
+	33 33   #ifdef INSTANCEDSTEREO
+	        ...
+	        '''
+Changed file "uv_blend_flipbook.vertex.hlsl":
+	Total line: 43 (+1, -2)
+	        '''
+	        ...
+	19 19   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	20 20   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	21 21   #endif
+	22 22   };
+	23 23   
+	   24 + 
+	24    - ROOT_SIGNATURE
+	   25 + void main(in VS_Input VSInput, out PS_Input PSInput) {
+	25    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	26    - {
+	27 26   	PSInput.uv = VSInput.uv;
+	28 27   	PSInput.uv.y += V_OFFSET;
+	29 28   	PSInput.uv1 = VSInput.uv;
+	30 29   	PSInput.uv1.y += V_BLEND_OFFSET;
+	31 30   
+	        ...
+	        '''
+Changed file "uv_repeat.vertex.hlsl":
+	Total line: 43 (+1, -1)
+	        '''
+	        ...
+	20 20   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21 21   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22 22   #endif
+	23 23   };
+	24 24   
+	   25 + 
+	25    - ROOT_SIGNATURE
+	   26 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27 27   {
+	28 28       float4 transformedUV = mul(UV_TRANSFORM, float4(VSInput.uv, 0, 1));
+	29 29       PSInput.uv = transformedUV.xy;
+	30 30   
+	31 31   #ifdef INSTANCEDSTEREO
+	        ...
+	        '''
+Changed file "uv_scale.vertex.hlsl":
+	Total line: 42 (+1, -1)
+	        '''
+	        ...
+	20 20   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21 21   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22 22   #endif
+	23 23   };
+	24 24   
+	   25 + 
+	25    - ROOT_SIGNATURE
+	   26 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27 27   {
+	28 28       PSInput.uv = VSInput.uv * GLINT_UV_SCALE.xy;
+	29 29   
+	30 30   #ifdef INSTANCEDSTEREO
+	31 31   	int i = VSInput.instanceID;
+	        ...
+	        '''
+Changed file "uv_selection_overlay.vertex.hlsl":
+	Total line: 43 (+1, -1)
+	        '''
+	        ...
+	20 20   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21 21   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22 22   #endif
+	23 23   };
+	24 24   
+	   25 + 
+	25    - ROOT_SIGNATURE
+	   26 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27 27   {
+	28 28       PSInput.uv = VSInput.uv;
+	29 29   #ifdef INSTANCEDSTEREO
+	30 30   	int i = VSInput.instanceID;
+	31 31   	float4 pos = mul(WORLDVIEW_STEREO[i], float4(VSInput.position, 1));
+	        ...
+	        '''
+Changed file "uv_time_rotate.vertex.hlsl":
+	Total line: 42 (+2, -1)
+	        '''
+	        ...
+	20 20   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21 21   	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22 22   #endif
+	23 23   };
+	24 24   
+	   25 + 
+	25    - ROOT_SIGNATURE
+	   26 + void main( in VS_Input VSInput, out PS_Input PSInput )
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27 27   {
+	   28 + 
+	28 29       PSInput.uv = VSInput.uv;
+	29 30   #ifdef INSTANCEDSTEREO
+	30 31       int i = VSInput.instanceID;
+	31 32       PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], mul(CUBE_MAP_ROTATION, float4( VSInput.position, 1 )));
+	32 33   #ifdef GEOMETRY_INSTANCEDSTEREO
+	        ...
+	        '''

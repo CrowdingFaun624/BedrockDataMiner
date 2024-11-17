@@ -1,0 +1,3233 @@
+Difference of "ui" between "1.10.0" and "1.11.0.1" (beta of "1.11.0").
+Unable to create data files for 1 file between: "1.10.1"
+
+Total namespace: 167 (+10, -0)
+Added namespace "blast_furnace" of element "blast_furnace_screen@furnace.furnace_screen": empty.
+Added namespace "cartography":
+	element "arrow_icon":
+		field "type": "image"
+		field "texture": "textures/ui/arrow"
+		field "size": [22, 15]
+	element "cartography_item_slot":
+		field "type": "panel"
+		field "size": ["100%c", "100%c"]
+		field "controls":
+			control:
+				element "container_item@common.container_item":
+					field "anchor_to": "center"
+					field "anchor_from": "center"
+	element "cartography_output_slot_button@common.no_coalesce_container_slot_button":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.cartography_result_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.cartography_result_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.cartography_result_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "button.cartography_result_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_auto_place"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop"
+				field "to_button_id": "button.drop_one"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop_all"
+				field "to_button_id": "button.drop_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "to_button_id": "button.container_slot_hovered"
+				field "mapping_type": "pressed"
+	element "cartography_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "container_gamepad_helpers@common.container_gamepad_helpers": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": field "layer": 8
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+			control:
+				element "root_panel@common.root_panel":
+					field "size": [176, 240]
+					field "layer": 1
+					field "controls":
+						control: element "common_panel@common.common_panel": empty
+						control:
+							element "cartography_screen_inventory":
+								field "type": "panel"
+								field "layer": 2
+								field "controls":
+									control: element "top_half_panel@cartography.top_half_panel": empty
+									control: element "inventory_panel_bottom_half_with_label@common.inventory_panel_bottom_half_with_label": empty
+									control: element "hotbar_grid@common.hotbar_grid_template": empty
+									control: element "inventory_take_progress_icon_button@common.inventory_take_progress_icon_button": empty
+						control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+						control: element "gamepad_cursor@common.gamepad_cursor_button": empty
+						control:
+							element "tab_close_and_help_button@common_tabs.tab_close_and_help_button":
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_left"
+								field "size": [26, 42]
+								field "offset": [-4, 0]
+					field "$variables": variable "$show_close_button": false
+	element "cartography_screen@common.inventory_screen_common":
+		field "close_on_player_hurt": "$close_on_player_hurt"
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables":
+					variable "$screen_content": "cartography.cartography_panel"
+					variable "$screen_bg_content": "common.screen_background"
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables": variable "$screen_content": "cartography_pocket.cartography_panel"
+		field "$variables": variable "$close_on_player_hurt|default": true
+	element "input_slots":
+		field "type": "stack_panel"
+		field "size": [18, "default"]
+		field "controls":
+			control:
+				element "input_item_slot@cartography.cartography_item_slot":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "offset": [0, 1]
+					field "$variables":
+						variable "$item_collection_name": "cartography_input_items"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "cartography_input"
+						variable "$focus_override_down_binding_type": "none"
+						variable "$focus_override_down": "cartography_additional"
+						variable "$focus_override_right_binding_type": "none"
+						variable "$focus_override_right": "cartography_result"
+			control:
+				element "plus_centerer":
+					field "type": "panel"
+					field "size": ["100%", "100%c + 8px"]
+					field "controls": control: element "plus_sign_icon@cartography.plus_sign_icon": empty
+			control:
+				element "additional_item_slot@cartography.cartography_item_slot":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": [0, -1]
+					field "$variables":
+						variable "$item_collection_name": "cartography_additional_items"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "cartography_additional"
+						variable "$focus_override_up_binding_type": "none"
+						variable "$focus_override_up": "cartography_input"
+						variable "$focus_override_right_binding_type": "none"
+						variable "$focus_override_right": "cartography_result"
+	element "main_panel":
+		field "type": "panel"
+		field "size": [162, 83]
+		field "controls":
+			control:
+				element "input_slots@cartography.input_slots":
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+			control:
+				element "arrow_icon@cartography.arrow_icon":
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "size": [16, 13]
+					field "offset": [25, 0]
+			control:
+				element "map_image_panel@cartography.map_image_panel":
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+			control: element "output_description_label@cartography.output_description_label": empty
+			control:
+				element "arrow_icon2@cartography.arrow_icon":
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "size": [16, 13]
+					field "offset": [-29, 0]
+			control:
+				element "result_item_slot@cartography.cartography_item_slot":
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "size": [26, 26]
+					field "$variables":
+						variable "$item_collection_name": "cartography_result_items"
+						variable "$button_ref": "cartography.cartography_output_slot_button"
+						variable "$cell_image_size":
+							item 0: 26
+							item 1: 26
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "cartography_result"
+						variable "$focus_override_left_binding_type": "none"
+						variable "$focus_override_left": "cartography_additional"
+	element "map_image":
+		field "type": "image"
+		field "texture": "$map_texture"
+		field "size": [66, 66]
+		field "bindings":
+			binding:
+				field "binding_name": "$map_binding_name"
+				field "binding_name_override": "#visible"
+	element "map_image_panel":
+		field "type": "panel"
+		field "size": [66, 66]
+		field "controls":
+			control:
+				element "none_map@cartography.map_image":
+					field "$variables":
+						variable "$map_texture": "textures/ui/cartography_table_empty"
+						variable "$map_binding_name": "#is_none_mode"
+			control:
+				element "copy_map@cartography.map_image":
+					field "$variables":
+						variable "$map_texture": "textures/ui/cartography_table_copy"
+						variable "$map_binding_name": "#is_clone_mode"
+			control:
+				element "rename_map@cartography.map_image":
+					field "$variables":
+						variable "$map_texture": "textures/ui/cartography_table_map"
+						variable "$map_binding_name": "#is_rename_mode"
+			control:
+				element "map@cartography.map_image":
+					field "$variables":
+						variable "$map_texture": "textures/ui/cartography_table_map"
+						variable "$map_binding_name": "#is_basic_map_mode"
+			control:
+				element "locator_map@cartography.map_image":
+					field "$variables":
+						variable "$map_texture": "textures/ui/cartography_table_map"
+						variable "$map_binding_name": "#is_locator_map_mode"
+			control:
+				element "zoom_map@cartography.map_image":
+					field "$variables":
+						variable "$map_texture": "textures/ui/cartography_table_zoom"
+						variable "$map_binding_name": "#is_extend_mode"
+	element "output_description_label":
+		field "type": "label"
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "bottom_middle"
+		field "text": "#text"
+		field "color": "$title_text_color"
+		field "offset": [0, 2]
+		field "bindings":
+			binding:
+				field "binding_name": "#output_description"
+				field "binding_name_override": "#text"
+	element "plus_sign_icon":
+		field "type": "image"
+		field "texture": "textures/ui/anvil-plus"
+		field "size": [13, 13]
+	element "text_box_panel":
+		field "type": "stack_panel"
+		field "controls":
+			control:
+				element "map_name_label":
+					field "type": "label"
+					field "text": "map.name"
+					field "color": "$title_text_color"
+			control: element "text_edit_control@cartography.text_edit_control": empty
+	element "text_edit_control@common.text_edit_box":
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["default", 20]
+		field "max_length": 30
+		field "$variables":
+			variable "$place_holder_text": "#text_box_placeholder_name"
+			variable "$text_edit_box_placeholder_content_binding_name": "#text_box_placeholder_name"
+			variable "$text_edit_box_label_size":
+				item 0: "default"
+				item 1: 10
+	element "title_label":
+		field "type": "label"
+		field "text": "tile.cartography_table.name"
+		field "color": "$title_text_color"
+	element "top_half_panel":
+		field "type": "stack_panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["100% - 12px", 144]
+		field "controls":
+			control:
+				element "padding1":
+					field "type": "panel"
+					field "size": ["100%", 7]
+			control:
+				element "title_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "title_label@cartography.title_label": empty
+			control:
+				element "padding2":
+					field "type": "panel"
+					field "size": ["100%", 7]
+			control: element "text_box_panel@cartography.text_box_panel": empty
+			control:
+				element "padding3":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			control:
+				element "main_panel_wrap":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "main_panel@cartography.main_panel": empty
+Added namespace "cartography_pocket":
+	element "additional_item_slot@common.pocket_ui_container_item":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "$variables": variable "$item_collection_name": "cartography_additional_items"
+	element "cartography_content_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100% - 12px", "100% - 8px"]
+		field "controls":
+			control:
+				element "label_holder":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "cartography_label@cartography.title_label": empty
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [0, 2]
+			control:
+				element "panel":
+					field "type": "panel"
+					field "size": ["100%", 28]
+					field "controls": control: element "input_slots@cartography_pocket.input_slots": empty
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": [0, 4]
+			control:
+				element "map_centerer":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "map_image_panel@cartography.map_image_panel": empty
+			control:
+				element "description_centerer":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "output_description_label@cartography.output_description_label": empty
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": [0, 2]
+			control:
+				element "arrow_centerer":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "vertical_arrow_icon@cartography_pocket.vertical_arrow_icon": empty
+			control:
+				element "padding_4":
+					field "type": "panel"
+					field "size": [0, 1]
+			control:
+				element "result_centerer":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "result_item_slot@cartography_pocket.result_item_slot": empty
+			control:
+				element "filling_panel":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+			control: element "text_box_panel@cartography.text_box_panel": empty
+	element "cartography_item_renderer":
+		field "type": "custom"
+		field "renderer": "inventory_item_renderer"
+		field "size": [16, 16]
+		field "property_bag":
+			field "#item_id_aux": -13107200
+			field "#collection_name": "cartography_tab"
+			field "#collection_index": 0
+	element "cartography_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "pocket_hotbar_and_content_panels@cartography_pocket.pocket_hotbar_and_content_panels": empty
+			control:
+				element "container_gamepad_helpers@common.container_gamepad_helpers":
+					field "size": ["100%", 40]
+					field "$variables":
+						variable "$gamepad_helper_size":
+							item 0: "100%c"
+							item 1: 15
+						variable "$a_b_stack_panel_orientation": "vertical"
+						variable "$x_y_stack_panel_orientation": "vertical"
+						variable "$a_b_stack_panel_size":
+							item 0: "100%cm"
+							item 1: "100%"
+						variable "$x_y_stack_panel_size":
+							item 0: "100%cm"
+							item 1: "100%"
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+			control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+			control: element "inventory_take_progress_icon_button@common.inventory_take_progress_icon_button": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": field "layer": 8
+	element "chest_item_renderer":
+		field "type": "custom"
+		field "renderer": "inventory_item_renderer"
+		field "size": [16, 16]
+		field "property_bag":
+			field "#item_id_aux": 3538944
+			field "#collection_name": "inventory_tab"
+			field "#collection_index": 0
+	element "input_item_slot@common.pocket_ui_container_item":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "$variables": variable "$item_collection_name": "cartography_input_items"
+	element "input_slots":
+		field "type": "stack_panel"
+		field "size": ["default", 28]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "input_item_slot@cartography_pocket.input_item_slot":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "offset": [0, 1]
+					field "$variables":
+						variable "$item_collection_name": "cartography_input_items"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "cartography_input"
+						variable "$focus_override_down_binding_type": "none"
+						variable "$focus_override_down": "cartography_result"
+						variable "$focus_override_right_binding_type": "none"
+						variable "$focus_override_right": "cartography_additional"
+			control:
+				element "plus_centerer":
+					field "type": "panel"
+					field "size": ["100%c+14px", "100%"]
+					field "controls": control: element "plus_sign_icon@cartography.plus_sign_icon": empty
+			control:
+				element "additional_item_slot@cartography_pocket.additional_item_slot":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": [0, -1]
+					field "$variables":
+						variable "$item_collection_name": "cartography_additional_items"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "cartography_additional"
+						variable "$focus_override_left_binding_type": "none"
+						variable "$focus_override_left": "cartography_input"
+						variable "$focus_override_down_binding_type": "none"
+						variable "$focus_override_down": "cartography_result"
+	element "input_slots_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100%cm"]
+		field "controls": control: element "input_item_slot@cartography_pocket.input_item_slot": empty
+	element "inventory_panel":
+		field "type": "stack_panel"
+		field "size": ["100% - 12px", "100% - 12px"]
+		field "controls":
+			control:
+				element "inventory_title_label_centerer":
+					field "type": "panel"
+					field "size": ["default", 14]
+					field "controls":
+						control:
+							element "inventory_title_label":
+								field "type": "label"
+								field "color": "$title_text_color"
+								field "text": "container.inventory"
+								field "size": ["default", "100%"]
+			control: element "inventory_scroll_panel@cartography_pocket.inventory_scroll_panel": field "size": ["100%", "fill"]
+	element "inventory_scroll_panel@common.container_scroll_panel": field "$variables": variable "$scrolling_content": "common.pocket_container_grid"
+	element "left_navigation_tabs":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": [35, "100%"]
+		field "offset": [4, 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "controls":
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [0, "fill"]
+			control: element "left_tab_inventory@cartography_pocket.left_tab_inventory": field "$variables": variable "$is_bottom_most_tab": true
+	element "left_panel":
+		field "type": "stack_panel"
+		field "size": ["fill", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "gamepad_helpers_and_tabs_holder":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "tabs_left_gamepad_helpers@common.tabs_left_gamepad_helpers":
+								field "size": [14, 0]
+								field "inherit_max_sibling_height": true
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+						control:
+							element "navigation_tabs_holder":
+								field "type": "panel"
+								field "size": ["100%c - 4px", "100%"]
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "controls": control: element "left_navigation_tabs@cartography_pocket.left_navigation_tabs": empty
+			control:
+				element "content@common.root_panel":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "bg@common.common_panel":
+								field "size": ["100%", "100%"]
+								field "$variables": variable "$show_close_button": false
+						control:
+							element "inventory_panel@cartography_pocket.inventory_panel":
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_type": "global"
+										field "binding_name": "#is_left_tab_inventory"
+										field "binding_name_override": "#visible"
+	element "left_tab_inventory@common_tabs.pocket_tab_left":
+		field "$variables":
+			variable "$tab_view_binding_name": "inventory_tab_toggle"
+			variable "$tab_content": "cartography_pocket.chest_item_renderer"
+			variable "$toggle_binding_type": "global"
+			variable "$toggle_state_binding_name": "#is_left_tab_inventory"
+	element "pattern_button@cartography.stone_button":
+		field "size": [28, 28]
+		field "$variables":
+			variable "$item_renderer_panel_size":
+				item 0: 28
+				item 1: 28
+			variable "$item_renderer_size":
+				item 0: 26
+				item 1: 26
+	element "pattern_scroll_panel@cartography.scroll_panel": field "$variables": variable "$grid_item_template": "cartography_pocket.pattern_button"
+	element "pocket_hotbar_and_content_panels@common.pocket_hotbar_and_content_panels":
+		field "layer": 2
+		field "$variables":
+			variable "$left_panel_control": "cartography_pocket.left_panel"
+			variable "$right_panel_control": "cartography_pocket.right_panel"
+	element "result_item_slot@common.pocket_ui_container_item":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "$variables":
+			variable "$item_collection_name": "cartography_result_items"
+			variable "$focus_override_up_binding_type": "none"
+			variable "$focus_override_up": "cartography_input"
+			variable "$button_ref": "cartography.cartography_output_slot_button"
+	element "right_navigation_tabs":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": [35, "100%"]
+		field "offset": [-4, 0]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control: element "pocket_tab_close_and_help_button@common_tabs.pocket_tab_close_and_help_button": empty
+			control:
+				element "fill":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+			control: element "right_tab_cartography@cartography_pocket.right_tab_cartography": field "$variables": variable "$is_bottom_most_tab": true
+	element "right_panel":
+		field "type": "stack_panel"
+		field "size": ["fill", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "content@common.root_panel":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "bg@common.common_panel":
+								field "size": ["100%", "100%"]
+								field "$variables": variable "$show_close_button": false
+						control: element "cartography_content_stack_panel@cartography_pocket.cartography_content_stack_panel": field "layer": 2
+			control:
+				element "navigation_tabs_holder":
+					field "type": "panel"
+					field "size": ["100%c - 4px", "100%"]
+					field "controls": control: element "right_navigation_tabs@cartography_pocket.right_navigation_tabs": empty
+	element "right_tab_cartography@common_tabs.pocket_tab_right":
+		field "$variables":
+			variable "$tab_view_binding_name": "cartography_tab_toggle"
+			variable "$tab_content": "cartography_pocket.cartography_item_renderer"
+			variable "$toggle_binding_type": "global"
+			variable "$toggle_state_binding_name": "#is_right_tab_cartography"
+	element "vertical_arrow_icon":
+		field "type": "image"
+		field "texture": "textures/ui/arrow_down"
+		field "size": [14, 17]
+Changed namespace "chest":
+	Total element: 17 (+2, -0)
+	Added empty element "barrel_panel@chest.small_chest_panel".
+	Added element "barrel_screen@chest.small_chest_screen":
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables":
+					variable "$screen_content": "chest.barrel_panel"
+					variable "$screen_bg_content": "common.screen_background"
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables": variable "$screen_content": "pocket_containers.barrel_panel"
+		field "$variables": variable "$close_on_player_hurt": true
+Changed namespace "common":
+	Total element: 241 (+5, -0)
+	Added element "anim_details_bubble_alpha":
+		field "anim_type": "alpha"
+		field "easing": "in_quint"
+		field "destroy_at_end": "details_bubble_control"
+		field "duration": 2
+		field "from": 1.0
+		field "to": 0
+	Added element "container_scroll_background_image":
+		field "type": "image"
+		field "layer": 2
+		field "texture": "textures/ui/recipe_book_pane_bg"
+	Added element "container_scroll_bar_side_rails":
+		field "type": "image"
+		field "layer": 1
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "texture": "textures/ui/ScrollGutterWithBG"
+	Added element "container_scroll_box_image":
+		field "type": "image"
+		field "texture": "textures/ui/ScrollBox"
+	Changed element "container_scroll_panel@common.scrolling_panel_with_offset":
+		Changed field "$variables":
+			Total variable: 13 (+0, -0)
+			Changed variable "$scroll_background_image_control" from "crafting.scroll_background_image" to "common.container_scroll_background_image".
+			Changed variable "$scroll_box_mouse_image_control" from "crafting.scroll_box_image" to "common.container_scroll_box_image".
+			Changed variable "$scroll_track_image_control" from "crafting.scrollbar_track" to "common.container_scrollbar_track".
+	Added element "container_scrollbar_track":
+		field "type": "panel"
+		field "layer": 1
+		field "anchor_to": "top_right"
+		field "anchor_from": "top_right"
+		field "controls": control: element "rails@common.container_scroll_bar_side_rails": field "allow_clipping": false
+	Changed element "filtered_item_renderer":
+		Unchanged field "type": "custom"
+		Changed field "bindings":
+			Total binding: 9 (+1, -0)
+			Added binding:
+				field "binding_name": "#banner_type"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$item_collection_name"
+	Changed element "highlight_slot_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "highlight@common.highlight_slot":
+					Changed field "controls":
+						Changed control:
+							Changed element "hover_text@common.hover_text":
+								Changed field "bindings":
+									Changed binding:
+										Changed field "binding_condition" from "always_when_visible" to "always".
+	Changed element "inventory_selected_icon@common.item_renderer":
+		Changed field "bindings":
+			Total binding: 6 (+1, -0)
+			Added binding:
+				field "binding_name": "#inventory_selected_banner_type"
+				field "binding_name_override": "#banner_type"
+				field "binding_condition": "always_when_visible"
+	Changed element "item_renderer":
+		Unchanged field "type": "custom"
+		Changed field "bindings":
+			Total binding: 11 (+2, -0)
+			Added binding:
+				field "binding_name": "#banner_type"
+				field "binding_condition": "visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$item_collection_name"
+			Added binding:
+				field "binding_name": "#shield_is_active"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$item_collection_name"
+	Changed element "selected_item_details":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "item_panel_image":
+					Unchanged field "type": "image"
+					Changed field "controls":
+						Changed control:
+							Changed element "item_text_label":
+								Unchanged field "type": "label"
+								Changed field "alpha" from "@common.anim_item_details_alpha" to "$alpha_anim".
+					Changed field "alpha" from "@common.anim_item_details_alpha" to "$alpha_anim".
+		Changed field "offset" from [0, "-16px"] to "$offset".
+		Added field "$variables":
+			variable "$offset|default":
+				item 0: 0
+				item 1: "-16px"
+			variable "$alpha_anim|default": "@common.anim_item_details_alpha"
+Changed namespace "common_buttons":
+	Changed element "light_text_button@common_buttons.light_button_assets":
+		Changed field "controls":
+			Changed control:
+				Changed element "locked@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 8 (+0, -0)
+						Changed variable "$text_color" from "$light_button_locked_text_color" to "$locked_text_color".
+			Changed control:
+				Changed element "pressed@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 9 (+0, -0)
+						Changed variable "$text_color" from "$light_button_pressed_text_color" to "$pressed_text_color".
+			Changed control:
+				Changed element "hover@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 8 (+0, -0)
+						Changed variable "$text_color" from "$light_button_hover_text_color" to "$hover_text_color".
+			Changed control:
+				Changed element "default@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 8 (+0, -0)
+						Changed variable "$text_color" from "$light_button_default_text_color" to "$default_text_color".
+		Changed field "$variables":
+			Total variable: 22 (+4, -0)
+			Added variable "$default_text_color|default" of "$light_button_default_text_color".
+			Added variable "$hover_text_color|default" of "$light_button_hover_text_color".
+			Added variable "$pressed_text_color|default" of "$light_button_pressed_text_color".
+			Added variable "$locked_text_color|default" of "$light_button_locked_text_color".
+Changed namespace "common_tabs":
+	Total element: 13 (+2, -0)
+	Added element "pocket_tab_close_and_help_button":
+		field "type": "image"
+		field "size": ["100%", 51]
+		field "texture": "textures/ui/TabRightBackTopMost"
+		field "controls":
+			control:
+				element "close_button@common.light_close_button":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "offset": [0, 6]
+			control:
+				element "help_button@common.help_button":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": [0, -8]
+	Added element "tab_close_and_help_button":
+		field "type": "image"
+		field "size": ["100%", 42]
+		field "texture": "textures/ui/TabRightBackTopMost"
+		field "controls":
+			control:
+				element "close_button@common.light_close_button":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "offset": [0, 4]
+			control:
+				element "help_button@common.help_button":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": [0, -6]
+Changed namespace "crafting":
+	Total element: 105 (+1, -5)
+	Removed element "scroll_background_image":
+		field "type": "image"
+		field "layer": 2
+		field "texture": "textures/ui/recipe_book_pane_bg"
+	Removed element "scroll_bar_side_rails":
+		field "type": "image"
+		field "layer": 1
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "texture": "textures/ui/ScrollGutterWithBG"
+	Removed element "scroll_box_image":
+		field "type": "image"
+		field "texture": "textures/ui/ScrollBox"
+	Added element "scroll_panel@common.container_scroll_panel":
+		field "$variables":
+			variable "$scrolling_panel_base_button_mappings":
+				item 0:
+					field "from_button_id": "button.menu_select"
+					field "to_button_id": "button.destroy_selection"
+					field "mapping_type": "pressed"
+				item 1:
+					field "from_button_id": "button.menu_secondary_select"
+					field "to_button_id": "button.container_reset_held"
+					field "mapping_type": "pressed"
+				item 2:
+					field "from_button_id": "button.menu_ok"
+					field "to_button_id": "button.destroy_selection"
+					field "mapping_type": "pressed"
+				item 3:
+					field "from_button_id": "button.controller_select"
+					field "to_button_id": "button.clear_hotbar_or_remove_one"
+					field "mapping_type": "pressed"
+				item 4:
+					field "from_button_id": "button.controller_secondary_select"
+					field "to_button_id": "button.container_reset_held"
+					field "mapping_type": "pressed"
+	Removed element "scroll_panel@common.scrolling_panel_with_offset":
+		field "$variables":
+			variable "$scrolling_pane_offset":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_view_port_offset":
+				item 0: 1
+				item 1: 1
+			variable "$scroll_view_port_offset_touch":
+				item 0: 0
+				item 1: 1
+			variable "$scrolling_pane_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$scroll_view_port_size":
+				item 0: "100% - 2px"
+				item 1: "100% - 2px"
+			variable "$scroll_view_port_size_touch":
+				item 0: "100% - 8px"
+				item 1: "100% - 2px"
+			variable "$scroll_bar_right_padding_size":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_background_image_control": "crafting.scroll_background_image"
+			variable "$scroll_track_image_control": "crafting.scrollbar_track"
+			variable "$scroll_box_mouse_image_control": "crafting.scroll_box_image"
+			variable "$scroll_box_touch_image_control": "common.new_touch_scrollbar_box_image"
+			variable "$scrolling_panel_base_button_mappings":
+				item 0:
+					field "from_button_id": "button.menu_select"
+					field "to_button_id": "button.destroy_selection"
+					field "mapping_type": "pressed"
+				item 1:
+					field "from_button_id": "button.menu_secondary_select"
+					field "to_button_id": "button.container_reset_held"
+					field "mapping_type": "pressed"
+				item 2:
+					field "from_button_id": "button.menu_ok"
+					field "to_button_id": "button.destroy_selection"
+					field "mapping_type": "pressed"
+				item 3:
+					field "from_button_id": "button.controller_select"
+					field "to_button_id": "button.clear_hotbar_or_remove_one"
+					field "mapping_type": "pressed"
+				item 4:
+					field "from_button_id": "button.controller_secondary_select"
+					field "to_button_id": "button.container_reset_held"
+					field "mapping_type": "pressed"
+	Removed element "scrollbar_track":
+		field "type": "panel"
+		field "layer": 1
+		field "anchor_to": "top_right"
+		field "anchor_from": "top_right"
+		field "controls": control: element "rails@crafting.scroll_bar_side_rails": field "allow_clipping": false
+Changed namespace "crafting_pocket":
+	Total element: 49 (+0, -1)
+	Changed element "recipe_inventory_screen_content_pocket":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Total control: 5 (+1, -1)
+			Removed control element "selected_item_details_factory@common.selected_item_details_factory": field "control_name": "@crafting_pocket.selected_item_details".
+			Added control:
+				element "selected_item_details_factory@common.selected_item_details_factory":
+					field "$variables":
+						variable "$offset":
+							item 0: 0
+							item 1: "-37px"
+	Removed element "selected_item_details@common.selected_item_details" of field "offset": [0, "-37px"].
+Added namespace "grindstone":
+	element "arrow_icon":
+		field "type": "image"
+		field "texture": "textures/ui/arrow_large"
+		field "size": [22, 15]
+	element "cross_out_icon":
+		field "type": "image"
+		field "texture": "textures/ui/crossout"
+		field "size": [15, 15]
+		field "bindings":
+			binding:
+				field "binding_name": "#cross_out_icon"
+				field "binding_name_override": "#visible"
+	element "grindstone_item_slot":
+		field "type": "panel"
+		field "size": ["100%c", "100%c"]
+		field "controls":
+			control:
+				element "container_item@common.container_item":
+					field "anchor_to": "center"
+					field "anchor_from": "center"
+	element "grindstone_middle_panel":
+		field "type": "panel"
+		field "size": [18, 41]
+		field "controls":
+			control:
+				element "input_item_slot@grindstone.grindstone_item_slot":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "offset": [0, 1]
+					field "$variables":
+						variable "$item_collection_name": "grindstone_input_items"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "grindstone_input"
+						variable "$focus_override_down_binding_type": "none"
+						variable "$focus_override_down": "grindstone_additional"
+						variable "$focus_override_right_binding_type": "none"
+						variable "$focus_override_right": "grindstone_result"
+			control:
+				element "additional_item_slot@grindstone.grindstone_item_slot":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": [0, -1]
+					field "$variables":
+						variable "$item_collection_name": "grindstone_additional_items"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "grindstone_additional"
+						variable "$focus_override_up_binding_type": "none"
+						variable "$focus_override_up": "grindstone_input"
+						variable "$focus_override_right_binding_type": "none"
+						variable "$focus_override_right": "grindstone_result"
+	element "grindstone_output_slot_button@common.container_slot_button_prototype":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.grindstone_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.grindstone_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.grindstone_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "button.grindstone_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_auto_place"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop"
+				field "to_button_id": "button.drop_one"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop_all"
+				field "to_button_id": "button.drop_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.grindstone_coalesce_stack"
+				field "mapping_type": "double_pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.grindstone_coalesce_stack"
+				field "mapping_type": "double_pressed"
+			button mapping:
+				field "to_button_id": "button.container_slot_hovered"
+				field "mapping_type": "pressed"
+	element "grindstone_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "container_gamepad_helpers@common.container_gamepad_helpers": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": field "layer": 8
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+			control:
+				element "root_panel@common.root_panel":
+					field "layer": 1
+					field "controls":
+						control: element "common_panel@common.common_panel": empty
+						control:
+							element "grindstone_screen_inventory":
+								field "type": "panel"
+								field "layer": 2
+								field "controls":
+									control: element "top_half_panel@grindstone.top_half_panel": empty
+									control: element "inventory_panel_bottom_half_with_label@common.inventory_panel_bottom_half_with_label": empty
+									control: element "hotbar_grid@common.hotbar_grid_template": empty
+									control: element "inventory_take_progress_icon_button@common.inventory_take_progress_icon_button": empty
+						control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+						control: element "gamepad_cursor@common.gamepad_cursor_button": empty
+	element "grindstone_screen@common.inventory_screen_common":
+		field "close_on_player_hurt": "$close_on_player_hurt"
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables":
+					variable "$screen_content": "grindstone.grindstone_panel"
+					variable "$screen_bg_content": "common.screen_background"
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables": variable "$screen_content": "grindstone_pocket.grindstone_panel"
+		field "$variables": variable "$close_on_player_hurt|default": true
+	element "grindstone_slots_panel":
+		field "type": "panel"
+		field "size": [90, 56]
+		field "controls":
+			control:
+				element "grindstone_middle_panel@grindstone.grindstone_middle_panel":
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+			control:
+				element "yields":
+					field "type": "panel"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "size": [22, 15]
+					field "controls":
+						control: element "arrow_icon@grindstone.arrow_icon": empty
+						control: element "cross_out_icon@grindstone.cross_out_icon": field "layer": 1
+			control:
+				element "result_item_slot@grindstone.grindstone_item_slot":
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "$variables":
+						variable "$item_collection_name": "grindstone_result_items"
+						variable "$button_ref": "grindstone.grindstone_output_slot_button"
+						variable "$focus_id_binding_type": "none"
+						variable "$focus_id": "grindstone_result"
+						variable "$focus_override_left_binding_type": "none"
+						variable "$focus_override_left": "grindstone_additional"
+	element "title_label":
+		field "type": "label"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "text": "container.repairAndDisenchant"
+		field "color": "$title_text_color"
+	element "top_half_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100% - 8px", "50% - 8px"]
+		field "offset": [4, 6]
+		field "controls":
+			control: element "title_label@grindstone.title_label": field "offset": [4, 2]
+			control: element "grindstone_slots_panel@grindstone.grindstone_slots_panel": field "offset": [0, 4]
+Added namespace "grindstone_pocket":
+	element "background_image":
+		field "type": "image"
+		field "size": ["100%", "100%"]
+		field "texture": "textures/ui/background_panel"
+	element "grindstone_contents_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control: element "repair_title_label@grindstone_pocket.repair_title_label": field "offset": [0, -50]
+			control: element "slots_panel@grindstone_pocket.slots_panel": empty
+	element "grindstone_half_screen@grindstone_pocket.half_screen":
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "size": ["50%", "100%-31px"]
+		field "offset": [0, 28]
+		field "controls":
+			control:
+				element "grindstone_contents_panel@grindstone_pocket.grindstone_contents_panel":
+					field "layer": 2
+					field "offset": [0, -10]
+	element "grindstone_middle_panel":
+		field "type": "panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": [32, 67]
+		field "controls":
+			control:
+				element "input_slot@common.pocket_ui_large_container_item":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "offset": [0, 1]
+					field "$variables": variable "$item_collection_name": "grindstone_input_items"
+			control:
+				element "additional_slot@common.pocket_ui_large_container_item":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": [0, -1]
+					field "$variables": variable "$item_collection_name": "grindstone_additional_items"
+	element "grindstone_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "header@grindstone_pocket.header": field "layer": 2
+			control: element "bg@grindstone_pocket.background_image": empty
+			control: element "root_panel@common.root_panel": empty
+			control:
+				element "inventory@grindstone_pocket.inventory_half_screen":
+					field "layer": 1
+					field "$variables":
+						variable "$container_size": 36
+						variable "$pane_collection": "combined_hotbar_and_inventory_items"
+			control: element "grindstone_half_screen@grindstone_pocket.grindstone_half_screen": empty
+			control: element "container_gamepad_helpers@common.container_gamepad_helpers": field "layer": 2
+			control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+			control: element "hold_icon@common.inventory_take_progress_icon_button": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": empty
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+	element "half_screen":
+		field "type": "input_panel"
+		field "size": ["50%", "100%-31px"]
+		field "offset": [0, 27]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+	element "header":
+		field "type": "panel"
+		field "size": ["100%", 28]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "controls":
+			control:
+				element "header_background":
+					field "type": "image"
+					field "texture": "textures/ui/header_bar"
+			control: element "legacy_pocket_close_button@common.legacy_pocket_close_button": empty
+			control:
+				element "panel":
+					field "type": "panel"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "controls":
+						control:
+							element "title_label":
+								field "type": "label"
+								field "color": "$pocket_title_text_color"
+								field "text": "tile.grindstone.name"
+								field "layer": 1
+	element "inventory_content":
+		field "type": "panel"
+		field "size": ["80%", "95%"]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls":
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "layer": 1
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100%"
+							item 1: "100%-2px"
+						variable "$scrolling_content": "grindstone_pocket.inventory_grid"
+						variable "$scroll_box_mouse_image_control": "common-classic.button_state_default"
+						variable "$scroll_size":
+							item 0: "8px"
+							item 1: "100%"
+	element "inventory_grid":
+		field "type": "grid"
+		field "grid_rescaling_type": "horizontal"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "size": ["100%", "default"]
+		field "maximum_grid_items": 36
+		field "collection_name": "combined_hotbar_and_inventory_items"
+		field "grid_item_template": "common.pocket_ui_container_item"
+		field "$variables": variable "$item_collection_name": "combined_hotbar_and_inventory_items"
+	element "inventory_half_screen@grindstone_pocket.half_screen":
+		field "size": ["50%", "100%-35px"]
+		field "offset": [9, 31]
+		field "controls": control: element "inventory_content@grindstone_pocket.inventory_content": empty
+	element "repair_title_label":
+		field "type": "label"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "text": "container.repairAndDisenchant"
+		field "color": "$title_text_color"
+	element "slots_panel":
+		field "type": "panel"
+		field "size": [142, 83]
+		field "controls":
+			control:
+				element "grindstone_middle_panel@grindstone_pocket.grindstone_middle_panel":
+					field "type": "panel"
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+			control:
+				element "arrow":
+					field "type": "image"
+					field "texture": "textures/ui/arrow_large"
+					field "size": [22, 15]
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "controls":
+						control:
+							element "cross_out":
+								field "type": "image"
+								field "layer": 1
+								field "texture": "textures/ui/crossout"
+								field "bindings":
+									binding:
+										field "binding_name": "#cross_out_icon"
+										field "binding_name_override": "#visible"
+			control:
+				element "result_slot@common.pocket_ui_large_container_item":
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "$variables":
+						variable "$item_collection_name": "grindstone_result_items"
+						variable "$button_ref": "grindstone.grindstone_output_slot_button"
+Changed namespace "how_to_play":
+	Changed element "how_to_play_screen@how_to_play_common.screen_base":
+		Changed field "$variables":
+			Total variable: 5 (+0, -1)
+			Removed variable "$fill_alpha" of 1.0.
+Changed namespace "loom":
+	Moved element "scroll_panel@common.scrolling_panel_with_offset" to "scroll_panel@common.container_scroll_panel".
+	Changed element "scroll_panel@common.container_scroll_panel":
+		Changed field "$variables":
+			Total variable: 2 (+0, -11)
+			Removed variable "$scrolling_pane_offset":
+				item 0: 0
+				item 1: 0
+			Removed variable "$scroll_view_port_offset":
+				item 0: 1
+				item 1: 1
+			Removed variable "$scroll_view_port_offset_touch":
+				item 0: 0
+				item 1: 1
+			Removed variable "$scrolling_pane_size":
+				item 0: "100%"
+				item 1: "100%"
+			Removed variable "$scroll_view_port_size":
+				item 0: "100% - 2px"
+				item 1: "100% - 2px"
+			Removed variable "$scroll_view_port_size_touch":
+				item 0: "100% - 8px"
+				item 1: "100% - 2px"
+			Removed variable "$scroll_bar_right_padding_size":
+				item 0: 0
+				item 1: 0
+			Removed variable "$scroll_background_image_control" of "crafting.scroll_background_image".
+			Removed variable "$scroll_track_image_control" of "crafting.scrollbar_track".
+			Removed variable "$scroll_box_mouse_image_control" of "crafting.scroll_box_image".
+			Removed variable "$scroll_box_touch_image_control" of "common.new_touch_scrollbar_box_image".
+Changed namespace "loom_pocket":
+	Changed element "loom_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 6 (+1, -1)
+			Removed control element "selected_item_details_factory@common.selected_item_details_factory": empty.
+			Added control:
+				element "selected_item_details_factory@common.selected_item_details_factory":
+					field "$variables":
+						variable "$offset":
+							item 0: 0
+							item 1: "-37px"
+Changed namespace "pocket_containers":
+	Total element: 18 (+1, -0)
+	Added empty element "barrel_panel@pocket_containers.small_chest_panel".
+Changed namespace "realms_create":
+	Changed element "scroll_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 8 (+0, -1)
+			Removed control:
+				element "realms_external_subscription_terms_info@settings_common.option_info_label":
+					field "ignored": "(not $xbox_one or $hide_external_subscription_purchase_info)"
+					field "layer": 3
+					field "size": ["100% - 4px", "100%c"]
+					field "$variables":
+						variable "$container_text_binding_name": "#realms_purchase_info"
+						variable "$used_fontsize": "normal"
+						variable "$used_fonttype": "smooth"
+						variable "$show_option_label": false
+						variable "$show_for_ios|default": false
+Added namespace "smoker" of element "smoker_screen@furnace.furnace_screen": empty.
+Added namespace "stonecutter":
+	element "arrow_icon":
+		field "type": "image"
+		field "texture": "textures/ui/arrow_large"
+		field "size": [18, 12]
+	element "center_fold@common.root_panel":
+		field "size": [4, 166]
+		field "controls":
+			control:
+				element "center_bg":
+					field "type": "image"
+					field "texture": "textures/ui/recipe_back_panel"
+					field "size": ["100% + 8px", "100% - 6px"]
+	element "container_cell_image":
+		field "type": "image"
+		field "size": "$cell_image_size"
+		field "bindings":
+			binding:
+				field "binding_name": "#container_cell_background_texture"
+				field "binding_name_override": "#texture"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$item_collection_name"
+				field "binding_condition": "$cell_images_binding_condition"
+		field "$variables":
+			variable "$cell_images_binding_condition|default": "visible"
+			variable "$cell_image_size|default":
+				item 0: "default"
+				item 1: "default"
+	element "help_button@common.help_button":
+		field "layer": 5
+		field "$variables":
+			variable "$focus_id": "help_button"
+			variable "$focus_override_up": "FOCUS_OVERRIDE_STOP"
+	element "highlight_slot_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "highlight@common.highlight_slot":
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "(not #using_touch)"
+							field "binding_name_override": "#visible"
+			control:
+				element "white_border@common.white_border_slot":
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "(not #using_touch)"
+							field "binding_name_override": "#visible"
+	element "input_item_slot@common.container_item":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "$variables": variable "$item_collection_name": "stonecutter_input_items"
+	element "input_slots_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100%cm"]
+		field "controls": control: element "input_item_slot@stonecutter.input_item_slot": empty
+	element "item_panel":
+		field "type": "panel"
+		field "size": "$item_renderer_panel_size"
+		field "controls":
+			control:
+				element "item_renderer@common.item_renderer":
+					field "size": "$item_renderer_size"
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "#item_id_aux"
+							field "binding_condition": "visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$item_collection_name"
+					field "controls":
+						control:
+							element "stack_count_label@common.stack_count_label":
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_name": "#item_stack_count"
+										field "binding_name_override": "#inventory_stack_count"
+										field "binding_condition": "visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$item_collection_name"
+					field "$variables":
+						variable "$item_renderer_size|default":
+							item 0: 16
+							item 1: 16
+		field "$variables":
+			variable "$item_renderer_panel_size|default":
+				item 0: 26
+				item 1: 26
+			variable "$item_collection_name": "$collection_name"
+			variable "$stack_count_required|default": true
+	element "result_item_slot@common.container_item":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "size": [26, 26]
+		field "$variables":
+			variable "$item_collection_name": "stonecutter_result_items"
+			variable "$button_ref": "stonecutter.result_slot_button"
+			variable "$cell_image_size":
+				item 0: 26
+				item 1: 26
+	element "result_slot_button@common.no_coalesce_container_slot_button":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.stonecutter_result_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.stonecutter_result_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.stonecutter_result_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "button.stonecutter_result_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_auto_place"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop"
+				field "to_button_id": "button.drop_one"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop_all"
+				field "to_button_id": "button.drop_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "to_button_id": "button.container_slot_hovered"
+				field "mapping_type": "pressed"
+	element "right_panel@common.root_panel":
+		field "layer": 1
+		field "controls":
+			control: element "common_panel@common.common_panel": field "$variables": variable "$show_close_button": false
+			control:
+				element "stonecutter_screen_inventory":
+					field "type": "panel"
+					field "layer": 2
+					field "controls":
+						control: element "stonecutter_label@stonecutter.stonecutter_label": field "offset": [0, 5]
+						control: element "top_half_panel@stonecutter.top_half_panel": empty
+						control: element "inventory_panel_bottom_half_with_label@common.inventory_panel_bottom_half_with_label": empty
+						control: element "hotbar_grid@common.hotbar_grid_template": empty
+	element "screen_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100%cm"]
+		field "controls":
+			control: element "stone_book_panel@stonecutter.stone_book_panel": empty
+			control: element "center_fold@stonecutter.center_fold": empty
+			control: element "right_panel@stonecutter.right_panel": empty
+			control: element "toolbar_anchor@stonecutter.toolbar_anchor": empty
+	element "scroll_grid":
+		field "type": "grid"
+		field "size": ["100%", "default"]
+		field "layer": 1
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "collection_name": "$collection_name"
+		field "grid_rescaling_type": "horizontal"
+		field "grid_item_template": "$grid_item_template"
+		field "bindings":
+			binding:
+				field "binding_name": "#stone_selector_total_items"
+				field "binding_name_override": "#maximum_grid_items"
+				field "binding_condition": "$binding_condition"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+		field "$variables":
+			variable "$binding_condition|default": "visible"
+			variable "$grid_item_template|default": "stonecutter.stone_button"
+	element "scroll_grid_panel@common.root_panel":
+		field "type": "input_panel"
+		field "size": ["100%", "100%c + 2px"]
+		field "controls": control: element "grid@stonecutter.scroll_grid": empty
+	element "scroll_panel@common.container_scroll_panel":
+		field "size": ["100% - 12px", "100% - 12px"]
+		field "$variables":
+			variable "$scrolling_content": "stonecutter.scroll_grid_panel"
+			variable "$collection_name": "stones"
+	element "stone_book_panel@common.root_panel":
+		field "size": [146, 166]
+		field "controls":
+			control: element "bg@common.common_panel": field "$variables": variable "$show_close_button": false
+			control: element "scroll_panel@stonecutter.scroll_panel": empty
+	element "stone_button":
+		field "layer": 2
+		field "type": "input_panel"
+		field "size": [18, 18]
+		field "controls":
+			control: element "$background_image_control_name@$background_images": field "layer": 1
+			control: element "banner_pattern@$banner_pattern_ref": field "layer": 6
+			control: element "item_button_ref@$button_ref": empty
+		field "$variables":
+			variable "$button_ref|default": "stonecutter.stone_slot_button"
+			variable "$banner_pattern_ref|default": "stonecutter.item_panel"
+			variable "$background_images|default": "stonecutter.stone_cell_image"
+			variable "$background_image_control_name|default": "bg"
+	element "stone_cell_image":
+		field "type": "image"
+		field "layer": 1
+		field "bindings":
+			binding:
+				field "binding_name": "#stone_cell_background_texture"
+				field "binding_name_override": "#texture"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "always_when_visible"
+	element "stone_slot_button":
+		field "type": "button"
+		field "focus_identifier": "$focus_id"
+		field "focus_change_down": "$focus_override_down"
+		field "focus_change_up": "$focus_override_up"
+		field "focus_change_left": "$focus_override_left"
+		field "focus_change_right": "$focus_override_right"
+		field "focus_enabled": true
+		field "focus_wrap_enabled": false
+		field "focus_magnet_enabled": true
+		field "sound_name": "random.click"
+		field "sound_volume": 1.0
+		field "sound_pitch": 1.0
+		field "default_focus_precedence": 1
+		field "hover_control": "hover"
+		field "layer": 1
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "once"
+			binding:
+				field "binding_type": "$focus_id_binding_type"
+				field "binding_name": "#focus_identifier"
+				field "binding_name_override": "#focus_identifier"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "once"
+			binding:
+				field "binding_type": "$focus_override_down_binding_type"
+				field "binding_name": "#focus_change_down"
+				field "binding_name_override": "#focus_change_down"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "once"
+			binding:
+				field "binding_type": "$focus_override_up_binding_type"
+				field "binding_name": "#focus_change_up"
+				field "binding_name_override": "#focus_change_up"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "once"
+			binding:
+				field "binding_type": "$focus_override_left_binding_type"
+				field "binding_name": "#focus_change_left"
+				field "binding_name_override": "#focus_change_left"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "once"
+			binding:
+				field "binding_type": "$focus_override_right_binding_type"
+				field "binding_name": "#focus_change_right"
+				field "binding_name_override": "#focus_change_right"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "once"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.stone_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.stone_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.stone_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "button.stone_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_auto_place"
+				field "to_button_id": "button.stone_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.stone_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop"
+				field "to_button_id": "button.stone_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop_all"
+				field "to_button_id": "button.stone_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "to_button_id": "button.container_slot_hovered"
+				field "mapping_type": "pressed"
+		field "controls": control: element "hover@$highlight_control": empty
+		field "$variables":
+			variable "$focus_id|default": ""
+			variable "$focus_override_down|default": ""
+			variable "$focus_override_up|default": ""
+			variable "$focus_override_left|default": ""
+			variable "$focus_override_right|default": ""
+			variable "$focus_id_binding_type|default": "collection"
+			variable "$focus_override_down_binding_type|default": "collection"
+			variable "$focus_override_up_binding_type|default": "collection"
+			variable "$focus_override_left_binding_type|default": "collection"
+			variable "$focus_override_right_binding_type|default": "collection"
+			variable "$highlight_control|default": "stonecutter.highlight_slot_panel"
+	element "stonecutter_label":
+		field "type": "label"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "color": "$title_text_color"
+		field "layer": 1
+		field "text": "container.stonecutter"
+	element "stonecutter_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "screen_stack_panel@stonecutter.screen_stack_panel": empty
+			control: element "container_gamepad_helpers@common.container_gamepad_helpers": empty
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+			control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+			control: element "inventory_take_progress_icon_button@common.inventory_take_progress_icon_button": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": field "layer": 8
+	element "stonecutter_screen@common.inventory_screen_common":
+		field "close_on_player_hurt": true
+		field "button_mappings": "$button_mappings"
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables": variable "$screen_content": "stonecutter.stonecutter_panel"
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables":
+					variable "$screen_content": "stonecutter_pocket.stonecutter_panel"
+					variable "$button_mappings":
+						item 0:
+							field "from_button_id": "button.menu_cancel"
+							field "to_button_id": "button.menu_exit"
+							field "mapping_type": "global"
+						item 1:
+							field "from_button_id": "button.menu_inventory_cancel"
+							field "to_button_id": "button.menu_exit"
+							field "mapping_type": "global"
+						item 2:
+							field "from_button_id": "button.menu_up"
+							field "to_button_id": "button.menu_up"
+							field "mapping_type": "global"
+							field "scope": "view"
+						item 3:
+							field "from_button_id": "button.menu_down"
+							field "to_button_id": "button.menu_down"
+							field "mapping_type": "global"
+							field "scope": "view"
+						item 4:
+							field "from_button_id": "button.menu_left"
+							field "to_button_id": "button.menu_left"
+							field "mapping_type": "global"
+							field "scope": "view"
+						item 5:
+							field "from_button_id": "button.menu_right"
+							field "to_button_id": "button.menu_right"
+							field "mapping_type": "global"
+							field "scope": "view"
+						item 6:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "button.cursor_drop_all"
+							field "mapping_type": "pressed"
+						item 7:
+							field "from_button_id": "button.menu_secondary_select"
+							field "to_button_id": "button.cursor_drop_one"
+							field "mapping_type": "pressed"
+						item 8:
+							field "from_button_id": "button.menu_ok"
+							field "to_button_id": "button.cursor_drop_all"
+							field "mapping_type": "pressed"
+						item 9:
+							field "from_button_id": "button.controller_select"
+							field "to_button_id": "button.cursor_drop_one"
+							field "mapping_type": "pressed"
+						item 10:
+							field "from_button_id": "button.controller_secondary_select"
+							field "to_button_id": "button.cursor_drop_all"
+							field "mapping_type": "pressed"
+						item 11:
+							field "from_button_id": "button.menu_tab_left"
+							field "to_button_id": "button.left_panel_tab_decrement"
+							field "mapping_type": "global"
+						item 12:
+							field "from_button_id": "button.menu_tab_right"
+							field "to_button_id": "button.menu_tab_right"
+							field "mapping_type": "global"
+						item 13:
+							field "from_button_id": "button.menu_alternate_tab_left"
+							field "to_button_id": "button.left_panel_tab_increment"
+							field "mapping_type": "global"
+						item 14:
+							field "from_button_id": "button.menu_alternate_tab_right"
+							field "to_button_id": "button.menu_alternate_tab_right"
+							field "mapping_type": "global"
+						item 15:
+							field "from_button_id": "button.controller_secondary_select_left"
+							field "to_button_id": "button.controller_secondary_select_left"
+							field "mapping_type": "global"
+						item 16:
+							field "from_button_id": "button.menu_clear"
+							field "to_button_id": "button.menu_clear"
+							field "mapping_type": "focused"
+		field "$variables":
+			variable "$screen_bg_content": "common.screen_background"
+			variable "$button_mappings|default":
+				item 0:
+					field "from_button_id": "button.menu_cancel"
+					field "to_button_id": "button.menu_exit"
+					field "mapping_type": "global"
+				item 1:
+					field "from_button_id": "button.menu_inventory_cancel"
+					field "to_button_id": "button.menu_exit"
+					field "mapping_type": "global"
+				item 2:
+					field "from_button_id": "button.menu_up"
+					field "to_button_id": "button.menu_up"
+					field "mapping_type": "global"
+					field "scope": "view"
+				item 3:
+					field "from_button_id": "button.menu_down"
+					field "to_button_id": "button.menu_down"
+					field "mapping_type": "global"
+					field "scope": "view"
+				item 4:
+					field "from_button_id": "button.menu_left"
+					field "to_button_id": "button.menu_left"
+					field "mapping_type": "global"
+					field "scope": "view"
+				item 5:
+					field "from_button_id": "button.menu_right"
+					field "to_button_id": "button.menu_right"
+					field "mapping_type": "global"
+					field "scope": "view"
+				item 6:
+					field "from_button_id": "button.menu_select"
+					field "to_button_id": "button.cursor_drop_all"
+					field "mapping_type": "pressed"
+				item 7:
+					field "from_button_id": "button.menu_secondary_select"
+					field "to_button_id": "button.cursor_drop_one"
+					field "mapping_type": "pressed"
+				item 8:
+					field "from_button_id": "button.menu_ok"
+					field "to_button_id": "button.cursor_drop_all"
+					field "mapping_type": "pressed"
+				item 9:
+					field "from_button_id": "button.controller_select"
+					field "to_button_id": "button.cursor_drop_one"
+					field "mapping_type": "pressed"
+				item 10:
+					field "from_button_id": "button.controller_secondary_select"
+					field "to_button_id": "button.cursor_drop_all"
+					field "mapping_type": "pressed"
+				item 11:
+					field "from_button_id": "button.controller_secondary_select_left"
+					field "to_button_id": "button.focus_left"
+					field "mapping_type": "global"
+				item 12:
+					field "from_button_id": "button.controller_secondary_select_right"
+					field "to_button_id": "button.focus_right"
+					field "mapping_type": "global"
+				item 13:
+					field "from_button_id": "button.chat"
+					field "to_button_id": "button.chat"
+					field "mapping_type": "global"
+	element "toolbar_anchor":
+		field "type": "panel"
+		field "size": [0, 0]
+		field "inherit_max_sibling_height": true
+		field "controls":
+			control:
+				element "toolbar_panel@stonecutter.toolbar_panel":
+					field "anchor_from": "top_right"
+					field "anchor_to": "bottom_right"
+	element "toolbar_background":
+		field "type": "image"
+		field "texture": "textures/ui/toolbar_background"
+	element "toolbar_panel@common.root_panel":
+		field "size": ["100%c", 20]
+		field "controls":
+			control:
+				element "toolbar_background@stonecutter.toolbar_background":
+					field "size": ["100%cm", "100% + 8px"]
+					field "offset": [0, -3]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "controls":
+						control:
+							element "toolbar_stack_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["default", "100% - 8px"]
+								field "offset": [0, 3]
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "controls":
+									control:
+										element "padding_1":
+											field "type": "panel"
+											field "size": [6, 0]
+									control:
+										element "help_button_panel":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "controls": control: element "help_button@stonecutter.help_button": empty
+									control:
+										element "close_button_panel":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "bindings":
+												binding:
+													field "binding_name": "#close_button_visible"
+													field "binding_name_override": "#visible"
+											field "controls":
+												control:
+													element "close_button@common.light_close_button":
+														field "size": ["100%cm", "100%cm"]
+														field "offset": [0, 0]
+														field "anchor_from": "center"
+														field "anchor_to": "center"
+									control:
+										element "padding_2":
+											field "type": "panel"
+											field "size": [6, 0]
+	element "top_half_panel":
+		field "type": "panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["100% - 14px", "50% - 22px"]
+		field "offset": [0, 15]
+		field "controls": control: element "top_half_stack_panel@stonecutter.top_half_stack_panel": empty
+	element "top_half_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100%cm"]
+		field "controls":
+			control:
+				element "input_slots_holder":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "inherit_max_sibling_height": true
+					field "controls": control: element "input_slots_stack_panel@stonecutter.input_slots_stack_panel": empty
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [14, 0]
+			control:
+				element "arrow_holder":
+					field "type": "panel"
+					field "size": [18, 12]
+					field "inherit_max_sibling_height": true
+					field "controls":
+						control:
+							element "arrow_icon@stonecutter.arrow_icon":
+								field "bindings":
+									binding:
+										field "binding_name": "#has_input_item"
+										field "binding_name_override": "#visible"
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": [14, 0]
+			control:
+				element "result_item_slot_holder":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "inherit_max_sibling_height": true
+					field "controls": control: element "result_item_slot@stonecutter.result_item_slot": empty
+Added namespace "stonecutter_pocket":
+	element "chest_item_renderer":
+		field "type": "custom"
+		field "renderer": "inventory_item_renderer"
+		field "size": [16, 16]
+		field "property_bag":
+			field "#item_id_aux": 3538944
+			field "#collection_name": "inventory_tab"
+			field "#collection_index": 0
+	element "input_item_slot@common.pocket_ui_container_item":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "$variables": variable "$item_collection_name": "stonecutter_input_items"
+	element "input_slots_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100%cm"]
+		field "controls": control: element "input_item_slot@stonecutter_pocket.input_item_slot": empty
+	element "inventory_panel":
+		field "type": "stack_panel"
+		field "size": ["100% - 12px", "100% - 12px"]
+		field "controls":
+			control:
+				element "inventory_title_label_centerer":
+					field "type": "panel"
+					field "size": ["default", 14]
+					field "controls":
+						control:
+							element "inventory_title_label":
+								field "type": "label"
+								field "color": "$title_text_color"
+								field "text": "container.inventory"
+								field "size": ["default", "100%"]
+			control: element "inventory_scroll_panel@stonecutter_pocket.inventory_scroll_panel": field "size": ["100%", "fill"]
+	element "inventory_scroll_panel@common.container_scroll_panel": field "$variables": variable "$scrolling_content": "common.pocket_container_grid"
+	element "left_navigation_tabs":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": [35, "100%"]
+		field "offset": [4, 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "controls":
+			control: element "left_tab_stones@stonecutter_pocket.left_tab_stones": empty
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [0, "fill"]
+			control: element "left_tab_inventory@stonecutter_pocket.left_tab_inventory": field "$variables": variable "$is_bottom_most_tab": true
+	element "left_panel":
+		field "type": "stack_panel"
+		field "size": ["fill", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "gamepad_helpers_and_tabs_holder":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "tabs_left_gamepad_helpers@common.tabs_left_gamepad_helpers":
+								field "size": [14, 0]
+								field "inherit_max_sibling_height": true
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+						control:
+							element "navigation_tabs_holder":
+								field "type": "panel"
+								field "size": ["100%c - 4px", "100%"]
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "controls": control: element "left_navigation_tabs@stonecutter_pocket.left_navigation_tabs": empty
+			control:
+				element "content@common.root_panel":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "bg@common.common_panel":
+								field "size": ["100%", "100%"]
+								field "$variables": variable "$show_close_button": false
+						control:
+							element "inventory_panel@stonecutter_pocket.inventory_panel":
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_type": "global"
+										field "binding_name": "#is_left_tab_inventory"
+										field "binding_name_override": "#visible"
+						control:
+							element "pattern_scroll_panel@stonecutter_pocket.pattern_scroll_panel":
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_type": "global"
+										field "binding_name": "(not #is_left_tab_inventory)"
+										field "binding_name_override": "#visible"
+	element "left_tab_inventory@common_tabs.pocket_tab_left":
+		field "$variables":
+			variable "$tab_view_binding_name": "inventory_tab_toggle"
+			variable "$toggle_group_forced_index": "$left_tab_index_inventory"
+			variable "$tab_content": "stonecutter_pocket.chest_item_renderer"
+			variable "$toggle_binding_type": "global"
+			variable "$toggle_state_binding_name": "#is_left_tab_inventory"
+	element "left_tab_stones@common_tabs.pocket_tab_left":
+		field "$variables":
+			variable "$is_top_most_tab": true
+			variable "$tab_view_binding_name": "stones_tab_toggle"
+			variable "$toggle_group_forced_index": "$left_tab_index_stones"
+			variable "$tab_content": "stonecutter_pocket.stonecutter_item_renderer"
+			variable "$toggle_binding_type": "global"
+			variable "$toggle_state_binding_name": "#is_left_tab_stones"
+	element "pattern_button@stonecutter.stone_button":
+		field "size": [28, 28]
+		field "$variables":
+			variable "$item_renderer_panel_size":
+				item 0: 28
+				item 1: 28
+			variable "$item_renderer_size":
+				item 0: 26
+				item 1: 26
+	element "pattern_scroll_panel@stonecutter.scroll_panel": field "$variables": variable "$grid_item_template": "stonecutter_pocket.pattern_button"
+	element "pocket_hotbar_and_content_panels@common.pocket_hotbar_and_content_panels":
+		field "layer": 2
+		field "$variables":
+			variable "$left_panel_control": "stonecutter_pocket.left_panel"
+			variable "$right_panel_control": "stonecutter_pocket.right_panel"
+	element "result_item_slot@common.pocket_ui_container_item":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "$variables":
+			variable "$item_collection_name": "stonecutter_result_items"
+			variable "$button_ref": "stonecutter.result_slot_button"
+	element "right_navigation_tabs":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": [35, "100%"]
+		field "offset": [-4, 0]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control: element "pocket_tab_close_and_help_button@common_tabs.pocket_tab_close_and_help_button": empty
+			control:
+				element "fill":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+			control: element "right_tab_stonecutter@stonecutter_pocket.right_tab_stonecutter": field "$variables": variable "$is_bottom_most_tab": true
+	element "right_panel":
+		field "type": "stack_panel"
+		field "size": ["fill", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "content@common.root_panel":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "bg@common.common_panel":
+								field "size": ["100%", "100%"]
+								field "$variables": variable "$show_close_button": false
+						control: element "stonecutter_content_stack_panel@stonecutter_pocket.stonecutter_content_stack_panel": field "layer": 2
+			control:
+				element "navigation_tabs_holder":
+					field "type": "panel"
+					field "size": ["100%c - 4px", "100%"]
+					field "controls": control: element "right_navigation_tabs@stonecutter_pocket.right_navigation_tabs": empty
+	element "right_tab_stonecutter@common_tabs.pocket_tab_right":
+		field "$variables":
+			variable "$tab_view_binding_name": "stonecutter_tab_toggle"
+			variable "$tab_content": "stonecutter_pocket.stonecutter_item_renderer"
+			variable "$toggle_binding_type": "global"
+			variable "$toggle_state_binding_name": "#is_right_tab_stonecutter"
+	element "stonecutter_content_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100% - 12px", "100% - 12px"]
+		field "controls":
+			control:
+				element "label_holder":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "stonecutter_label@stonecutter.stonecutter_label": empty
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [0, 4]
+			control:
+				element "panel":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+					field "controls":
+						control:
+							element "stack_panel":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "controls":
+									control:
+										element "input_slots_holder":
+											field "type": "panel"
+											field "size": ["100%", "100%c"]
+											field "controls": control: element "input_slots_stack_panel@stonecutter_pocket.input_slots_stack_panel": empty
+									control:
+										element "padding_3":
+											field "type": "panel"
+											field "size": [0, 10]
+									control:
+										element "arrow_holder":
+											field "type": "panel"
+											field "size": ["100%", 22]
+											field "controls": control: element "vertical_arrow_icon@stonecutter_pocket.vertical_arrow_icon": empty
+									control:
+										element "padding_4":
+											field "type": "panel"
+											field "size": [0, 10]
+									control:
+										element "result_item_slot_holder":
+											field "type": "panel"
+											field "size": ["100%", "100%c"]
+											field "controls": control: element "result_item_slot@stonecutter_pocket.result_item_slot": empty
+									control:
+										element "padding_5":
+											field "type": "panel"
+											field "size": [0, 4]
+	element "stonecutter_item_renderer":
+		field "type": "custom"
+		field "renderer": "inventory_item_renderer"
+		field "size": [16, 16]
+		field "property_bag":
+			field "#item_id_aux": -12910592
+			field "#collection_name": "stonecutter_tab"
+			field "#collection_index": 0
+	element "stonecutter_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "pocket_hotbar_and_content_panels@stonecutter_pocket.pocket_hotbar_and_content_panels": empty
+			control:
+				element "container_gamepad_helpers@common.container_gamepad_helpers":
+					field "size": ["100%", 40]
+					field "$variables":
+						variable "$gamepad_helper_size":
+							item 0: "100%c"
+							item 1: 15
+						variable "$a_b_stack_panel_orientation": "vertical"
+						variable "$x_y_stack_panel_orientation": "vertical"
+						variable "$a_b_stack_panel_size":
+							item 0: "100%cm"
+							item 1: "100%"
+						variable "$x_y_stack_panel_size":
+							item 0: "100%cm"
+							item 1: "100%"
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+			control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+			control: element "inventory_take_progress_icon_button@common.inventory_take_progress_icon_button": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": field "layer": 8
+	element "vertical_arrow_icon":
+		field "type": "image"
+		field "texture": "textures/ui/arrow_down_large"
+		field "size": [15, 22]
+Added namespace "trade2":
+	element "anim_trade_details_alpha":
+		field "anim_type": "alpha"
+		field "easing": "in_quint"
+		field "destroy_at_end": "trade_details"
+		field "duration": 2
+		field "from": 1.0
+		field "to": 0
+	element "arrow_holder":
+		field "type": "panel"
+		field "size": [16, 0]
+		field "controls":
+			control:
+				element "arrow_image@trade2.arrow_right_image":
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "#trade_toggle_enabled"
+							field "binding_name_override": "#visible"
+			control:
+				element "cross_out_image@trade2.cross_out_image":
+					field "layer": 2
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "#trade_cross_out_visible"
+							field "binding_name_override": "#visible"
+			control:
+				element "lock_image@trade2.lock_image":
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "(not #trade_toggle_enabled)"
+							field "binding_name_override": "#visible"
+	element "arrow_left_image":
+		field "type": "image"
+		field "size": [16, 13]
+		field "texture": "textures/ui/arrow_dark_left_stretch"
+	element "arrow_right_image":
+		field "type": "image"
+		field "size": [16, 13]
+		field "texture": "textures/ui/arrow_dark_right_stretch"
+	element "center_fold@common.root_panel":
+		field "size": [4, 166]
+		field "controls":
+			control:
+				element "center_bg":
+					field "type": "image"
+					field "texture": "textures/ui/recipe_back_panel"
+					field "size": ["100% + 8px", "100% - 6px"]
+	element "container_cell_image":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "cell_image@common.cell_image":
+					field "bindings":
+						binding:
+							field "binding_name": "#item_valid"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$item_collection_name"
+			control:
+				element "red_cell_image@trade2.red_cell_image":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #item_valid)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$item_collection_name"
+	element "cross_out_image":
+		field "type": "image"
+		field "texture": "textures/ui/crossout"
+		field "layer": 1
+		field "size": [15, 15]
+	element "enchantment_details_button@trade2.trade_details_button":
+		field "bindings":
+			binding:
+				field "binding_name": "#enchantment_details_button_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$pressed_button_name": "button.enchantment_details"
+			variable "$button_text": "trade.mysteriousText"
+			variable "$font_type": "rune"
+			variable "$default_button_texture": "textures/ui/button_purple"
+			variable "$default_text_color": "$enchantment_button_default_text_color"
+	element "hover_button":
+		field "type": "button"
+		field "layer": 1
+		field "default_focus_precedence": 1
+		field "hover_control": "hover_text"
+		field "consume_event": false
+		field "button_mappings":
+			button mapping:
+				field "to_button_id": "button.container_slot_hovered"
+				field "mapping_type": "pressed"
+				field "consume_event": false
+		field "controls":
+			control:
+				element "hover_text@common.hover_text":
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "#hover_text"
+							field "binding_condition": "visible"
+		field "bindings":
+			binding:
+				field "binding_name": "(not #using_touch)"
+				field "binding_name_override": "#visible"
+	element "how_to_play_button@common_buttons.light_text_button":
+		field "size": [18, 18]
+		field "$variables":
+			variable "$pressed_button_name": "button.help"
+			variable "$button_text": "trade.question"
+	element "ingredient_1_item_slot@trade2.item_slot": field "$variables": variable "$item_collection_name": "trade2_ingredient1_item"
+	element "ingredient_2_item_slot@trade2.item_slot": field "$variables": variable "$item_collection_name": "trade2_ingredient2_item"
+	element "item_slot@common.container_item":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "size": [28, 28]
+		field "$variables":
+			variable "$cell_image_size":
+				item 0: 28
+				item 1: 28
+			variable "$item_renderer_panel_size":
+				item 0: 24
+				item 1: 24
+			variable "$item_renderer_size":
+				item 0: 24
+				item 1: 24
+			variable "$background_images": "trade2.container_cell_image"
+	element "item_slot_holder":
+		field "type": "panel"
+		field "size": ["100%cm", "100%cm"]
+		field "controls":
+			control: element "ingredient_1_item_slot@$item_slot_control": empty
+			control:
+				element "trade_details_1_button@$item_details_control":
+					field "size": [0, 12]
+					field "inherit_max_sibling_width": true
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "top_middle"
+			control:
+				element "trade_details_1_factory_holder@trade2.trade_details_factory_holder":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "bottom_middle"
+		field "$variables":
+			variable "$item_slot_control|default": ""
+			variable "$item_details_control|default": ""
+			variable "$factory_name|default": ""
+	element "item_slots_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": [96, "100%cm"]
+		field "controls":
+			control:
+				element "ingredient_item_1_holder@trade2.item_slot_holder":
+					field "$variables":
+						variable "$item_slot_control": "trade2.ingredient_1_item_slot"
+						variable "$item_details_control": "trade2.trade_details_1_button"
+						variable "$factory_name": "trade_details_1_factory"
+			control:
+				element "ingredient_item_2_holder@trade2.item_slot_holder":
+					field "ignored": "$second_item_slot_ignored"
+					field "$variables":
+						variable "$item_slot_control": "trade2.ingredient_2_item_slot"
+						variable "$item_details_control": "trade2.trade_details_2_button"
+						variable "$factory_name": "trade_details_2_factory"
+						variable "$factory_layer": 4
+			control:
+				element "pointing_right_arrow_holder":
+					field "type": "panel"
+					field "size": ["fill", 0]
+					field "inherit_max_sibling_height": true
+					field "controls":
+						control:
+							element "arrow_right_image@trade2.arrow_right_image":
+								field "size": ["100% + 3px", 13]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "offset": [0, 2]
+			control:
+				element "pointing_left_arrow_holder":
+					field "type": "panel"
+					field "size": ["fill", 0]
+					field "inherit_max_sibling_height": true
+					field "controls":
+						control:
+							element "arrow_left_image@trade2.arrow_left_image":
+								field "size": ["100% + 3px", 13]
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "offset": [0, -2]
+			control:
+				element "result_item_slot_holder@trade2.item_slot_holder":
+					field "$variables":
+						variable "$item_slot_control": "trade2.result_item_slot"
+						variable "$item_details_control": "trade2.enchantment_details_button"
+						variable "$factory_name": "trade_enchantment_details_factory"
+						variable "$factory_layer": 7
+	element "left_panel@common.root_panel":
+		field "size": [128, 166]
+		field "controls":
+			control: element "bg@common.common_panel": field "$variables": variable "$show_close_button": false
+			control: element "trade_scroll_panel@trade2.trade_scroll_panel": empty
+	element "lock_image":
+		field "type": "image"
+		field "size": [8, 8]
+		field "texture": "textures/ui/lock"
+		field "color": "$trade_lock_color"
+	element "red_cell_image":
+		field "type": "image"
+		field "texture": "textures/ui/cell_image_red"
+	element "result_item_slot@trade2.item_slot":
+		field "$variables":
+			variable "$item_collection_name": "trade2_result_item"
+			variable "$item_renderer_binding_condition": "always_when_visible"
+			variable "$button_ref": "trade2.trade_result_item_slot_button"
+	element "right_panel@common.root_panel":
+		field "layer": 1
+		field "controls":
+			control: element "common_panel@common.common_panel": field "$variables": variable "$show_close_button": false
+			control:
+				element "trade_screen_inventory":
+					field "type": "panel"
+					field "layer": 2
+					field "controls":
+						control: element "villager_name_label@trade2.villager_name_label": empty
+						control: element "villager_exp_label@trade2.villager_exp_label": empty
+						control: element "top_half_panel@trade2.top_half_panel": empty
+						control: element "inventory_panel_bottom_half_with_label@common.inventory_panel_bottom_half_with_label": empty
+						control: element "hotbar_grid@common.hotbar_grid_template": empty
+	element "screen_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "screen_stack_panel@trade2.screen_stack_panel": empty
+			control: element "container_gamepad_helpers@common.container_gamepad_helpers": empty
+			control: element "selected_item_details_factory@common.selected_item_details_factory": empty
+			control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+			control: element "inventory_take_progress_icon_button@common.inventory_take_progress_icon_button": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": field "layer": 20
+	element "screen_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100%cm"]
+		field "controls":
+			control: element "left_panel@trade2.left_panel": empty
+			control: element "center_fold@trade2.center_fold": empty
+			control: element "right_panel@trade2.right_panel": empty
+			control: element "toolbar_anchor@trade2.toolbar_anchor": empty
+	element "scroll_background_image":
+		field "type": "image"
+		field "texture": "textures/ui/background_with_border"
+		field "layer": 3
+	element "scroll_inner_input_panel@common.root_panel":
+		field "type": "input_panel"
+		field "size": ["100%", "100%c + 2px"]
+		field "controls": control: element "trade_selector_stack_panel@trade2.trade_selector_stack_panel": empty
+	element "sell_item@trade2.single_item_grid": field "collection_name": "sell_item"
+	element "single_item_grid":
+		field "type": "grid"
+		field "size": ["100%c", "100%c"]
+		field "grid_dimensions": [1, 1]
+		field "controls":
+			control:
+				element "item_with_count":
+					field "type": "panel"
+					field "size": ["100%cm", "100%cm"]
+					field "controls":
+						control:
+							element "item_renderer@common.item_renderer":
+								field "size": "$item_renderer_size"
+								field "layer": 1
+								field "bindings":
+									binding: field "binding_type": "collection_details"
+									binding: field "binding_name": "#item_id_aux"
+									binding: field "binding_name": "#item_custom_color"
+									binding: field "binding_name": "#item_pickup_time"
+									binding: field "binding_name": "#banner_patterns"
+									binding: field "binding_name": "#banner_colors"
+									binding: field "binding_name": "#banner_type"
+								field "$variables":
+									variable "$item_renderer_size|default":
+										item 0: 16
+										item 1: 16
+						control:
+							element "stack_count_label@common.stack_count_label":
+								field "layer": 2
+								field "text": "#trade_item_count"
+								field "bindings":
+									binding: field "binding_type": "collection_details"
+									binding: field "binding_name": "#trade_item_count"
+						control:
+							element "hover_button@trade2.hover_button":
+								field "size": [0, 0]
+								field "inherit_max_sibling_width": true
+								field "inherit_max_sibling_height": true
+					field "$variables": variable "$stack_count_required": true
+	element "tier_label":
+		field "type": "label"
+		field "color": "$trade_tier_name_color"
+		field "text": "#tier_name"
+		field "bindings":
+			binding:
+				field "binding_name": "#tier_name"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "#is_tier_unlocked"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+	element "tier_label_locked":
+		field "type": "label"
+		field "color": "$trade_tier_name_locked_color"
+		field "text": "#tier_name"
+		field "bindings":
+			binding:
+				field "binding_name": "#tier_name"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+			binding:
+				field "binding_name": "(not #is_tier_unlocked)"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+	element "tier_stack_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c + 1px"]
+		field "orientation": "vertical"
+		field "controls":
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [0, 2]
+			control:
+				element "tier_label_holder":
+					field "type": "panel"
+					field "size": ["100%", "100%cm"]
+					field "controls":
+						control:
+							element "tier_label@trade2.tier_label":
+								field "size": ["100%", "default"]
+								field "offset": [2, 0]
+								field "layer": 2
+						control:
+							element "tier_label_locked@trade2.tier_label_locked":
+								field "size": ["100%", "default"]
+								field "offset": [2, 0]
+								field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_name": "#show_level"
+							field "binding_name_override": "#visible"
+			control: element "trade_toggle_stack_panel@trade2.trade_toggle_stack_panel": empty
+	element "toggle_content":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%cm"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["fill", 0]
+			control: element "trade_item_1@trade2.trade_item_1": empty
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": ["fill", 0]
+					field "max_size": [2, 0]
+			control: element "trade_item_2@trade2.trade_item_2": empty
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["fill", 0]
+					field "max_size": [2, 0]
+			control: element "arrow_holder@$arrow_holder_control": field "inherit_max_sibling_height": true
+			control:
+				element "padding_4":
+					field "type": "panel"
+					field "size": ["fill", 0]
+					field "max_size": [2, 0]
+			control:
+				element "sell_item_holder":
+					field "type": "panel"
+					field "size": "$sell_item_holder_size"
+					field "controls": control: element "sell_item@trade2.sell_item": empty
+					field "$variables":
+						variable "$sell_item_holder_size|default":
+							item 0: "200%c"
+							item 1: "100%c"
+			control:
+				element "padding_5":
+					field "type": "panel"
+					field "size": ["fill", 0]
+		field "$variables": variable "$arrow_holder_control|default": "trade2.arrow_holder"
+	element "toggle_content_holder":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls": control: element "toggle_content@trade2.toggle_content": empty
+	element "toolbar_anchor":
+		field "type": "panel"
+		field "size": [0, 0]
+		field "inherit_max_sibling_height": true
+		field "controls":
+			control:
+				element "toolbar_panel@trade2.toolbar_panel":
+					field "anchor_from": "top_right"
+					field "anchor_to": "bottom_right"
+					field "bindings":
+						binding:
+							field "binding_name": "#close_button_visible"
+							field "binding_name_override": "#visible"
+	element "toolbar_background":
+		field "type": "image"
+		field "texture": "textures/ui/toolbar_background"
+	element "toolbar_panel@common.root_panel":
+		field "size": ["100%c", 20]
+		field "controls":
+			control:
+				element "toolbar_background@trade2.toolbar_background":
+					field "size": ["100%cm", "100% + 8px"]
+					field "offset": [0, -3]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "controls":
+						control:
+							element "toolbar_stack_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["default", "100% - 8px"]
+								field "offset": [0, 3]
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "controls":
+									control:
+										element "padding_1":
+											field "type": "panel"
+											field "size": [6, 0]
+									control:
+										element "close_button_panel":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "bindings":
+												binding:
+													field "binding_name": "#close_button_visible"
+													field "binding_name_override": "#visible"
+											field "controls":
+												control:
+													element "close_button@common.light_close_button":
+														field "size": ["100%cm", "100%cm"]
+														field "offset": [0, 0]
+														field "anchor_from": "center"
+														field "anchor_to": "center"
+									control:
+										element "padding_2":
+											field "type": "panel"
+											field "size": [6, 0]
+	element "top_half_panel":
+		field "type": "panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["100% - 14px", "50% - 22px"]
+		field "offset": [0, 15]
+		field "controls": control: element "top_half_stack_panel@trade2.top_half_stack_panel": empty
+	element "top_half_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100%cm"]
+		field "controls":
+			control:
+				element "item_slots_holder":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "inherit_max_sibling_height": true
+					field "controls": control: element "item_slots_stack_panel@trade2.item_slots_stack_panel": empty
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [1, 0]
+			control:
+				element "trade_button_holder":
+					field "type": "panel"
+					field "size": ["100%c", 0]
+					field "inherit_max_sibling_height": true
+					field "controls": control: element "trade_button@trade2.trade_button": empty
+			control:
+				element "how_to_play_button_holder":
+					field "type": "panel"
+					field "size": ["100%c - 1px", 0]
+					field "inherit_max_sibling_height": true
+					field "controls":
+						control:
+							element "how_to_play_button@trade2.how_to_play_button":
+								field "anchor_from": "right_middle"
+								field "anchor_to": "right_middle"
+	element "trade_button@common_buttons.light_text_button":
+		field "size": [48, 18]
+		field "bindings":
+			binding:
+				field "binding_name": "#trade_button_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$pressed_button_name": "button.trade"
+			variable "$button_text": "trade.trade"
+	element "trade_cell_image":
+		field "type": "image"
+		field "layer": 1
+		field "bindings":
+			binding:
+				field "binding_name": "#trade_cell_background_texture"
+				field "binding_name_override": "#texture"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+				field "binding_condition": "always_when_visible"
+	element "trade_details":
+		field "type": "panel"
+		field "size": ["100%c", "100%c"]
+		field "offset": [0, 0]
+		field "anchor_to": "bottom_middle"
+		field "anchor_from": "bottom_middle"
+		field "layer": 30
+		field "controls":
+			control:
+				element "item_panel_image":
+					field "type": "image"
+					field "size": ["100%c + 8px", "100%c + 8px"]
+					field "layer": 30
+					field "alpha": "$alpha_anim"
+					field "texture": "textures/ui/purpleBorder"
+					field "controls":
+						control:
+							element "item_text_label":
+								field "type": "label"
+								field "max_size": [80, 60]
+								field "layer": 1
+								field "alpha": "$alpha_anim"
+								field "text": "#selected_hover_text"
+								field "color": "$item_hover_text_color"
+		field "$variables": variable "$alpha_anim|default": "@trade2.anim_trade_details_alpha"
+	element "trade_details_1_button@trade2.trade_details_button":
+		field "bindings":
+			binding:
+				field "binding_name": "#trade_details_button_1_visible"
+				field "binding_name_override": "#visible"
+		field "$variables": variable "$pressed_button_name": "button.trade_details_1"
+	element "trade_details_2_button@trade2.trade_details_button":
+		field "bindings":
+			binding:
+				field "binding_name": "#trade_details_button_2_visible"
+				field "binding_name_override": "#visible"
+		field "$variables": variable "$pressed_button_name": "button.trade_details_2"
+	element "trade_details_button@common_buttons.light_text_button":
+		field "size": [28, 18]
+		field "$variables":
+			variable "$button_image_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$button_content_size":
+				item 0: "100% - 4px"
+				item 1: "100% - 4px"
+			variable "$pressed_button_name": "button.trade_details"
+			variable "$button_text": "trade.excalamation"
+			variable "$border_visible": false
+	element "trade_details_factory":
+		field "type": "factory"
+		field "control_name": "@trade2.trade_details"
+		field "size": [0, 0]
+	element "trade_details_factory_holder":
+		field "type": "panel"
+		field "size": [0, 0]
+		field "layer": "$factory_layer"
+		field "controls": control: element "$factory_name@trade2.trade_details_factory": empty
+		field "$variables":
+			variable "$factory_name|default": "trade_details_factory"
+			variable "$factory_layer|default": 1
+	element "trade_item_1@trade2.single_item_grid": field "collection_name": "trade_item_1"
+	element "trade_item_2@trade2.single_item_grid": field "collection_name": "trade_item_2"
+	element "trade_result_item_slot_button@common.container_slot_button_prototype":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.trade_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.trade_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.trade_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_select"
+				field "to_button_id": "button.trade_take_all_place_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_auto_place"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.container_auto_place"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop"
+				field "to_button_id": "button.drop_one"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_inventory_drop_all"
+				field "to_button_id": "button.drop_all"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.trade_coalesce_stack"
+				field "mapping_type": "double_pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.trade_coalesce_stack"
+				field "mapping_type": "double_pressed"
+			button mapping:
+				field "to_button_id": "button.container_slot_hovered"
+				field "mapping_type": "pressed"
+	element "trade_screen@common.inventory_screen_common":
+		field "close_on_player_hurt": true
+		field "button_mappings": "$button_mappings"
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables": variable "$screen_content": "trade2.screen_panel"
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables":
+					variable "$screen_content": "trade2_pocket.screen_panel"
+					variable "$button_mappings":
+						item 0:
+							field "from_button_id": "button.menu_cancel"
+							field "to_button_id": "button.menu_exit"
+							field "mapping_type": "global"
+						item 1:
+							field "from_button_id": "button.menu_inventory_cancel"
+							field "to_button_id": "button.menu_exit"
+							field "mapping_type": "global"
+						item 2:
+							field "from_button_id": "button.menu_up"
+							field "to_button_id": "button.menu_up"
+							field "mapping_type": "global"
+							field "scope": "view"
+						item 3:
+							field "from_button_id": "button.menu_down"
+							field "to_button_id": "button.menu_down"
+							field "mapping_type": "global"
+							field "scope": "view"
+						item 4:
+							field "from_button_id": "button.menu_left"
+							field "to_button_id": "button.menu_left"
+							field "mapping_type": "global"
+							field "scope": "view"
+						item 5:
+							field "from_button_id": "button.menu_right"
+							field "to_button_id": "button.menu_right"
+							field "mapping_type": "global"
+							field "scope": "view"
+						item 6:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "button.cursor_drop_all"
+							field "mapping_type": "pressed"
+						item 7:
+							field "from_button_id": "button.menu_secondary_select"
+							field "to_button_id": "button.cursor_drop_one"
+							field "mapping_type": "pressed"
+						item 8:
+							field "from_button_id": "button.menu_ok"
+							field "to_button_id": "button.cursor_drop_all"
+							field "mapping_type": "pressed"
+						item 9:
+							field "from_button_id": "button.controller_select"
+							field "to_button_id": "button.cursor_drop_one"
+							field "mapping_type": "pressed"
+						item 10:
+							field "from_button_id": "button.controller_secondary_select"
+							field "to_button_id": "button.cursor_drop_all"
+							field "mapping_type": "pressed"
+						item 11:
+							field "from_button_id": "button.menu_tab_left"
+							field "to_button_id": "button.left_panel_tab_decrement"
+							field "mapping_type": "global"
+						item 12:
+							field "from_button_id": "button.menu_tab_right"
+							field "to_button_id": "button.menu_tab_right"
+							field "mapping_type": "global"
+						item 13:
+							field "from_button_id": "button.menu_alternate_tab_left"
+							field "to_button_id": "button.left_panel_tab_increment"
+							field "mapping_type": "global"
+						item 14:
+							field "from_button_id": "button.menu_alternate_tab_right"
+							field "to_button_id": "button.menu_alternate_tab_right"
+							field "mapping_type": "global"
+						item 15:
+							field "from_button_id": "button.controller_secondary_select_left"
+							field "to_button_id": "button.focus_left"
+							field "mapping_type": "global"
+						item 16:
+							field "from_button_id": "button.menu_clear"
+							field "to_button_id": "button.menu_clear"
+							field "mapping_type": "focused"
+		field "$variables":
+			variable "$screen_bg_content": "common.screen_background"
+			variable "$button_mappings|default":
+				item 0:
+					field "from_button_id": "button.menu_cancel"
+					field "to_button_id": "button.menu_exit"
+					field "mapping_type": "global"
+				item 1:
+					field "from_button_id": "button.menu_inventory_cancel"
+					field "to_button_id": "button.menu_exit"
+					field "mapping_type": "global"
+				item 2:
+					field "from_button_id": "button.menu_up"
+					field "to_button_id": "button.menu_up"
+					field "mapping_type": "global"
+					field "scope": "view"
+				item 3:
+					field "from_button_id": "button.menu_down"
+					field "to_button_id": "button.menu_down"
+					field "mapping_type": "global"
+					field "scope": "view"
+				item 4:
+					field "from_button_id": "button.menu_left"
+					field "to_button_id": "button.menu_left"
+					field "mapping_type": "global"
+					field "scope": "view"
+				item 5:
+					field "from_button_id": "button.menu_right"
+					field "to_button_id": "button.menu_right"
+					field "mapping_type": "global"
+					field "scope": "view"
+				item 6:
+					field "from_button_id": "button.menu_select"
+					field "to_button_id": "button.cursor_drop_all"
+					field "mapping_type": "pressed"
+				item 7:
+					field "from_button_id": "button.menu_secondary_select"
+					field "to_button_id": "button.cursor_drop_one"
+					field "mapping_type": "pressed"
+				item 8:
+					field "from_button_id": "button.menu_ok"
+					field "to_button_id": "button.cursor_drop_all"
+					field "mapping_type": "pressed"
+				item 9:
+					field "from_button_id": "button.controller_select"
+					field "to_button_id": "button.cursor_drop_one"
+					field "mapping_type": "pressed"
+				item 10:
+					field "from_button_id": "button.controller_secondary_select"
+					field "to_button_id": "button.cursor_drop_all"
+					field "mapping_type": "pressed"
+				item 11:
+					field "from_button_id": "button.controller_secondary_select_left"
+					field "to_button_id": "button.focus_left"
+					field "mapping_type": "global"
+				item 12:
+					field "from_button_id": "button.controller_secondary_select_right"
+					field "to_button_id": "button.focus_right"
+					field "mapping_type": "global"
+				item 13:
+					field "from_button_id": "button.chat"
+					field "to_button_id": "button.chat"
+					field "mapping_type": "global"
+	element "trade_scroll_panel@common.container_scroll_panel":
+		field "size": ["100% - 12px", "100% - 12px"]
+		field "$variables":
+			variable "$scrolling_content": "trade2.scroll_inner_input_panel"
+			variable "$collection_name": "trade_tiers"
+			variable "$scroll_background_image_control": "trade2.scroll_background_image"
+	element "trade_selector_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100% - 4px", "default"]
+		field "factory":
+			field "name": "selected_pack_factory"
+			field "control_name": "trade2.tier_stack_panel"
+		field "collection_name": "$collection_name"
+		field "bindings":
+			binding:
+				field "binding_name": "#trade_selector_total"
+				field "binding_name_override": "#collection_length"
+	element "trade_toggle@common_toggles.light_image_toggle_collection":
+		field "layer": 2
+		field "size": "$toggle_size"
+		field "$variables":
+			variable "$toggle_size|default":
+				item 0: "100%"
+				item 1: 24
+			variable "$toggle_name": "trade_toggle"
+			variable "$toggle_binding_type": "global"
+			variable "$toggle_state_binding_name": "#trade_toggle_state"
+			variable "$toggle_enabled_binding_type": "global"
+			variable "$toggle_enabled_binding_name": "#trade_toggle_enabled"
+			variable "$button_content": "trade2.toggle_content_holder"
+			variable "$unchecked_control": "trade2.trade_toggle_unchecked"
+			variable "$checked_control": "trade2.trade_toggle_checked"
+			variable "$unchecked_locked_control": "trade2.trade_toggle_locked"
+			variable "$unchecked_locked_hover_control": "trade2.trade_toggle_locked"
+			variable "$checked_locked_control": "trade2.trade_toggle_locked"
+			variable "$checked_locked_hover_control": "trade2.trade_toggle_locked"
+	element "trade_toggle_checked":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "toggle_checked_normal@common_toggles.toggle_checked":
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "#trade_possible"
+							field "binding_name_override": "#visible"
+			control:
+				element "toggle_checked_red@common_toggles.toggle_checked":
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "(not #trade_possible)"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$new_ui_button_texture": "textures/ui/button_trade_red_pressed"
+	element "trade_toggle_holder":
+		field "type": "panel"
+		field "size": ["100%", "100%c - 1px"]
+		field "controls":
+			control:
+				element "trade_toggle@trade2.trade_toggle":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+	element "trade_toggle_locked@common_toggles.toggle_locked": field "$variables": variable "$border_visible": false
+	element "trade_toggle_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "default"]
+		field "factory":
+			field "name": "selected_pack_factory"
+			field "control_name": "trade2.trade_toggle_holder"
+		field "collection_name": "$trade_collection_name"
+		field "bindings":
+			binding:
+				field "binding_name": "#trade_tier_total"
+				field "binding_name_override": "#collection_length"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_name"
+		field "$variables": variable "$trade_collection_name": "trades"
+	element "trade_toggle_unchecked":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "toggle_checked_normal@common_toggles.toggle_unchecked":
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "#trade_possible"
+							field "binding_name_override": "#visible"
+			control:
+				element "toggle_checked_red@common_toggles.toggle_unchecked":
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "(not #trade_possible)"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$new_ui_button_texture": "textures/ui/button_trade_red"
+	element "villager_exp_label":
+		field "type": "label"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "offset": [0, 17]
+		field "color": "$title_text_color"
+		field "layer": 2
+		field "text": "#villager_exp"
+		field "bindings":
+			binding:
+				field "binding_name": "#villager_exp"
+				field "binding_condition": "always"
+	element "villager_name_label":
+		field "type": "label"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "offset": [0, 5]
+		field "color": "$title_text_color"
+		field "layer": 1
+		field "text": "$villager_name"
+Added namespace "trade2_pocket":
+	element "arrow_holder":
+		field "type": "panel"
+		field "size": [24, 0]
+		field "controls":
+			control:
+				element "arrow_image@trade2_pocket.arrow_right_image":
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "#trade_toggle_enabled"
+							field "binding_name_override": "#visible"
+			control:
+				element "cross_out_image@trade2.cross_out_image":
+					field "size": [22, 22]
+					field "layer": 2
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "#trade_cross_out_visible"
+							field "binding_name_override": "#visible"
+			control:
+				element "lock_image@trade2.lock_image":
+					field "size": [16, 16]
+					field "bindings":
+						binding: field "binding_type": "collection_details"
+						binding:
+							field "binding_name": "(not #trade_toggle_enabled)"
+							field "binding_name_override": "#visible"
+	element "arrow_right_image":
+		field "type": "image"
+		field "size": [24, 19]
+		field "texture": "textures/ui/arrow_dark_right"
+	element "chest_item_renderer":
+		field "type": "custom"
+		field "renderer": "inventory_item_renderer"
+		field "size": [16, 16]
+		field "property_bag":
+			field "#item_id_aux": 3538944
+			field "#collection_name": "inventory_tab"
+			field "#collection_index": 0
+	element "inventory_scroll_panel@common.container_scroll_panel":
+		field "size": ["100% - 12px", "100% - 12px"]
+		field "$variables": variable "$scrolling_content": "common.pocket_container_grid"
+	element "left_navigation_tabs":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": [35, "default"]
+		field "offset": [4, 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "controls":
+			control: element "left_tab_trades@trade2_pocket.left_tab_trade": empty
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [0, 1]
+			control: element "left_tab_inventory@trade2_pocket.left_tab_inventory": field "$variables": variable "$is_bottom_most_tab": true
+	element "left_panel":
+		field "type": "stack_panel"
+		field "size": ["fill", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "gamepad_helpers_and_tabs_holder":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "tabs_left_gamepad_helpers@common.tabs_left_gamepad_helpers":
+								field "size": [14, 0]
+								field "inherit_max_sibling_height": true
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+						control:
+							element "navigation_tabs_holder":
+								field "type": "panel"
+								field "size": ["100%c - 4px", "100%c"]
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "controls": control: element "left_navigation_tabs@trade2_pocket.left_navigation_tabs": empty
+			control:
+				element "content@common.root_panel":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "bg@common.common_panel":
+								field "size": ["100%", "100%"]
+								field "$variables": variable "$show_close_button": false
+						control:
+							element "inventory_scroll_panel@trade2_pocket.inventory_scroll_panel":
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_type": "global"
+										field "binding_name": "#is_left_tab_inventory"
+										field "binding_name_override": "#visible"
+						control:
+							element "trade_scroll_panel@trade2.trade_scroll_panel":
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_type": "global"
+										field "binding_name": "#is_left_tab_trade"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$toggle_size":
+										item 0: "100%"
+										item 1: 32
+									variable "$item_renderer_size":
+										item 0: 24
+										item 1: 24
+									variable "$sell_item_holder_size":
+										item 0: "100%c"
+										item 1: "100%c"
+									variable "$arrow_holder_control": "trade2_pocket.arrow_holder"
+	element "left_tab_inventory@common_tabs.pocket_tab_left":
+		field "$variables":
+			variable "$tab_view_binding_name": "inventory_left_tab_toggle"
+			variable "$toggle_group_forced_index": "$left_tab_index_inventory"
+			variable "$tab_content": "trade2_pocket.chest_item_renderer"
+			variable "$toggle_binding_type": "global"
+			variable "$toggle_state_binding_name": "#is_left_tab_inventory"
+	element "left_tab_trade@common_tabs.pocket_tab_left":
+		field "$variables":
+			variable "$tab_view_binding_name": "trade_tab_toggle"
+			variable "$toggle_group_forced_index": "$left_tab_index_trades"
+			variable "$tab_content": "trade2_pocket.trade_icon"
+			variable "$toggle_binding_type": "global"
+			variable "$toggle_state_binding_name": "#is_left_tab_trade"
+	element "name_and_trade_slots_stack_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%"]
+		field "orientation": "vertical"
+		field "controls":
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [0, 8]
+			control:
+				element "villager_name_label_holder":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "villager_name_label@trade2.villager_name_label":
+								field "offset": [0, 0]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": [0, 8]
+			control: element "trade_slots_panel@trade2_pocket.trade_slots_panel": field "size": ["100%", "fill"]
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": [0, 2]
+			control: element "trade_and_help_buttons@trade2_pocket.trade_and_help_buttons": empty
+	element "pocket_hotbar_and_content_panels@common.pocket_hotbar_and_content_panels":
+		field "layer": 2
+		field "$variables":
+			variable "$left_panel_control": "trade2_pocket.left_panel"
+			variable "$right_panel_control": "trade2_pocket.right_panel"
+	element "right_navigation_tabs":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": [35, "100%"]
+		field "offset": [-4, 0]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control: element "pocket_tab_close_button@common_tabs.pocket_tab_close_button": empty
+			control:
+				element "fill":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+	element "right_panel":
+		field "type": "stack_panel"
+		field "size": ["fill", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "content@common.root_panel":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "bg@common.common_panel":
+								field "size": ["100%", "100%"]
+								field "$variables": variable "$show_close_button": false
+						control:
+							element "name_and_trade_slots_stack_panel@trade2_pocket.name_and_trade_slots_stack_panel":
+								field "size": ["100% - 12px", "100% - 12px"]
+								field "layer": 2
+			control:
+				element "navigation_tabs_holder":
+					field "type": "panel"
+					field "size": ["100%c - 4px", "100%"]
+					field "controls": control: element "right_navigation_tabs@trade2_pocket.right_navigation_tabs": empty
+	element "screen_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "pocket_hotbar_and_content_panels@trade2_pocket.pocket_hotbar_and_content_panels": empty
+			control:
+				element "container_gamepad_helpers@common.container_gamepad_helpers":
+					field "size": ["100%", 40]
+					field "$variables":
+						variable "$gamepad_helper_size":
+							item 0: "100%c"
+							item 1: 15
+						variable "$a_b_stack_panel_orientation": "vertical"
+						variable "$x_y_stack_panel_orientation": "vertical"
+						variable "$a_b_stack_panel_size":
+							item 0: "100%cm"
+							item 1: "100%"
+						variable "$x_y_stack_panel_size":
+							item 0: "100%cm"
+							item 1: "100%"
+			control:
+				element "selected_item_details_factory@common.selected_item_details_factory":
+					field "$variables":
+						variable "$offset":
+							item 0: 0
+							item 1: "-37px"
+			control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+			control: element "inventory_take_progress_icon_button@common.inventory_take_progress_icon_button": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": field "layer": 12
+	element "trade_and_help_buttons":
+		field "type": "stack_panel"
+		field "size": ["100%", 32]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "trade_button_holder":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "controls": control: element "trade_button@trade2.trade_button": field "size": ["100%", "100%"]
+			control:
+				element "how_to_play_button_holder":
+					field "type": "panel"
+					field "size": ["100%c - 1px", "100%"]
+					field "controls":
+						control:
+							element "how_to_play_button@trade2.how_to_play_button":
+								field "size": [32, "100%"]
+								field "anchor_from": "right_middle"
+								field "anchor_to": "right_middle"
+								field "$variables":
+									variable "$button_font_size": "large"
+									variable "$button_text_max_size":
+										item 0: "100%"
+										item 1: 16
+	element "trade_icon":
+		field "type": "image"
+		field "texture": "textures/ui/trade_icon"
+		field "size": [18, 17]
+	element "trade_slots_panel@trade2.scroll_background_image":
+		field "layer": 1
+		field "controls":
+			control:
+				element "item_slots_stack_panel@trade2.item_slots_stack_panel":
+					field "size": ["100%", "100%cm"]
+					field "max_size": [104, "100%cm"]
+					field "layer": 2

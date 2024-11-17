@@ -1,0 +1,162 @@
+Difference of "ui" between "1.16.200.53" (beta of "1.16.200") and "1.16.200.55" (beta of "1.16.200").
+Unable to create data files for 1 file between: "1.16.200.54"
+
+Total namespace: 196 (+1, -0)
+Changed namespace "common":
+	Changed element "base_screen":
+		Unchanged field "type": "screen"
+		Removed field "should_steal_mouse" of "$is_holographic".
+Changed namespace "controls_section":
+	Changed element "controller_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 16 (+1, -1)
+			Changed control:
+				Changed element "option_group_label@settings_common.option_group_label":
+					Added field "ignored" of "$ignore_controller_layout".
+			Removed control element "gamepad_keymapping_grid@controls_section.gamepad_mapping_grid": empty.
+			Added control element "gamepad_keymapping_grid@controls_section.gamepad_mapping_grid": field "ignored": "$ignore_controller_layout".
+Added namespace "gfx_driver_outdated":
+	element "do_not_show_checkbox@common.checkbox":
+		field "size": ["100%", 30]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "tts_control_type_order_priority": 100
+		field "tts_value_order_priority": 101
+		field "controls":
+			control:
+				element "header_description_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls":
+						control:
+							element "checkbox_visuals@common.toggle_visuals":
+								field "size": [30, "100%"]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+						control:
+							element "buffer_panel":
+								field "type": "panel"
+								field "layer": 3
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$light_button_default_text_color"
+											field "text": "$toggle_label_text"
+											field "size": ["default", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+						control:
+							element "another_panel":
+								field "type": "panel"
+								field "size": [30, "100%"]
+		field "$variables":
+			variable "$toggle_name": "gfx_driver_outdated_do_not_show_again"
+			variable "$toggle_state_binding_name": "#gfx_driver_outdated_do_not_show_again"
+			variable "$toggle_label_text|default": "gfxDriverOutdated.doNotShowAgain"
+			variable "$toggle_enabled_binding_type": "global"
+	element "gamepad_helpers":
+		field "type": "panel"
+		field "size": [100, 10]
+		field "offset": [0, "45%"]
+		field "controls":
+			control:
+				element "gamepad_helper_a@common.gamepad_helper_a":
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+	element "gfx_driver_outdated_close_button@popup_dialog.popup_dialog_button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.close"
+			variable "$button_text": "gfxDriverOutdated.close"
+	element "gfx_driver_outdated_description":
+		field "type": "label"
+		field "size": ["100%-4px", "default"]
+		field "color": "$body_text_color"
+		field "text": "gfxDriverOutdated.message"
+	element "gfx_driver_outdated_dialog@common_dialogs.main_panel_two_buttons":
+		field "size": [250, 200]
+		field "layer": 101
+		field "bindings":
+			binding:
+				field "binding_name": "#tts_dialog_body"
+				field "binding_condition": "once"
+		field "property_bag": field "#tts_dialog_body": "gfxDriverOutdated.message"
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$text_name": "gfxDriverOutdated.title"
+			variable "$description_text": "gfxDriverOutdated.message"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$show_close_button": false
+			variable "$child_control": "gfx_driver_outdated.gfx_driver_outdated_label_panel"
+			variable "$top_button_panel": "gfx_driver_outdated.do_not_show_checkbox"
+			variable "$bottom_button_panel": "gfx_driver_outdated.gfx_driver_outdated_close_button"
+	element "gfx_driver_outdated_label_panel@common.scrolling_panel":
+		field "layer": 1
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "$variables":
+			variable "$scrolling_pane_size":
+				item 0: "100% - 1px"
+				item 1: "100% - 3px"
+			variable "$scrolling_pane_offset":
+				item 0: 2
+				item 1: 2
+			variable "$scrolling_content": "gfx_driver_outdated.gfx_driver_outdated_description"
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100% - 4px"
+			variable "$show_background": false
+			variable "$always_handle_scrolling": true
+	element "gfx_driver_outdated_screen@common.base_screen":
+		field "force_render_below": false
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "$variables":
+			variable "$screen_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+			variable "$screen_content": "gfx_driver_outdated.gfx_driver_outdated_screen_content"
+	element "gfx_driver_outdated_screen_content":
+		field "type": "panel"
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables":
+					variable "$button_state_default_base": "common.button_state_default"
+					variable "$button_state_hover_base": "common.button_state_hover"
+					variable "$button_state_pressed_base": "common.button_state_pressed"
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables":
+					variable "$button_state_default_base": "common-classic.button_state_default"
+					variable "$button_state_hover_base": "common-classic.button_state_hover"
+					variable "$button_state_pressed_base": "common-classic.button_state_pressed"
+		field "controls":
+			control: element "gfx_driver_outdated_dialog@gfx_driver_outdated.gfx_driver_outdated_dialog": empty
+			control: element "gamepad_helpers@gfx_driver_outdated.gamepad_helpers": empty
+Changed namespace "pdp":
+	Changed element "smooth_buttons_panel":
+		Unchanged field "type": "stack_panel"
+		Added field "visible" of false.
+		Added field "bindings":
+			binding:
+				field "binding_name": "#buttons_panel_visible"
+				field "binding_name_override": "#visible"
+			binding:
+				field "binding_name": "#buttons_panel_visible"
+				field "binding_name_override": "#enabled"
+Changed namespace "persona":
+	Changed element "touch_name_label":
+		Unchanged field "type": "label"
+		Added field "tts_skip_message" of true.

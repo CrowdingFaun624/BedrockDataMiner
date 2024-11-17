@@ -1,0 +1,150 @@
+Difference of "shaders_resource_packs" between "1.19.60.24" (beta of "1.19.60") and "1.19.60.25" (beta of "1.19.60").
+
+Changed resource pack "hb_blur.fragment":
+	Changed file "vanilla":
+		Total line: 44 (+0, -2)
+		        '''
+		        ...
+		29 29   
+		30 30   		vec2 uvPointWithOffset = AdditionalOut.xy + offset;
+		31 31   		vec2 uvPointWithNegativeOffset = AdditionalOut.xy - offset;
+		32 32   		if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		33 33   		{
+		34    - 			// The lines for calculating the .y values differs from the original shader from Coherent since we need to handle
+		35    - 			// the Y axis being inverted in OpenGL
+		36 34   			uvPointWithOffset.x = clamp(AdditionalOut.x + offset.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   35 + 			uvPointWithOffset.y = clamp(AdditionalOut.y + offset.y, PRIM_PROPS_1.y, PRIM_PROPS_1.y + PRIM_PROPS_1.w);
+		37    - 			uvPointWithOffset.y = clamp(AdditionalOut.y + offset.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		38 36   			uvPointWithNegativeOffset.x = clamp(AdditionalOut.x - offset.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   37 + 			uvPointWithNegativeOffset.y = clamp(AdditionalOut.y - offset.y, PRIM_PROPS_1.y, PRIM_PROPS_1.y + PRIM_PROPS_1.w);
+		39    - 			uvPointWithNegativeOffset.y = clamp(AdditionalOut.y - offset.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		40 38   		}
+		41 39   
+		42 40   		outColor += ((texture2D(TEXTURE_0, uvPointWithOffset) + texture2D(TEXTURE_0, uvPointWithNegativeOffset)) * coeff);
+		43 41   	}
+		44 42   
+		        ...
+		        '''
+Changed resource pack "hb_standard_texture.fragment":
+	Changed file "vanilla":
+		Total line: 30 (+0, -22)
+		        '''
+		        ...
+		 3  3   // Bedrock engine and heavily depends on Gameface's functionality, why
+		 4  4   // some numbers and values seem arbitrary or "magic".
+		 5  5   
+		 6  6   #include "fragmentVersionSimple.h"
+		 7  7   
+		 8    - #include "uniformUIEffectsPixelConstants.h"
+		 9    - #include "uniformUIStandardPrimitivePixelConstants.h"
+		10    - #include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		11    - 
+		12    - varying vec4 ColorOut;
+		13    - varying vec4 AdditionalOut;
+		14    - // We need this here even if we do not use it as some drivers require
+		15    - // the verying variables to match between the vertex and fragment shaders.
+		16    - varying vec3 ScreenNormalPosition;
+		17    - 
+		18    - LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		19    - 
+		20    - void main() {
+		21    - 	// snes-todo: Put this in separate shader when Gameface sets ST_StandardTextureWithColorMatrix on filters (other than drop-shadow)
+		22    - 	// we get the correct shadertype, but not the correct shader mapping.
+		23    - 	if (SHADER_TYPE == 7) {
+		24    - 		vec4 baseColor = texture2D(TEXTURE_0, AdditionalOut.xy);
+		25    - 		float nonZeroAlpha = max(baseColor.a, 0.00001);
+		26    - 		baseColor = vec4(baseColor.rgb / nonZeroAlpha, nonZeroAlpha);
+		    8 + #include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		    9 + 
+		   10 + varying vec4 ColorOut;
+		   11 + varying vec4 AdditionalOut;
+		   12 + // We need this here even if we do not use it as some drivers require
+		   13 + // the verying variables to match between the vertex and fragment shaders.
+		   14 + varying vec3 ScreenNormalPosition;
+		   15 + 
+		   16 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		   17 + 
+		   18 + void main() {
+		   19 + 	vec2 uvPoint = AdditionalOut.xy;
+		   20 + 	if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		   21 + 	{
+		   22 + 		uvPoint.x = clamp(AdditionalOut.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		27    - 		// TODO: Rename the members of the constant buffer so they are not weird for non-blurs
+		28    - 		vec4 finalColor;
+		29    - 		finalColor.r = dot(baseColor, vec4(COEFFICIENTS[0].x, COEFFICIENTS[0].y, COEFFICIENTS[0].z, COEFFICIENTS[0].w));
+		30    - 		finalColor.g = dot(baseColor, vec4(COEFFICIENTS[1].x, COEFFICIENTS[1].y, COEFFICIENTS[1].z, COEFFICIENTS[1].w));
+		31    - 		finalColor.b = dot(baseColor, vec4(COEFFICIENTS[2].x, COEFFICIENTS[2].y, COEFFICIENTS[2].z, COEFFICIENTS[2].w));
+		32    - 		finalColor.a = dot(baseColor, vec4(PIXEL_OFFSETS[0].x, PIXEL_OFFSETS[0].y, PIXEL_OFFSETS[0].z, PIXEL_OFFSETS[0].w));
+		33    - 		finalColor += vec4(PIXEL_OFFSETS[1].x, PIXEL_OFFSETS[1].y, PIXEL_OFFSETS[1].z, PIXEL_OFFSETS[1].w);
+		34    - 		finalColor.rgb *= finalColor.a;
+		35    - 		finalColor.rgba *= ColorOut.a;
+		36    - 		gl_FragColor = finalColor;
+		37    - 	} else {
+		38    - 		vec2 uvPoint = AdditionalOut.xy;
+		39    - 		if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		40    - 		{
+		41    - 			uvPoint.x = clamp(AdditionalOut.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		42    - 			// The following line differs from the original shader from Coherent since we need to handle
+		43    - 			// the Y axis being inverted in OpenGL
+		   23 + 		uvPoint.y = clamp(AdditionalOut.y, PRIM_PROPS_1.y, PRIM_PROPS_1.y + PRIM_PROPS_1.w);
+		   24 + 	}
+		44    - 			uvPoint.y = clamp(AdditionalOut.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		45    - 		}
+		46 25   
+		   26 + 	vec4 outColor = texture2D(TEXTURE_0, uvPoint);
+		   27 + 	outColor.w = mix(1.0 - outColor.w, outColor.w, ColorOut.x);
+		   28 + 	float alpha = ColorOut.w * clamp(AdditionalOut.z, 0.0, 1.0);
+		   29 + 	gl_FragColor = outColor * alpha;
+		47    - 		vec4 outColor = texture2D(TEXTURE_0, uvPoint);
+		48    - 		outColor.w = mix(1.0 - outColor.w, outColor.w, ColorOut.x);
+		49    - 		float alpha = ColorOut.w * clamp(AdditionalOut.z, 0.0, 1.0);
+		50    - 		gl_FragColor = outColor * alpha;
+		51    - 	}
+		52 30   }
+		        '''
+Changed resource pack "hb_text_sdf.fragment":
+	Changed file "vanilla":
+		Total line: 43 (+1, -0)
+		        '''
+		        ...
+		26 26   	// https://en.wikipedia.org/wiki/Relative_luminance
+		27 27   	return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		28 28   }
+		29 29   
+		30 30   void main() {
+		   31 + 	vec2 uvPos = vec2(AdditionalOut.x, 1.0 - AdditionalOut.y);
+		   32 + 	float dfValue = texture2D(TEXTURE_2, uvPos).r;
+		31    - 	float dfValue = texture2D(TEXTURE_2, AdditionalOut.xy).r;
+		32 33   #if SHOW_DF
+		33 34   	gl_FragColor = vec4(dfValue.xxx, 1);
+		34 35   #else
+		35 36   	// Values should be in [-4, 4]
+		36 37   	dfValue = (dfValue * DISTANCE_FIELD_MULTIPLIER) - DISTANCE_FIELD_MULTIPLIER_DIV2;
+		   38 + 	dfValue = smoothstep(-DISTANCE_FIELD_THRESHOLD / AdditionalOut.z, DISTANCE_FIELD_THRESHOLD / AdditionalOut.z, dfValue);
+		37    - 	dfValue = smoothstep(-DISTANCE_FIELD_THRESHOLD / PRIM_PROPS_0.x, DISTANCE_FIELD_THRESHOLD / PRIM_PROPS_0.x, dfValue);
+		38 39   
+		39 40   	float lum = 1.45 - GetLuminance(ColorOut.xyz);
+		40 41   	gl_FragColor = ColorOut * pow(dfValue, lum);
+		41 42   #endif
+		42 43   }
+		        '''
+Changed resource pack "hb_text_stroke_sdf.fragment":
+	Changed file "vanilla":
+		Total line: 37 (+1, -0)
+		        '''
+		        ...
+		16 16   LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		17 17   
+		18 18   #define SHOW_DF 0
+		19 19   
+		20 20   void main() {
+		   21 + 	vec2 uvPos = vec2(AdditionalOut.x, 1.0 - AdditionalOut.y);
+		   22 + 	float dfValue = texture2D(TEXTURE_0, uvPos).r;
+		21    - 	float dfValue = texture2D(TEXTURE_0, AdditionalOut.xy).a;
+		22 23   #if SHOW_DF
+		23 24   	gl_FragColor = vec4(dfValue.xxx, 1);
+		24 25   #else
+		25 26   	float scale = sqrt(PRIM_PROPS_0.y * 0.5);
+		26 27   
+		        ...
+		        '''

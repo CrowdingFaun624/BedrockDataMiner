@@ -1,0 +1,1356 @@
+Addition of "shaders" at "1.2.0.2" (beta of "1.2.0").
+Unable to create data files for 201 files before.
+
+Added file "7f4ba1a2-43dd-45b1-aa3f-0b3ca2ebd5c8/glsl/entity.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+		// version 300 code
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef NO_TEXTURE
+			_centroid in vec2 uv;
+		#endif
+	#else
+		// version 100 code
+		#ifndef NO_TEXTURE
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				varying highp vec2 uv;
+			#else
+				varying vec2 uv;
+			#endif
+		#endif
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	
+	#ifdef USE_MULTITEXTURE
+		uniform sampler2D TEXTURE_2;
+	#endif
+	
+	varying vec4 light;
+	varying vec4 fogColor;
+	
+	#ifdef USE_OVERLAY
+		varying vec4 overlayColor;
+	#endif
+	
+	#ifdef TINTED_ALPHA_TEST
+	varying float alphaTestMultiplier;
+	#endif
+	
+	#if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		varying vec4 changeColor;
+	#endif
+	
+	#ifdef GLINT
+		varying vec2 layer1UV;
+		varying vec2 layer2UV;
+		varying vec4 tileLightColor;
+		varying vec4 glintColor;
+	#endif
+	
+	vec4 glintBlend(vec4 dest, vec4 source) {
+		// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+	}
+	
+	#ifdef USE_EMISSIVE
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#else
+	#ifndef USE_COLOR_MASK
+	#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	#else
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#endif
+	#endif
+	
+	void main()
+	{
+		vec4 color = vec4(1.0);
+	
+	#ifndef NO_TEXTURE
+	#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		color = texture2D( TEXTURE_0, uv );
+	#else
+		color = texture2D_AA(TEXTURE_0, uv);
+	#endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	
+	#ifdef ALPHA_TEST
+		if(NEEDS_DISCARD(color))
+			discard;
+	#endif // ALPHA_TEST
+	
+	#ifdef TINTED_ALPHA_TEST
+	vec4 testColor = color;
+	testColor.a *= alphaTestMultiplier;
+		if(NEEDS_DISCARD(testColor))
+			discard;
+	#endif // TINTED_ALPHA_TEST
+	#endif // NO_TEXTURE
+	
+	#ifdef USE_COLOR_MASK
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		color.a *= changeColor.a;
+	#endif
+	
+	#ifdef ITEM_IN_HAND
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+	#endif
+	
+	#ifdef USE_MULTITEXTURE
+		vec4 tex1 = texture2D( TEXTURE_1, uv );
+		vec4 tex2 = texture2D( TEXTURE_2, uv );
+		color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+	#ifdef COLOR_SECOND_TEXTURE
+		if (tex2.a > 0.0) {
+			color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		}
+	#else
+		color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+	#endif
+	#endif
+	
+	#ifdef USE_OVERLAY
+		//use either the diffuse or the OVERLAY_COLOR
+		color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+	#endif
+	
+	#ifdef USE_EMISSIVE
+		//make glowy stuff
+		color *= mix(vec4(1.0), light, color.a );
+	#else
+		color *= light;
+	#endif
+	
+		//apply fog
+		color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	
+	#ifdef GLINT
+		// Applies color mask to glint texture instead and blends with original color
+		vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		vec4 glint = (layer1 + layer2) * tileLightColor;
+	
+		color = glintBlend(color, glint);
+	#endif
+	
+		//WARNING do not refactor this 
+		gl_FragColor = color;
+	}
+	'''
+Added file "884ecfc8-a6e6-4ee1-a860-fd1f85d2bbc9/glsl/entity.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+		// version 300 code
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef NO_TEXTURE
+			_centroid in vec2 uv;
+		#endif
+	#else
+		// version 100 code
+		#ifndef NO_TEXTURE
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				varying highp vec2 uv;
+			#else
+				varying vec2 uv;
+			#endif
+		#endif
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	
+	#ifdef USE_MULTITEXTURE
+		uniform sampler2D TEXTURE_2;
+	#endif
+	
+	varying vec4 light;
+	varying vec4 fogColor;
+	
+	#ifdef USE_OVERLAY
+		varying vec4 overlayColor;
+	#endif
+	
+	#ifdef TINTED_ALPHA_TEST
+	varying float alphaTestMultiplier;
+	#endif
+	
+	#if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		varying vec4 changeColor;
+	#endif
+	
+	#ifdef GLINT
+		varying vec2 layer1UV;
+		varying vec2 layer2UV;
+		varying vec4 tileLightColor;
+		varying vec4 glintColor;
+	#endif
+	
+	vec4 glintBlend(vec4 dest, vec4 source) {
+		// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+	}
+	
+	#ifdef USE_EMISSIVE
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#else
+	#ifndef USE_COLOR_MASK
+	#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	#else
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#endif
+	#endif
+	
+	void main()
+	{
+		vec4 color = vec4(1.0);
+	
+	#ifndef NO_TEXTURE
+	#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		color = texture2D( TEXTURE_0, uv );
+	#else
+		color = texture2D_AA(TEXTURE_0, uv);
+	#endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	
+	#ifdef ALPHA_TEST
+		if(NEEDS_DISCARD(color))
+			discard;
+	#endif // ALPHA_TEST
+	
+	#ifdef TINTED_ALPHA_TEST
+	vec4 testColor = color;
+	testColor.a *= alphaTestMultiplier;
+		if(NEEDS_DISCARD(testColor))
+			discard;
+	#endif // TINTED_ALPHA_TEST
+	#endif // NO_TEXTURE
+	
+	#ifdef USE_COLOR_MASK
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		color.a *= changeColor.a;
+	#endif
+	
+	#ifdef ITEM_IN_HAND
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+	#endif
+	
+	#ifdef USE_MULTITEXTURE
+		vec4 tex1 = texture2D( TEXTURE_1, uv );
+		vec4 tex2 = texture2D( TEXTURE_2, uv );
+		color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+	#ifdef COLOR_SECOND_TEXTURE
+		if (tex2.a > 0.0) {
+			color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		}
+	#else
+		color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+	#endif
+	#endif
+	
+	#ifdef USE_OVERLAY
+		//use either the diffuse or the OVERLAY_COLOR
+		color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+	#endif
+	
+	#ifdef USE_EMISSIVE
+		//make glowy stuff
+		color *= mix(vec4(1.0), light, color.a );
+	#else
+		color *= light;
+	#endif
+	
+		//apply fog
+		color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	
+	#ifdef GLINT
+		// Applies color mask to glint texture instead and blends with original color
+		vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		vec4 glint = (layer1 + layer2) * tileLightColor;
+	
+		color = glintBlend(color, glint);
+	#endif
+	
+		//WARNING do not refactor this 
+		gl_FragColor = color;
+	}
+	'''
+Added file "98330b0a-2c79-4d30-b9c8-136098340edc/glsl/entity.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+		// version 300 code
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef NO_TEXTURE
+			_centroid in vec2 uv;
+		#endif
+	#else
+		// version 100 code
+		#ifndef NO_TEXTURE
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				varying highp vec2 uv;
+			#else
+				varying vec2 uv;
+			#endif
+		#endif
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	
+	#ifdef USE_MULTITEXTURE
+		uniform sampler2D TEXTURE_2;
+	#endif
+	
+	varying vec4 light;
+	varying vec4 fogColor;
+	
+	#ifdef USE_OVERLAY
+		varying vec4 overlayColor;
+	#endif
+	
+	#ifdef TINTED_ALPHA_TEST
+	varying float alphaTestMultiplier;
+	#endif
+	
+	#if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		varying vec4 changeColor;
+	#endif
+	
+	#ifdef GLINT
+		varying vec2 layer1UV;
+		varying vec2 layer2UV;
+		varying vec4 tileLightColor;
+		varying vec4 glintColor;
+	#endif
+	
+	vec4 glintBlend(vec4 dest, vec4 source) {
+		// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+	}
+	
+	#ifdef USE_EMISSIVE
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#else
+	#ifndef USE_COLOR_MASK
+	#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	#else
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#endif
+	#endif
+	
+	void main()
+	{
+		vec4 color = vec4(1.0);
+	
+	#ifndef NO_TEXTURE
+	#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		color = texture2D( TEXTURE_0, uv );
+	#else
+		color = texture2D_AA(TEXTURE_0, uv);
+	#endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	
+	#ifdef ALPHA_TEST
+		if(NEEDS_DISCARD(color))
+			discard;
+	#endif // ALPHA_TEST
+	
+	#ifdef TINTED_ALPHA_TEST
+	vec4 testColor = color;
+	testColor.a *= alphaTestMultiplier;
+		if(NEEDS_DISCARD(testColor))
+			discard;
+	#endif // TINTED_ALPHA_TEST
+	#endif // NO_TEXTURE
+	
+	#ifdef USE_COLOR_MASK
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		color.a *= changeColor.a;
+	#endif
+	
+	#ifdef ITEM_IN_HAND
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+	#endif
+	
+	#ifdef USE_MULTITEXTURE
+		vec4 tex1 = texture2D( TEXTURE_1, uv );
+		vec4 tex2 = texture2D( TEXTURE_2, uv );
+		color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+	#ifdef COLOR_SECOND_TEXTURE
+		if (tex2.a > 0.0) {
+			color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		}
+	#else
+		color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+	#endif
+	#endif
+	
+	#ifdef USE_OVERLAY
+		//use either the diffuse or the OVERLAY_COLOR
+		color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+	#endif
+	
+	#ifdef USE_EMISSIVE
+		//make glowy stuff
+		color *= mix(vec4(1.0), light, color.a );
+	#else
+		color *= light;
+	#endif
+	
+		//apply fog
+		color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	
+	#ifdef GLINT
+		// Applies color mask to glint texture instead and blends with original color
+		vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		vec4 glint = (layer1 + layer2) * tileLightColor;
+	
+		color = glintBlend(color, glint);
+	#endif
+	
+		//WARNING do not refactor this 
+		gl_FragColor = color;
+	}
+	'''
+Added file "b8de1e1e-ad0c-407f-af95-211e85e0a274/glsl/entity.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+		// version 300 code
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef NO_TEXTURE
+			_centroid in vec2 uv;
+		#endif
+	#else
+		// version 100 code
+		#ifndef NO_TEXTURE
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				varying highp vec2 uv;
+			#else
+				varying vec2 uv;
+			#endif
+		#endif
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	
+	#ifdef USE_MULTITEXTURE
+		uniform sampler2D TEXTURE_2;
+	#endif
+	
+	varying vec4 light;
+	varying vec4 fogColor;
+	
+	#ifdef USE_OVERLAY
+		varying vec4 overlayColor;
+	#endif
+	
+	#ifdef TINTED_ALPHA_TEST
+	varying float alphaTestMultiplier;
+	#endif
+	
+	#if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		varying vec4 changeColor;
+	#endif
+	
+	#ifdef GLINT
+		varying vec2 layer1UV;
+		varying vec2 layer2UV;
+		varying vec4 tileLightColor;
+		varying vec4 glintColor;
+	#endif
+	
+	vec4 glintBlend(vec4 dest, vec4 source) {
+		// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+	}
+	
+	#ifdef USE_EMISSIVE
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#else
+	#ifndef USE_COLOR_MASK
+	#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	#else
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#endif
+	#endif
+	
+	void main()
+	{
+		vec4 color = vec4(1.0);
+	
+	#ifndef NO_TEXTURE
+	#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		color = texture2D( TEXTURE_0, uv );
+	#else
+		color = texture2D_AA(TEXTURE_0, uv);
+	#endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	
+	#ifdef ALPHA_TEST
+		if(NEEDS_DISCARD(color))
+			discard;
+	#endif // ALPHA_TEST
+	
+	#ifdef TINTED_ALPHA_TEST
+	vec4 testColor = color;
+	testColor.a *= alphaTestMultiplier;
+		if(NEEDS_DISCARD(testColor))
+			discard;
+	#endif // TINTED_ALPHA_TEST
+	#endif // NO_TEXTURE
+	
+	#ifdef USE_COLOR_MASK
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		color.a *= changeColor.a;
+	#endif
+	
+	#ifdef ITEM_IN_HAND
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+	#endif
+	
+	#ifdef USE_MULTITEXTURE
+		vec4 tex1 = texture2D( TEXTURE_1, uv );
+		vec4 tex2 = texture2D( TEXTURE_2, uv );
+		color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+	#ifdef COLOR_SECOND_TEXTURE
+		if (tex2.a > 0.0) {
+			color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		}
+	#else
+		color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+	#endif
+	#endif
+	
+	#ifdef USE_OVERLAY
+		//use either the diffuse or the OVERLAY_COLOR
+		color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+	#endif
+	
+	#ifdef USE_EMISSIVE
+		//make glowy stuff
+		color *= mix(vec4(1.0), light, color.a );
+	#else
+		color *= light;
+	#endif
+	
+		//apply fog
+		color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	
+	#ifdef GLINT
+		// Applies color mask to glint texture instead and blends with original color
+		vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		vec4 glint = (layer1 + layer2) * tileLightColor;
+	
+		color = glintBlend(color, glint);
+	#endif
+	
+		//WARNING do not refactor this 
+		gl_FragColor = color;
+	}
+	'''
+Added file "bd49c9c7-d2c9-432d-a24f-5227a3bde5f1/glsl/entity.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+		// version 300 code
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef NO_TEXTURE
+			_centroid in vec2 uv;
+		#endif
+	#else
+		// version 100 code
+		#ifndef NO_TEXTURE
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				varying highp vec2 uv;
+			#else
+				varying vec2 uv;
+			#endif
+		#endif
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	
+	#ifdef USE_MULTITEXTURE
+		uniform sampler2D TEXTURE_2;
+	#endif
+	
+	varying vec4 light;
+	varying vec4 fogColor;
+	
+	#ifdef USE_OVERLAY
+		varying vec4 overlayColor;
+	#endif
+	
+	#ifdef TINTED_ALPHA_TEST
+	varying float alphaTestMultiplier;
+	#endif
+	
+	#if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		varying vec4 changeColor;
+	#endif
+	
+	#ifdef GLINT
+		varying vec2 layer1UV;
+		varying vec2 layer2UV;
+		varying vec4 tileLightColor;
+		varying vec4 glintColor;
+	#endif
+	
+	vec4 glintBlend(vec4 dest, vec4 source) {
+		// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+	}
+	
+	#ifdef USE_EMISSIVE
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#else
+	#ifndef USE_COLOR_MASK
+	#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	#else
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#endif
+	#endif
+	
+	void main()
+	{
+		vec4 color = vec4(1.0);
+	
+	#ifndef NO_TEXTURE
+	#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		color = texture2D( TEXTURE_0, uv );
+	#else
+		color = texture2D_AA(TEXTURE_0, uv);
+	#endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	
+	#ifdef ALPHA_TEST
+		if(NEEDS_DISCARD(color))
+			discard;
+	#endif // ALPHA_TEST
+	
+	#ifdef TINTED_ALPHA_TEST
+	vec4 testColor = color;
+	testColor.a *= alphaTestMultiplier;
+		if(NEEDS_DISCARD(testColor))
+			discard;
+	#endif // TINTED_ALPHA_TEST
+	#endif // NO_TEXTURE
+	
+	#ifdef USE_COLOR_MASK
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		color.a *= changeColor.a;
+	#endif
+	
+	#ifdef ITEM_IN_HAND
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+	#endif
+	
+	#ifdef USE_MULTITEXTURE
+		vec4 tex1 = texture2D( TEXTURE_1, uv );
+		vec4 tex2 = texture2D( TEXTURE_2, uv );
+		color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+	#ifdef COLOR_SECOND_TEXTURE
+		if (tex2.a > 0.0) {
+			color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		}
+	#else
+		color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+	#endif
+	#endif
+	
+	#ifdef USE_OVERLAY
+		//use either the diffuse or the OVERLAY_COLOR
+		color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+	#endif
+	
+	#ifdef USE_EMISSIVE
+		//make glowy stuff
+		color *= mix(vec4(1.0), light, color.a );
+	#else
+		color *= light;
+	#endif
+	
+		//apply fog
+		color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	
+	#ifdef GLINT
+		// Applies color mask to glint texture instead and blends with original color
+		vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		vec4 glint = (layer1 + layer2) * tileLightColor;
+	
+		color = glintBlend(color, glint);
+	#endif
+	
+		//WARNING do not refactor this 
+		gl_FragColor = color;
+	}
+	'''
+Added file "ce292d20-42e1-4873-a721-06507dbd54d4/glsl/festive_foliage.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+	
+		// version 300 code
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef BYPASS_PIXEL_SHADER
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				_centroid in highp vec2 uv0;
+				_centroid in highp vec2 uv1;
+			#else
+				_centroid in vec2 uv0;
+				_centroid in vec2 uv1;
+			#endif
+		#endif
+	
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	#else
+	
+		// version 100 code
+	
+		#ifndef BYPASS_PIXEL_SHADER
+			varying vec2 uv0;
+			varying vec2 uv1;
+		#endif
+	#endif
+	
+	
+	varying vec4 color;
+	
+	#ifdef FOG
+	varying vec4 fogColor;
+	#endif
+	
+	#ifdef NEAR_WATER
+	varying float cameraDist;
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	uniform sampler2D TEXTURE_2;
+	
+	void main()
+	{
+		vec4 diffuse = texture2D( TEXTURE_0, uv0 );
+	
+		vec4 inColor = color;
+		
+	#ifdef SEASONS_FAR
+		diffuse.a = 1.0;
+		inColor.b = 1.0;
+	#endif
+	
+		if(diffuse.a <= 0.0)
+			discard;
+		
+		diffuse = diffuse * texture2D( TEXTURE_1, uv1 );
+	
+	#ifndef SEASONS
+	
+		diffuse.rgb *= mix(vec3(1.0, 1.0, 1.0), inColor.rgb, diffuse.a);
+		diffuse.a = 1.0;
+		
+	#else
+		vec2 uv = inColor.xy;
+		inColor.b = mix(0.0, color.b, diffuse.a);
+		diffuse.rgb *= mix(vec3(1.0,1.0,1.0), texture2D( TEXTURE_2, uv).rgb*2.0, inColor.b);
+		diffuse.rgb *= inColor.aaa;
+		diffuse.a = 1.0;
+	#endif
+	
+	#ifdef FOG
+		diffuse.rgb = mix( diffuse.rgb, fogColor.rgb, fogColor.a );
+	#endif
+	
+		gl_FragColor = diffuse;
+	}
+	'''
+Added file "d10c2615-6558-4a31-b32d-a5bf9bc3fbc5/glsl/entity.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+		// version 300 code
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef NO_TEXTURE
+			_centroid in vec2 uv;
+		#endif
+	#else
+		// version 100 code
+		#ifndef NO_TEXTURE
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				varying highp vec2 uv;
+			#else
+				varying vec2 uv;
+			#endif
+		#endif
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	
+	#ifdef USE_MULTITEXTURE
+		uniform sampler2D TEXTURE_2;
+	#endif
+	
+	varying vec4 light;
+	varying vec4 fogColor;
+	
+	#ifdef USE_OVERLAY
+		varying vec4 overlayColor;
+	#endif
+	
+	#ifdef TINTED_ALPHA_TEST
+	varying float alphaTestMultiplier;
+	#endif
+	
+	#if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		varying vec4 changeColor;
+	#endif
+	
+	#ifdef GLINT
+		varying vec2 layer1UV;
+		varying vec2 layer2UV;
+		varying vec4 tileLightColor;
+		varying vec4 glintColor;
+	#endif
+	
+	vec4 glintBlend(vec4 dest, vec4 source) {
+		// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+	}
+	
+	#ifdef USE_EMISSIVE
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#else
+	#ifndef USE_COLOR_MASK
+	#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	#else
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#endif
+	#endif
+	
+	void main()
+	{
+		vec4 color = vec4(1.0);
+	
+	#ifndef NO_TEXTURE
+	#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		color = texture2D( TEXTURE_0, uv );
+	#else
+		color = texture2D_AA(TEXTURE_0, uv);
+	#endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	
+	#ifdef ALPHA_TEST
+		if(NEEDS_DISCARD(color))
+			discard;
+	#endif // ALPHA_TEST
+	
+	#ifdef TINTED_ALPHA_TEST
+	vec4 testColor = color;
+	testColor.a *= alphaTestMultiplier;
+		if(NEEDS_DISCARD(testColor))
+			discard;
+	#endif // TINTED_ALPHA_TEST
+	#endif // NO_TEXTURE
+	
+	#ifdef USE_COLOR_MASK
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		color.a *= changeColor.a;
+	#endif
+	
+	#ifdef ITEM_IN_HAND
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+	#endif
+	
+	#ifdef USE_MULTITEXTURE
+		vec4 tex1 = texture2D( TEXTURE_1, uv );
+		vec4 tex2 = texture2D( TEXTURE_2, uv );
+		color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+	#ifdef COLOR_SECOND_TEXTURE
+		if (tex2.a > 0.0) {
+			color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		}
+	#else
+		color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+	#endif
+	#endif
+	
+	#ifdef USE_OVERLAY
+		//use either the diffuse or the OVERLAY_COLOR
+		color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+	#endif
+	
+	#ifdef USE_EMISSIVE
+		//make glowy stuff
+		color *= mix(vec4(1.0), light, color.a );
+	#else
+		color *= light;
+	#endif
+	
+		//apply fog
+		color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	
+	#ifdef GLINT
+		// Applies color mask to glint texture instead and blends with original color
+		vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		vec4 glint = (layer1 + layer2) * tileLightColor;
+	
+		color = glintBlend(color, glint);
+	#endif
+	
+		//WARNING do not refactor this 
+		gl_FragColor = color;
+	}
+	'''
+Added file "d1bea604-839d-4e53-8c1f-4732b419ab1f/glsl/entity.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+		// version 300 code
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef NO_TEXTURE
+			_centroid in vec2 uv;
+		#endif
+	#else
+		// version 100 code
+		#ifndef NO_TEXTURE
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				varying highp vec2 uv;
+			#else
+				varying vec2 uv;
+			#endif
+		#endif
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	
+	#ifdef USE_MULTITEXTURE
+		uniform sampler2D TEXTURE_2;
+	#endif
+	
+	varying vec4 light;
+	varying vec4 fogColor;
+	
+	#ifdef USE_OVERLAY
+		varying vec4 overlayColor;
+	#endif
+	
+	#ifdef TINTED_ALPHA_TEST
+	varying float alphaTestMultiplier;
+	#endif
+	
+	#if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		varying vec4 changeColor;
+	#endif
+	
+	#ifdef GLINT
+		varying vec2 layer1UV;
+		varying vec2 layer2UV;
+		varying vec4 tileLightColor;
+		varying vec4 glintColor;
+	#endif
+	
+	vec4 glintBlend(vec4 dest, vec4 source) {
+		// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+	}
+	
+	#ifdef USE_EMISSIVE
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#else
+	#ifndef USE_COLOR_MASK
+	#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	#else
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#endif
+	#endif
+	
+	void main()
+	{
+		vec4 color = vec4(1.0);
+	
+	#ifndef NO_TEXTURE
+	#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		color = texture2D( TEXTURE_0, uv );
+	#else
+		color = texture2D_AA(TEXTURE_0, uv);
+	#endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	
+	#ifdef ALPHA_TEST
+		if(NEEDS_DISCARD(color))
+			discard;
+	#endif // ALPHA_TEST
+	
+	#ifdef TINTED_ALPHA_TEST
+	vec4 testColor = color;
+	testColor.a *= alphaTestMultiplier;
+		if(NEEDS_DISCARD(testColor))
+			discard;
+	#endif // TINTED_ALPHA_TEST
+	#endif // NO_TEXTURE
+	
+	#ifdef USE_COLOR_MASK
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		color.a *= changeColor.a;
+	#endif
+	
+	#ifdef ITEM_IN_HAND
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+	#endif
+	
+	#ifdef USE_MULTITEXTURE
+		vec4 tex1 = texture2D( TEXTURE_1, uv );
+		vec4 tex2 = texture2D( TEXTURE_2, uv );
+		color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+	#ifdef COLOR_SECOND_TEXTURE
+		if (tex2.a > 0.0) {
+			color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		}
+	#else
+		color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+	#endif
+	#endif
+	
+	#ifdef USE_OVERLAY
+		//use either the diffuse or the OVERLAY_COLOR
+		color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+	#endif
+	
+	#ifdef USE_EMISSIVE
+		//make glowy stuff
+		color *= mix(vec4(1.0), light, color.a );
+	#else
+		color *= light;
+	#endif
+	
+		//apply fog
+		color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	
+	#ifdef GLINT
+		// Applies color mask to glint texture instead and blends with original color
+		vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		vec4 glint = (layer1 + layer2) * tileLightColor;
+	
+		color = glintBlend(color, glint);
+	#endif
+	
+		//WARNING do not refactor this 
+		gl_FragColor = color;
+	}
+	'''
+Added file "d725e15d-105d-4f12-997f-16f844717b59/glsl/entity.fragment":
+	'''
+	// __multiversion__
+	// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+	
+	// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+	// attribute to in
+	// varying to out when in vertex shaders or in when in fragment shaders
+	// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+	// texture2D to texture
+	#if __VERSION__ >= 300
+		// version 300 code
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+	
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+			#define _centroid centroid
+		#else
+			#define _centroid
+		#endif
+	
+		#ifndef NO_TEXTURE
+			_centroid in vec2 uv;
+		#endif
+	#else
+		// version 100 code
+		#ifndef NO_TEXTURE
+			#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+				varying highp vec2 uv;
+			#else
+				varying vec2 uv;
+			#endif
+		#endif
+	#endif
+	
+	#include "shaders/util.h"
+	
+	uniform sampler2D TEXTURE_0;
+	uniform sampler2D TEXTURE_1;
+	
+	#ifdef USE_MULTITEXTURE
+		uniform sampler2D TEXTURE_2;
+	#endif
+	
+	varying vec4 light;
+	varying vec4 fogColor;
+	
+	#ifdef USE_OVERLAY
+		varying vec4 overlayColor;
+	#endif
+	
+	#ifdef TINTED_ALPHA_TEST
+	varying float alphaTestMultiplier;
+	#endif
+	
+	#if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		varying vec4 changeColor;
+	#endif
+	
+	#ifdef GLINT
+		varying vec2 layer1UV;
+		varying vec2 layer2UV;
+		varying vec4 tileLightColor;
+		varying vec4 glintColor;
+	#endif
+	
+	vec4 glintBlend(vec4 dest, vec4 source) {
+		// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+	}
+	
+	#ifdef USE_EMISSIVE
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#else
+	#ifndef USE_COLOR_MASK
+	#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	#else
+	#define NEEDS_DISCARD(C)	(C.a == 0.0)
+	#endif
+	#endif
+	
+	void main()
+	{
+		vec4 color = vec4(1.0);
+	
+	#ifndef NO_TEXTURE
+	#if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		color = texture2D( TEXTURE_0, uv );
+	#else
+		color = texture2D_AA(TEXTURE_0, uv);
+	#endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+	
+	#ifdef ALPHA_TEST
+		if(NEEDS_DISCARD(color))
+			discard;
+	#endif // ALPHA_TEST
+	
+	#ifdef TINTED_ALPHA_TEST
+	vec4 testColor = color;
+	testColor.a *= alphaTestMultiplier;
+		if(NEEDS_DISCARD(testColor))
+			discard;
+	#endif // TINTED_ALPHA_TEST
+	#endif // NO_TEXTURE
+	
+	#ifdef USE_COLOR_MASK
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		color.a *= changeColor.a;
+	#endif
+	
+	#ifdef ITEM_IN_HAND
+		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+	#endif
+	
+	#ifdef USE_MULTITEXTURE
+		vec4 tex1 = texture2D( TEXTURE_1, uv );
+		vec4 tex2 = texture2D( TEXTURE_2, uv );
+		color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+	#ifdef COLOR_SECOND_TEXTURE
+		if (tex2.a > 0.0) {
+			color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		}
+	#else
+		color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+	#endif
+	#endif
+	
+	#ifdef USE_OVERLAY
+		//use either the diffuse or the OVERLAY_COLOR
+		color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+	#endif
+	
+	#ifdef USE_EMISSIVE
+		//make glowy stuff
+		color *= mix(vec4(1.0), light, color.a );
+	#else
+		color *= light;
+	#endif
+	
+		//apply fog
+		color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+	
+	#ifdef GLINT
+		// Applies color mask to glint texture instead and blends with original color
+		vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		vec4 glint = (layer1 + layer2) * tileLightColor;
+	
+		color = glintBlend(color, glint);
+	#endif
+	
+		//WARNING do not refactor this 
+		gl_FragColor = color;
+	}
+	'''

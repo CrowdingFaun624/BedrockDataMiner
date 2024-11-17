@@ -1,0 +1,424 @@
+Difference of "shaders_resource_packs" between "1.2.0.9" (beta of "1.2.0") and "1.2.0.11" (beta of "1.2.0").
+
+Changed resource pack "banner.fragment":
+	Changed file "vanilla":
+		Total line: 61 (+22, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		    4 + #if __VERSION__ >= 300
+		    5 + 
+		    6 + #ifdef MSAA_FRAMEBUFFER_ENABLED
+		    7 + #define _centroid centroid
+		    8 + #else
+		    9 + #define _centroid
+		   10 + #endif
+		   11 + 
+		   12 + // version 300 code
+		   13 + _centroid in vec4 uv;
+		   14 + 
+		   15 + #define varying in
+		   16 + #define texture2D texture
+		   17 + out vec4 FragColor;
+		   18 + #define gl_FragColor FragColor
+		   19 + 
+		   20 + #else
+		   21 + 
+		   22 + // version 100 code
+		   23 + varying vec4 uv;
+		   24 + 
+		   25 + #endif
+		 4    - #include "shaders/fragmentVersionCentroidUV.h"
+		 5 26   
+		 6 27   uniform sampler2D TEXTURE_0;
+		 7 28   
+		 8 29   #ifdef ENABLE_FOG
+		 9 30   varying vec4 fogColor;
+		        ...
+		17 38   varying vec4 color;
+		18 39   #endif
+		19 40   
+		20 41   void main()
+		21 42   {
+		   43 + 	vec4 diffuse = texture2D(TEXTURE_0, uv.xy);
+		   44 + 	vec4 base = texture2D(TEXTURE_0, uv.zw);
+		22    - 	vec4 diffuse = texture2D(TEXTURE_0, uv);
+		23 45   
+		24 46   #ifndef DISABLE_TINTING
+		   47 + 	base.a = mix(diffuse.r * diffuse.a, diffuse.a, color.a);
+		   48 + 	base.rgb *= color.rgb;
+		25    - 	diffuse.a = mix(diffuse.r * diffuse.a, diffuse.a, color.a);
+		26    - 	diffuse.rgb *= color.rgb;
+		27 49   #endif
+		28 50   
+		29 51   #ifdef ENABLE_LIGHT
+		   52 + 	base.rgb *= light.rgb;
+		30    - 	diffuse.rgb *= light.rgb;
+		31 53   #endif
+		32 54   
+		33 55   #ifdef ENABLE_FOG
+		34 56   	//apply fog
+		   57 + 	base.rgb = mix( base.rgb, fogColor.rgb, fogColor.a );
+		35    - 	diffuse.rgb = mix( diffuse.rgb, fogColor.rgb, fogColor.a );
+		36 58   #endif
+		37 59   
+		   60 + 	gl_FragColor = base;
+		38    - 	gl_FragColor = diffuse;
+		39 61   }
+		        '''
+Changed resource pack "banner.vertex":
+	Changed file "vanilla":
+		Total line: 95 (+17, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		    4 + #if __VERSION__ >= 300
+		    5 + #define attribute in
+		    6 + #define varying out
+		    7 + 
+		    8 + #ifdef MSAA_FRAMEBUFFER_ENABLED
+		    9 + #define _centroid centroid
+		   10 + #else
+		   11 + #define _centroid
+		   12 + #endif
+		   13 + 
+		   14 + _centroid out vec4 uv;
+		   15 + 
+		   16 + #else
+		   17 + 
+		   18 + varying vec4 uv;
+		   19 + 
+		   20 + #endif
+		 4    - #include "shaders/vertexVersionCentroidUV.h"
+		 5 21   
+		 6 22   #include "shaders/uniformWorldConstants.h"
+		 7 23   #include "shaders/uniformEntityConstants.h"
+		 8 24   #include "shaders/uniformPerFrameConstants.h"
+		 9 25   #include "shaders/uniformBannerConstants.h"
+		        ...
+		59 75       light = vec4(vec3(L) * TILE_LIGHT_COLOR.xyz, 1.0);
+		60 76   #endif
+		61 77      
+		62 78   	int frameIndex = int((COLOR.a * 255.0) + 0.5);
+		63 79   	uv.xy = TEXCOORD_0.xy + BANNER_UV_OFFSETS[frameIndex].xy;
+		   80 + 	uv.zw = TEXCOORD_0.xy;
+		64 81   
+		65 82   #ifndef DISABLE_TINTING
+		66 83   	color = BANNER_COLORS[frameIndex];
+		67 84   	color.a = 1.0;
+		68 85   	if (frameIndex > 0) {
+		        ...
+		        '''
+Changed resource pack "color_texture.fragment":
+	Changed file "vanilla":
+		Total line: 88 (+2, -1)
+		        '''
+		        ...
+		 5  5   
+		 6  6   uniform sampler2D TEXTURE_0;
+		 7  7   uniform sampler2D TEXTURE_1;
+		 8  8   
+		 9  9   #include "shaders/uniformEntityConstants.h"
+		   10 + #include "shaders/uniformShaderConstants.h"
+		10 11   
+		11 12   #ifdef EFFECTS_OFFSET
+		12 13   #include "shaders/uniformEffectsConstants.h"
+		13 14   #endif
+		14 15   
+		        ...
+		45 46   #endif
+		46 47   
+		47 48   #ifdef ENABLE_VERTEX_TINT_MASK
+		48 49   	diffuse.rgb = mix(diffuse.rgb, diffuse.rgb*color.rgb, diffuse.a);
+		49 50   	if (color.a > 0.0) {
+		   51 + 		diffuse.a = (diffuse.a > 0.0) ? 1.0 : 0.0; // This line is needed for horse armour icon and dyed leather to work properly
+		50    - 		diffuse.a = (diffuse.a > 0.0) ? 1.0 : 0.0;
+		51 52   	}
+		52 53   #endif
+		53 54   
+		54 55   #ifdef GLINT
+		55 56   	vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * GLINT_COLOR;
+		        ...
+		74 75   #endif
+		75 76   
+		76 77   #ifdef ENABLE_VERTEX_TINT_MASK
+		77 78   
+		78 79   #ifdef ENABLE_CURRENT_ALPHA_MULTIPLY
+		   80 + 	gl_FragColor = diffuse * vec4(1.0,1.0,1.0,HUD_OPACITY);
+		79    - 	gl_FragColor = diffuse * color.a;
+		80 81   #else
+		81 82   	gl_FragColor = diffuse;
+		82 83   #endif
+		83 84   
+		84 85   #else
+		        ...
+		        '''
+Changed resource pack "uniformBannerConstants.h":
+	Changed file "vanilla":
+		Total line: 14 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_BANNER_CONSTANTS_H
+		 2  2   #define _UNIFORM_BANNER_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform BannerConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(BannerConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(BannerConstants)
+		 7 10   UNIFORM vec4 BANNER_COLORS[7];
+		 8 11   UNIFORM vec4 BANNER_UV_OFFSETS[7];
+		 9 12   END_UNIFORM_BLOCK
+		10 13   
+		11 14   #endif
+		        '''
+Changed resource pack "uniformDebugConstants.h":
+	Changed file "vanilla":
+		Total line: 13 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_DEBUG_CONSTANTS_H
+		 2  2   #define _UNIFORM_DEBUG_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform DebugConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(DebugConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(DebugConstants)
+		 7 10   UNIFORM float TEXTURE_ARRAY_INDEX_0;
+		 8 11   END_UNIFORM_BLOCK
+		 9 12   
+		10 13   #endif
+		        '''
+Changed resource pack "uniformEffectsConstants.h":
+	Changed file "vanilla":
+		Total line: 13 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_EFFECTS_CONSTANTS_H
+		 2  2   #define _UNIFORM_EFFECTS_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform EffectsConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(EffectsConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(EffectsConstants)
+		 7 10   UNIFORM vec2 EFFECT_UV_OFFSET;
+		 8 11   END_UNIFORM_BLOCK
+		 9 12   
+		10 13   #endif
+		        '''
+Changed resource pack "uniformEntityConstants.h":
+	Changed file "vanilla":
+		Total line: 20 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_ENTITY_CONSTANTS_H
+		 2  2   #define _UNIFORM_ENTITY_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform EntityConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(EntityConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(EntityConstants)
+		 7 10   UNIFORM vec4 OVERLAY_COLOR;
+		 8 11   UNIFORM vec4 TILE_LIGHT_COLOR;
+		 9 12   UNIFORM vec4 CHANGE_COLOR;
+		10 13   UNIFORM vec4 GLINT_COLOR;
+		11 14   UNIFORM vec4 UV_ANIM;
+		        ...
+		        '''
+Changed resource pack "uniformFlipbookTextureConstants.h":
+	Changed file "vanilla":
+		Total line: 14 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_FLIPBOOK_TEXTURE_CONSTANTS_H
+		 2  2   #define _UNIFORM_FLIPBOOK_TEXTURE_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform FlipbookTextureConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(FlipbookTextureConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(FlipbookTextureConstants)
+		 7 10   UNIFORM float V_OFFSET;
+		 8 11   UNIFORM float V_BLEND_OFFSET;
+		 9 12   END_UNIFORM_BLOCK
+		10 13   
+		11 14   #endif
+		        '''
+Changed resource pack "uniformInterFrameConstants.h":
+	Changed file "vanilla":
+		Total line: 15 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_INTER_FRAME_CONSTANTS_H
+		 2  2   #define _UNIFORM_INTER_FRAME_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform InterFrameConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(InterFrameConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(InterFrameConstants)
+		 7 10   // in secs. This is reset every 1 hour. so the range is [0, 3600]
+		 8 11   // make sure your shader handles the case when it transitions from 3600 to 0
+		 9 12   UNIFORM float TOTAL_REAL_WORLD_TIME;
+		10 13   END_UNIFORM_BLOCK
+		11 14   
+		        ...
+		        '''
+Changed resource pack "uniformMacro.h":
+	Changed file "vanilla":
+		Total line: 14 (+2, -2)
+		        '''
+		 1  1   #ifndef _UNIFORM_MACRO_H
+		 2  2   #define _UNIFORM_MACRO_H
+		 3  3   
+		 4  4   #ifdef MCPE_PLATFORM_NX
+		    5 + // Unfortunately this macro does not work on old Amazon platforms #define BEGIN_UNIFORM_BLOCK(x) uniform x {
+		 5    - #define BEGIN_UNIFORM_BLOCK(x) uniform x {
+		 6  6   #define END_UNIFORM_BLOCK };
+		 7  7   #define UNIFORM 
+		 8  8   #else
+		    9 + // Unfortunately this macro does not work on old Amazon platforms #define BEGIN_UNIFORM_BLOCK(x) 
+		 9    - #define BEGIN_UNIFORM_BLOCK(x) 
+		10 10   #define END_UNIFORM_BLOCK
+		11 11   #define UNIFORM uniform 
+		12 12   #endif
+		13 13   
+		14 14   #endif
+		        '''
+Changed resource pack "uniformPerFrameConstants.h":
+	Changed file "vanilla":
+		Total line: 18 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_PER_FRAME_CONSTANTS_H
+		 2  2   #define _UNIFORM_PER_FRAME_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform PerFrameConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(PerFrameConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(PerFrameConstants)
+		 7 10   UNIFORM vec3 VIEW_POS;
+		 8 11   UNIFORM float TIME;
+		 9 12   UNIFORM vec4 FOG_COLOR;
+		10 13   UNIFORM vec2 FOG_CONTROL;
+		11 14   UNIFORM float RENDER_DISTANCE;
+		        ...
+		        '''
+Changed resource pack "uniformRenderChunkConstants.h":
+	Changed file "vanilla":
+		Total line: 13 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_RENDER_CHUNK_CONSTANTS_H
+		 2  2   #define _UNIFORM_RENDER_CHUNK_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform RenderChunkConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(RenderChunkConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(RenderChunkConstants)
+		 7 10   UNIFORM POS4 CHUNK_ORIGIN_AND_SCALE;
+		 8 11   END_UNIFORM_BLOCK
+		 9 12   
+		10 13   #endif
+		        '''
+Changed resource pack "uniformShaderConstants.h":
+	Changed file "vanilla":
+		Total line: 17 (+4, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_SHADER_CONSTANTS_H
+		 2  2   #define _UNIFORM_SHADER_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform ShaderConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(ShaderConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(ShaderConstants)
+		 7 10   UNIFORM vec4 CURRENT_COLOR;
+		 8 11   UNIFORM vec4 DARKEN;
+		 9 12   UNIFORM vec3 TEXTURE_DIMENSIONS;
+		   13 + UNIFORM float HUD_OPACITY;
+		10 14   UNIFORM MAT4 UV_TRANSFORM;
+		11 15   END_UNIFORM_BLOCK
+		12 16   
+		13 17   #endif
+		        '''
+Changed resource pack "uniformTextConstants.h":
+	Changed file "vanilla":
+		Total line: 19 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_TEXT_CONSTANTS_H
+		 2  2   #define _UNIFORM_TEXT_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform TextConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(TextConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(TextConstants)
+		 7 10   UNIFORM float GLYPH_SMOOTH_RADIUS;
+		 8 11   UNIFORM float GLYPH_CUTOFF;
+		 9 12   UNIFORM float OUTLINE_CUTOFF;
+		10 13   UNIFORM vec4 OUTLINE_COLOR;
+		11 14   UNIFORM float SHADOW_SMOOTH_RADIUS;
+		        ...
+		        '''
+Changed resource pack "uniformWeatherConstants.h":
+	Changed file "vanilla":
+		Total line: 20 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_WEATHER_CONSTANTS_H
+		 2  2   #define _UNIFORM_WEATHER_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform WeatherConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(WeatherConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(WeatherConstants)
+		 7 10   UNIFORM vec4 POSITION_OFFSET;
+		 8 11   UNIFORM vec4 VELOCITY;
+		 9 12   UNIFORM vec4 ALPHA;
+		10 13   UNIFORM vec4 VIEW_POSITION;
+		11 14   UNIFORM vec4 SIZE_SCALE;
+		        ...
+		        '''
+Changed resource pack "uniformWorldConstants.h":
+	Changed file "vanilla":
+		Total line: 16 (+3, -0)
+		        '''
+		 1  1   #ifndef _UNIFORM_WORLD_CONSTANTS_H
+		 2  2   #define _UNIFORM_WORLD_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		    6 + #ifdef MCPE_PLATFORM_NX
+		    7 + uniform WorldConstants {
+		    8 + #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(WorldConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 6    - BEGIN_UNIFORM_BLOCK(WorldConstants)
+		 7 10   UNIFORM MAT4 WORLDVIEWPROJ;
+		 8 11   UNIFORM MAT4 WORLD;
+		 9 12   UNIFORM MAT4 WORLDVIEW;
+		10 13   UNIFORM MAT4 PROJ;
+		11 14   END_UNIFORM_BLOCK
+		        ...
+		        '''

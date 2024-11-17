@@ -1,24 +1,42 @@
-Difference of "animation_controllers" between "1.20.1" and "1.20.10.20" (beta of "1.20.10").
+Difference of "animation_controllers" between "1.20.10.21" (beta of "1.20.10") and "1.20.10.23" (beta of "1.20.10").
 
-Changed file "camel.animation_controllers":
+Changed file "agent.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.camel.general":
+			Changed animation controller "controller.animation.agent.move":
 				Changed field "states":
-					Changed state "dashing":
-						Changed field "animations":
-							Total animation dict: 2 (+1, -0)
-							Added animation dict "dashing_sound".
-Changed file "player.animation_controllers":
+					Total state: 3 (+1, -0)
+					Changed state "moving":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -1)
+							Removed transition list transition "swinging_arms": "variable.agent.swinganimationtick > 0".
+							Added transition list transition "swinging_arms": "variable.agent.anim_state == 2".
+							Added transition list transition "shrug": "variable.agent.anim_state == 3".
+					Added state "shrug":
+						field "animations": animation dict: "shrug"
+						field "transitions": transition list: transition "moving": "variable.agent.anim_state == 1"
+					Changed state "swinging_arms":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "moving": "variable.agent.swinganimationtick <= 0".
+							Added transition list transition "moving": "variable.agent.anim_state == 1".
+Changed file "humanoid.animation_controllers.json":
 	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 11 (+1, -0)
-			Added resource pack "vanilla_1.20.10".
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.player.root":
+			Changed animation controller "controller.animation.humanoid.look_at_target":
 				Changed field "states":
-					Changed state "third_person":
-						Changed field "animations":
-							Total animation dict: 29 (+2, -0)
-							Added animation dict animation "crawling": "query.is_crawling".
-							Added animation dict animation "crawling.legs": "query.is_crawling".
+					Changed state "default":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "swimming": "query.is_swimming".
+							Added transition list transition "swimming": "query.is_swimming || query.is_crawling".
+					Changed state "gliding":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "swimming": "query.is_swimming".
+							Added transition list transition "swimming": "query.is_swimming || query.is_crawling".
+					Changed state "swimming":
+						Changed field "transitions":
+							Total transition list: 2 (+1, -1)
+							Removed transition list transition "default": "!query.is_swimming".
+							Added transition list transition "default": "!query.is_swimming && !query.is_crawling".

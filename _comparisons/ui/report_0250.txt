@@ -1,0 +1,154 @@
+Difference of "ui" between "1.18.20.21" (beta of "1.18.30") and "1.18.20.23" (beta of "1.18.30").
+
+Changed namespace "chat":
+	Changed element "messages_text":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "text":
+					field "type": "label"
+					field "color": "$chat_text_color"
+					field "localize": false
+					field "size": ["100%", "default"]
+					field "text": "#text"
+					field "text_tts": "#text_tts"
+					field "font_type": "$chat_font_type"
+					field "font_scale_factor": "$chat_font_scale_factor"
+					field "line_padding": "$chat_line_spacing"
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_visible"
+				field "binding_name_override": "#visible"
+		field "type": "label"
+		field "color": "$chat_text_color"
+		field "localize": false
+		field "size": ["100%", "default"]
+		field "text": "#text"
+		field "text_tts": "#text_tts"
+		field "font_type": "$chat_font_type"
+		field "font_scale_factor": "$chat_font_scale_factor"
+		field "line_padding": "$chat_line_spacing"
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_visible"
+				field "binding_name_override": "#visible"
+Changed namespace "controls_section":
+	Changed element "touch_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "common_touch_settings":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "option_toggle_toggle_crouch@settings_common.option_toggle":
+								Added field "bindings":
+									binding:
+										field "binding_name": "#touch_controls_v2"
+										field "binding_name_override": "#visible"
+Changed namespace "crafting_pocket":
+	Changed element "crafting_grid_2x2_with_label":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "crafting_label@crafting.crafting_label":
+					field "size": ["100%", 10]
+					field "text_alignment": "$grid_label_alignment"
+			Added control:
+				element "crafting_label@crafting.crafting_label":
+					field "size": ["200%", 10]
+					field "offset": ["-50%", 0]
+					field "text_alignment": "$grid_label_alignment"
+Changed namespace "hud":
+	Changed element "chat_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "chat_background":
+					Unchanged field "type": "image"
+					Changed field "controls":
+						Changed control:
+							Changed element "chat_text@chat_label":
+								Changed field "offset":
+									Unchanged item 0: 2
+									Changed item 1 from 0 to 2.
+					Changed field "size":
+						Unchanged item 0: "100%"
+						Changed item 1 from "100%c" to "100%c + 4px".
+Changed namespace "persona":
+	Total element: 344 (+4, -2)
+	Changed element "a_button_helper@common.gamepad_helper_a":
+		Changed field "$variables":
+			Total variable: 3 (+2, -0)
+			Moved variable "$hide_description|default" to "$hide_description".
+			Added variable "$gamepad_helper_icon_size":
+				item 0: 20
+				item 1: 20
+			Added variable "$gamepad_helper_size":
+				item 0: "100%"
+				item 1: "100%"
+		Changed field "offset":
+			Changed item 0 from "-34%" to "-25% - 2px".
+			Changed item 1 from 0 to "-25% + 1px".
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#show_equip_button_helper"
+				field "binding_name_override": "#visible"
+		Added field "size" of ["100%", "100%"].
+	Added element "a_button_helper_center@common.empty_panel":
+		field "size": ["90%y", "100%"]
+		field "controls": control: element "a_button_helper@persona.a_button_helper": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#show_equip_button_helper"
+				field "binding_name_override": "#visible"
+	Changed element "emote_wheel_screen@common.base_screen":
+		Changed field "$variables":
+			Total variable: 5 (+0, -0)
+			Changed variable "$is_full_screen_layout" from true to false.
+	Removed element "equip_button@persona.equip_piece":
+		field "size": ["100%", "100%"]
+		field "$variables": variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+	Added element "equip_button_content@common.horizontal_stack_panel":
+		field "size": ["100%", "100%"]
+		field "offset": [0, 3]
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "controls":
+			control: element "helper_wrapper@persona.a_button_helper_center": empty
+			control: element "equip_text@persona.equip_piece_text_wrapper": empty
+	Changed element "equip_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -2)
+			Removed control element "a_button_helper@persona.a_button_helper": empty.
+			Removed control element "equip@persona.equip_button": empty.
+			Added control element "equip@persona.equip_piece_button": empty.
+		Removed field "offset" of ["50%", 0].
+		Removed field "anchor_from" of "bottom_middle".
+		Removed field "anchor_to" of "bottom_middle".
+	Removed element "equip_piece@persona.equip_piece_button":
+		field "$variables":
+			variable "$pressed_button_name": "$equip_button_name"
+			variable "$button_text": "dr.equip_piece"
+	Moved element "equip_piece_button@common_buttons.light_text_button" to "equip_piece_button@common_buttons.light_content_button".
+	Changed element "equip_piece_button@common_buttons.light_content_button":
+		Changed field "$variables":
+			Total variable: 5 (+3, -1)
+			Removed variable "$new_ui_label_offset":
+				item 0: 0
+				item 1: 0
+			Added variable "$focus_override_down" of "FOCUS_OVERRIDE_STOP".
+			Added variable "$pressed_button_name" of "$equip_button_name".
+			Added variable "$button_content" of "persona.equip_button_content".
+	Added element "equip_piece_text":
+		field "type": "label"
+		field "size": ["100%", "default"]
+		field "color": "$text_color"
+		field "text": "dr.equip_piece"
+		field "text_alignment": "center"
+	Added element "equip_piece_text_wrapper@common.empty_panel":
+		field "size": ["fill", "100%"]
+		field "controls": control: element "text@persona.equip_piece_text": empty

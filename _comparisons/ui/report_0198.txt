@@ -1,0 +1,184 @@
+Difference of "ui" between "1.16.210.55" (beta of "1.16.210") and "1.16.210.56" (beta of "1.16.210").
+
+Changed namespace "invite":
+	Changed element "horizontal_invite_panel@common_dialogs.main_panel_one_button":
+		Changed field "$variables":
+			Total variable: 2 (+0, -1)
+			Removed variable "$text_name" of "invite.title".
+		Added field "variables":
+			variable:
+				field "requires": "$is_inviting_to_realm"
+				field "$variables": variable "$text_name": "invite.titleRealms"
+			variable:
+				field "requires": "(not $is_inviting_to_realm)"
+				field "$variables": variable "$text_name": "invite.title"
+	Changed element "vertical_invite_panel@common_dialogs.main_panel_two_buttons":
+		Changed field "$variables":
+			Total variable: 4 (+0, -1)
+			Removed variable "$text_name" of "invite.title".
+		Added field "variables":
+			variable:
+				field "requires": "$is_inviting_to_realm"
+				field "$variables": variable "$text_name": "invite.titleRealms"
+			variable:
+				field "requires": "(not $is_inviting_to_realm)"
+				field "$variables": variable "$text_name": "invite.title"
+Changed namespace "realmsPlus_buy":
+	Changed element "terms_and_conditions_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "terms_string_panel":
+					Unchanged field "type": "panel"
+					Changed field "variables":
+						Total variable: 2 (+2, -2)
+						Removed variable:
+							field "requires": "($is_holographic or $fire_tv)"
+							field "$variables": variable "$pressed_button_name_terms_conditions": "button.tos_popup"
+						Removed variable:
+							field "requires": "($is_holographic or $fire_tv or $nx_os)"
+							field "$variables": variable "$pressed_button_name_privacy_policy": "button.privpol_popup"
+						Added variable:
+							field "requires": "($is_holographic or $fire_tv or $xbox_one)"
+							field "$variables": variable "$pressed_button_name_terms_conditions": "button.tos_popup"
+						Added variable:
+							field "requires": "($is_holographic or $fire_tv or $nx_os or $xbox_one)"
+							field "$variables": variable "$pressed_button_name_privacy_policy": "button.privpol_popup"
+Changed namespace "realms_allowlist":
+	Total element: 106 (+0, -1)
+	Changed element "link_url_text":
+		Unchanged field "type": "label"
+		Changed field "size" from [168, "default"] to "$link_url_text_size".
+		Added field "variables":
+			variable:
+				field "requires": "$is_console"
+				field "$variables":
+					variable "$link_url_text_size":
+						item 0: 163
+						item 1: "default"
+		Added field "$variables":
+			variable "$link_url_text_size|default":
+				item 0: 208
+				item 1: "default"
+	Changed element "lower_body_default_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "info_text@realms_allowlist.share_popup_text": field "$variables": variable "$text": "realmsInvitationScreen.shareInfoMessage".
+			Added control:
+				element "info_text@realms_allowlist.share_popup_text":
+					field "variables":
+						variable:
+							field "requires": "$is_console"
+							field "$variables": variable "$text": "realmsInvitationScreen.shareInfoMessageCode"
+						variable:
+							field "requires": "(not $is_console)"
+							field "$variables": variable "$text": "realmsInvitationScreen.shareInfoMessage"
+	Changed element "lower_body_refresh_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "info_text@realms_allowlist.share_popup_text":
+					Removed field "$variables" of variable "$text": "realmsInvitationScreen.refreshLinkInfoMessage".
+					Added field "variables":
+						variable:
+							field "requires": "$is_console"
+							field "$variables": variable "$text": "realmsInvitationScreen.refreshCodeInfoMessage"
+						variable:
+							field "requires": "(not $is_console)"
+							field "$variables": variable "$text": "realmsInvitationScreen.refreshLinkInfoMessage"
+	Changed element "new_link_button@common_buttons.light_text_button":
+		Removed field "$variables" of variable "$button_text": "realmsInvitationScreen.shareDialogNewLinkButton".
+		Added field "variables":
+			variable:
+				field "requires": "$is_console"
+				field "$variables": variable "$button_text": "realmsInvitationScreen.shareDialogNewCodeButton"
+			variable:
+				field "requires": "(not $is_console)"
+				field "$variables": variable "$button_text": "realmsInvitationScreen.shareDialogNewLinkButton"
+	Changed element "right_settings_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control element "undo_button@realms_allowlist.undo_button": field "layer": 4.
+	Changed element "share_by_link_button@common_buttons.light_text_button":
+		Removed field "$variables" of variable "$button_text": "realmsInvitationScreen.shareByLink".
+		Added field "variables":
+			variable:
+				field "requires": "$is_console"
+				field "$variables": variable "$button_text": "realmsInvitationScreen.shareByCode"
+			variable:
+				field "requires": "(not $is_console)"
+				field "$variables": variable "$button_text": "realmsInvitationScreen.shareByLink"
+	Changed element "share_popup_content":
+		Unchanged field "type": "panel"
+		Changed field "size" from [300, 140] to "$share_popup_content_size".
+		Added field "variables":
+			variable:
+				field "requires": "$is_console"
+				field "$variables":
+					variable "$share_popup_content_size":
+						item 0: 255
+						item 1: 140
+		Added field "$variables":
+			variable "$share_popup_content_size|default":
+				item 0: 340
+				item 1: 140
+	Changed element "share_popup_dialog_header_text":
+		Unchanged field "type": "label"
+		Changed field "text" from "realmsInvitationScreen.shareLinkToRealm" to "$text".
+		Added field "variables":
+			variable:
+				field "requires": "$is_console"
+				field "$variables": variable "$text": "realmsInvitationScreen.shareCodeToRealm"
+			variable:
+				field "requires": "(not $is_console)"
+				field "$variables": variable "$text": "realmsInvitationScreen.shareLinkToRealm"
+	Removed element "undo_button@common_buttons.light_text_button":
+		field "size": [60, 21]
+		field "ignored": "($collection_binding_name = $uninvited_collection_name)"
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.realms_invite_undo"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.realms_invite_undo"
+				field "mapping_type": "focused"
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "$collection_binding_name"
+			binding:
+				field "binding_name": "#undo_action_visible"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_binding_name"
+			binding:
+				field "binding_name": "#members_list_enabled"
+				field "binding_name_override": "#enabled"
+		field "$variables": variable "$button_text": "realmsInvitationScreen.undo"
+Changed namespace "realms_create":
+	Changed element "terms_and_conditions_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "terms_string_panel":
+					Unchanged field "type": "panel"
+					Changed field "variables":
+						Total variable: 2 (+2, -2)
+						Removed variable:
+							field "requires": "($is_holographic or $fire_tv)"
+							field "$variables": variable "$pressed_button_name_terms_conditions": "button.tos_popup"
+						Removed variable:
+							field "requires": "($is_holographic or $fire_tv or $thirdpartyconsole)"
+							field "$variables": variable "$pressed_button_name_privacy_policy": "button.privpol_popup"
+						Added variable:
+							field "requires": "($is_holographic or $fire_tv or $xbox_one)"
+							field "$variables": variable "$pressed_button_name_terms_conditions": "button.tos_popup"
+						Added variable:
+							field "requires": "($is_holographic or $fire_tv or $thirdpartyconsole or $xbox_one)"
+							field "$variables": variable "$pressed_button_name_privacy_policy": "button.privpol_popup"

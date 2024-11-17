@@ -1,127 +1,513 @@
-Difference of "entities" between "1.20.60.24" (beta of "1.20.60") and "1.20.60.25" (beta of "1.20.60").
+Difference of "entities" between "1.20.70.22" (beta of "1.20.71") and "1.20.70.24" (beta of "1.20.71").
 
-Changed entity "bee":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 14 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.16.200"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Unchanged behavior pack: "vanilla_1.19.0"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.19.50"
-			Unchanged behavior pack: "vanilla_1.20.0"
-			Unchanged behavior pack: "vanilla_1.20.50"
-			Added behavior pack "vanilla_1.20.60".
-		Changed field "format_version" from "1.18.20" to "1.20.60".
-		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:bee"
-				Removed description "is_experimental" of false.
-			Changed field "component_groups":
-				Changed component group "look_for_food":
-					Changed component "minecraft:behavior.move_to_block":
-						Changed field "target_blocks":
-							Total block: 14 (+4, -4)
-							Added block "minecraft:double_plant:0".
-							Added block "minecraft:double_plant:1".
-							Removed block "minecraft:double_plant:12".
-							Removed block "minecraft:double_plant:13".
-							Added block "minecraft:double_plant:4".
-							Added block "minecraft:double_plant:5".
-							Removed block "minecraft:double_plant:8".
-							Removed block "minecraft:double_plant:9".
-			Changed field "components":
-				Changed component "minecraft:damage_sensor":
-					Changed field "triggers" from:
-						field "cause": "fall"
-						field "deals_damage": false
-					to:
-						trigger:
-							field "cause": "fall"
-							field "deals_damage": false
-						trigger:
-							field "deals_damage": false
-							field "on_damage":
+Total entity: 121 (+2, -0)
+Added entity "bogged.json":
+	behavior pack "experimental":
+		field "format_version": "1.20.60"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:bogged"
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "component_groups":
+				component group "minecraft:melee_attack":
+					component "minecraft:attack":
+						field "damage": 3
+						field "effect_name": "slowness"
+						field "effect_duration": 10
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
 								field "filters":
-									filter property "subject": "block"
-									filter property "test": "is_block"
-									filter property "value": "minecraft:sweet_berry_bush"
-Changed entity "breeze":
+									filter property "all_of":
+										filter:
+											filter property "test": "in_water"
+											filter property "subject": "self"
+											filter property "operator": "=="
+											filter property "value": false
+										filter:
+											filter property "test": "has_ranged_weapon"
+											filter property "subject": "self"
+											filter property "operator": "=="
+											filter property "value": true
+								field "event": "minecraft:ranged_mode"
+					component "minecraft:behavior.melee_box_attack":
+						field "priority": 4
+						field "track_target": true
+						field "speed_multiplier": 1.25
+				component group "minecraft:ranged_attack":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "test": "is_underwater"
+									filter property "subject": "self"
+									filter property "operator": "=="
+									filter property "value": true
+								field "event": "minecraft:melee_mode"
+							trigger:
+								field "filters":
+									filter property "test": "has_ranged_weapon"
+									filter property "subject": "self"
+									filter property "operator": "=="
+									filter property "value": false
+								field "event": "minecraft:melee_mode"
+					component "minecraft:shooter":
+						field "def": "minecraft:arrow"
+						field "sound": "bow"
+						field "aux_val": 26
+					component "minecraft:behavior.ranged_attack":
+						field "priority": 0
+						field "attack_interval_min": 1.0
+						field "attack_interval_max": 3.0
+						field "attack_radius": 15.0
+			field "components":
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+					field "breathes_water": true
+				component "minecraft:burns_in_daylight": empty
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.6
+					field "height": 1.9
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:environment_sensor":
+					field "triggers":
+						trigger:
+							field "filters":
+								filter property "test": "is_underwater"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "minecraft:melee_mode"
+						trigger:
+							field "filters":
+								filter property "test": "has_ranged_weapon"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": false
+							field "event": "minecraft:melee_mode"
+				component "minecraft:equip_item": field "excluded_items": item: field "item": "minecraft:banner:15"
+				component "minecraft:equipment": field "table": "loot_tables/entities/skeleton_gear.json"
+				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0"
+				component "minecraft:health":
+					field "value": 16
+					field "max": 16
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/bogged.json"
+				component "minecraft:movement": field "value": 0.25
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "is_amphibious": true
+					field "avoid_sun": true
+					field "avoid_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:shareables":
+					field "singular_pickup": true
+					field "items":
+						item:
+							field "item": "minecraft:netherite_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						item:
+							field "item": "minecraft:diamond_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 1
+						item:
+							field "item": "minecraft:iron_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 2
+						item:
+							field "item": "minecraft:stone_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 3
+						item:
+							field "item": "minecraft:golden_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 4
+						item:
+							field "item": "minecraft:wooden_sword"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 5
+						item:
+							field "item": "minecraft:bow"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 6
+						item:
+							field "item": "minecraft:netherite_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						item:
+							field "item": "minecraft:diamond_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 1
+						item:
+							field "item": "minecraft:iron_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 2
+						item:
+							field "item": "minecraft:chainmail_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 3
+						item:
+							field "item": "minecraft:golden_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 4
+						item:
+							field "item": "minecraft:leather_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 5
+						item:
+							field "item": "minecraft:turtle_helmet"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 6
+						item:
+							field "item": "minecraft:skull:0"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 7
+						item:
+							field "item": "minecraft:skull:1"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 7
+						item:
+							field "item": "minecraft:carved_pumpkin"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 7
+						item:
+							field "item": "minecraft:netherite_chestplate"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						item:
+							field "item": "minecraft:diamond_chestplate"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 1
+						item:
+							field "item": "minecraft:iron_chestplate"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 2
+						item:
+							field "item": "minecraft:chainmail_chestplate"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 3
+						item:
+							field "item": "minecraft:golden_chestplate"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 4
+						item:
+							field "item": "minecraft:leather_chestplate"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 5
+						item:
+							field "item": "minecraft:netherite_leggings"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						item:
+							field "item": "minecraft:diamond_leggings"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 1
+						item:
+							field "item": "minecraft:iron_leggings"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 2
+						item:
+							field "item": "minecraft:chainmail_leggings"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 3
+						item:
+							field "item": "minecraft:golden_leggings"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 4
+						item:
+							field "item": "minecraft:leather_leggings"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 5
+						item:
+							field "item": "minecraft:netherite_boots"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						item:
+							field "item": "minecraft:diamond_boots"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 1
+						item:
+							field "item": "minecraft:iron_boots"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 2
+						item:
+							field "item": "minecraft:chainmail_boots"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 3
+						item:
+							field "item": "minecraft:golden_boots"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 4
+						item:
+							field "item": "minecraft:leather_boots"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 5
+				component "minecraft:shooter":
+					field "def": "minecraft:arrow"
+					field "aux_val": 26
+				component "minecraft:type_family":
+					field "family":
+						family: "bogged"
+						family: "skeleton"
+						family: "monster"
+						family: "mob"
+						family: "undead"
+				component "minecraft:behavior.avoid_mob_type":
+					field "priority": 4
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "wolf"
+							field "max_dist": 6
+							field "walk_speed_multiplier": 1.2
+							field "sprint_speed_multiplier": 1.2
+				component "minecraft:behavior.equip_item": field "priority": 3
+				component "minecraft:behavior.flee_sun":
+					field "priority": 2
+					field "speed_multiplier": 1
+				component "minecraft:behavior.hurt_by_target":
+					field "priority": 1
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "damager"
+								filter property "operator": "!="
+								filter property "value": "wind_charge_projectile"
+				component "minecraft:behavior.look_at_player":
+					field "priority": 7
+					field "look_distance": 8
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 2
+					field "must_see": true
+					field "reselect_targets": true
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "player"
+							field "max_dist": 16
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "irongolem"
+							field "max_dist": 16
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "baby_turtle"
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "operator": "!="
+										filter property "value": true
+							field "max_dist": 16
+				component "minecraft:behavior.pickup_items":
+					field "priority": 5
+					field "max_dist": 3
+					field "goal_radius": 2
+					field "speed_multiplier": 1.0
+					field "pickup_based_on_chance": true
+					field "can_pickup_any_item": true
+				component "minecraft:behavior.random_look_around": field "priority": 8
+				component "minecraft:behavior.random_stroll":
+					field "priority": 6
+					field "speed_multiplier": 1
+				component "minecraft:behavior.ranged_attack":
+					field "priority": 0
+					field "attack_interval": 3.5
+					field "attack_radius": 15.0
+			field "events":
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:melee_mode":
+					field "add": field "component_groups": component group: "minecraft:melee_attack"
+					field "remove": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:ranged_mode":
+					field "add": field "component_groups": component group: "minecraft:ranged_attack"
+					field "remove": field "component_groups": component group: "minecraft:melee_attack"
+Changed entity "breeze.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:reflect_projectiles":
-					Changed field "reflected_projectiles":
-						Total projectile: 18 (+16, -0)
-						Added projectile "dragon_fireball".
-						Added projectile "ender_pearl".
-						Added projectile "evocation_fang".
-						Added projectile "experience_bottle".
-						Added projectile "fireball".
-						Added projectile "ice_bomb".
-						Added projectile "lingering_potion".
-						Added projectile "llama_spit".
-						Added projectile "shulker_bullet".
-						Added projectile "small_fireball".
-						Added projectile "snowball".
-						Added projectile "splash_potion".
-						Added projectile "thrownegg".
-						Added projectile "thrownenderpearl".
-						Added projectile "thrownicebomb".
-						Added projectile "wither_skull".
-					Changed field "reflection_scale" from "0.5" to "0.25".
-					Changed field "azimuth_angle" from "Math.random(0.0, 359.0)" to "180.0 + Math.random(-20.0, 20.0)".
-Changed entity "xp_orb":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 4 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.19.0"
-			Added behavior pack "vanilla_1.20.60".
-		Changed field "format_version" from "1.16.0" to "1.20.60".
+				Total component: 32 (+1, -0)
+				Changed component "minecraft:damage_sensor":
+					Changed field "triggers":
+						Changed trigger:
+							Unchanged field "cause": "projectile"
+							Added field "on_damage":
+								field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "damager"
+									filter property "operator": "!="
+									filter property "value": "wind_charge"
+				Added component "minecraft:loot" of field "table": "loot_tables/entities/breeze.json".
+				Changed component "minecraft:behavior.fire_at_target":
+					Changed field "projectile_def" from "minecraft:wind_charge_projectile" to "minecraft:breeze_wind_charge_projectile".
+Added entity "breeze_wind_charge_projectile.json":
+	behavior pack "experimental":
+		field "format_version": "1.20.60"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:breeze_wind_charge_projectile"
+				description "is_spawnable": false
+				description "is_summonable": false
+			field "components":
+				component "minecraft:collision_box":
+					field "width": 0.4
+					field "height": 0.4
+				component "minecraft:conditional_bandwidth_optimization":
+					field "default_values":
+						field "max_optimized_distance": 80.0
+						field "max_dropped_ticks": 7
+						field "use_motion_prediction_hints": true
+				component "minecraft:physics": empty
+				component "minecraft:projectile":
+					field "on_hit":
+						field "impact_damage":
+							field "damage": 1
+							field "knockback": true
+						field "remove_on_hit": empty
+					field "power": 0.7
+					field "gravity": 0.0
+					field "inertia": 1.0
+					field "liquid_inertia": 1.0
+					field "uncertainty_base": 5.0
+					field "uncertainty_multiplier": 4.0
+					field "reflect_on_hurt": true
+				component "minecraft:pushable":
+					field "is_pushable": false
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "wind_charge"
+						family: "wind_charge_projectile"
+				component "minecraft:wind_burst":
+					field "radius": 3.0
+					field "particle_effect": "breeze_wind_burst"
+					field "sound_effect": "breeze_wind_charge.burst"
+					field "knockback_scaling": 0.6
+Changed entity "husk.json":
+	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:xp_orb"
-				Removed description "is_experimental" of false.
 			Changed field "components":
-				Changed component "minecraft:pushable":
-					Changed field "is_pushable" from true to false.
-Changed entity "zoglin":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Unchanged behavior pack: "vanilla_1.18.30"
-			Unchanged behavior pack: "vanilla_1.19.30"
-			Unchanged behavior pack: "vanilla_1.20.50"
-			Added behavior pack "vanilla_1.20.60".
-		Changed field "format_version" from "1.18.30" to "1.20.60".
+				Changed component "minecraft:behavior.hurt_by_target":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Unchanged filter property "test": "is_family"
+								Unchanged filter property "operator": "!="
+								Changed filter property "value" from "wind_charge_projectile" to "breeze".
+								Changed filter property "subject" from "damager" to "other".
+Changed entity "skeleton.json":
+	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:zoglin"
-				Removed description "is_experimental" of false.
-			Changed field "component_groups":
-				Changed component group "zoglin_adult":
-					Changed component "minecraft:type_family":
-						Changed field "family":
-							Total family: 5 (+1, -0)
-							Added family "monster".
-				Changed component group "zoglin_baby":
-					Changed component "minecraft:type_family":
-						Changed field "family":
-							Total family: 5 (+1, -0)
-							Added family "monster".
 			Changed field "components":
-				Changed component "minecraft:experience_reward":
-					Removed field "on_bred" of "Math.Random(1,7)".
+				Changed component "minecraft:behavior.hurt_by_target":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Unchanged filter property "test": "is_family"
+								Unchanged filter property "operator": "!="
+								Changed filter property "value" from "wind_charge_projectile" to "breeze".
+								Changed filter property "subject" from "damager" to "other".
+Changed entity "stray.json":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.hurt_by_target":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Unchanged filter property "test": "is_family"
+								Unchanged filter property "operator": "!="
+								Changed filter property "value" from "wind_charge_projectile" to "breeze".
+								Changed filter property "subject" from "damager" to "other".
+Changed entity "wind_charge_projectile.json":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 7 (+1, -0)
+				Changed component "minecraft:projectile":
+					Changed field "uncertainty_multiplier" from 4.0 to 0.0.
+					Changed field "uncertainty_base" from 5.0 to 1.0.
+					Changed field "power" from 0.7 to 1.0.
+					Added field "offset" of [0.0, 0.0, 0.3].
+				Added component "minecraft:wind_burst":
+					field "radius": 1.7
+					field "particle_effect": "wind_burst"
+					field "sound_effect": "wind_charge.burst"
+					field "knockback_scaling": 1.2
+Changed entity "zombie.json":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.hurt_by_target":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Unchanged filter property "test": "is_family"
+								Unchanged filter property "operator": "!="
+								Changed filter property "value" from "wind_charge_projectile" to "breeze".
+								Changed filter property "subject" from "damager" to "other".

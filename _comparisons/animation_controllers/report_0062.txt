@@ -1,17 +1,22 @@
-Difference of "animation_controllers" between "1.18.10.24" (beta of "1.18.10") and "1.18.10.26" (beta of "1.18.10").
+Difference of "animation_controllers" between "1.18.12" and "1.18.20.21" (beta of "1.18.30").
 
-Changed file "fox.animation_controllers":
-	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 2 (+1, -0)
-			Added resource pack "vanilla_1.18.10".
+Changed file "frog.animation_controllers.json":
+	Changed resource pack "experimental":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.fox.move":
+			Changed animation controller "controller.animation.frog.general":
 				Changed field "states":
-					Changed state "pounce":
-						Added field "blend_transition" of 2.0.
-					Changed state "wiggle":
-						Changed field "transitions":
-							Total transition list: 3 (+1, -1)
-							Removed transition list transition "default": "query.is_on_ground && !query.is_interested && !query.is_stalking".
-							Added transition list transition "default": "!query.has_target && query.is_on_ground".
+					Changed state "on_land":
+						Changed field "animations":
+							Total animation dict: 2 (+1, -1)
+							Removed animation dict animation "jump_up": "query.vertical_speed > 0.25".
+							Added animation dict animation "jump": "!query.is_on_ground".
+Changed file "player.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.player.root":
+				Changed field "states":
+					Changed state "third_person":
+						Changed field "animations":
+							Total animation dict: 24 (+1, -1)
+							Removed animation dict animation "use_item_progress": "( variable.use_item_interval_progress > 0.0 ) || ( variable.use_item_startup_progress > 0.0 ) && !variable.is_brandishing_spear && !variable.is_holding_spyglass".
+							Added animation dict animation "use_item_progress": "( variable.use_item_interval_progress > 0.0 ) || ( variable.use_item_startup_progress > 0.0 ) && !variable.is_brandishing_spear && !variable.is_holding_spyglass && !query.is_item_name_any('slot.weapon.mainhand', 'minecraft:bow')".

@@ -1,0 +1,36 @@
+Difference of "shaders_resource_packs" between "1.19.70.22" (beta of "1.19.70") and "1.19.70.23" (beta of "1.19.70").
+
+Changed resource pack "hb_text.fragment":
+	Changed file "vanilla":
+		Total line: 43 (+1, -0)
+		        '''
+		        ...
+		19 19   float GetLuminance(vec3 color) {
+		20 20   	return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		21 21   }
+		22 22   
+		23 23   void main() {
+		   24 + 	vec2 uvPos = vec2(AdditionalOut.x, 1 - AdditionalOut.y);
+		   25 + 	float dfValue = texture2D(TEXTURE_1, uvPos).r;
+		24    - 	float dfValue = texture2D(TEXTURE_1, AdditionalOut.xy).r;
+		25 26   
+		26 27   	if (BITMAP >= 0.5) {
+		27 28   		vec4 fragColor = vec4(dfValue);
+		28 29   
+		29 30   		const float center = 0.4;
+		30 31   		const float radius = 0.1;
+		31 32   		fragColor = smoothstep(center - radius, center + radius, fragColor);
+		32 33   	
+		33 34   		fragColor = ColorOut * fragColor;
+		34 35   
+		   36 + 		gl_FragColor = fragColor;
+		35    - 		gl_FragColor = fragColor;		
+		36 37   	} else {
+		37 38   		float lum = 1.45 - GetLuminance(ColorOut.xyz);
+		38 39   		vec4 fragColor = ColorOut * pow(abs(dfValue), lum);
+		39 40   
+		   41 + 		gl_FragColor = fragColor;
+		40    - 		gl_FragColor = fragColor;		
+		41 42   	}
+		42 43   }
+		        '''

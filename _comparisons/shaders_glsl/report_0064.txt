@@ -1,0 +1,140 @@
+Difference of "shaders_resource_packs" between "1.8.0.10" (beta of "1.8.0") and "1.8.0.11" (beta of "1.8.0").
+
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 180 (+2, -4)
+		          '''
+		          ...
+		 22  22   #ifdef COLOR_BASED
+		 23  23   	varying vec4 vertColor;
+		 24  24   #endif
+		 25  25   
+		 26  26   #ifdef USE_OVERLAY
+		     27 +     // When drawing horses on specific android devices, overlay color ends up being garbage data.
+		 27     - 	varying vec4 overlayColor;
+		 28     - #endif
+		 29     - 
+		     28 +     // Changing overlay color to high precision appears to fix the issue on devices tested
+		     29 + 	varying highp vec4 overlayColor;
+		 30     - #ifdef TINTED_ALPHA_TEST
+		 31     - varying float alphaTestMultiplier;
+		 32  30   #endif
+		 33  31   
+		     32 + #ifdef TINTED_ALPHA_TEST
+		 34     - #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		     33 + 	varying float alphaTestMultiplier;
+		 35     - 	varying vec4 changeColor;
+		 36  34   #endif
+		 37  35   
+		 38  36   #ifdef GLINT
+		 39  37   	varying vec2 layer1UV;
+		 40  38   	varying vec2 layer2UV;
+		          ...
+		 99  97   	// Apply the secondary color mask and tint so long as its grayscale value is not 0
+		100  98   	color.rgb = mix(color, colorMask.gggg * MULTIPLICATIVE_TINT_CHANGE_COLOR, ceil(colorMask.g)).rgb;
+		101  99   #else
+		102 100   
+		103 101   #ifdef USE_COLOR_MASK
+		    102 + 	color.rgb = mix(color.rgb, color.rgb*CHANGE_COLOR.rgb, color.a);
+		    103 + 	color.a *= CHANGE_COLOR.a;
+		104     - 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		105     - 	color.a *= changeColor.a;
+		106 104   #endif
+		107 105   
+		108 106   #ifdef ITEM_IN_HAND
+		    107 + 	color.rgb = mix(color.rgb, color.rgb*CHANGE_COLOR.rgb, vertColor.a);
+		109     - 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, vertColor.a);
+		110 108   #if defined(MCPE_PLATFORM_NX) && defined(NO_TEXTURE) && defined(GLINT)
+		111 109   	// TODO(adfairfi): This needs to be properly fixed soon. We have a User Story for it in VSO: 102633
+		112 110   	vec3 dummyColor = texture2D(TEXTURE_0, vec2(0.0, 0.0)).rgb;
+		113 111   	color.rgb += dummyColor * 0.000000001;
+		114 112   #endif
+		          ...
+		126 124   	}
+		127 125   #endif
+		128 126   
+		129 127   #ifdef COLOR_SECOND_TEXTURE
+		130 128   	if (tex2.a > 0.0) {
+		    129 + 		color.rgb = tex2.rgb + (tex2.rgb * CHANGE_COLOR.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		131     - 		color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		132 130   	}
+		133 131   #else
+		134 132   	color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+		135 133   #endif
+		136 134   #endif
+		          ...
+		          '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 155 (+7, -13)
+		          '''
+		          ...
+		 28  28   
+		 29  29   varying vec4 light;
+		 30  30   varying vec4 fogColor;
+		 31  31   
+		 32  32   #ifdef USE_OVERLAY
+		     33 +     // When drawing horses on specific android devices, overlay color ends up being garbage data.
+		 33     - varying vec4 overlayColor;
+		 34     - #endif
+		 35     - 
+		     34 +     // Changing overlay color to high precision appears to fix the issue on devices tested
+		     35 + 	varying highp vec4 overlayColor;
+		 36     - #ifdef TINTED_ALPHA_TEST
+		 37     - varying float alphaTestMultiplier;
+		 38  36   #endif
+		 39  37   
+		     38 + #ifdef TINTED_ALPHA_TEST
+		 40     - #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		     39 + 	varying float alphaTestMultiplier;
+		 41     - varying vec4 changeColor;
+		 42  40   #endif
+		 43  41   
+		 44  42   #ifdef GLINT
+		 45  43   	varying vec2 layer1UV;
+		 46  44   	varying vec2 layer2UV;
+		          ...
+		105 103   
+		106 104   void main()
+		107 105   {
+		108 106   #ifdef USE_SKINNING
+		109 107   #if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+		110     -     POS4 pos = WORLDVIEWPROJ * BONES[int(BONEID_0)] * POSITION;
+		111     - #else
+		    108 +     POS4 pos = WORLDVIEWPROJ * BONES[int(BONEID_0)] * POSITION;
+		112     -     POS4 pos = WORLDVIEWPROJ * BONE * POSITION;
+		113     - #endif
+		114 109   #else
+		    110 +     POS4 pos = WORLDVIEWPROJ * BONE * POSITION;
+		115     -     POS4 pos = WORLDVIEWPROJ * POSITION;
+		116 111   #endif
+		117     -     gl_Position = pos;
+		118     - 
+		119     -     float L = lightIntensity();
+		120     - 
+		    112 + #else
+		    113 +     POS4 pos = WORLDVIEWPROJ * POSITION;
+		121     - #ifdef USE_OVERLAY
+		122     - 	L += OVERLAY_COLOR.a * 0.35;
+		123 114   #endif
+		    115 +     gl_Position = pos;
+		    116 + 
+		    117 +     float L = lightIntensity();
+		124 118   
+		    119 + #ifdef USE_OVERLAY
+		125     - #ifdef TINTED_ALPHA_TEST
+		    120 + 	L += OVERLAY_COLOR.a * 0.35;
+		126     -     alphaTestMultiplier = OVERLAY_COLOR.a;
+		127 121   #endif
+		128 122   
+		    123 + #ifdef TINTED_ALPHA_TEST
+		129     - #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		    124 +     alphaTestMultiplier = OVERLAY_COLOR.a;
+		130     -     changeColor = CHANGE_COLOR;
+		131 125   #endif
+		132 126   
+		133 127       light = vec4(vec3(L) * TILE_LIGHT_COLOR.xyz, 1.0);
+		134 128   
+		135 129   #ifdef COLOR_BASED
+		          ...
+		          '''

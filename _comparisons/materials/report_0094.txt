@@ -1,22 +1,22 @@
-Difference of "materials" between "1.16.210.59" (beta of "1.16.210") and "1.16.210.60" (beta of "1.16.210").
+Difference of "materials" between "1.16.221" and "1.16.230.50" (beta of "1.17.0").
 
-Changed material "entity":
-	Total resource pack: 2 (+0, -1)
-	Removed resource pack "experimental":
+Changed material "entity.material":
+	Total resource pack: 3 (+1, -0)
+	Added resource pack "experimental":
 		field "version": "1.0.0"
-		field "defined_in": resource pack: "experimental_caves_and_cliffs"
 		field "materials":
 			material "entity:entity_static":
 				field "+defines": definition: "USE_OVERLAY"
 				field "msaaSupport": "Both"
 			material "entity_emissive:entity": field "+defines": definition: "USE_EMISSIVE"
 			material "entity_static":
-				field "+samplerStates":
-					sampler state:
-						field "samplerIndex": 0
-						field "textureFilter": "Point"
+				field "vertexShader": "shaders/entity.vertex"
+				field "vrGeometryShader": "shaders/entity.geometry"
 				field "fragmentShader": "shaders/entity.fragment"
-				field "msaaSupport": "Both"
+				field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "Normal"
+					vertex field: field "field": "UV0"
 				field "variants":
 					variant:
 						material "skinning":
@@ -38,10 +38,9 @@ Changed material "entity":
 								vertex field: field "field": "Color"
 								vertex field: field "field": "Normal"
 								vertex field: field "field": "UV0"
-				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
-				field "vertexShader": "shaders/entity.vertex"
-				field "vrGeometryShader": "shaders/entity.geometry"
+				field "msaaSupport": "Both"
+				field "+samplerStates":
+					sampler state:
+						field "samplerIndex": 0
+						field "textureFilter": "Point"
 			material "glow_squid:entity_emissive": empty

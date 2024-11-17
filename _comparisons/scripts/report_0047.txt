@@ -1,0 +1,180 @@
+Difference of "scripts" between "1.19.10.20" (beta of "1.19.10") and "1.19.10.21" (beta of "1.19.10").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "APITests.js":
+		Total line: 1872 (+4, -0)
+		            '''
+		            ...
+		1745 1745     const targetLoc = new BlockLocation(1, 3, 7);
+		1746 1746   
+		1747 1747     let projectileHitCallback = world.events.projectileHit.subscribe((e) => {
+		1748 1748       if (e.blockHit && test.relativeBlockLocation(e.blockHit.block.location).equals(targetLoc)) {
+		1749 1749         world.events.projectileHit.unsubscribe(projectileHitCallback);
+		     1750 +       try {
+		     1751 +         test.assert(e.dimension === test.getDimension(), "Unexpected dimension");
+		     1752 +         test.assert(e.entityHit === undefined, "Expected no entity hit");
+		     1753 +         test.assert(
+		     1754 +           e.projectile?.id === "minecraft:arrow",
+		     1755 +           "Expected projectile to be arrow, but got " + e.projectile?.id
+		     1756 +         );
+		     1757 +         test.assert(e.source?.id === "minecraft:player", "Expected source to be player, but got " + e.source?.id);
+		     1758 +         test.assert(
+		     1759 +           isNearVec(e.hitVector, test.rotateVector(Vector.forward), 0.1),
+		     1760 +           `Expected e.hitVector to be forward, but got [${e.hitVector.x}, ${e.hitVector.y}, ${e.hitVector.z}]`
+		     1761 +         );
+		     1762 +         test.assert(
+		     1763 +           e.blockHit.block?.id === "minecraft:target",
+		     1764 +           "Expected block to be target, but got " + e.blockHit.block?.id
+		     1765 +         );
+		     1766 +         test.assert(e.blockHit.face == test.rotateDirection(Direction.north), "Expected north block face");
+		     1767 +         test.assert(
+		     1768 +           isNear(e.blockHit.faceLocationX, 0, 5, 0.1),
+		     1769 +           "Expected faceLocationX to be near center, but got " + e.blockHit.faceLocationX
+		     1770 +         );
+		     1771 +         test.assert(
+		     1772 +           isNear(e.blockHit.faceLocationY, 0.5, 0.2),
+		     1773 +           "Expected faceLocationY to be near center, but got " + e.blockHit.faceLocationY
+		     1774 +         );
+		     1775 +         test.succeed();
+		     1776 +       } catch (ex) {
+		     1777 +         test.fail(ex);
+		     1778 +       }
+		1750      -       test.assert(e.dimension === test.getDimension(), "Unexpected dimension");
+		1751      -       test.assert(e.entityHit === undefined, "Expected no entity hit");
+		1752      -       test.assert(
+		1753      -         e.projectile?.id === "minecraft:arrow",
+		1754      -         "Expected projectile to be arrow, but got " + e.projectile?.id
+		1755      -       );
+		1756      -       test.assert(e.source?.id === "minecraft:player", "Expected source to be player, but got " + e.source?.id);
+		1757      -       test.assert(
+		1758      -         isNearVec(e.hitVector, test.rotateVector(Vector.forward), 0.1),
+		1759      -         `Expected e.hitVector to be forward, but got [${e.hitVector.x}, ${e.hitVector.y}, ${e.hitVector.z}]`
+		1760      -       );
+		1761      -       test.assert(
+		1762      -         e.blockHit.block?.id === "minecraft:target",
+		1763      -         "Expected block to be target, but got " + e.blockHit.block?.id
+		1764      -       );
+		1765      -       test.assert(e.blockHit.face == test.rotateDirection(Direction.north), "Expected north block face");
+		1766      -       test.assert(
+		1767      -         isNear(e.blockHit.faceLocationX, 0, 5, 0.1),
+		1768      -         "Expected faceLocationX to be near center, but got " + e.blockHit.faceLocationX
+		1769      -       );
+		1770      -       test.assert(
+		1771      -         isNear(e.blockHit.faceLocationY, 0.5, 0.1),
+		1772      -         "Expected faceLocationY to be near center, but got " + e.blockHit.faceLocationY
+		1773      -       );
+		1774      -       test.succeed();
+		1775 1779       }
+		1776 1780     });
+		1777 1781   
+		1778 1782     await test.idle(5);
+		1779 1783     player.giveItem(new ItemStack(MinecraftItemTypes.bow, 1), false);
+		            ...
+		            '''
+	Changed script "ComponentTests.js":
+		Total line: 503 (+6, -6)
+		          '''
+		  1   1   import * as GameTest from "mojang-gametest";
+		      2 + import { BlockLocation, Location, MinecraftItemTypes, ItemStack } from "mojang-minecraft";
+		  2     - import { BlockLocation, MinecraftItemTypes, ItemStack } from "mojang-minecraft";
+		  3   3   
+		  4   4   function isNear(n1, n2) {
+		  5   5     return Math.abs(n1 - n2) < 0.01;
+		  6   6   }
+		  7   7   
+		          ...
+		487 487     test.succeed();
+		488 488   })
+		489 489     .structureName("ComponentTests:animal_pen")
+		490 490     .tag(GameTest.Tags.suiteDefault);
+		491 491   
+		    492 + GameTest.registerAsync("ComponentTests", "item_component", async (test) => {
+		492     - GameTest.register("ComponentTests", "item_component", async (test) => {
+		493     -   const itemLoc = test.worldBlockLocation(new BlockLocation(1, 2, 1));
+		494     -   test.pressButton(new BlockLocation(0, 2, 0));
+		    493 +   const itemAmount = 5;
+		    494 +   const torchItem = new ItemStack(MinecraftItemTypes.torch, itemAmount);
+		    495 +   const torch = test.spawnItem(torchItem, new Location(1.5, 2.5, 1.5));
+		    496 +   const itemComp = torch.getComponent("item");
+		495     -   await test.idle(40);
+		496     -   const entities = test.getDimension().getEntitiesAtBlockLocation(itemLoc);
+		497     -   test.assert(entities.length === 1, "Expected 1 entity");
+		498     -   const itemComp = entities[0].getComponent("item");
+		499 497     test.assert(itemComp !== undefined, "Expected item component");
+		500 498     test.assert(itemComp.itemStack.id === "minecraft:torch", "Unexpected item id");
+		    499 +   test.assert(itemComp.itemStack.amount === itemAmount, "Unexpected item amount");
+		501     -   test.assert(itemComp.itemStack.amount === 1, "Unexpected item amount");
+		502 500     test.succeed();
+		    501 + })
+		    502 +   .structureName("ComponentTests:platform")
+		    503 +   .tag(GameTest.Tags.suiteDefault);
+		503     - }).tag(GameTest.Tags.suiteDefault);
+		          '''
+	Changed script "EntityQueryTests.js":
+		Total line: 341 (+2, -2)
+		          '''
+		          ...
+		 83  83   
+		 84  84     // Entity Grid
+		 85  85     // e8|e7|e6
+		 86  86     // e5|e4|e3
+		 87  87     // e2|e1|e0
+		     88 +   const e0 = test.spawn("minecraft:cow<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     89 +   const e1 = test.spawn("minecraft:cow<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 1));
+		 88     -   const e0 = test.spawn("minecraft:cow", new BlockLocation(1, 2, 1));
+		 89     -   const e1 = test.spawn("minecraft:cow", new BlockLocation(3, 2, 1));
+		     90 +   const e2 = test.spawn("minecraft:cow<minecraft:ageable_grow_up>", new BlockLocation(5, 2, 1));
+		     91 +   const e3 = test.spawn("minecraft:husk<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 3));
+		     92 +   const e4 = test.spawn("minecraft:zombie<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 3));
+		     93 +   const e5 = test.spawn("minecraft:sheep<minecraft:ageable_grow_up>", new BlockLocation(5, 2, 3));
+		     94 +   const e6 = test.spawn("minecraft:sheep<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 5));
+		 90     -   const e2 = test.spawn("minecraft:cow", new BlockLocation(5, 2, 1));
+		 91     -   const e3 = test.spawn("husk", new BlockLocation(1, 2, 3));
+		 92     -   const e4 = test.spawn("minecraft:zombie", new BlockLocation(3, 2, 3));
+		 93     -   const e5 = test.spawn("minecraft:sheep", new BlockLocation(5, 2, 3));
+		 94     -   const e6 = test.spawn("sheep", new BlockLocation(1, 2, 5));
+		 95  95     const e7 = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 5), p1Name);
+		 96  96     const e8 = test.spawnSimulatedPlayer(new BlockLocation(5, 2, 5), p2Name);
+		 97  97   
+		 98  98     const dimension = test.getDimension();
+		 99  99   
+		          ...
+		          '''
+	Changed script "SculkTests.js":
+		Total line: 725 (+4, -0)
+		          '''
+		          ...
+		257 257       test.spawn("minecraft:creeper", new BlockLocation(2, 4, 2)).kill();
+		258 258       test.spawn("minecraft:creeper", new BlockLocation(0, 4, 0)).kill();
+		259 259       test.spawn("minecraft:creeper", new BlockLocation(0, 4, 4)).kill();
+		260 260       test.spawn("minecraft:creeper", new BlockLocation(4, 4, 0)).kill();
+		261 261       test.spawn("minecraft:creeper", new BlockLocation(4, 4, 4)).kill();
+		    262 +     test.spawn("minecraft:creeper", new BlockLocation(2, 4, 0)).kill();
+		    263 +     test.spawn("minecraft:creeper", new BlockLocation(0, 4, 2)).kill();
+		    264 +     test.spawn("minecraft:creeper", new BlockLocation(4, 4, 2)).kill();
+		    265 +     test.spawn("minecraft:creeper", new BlockLocation(2, 4, 4)).kill();
+		262 266   
+		263 267       test.succeedWhen(() => {
+		264 268           for (var x = 0; x < 5; ++x) {
+		265 269               for (var z = 0; z < 5; ++z) {
+		266 270                   const isSculk = test.getBlock(new BlockLocation(x, 3, z)).id == "minecraft:sculk" || test.getBlock(new BlockLocation(x, 4, z)).id == "minecraft:sculk_vein";
+		          ...
+		          '''
+	Changed script "VibrationTests.js":
+		Total line: 764 (+1, -1)
+		          '''
+		          ...
+		512 512   
+		513 513   // Tests that a projectile (shot by powering a Dispenser) does not produce vibrations when landing on wool.
+		514 514   GameTest.register("VibrationTests", "event_projectile_land_wool", (test) => {
+		515 515       const sensorPos = new BlockLocation(9, 2, 9);
+		516 516   
+		    517 +     const placeAtPos = new BlockLocation(9, 7, 4);
+		517     -     const placeAtPos = new BlockLocation(9, 4, 4);
+		518 518       test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		519 519   
+		520 520       failOnVibrationDetected(test, sensorPos, TicksPerSecond * 2);
+		521 521   })
+		522 522       .tag(GameTest.Tags.suiteDefault);
+		          ...
+		          '''

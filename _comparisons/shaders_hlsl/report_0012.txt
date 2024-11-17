@@ -1,0 +1,23 @@
+Difference of "shaders" between "1.2.2" and "1.2.3.3" (beta of "1.2.3").
+
+Changed file "entity.fragment.hlsl":
+	Total line: 135 (+4, -0)
+	          '''
+	          ...
+	 29  29   {
+	 30  30   	float4 color : SV_Target;
+	 31  31   };
+	 32  32   
+	 33  33   #ifdef USE_EMISSIVE
+	     34 + #ifdef USE_ONLY_EMISSIVE
+	     35 + #define NEEDS_DISCARD(C) (C.a == 0.0f ||C.a == 1.0f )
+	     36 + #else
+	 34  37   #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+	     38 + #endif
+	 35  39   #else
+	 36  40   #ifndef USE_COLOR_MASK
+	 37  41   #define NEEDS_DISCARD(C)	(C.a < 0.5)
+	 38  42   #else
+	 39  43   #define NEEDS_DISCARD(C)	(C.a == 0.0)
+	          ...
+	          '''

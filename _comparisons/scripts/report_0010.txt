@@ -1,0 +1,1615 @@
+Difference of "scripts" between "1.17.2" and "1.17.10.20" (beta of "1.17.10").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 17 (+2, -0)
+	Changed script "APITests.js":
+		Total line: 219 (+1, -1)
+		          '''
+		          ...
+		 58  58   GameTest.register("APITests", "assert_entity_data", (test) => {
+		 59  59     const pigId = "minecraft:pig<minecraft:ageable_grow_up>";
+		 60  60     const pigLoc = new BlockLocation(1, 2, 1);
+		 61  61     test.spawn(pigId, pigLoc);
+		 62  62     test.succeedWhen(() => {
+		     63 +     test.assertEntityData(pigLoc, pigId, (entity) => entity.id !== undefined);
+		 63     -     test.assertEntityData(pigLoc, pigId, (entity) => entity.getName !== undefined);
+		 64  64     });
+		 65  65   })
+		 66  66     .structureName("ComponentTests:animal_pen")
+		 67  67     .tag(GameTest.Tags.suiteDefault);
+		 68  68   
+		          ...
+		          '''
+	Changed script "BlockTests.js":
+		Total line: 263 (+179, -43)
+		          '''
+		          ...
+		  2   2   import { BlockLocation, Blocks, Items, ItemStack } from "Minecraft";
+		  3   3   
+		  4   4   const TicksPerSecond = 20;
+		  5   5   const FiveSecondsInTicks = 5 * TicksPerSecond;
+		  6   6   
+		      7 + const FALLING_SAND_TEMPLATE_NAME = "BlockTests:falling_sand_template";
+		      8 + const FALLING_SAND_STARTUP_TICKS = 1;
+		      9 + const FALLING_SAND_TIMEOUT_TICKS = 20;
+		     10 + 
+		     11 + const BLOCKS_THAT_POP_SAND = [
+		     12 +     [Blocks.woodenSlab(), Blocks.air()],  //replace missing oakSlab() with woodenSlab()
+		     13 +     [Blocks.chest(), Blocks.stone()],
+		     14 +     [Blocks.rail(), Blocks.stone()],
+		     15 +     [Blocks.stoneButton(), Blocks.stone()],
+		     16 +     [Blocks.woodenPressurePlate(), Blocks.stone()],  //replace missing OakPressurePlate() with woodenPressurePlate()
+		     17 +     [Blocks.torch(), Blocks.stone()],
+		     18 +     [Blocks.soulSand(), Blocks.air()],
+		     19 + ];
+		     20 + 
+		     21 + const BLOCKS_REPLACED_BY_SAND = [
+		     22 +     Blocks.water(),
+		     23 +     Blocks.air(),
+		     24 +     Blocks.tallgrass() //replace grass() with tallgrass(). It needs grass, not grass block, Blocks.grass() is actually grass block.
+		     25 + ];
+		     26 + 
+		     27 + const BLOCKS_THAT_SUPPORT_SAND = [
+		     28 +     Blocks.stone(),
+		     29 +     Blocks.fence(),  //replace missing oakFence() with fence()
+		     30 +     Blocks.oakStairs(),
+		     31 +     Blocks.scaffolding()
+		     32 + ];
+		     33 + 
+		     34 + function testThatFallingSandPopsIntoItem(test) {
+		     35 +     test.setBlock(Blocks.sand(), new BlockLocation(1, 4, 1));
+		     36 +     const targetPos = new BlockLocation(1, 2, 1);
+		     37 + 
+		     38 +     test.succeedWhen(() => {
+		     39 +         test.assertEntityPresentInArea("minecraft:item");
+		     40 +         test.assertEntityNotPresent("minecraft:falling_block", targetPos);
+		     41 +     });
+		     42 + }
+		     43 + 
+		     44 + function testThatFallingSandReplaces(test) {
+		     45 +     test.setBlock(Blocks.sand(), new BlockLocation(1, 4, 1));
+		     46 +     test.succeedWhenBlockPresent(Blocks.sand(), new BlockLocation(1, 2, 1));
+		     47 + }
+		     48 + 
+		     49 + function testThatFallingSandLandsOnTop(test) {
+		     50 +     test.setBlock(Blocks.sand(), new BlockLocation(1, 4, 1));
+		     51 +     test.succeedWhenBlockPresent(Blocks.sand(), new BlockLocation(1, 3, 1));
+		     52 + }
+		     53 + 
+		     54 + ///
+		     55 + // Concrete Tests
+		     56 + ///
+		     57 + for (let i = 0; i < BLOCKS_THAT_POP_SAND.length; i++) {
+		     58 +     const topBlock = BLOCKS_THAT_POP_SAND[i][0];
+		     59 +     const bottomBlock = BLOCKS_THAT_POP_SAND[i][1];
+		     60 +     const testName = "blocktests.falling_sand_pops_on_" + topBlock.name;
+		     61 +     let tag = null;
+		     62 + 
+		     63 +     //When sand block falls on soul sand, it should pop into item.
+		     64 +     //Buttons will break off if they face the worng direction. Wait API that can set the block property for "direction" for the button.
+		     65 +     if (topBlock.name == "soul_sand" || topBlock.name == "stone_button") {
+		     66 +         tag = GameTest.Tags.suiteDisabled;
+		     67 +     }
+		     68 +     else {
+		     69 +         tag = GameTest.Tags.suiteDefault;
+		     70 +     }
+		     71 + 
+		     72 +     GameTest.register("BlockTests", testName, (test) => {
+		     73 +         test.setBlock(topBlock, new BlockLocation(1, 2, 1));
+		     74 +         test.setBlock(bottomBlock, new BlockLocation(1, 1, 1));
+		     75 +         testThatFallingSandPopsIntoItem(test);
+		     76 +     })
+		     77 +         .batch("day")
+		     78 +         .structureName(FALLING_SAND_TEMPLATE_NAME)
+		     79 +         .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		     80 +         .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		     81 +         .required(true)
+		     82 +         .tag(tag);
+		     83 + }
+		     84 + 
+		     85 + for (const block of BLOCKS_REPLACED_BY_SAND) {
+		     86 +     const testName = "blocktests.falling_sand_replaces_" + block.name;
+		     87 + 
+		     88 +     GameTest.register("BlockTests", testName, (test) => {
+		     89 +         //SetBlock will fail if set a block to what it already is. Skip to call setblock() for test falling_sand_replaces_air because it's just air block in initial structure.
+		     90 +         if (block.name != "air") {
+		     91 +             test.setBlock(block, new BlockLocation(1, 2, 1));
+		     92 +         }
+		     93 +         testThatFallingSandReplaces(test);
+		     94 +     })
+		     95 +         .batch("day")
+		     96 +         .structureName(FALLING_SAND_TEMPLATE_NAME)
+		     97 +         .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		     98 +         .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		     99 +         .required(true)
+		    100 +         .tag(GameTest.Tags.suiteDefault);
+		    101 + }
+		    102 + 
+		    103 + for (const block of BLOCKS_THAT_SUPPORT_SAND) {
+		    104 +     const testName = "blocktests.falling_sand_lands_on_" + block.name;
+		    105 +     let tag = null;
+		    106 + 
+		    107 +     //When sand block falls on fence or stair, it shouldn't pop into item.
+		    108 +     if (block.name == "fence" || block.name == "oak_stairs") {
+		    109 +         tag = GameTest.Tags.suiteDisabled;
+		    110 +     }
+		    111 +     else {
+		    112 +         tag = GameTest.Tags.suiteDefault;
+		    113 +     }
+		    114 + 
+		    115 +     GameTest.register("BlockTests", testName, (test) => {
+		    116 +         test.setBlock(block, new BlockLocation(1, 2, 1));
+		    117 +         testThatFallingSandLandsOnTop(test);
+		    118 +     })
+		    119 +         .batch("day")
+		    120 +         .structureName(FALLING_SAND_TEMPLATE_NAME)
+		    121 +         .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		    122 +         .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		    123 +         .required(true)
+		    124 +         .tag(tag);
+		    125 + }
+		    126 + 
+		    127 + GameTest.register("BlockTests", "concrete_solidifies_in_shallow_water", (test) => {
+		    128 +     test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 3, 1));
+		    129 + 
+		    130 +     test.succeedWhen(() => {
+		    131 +         test.assertBlockPresent(Blocks.concrete(), new BlockLocation(1, 2, 1));
+		    132 +     });
+		    133 + })
+		    134 +     .maxTicks(FiveSecondsInTicks)
+		    135 +     .tag(GameTest.Tags.suiteDefault);
+		    136 + 
+		    137 + GameTest.register("BlockTests", "concrete_solidifies_in_deep_water", (test) => {
+		    138 +     test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 4, 1));
+		    139 + 
+		    140 +     test.succeedWhen(() => {
+		    141 +         test.assertBlockPresent(Blocks.concrete(), new BlockLocation(1, 2, 1));
+		    142 +     });
+		    143 + })
+		    144 +     .maxTicks(FiveSecondsInTicks)
+		    145 +     .tag(GameTest.Tags.suiteDefault);
+		    146 + 
+		    147 + GameTest.register("BlockTests", "concrete_solidifies_next_to_water", (test) => {
+		    148 +     test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 3, 1));
+		  7     - ///
+		  8     - // Concrete Tests
+		  9     - ///
+		 10     - GameTest.register("BlockTests", "concrete_solidifies_in_shallow_water", (test) => {
+		 11     -   test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 3, 1));
+		 12 149   
+		    150 +     test.succeedWhen(() => {
+		    151 +         test.assertBlockPresent(Blocks.concrete(), new BlockLocation(1, 2, 1));
+		 13     -   test.succeedWhen(() => {
+		 14     -     test.assertBlockPresent(Blocks.concrete(), new BlockLocation(1, 2, 1));
+		    152 +     });
+		 15     -   });
+		 16 153   })
+		    154 +     .maxTicks(FiveSecondsInTicks)
+		    155 +     .tag(GameTest.Tags.suiteDefault);
+		 17     -   .maxTicks(FiveSecondsInTicks)
+		 18     -   .tag(GameTest.Tags.suiteDefault);
+		 19 156   
+		    157 + GameTest.register("BlockTests", "sand_fall_boats", (test) => {
+		    158 +     test.setBlock(Blocks.sand(), new BlockLocation(1, 4, 1));
+		 20     - GameTest.register("BlockTests", "concrete_solidifies_in_deep_water", (test) => {
+		 21     -   test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 4, 1));
+		 22 159   
+		    160 +     test.succeedWhen(() => {
+		    161 +         test.assertBlockPresent(Blocks.sand(), new BlockLocation(1, 2, 1));
+		 23     -   test.succeedWhen(() => {
+		 24     -     test.assertBlockPresent(Blocks.concrete(), new BlockLocation(1, 2, 1));
+		    162 +     });
+		 25     -   });
+		 26 163   })
+		    164 +     .maxTicks(FiveSecondsInTicks)
+		    165 +     .tag(GameTest.Tags.suiteDefault);
+		 27     -   .maxTicks(FiveSecondsInTicks)
+		 28     -   .tag(GameTest.Tags.suiteDefault);
+		 29 166   
+		    167 + GameTest.register("BlockTests", "sand_fall_shulker", (test) => {
+		    168 +     const EntitySpawnType = "minecraft:shulker";
+		 30     - GameTest.register("BlockTests", "concrete_solidifies_next_to_water", (test) => {
+		    169 +     const spawnPos = new BlockLocation(1, 2, 1);
+		 31     -   test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 3, 1));
+		 32 170   
+		    171 +     test.spawn(EntitySpawnType, spawnPos);
+		 33     -   test.succeedWhen(() => {
+		 34     -     test.assertBlockPresent(Blocks.concrete(), new BlockLocation(1, 2, 1));
+		    172 +     testThatFallingSandPopsIntoItem(test);
+		 35     -   });
+		 36 173   })
+		 37     -   .maxTicks(FiveSecondsInTicks)
+		 38     -   .tag(GameTest.Tags.suiteDefault);
+		 39     - 
+		    174 +     .maxTicks(FiveSecondsInTicks)
+		    175 +     .tag(GameTest.Tags.suiteDefault);
+		 40     - GameTest.register("BlockTests", "sand_fall_boats", (test) => {
+		 41     -   test.setBlock(Blocks.sand(), new BlockLocation(1, 4, 1));
+		 42 176   
+		    177 + ///
+		 43     -   test.succeedWhen(() => {
+		 44     -     test.assertBlockPresent(Blocks.sand(), new BlockLocation(1, 2, 1));
+		 45     -   });
+		 46     - })
+		    178 + // Turtle Egg Tests
+		    179 + ///
+		 47     -   .maxTicks(FiveSecondsInTicks)
+		 48     -   .tag(GameTest.Tags.suiteDefault);
+		 49 180   
+		    181 + GameTest.register("BlockTests", "turtle_eggs_survive_xp", (test) => {
+		    182 +     const xpOrb = "minecraft:xp_orb";
+		 50     - ///
+		    183 +     const spawnPos = new BlockLocation(1, 3, 1);
+		 51     - // Turtle Egg Tests
+		 52     - ///
+		 53 184   
+		 54     - GameTest.register("BlockTests", "turtle_eggs_survive_xp", (test) => {
+		 55     -   const xpOrb = "minecraft:xp_orb";
+		 56     -   const spawnPos = new BlockLocation(1, 3, 1);
+		    185 +     for (let i = 0; i < 8; i++) {
+		    186 +         test.spawn(xpOrb, spawnPos);
+		    187 +     }
+		    188 + 
+		    189 +     // Fail if the turtle egg dies
+		    190 +     test.failIf(() => {
+		    191 +         test.assertBlockPresent(Blocks.air(), new BlockLocation(1, 2, 1));
+		    192 +     });
+		 57     -   test.spawn(xpOrb, spawnPos);
+		 58     -   test.spawn(xpOrb, spawnPos);
+		 59     -   test.spawn(xpOrb, spawnPos);
+		 60     -   test.spawn(xpOrb, spawnPos);
+		 61     -   test.spawn(xpOrb, spawnPos);
+		 62     -   test.spawn(xpOrb, spawnPos);
+		 63     -   test.spawn(xpOrb, spawnPos);
+		 64     -   test.spawn(xpOrb, spawnPos);
+		 65 193   
+		    194 +     // Succeed after 4 seconds
+		    195 +     test.startSequence().thenIdle(80).thenSucceed();
+		 66     -   // Fail if the turtle egg dies
+		    196 + })
+		    197 +     .maxTicks(FiveSecondsInTicks)
+		    198 +     .tag(GameTest.Tags.suiteDefault);
+		 67     -   test.failIf(() => {
+		 68     -     test.assertBlockPresent(Blocks.air(), new BlockLocation(1, 2, 1));
+		 69     -   });
+		 70 199   
+		 71     -   // Succeed after 4 seconds
+		 72     -   test.startSequence().thenIdle(80).thenSucceed();
+		 73     - })
+		    200 + GameTest.register("BlockTests", "turtle_eggs_survive_item", (test) => {
+		    201 +     test.pressButton(new BlockLocation(2, 4, 0));
+		 74     -   .maxTicks(FiveSecondsInTicks)
+		 75     -   .tag(GameTest.Tags.suiteDefault);
+		 76 202   
+		    203 +     // Fail if the turtle egg dies
+		    204 +     test.failIf(() => {
+		    205 +         test.assertBlockPresent(Blocks.air(), new BlockLocation(1, 2, 1));
+		 77     - GameTest.register("BlockTests", "turtle_eggs_survive_item", (test) => {
+		    206 +     });
+		 78     -   test.pressButton(new BlockLocation(2, 4, 0));
+		 79 207   
+		    208 +     // Succeed after 4 seconds
+		    209 +     test.startSequence().thenIdle(80).thenSucceed();
+		 80     -   // Fail if the turtle egg dies
+		    210 + })
+		    211 +     .maxTicks(FiveSecondsInTicks)
+		    212 +     .tag(GameTest.Tags.suiteDefault);
+		 81     -   test.failIf(() => {
+		 82     -     test.assertBlockPresent(Blocks.air(), new BlockLocation(1, 2, 1));
+		 83     -   });
+		 84 213   
+		    214 + GameTest.register("BlockTests", "turtle_eggs_squished_by_mob", (test) => {
+		    215 +     const zombieEntityType = "minecraft:husk";
+		    216 +     const zombiePosition = new BlockLocation(1, 5, 1);
+		    217 +     test.spawn(zombieEntityType, zombiePosition);
+		    218 +     test.succeedWhenBlockPresent(Blocks.air(), new BlockLocation(1, 2, 1));
+		 85     -   // Succeed after 4 seconds
+		 86     -   test.startSequence().thenIdle(80).thenSucceed();
+		 87 219   })
+		    220 +     .required(false)
+		    221 +     .maxTicks(TicksPerSecond * 20)
+		 88     -   .maxTicks(FiveSecondsInTicks)
+		    222 +     .tag(GameTest.Tags.suiteDefault);
+		 89     -   .tag(GameTest.Tags.suiteDefault);
+		 90 223   
+		 91 224   GameTest.register("BlockTests", "explosion_drop_location", (test) => {
+		    225 +     test.pressButton(new BlockLocation(4, 3, 4));
+		 92     -   test.pressButton(new BlockLocation(4, 3, 4));
+		 93 226   
+		    227 +     test.succeedWhen(() => {
+		    228 +         const redSandstonePos = new BlockLocation(6, 2, 4);
+		 94     -   test.succeedWhen(() => {
+		 95     -     const redSandstonePos = new BlockLocation(6, 2, 4);
+		    229 +         const sandstonePos = new BlockLocation(2, 2, 4);
+		 96     -     const sandstonePos = new BlockLocation(2, 2, 4);
+		 97 230   
+		    231 +         test.assertBlockNotPresent(Blocks.redSandstone(), redSandstonePos);
+		    232 +         test.assertBlockNotPresent(Blocks.sandstone(), sandstonePos);
+		 98     -     test.assertBlockNotPresent(Blocks.redSandstone(), redSandstonePos);
+		 99     -     test.assertBlockNotPresent(Blocks.sandstone(), sandstonePos);
+		    233 +         test.assertItemEntityPresent(Items.redSandstone, redSandstonePos, 2.0);
+		    234 +         test.assertItemEntityPresent(Items.sandstone, sandstonePos, 2.0);
+		    235 +     });
+		100     -     test.assertItemEntityPresent(Items.redSandstone, redSandstonePos, 2.0);
+		101     -     test.assertItemEntityPresent(Items.sandstone, sandstonePos, 2.0);
+		102     -   });
+		103 236   })
+		    237 +     .maxTicks(TicksPerSecond * 10)
+		    238 +     .tag("suite:java_parity")
+		104     -   .maxTicks(TicksPerSecond * 10)
+		    239 +     .tag(GameTest.Tags.suiteDisabled) //redSandstone and sandstone items should be present.
+		    240 +     .maxAttempts(3);
+		105     -   .tag(GameTest.Tags.suiteDisabled)
+		106     -   .maxAttempts(3);
+		107 241   
+		108 242   GameTest.register("BlockTests", "concrete_pops_off_waterlogged_chest", (test) => {
+		    243 +     test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 4, 1));
+		    244 +     test.succeedWhen(() => {
+		    245 +         const chestPos = new BlockLocation(1, 2, 1);
+		109     -   test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 4, 1));
+		    246 +         test.assertBlockPresent(Blocks.chest(), chestPos);
+		    247 +         test.assertItemEntityPresent(Items.concretePowder, chestPos, 2);
+		    248 +         test.assertEntityNotPresent("falling_block");
+		    249 +     });
+		    250 + })
+		    251 +     .maxTicks(TicksPerSecond * 5)
+		    252 +     .tag(GameTest.Tags.suiteDefault);
+		110     -   test.succeedWhen(() => {
+		111     -     const chestPos = new BlockLocation(1, 2, 1);
+		112     -     test.assertBlockPresent(Blocks.chest(), chestPos);
+		113     -     test.assertItemEntityPresent(Items.concretePowder, chestPos, 2);
+		114     -     test.assertEntityNotPresent("falling_block");
+		115     -   });
+		116     - }).maxTicks(TicksPerSecond * 5);
+		117 253   
+		118 254   GameTest.register("BlockTests", "waterlogged_slab", (test) => {
+		    255 +     const slabPos = new BlockLocation(1, 1, 1);
+		    256 +     test.assertIsWaterlogged(slabPos, false);
+		119     -   const slabPos = new BlockLocation(1, 1, 1);
+		120     -   test.assertIsWaterlogged(slabPos, false);
+		    257 +     test.succeedWhen(() => {
+		    258 +         test.assertIsWaterlogged(slabPos, true);
+		    259 +     });
+		121     -   test.succeedWhen(() => {
+		122     -     test.assertIsWaterlogged(slabPos, true);
+		123     -   });
+		124 260   })
+		    261 +     .tag("suite:java_parity")
+		    262 +     .tag(GameTest.Tags.suiteDisabled) // Slab should be waterlogged 
+		125     -   .tag("suite:java_parity")
+		126     -   .tag(GameTest.Tags.suiteDisabled) // Slab should be waterlogged 
+		    263 +     .maxTicks(TicksPerSecond * 2);
+		127     -   .maxTicks(TicksPerSecond * 2);
+		          '''
+	Added script "FlyingMachineTests.js":
+		'''
+		import * as GameTest from "GameTest";
+		import { BlockLocation, Blocks } from "Minecraft";
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_a", (test) => {
+		    const triggerPos = new BlockLocation(1, 5, 1);
+		    const farPos = new BlockLocation(2, 3, 5);
+		    const nearPos = new BlockLocation(2, 3, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => { test.setBlock(Blocks.fire(), triggerPos); })
+		        .thenExecuteAfter(20, () => { test.assertBlockPresent(Blocks.slime(), farPos); })
+		        .thenExecuteAfter(20, () => { test.assertBlockPresent(Blocks.slime(), nearPos); })
+		        .thenSucceed();
+		
+		})
+		    .tag("suite:java_parity")  // The behavior is different between Java and Bedrock.In Java the flying machine move forward to the end and then returns to its original position, but in Bedrock it returns before it reaches the end.That cause the far point or near point been judged fail.
+		    .tag(GameTest.Tags.suiteDisabled); // Unstable, about 50% pass rate. 
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_b", (test) => {
+		    const triggerPos = new BlockLocation(5, 4, 1);
+		    const farPos = new BlockLocation(3, 3, 4);
+		    const nearPos = new BlockLocation(4, 3, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => {
+		            test.pulseRedstone(triggerPos, 2);
+		        })
+		        .thenExecuteAfter(20, () => { test.assertBlockPresent(Blocks.slime(), farPos); })
+		        .thenExecuteAfter(20, () => { test.assertBlockPresent(Blocks.slime(), nearPos); })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled); // After I use redstone instead of set fire block to active the observer, I can see this machine use 2 reverse sticky-piston for flying forward and back in Java. It didn't work well in bedrock.
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_c", (test) => {
+		    const triggerPos = new BlockLocation(4, 4, 0);
+		    const farPos = new BlockLocation(4, 3, 5);
+		    const nearPos = new BlockLocation(4, 3, 2);
+		    const stopBlock = new BlockLocation(4, 3, 4);
+		
+		    test.startSequence()
+		        .thenExecute(() => {
+		            test.pulseRedstone(triggerPos, 2);
+		        })
+		        .thenExecuteAfter(20, () => { test.assertBlockPresent(Blocks.slime(), farPos); })
+		        .thenExecuteAfter(20, () => { test.setBlock(Blocks.obsidian(), stopBlock); })
+		        .thenExecuteAfter(2, () => { test.assertBlockPresent(Blocks.stickyPiston(), nearPos); })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled); // Could not set fire block in the air even I use pulseRedstone() the machine didn't move.
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_d", (test) => {
+		    const triggerPos = new BlockLocation(3, 7, 3);
+		    const dropPos = new BlockLocation(5, 5, 2);
+		    const farPos = new BlockLocation(2, 5, 8);
+		    const nearPos = new BlockLocation(3, 5, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => { test.setBlock(Blocks.fire(), triggerPos); })
+		        .thenExecuteAfter(16, () => {
+		            test.assertBlockPresent(Blocks.slime(), dropPos);
+		            test.assertBlockPresent(Blocks.slime(), farPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);  // Can't fly as a whole thing as expectation
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_e", (test) => {
+		    const triggerPos = new BlockLocation(1, 2, 1);
+		    const farPos = new BlockLocation(1, 11, 1);
+		    const nearPos = new BlockLocation(1, 3, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => { test.setBlock(Blocks.dirt(), triggerPos); })
+		        .thenExecuteAfter(16, () => { test.assertBlockPresent(Blocks.honeyBlock(), farPos); })
+		        .thenExecuteAfter(20, () => { test.assertBlockPresent(Blocks.observer(), nearPos); })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity") // The behavior is different between Java and Bedrock. In Java the flying machine move forward to the end and then returns to its original position, but in Bedrock it returns before it reaches the end. That cause the far point or near point been judged fail.
+		    .tag(GameTest.Tags.suiteDisabled); // Unstable
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_f", (test) => {
+		    const triggerPos = new BlockLocation(4, 6, 1);
+		    const farPos = new BlockLocation(3, 4, 8);
+		    const dropPos = new BlockLocation(3, 4, 6);
+		    const nearPos = new BlockLocation(3, 4, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => { test.setBlock(Blocks.fire(), triggerPos); })
+		        .thenExecuteAfter(18, () => { test.assertBlockPresent(Blocks.slime(), farPos) })
+		        .thenExecuteAfter(40, () => {
+		            test.assertBlockPresent(Blocks.slime(), dropPos);
+		            test.assertBlockPresent(Blocks.slime(), nearPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);  // Unstable, when noFinishingSequence appears, it failed.
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_g", (test) => {
+		    const triggerPos = new BlockLocation(1, 3, 0);
+		    const farPos = new BlockLocation(2, 3, 6);
+		    const nearPos = new BlockLocation(1, 3, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => {
+		            test.pulseRedstone(triggerPos, 2);
+		        })
+		        .thenExecuteAfter(16, () => { test.assertBlockPresent(Blocks.slime(), farPos) })
+		        .thenExecuteAfter(20, () => { test.assertBlockPresent(Blocks.observer(), nearPos) })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled); // Could not set fire in the air, so I use pulseRedstone to active the observer. It's 50% pass rate.
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_h", (test) => {
+		    const triggerPos = new BlockLocation(1, 4, 0);
+		    const farPos = new BlockLocation(1, 3, 8);
+		    const dropPos = new BlockLocation(1, 3, 7);
+		    const nearPos = new BlockLocation(1, 4, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => {
+		            test.pulseRedstone(triggerPos, 2);
+		        })
+		        .thenExecuteAfter(20, () => { test.assertBlockPresent(Blocks.slime(), farPos) })
+		        .thenExecuteAfter(20, () => {
+		            test.assertBlockPresent(Blocks.slime(), dropPos);
+		            test.assertBlockPresent(Blocks.observer(), nearPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled); // Could not set fire in the air, so I use pulseRedstone to active the observer, pass rate is less than 10%, the sticky-piston always unstick.
+		
+		
+		GameTest.register("FlyingMachineTests", "machine_i", (test) => {
+		    const triggerPos = new BlockLocation(4, 2, 1);
+		    const farPos = new BlockLocation(3, 8, 1);
+		    const nearPos = new BlockLocation(4, 3, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => { test.setBlock(Blocks.dirt(), triggerPos) })
+		        .thenExecuteAfter(18, () => { test.assertBlockPresent(Blocks.honeyBlock(), farPos) })
+		        .thenExecuteAfter(18, () => { test.assertBlockPresent(Blocks.observer(), nearPos) })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")  // The behavior is different between Java and Bedrock. In Java the flying machine move forward to the end and then returns to its original position, but in Bedrock it returns before it reaches the end. That cause the far point or near point been judged fail.
+		    .tag(GameTest.Tags.suiteDisabled); // Unstable.
+		
+		GameTest.register("FlyingMachineTests", "m_bedrock", (test) => { // For bedrock. Follow the simple engine 1
+		    const triggerPos = new BlockLocation(0, 3, 0);
+		    const sourcePos = new BlockLocation(1, 3, 0);
+		    const targetPos = new BlockLocation(8, 3, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.slime(), sourcePos);
+		            test.assertBlockNotPresent(Blocks.slime(), targetPos);
+		            test.setBlock(Blocks.redstoneBlock(), triggerPos);
+		        })
+		        .thenExecuteAfter(10, () => { test.assertBlockNotPresent(Blocks.slime(), sourcePos) })
+		        .thenExecuteAfter(10, () => { test.assertBlockPresent(Blocks.slime(), targetPos) })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		
+		GameTest.register("FlyingMachineTests", "m2_bedrock", (test) => { // For bedrock. Follow the simple engine 2
+		    const triggerPos = new BlockLocation(0, 3, 1);
+		    const sourcePos = new BlockLocation(2, 3, 0);
+		    const targetPos = new BlockLocation(6, 3, 1);
+		
+		    test.startSequence()
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.slime(), sourcePos);
+		            test.assertBlockNotPresent(Blocks.slime(), targetPos);
+		            test.setBlock(Blocks.redstoneBlock(), triggerPos);
+		        })
+		        .thenExecuteAfter(10, () => { test.assertBlockNotPresent(Blocks.slime(), sourcePos) })
+		        .thenExecuteAfter(10, () => { test.assertBlockPresent(Blocks.slime(), targetPos) })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("FlyingMachineTests", "m3_bedrock", (test) => { // for bedrock. Follow the simple engine 2 with trailer
+		    const triggerPos = new BlockLocation(1, 3, 2);
+		    const sourcePos = new BlockLocation(4, 3, 2);
+		    const targetPos = new BlockLocation(7, 3, 2);
+		
+		    test.startSequence()
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.slime(), sourcePos);
+		            test.assertBlockNotPresent(Blocks.slime(), targetPos);
+		            test.setBlock(Blocks.redstoneBlock(), triggerPos);
+		        })
+		        .thenExecuteAfter(10, () => { test.assertBlockNotPresent(Blocks.slime(), sourcePos) })
+		        .thenExecuteAfter(10, () => { test.assertBlockPresent(Blocks.slime(), targetPos) })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDisabled); // Unstable, the pass rate is 85%
+		'''
+	Changed script "Main.js":
+		Total line: 16 (+2, -0)
+		        '''
+		        ...
+		10 10   import "scripts/FireAvoidTests.js";
+		11 11   import "scripts/GameTestExtensions.js";
+		12 12   import "scripts/MinecartTests.js";
+		13 13   import "scripts/MobTests.js";
+		14 14   import "scripts/PathFindingTests.js";
+		   15 + import "scripts/FlyingMachineTests.js";
+		   16 + import "scripts/PistonTests.js";
+		        '''
+	Changed script "MinecartTests.js":
+		Total line: 215 (+203, -4)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, Blocks } from "Minecraft";
+		      3 + 
+		      4 + GameTest.register("MinecartTests", "turn", (test) => {
+		      5 +     const minecartEntityType = "minecart";
+		      6 + 
+		      7 +     const endPos = new BlockLocation(1, 2, 2);
+		      8 +     const startPos = new BlockLocation(1, 2, 0);
+		      9 + 
+		     10 +     test.assertEntityPresent(minecartEntityType, startPos);
+		     11 +     test.assertEntityNotPresent(minecartEntityType, endPos);
+		     12 + 
+		     13 +     test.pressButton(new BlockLocation(0, 3, 0));
+		     14 + 
+		     15 +     test.succeedWhenEntityPresent(minecartEntityType, endPos);
+		     16 + }).tag(GameTest.Tags.suiteDefault);
+		     17 + 
+		     18 + GameTest.register("MinecartTests", "furnace_corner", (test) => {
+		     19 +     const furnaceMinecart = "furnace_minecart";
+		     20 + 
+		     21 +     const endPos = new BlockLocation(2, 2, 1);
+		     22 +     const startPos = new BlockLocation(1, 2, 0);
+		     23 + 
+		     24 +     test.assertEntityPresent(furnaceMinecart, startPos);
+		     25 + 
+		     26 +     test.succeedWhenEntityPresent(furnace_minecart, endPos);
+		     27 + })
+		     28 +     .tag("suite:java_parity")
+		     29 +     .tag(GameTest.Tags.suiteDisabled); //furnace_minecart doesn't exist in bedrock
+		     30 + 
+		     31 + GameTest.register("MinecartTests", "detector_rail_slope", (test) => {
+		     32 +     const poweredDetectorPos = new BlockLocation(2, 2, 1);
+		     33 +     const ascendingSouth = 5;
+		     34 +     test.assertBlockPresent(Blocks.detectorRail(), poweredDetectorPos);
+		     35 +     test.assertBlockState("rail_direction", ascendingSouth, poweredDetectorPos);
+		     36 + 
+		     37 +     test.pressButton(new BlockLocation(0, 3, 3));
+		     38 +     test.runAfterDelay(20, () => {
+		     39 +         test.succeedWhen(() => {
+		     40 +             test.assertBlockPresent(Blocks.detectorRail(), poweredDetectorPos);
+		     41 +             test.assertBlockState("rail_direction", ascendingSouth, poweredDetectorPos);
+		     42 +         });
+		     43 +     });
+		     44 + }) .tag(GameTest.Tags.suiteDefault);
+		     45 + 
+		     46 + GameTest.register("MinecartTests", "detector_rail_piston", (test) => {
+		     47 +     const pistonRight = new BlockLocation(5, 3, 0);
+		     48 +     const pistonLeft = new BlockLocation(0, 3, 0);
+		     49 +     const torchRight = new BlockLocation(3, 2, 0);
+		     50 +     const torchLeft = new BlockLocation(2, 2, 0);
+		     51 +     const ascendingNorth = 4;
+		     52 + 
+		     53 +     let minecart = undefined;
+		     54 +     test.startSequence()
+		     55 +         .thenExecute(() => test.pulseRedstone(pistonRight, 1))
+		     56 +         .thenExecuteAfter(3, () => test.pulseRedstone(pistonLeft, 1))
+		     57 +         .thenExecuteAfter(3, () => {
+		     58 +             test.assertBlockState("torch_facing_direction", ascendingNorth, torchRight);
+		     59 +             test.assertBlockState("torch_facing_direction", ascendingNorth, torchLeft);
+		     60 +             minecart = test.spawn("minecart", new BlockLocation(3, 3, 1));
+		     61 +         })
+		     62 +         .thenExecuteAfter(3, () => {
+		     63 +             test.assertBlockState("torch_facing_direction", ascendingNorth,torchRight);
+		     64 +             test.pulseRedstone(pistonRight, 1);
+		     65 +         })
+		     66 +         .thenExecuteAfter(7, () => {
+		     67 +             test.assertBlockState("torch_facing_direction", ascendingNorth, torchRight);
+		     68 +             test.assertBlockState("torch_facing_direction", ascendingNorth, torchLeft);
+		     69 +             test.pulseRedstone(pistonLeft, 1);
+		     70 +         })
+		     71 +         .thenExecuteAfter(7, () => {
+		     72 +             test.assertBlockState("torch_facing_direction",ascendingNorth, torchRight);
+		     73 +             test.assertBlockState("torch_facing_direction", ascendingNorth, torchLeft);
+		     74 +             minecart.kill();
+		     75 +         })
+		     76 +         .thenExecuteAfter(6, () => {
+		     77 +             test.assertBlockState("torch_facing_direction", ascendingNorth, torchRight);
+		     78 +             test.assertBlockState("torch_facing_direction", ascendingNorth, torchLeft);
+		     79 +         })
+		     80 +         .thenSucceed();
+		     81 + })
+		     82 +     .required(false)
+		     83 +     .tag(GameTest.Tags.suiteDefault) 
+		     84 + 
+		     85 + function runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, entityType) {
+		     86 +     test.assertEntityNotPresent(entityType, dryTrackEndPos);
+		     87 +     test.assertEntityNotPresent(entityType, wetTrackEndPos);
+		     88 + 
+		     89 +     test.pressButton(buttonPos);
+		     90 + 
+		     91 +     test
+		     92 +         .startSequence()
+		     93 +         .thenWait(() => test.assertEntityPresent(entityType, dryTrackEndPos))
+		     94 +         .thenExecute(() => test.assertEntityNotPresent(entityType, wetTrackEndPos))
+		     95 +         .thenWait(() => test.assertEntityPresent(entityType, wetTrackEndPos))
+		     96 +         .thenSucceed();
+		     97 + }
+		     98 + 
+		     99 + function runWaterSlowdown(test, entityType) {
+		    100 +     const buttonPos = new BlockLocation(1, 4, 2);
+		    101 +     const dryTrackEndPos = new BlockLocation(8, 3, 1);
+		    102 +     const wetTrackEndPos = new BlockLocation(8, 3, 3);
+		    103 + 
+		    104 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, entityType);
+		    105 + }
+		    106 + 
+		    107 + 
+		    108 + GameTest.register("MinecartTests", "water_slowdown", (test) => {
+		    109 +     runWaterSlowdown(test, "minecart");
+		    110 + })
+		    111 +     .tag("suite:java_parity")
+		    112 +     .tag(GameTest.Tags.suiteDisabled); //the minecart cannot slow down in water.
+		    113 + 
+		    114 + GameTest.register("MinecartTests", "water_slowdown_occupied_cart", (test) => {
+		    115 +     runWaterSlowdown(test, "minecart"); 
+		    116 + })
+		    117 +     .tag("suite:java_parity")
+		    118 +     .tag(GameTest.Tags.suiteDisabled);//the minecart cannot slow down in water.
+		    119 + 
+		    120 + GameTest.register("MinecartTests", "water_slowdown_tnt_cart", (test) => {
+		    121 +     runWaterSlowdown(test, "tnt_minecart");
+		    122 + })
+		    123 +     .tag("suite:java_parity")
+		    124 +     .tag(GameTest.Tags.suiteDisabled);//the tnt_minecart cannot slow down in water.
+		    125 + 
+		    126 + GameTest.register("MinecartTests", "water_slowdown_hopper_cart", (test) => {
+		    127 +     runWaterSlowdown(test, "hopper_minecart");
+		    128 + })
+		    129 +     .tag("suite:java_parity")
+		    130 +     .tag(GameTest.Tags.suiteDisabled);//the hopper_minecart cannot slow down in water.
+		    131 + 
+		    132 + GameTest.register("MinecartTests", "water_slowdown_chest_cart", (test) => {
+		    133 +     runWaterSlowdown(test, "chest_minecart");
+		    134 + })
+		    135 +     .tag("suite:java_parity")
+		    136 +     .tag(GameTest.Tags.suiteDisabled);//the chest_minecart cannot slow down in water.
+		    137 + 
+		    138 + GameTest.register("MinecartTests", "water_slowdown_commandblock_cart", (test) => {
+		    139 +     runWaterSlowdown(test, "command_block_minecart");
+		    140 + })
+		    141 +     .tag("suite:java_parity")
+		    142 +     .tag(GameTest.Tags.suiteDisabled);//the command_block_minecart cannot slow down in water.
+		    143 + 
+		    144 + GameTest.register("MinecartTests", "water_slowdown_powered_furnace_cart", (test) => {
+		    145 +     const buttonPos = new BlockLocation(1, 4, 4);
+		    146 +     const dryTrackEndPos = new BlockLocation(7, 3, 1);
+		    147 +     const wetTrackEndPos = new BlockLocation(7, 3, 7);
+		    148 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, "furnace_minecart");
+		    149 + })
+		    150 +     .tag("suite:java_parity")
+		    151 +     .tag(GameTest.Tags.suiteDisabled);//furnace_minecart doesn't exist in bedrock
+		    152 + 
+		    153 + GameTest.register("MinecartTests", "water_slowdown_vertical", (test) => {
+		    154 +     const buttonPos = new BlockLocation(1, 6, 2);
+		    155 +     const dryTrackEndPos = new BlockLocation(3, 2, 1);
+		    156 +     const wetTrackEndPos = new BlockLocation(3, 2, 3);
+		    157 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, "minecart");
+		    158 + })
+		    159 +     .tag("suite:java_parity")
+		    160 +     .tag(GameTest.Tags.suiteDisabled);//the minecart cannot slow down in water.
+		    161 + 
+		    162 + GameTest.register("MinecartTests", "water_slowdown_vertical_furnace", (test) => {
+		    163 +     const buttonPos = new BlockLocation(1, 6, 2);
+		    164 +     const dryTrackEndPos = new BlockLocation(3, 2, 1);
+		    165 +     const wetTrackEndPos = new BlockLocation(3, 2, 3);
+		    166 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, "furnace_minecart");
+		    167 + })
+		    168 +     .tag("suite:java_parity")
+		    169 +     .tag(GameTest.Tags.suiteDisabled);//furnace_minecart doesn't exist in bedrock
+		    170 + 
+		    171 + GameTest.register("MinecartTests", "water_slowdown_slope_down", (test) => {
+		    172 +     const buttonPos = new BlockLocation(1, 6, 2);
+		    173 +     const dryTrackEndPos = new BlockLocation(6, 2, 1);
+		    174 +     const wetTrackEndPos = new BlockLocation(6, 2, 3);
+		    175 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, "minecart");
+		    176 + })
+		    177 +     .tag("suite:java_parity")
+		    178 +     .tag(GameTest.Tags.suiteDisabled);//the minecart cannot slow down in water.
+		    179 + 
+		    180 + GameTest.register("MinecartTests", "water_slowdown_slope_down_furnace", (test) => {
+		    181 +     const buttonPos = new BlockLocation(1, 6, 2);
+		    182 +     const dryTrackEndPos = new BlockLocation(6, 2, 1);
+		    183 +     const wetTrackEndPos = new BlockLocation(6, 2, 3);
+		    184 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, "furnace_minecart");
+		    185 + })
+		    186 +     .tag("suite:java_parity")
+		    187 +     .tag(GameTest.Tags.suiteDisabled);//furnace_minecart doesn't exist in bedrock
+		    188 + 
+		    189 + GameTest.register("MinecartTests", "water_slowdown_slope_up", (test) => {
+		    190 +     const buttonPos = new BlockLocation(1, 3, 1);
+		    191 +     const dryTrackEndPos = new BlockLocation(7, 5, 0);
+		    192 +     const wetTrackEndPos = new BlockLocation(7, 5, 2);
+		    193 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, "minecart");
+		    194 + })
+		    195 +     .tag("suite:java_parity")
+		    196 +     .tag(GameTest.Tags.suiteDisabled);//the minecart cannot slow down in water.
+		    197 + 
+		    198 + GameTest.register("MinecartTests", "water_slowdown_powered_rail", (test) => {
+		    199 +     const buttonPos = new BlockLocation(1, 3, 1);
+		    200 +     const dryTrackEndPos = new BlockLocation(7, 5, 0);
+		    201 +     const wetTrackEndPos = new BlockLocation(7, 5, 2);
+		    202 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, "minecart");
+		    203 + })
+		    204 +     .tag("suite:java_parity")
+		    205 +     .tag(GameTest.Tags.suiteDisabled);//the minecart cannot slow down in water.
+		  2     - import { BlockLocation } from "Minecraft";
+		  3     - 
+		  4     - GameTest.register("MinecartTests", "turn", (test) => {
+		  5     -   const minecartEntityType = "minecart";
+		  6 206   
+		    207 + GameTest.register("MinecartTests", "water_slowdown_powered_rail_furnace", (test) => {
+		    208 +     const buttonPos = new BlockLocation(1, 3, 1);
+		    209 +     const dryTrackEndPos = new BlockLocation(7, 2, 0);
+		  7     -   const endPos = new BlockLocation(1, 2, 2);
+		    210 +     const wetTrackEndPos = new BlockLocation(7, 2, 2);
+		  8     -   const startPos = new BlockLocation(1, 2, 0);
+		  9     - 
+		    211 +     runWaterSlowdownTest(test, buttonPos, dryTrackEndPos, wetTrackEndPos, "furnace_minecart");
+		    212 + })
+		    213 +     .tag("suite:java_parity")
+		    214 +     .tag(GameTest.Tags.suiteDisabled);//furnace_minecart doesn't exist in bedrock
+		 10     -   test.assertEntityPresent(minecartEntityType, startPos);
+		 11     -   test.assertEntityNotPresent(minecartEntityType, endPos);
+		 12     - 
+		 13     -   test.pressButton(new BlockLocation(0, 3, 0));
+		 14 215   
+		 15     -   test.succeedWhenEntityPresent(minecartEntityType, endPos);
+		 16     - }).tag(GameTest.Tags.suiteDefault);
+		          '''
+	Added script "PistonTests.js":
+		'''
+		import * as GameTest from "GameTest";
+		import { BlockLocation, Location, Blocks, ItemStack, BlockStates } from "Minecraft";
+		
+		GameTest.register("PistonTests", "honey_block_entity_drag_sideways", (test) => {
+		    const startPos = new BlockLocation(3, 4, 1);
+		    const endPos = new BlockLocation(2, 4, 1);
+		    const pullLeverPos = new BlockLocation(0, 3, 0);
+		    const chickenEntityType = "minecraft:chicken";
+		
+		    test.assertEntityNotPresent(chickenEntityType, endPos);
+		    test.spawn(chickenEntityType, startPos);
+		    test.startSequence()
+		        .thenExecuteAfter(1, () => { test.pullLever(pullLeverPos); })
+		        .thenWait(() => { test.assertEntityPresent(chickenEntityType, endPos); })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault)
+		
+		GameTest.register("PistonTests", "quasiconnectivity", (test) => {
+		    const topStartPos = new BlockLocation(3, 3, 0);
+		    const bottomStartPos = new BlockLocation(3, 2, 0);
+		    const topEndPos = new BlockLocation(2, 3, 0);
+		    const bottomEndPos = new BlockLocation(2, 2, 0);
+		    const pullLeverPos = new BlockLocation(0, 4, 0);
+		
+		    test.pullLever(pullLeverPos);
+		    test.startSequence()
+		        .thenWaitWithDelay(3, () => {
+		            test.assertBlockPresent(Blocks.stone(), topStartPos);
+		            test.assertBlockPresent(Blocks.stone(), bottomStartPos);
+		        })
+		        .thenExecute(() => { test.pullLever(pullLever); })
+		        .thenWaitWithDelay(3, () => {
+		            test.assertBlockPresent(Blocks.stone(), topEndPos);
+		            test.assertBlockPresent(Blocks.stone(), bottomEndPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled); //There are version differences. Java version has a switch, which can control one piston at the same time, while bedrock version can only control one piston. All the structures have been modified, and the pull rod and its coordinates have been changed to (0, 3, 0) ,next to "quasiconnectivity_bedrock"
+		
+		GameTest.register("PistonTests", "quasiconnectivity_bedrock", (test) => {
+		    const topStartPos = new BlockLocation(3, 3, 0);
+		    const bottomStartPos = new BlockLocation(3, 2, 0);
+		    const topEndPos = new BlockLocation(2, 3, 0);
+		    const bottomEndPos = new BlockLocation(2, 2, 0);
+		    const pullLeverPos = new BlockLocation(0, 3, 0);
+		
+		    test.pullLever(pullLeverPos); //There are version differences. Java version has a switch, which can control one piston at the same time, while bedrock version can only control one piston. All the structures have been modified, and the pull rod and its coordinates have been changed to (0, 3, 0)
+		
+		    test.startSequence()
+		        .thenIdle(6) //it's not possible to time it exactly due to redstone differences then you can just pull the lever, wait 6 ticks, assert, pull, wait 6, assert.
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.stone(), topStartPos);
+		            test.assertBlockPresent(Blocks.stone(), bottomStartPos);
+		        })
+		        .thenExecute(() => { test.pullLever(pullLeverPos); })
+		        .thenIdle(6)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.stone(), topEndPos);
+		            test.assertBlockPresent(Blocks.stone(), bottomEndPos);
+		        })
+		        .thenSucceed();
+		})
+		
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "redstone_simple_vertical_bud", (test) => {
+		    const blockPos = new BlockLocation(0, 5, 0);
+		    const setblockPos = new BlockLocation(0, 1, 0);
+		    test.setBlock(Blocks.stone(), setblockPos);
+		
+		    test.startSequence()
+		        .thenIdle(3)
+		        .thenWait(() => { test.assertBlockPresent(Blocks.redstoneBlock(), blockPos); })
+		        .thenIdle(1)
+		        .thenWait(() => { test.assertBlockPresent(Blocks.air(), blockPos); })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled)	//The lack of quasi-connectivity in bedrock is parity difference that causes this test not to succeed.
+		
+		GameTest.register("PistonTests", "redstone_simple_horizontal_bud", (test) => {
+		    const extendedPos = new BlockLocation(3, 2, 0);
+		    const retractedPos = new BlockLocation(2, 2, 0);
+		    test.setBlock(Blocks.stone(), new BlockLocation(0, 1, 0));
+		
+		    test.startSequence()
+		        .thenWaitWithDelay(3, () => {
+		            test.assertBlockPresent(Blocks.redstoneBlock(), extendedPos);
+		            test.assertBlockPresent(Blocks.air(), retractedPos);
+		        })
+		        .thenWaitWithDelay(3, () => {
+		            test.assertBlockPresent(Blocks.air(), extendedPos);
+		            test.assertBlockPresent(Blocks.redstoneBlock(), retractedPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled) // The lack of quasi-connectivity in bedrock is parity difference that causes this test not to succeed.
+		
+		GameTest.register("PistonTests", "redstone_bud", (test) => {
+		    const blockPos = new BlockLocation(0, 3, 5);
+		    const pullLeverPos = new BlockLocation(0, 4, 0);
+		    test.pullLever(pullLeverPos);
+		    test.startSequence()
+		        .thenWaitWithDelay(3, () => { test.assertBlockPresent(Blocks.redstoneBlock(), blockPos); })
+		        .thenWaitWithDelay(5, () => { test.assertBlockPresent(Blocks.air(), blockPos); })
+		        .thenWait(() => { test.pullLever(pullLeverPos); })
+		        .thenWaitWithDelay(3, () => { test.assertBlockPresent(Blocks.redstoneBlock(), blockPos); })
+		        .thenWaitWithDelay(5, () => { test.assertBlockPresent(Blocks.air(), blockPos); })
+		        .thenSucceed();
+		})
+		    .setupTicks(10)
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled) // The lack of quasi-connectivity in bedrock is parity difference that causes this test not to succeed.
+		
+		GameTest.register("PistonTests", "slime_block_pull", (test) => {
+		    const targetPos = new BlockLocation(3, 3, 0);
+		    const pullLeverPos = new BlockLocation(0, 4, 0);
+		
+		    test.assertBlockNotPresent(Blocks.planks(), targetPos);
+		    test.pullLever(pullLeverPos);
+		    test.succeedWhenBlockPresent(Blocks.planks(), targetPos);
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "normal_extend", (test) => {
+		    const targetPos = new BlockLocation(3, 2, 0);
+		    const pullLeverPos = new BlockLocation(0, 3, 0);
+		
+		    test.assertBlockNotPresent(Blocks.stone(), targetPos);
+		    test.pullLever(pullLeverPos);
+		    test.succeedOnTickWhen(3, () => {
+		        test.assertBlockPresent(Blocks.stone(), targetPos);
+		    });
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "normal_extend_retract", (test) => {
+		    const extendedPos = new BlockLocation(3, 2, 0);
+		    const retractedPos = new BlockLocation(2, 2, 0);
+		    const pullLeverPos = new BlockLocation(0, 3, 0);
+		
+		    test.assertBlockNotPresent(Blocks.stone(), extendedPos);
+		    test.pullLever(pullLeverPos);
+		
+		    test.startSequence()
+		        .thenWaitWithDelay(3, () => {
+		            test.assertBlockPresent(Blocks.stone(), extendedPos);
+		            test.assertBlockPresent(Blocks.pistonarmcollision(), retractedPos);
+		        })
+		        .thenExecute(() => { test.pullLever(pullLeverPos); })
+		        .thenWaitWithDelay(1, () => {
+		            test.assertBlockPresent(Blocks.air(), retractedPos);
+		            test.assertBlockPresent(Blocks.stone(), extendedPos);
+		        })
+		        .thenSucceed();
+		})
+		    .structureName("PistonTests:normal_extend")
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);   //Pistons react at different speeds in Bedrock, create a new test called normal_extend_retract_bedrock.
+		
+		GameTest.register("PistonTests", "normal_extend_retract_bedrock", (test) => {
+		    const extendedPos = new BlockLocation(3, 2, 0);
+		    const retractedPos = new BlockLocation(2, 2, 0);
+		    const pullLeverPos = new BlockLocation(0, 3, 0);
+		
+		    test.assertBlockNotPresent(Blocks.stone(), extendedPos);
+		    test.pullLever(pullLeverPos);
+		
+		    //it's not possible to time it exactly due to redstone differences, so just validate assert can pass before given delay.
+		    test.startSequence()
+		        .thenIdle(6)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.stone(), extendedPos);
+		            test.assertBlockPresent(Blocks.pistonarmcollision(), retractedPos);
+		        })
+		        .thenExecute(() => {
+		            test.pullLever(pullLeverPos);
+		        })
+		        .thenIdle(4)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.air(), retractedPos);
+		            test.assertBlockPresent(Blocks.stone(), extendedPos);
+		        })
+		        .thenSucceed();
+		})
+		    .structureName("PistonTests:normal_extend")
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "sticky_extend", (test) => {
+		    const targetPos = new BlockLocation(3, 2, 0);
+		    const pullLeverPos = new BlockLocation(0, 3, 0);
+		
+		    test.assertBlockNotPresent(Blocks.stone(), targetPos);
+		    test.pullLever(pullLeverPos);
+		    test.succeedOnTickWhen(3, () => {
+		        test.assertBlockPresent(Blocks.stone(), targetPos);
+		    });
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "sticky_extend_retract", (test) => {
+		    const extendedPos = new BlockLocation(3, 2, 0);
+		    const retractedPos = new BlockLocation(2, 2, 0);
+		    const pullLeverPos = new BlockLocation(0, 3, 0);
+		
+		    test.assertBlockNotPresent(Blocks.stone(), extendedPos);
+		    test.pullLever(pullLeverPos);
+		
+		    test.startSequence()
+		        .thenWaitWithDelay(3, () => {
+		            test.assertBlockPresent(Blocks.stone(), extendedPos);
+		            test.assertBlockPresent(Blocks.stickypistonarmcollision(), retractedPos);
+		        })
+		        .thenExecute(() => {
+		            test.pullLever(pullLeverPos);
+		        })
+		        .thenWaitWithDelay(3, () => {
+		            test.assertBlockPresent(Blocks.stone(), retractedPos);
+		            test.assertBlockPresent(Blocks.air(), extendedPos);
+		        })
+		        .thenSucceed();
+		})
+		    .structureName("PistonTests:sticky_extend")
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);     //Pistons react at different speeds in Bedrock, create a new test called sticky_extend_retract_bedrock.
+		
+		GameTest.register("PistonTests", "sticky_extend_retract_bedrock", (test) => {
+		    const extendedPos = new BlockLocation(3, 2, 0);
+		    const retractedPos = new BlockLocation(2, 2, 0);
+		    const pullLeverPos = new BlockLocation(0, 3, 0);
+		
+		    test.assertBlockNotPresent(Blocks.stone(), extendedPos);
+		    test.pullLever(pullLeverPos);
+		
+		    //it's not possible to time it exactly due to redstone differences, so just validate assert can pass before given delay.
+		    test.startSequence()
+		        .thenIdle(6)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.stone(), extendedPos);
+		            test.assertBlockPresent(Blocks.stickypistonarmcollision(), retractedPos);
+		        })
+		        .thenExecute(() => {
+		            test.pullLever(pullLeverPos);
+		        })
+		        .thenIdle(6)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.stone(), retractedPos);
+		            test.assertBlockPresent(Blocks.air(), extendedPos);
+		        })
+		        .thenSucceed();
+		})
+		    .structureName("PistonTests:sticky_extend")
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "push_limit", (test) => {
+		    const underLimitTip = new BlockLocation(0, 2, 6);
+		    const overLimitTip = new BlockLocation(2, 2, 6);
+		    const pullLeverPos = new BlockLocation(1, 2, 0);
+		    const underLimitExtendedTip = new BlockLocation(0, 2, 7);
+		
+		    test.assertBlockPresent(Blocks.goldBlock(), underLimitTip);
+		    test.assertBlockPresent(Blocks.emeraldBlock(), overLimitTip);
+		    test.pullLever(pullLeverPos);
+		
+		    test.succeedOnTickWhen(3, () => {
+		        test.assertBlockPresent(Blocks.goldBlock(), underLimitExtendedTip);
+		        test.assertBlockPresent(Blocks.emeraldBlock(), overLimitTip);
+		    });
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		
+		GameTest.register("PistonTests", "block_leave", (test) => {
+		    const trigger = new BlockLocation(3, 1, 1);
+		    const retracted = new BlockLocation(1, 1, 1);
+		    const extended = new BlockLocation(0, 1, 1);
+		
+		    test.pulseRedstone(trigger, 2);
+		    test.startSequence()
+		        .thenWaitWithDelay(3, () => {
+		            test.assertBlockPresent(Blocks.concrete(), extended);
+		            test.assertBlockPresent(Blocks.air(), retracted);
+		        })
+		        .thenExecuteAfter(3, () => {
+		            test.pulseRedstone(trigger, 2);
+		        })
+		        .thenWaitWithDelay(5, () => {
+		            test.assertBlockPresent(Blocks.concrete(), retracted);
+		            test.assertBlockPresent(Blocks.air(), extended);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);  //In Java Edition, pistons finish extending early and start retracting if given a pulse shorter than 3 game ticks (1.5 redstone ticks; 0.15 seconds). These shorter pulses cause sticky pistons to "drop" their block, leaving it behind when trying to push it with a short pulse. Also, this causes the block to end up in its final position earlier.Therefore, the bedrock version can't be modified, and can only be verified according to the piston tension,
+		
+		GameTest.register("PistonTests", "block_leave_bedrock", (test) => {
+		    const trigger = new BlockLocation(3, 1, 1);
+		    const retracted = new BlockLocation(1, 1, 1);
+		    const extended = new BlockLocation(0, 1, 1);
+		
+		    test.pulseRedstone(trigger, 2);
+		    test.startSequence()
+		        .thenIdle(2)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.concrete(), extended);
+		            test.assertBlockPresent(Blocks.air(), retracted);
+		        })
+		        .thenExecuteAfter(3, () => {
+		            test.pulseRedstone(trigger, 2);
+		        })
+		        .thenIdle(6)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.concrete(), retracted);
+		            test.assertBlockPresent(Blocks.air(), extended);
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "update_order", (test) => {
+		    const posA = new BlockLocation(2, 1, 1);
+		    const posB = new BlockLocation(2, 1, 0);
+		    const posC = new BlockLocation(3, 1, 0);
+		    const posD = new BlockLocation(1, 1, 0);
+		
+		    const trigger = new BlockLocation(6, 2, 2);
+		    test.setBlock(trigger, Blocks.greenWool());
+		
+		    test.startSequence()
+		        .thenWaitWithDelay(4, () => {
+		            test.assertBlockPresent(Blocks.yellowWool(), posB);
+		        })
+		        .thenExecuteAfter(4, () => {
+		            test.setBlock(trigger, Blocks.blueWool());
+		        })
+		        .thenWaitWithDelay(6, () => {
+		            test.assertBlockPresent(Blocks.yellowWool(), posC);
+		        })
+		        .thenExecuteAfter(4, () => {
+		            test.setBlock(trigger, Blocks.purpleWool());
+		        })
+		        .thenWaitWithDelay(6, () => {
+		            test.assertBlockPresent(Blocks.yellowWool(), posD);
+		        })
+		        .thenExecuteAfter(4, () => {
+		            test.setBlock(trigger, Blocks.cyanWool());
+		        })
+		        .thenWaitWithDelay(6, () => {
+		            test.assertBlockPresent(Blocks.yellowWool(), posA);
+		        })
+		        .thenSucceed();
+		})
+		    .required(false)
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled); //Due to redstone differences, create a new test called update_order_bedrock. Also, use colored glazed terracotta instead of missing colored wool blocks.
+		
+		GameTest.register("PistonTests", "update_order_bedrock", (test) => {
+		    const posA = new BlockLocation(2, 1, 1);
+		    const posB = new BlockLocation(2, 1, 0);
+		    const posC = new BlockLocation(3, 1, 0);
+		    const posD = new BlockLocation(1, 1, 0);
+		
+		    const trigger = new BlockLocation(6, 2, 2);
+		    test.setBlock(Blocks.greenGlazedTerracotta(), trigger);
+		    test.startSequence()
+		        .thenIdle(5)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.wool(), posB);
+		        })
+		        .thenIdle(4)
+		        .thenWait(() => {
+		            test.setBlock(Blocks.blueGlazedTerracotta(), trigger);
+		        })
+		        .thenIdle(6)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.wool(), posC);
+		        })
+		        .thenIdle(4)
+		        .thenWait(() => {
+		            test.setBlock(Blocks.purpleGlazedTerracotta(), trigger);
+		        })
+		        .thenIdle(6)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.wool(), posD);
+		        })
+		        .thenIdle(4)
+		        .thenWait(() => {
+		            test.setBlock(Blocks.cyanGlazedTerracotta(), trigger);
+		        })
+		        .thenIdle(6)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.wool(), posA);
+		        })
+		        .thenSucceed();
+		})
+		
+		    .required(false)
+		    .tag(GameTest.Tags.suiteDisabled);  //Both of Java and Bedrock are failed as block position doesn't update with the right order.
+		
+		GameTest.register("PistonTests", "double_extender", (test) => {
+		    const pullLeverPos = new BlockLocation(2, 3, 2);
+		    const blockPresentPosA = new BlockLocation(0, 2, 2);
+		    const blockPresentPosB = new BlockLocation(0, 2, 4);
+		
+		    test.pullLever(pullLeverPos);
+		    test.assertBlockPresent(Blocks.emeraldBlock(), blockPresentPosA);
+		
+		    test.startSequence()
+		        .thenWaitWithDelay(11, () => {
+		            test.assertBlockPresent(Blocks.emeraldBlock(), blockPresentPosB);
+		            test.pullLever(pullLeverPos);
+		        })
+		        .thenWaitWithDelay(12, () => {
+		            test.assertBlockPresent(Blocks.emeraldBlock(), blockPresentPosA);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);  //Pistons react at different speeds in Bedrock, create a new test called double_extender_bedrock.
+		
+		GameTest.register("PistonTests", "double_extender_bedrock", (test) => {
+		    const pullLeverPos = new BlockLocation(2, 3, 2);
+		    const blockPresentPosA = new BlockLocation(0, 2, 2);
+		    const blockPresentPosB = new BlockLocation(0, 2, 4);
+		
+		    test.pullLever(pullLeverPos);
+		    test.assertBlockPresent(Blocks.emeraldBlock(), blockPresentPosA);
+		
+		    //it's not possible to time it exactly due to redstone differences, so just validate assert can pass before given delay.
+		    test.startSequence()
+		        .thenIdle(17)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.emeraldBlock(), blockPresentPosB);
+		            test.pullLever(pullLeverPos);
+		        })
+		        .thenIdle(18)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.emeraldBlock(), blockPresentPosA);
+		        })
+		        .thenSucceed();
+		})
+		    .structureName("PistonTests:double_extender")
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "triple_extender", (test) => {
+		    const retracted = new BlockLocation(0, 4, 4);
+		    const extended = new BlockLocation(0, 1, 4);
+		    const trigger = new BlockLocation(0, 8, 0);
+		    const assertBlockPresentA = new BlockLocation(0, 7, 4);
+		    const assertBlockPresentB = new BlockLocation(0, 6, 4);
+		    const assertBlockPresentC = new BlockLocation(0, 5, 4);
+		
+		    test.pressButton(trigger);
+		
+		    test.startSequence()
+		        .thenIdle(30)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentA);
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentB);
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentC);
+		            test.assertBlockPresent(Blocks.concrete(), extended);
+		        })
+		        .thenIdle(20)
+		        .thenWait(() => {
+		            test.pressButton(trigger);
+		        })
+		        .thenIdle(42)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.stickyPiston(), new assertBlockPresentA);
+		            test.assertBlockPresent(Blocks.stickyPiston(), new assertBlockPresentB);
+		            test.assertBlockPresent(Blocks.stickyPiston(), new assertBlockPresentC);
+		            test.assertBlockPresent(Blocks.concrete(), retracted);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);  // Game parity issue. Create a new test called triple_extender_bedrock using new structure, and updated piston react time.
+		
+		GameTest.register("PistonTests", "triple_extender_bedrock", (test) => {
+		    const retracted = new BlockLocation(0, 4, 4);
+		    const extended = new BlockLocation(0, 1, 4);
+		    const trigger = new BlockLocation(0, 7, 0);
+		    const assertBlockPresentA = new BlockLocation(0, 7, 4);
+		    const assertBlockPresentB = new BlockLocation(0, 6, 4);
+		    const assertBlockPresentC = new BlockLocation(0, 5, 4);
+		    const assertBlockPresentD = new BlockLocation(0, 3, 4);
+		
+		    test.pressButton(trigger);
+		    test.startSequence()
+		        .thenIdle(33)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentA);
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentC);
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentD);
+		            test.assertBlockPresent(Blocks.concrete(), extended);
+		        })
+		        .thenIdle(1)
+		        .thenExecute(() => {
+		            test.pressButton(trigger);
+		        })
+		        .thenIdle(45)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentA);
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentB);
+		            test.assertBlockPresent(Blocks.stickyPiston(), assertBlockPresentC);
+		            test.assertBlockPresent(Blocks.concrete(), retracted);
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDisabled) // Disable this test after it is not passing 100% in Main.
+		    .maxTicks(300);
+		
+		GameTest.register("PistonTests", "monostable", (test) => {
+		    const lampPos = new BlockLocation(0, 3, 5);
+		    const pullLeverPos = new BlockLocation(0, 2, 0);
+		
+		    test.assertBlockState("redstone_signal", 0, lampPos);
+		    test.pullLever(pullLeverPos);
+		
+		    test.startSequence()
+		        .thenWaitWithDelay(2, () => {
+		            test.assertBlockState("redstone_signal", 1, lampPos);
+		        })
+		        .thenWaitWithDelay(4, () => {
+		            test.assertBlockState("redstone_signal", 0, lampPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled); //quasi connectivity problem: when the repeater is in the upper right corner of the piston, the bedrock piston will not stretch, but Java will stretch
+		
+		GameTest.register("PistonTests", "monostable_bedrock", (test) => {
+		    const lampPos = new BlockLocation(0, 3, 5);
+		    const pullLeverPos = new BlockLocation(0, 2, 0);
+		
+		    test.assertRedstonePower(lampPos, 0);
+		
+		    test.startSequence()
+		        .thenIdle(10)
+		        .thenExecute(() => {
+		            test.pullLever(pullLeverPos);
+		        })
+		        .thenIdle(5)
+		        .thenExecute(() => {
+		            test.assertRedstonePower(lampPos, 15);
+		        })
+		        .thenIdle(9)
+		        .thenExecute(() => {
+		            test.assertRedstonePower(lampPos, 0);
+		        })
+		        .thenSucceed();
+		})
+		    .maxTicks(100)
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "instant_retraction", (test) => {
+		    const airPos = new BlockLocation(2, 1, 1);
+		    const concretePos = new BlockLocation(0, 1, 3);
+		
+		    test.setBlock(Blocks.air(), airPos);
+		    test.succeedOnTickWhen(3, () => {
+		        test.assertBlockPresent(Blocks.concrete(), concretePos);
+		    })
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "instant_repeater", (test) => {
+		    const triggerPos = new BlockLocation(0, 3, 0);
+		    const outputPos = new BlockLocation(0, 3, 25);
+		    test.pullLever(triggerPos);
+		
+		    test.startSequence()
+		        .thenWaitWithDelay(1, () => {
+		            test.assertBlockState("redstone_signal", 1, outputPos);
+		        })
+		        .thenIdle(10) // relaxation time
+		        .thenExecute(() => {
+		            test.pullLever(triggerPos);
+		        })
+		        .thenWaitWithDelay(5, () => {
+		            test.assertBlockState("redstone_signal", 0, outputPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);  //Instant repeaters rely on block update detection due to quasi-connectivity and cannot be built in Bedrock.
+		
+		GameTest.register("PistonTests", "entity_backside", (test) => {
+		    const buttonPos = new BlockLocation(2, 2, 0);
+		    const lampFailPos = new BlockLocation(4, 3, 2);
+		
+		    test.pressButton(buttonPos);
+		    test.startSequence()
+		        .thenIdle(30)
+		        .thenWait(() => {
+		            test.assertBlockNotPresent(Blocks.redstoneLamp(), lampFailPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "redstone_matrix", (test) => {
+		    const buttonPos = new BlockLocation(1, 3, 1);
+		    const wirePos = new BlockLocation(1, 4, 2);
+		
+		    test.pressButton(buttonPos);
+		    test.startSequence()
+		        .thenIdle(30)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.redstoneWire(), wirePos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "one_tick_pulse", (test) => {
+		    const retractedPos = new BlockLocation(1, 2, 3);
+		    const extendedPos = new BlockLocation(0, 2, 3);
+		    const pressButtonPos = new BlockLocation(2, 2, 0);
+		
+		    test.pressButton(pressButtonPos);
+		
+		    test.startSequence()
+		
+		        .thenWaitWithDelay(2, () => {
+		            test.assertBlockPresent(Blocks.stainedGlass(), extendedPos)
+		        })
+		        .thenIdle(30)
+		        .thenWait(() => {
+		            test.pressButton(pressButtonPos);
+		        })
+		        .thenWaitWithDelay(4, () => {
+		            test.assertBlockPresent(Blocks.stainedGlass(), retractedPos);
+		            test.assertBlockPresent(Blocks.air(), extendedPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled);   //It's Gameplay differences. In Java Edition, pistons finish extending early and start retracting if given a pulse shorter than 3 game ticks, this causes the block to end up in its final position earlier.
+		
+		GameTest.register("PistonTests", "one_tick_pulse_bedrock", (test) => {
+		    const retractedPos = new BlockLocation(1, 2, 3);
+		    const extendedPos = new BlockLocation(0, 2, 3);
+		    const pressButtonPos = new BlockLocation(2, 2, 0);
+		
+		    test.pressButton(pressButtonPos);
+		
+		    test.startSequence()
+		        .thenIdle(2)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.stainedGlass(), extendedPos)
+		        })
+		        .thenIdle(30)
+		        .thenWait(() => {
+		            test.pressButton(pressButtonPos);
+		        })
+		        .thenIdle(4)
+		        .thenWait(() => {
+		            test.assertBlockPresent(Blocks.stainedGlass(), retractedPos);
+		            test.assertBlockPresent(Blocks.air(), extendedPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault)
+		
+		
+		GameTest.register("PistonTests", "backside", (test) => {
+		    var buttonsBlockPos = [
+		        new BlockLocation(3, 3, 0),
+		        new BlockLocation(1, 2, 1),
+		        new BlockLocation(4, 3, 3),
+		        new BlockLocation(1, 4, 3),
+		        new BlockLocation(3, 3, 6),
+		        new BlockLocation(0, 3, 5)
+		    ];
+		
+		    for (const buttonPos of buttonsBlockPos) {
+		        test.pressButton(buttonPos);
+		    };
+		    test.startSequence()
+		        .thenIdle(30)
+		        .thenWait(() => {
+		            for (const buttonPos of buttonsBlockPos) {
+		                test.assertBlockPresent(Blocks.stoneButton(), buttonPos);
+		            }
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault)
+		
+		GameTest.register("PistonTests", "observer_retraction_timing", (test) => {
+		    const levelPos = new BlockLocation(3, 2, 2);
+		    const observerPos = new BlockLocation(2, 2, 1);
+		    test.pullLever(levelPos);
+		    test.startSequence()
+		        .thenIdle(2).thenExecute(() => {
+		            test.assertBlockState("powered_bit", 0, observerPos);
+		        })
+		        .thenIdle(1).thenExecute(() => {
+		            test.assertBlockState("powered_bit", 1, observerPos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "random_tick_forcer", (test) => {
+		    const buttonPos = new BlockLocation(1, 3, 0);
+		    const flower = new BlockLocation(1, 3, 6);
+		    const aboveFlower = new BlockLocation(1, 4, 6);
+		
+		    test.pressButton(buttonPos);
+		    test.startSequence()
+		        .thenIdle(20)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.chorusFlower(), flower);
+		            test.assertBlockPresent(Blocks.air(), aboveFlower);
+		        })
+		        .thenSucceed();
+		})
+		    .batch("no_random_ticks")
+		    .tag("suite:java_parity")
+		    .tag(GameTest.Tags.suiteDisabled); //The parity problem is still being solved
+		
+		GameTest.register("PistonTests", "random_tick_forcer_bedrock", (test) => {
+		    const buttonPos = new BlockLocation(1, 3, 0);
+		    const flower = new BlockLocation(1, 3, 6);
+		    const aboveFlower = new BlockLocation(1, 4, 6);
+		
+		    test.pressButton(buttonPos);
+		    test.startSequence()
+		        .thenIdle(10)
+		        .thenExecute(() => {
+		            test.assertBlockPresent(Blocks.chorusFlower(), flower);
+		            test.assertBlockPresent(Blocks.air(), aboveFlower);
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("PistonTests", "honey_block_entity_drag_down", (test) => {
+		    const leverPos = new BlockLocation(1, 1, 0);
+		    const entityTypePos = new BlockLocation(1, 4, 1);
+		    const cowId = "minecraft:cow<minecraft:ageable_grow_up>";
+		    const entityTouchingPos = new Location(1.5, 4.5, 1.5);
+		    const entityNotTouchingTypePos = new Location(1.5, 3.5, 1.5);
+		
+		    test.spawn(cowId, entityTypePos);
+		    test.assertEntityTouching(cowId, entityTouchingPos);
+		    test.assertEntityNotTouching(cowId, entityNotTouchingTypePos);
+		
+		    const timeBetweenEachLeverPull = 4;
+		
+		    var startSequence = test.startSequence().thenIdle(4).thenExecuteAfter(timeBetweenEachLeverPull, () => { test.pullLever(leverPos); })
+		    startSequence
+		
+		    for (var i = 0; i < 10; i++) {
+		        startSequence.thenExecuteAfter(timeBetweenEachLeverPull, () => { test.pullLever(leverPos); })
+		    }
+		
+		    startSequence
+		        .thenExecuteAfter(timeBetweenEachLeverPull, () => { test.pullLever(leverPos); })
+		        .thenWait(() => {
+		            test.assertEntityTouching(cowId, entityTouchingPos);
+		            test.assertEntityNotTouching(cowId, entityNotTouchingTypePos);
+		        })
+		        .thenSucceed();
+		})
+		    .tag(GameTest.Tags.suiteDefault);
+		'''

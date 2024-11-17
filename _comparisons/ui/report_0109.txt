@@ -1,0 +1,493 @@
+Difference of "ui" between "1.9.0.0" (beta of "1.9.0") and "1.9.0.2" (beta of "1.9.0").
+
+Total namespace: 153 (+1, -0)
+Changed namespace "book":
+	Changed element "page_caption@book.page_text_edit":
+		Changed field "max_length" from 32 to "$max_page_length".
+Changed namespace "chat":
+	Changed element "messages_text":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "text":
+					Unchanged field "type": "label"
+					Changed field "line_padding" from "$chat_message_spacing" to "$chat_line_spacing".
+	Changed element "text_edit_box@common.text_edit_box":
+		Changed field "button_mappings":
+			Changed button mapping:
+				Added field "consume_event" of false.
+Changed namespace "chat_settings":
+	Total element: 59 (+1, -1)
+	Changed element "font_section_content_panel@chat_settings.section_content_panel":
+		Changed field "$variables":
+			Changed variable "$section_content":
+				Changed item 0:
+					Changed field "font_content@chat_settings.bordered_content_panel":
+						Changed field "$content_panel_controls":
+							Changed item 1:
+								Removed empty field "message_spacing@chat_settings.message_spacing_slider".
+								Added empty field "line_spacing@chat_settings.line_spacing_slider".
+	Added element "line_spacing_slider@settings_common.option_slider":
+		field "$variables":
+			variable "$option_label": "#chat_line_spacing_custom_text"
+			variable "$slider_name": "chat_line_spacing"
+			variable "$slider_value_binding_name": "#chat_line_spacing"
+			variable "$option_enabled_binding_name": "#chat_line_spacing_enabled"
+			variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+			variable "$focus_override_left": "FOCUS_OVERRIDE_STOP"
+			variable "$label_bindings": item 0: field "binding_name": "#chat_line_spacing_custom_text"
+	Removed element "message_spacing_slider@settings_common.option_slider":
+		field "$variables":
+			variable "$option_label": "#chat_message_spacing_custom_text"
+			variable "$slider_name": "chat_message_spacing"
+			variable "$slider_value_binding_name": "#chat_message_spacing"
+			variable "$option_enabled_binding_name": "#chat_message_spacing_enabled"
+			variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+			variable "$focus_override_left": "FOCUS_OVERRIDE_STOP"
+			variable "$label_bindings": item 0: field "binding_name": "#chat_message_spacing_custom_text"
+Changed namespace "coin_purchase":
+	Total element: 13 (+1, -0)
+	Added element "background@common.screen_background":
+		field "alpha": 0.65
+		field "layer": 1
+	Changed element "coin_purchase_screen@common.base_screen":
+		Changed field "$variables":
+			Total variable: 4 (+3, -0)
+			Added variable "$screen_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+				item 2: "@common.screen_entrance_animation_push_fade"
+				item 3: "@common.screen_entrance_animation_pop_fade"
+			Added variable "$background_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+				item 2: "@common.screen_entrance_animation_push_fade"
+				item 3: "@common.screen_entrance_animation_pop_fade"
+			Added variable "$screen_background_control" of "coin_purchase.background".
+	Changed element "coin_purchase_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "background@common.screen_background":
+					field "alpha": 0.65
+					field "layer": 1
+Changed namespace "common":
+	Changed element "text_edit_box":
+		Unchanged field "type": "edit_box"
+		Changed field "button_mappings":
+			Changed button mapping:
+				Added field "consume_event" of false.
+Changed namespace "common_store":
+	Changed element "hero_offer_description_details":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "ratings_and_coins":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 6 (+1, -0)
+						Added control:
+							element "offer_price_markdown_panel@common_store.offer_price_markdown_panel":
+								field "$variables":
+									variable "$offer_category_collection_details": "none"
+									variable "$offer_category_collection_name": ""
+									variable "$offer_category_collection_prefix": ""
+									variable "$offer_binding_type": "$hero_offer_binding_type"
+									variable "$offer_collection_name": "$hero_offer_collection_name"
+	Changed element "store_offer_item_creator_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "creator_label":
+					Unchanged field "type": "label"
+					Changed field "size":
+						Changed item 0 from "100%" to "fill".
+						Unchanged item 1: "100%"
+Added namespace "content_log":
+	element "anim_content_log_bg_alpha":
+		field "anim_type": "alpha"
+		field "easing": "in_quart"
+		field "destroy_at_end": "content_log_grid_item"
+		field "duration": 1
+		field "from": 0.5
+		field "to": 0
+	element "anim_content_log_bg_wait":
+		field "anim_type": "wait"
+		field "duration": "$content_log_item_lifetime"
+		field "next": "@content_log.anim_content_log_bg_alpha"
+	element "anim_content_log_txt_alpha":
+		field "anim_type": "alpha"
+		field "easing": "in_quart"
+		field "duration": 1
+		field "from": 1
+		field "to": 0
+	element "anim_content_log_txt_wait":
+		field "anim_type": "wait"
+		field "duration": "$content_log_item_lifetime"
+		field "next": "@content_log.anim_content_log_txt_alpha"
+	element "content_log_grid_item":
+		field "type": "panel"
+		field "layer": 1
+		field "size": ["100%-2px", "100%c"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "content_log_background":
+					field "type": "image"
+					field "texture": "textures/ui/Black"
+					field "alpha": 0.5
+					field "size": ["100%", "100%c"]
+					field "anims": animation: "@content_log.anim_content_log_bg_wait"
+					field "controls":
+						control:
+							element "content_log_text@content_log_label":
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "offset": [2, 0]
+	element "content_log_label":
+		field "type": "label"
+		field "layer": 31
+		field "text": "#text"
+		field "font_type": "smooth"
+		field "size": ["100%", "default"]
+		field "shadow": true
+		field "localize": false
+		field "color": "$chat_text_color"
+		field "anims": animation: "@content_log.anim_content_log_txt_wait"
+		field "bindings":
+			binding:
+				field "binding_name": "#content_log_text"
+				field "binding_name_override": "#text"
+				field "binding_type": "collection"
+				field "binding_collection_name": "content_log_text_grid"
+				field "binding_condition": "once"
+	element "content_log_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "100%c"]
+		field "max_size": ["100%", "50%"]
+		field "controls":
+			control:
+				element "stack_panel":
+					field "type": "stack_panel"
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "factory":
+						field "name": "content_log_item_factory"
+						field "max_children_size": 50
+						field "control_ids": control id "content_log_item": "content_log_item@content_log.content_log_grid_item"
+Changed namespace "game_tip":
+	Changed element "game_tip_item":
+		field "type": "panel"
+		field "layer": 1
+		field "size": ["100% + 5px", "100%c"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "game_tip_text@game_tip_label":
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "offset": [2, 0]
+		field "type": "image"
+		field "texture": "textures/ui/effect_background"
+		field "layer": 1
+		field "size": ["100%+10px", "100%c+10px"]
+		field "variables":
+			variable:
+				field "requires": "$is_holographic"
+				field "$variables": variable "$fill_alpha": 1.0
+		field "alpha": "$fill_alpha"
+		field "controls":
+			control:
+				element "game_tip_text@game_tip_label":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+		field "$variables": variable "$fill_alpha|default": 0.6
+	Changed element "game_tip_label":
+		Unchanged field "type": "label"
+		Changed field "size":
+			Changed item 0 from "100%" to "100%-10px".
+			Unchanged item 1: "default"
+		Changed field "layer" from 31 to 3.
+		Added field "text_alignment" of "center".
+		Added field "offset" of [0, 5].
+	Changed element "game_tip_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "size":
+			Changed item 0 from "100%" to "default".
+			Changed item 1 from "100%c" to "default".
+		Changed field "max_size":
+			Changed item 0 from "100%" to 170.
+			Changed item 1 from "50%" to "100%".
+		Changed field "anchor_to" from "top_left" to "top_middle".
+		Changed field "anchor_from" from "top_left" to "top_middle".
+		Added field "offset" of [0, 15].
+Changed namespace "general_section":
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 48 (+2, -1)
+			Removed control:
+				element "option_content_log@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.content_log"
+						variable "$option_binding_name": "#content_log"
+						variable "$option_enabled_binding_name": "#content_log_enabled"
+						variable "$toggle_name": "content_log"
+			Added control:
+				element "option_content_file_log@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.content_log"
+						variable "$option_binding_name": "#content_log"
+						variable "$option_enabled_binding_name": "#content_log_enabled"
+						variable "$toggle_name": "content_log"
+			Added control:
+				element "option_content_gui_log@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.content_log_gui"
+						variable "$option_binding_name": "#content_log_gui"
+						variable "$option_enabled_binding_name": "#content_log_gui_enabled"
+						variable "$toggle_name": "content_log_gui"
+Changed namespace "hud":
+	Changed element "root_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 20 (+1, -0)
+			Changed control:
+				Changed element "chat_stack":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 7 (+0, -1)
+						Removed control element "game_tip@game_tip.game_tip_panel": empty.
+			Added control element "game_tip@game_tip.game_tip_panel": empty.
+Changed namespace "pause":
+	Total element: 59 (+0, -1)
+	Moved element "how_to_play_button@pause.pause_button_template" to "feedback_button@pause.pause_button_template".
+	Changed element "feedback_button@pause.pause_button_template":
+		Changed field "$variables":
+			Total variable: 2 (+0, -0)
+			Changed variable "$pressed_button_name" from "button.menu_how_to_play" to "button.menu_feedback".
+			Changed variable "$button_text" from "menu.howToPlay" to "Feedback".
+	Removed element "feedback_button@settings_common.link_button":
+		field "ignored": "(not $pre_release)"
+		field "size": ["100%", 28]
+		field "variables":
+			variable:
+				field "requires": "(not $education_edition)"
+				field "$variables": variable "$fblink": "https://aka.ms/minecraftfbbeta"
+			variable:
+				field "requires": "($education_edition)"
+				field "$variables": variable "$fblink": "https://aka.ms/minecraftedubeta"
+		field "property_bag": field "#hyperlink": "$fblink"
+		field "$variables":
+			variable "$button_text": "pauseScreen.betaFeedback"
+			variable "$focus_id": "button.feedback_button"
+	Changed element "menu_background@pause.transparent_background":
+		Changed field "controls":
+			Changed control:
+				Changed element "button_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 15 (+0, -2)
+						Removed control element "how_to_play_button@pause.how_to_play_button": empty.
+						Removed control element "feedback@pause.vertical_padding": field "ignored": "(not $pre_release)".
+	Changed element "quit_button@pause.pause_button_template":
+		Changed field "variables":
+			Total variable: 2 (+0, -1)
+			Removed variable:
+				field "requires": "$pre_release"
+				field "$variables": variable "$focus_down_control": "button.feedback_button"
+	Changed element "return_to_game_button@pause.pause_button_template":
+		Changed field "variables":
+			Total variable: 1 (+0, -1)
+			Removed variable:
+				field "requires": "$pre_release"
+				field "$variables": variable "$focus_up_control": "button.feedback_button"
+Changed namespace "popup_dialog":
+	Changed element "modal_dialog_with_buttons":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+1, -1)
+			Removed control:
+				element "background_with_buttons@common.common_panel":
+					field "$variables":
+						variable "$dialog_background": "$dialog_background_override"
+						variable "$show_close_button": false
+						variable "$fill_alpha": 1
+			Added control:
+				element "background_with_buttons@common.common_panel":
+					field "$variables":
+						variable "$dialog_background": "$dialog_background_override"
+						variable "$fill_alpha": 1
+Changed namespace "progress":
+	Total element: 58 (+1, -0)
+	Added element "add_on_confirmation@progress.simple_popup_dialog_base":
+		field "$variables":
+			variable "$title_text": "progressScreen.dialog.title.scriptConfirm"
+			variable "$description_text": "progressScreen.dialog.message.scriptConfirm"
+			variable "$top_button_text": "#empty_binding"
+			variable "$middle_button_press": "button.join"
+			variable "$middle_button_text": "#join_and_download"
+			variable "$bottom_button_press": "button.leave"
+			variable "$bottom_button_text": "progressScreen.dialog.button.leave"
+	Changed element "popup_dialog_factory":
+		Unchanged field "type": "factory"
+		Changed field "control_ids":
+			Total control id: 7 (+1, -0)
+			Added control id "add_on_confirmation" of "add_on_only@progress.add_on_confirmation".
+Changed namespace "server_form":
+	Changed element "dynamic_button":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "form_button@common_buttons.light_text_button":
+					Changed field "$variables":
+						Total variable: 5 (+1, -0)
+						Added variable "$button_text_max_size":
+							item 0: "100%"
+							item 1: 20
+Changed namespace "settings":
+	Changed element "section_content_panels":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "general_and_controls_sections":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "how_to_play_section@general_section.how_to_play_section":
+								Removed field "ignored" of "(not $is_pregame)".
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "controls_and_settings_selector_pane":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "how_to_play_button@general_section.how_to_play_button":
+								Removed field "ignored" of "(not $is_pregame)".
+Changed namespace "sign":
+	Changed element "sign_text_multiline@common.multiline_text_edit_box":
+		Changed field "constrain_to_rect" from true to false.
+		Added field "max_length" of 32500.
+Changed namespace "store_sale_item_list":
+	Changed element "sales_offer_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "ignored" from "$sales_disabled_on_screen" to "($sales_disabled_on_screen or $is_on_3p_server)".
+Changed namespace "toast_screen":
+	Changed element "toast_screen_content":
+		Unchanged field "type": "panel"
+		Added field "controls" of control: element "content_log_panel@content_log.content_log_panel": empty.
+Changed namespace "trialUpsell":
+	Changed element "content_description_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "$variables":
+						variable "$scrolling_content": "trialUpsell.trial_description_panel"
+						variable "$show_background": false
+						variable "$scroll_size":
+							item 0: "5px"
+							item 1: "100%c"
+						variable "$scroll_bar_left_padding_size":
+							item 0: 1
+							item 1: 0
+			Added control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "$variables":
+						variable "$scrolling_content": "trialUpsell.trial_description_panel"
+						variable "$show_background": false
+						variable "$scroll_size":
+							item 0: "5px"
+							item 1: "100%"
+						variable "$scroll_bar_left_padding_size":
+							item 0: 1
+							item 1: 0
+	Changed element "continue_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Added variable "$button_text_binding_type" of "global".
+	Changed element "trial_upsell_expired_screen_dialog@common_dialogs.main_panel_one_button":
+		Changed field "$variables":
+			Total variable: 5 (+0, -0)
+			Changed variable "$continue_button_text" from "trial.upsell.expiredViewWorld" to "#trial_upsell_continue_button".
+	Changed element "trial_upsell_screen_dialog@common_dialogs.main_panel_one_button":
+		Changed field "$variables":
+			Total variable: 5 (+0, -0)
+			Changed variable "$continue_button_text" from "trial.upsell.startTrial" to "#trial_upsell_continue_button".
+Changed namespace "world_section":
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "bonus_chest_toggle@settings_common.option_toggle":
+					Added field "enabled" of "(not $trial)".
+Changed namespace "world_templates":
+	Changed element "template_scroll_panel@world_templates.common_scroll_pane":
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control:
+				element "header_panel_bottom_padding":
+					field "type": "panel"
+					field "size": ["100%", 5]
+	Changed element "world_template_screen_content_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 9 (+1, -0)
+			Changed control:
+				Changed element "template_list_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "inventory_button@common_buttons.dark_text_button":
+								Added field "ignored" of "$education_edition".
+			Added control:
+				element "education_template_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "ignored": "(not $education_edition)"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "suggested_content_offers_title_label@resource_packs.suggested_content_offers_title_label":
+								field "size": ["100%", "10px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#education_template_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$suggested_content_offers_label_text": "selectTemplate.suggestedContent.title"
+									variable "$suggested_content_offers_binding_type": "none"
+						control:
+							element "education_template_grid":
+								field "type": "grid"
+								field "size": ["100%", "default"]
+								field "grid_item_template": "world_templates.world_template_item"
+								field "grid_dimension_binding": "#education_template_item_grid_dimension"
+								field "collection_name": "#education_template_collection"
+								field "bindings":
+									binding: field "binding_name": "#education_template_item_grid_dimension"
+									binding:
+										field "binding_name": "#education_template_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$collection_name": "#education_template_collection"
+									variable "$collection_prefix|default": ""
+									variable "$pressed_button_name": "button.select_template"
+									variable "$world_template_description_binding_name": "#created_by_label"
+									variable "$world_template_name_binding_name": "#title_label"
+									variable "$screenshot_texture_name": "#template_texture_name"
+									variable "$screenshot_file_system": "#template_texture_file_system"
+						control:
+							element "see_more_templates_button@common_buttons.dark_text_button":
+								field "size": ["100%", 30]
+								field "$variables":
+									variable "$pressed_button_name": "button.see_more_templates"
+									variable "$button_text": "selectTemplate.suggestedContent.button"

@@ -1,0 +1,120 @@
+Difference of "scripts" between "1.19.30.22" (beta of "1.19.30") and "1.19.30.23" (beta of "1.19.30").
+
+Changed behavior pack "vanilla_edu_gametest":
+	Changed script "Main.js":
+		Total line: 7 (+5, -0)
+		      '''
+		1 1   import "scripts/AgentTests.js";
+		2 2   import "scripts/BlockTests.js";
+		  3 + 
+		  4 + import { system } from "mojang-minecraft";
+		  5 + system.events.beforeWatchdogTerminate.subscribe((e) => {
+		  6 +   e.cancel = true;
+		  7 + });
+		      '''
+Changed behavior pack "vanilla_gametest":
+	Changed script "BlockEventTests.js":
+		Total line: 119 (+1, -1)
+		          '''
+		          ...
+		113 113   registerBlockPlaceTest(MinecraftItemTypes.dirt);
+		114 114   registerBlockPlaceTest(MinecraftItemTypes.bamboo, MinecraftBlockTypes.dirt);
+		115 115   registerBlockPlaceTest(MinecraftItemTypes.banner);
+		116 116   registerBlockPlaceTest(MinecraftItemTypes.bed);
+		117 117   registerBlockPlaceTest(MinecraftItemTypes.flowerPot);
+		    118 + registerBlockPlaceTest(MinecraftItemTypes.redstone);
+		118     - registerBlockPlaceTest(MinecraftItemTypes.redstoneWire);
+		119 119   registerBlockPlaceTest(MinecraftItemTypes.oakSign);
+		          '''
+	Changed script "DebugTests.js":
+		Total line: 75 (+18, -3)
+		        '''
+		        ...
+		35 35   })
+		36 36     .tag(GameTest.Tags.suiteDebug)
+		37 37     .structureName("DebugTests:always_succeed");
+		38 38   
+		39 39   GameTest.register("DebugTests", "perf_slow", (test) => {
+		   40 +   console.warn("7 ms delay each frame");
+		   41 +   let tickEvent = world.events.tick.subscribe((eventData) => {
+		   42 +     const start = Date.now();
+		   43 +     while (Date.now() - start < 7) {}
+		   44 +   });
+		   45 +   test.runAfterDelay(80, () => {
+		   46 +     world.events.tick.unsubscribe(tickEvent);
+		   47 +     test.succeed();
+		   48 +   });
+		   49 + })
+		   50 +   .tag(GameTest.Tags.suiteDebug)
+		   51 +   .structureName("DebugTests:always_succeed");
+		   52 + 
+		   53 + GameTest.register("DebugTests", "perf_spike", (test) => {
+		   54 +   console.warn("150 ms delay");
+		   55 +   const start = Date.now();
+		   56 +   while (Date.now() - start < 150) {}
+		   57 +   test.succeed();
+		   58 + })
+		   59 +   .tag(GameTest.Tags.suiteDebug)
+		   60 +   .structureName("DebugTests:always_succeed");
+		   61 + 
+		   62 + GameTest.register("DebugTests", "out_of_memory", (test) => {
+		   63 +   let buffer = new ArrayBuffer(250000000); // 250MB
+		   64 +   test.fail("Test should have ran out of memory");
+		40    -   console.warn("3 ms delay each frame");
+		41    -   let tickEvent = world.events.tick.subscribe((eventData) => {
+		42    -     const start = Date.now();
+		43    -     while (Date.now() - start < 3) {}
+		44    -   });
+		45    -   test.runAfterDelay(80, () => {
+		46    -     world.events.tick.unsubscribe(tickEvent);
+		47    -     test.succeed();
+		48    -   });
+		49 65   })
+		50 66     .tag(GameTest.Tags.suiteDebug)
+		   67 +   .structureName("DebugTests:always_fail");
+		51    -   .structureName("DebugTests:always_succeed");
+		52 68   
+		   69 + GameTest.register("DebugTests", "high_memory_usage", (test) => {
+		53    - GameTest.register("DebugTests", "perf_spike", (test) => {
+		54    -   console.warn("150 ms delay");
+		   70 +   let buffer = new ArrayBuffer(100000000); // 100MB
+		   71 +   buffer.a = buffer; // circular reference
+		55    -   const start = Date.now();
+		56    -   while (Date.now() - start < 150) {}
+		57 72     test.succeed();
+		58 73   })
+		59 74     .tag(GameTest.Tags.suiteDebug)
+		60 75     .structureName("DebugTests:always_succeed");
+		        '''
+	Changed script "Main.js":
+		Total line: 43 (+5, -0)
+		        '''
+		        ...
+		34 34   import "scripts/ItemTests.js";
+		35 35   import "scripts/ItemEnchantmentsTests.js";
+		36 36   import "scripts/SculkTests.js";
+		37 37   import "scripts/VibrationTests.js";
+		38 38   import "scripts/EnchantmentTests.js";
+		   39 + 
+		   40 + import { system } from "mojang-minecraft";
+		   41 + system.events.beforeWatchdogTerminate.subscribe((e) => {
+		   42 +   e.cancel = true;
+		   43 + });
+		        '''
+	Changed script "VibrationTests.js":
+		Total line: 829 (+1, -0)
+		          '''
+		          ...
+		544 544       const comparatorPos = new BlockLocation(9, 2, 10);
+		545 545       const expectedFrequency = 6;
+		546 546   
+		547 547       succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		548 548   })
+		    549 +     .maxTicks(TicksPerSecond * 15)
+		549 550       .tag(GameTest.Tags.suiteDefault);
+		550 551   
+		551 552   // Tests that a projectile being shot (by powering a Dispenser) produces vibrations of the expected frequency.
+		552 553   GameTest.register("VibrationTests", "event_projectile_shoot", (test) => {
+		553 554       const sensorPos = new BlockLocation(9, 2, 9);
+		          ...
+		          '''

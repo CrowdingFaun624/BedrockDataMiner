@@ -1,0 +1,134 @@
+Difference of "ui" between "1.16.210.57" (beta of "1.16.210") and "1.16.210.58" (beta of "1.16.210").
+
+Changed namespace "general_section":
+	Total element: 96 (+0, -2)
+	Removed element "broadcast_button@settings_common.section_toggle_base":
+		field "ignored": "(not $can_support_broadcast)"
+		field "$variables":
+			variable "$toggle_view_binding_name": "broadcast_button_toggle"
+			variable "$glyph_texture": "textures/ui/broadcast_glyph"
+			variable "$glyph_color_texture": "textures/ui/broadcast_glyph_color"
+			variable "$glyph_size":
+				item 0: 18
+				item 1: 19
+			variable "$button_text": "options.broadcast"
+			variable "$toggle_property_bag": field "#panel_title": "options.broadcast"
+	Removed element "broadcast_section":
+		field "ignored": "(not $can_support_broadcast)"
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "broadcast_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control:
+				element "create_mixer_description":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "create_mixer_description_text":
+								field "type": "label"
+								field "color": "$main_header_text_color"
+								field "size": ["100%", "default"]
+								field "layer": 1
+								field "text": "options.broadcast.mixerCreatePrompt"
+			control:
+				element "padding0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "get_create_mixer_button@settings_common.action_button":
+					field "ignored": "$mixer_create_installed"
+					field "$variables":
+						variable "$pressed_button_name": "button.get_mixer_create"
+						variable "$button_text": "options.broadcast.mixerCreate.get"
+			control:
+				element "launch_mixer_create_button@settings_common.action_button":
+					field "ignored": "(not $mixer_create_installed)"
+					field "$variables":
+						variable "$pressed_button_name": "button.launch_mixer_create"
+						variable "$button_text": "options.broadcast.mixerCreate.launch"
+			control:
+				element "padding1":
+					field "ignored": "(not $is_ios)"
+					field "type": "panel"
+					field "size": ["100%", 8]
+			control:
+				element "start_broadcast_text":
+					field "ignored": "(not $is_ios)"
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "create_mixer_label":
+								field "type": "label"
+								field "color": "$main_header_text_color"
+								field "size": ["100%", "default"]
+								field "layer": 1
+								field "text": "options.broadcast.startPrompt"
+			control:
+				element "padding2":
+					field "ignored": "(not $is_ios)"
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "start_broadcast_button@settings_common.action_button":
+					field "ignored": "(not $is_ios)"
+					field "$variables":
+						variable "$pressed_button_name": "button.start_broadcast"
+						variable "$button_text": "options.broadcast.start"
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 81 (+0, -1)
+			Removed control:
+				element "option_toggle_dev_mixer_interactive@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_enableMixerInteractive"
+						variable "$option_binding_name": "#dev_enable_mixer_interactive"
+						variable "$option_enabled_binding_name": "#dev_enable_mixer_interactive_enabled"
+						variable "$toggle_name": "dev_enable_mixer_interactive"
+Changed namespace "profile":
+	Changed element "achievements_button@common_buttons.light_text_button":
+		Added field "tts_play_on_unchanged_focus_control" of true.
+	Changed element "delete_appearance_button@common_buttons.light_content_button":
+		Added field "tts_control_header" of "profileScreen.delete_button".
+		Added field "tts_play_on_unchanged_focus_control" of true.
+	Changed element "edit_appearance_button@common_buttons.light_text_button":
+		Added field "tts_play_on_unchanged_focus_control" of true.
+	Changed element "settings_button@common_buttons.light_content_button":
+		Added field "tts_control_header" of "profileScreen.settings_button".
+		Added field "tts_play_on_unchanged_focus_control" of true.
+Changed namespace "settings":
+	Changed element "section_content_panels":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "general_and_controls_sections":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 16 (+0, -1)
+						Removed control:
+							element "broadcast_section@general_section.broadcast_section":
+								field "ignored": "(not $can_support_broadcast or $education_edition)"
+								field "visible": false
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "controls_and_settings_selector_pane":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 18 (+0, -1)
+						Removed control:
+							element "broadcast_button@general_section.broadcast_button":
+								field "ignored": "(not $can_support_broadcast or $education_edition)"
+								field "$variables":
+									variable "$toggle_group_forced_index": "$broadcast_forced_index"
+									variable "$tts_section_header": "$general_section_header"

@@ -1,0 +1,992 @@
+Difference of "ui" between "1.17.34" and "1.17.40.20" (beta of "1.17.40").
+
+Total namespace: 196 (+1, -1)
+Changed namespace "authentication":
+	Total element: 60 (+9, -0)
+	Added element "authentication_popup@popup_dialog.form_fit_modal_dialog_popup":
+		field "$variables":
+			variable "$popup_dialog_escape_button_name": "button.close_dialog"
+			variable "$modal_title": "#popup_title"
+			variable "$modal_title_binding_type": "global"
+			variable "$modal_title_binding_condition": "visible"
+			variable "$modal_contents": "authentication.authentication_popup_content_panel"
+			variable "$modal_contents_padding":
+				item 0: 6
+				item 1: 0
+			variable "$popup_type": "popup_dialog.form_fit_screen_with_title_and_close_and_bottom_buttons"
+			variable "$lower_button_control": "authentication.authentication_popup_lower_button_panel"
+	Added element "authentication_popup_button@common_buttons.light_text_button":
+		field "size": ["fill", "100%"]
+		field "$variables":
+			variable "$button_text": "('#popup_' + $button_pos + '_lower_button_text')"
+			variable "$button_text_binding_type": "global"
+			variable "$button_binding_condition": "visible"
+			variable "$pressed_button_name": "('button.' + $button_pos + '_lower_popup_button')"
+	Added element "authentication_popup_content_panel@authentication.resizeable_scrolling_panel":
+		field "size": [254, "100%c"]
+		field "$variables":
+			variable "$scroll_view_port_max_size":
+				item 0: "100%"
+				item 1: 185
+			variable "$scroll_view_port_max_size_touch":
+				item 0: "100%"
+				item 1: 185
+			variable "$scrolling_content": "authentication.authentication_popup_contents"
+			variable "$show_background": false
+			variable "$scroll_bar_left_padding_size":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_bar_right_padding_size":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_bar_and_track_size":
+				item 0: "100%c"
+				item 1: "100%sm - 6px"
+			variable "$scroll_track_offset":
+				item 0: 0
+				item 1: 3
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100%"
+			variable "$scroll_size_touch": "$scroll_size"
+	Added element "authentication_popup_contents":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control: element "initial_padding@common.empty_panel": field "size": ["100%", 3]
+			control:
+				element "body@authentication.smooth_bound_label":
+					field "font_scale_factor": 1
+					field "max_size": ["100%", "default"]
+					field "$variables": variable "$text_binding_name": "#popup_text"
+			control: element "learn_more_link@authentication.authentication_popup_link_button": field "$variables": variable "$link_type": "learn_more"
+			control: element "link2@authentication.authentication_popup_link_button": field "$variables": variable "$link_type": "open_demo"
+			control: element "end_padding@common.empty_panel": field "size": ["100%", 3]
+	Added element "authentication_popup_link_button":
+		field "type": "stack_panel"
+		field "controls":
+			control: element "top_padding@common.empty_panel": field "size": ["100%", 10]
+			control: element "link_button@edu_common.underline_button": empty
+		field "bindings":
+			binding:
+				field "binding_name": "('#popup_' + $link_type + '_visible')"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$single_label_size":
+				item 0: "default"
+				item 1: 10
+			variable "$single_line_font_scale_factor": 1
+			variable "$pressed_button_name": "('button.' + $link_type + '_popup_link')"
+			variable "$single_line_label_text": "('#popup_' + $link_type + '_text')"
+			variable "$label_text_bindings": item 0: field "binding_name": "('#popup_' + $link_type + '_text')"
+	Added element "authentication_popup_lower_button_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "one_button@authentication.authentication_popup_one_button": empty
+			control: element "two_buttons@authentication.authentication_popup_two_buttons": empty
+	Added element "authentication_popup_one_button":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "button@authentication.authentication_popup_button":
+					field "size": ["100%", "100%"]
+					field "$variables": variable "$button_pos": "first"
+		field "bindings":
+			binding:
+				field "binding_name": "(not #popup_has_two_buttons)"
+				field "binding_name_override": "#visible"
+	Added element "authentication_popup_two_buttons":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control: element "first_button@authentication.authentication_popup_button": field "$variables": variable "$button_pos": "first"
+			control: element "button_padding@common.empty_panel": field "size": [2, "100%"]
+			control: element "second_button@authentication.authentication_popup_button": field "$variables": variable "$button_pos": "second"
+		field "bindings":
+			binding:
+				field "binding_name": "#popup_has_two_buttons"
+				field "binding_name_override": "#visible"
+	Changed element "authentication_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "popup_dialog_factory":
+					Unchanged field "type": "factory"
+					Changed field "control_ids":
+						Total control id: 4 (+1, -0)
+						Added control id "muts_driven" of "@authentication.authentication_popup".
+	Changed element "debug_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 6 (+1, -0)
+			Added control:
+				element "open_popup@common_buttons.light_text_button":
+					field "size": [150, 16]
+					field "bindings":
+						binding:
+							field "binding_name": "#debug_json_popup_enabled"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$pressed_button_name": "button.debug_open_json_popup"
+						variable "$button_text": "Load popup from clipboard"
+	Changed element "eula_hyperlink@common_buttons.hyperlink_button":
+		Changed field "property_bag":
+			Changed field "#hyperlink" from "https://education.minecraft.net/eula" to "https://aka.ms/meeeula".
+	Changed element "privacy_policy_button@common_buttons.hyperlink_button":
+		Changed field "property_bag":
+			Changed field "#hyperlink" from "https://aka.ms/privacy" to "https://aka.ms/mee_privacy".
+	Added element "resizeable_scrolling_panel@common.scrolling_panel":
+		field "$variables":
+			variable "$scrolling_pane_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$scroll_view_control_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$scroll_view_stack_panel_size":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$scroll_view_port_panel_size":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$view_port_size":
+				item 0: "fill"
+				item 1: "100%cm"
+			variable "$view_port_size_touch":
+				item 0: "100%"
+				item 1: "100%cm"
+			variable "$scroll_view_port_size":
+				item 0: "100%"
+				item 1: "100%c"
+			variable "$scroll_view_port_size_touch":
+				item 0: "100%"
+				item 1: "100%c"
+Added namespace "cloud_upload":
+	element "button@common_buttons.light_text_button":
+		field "layer": 101
+		field "size": ["40%", "20%"]
+	element "cancel_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.cancel"
+			variable "$button_text": "gui.cancel"
+	element "close_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.close"
+			variable "$button_text": "gui.close"
+	element "cloud_upload_screen@progress.progress_screen":
+		field "force_render_below": false
+		field "should_be_skipped_during_automation": true
+		field "$variables": variable "$screen_content": "cloud_upload.screen_content"
+	element "description_stack":
+		field "type": "stack_panel"
+		field "size": ["100% - 12px", "100%c"]
+		field "orientation": "vertical"
+		field "controls":
+			control:
+				element "description_1@cloud_upload.label":
+					field "text": "cloud_upload.uploading.description_1"
+					field "size": ["100%", "default"]
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [0, 14]
+			control:
+				element "description_2@cloud_upload.label":
+					field "text": "cloud_upload.uploading.description_2"
+					field "size": ["100%", "default"]
+	element "failed_description@cloud_upload.label": field "text": "cloud_upload.failed.description"
+	element "label":
+		field "type": "label"
+		field "size": ["100% - 4px", "default"]
+		field "font_type": "smooth"
+		field "line_padding": 1.5
+		field "color": "$body_text_color"
+	element "retry_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.retry"
+			variable "$button_text": "gui.retry"
+	element "screen_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "main_content":
+					field "type": "panel"
+					field "size": "$cloud_upload_progress_screen_size"
+					field "controls":
+						control:
+							element "common_panel@common.common_panel":
+								field "$variables":
+									variable "$dialog_background": "dialog_background_hollow_2"
+									variable "$fill_alpha": 1
+									variable "$show_close_button": false
+						control:
+							element "progress_title_text@progress.progress_title_text":
+								field "color": "$title_text_color"
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "offset": [0, 8]
+						control:
+							element "inner_content":
+								field "type": "panel"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": ["100%-12px", "100%-12px"]
+								field "offset": [6, 6]
+								field "controls":
+									control:
+										element "description_stack@common.tts_label_focus_wrapper":
+											field "anchor_from": "top_middle"
+											field "anchor_to": "top_middle"
+											field "offset": [0, 20]
+											field "$variables": variable "$tts_label_panel": "cloud_upload.description_stack"
+									control:
+										element "progress_loading_bars@progress.progress_loading_bars":
+											field "anchor_from": "bottom_middle"
+											field "anchor_to": "bottom_middle"
+											field "offset": [0, -50]
+									control:
+										element "cancel@cloud_upload.cancel_button":
+											field "size": ["100%", 30]
+											field "anchor_from": "bottom_middle"
+											field "anchor_to": "bottom_middle"
+					field "bindings":
+						binding:
+							field "binding_name": "#upload_in_progress"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+			control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "terms_and_conditions": "terms_and_conditions@cloud_upload.terms_and_conditions"
+						control id "upload_failed": "upload_failed@cloud_upload.upload_failed"
+						control id "upload_succeeded": "upload_succeeded@cloud_upload.upload_succeeded"
+	element "scrolling_child":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100% - 1px"
+							item 1: "100% - 2px"
+						variable "$scroll_view_port_size":
+							item 0: "100% - 4px"
+							item 1: "100% - 4px"
+						variable "$scroll_view_port_offset":
+							item 0: 3
+							item 1: 2
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100% - 2px"
+						variable "$show_background": false
+	element "service_agreement_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.service_agreement"
+			variable "$button_text": "cloud_upload.button.service_agreement"
+	element "succeeded_description@cloud_upload.label": field "text": "cloud_upload.succeeded.description"
+	element "terms_and_conditions@common_dialogs.main_panel_three_buttons":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$text_name": "cloud_upload.terms.title"
+			variable "$description_text": "cloud_upload.terms.description"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$child_control": "cloud_upload.scrolling_child"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+			variable "$top_button_panel": "cloud_upload.terms_checkbox"
+			variable "$middle_button_panel": "cloud_upload.upload_world_button"
+			variable "$bottom_button_panel": "cloud_upload.service_agreement_button"
+			variable "$tts_label_panel": "cloud_upload.terms_and_conditions_description"
+	element "terms_and_conditions_description@cloud_upload.label": field "text": "cloud_upload.terms.description"
+	element "terms_checkbox@common.checkbox":
+		field "size": ["100%", 30]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "tts_control_type_order_priority": 100
+		field "tts_value_order_priority": 101
+		field "controls":
+			control:
+				element "header_description_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls":
+						control:
+							element "checkbox_visuals@common.toggle_visuals":
+								field "size": [30, "100%"]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+						control:
+							element "buffer_panel":
+								field "type": "panel"
+								field "layer": 3
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$light_button_default_text_color"
+											field "text": "$toggle_label_text"
+											field "size": ["default", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+						control:
+							element "another_panel":
+								field "type": "panel"
+								field "size": [30, "100%"]
+		field "$variables":
+			variable "$toggle_name": "cloud_upload_terms_accepted"
+			variable "$toggle_state_binding_name": "#cloud_upload_terms_accepted"
+			variable "$toggle_label_text|default": "cloud_upload.toggle.accept_terms"
+			variable "$toggle_enabled_binding_type": "global"
+	element "upload_failed@common_dialogs.main_panel_two_buttons":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$show_close_button": false
+			variable "$text_name": "cloud_upload.title"
+			variable "$description_text": "cloud_upload.failed.description"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$child_control": "cloud_upload.scrolling_child"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+			variable "$top_button_panel": "cloud_upload.retry_button"
+			variable "$bottom_button_panel": "cloud_upload.close_button"
+			variable "$tts_label_panel": "cloud_upload.failed_description"
+	element "upload_succeeded@common_dialogs.main_panel_one_button":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$show_close_button": false
+			variable "$text_name": "cloud_upload.title"
+			variable "$description_text": "cloud_upload.succeeded.description"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$child_control": "cloud_upload.scrolling_child"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+			variable "$button_panel": "cloud_upload.close_button"
+			variable "$tts_label_panel": "cloud_upload.succeeded_description"
+	element "upload_world_button@cloud_upload.button":
+		field "size": "$button_size"
+		field "bindings":
+			binding:
+				field "binding_name": "#cloud_upload_terms_accepted"
+				field "binding_name_override": "#enabled"
+				field "binding_condition": "always_when_visible"
+		field "$variables":
+			variable "$pressed_button_name": "button.upload_world"
+			variable "$button_text": "#upload_button_text"
+			variable "$button_text_binding_type": "global"
+Changed namespace "common":
+	Changed element "base_screen":
+		Unchanged field "type": "screen"
+		Changed field "controls":
+			Changed control:
+				Changed element "variables_button_mappings_and_controls":
+					Unchanged field "type": "input_panel"
+					Changed field "variables":
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 42 (+1, -0)
+								Added variable "$cloud_upload_progress_screen_size":
+									item 0: 290
+									item 1: 200
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 42 (+1, -0)
+								Added variable "$cloud_upload_progress_screen_size":
+									item 0: 290
+									item 1: 200
+	Changed element "scroll_background_and_viewport":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "scrolling_view_port":
+					Unchanged field "type": "panel"
+					Added field "max_size" of "$scroll_view_port_max_size".
+	Changed element "scroll_bar_and_track":
+		Unchanged field "type": "panel"
+		Changed field "size" from ["100%c", "100%"] to "$scroll_bar_and_track_size".
+		Added field "$variables":
+			variable "$scroll_bar_and_track_size|default":
+				item 0: "100%c"
+				item 1: "100%"
+	Changed element "scrolling_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "scroll_touch@common.scrolling_panel_base":
+					Changed field "$variables":
+						Total variable: 13 (+1, -0)
+						Added variable "$scroll_view_port_max_size" of "$scroll_view_port_max_size_touch".
+		Changed field "$variables":
+			Total variable: 27 (+2, -0)
+			Added variable "$scroll_view_port_max_size|default":
+				item 0: "100%"
+				item 1: "100%"
+			Added variable "$scroll_view_port_max_size_touch|default":
+				item 0: "100%"
+				item 1: "100%"
+Changed namespace "edu_common":
+	Total element: 74 (+3, -0)
+	Added element "manage_sharelink_body_content_stack":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "layer": 5
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "body_text_centering_panel1@edu_common.vertical_stack_item":
+					field "controls":
+						control:
+							element "body_text1":
+								field "type": "label"
+								field "font_type": "smooth"
+								field "color": "$body_text_color"
+								field "text": "manage.sharepopup.link.body.top"
+								field "size": ["100%", "default"]
+								field "layer": 1
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+			control: element "padding1@common.empty_panel": field "size": ["100%sm", 8]
+			control:
+				element "body_text_centering_panel2@edu_common.vertical_stack_item":
+					field "controls":
+						control:
+							element "body_text2":
+								field "type": "label"
+								field "font_type": "smooth"
+								field "color": "$body_text_color"
+								field "text": "manage.sharepopup.link.body.bottom"
+								field "size": ["100%", "default"]
+								field "layer": 1
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+			control: element "padding2@common.empty_panel": field "size": ["100%sm", 8]
+			control: element "icons@edu_common.icon_section": empty
+			control: element "copy_link_centering_panel@edu_common.vertical_stack_item": field "controls": control: element "copy_link_panel@edu_common.copy_link_stack_panel": empty
+			control: element "padding3@common.empty_panel": field "size": ["100%sm", 8]
+			control:
+				element "manage_access_button@edu_common.underline_button":
+					field "$variables":
+						variable "$single_label_size":
+							item 0: "default"
+							item 1: "default"
+						variable "$single_line_font_scale_factor": 1
+						variable "$pressed_button_name": "button.manage_access"
+						variable "$single_line_label_text": "manage.sharepopup.link.manage"
+						variable "$font_type": "smooth"
+			control: element "padding4@common.empty_panel": field "size": ["100%sm", 8]
+			control:
+				element "learn_more_button@edu_common.underline_button":
+					field "$variables":
+						variable "$single_label_size":
+							item 0: "default"
+							item 1: "default"
+						variable "$single_line_font_scale_factor": 1
+						variable "$pressed_button_name": "button.learn_more"
+						variable "$single_line_label_text": "manage.sharepopup.copy.hyperlink"
+						variable "$font_type": "smooth"
+			control: element "padding5@common.empty_panel": field "size": ["100%sm", 4]
+			control:
+				element "done_button@edu_worlds.world_entry_button_def":
+					field "size": ["100%", 24]
+					field "$variables":
+						variable "$font_type": "default"
+						variable "$button_text": "manage.sharepopup.link.done"
+						variable "$pressed_button_name": "button.close_share_popup"
+	Added element "manage_sharelink_body_panel@edu_common.body_panel" of field "$variables": variable "$body_stack": "edu_common.manage_sharelink_body_content_stack".
+	Added element "manage_sharelink_edu_popup@popup_dialog.form_fit_modal_dialog_popup":
+		field "$variables":
+			variable "$modal_title": "($share_source + '.item.sharepopup.title.simple')"
+			variable "$modal_contents": "edu_common.manage_sharelink_body_panel"
+			variable "$modal_contents_padding":
+				item 0: 6
+				item 1: 6
+			variable "$popup_dialog_escape_button_name": "button.close_share_popup"
+Changed namespace "general_section":
+	Changed element "debug_override_treatments_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "override_treatments_panel_background":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "override_treatment_options_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Total control: 3 (+1, -0)
+									Added control:
+										element "apply_treatments_button@common_buttons.light_text_button":
+											field "size": ["100%", 30]
+											field "$variables":
+												variable "$pressed_button_name": "button.apply_treatments"
+												variable "$button_text": "options.dev_applyTreatments"
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 90 (+2, -0)
+			Added control:
+				element "option_toggle_disable_render_main_menu_paperdoll_animation@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_disableRenderMainMenuPaperdollAnimation"
+						variable "$option_binding_name": "#dev_disable_render_main_menu_paperdoll_animation"
+						variable "$option_enabled_binding_name": "#dev_disable_render_main_menu_paperdoll_animation_enabled"
+						variable "$toggle_name": "dev_disable_render_main_menu_paperdoll_animation"
+			Added control:
+				element "reset_cloud_upload_option@settings_common.action_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.dev_reset_cloud_upload_option"
+						variable "$button_text": "Reset Cloud Upload Dialog Option"
+	Changed element "ui_debug_button@settings_common.section_toggle_base":
+		Changed field "$variables":
+			Total variable: 6 (+0, -0)
+			Changed variable "$glyph_texture" from "textures/ui/focus_border_white" to "textures/ui/ui_debug_glyph".
+			Changed variable "$glyph_color_texture" from "textures/ui/right_split_panel_default" to "textures/ui/ui_debug_glyph_color".
+			Changed variable "$glyph_size":
+				Changed item 0 from 15 to 16.
+				Changed item 1 from 15 to 16.
+Changed namespace "play":
+	Total element: 263 (+3, -0)
+	Added element "cloud_upload_and_edit_world_stack_panel":
+		field "size": ["100%c - 2px", "100%"]
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "cloud@play.cloud_upload_button":
+					field "visible": false
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "local_worlds"
+						binding:
+							field "binding_name": "#cloud_upload_enabled"
+							field "binding_name_override": "#visible"
+			control: element "edit@play.local_world_edit_button": empty
+	Added element "cloud_upload_button@common_buttons.dark_glyph_button":
+		field "size": ["100%y - 1px", "100%"]
+		field "layer": 2
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "local_worlds"
+		field "$variables":
+			variable "$pressed_button_name": "button.cloud_upload"
+			variable "$button_content": "play.upload_icon"
+			variable "$button_tts_header": "accessibility.play.uploadWorld"
+	Changed element "legacy_world_item_button@common_buttons.dark_content_button":
+		Changed field "button_mappings":
+			Total button mapping: 2 (+0, -2)
+			Removed button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.upload_legacy_world"
+				field "mapping_type": "focused"
+			Removed button mapping:
+				field "from_button_id": "button.menu_secondary_select"
+				field "to_button_id": "button.upload_legacy_world"
+				field "mapping_type": "focused"
+	Changed element "local_world_item":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "header_button_panel@play.header_button_panel":
+					Changed field "$variables":
+						Total variable: 3 (+0, -0)
+						Changed variable "$secondary_header_button" from "play.local_world_edit_button" to "play.cloud_upload_and_edit_world_stack_panel".
+	Changed element "more_servers_world_item":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "network_server_world_edit_button@play.network_server_world_edit_button":
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$focus_id" of "edit_server".
+			Changed control:
+				Changed element "additional_server_toggle_base@play.server_toggle_base":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_override_right" of "edit_server".
+	Added element "upload_icon":
+		field "type": "image"
+		field "texture": "textures/ui/upload_glyph"
+		field "size": [16, 16]
+Changed namespace "profile":
+	Total element: 51 (+0, -1)
+	Removed element "achievements_button@common_buttons.light_text_button":
+		field "ignored": "(not $supports_xbl_achievements)"
+		field "size": ["fill", "100%"]
+		field "tts_play_on_unchanged_focus_control": true
+		field "bindings":
+			binding:
+				field "binding_name": "#enable_achievement_button"
+				field "binding_name_override": "#enabled"
+				field "binding_condition": "always"
+		field "$variables":
+			variable "$pressed_button_name": "button.achievements"
+			variable "$button_text": "gui.achievements"
+			variable "$font_type": "MinecraftTen"
+			variable "$button_font_scale_factor": 1.0
+			variable "$new_ui_label_offset":
+				item 0: 0
+				item 1: 2
+			variable "$button_text_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$button_text_max_size":
+				item 0: "100%"
+				item 1: "100%"
+			variable "$persona_focus_precedence": 3
+Changed namespace "scoreboard":
+	Changed element "scoreboard_sidebar":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "main":
+					Unchanged field "type": "image"
+					Changed field "controls":
+						Changed control:
+							Changed element "lists":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "scores":
+											Unchanged field "type": "stack_panel"
+											Added field "use_child_anchors" of true.
+								Removed field "inherit_max_sibling_width" of true.
+	Changed element "scoreboard_sidebar_player":
+		Unchanged field "type": "label"
+		Removed field "text_alignment" of "left".
+		Removed field "anchor_from" of "top_right".
+		Removed field "anchor_to" of "top_right".
+		Removed field "inherit_max_sibling_width" of true.
+	Changed element "scoreboard_sidebar_score":
+		Unchanged field "type": "label"
+		Removed field "text_alignment" of "right".
+		Removed field "inherit_max_sibling_width" of true.
+Changed namespace "start":
+	Total element: 68 (+6, -0)
+	Added element "cloud_upload_description":
+		field "type": "label"
+		field "size": ["100% - 4px", "default"]
+		field "font_type": "smooth"
+		field "line_padding": 1.5
+		field "color": "$body_text_color"
+		field "text": "cloud_upload.prompt.description"
+	Added element "cloud_upload_do_not_show_checkbox@common.checkbox":
+		field "size": ["100%", 30]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "tts_control_type_order_priority": 100
+		field "tts_value_order_priority": 101
+		field "controls":
+			control:
+				element "header_description_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls":
+						control:
+							element "checkbox_visuals@common.toggle_visuals":
+								field "size": [30, "100%"]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+						control:
+							element "buffer_panel":
+								field "type": "panel"
+								field "layer": 3
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "color": "$light_button_default_text_color"
+											field "text": "$toggle_label_text"
+											field "size": ["default", "default"]
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+						control:
+							element "another_panel":
+								field "type": "panel"
+								field "size": [30, "100%"]
+		field "$variables":
+			variable "$toggle_name": "cloud_upload_do_not_show_again"
+			variable "$toggle_state_binding_name": "#cloud_upload_do_not_show_again"
+			variable "$toggle_label_text|default": "cloud_upload.prompt.do_not_show_toggle"
+			variable "$toggle_enabled_binding_type": "global"
+	Added element "cloud_upload_learn_more_button@popup_dialog.popup_dialog_button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.learn_more"
+			variable "$button_text": "cloud_upload.prompt.button.learn_more"
+	Added element "cloud_upload_prompt@common_dialogs.main_panel_three_buttons":
+		field "size": [300, 200]
+		field "layer": 101
+		field "$variables":
+			variable "$fill_alpha": 1
+			variable "$text_name": "cloud_upload.title"
+			variable "$description_text": "cloud_upload.prompt.description"
+			variable "$button_size":
+				item 0: "100%"
+				item 1: 30
+			variable "$close_button_to_button_id": "button.close_cloud_upload_prompt"
+			variable "$child_control": "start.scrolling_child"
+			variable "$scrolling_content": "common.tts_label_focus_wrapper"
+			variable "$top_button_panel": "start.cloud_upload_do_not_show_checkbox"
+			variable "$middle_button_panel": "start.cloud_upload_worlds_button"
+			variable "$bottom_button_panel": "start.cloud_upload_learn_more_button"
+			variable "$tts_label_panel": "start.cloud_upload_description"
+	Added element "cloud_upload_worlds_button@popup_dialog.popup_dialog_button":
+		field "size": "$button_size"
+		field "$variables":
+			variable "$pressed_button_name": "button.worlds"
+			variable "$button_text": "cloud_upload.prompt.button.worlds"
+	Changed element "lower_online_buttons_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_column":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "signingin":
+								Unchanged field "type": "label"
+								Changed field "max_size":
+									Changed item 0 from 150 to 120.
+									Unchanged item 1: "100%"
+	Added element "scrolling_child":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100% - 1px"
+							item 1: "100% - 2px"
+						variable "$scroll_view_port_size":
+							item 0: "100% - 4px"
+							item 1: "100% - 4px"
+						variable "$scroll_view_port_offset":
+							item 0: 3
+							item 1: 2
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100% - 2px"
+						variable "$show_background": false
+	Changed element "start_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 6 (+1, -0)
+			Added control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids": control id "cloud_upload_prompt": "@start.cloud_upload_prompt"
+Changed namespace "update_version":
+	Changed element "update_version_popup@common_dialogs.main_panel_one_button":
+		Added field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_exit"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+Removed namespace "world_conversion_error_report":
+	element "dialog@common_dialogs.main_panel_no_buttons":
+		field "size": [280, 206]
+		field "$variables":
+			variable "$text_name": "worldConversionErrorReport.title"
+			variable "$child_control": "world_conversion_error_report.dialog_content"
+			variable "$show_close_button": false
+	element "dialog_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 4px", "100% - 4px"]
+		field "controls":
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 1]
+			control:
+				element "dropdown_visibility_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c - 2px"]
+					field "ignored": "$hide_report_reason_dropdown"
+					field "controls":
+						control:
+							element "error_dropdown@settings_common.option_dropdown":
+								field "$variables":
+									variable "$button_type_panel": "world_conversion_error_report.error_dropdown_panel"
+									variable "$show_option_label": false
+									variable "$option_label": "#report_reason_dropdown_toggle_label"
+									variable "$dropdown_content": "world_conversion_error_report.report_dropdown_content"
+									variable "$dropdown_area": "main_panel"
+									variable "$dropdown_name": "report_reason_dropdown"
+									variable "$options_dropdown_toggle_label_binding": "#report_reason_dropdown_toggle_label"
+									variable "$dropdown_scroll_content_size":
+										item 0: "100%"
+										item 1: 116
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "ignored": "$hide_report_reason_dropdown"
+					field "size": ["100%", 2]
+			control: element "terms_and_conditions@world_conversion_error_report.terms_and_conditions": field "size": ["100%", "fill"]
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "report_button@common_buttons.dark_text_button":
+					field "size": ["100%", 30]
+					field "$variables":
+						variable "$pressed_button_name": "button.report"
+						variable "$button_text": "worldConversionErrorReport.button.reportAndSend"
+			control:
+				element "padding_3":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "view_terms@common_buttons.dark_text_button":
+					field "size": ["100%", 30]
+					field "$variables":
+						variable "$pressed_button_name": "button.view_terms"
+						variable "$button_text": "worldConversionErrorReport.terms.viewTerms"
+			control:
+				element "padding_4":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "back_button@common_buttons.dark_text_button":
+					field "size": ["100%", 30]
+					field "$variables":
+						variable "$pressed_button_name": "button.back"
+						variable "$button_text": "gui.goBack"
+	element "error_dropdown_panel":
+		field "type": "stack_panel"
+		field "size": ["100% - 12px", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "label_panel":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+					field "controls": control: element "report_label@world_conversion_error_report.report_label": empty
+			control:
+				element "arrow_panel":
+					field "type": "panel"
+					field "layer": 1
+					field "size": ["100%c", "100%"]
+					field "controls": control: element "arrow@settings_common.arrow_image": empty
+	element "gamepad_helpers":
+		field "type": "panel"
+		field "layer": 2
+		field "controls":
+			control:
+				element "gamepad_helper_a@common.gamepad_helper_a":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": ["-10%", "-5%"]
+			control:
+				element "gamepad_helper_b@common.gamepad_helper_b":
+					field "anchor_from": "bottom_middle"
+					field "anchor_to": "bottom_middle"
+					field "offset": ["10%", "-5%"]
+	element "report_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "size": ["100%", "100%c"]
+		field "$variables":
+			variable "$show_option_label": false
+			variable "$radio_buttons":
+				item 0:
+					field "mobs@settings_common.radio_with_label":
+						field "min_size":
+							item 0: "100%"
+							item 1: 22
+						field "$toggle_state_binding_name": "#mobs"
+						field "$radio_label_text": "worldConversionErrorReport.dropdown.mobs"
+				item 1:
+					field "terrain@settings_common.radio_with_label":
+						field "min_size":
+							item 0: "100%"
+							item 1: 22
+						field "$toggle_state_binding_name": "#terrain"
+						field "$radio_label_text": "worldConversionErrorReport.dropdown.terrain"
+				item 2:
+					field "items_missing@settings_common.radio_with_label":
+						field "min_size":
+							item 0: "100%"
+							item 1: 22
+						field "$toggle_state_binding_name": "#items_missing"
+						field "$radio_label_text": "worldConversionErrorReport.dropdown.itemsMissing"
+				item 3:
+					field "item_interaction@settings_common.radio_with_label":
+						field "min_size":
+							item 0: "100%"
+							item 1: 22
+						field "$toggle_state_binding_name": "#item_interaction"
+						field "$radio_label_text": "worldConversionErrorReport.dropdown.itemInteraction"
+				item 4:
+					field "world_conversion@settings_common.radio_with_label":
+						field "min_size":
+							item 0: "100%"
+							item 1: 22
+						field "$toggle_state_binding_name": "#world_conversion_failed"
+						field "$radio_label_text": "worldConversionErrorReport.dropdown.worldConversion"
+	element "report_label@common.new_button_label":
+		field "layer": 2
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "size": ["100%", "default"]
+		field "text": "$options_dropdown_toggle_label_binding"
+		field "bindings": binding: field "binding_name": "$options_dropdown_toggle_label_binding"
+	element "terms_and_conditions":
+		field "type": "label"
+		field "text": "worldConversionErrorReport.terms.agreementForBeta"
+		field "size": ["100%", "default"]
+		field "font_type": "smooth"
+		field "color": "$body_text_color"
+	element "world_conversion_error_report_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "$variables": variable "$screen_content": "world_conversion_error_report.world_conversion_error_report_screen_content"
+	element "world_conversion_error_report_screen_content":
+		field "type": "panel"
+		field "controls":
+			control: element "gamepad_helpers@world_conversion_error_report.gamepad_helpers": empty
+			control: element "main_panel@world_conversion_error_report.dialog": field "layer": 1
+Changed namespace "world_section":
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 52 (+0, -1)
+			Removed control:
+				element "show_border_effect@settings_common.option_toggle":
+					field "$variables":
+						variable "$tts_section_header": "createWorldScreen.cheatSettings"
+						variable "$option_label": "createWorldScreen.showbordereffect"
+						variable "$option_binding_name": "#show_border_effect"
+						variable "$option_enabled_binding_name": "#show_border_effect_enabled"
+						variable "$toggle_name": "show_border_effect"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+						variable "$toggle_binding_condition": "always_when_visible"

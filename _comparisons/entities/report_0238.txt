@@ -1,0 +1,484 @@
+Difference of "entities" between "1.21.41" and "1.21.50.20" (beta of "1.21.50").
+
+Total entity: 123 (+1, -0)
+Added entity "creaking.json":
+	behavior pack "core":
+		field "format_version": "1.21.50"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:creaking"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:creaking_state":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "neutral"
+						field "values":
+							possible property: "neutral"
+							possible property: "hostile_observed"
+							possible property: "hostile_unobserved"
+				description "spawn_category": "monster"
+			field "component_groups":
+				component group "minecraft:hostile":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "any_of":
+										filter:
+											filter property "test": "has_target"
+											filter property "value": false
+										filter:
+											filter property "test": "actor_health"
+											filter property "subject": "target"
+											filter property "value": 0
+										filter:
+											filter property "test": "target_distance"
+											filter property "operator": ">"
+											filter property "value": 24
+								field "event": "minecraft:become_neutral"
+					component "minecraft:looked_at":
+						field "search_radius": 24.0
+						field "look_at_locations":
+							location: "head"
+							location: "body"
+							location: "feet"
+						field "set_target": "never"
+						field "find_players_only": true
+						field "looked_at_cooldown": 0.1
+						field "field_of_view": 120
+						field "scale_fov_by_distance": false
+						field "line_of_sight_obstruction_type": "collision_for_camera"
+						field "looked_at_event":
+							field "event": "minecraft:on_target_start_looking"
+							field "filter": "self"
+						field "not_looked_at_event":
+							field "event": "minecraft:on_target_stop_looking"
+							field "filter": "self"
+						field "filters":
+							filter property "none_of":
+								filter:
+									filter property "test": "actor_health"
+									filter property "subject": "target"
+									filter property "value": 0
+								filter:
+									filter property "test": "has_equipment"
+									filter property "subject": "other"
+									filter property "domain": "head"
+									filter property "value": "carved_pumpkin"
+				component group "minecraft:hostile_observed": component "minecraft:body_rotation_blocked": empty
+				component group "minecraft:hostile_unobserved": component "minecraft:behavior.melee_box_attack": field "priority": 2
+				component group "minecraft:immobile":
+					component "minecraft:knockback_resistance": field "value": 1.0
+					component "minecraft:movement": field "value": 0.0
+					component "minecraft:pushable":
+						field "is_pushable": false
+						field "is_pushable_by_piston": false
+				component group "minecraft:mobile":
+					component "minecraft:knockback_resistance": field "value": 0.0
+					component "minecraft:movement": field "value": 0.3
+					component "minecraft:pushable":
+						field "is_pushable": true
+						field "is_pushable_by_piston": true
+					component "minecraft:behavior.float": field "priority": 0
+				component group "minecraft:neutral":
+					component "minecraft:ambient_sound_interval": empty
+					component "minecraft:looked_at":
+						field "search_radius": 12.0
+						field "look_at_locations":
+							location: "head"
+							location: "body"
+							location: "feet"
+						field "set_target": "once_and_keep_scanning"
+						field "find_players_only": true
+						field "looked_at_cooldown": 0.1
+						field "field_of_view": 120
+						field "scale_fov_by_distance": false
+						field "line_of_sight_obstruction_type": "collision_for_camera"
+						field "looked_at_event":
+							field "event": "minecraft:become_hostile"
+							field "filter": "self"
+						field "filters":
+							filter property "test": "actor_health"
+							filter property "subject": "other"
+							filter property "operator": ">"
+							filter property "value": 0
+					component "minecraft:behavior.random_stroll":
+						field "priority": 7
+						field "speed_multiplier": 0.667
+				component group "minecraft:spawned_by_creaking_heart":
+					component "minecraft:damage_sensor":
+						field "triggers":
+							trigger:
+								field "cause": "void"
+								field "deals_damage": "yes"
+							trigger:
+								field "on_damage":
+									field "filters":
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "player"
+									field "event": "minecraft:attacked_by_player"
+								field "cause": "all"
+								field "deals_damage": "no_but_side_effects_apply"
+							trigger:
+								field "on_damage":
+									field "filters":
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "mob"
+									field "event": "minecraft:attacked_by_mob"
+								field "cause": "all"
+								field "deals_damage": "no_but_side_effects_apply"
+							trigger:
+								field "cause": "all"
+								field "deals_damage": "no_but_side_effects_apply"
+					component "minecraft:dimension_bound": empty
+					component "minecraft:home":
+						field "restriction_type": "all_movement"
+						field "restriction_radius": 32
+					component "minecraft:transient": empty
+				component group "minecraft:spawned_by_player": component "minecraft:nameable": empty
+				component group "minecraft:swaying":
+					component "minecraft:behavior.timer_flag_1":
+						field "priority": 0
+						field "cooldown_range": 0.0
+						field "duration_range": [0.3, 0.3]
+						field "on_end":
+							field "event": "minecraft:stop_swaying"
+							field "target": "self"
+			field "components":
+				component "minecraft:attack": field "damage": 2
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.9
+					field "height": 2.7
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:fire_immune": empty
+				component "minecraft:follow_range":
+					field "value": 32
+					field "max": 32
+				component "minecraft:health":
+					field "value": 1
+					field "max": 1
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:movement.basic": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "can_path_over_lava": true
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "creaking"
+						family: "monster"
+						family: "mob"
+				component "minecraft:variable_max_auto_step":
+					field "base_value": 1.0625
+					field "jump_prevented_value": 0.5625
+			field "events":
+				event "minecraft:attacked_by_mob": field "trigger": "minecraft:start_swaying"
+				event "minecraft:attacked_by_player":
+					field "trigger": "minecraft:start_swaying"
+					field "execute_event_on_home_block": field "event": "minecraft:on_spawned_creaking_damaged_by_player"
+				event "minecraft:become_hostile":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:hostile"
+							component group: "minecraft:hostile_observed"
+							component group: "minecraft:immobile"
+					field "emit_vibration": field "vibration": "entity_act"
+					field "filters":
+						filter property "test": "enum_property"
+						filter property "domain": "minecraft:creaking_state"
+						filter property "value": "neutral"
+					field "play_sound": field "sound": "activate"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:neutral"
+							component group: "minecraft:hostile_unobserved"
+							component group: "minecraft:mobile"
+					field "set_property": property "minecraft:creaking_state": "hostile_observed"
+				event "minecraft:become_neutral":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:neutral"
+							component group: "minecraft:mobile"
+					field "emit_vibration": field "vibration": "entity_act"
+					field "filters":
+						filter property "test": "enum_property"
+						filter property "domain": "minecraft:creaking_state"
+						filter property "operator": "not"
+						filter property "value": "neutral"
+					field "play_sound": field "sound": "deactivate"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:hostile"
+							component group: "minecraft:hostile_observed"
+							component group: "minecraft:hostile_unobserved"
+							component group: "minecraft:immobile"
+					field "reset_target": empty
+					field "set_property": property "minecraft:creaking_state": "neutral"
+				event "minecraft:entity_spawned":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:spawned_by_player"
+							component group: "minecraft:neutral"
+							component group: "minecraft:mobile"
+				event "minecraft:entity_spawned_by_creaking_heart":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:spawned_by_creaking_heart"
+							component group: "minecraft:neutral"
+							component group: "minecraft:mobile"
+				event "minecraft:on_target_start_looking":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:hostile"
+							component group: "minecraft:hostile_observed"
+							component group: "minecraft:immobile"
+					field "emit_vibration": field "vibration": "entity_act"
+					field "filters":
+						filter property "test": "enum_property"
+						filter property "domain": "minecraft:creaking_state"
+						filter property "value": "hostile_unobserved"
+					field "play_sound": field "sound": "freeze"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:neutral"
+							component group: "minecraft:hostile_unobserved"
+							component group: "minecraft:mobile"
+					field "set_property": property "minecraft:creaking_state": "hostile_observed"
+				event "minecraft:on_target_stop_looking":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:hostile"
+							component group: "minecraft:hostile_unobserved"
+							component group: "minecraft:mobile"
+					field "emit_vibration": field "vibration": "entity_act"
+					field "filters":
+						filter property "test": "enum_property"
+						filter property "domain": "minecraft:creaking_state"
+						filter property "value": "hostile_observed"
+					field "play_sound": field "sound": "unfreeze"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:neutral"
+							component group: "minecraft:hostile_observed"
+							component group: "minecraft:immobile"
+					field "set_property": property "minecraft:creaking_state": "hostile_unobserved"
+				event "minecraft:start_swaying": field "add": field "component_groups": component group: "minecraft:swaying"
+				event "minecraft:stop_swaying": field "remove": field "component_groups": component group: "minecraft:swaying"
+Changed entity "enderman.json":
+	Changed behavior pack "core":
+		Removed field "use_beta_features" of true.
+Changed entity "evocation_illager.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.21.50".
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:evocation_illager"
+				Removed description "is_experimental" of false.
+			Changed field "components":
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Total entity type: 2 (+1, -0)
+						Added entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "creaking"
+							field "max_dist": 8
+							field "sprint_speed_multiplier": 1.2
+				Changed component "minecraft:behavior.hurt_by_target":
+					Added field "entity_types":
+						field "filters":
+							filter property "test": "is_family"
+							filter property "subject": "other"
+							filter property "operator": "!="
+							filter property "value": "illager"
+						field "max_dist": 64
+				Changed component "minecraft:behavior.summon_entity":
+					Changed field "summon_choices":
+						Changed choice:
+							Changed field "sequence":
+								Changed spell sequence step 0:
+									Unchanged field "shape": "circle"
+									Added field "summon_event" of "minecraft:add_damage_timer".
+Changed entity "fox.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.30" to "1.21.40".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:damage_sensor":
+					Changed field "triggers":
+						Total trigger: 1 (+1, -1)
+						Removed trigger:
+							field "on_damage":
+								field "filters":
+									filter property "test": "is_block"
+									filter property "subject": "block"
+									filter property "value": "minecraft:sweet_berry_bush"
+							field "deals_damage": false
+						Added trigger:
+							field "on_damage":
+								field "filters":
+									filter property "test": "is_block"
+									filter property "subject": "block"
+									filter property "value": "minecraft:sweet_berry_bush"
+							field "deals_damage": "no"
+				Changed component "minecraft:shareables":
+					Changed field "items":
+						Total item: 40 (+1, -0)
+						Added item:
+							field "item": "minecraft:bundle"
+							field "priority": 1
+							field "max_amount": 1
+Changed entity "pillager.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.50".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 33 (+1, -0)
+				Added component "minecraft:behavior.avoid_mob_type":
+					field "priority": 1
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "creaking"
+							field "max_dist": 8
+							field "sprint_speed_multiplier": 1.2
+Changed entity "ravager.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.17.20" to "1.21.50".
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:ravager"
+				Removed description "is_experimental" of false.
+			Changed field "components":
+				Changed component "minecraft:break_blocks":
+					Changed field "breakable_blocks":
+						Total block: 45 (+7, -31)
+						Removed block "acacia_leaves".
+						Removed block "acacia_sapling".
+						Removed block "allium".
+						Removed block "azure_bluet".
+						Removed block "birch_leaves".
+						Removed block "birch_sapling".
+						Removed block "blue_orchid".
+						Removed block "cornflower".
+						Removed block "dark_oak_leaves".
+						Removed block "dark_oak_sapling".
+						Added block "double_plant".
+						Removed block "fern".
+						Removed block "jungle_leaves".
+						Removed block "jungle_sapling".
+						Removed block "large_fern".
+						Added block "leaves".
+						Added block "leaves2".
+						Removed block "lilac".
+						Removed block "lily_of_the_valley".
+						Removed block "oak_leaves".
+						Removed block "oak_sapling".
+						Removed block "orange_tulip".
+						Removed block "oxeye_daisy".
+						Added block "pale_hanging_moss".
+						Removed block "peony".
+						Removed block "pink_tulip".
+						Removed block "poppy".
+						Added block "red_flower".
+						Removed block "red_tulip".
+						Removed block "rose_bush".
+						Added block "sapling".
+						Removed block "short_grass".
+						Removed block "spruce_leaves".
+						Removed block "spruce_sapling".
+						Removed block "sunflower".
+						Removed block "tall_grass".
+						Added block "tallgrass".
+						Removed block "white_tulip".
+Changed entity "sniffer.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.50".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "sniffer_search_and_dig":
+					Changed component "minecraft:behavior.random_search_and_dig":
+						Unchanged field "item_table": "loot_tables/gameplay/entities/sniffer_seeds.json"
+						Changed field "target_blocks":
+							Total block: 9 (+2, -1)
+							Added block "minecraft:grass".
+							Removed block "minecraft:grass_block".
+							Added block "minecraft:pale_moss_block".
+			Changed field "components":
+				Changed component "minecraft:hurt_on_condition":
+					Changed field "damage_conditions":
+						Changed damage condition:
+							Changed field "filters":
+								Unchanged filter property "test": "in_lava"
+								Unchanged filter property "subject": "self"
+								Removed filter property "operator" of "==".
+								Removed filter property "value" of true.
+Changed entity "vex.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Added field "component_groups":
+				component group "minecraft:periodic_damage":
+					component "minecraft:damage_over_time":
+						field "damage_per_hurt": 1
+						field "time_between_hurt": 1.0
+				component group "minecraft:start_damage_timer":
+					component "minecraft:timer":
+						field "looping": false
+						field "randomInterval": true
+						field "time": [30, 119]
+						field "time_down_event": field "event": "minecraft:add_periodic_damage"
+			Added field "events":
+				event "minecraft:add_damage_timer": field "add": field "component_groups": component group: "minecraft:start_damage_timer"
+				event "minecraft:add_periodic_damage":
+					field "add": field "component_groups": component group: "minecraft:periodic_damage"
+					field "remove": field "component_groups": component group: "minecraft:start_damage_timer"
+Changed entity "vindicator.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.50".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:vindicator_johnny":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "entity_types":
+							Changed entity type:
+								Changed field "filters":
+									Removed filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "operator": "!="
+											filter property "value": "illager"
+									Added filter property "test" of "is_family".
+									Added filter property "subject" of "other".
+									Added filter property "operator" of "!=".
+									Added filter property "value" of "illager".
+			Changed field "components":
+				Total component: 33 (+1, -0)
+				Added component "minecraft:behavior.avoid_mob_type":
+					field "priority": 2
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "creaking"
+							field "max_dist": 8
+							field "sprint_speed_multiplier": 1.2
+				Changed component "minecraft:behavior.hurt_by_target":
+					Added field "entity_types":
+						field "filters":
+							filter property "test": "is_family"
+							filter property "subject": "other"
+							filter property "operator": "!="
+							filter property "value": "illager"
+						field "max_dist": 64

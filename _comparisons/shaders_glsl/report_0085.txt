@@ -1,0 +1,162 @@
+Difference of "shaders_resource_packs" between "1.16.230.56" (beta of "1.17.0") and "1.17.0.50" (beta of "1.17.0").
+
+Changed resource pack "hb_yuv_2_rgb.fragment":
+	Changed file "vanilla":
+		Total line: 32 (+0, -0)
+		        '''
+		        ...
+		16 16   LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		17 17   LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		18 18   
+		19 19   void main() {
+		20 20   	vec3 YCbCr;
+		   21 + 	YCbCr.x = texture2D(TEXTURE_0, AdditionalOut.xy).r;
+		   22 + 	YCbCr.y = texture2D(TEXTURE_1, AdditionalOut.xy).r;
+		   23 + 	YCbCr.z = texture2D(TEXTURE_2, AdditionalOut.xy).r;
+		21    - 	YCbCr.x = texture2D(TEXTURE_0, AdditionalOut.xy).a;
+		22    - 	YCbCr.y = texture2D(TEXTURE_1, AdditionalOut.xy).a;
+		23    - 	YCbCr.z = texture2D(TEXTURE_2, AdditionalOut.xy).a;
+		24 24   
+		25 25   	// https://en.wikipedia.org/wiki/YCbCr
+		26 26   	YCbCr -= vec3(0.0625, 0.5, 0.5);
+		27 27   	mat3 yuv2rgb = mat3(vec3(1.164, 1.164, 1.164), vec3(0, -0.391, 2.018), vec3(1.596, -0.813, 0));
+		28 28   	vec3 rgb = yuv2rgb * YCbCr;
+		        ...
+		        '''
+Added resource pack "hb_yuva_2_rgb.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This shader is from the Gameface library modified to work in the
+		// Bedrock engine and heavily depends on Gameface's functionality, why
+		// some numbers and values seem arbitrary or "magic".
+		
+		#include "fragmentVersionSimple.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		// We need this here even if we do not use it as some drivers require
+		// the verying variables to match between the vertex and fragment shaders.
+		varying vec3 ScreenNormalPosition;
+		
+		LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		LAYOUT_BINDING(3) uniform sampler2D TEXTURE_3;
+		
+		void main() {
+			vec3 YCbCr;
+			YCbCr.x = texture2D(TEXTURE_0, AdditionalOut.xy).r;
+			YCbCr.y = texture2D(TEXTURE_1, AdditionalOut.xy).r;
+			YCbCr.z = texture2D(TEXTURE_2, AdditionalOut.xy).r;
+		
+			// https://en.wikipedia.org/wiki/YCbCr
+			YCbCr -= vec3(0.0625, 0.5, 0.5);
+			mat3 yuv2rgb = mat3(vec3(1.164, 1.164, 1.164), vec3(0, -0.391, 2.018), vec3(1.596, -0.813, 0));
+			vec3 rgb = yuv2rgb * YCbCr;
+		
+			float a = texture2D(TEXTURE_3, AdditionalOut.xy).r;
+			float alpha = ColorOut.a;
+			alpha *= a;
+			gl_FragColor = vec4(rgb * alpha, alpha);
+		}
+		'''
+Changed resource pack "rain_snow.fragment":
+	Changed file "vanilla":
+		Total line: 72 (+8, -2)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "fragmentVersionSimple.h"
+		 5  5   #include "uniformMacro.h"
+		    6 + #include "uniformPerFrameConstants.h"
+		 6  7   
+		    8 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		    9 + LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		   10 + LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		   11 + LAYOUT_BINDING(3) uniform sampler2D TEXTURE_3;
+		 7    - LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 8    - LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		 9    - LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		10 12   
+		11 13   varying vec2 uv;
+		12 14   varying vec4 color;
+		13 15   varying vec4 worldPosition;
+		14 16   varying vec4 fogColor;
+		        ...
+		23 25   #endif
+		24 26   
+		25 27   	albedo.a *= color.a;
+		26 28   
+		27 29   	vec2 occlusionUV = worldPosition.xz;
+		   30 + 	vec4 luminanceTexture = texture2D( TEXTURE_1, occlusionUV);
+		   31 + 	vec4 occlusionTexture = texture2D( TEXTURE_3, occlusionUV);
+		28    - 	vec4 occlusionTexture = texture2D( TEXTURE_1, occlusionUV);
+		29 32   
+		30 33   #ifndef FLIP_OCCLUSION
+		31 34   #define OCCLUSION_OPERATOR <
+		32 35   #else
+		33 36   #define OCCLUSION_OPERATOR >
+		34 37   #endif
+		35 38   
+		36 39   #ifdef SNOW
+		   40 + #define OCCLUSION_LUMINANCE luminanceTexture.r
+		   41 + #define OCCLUSION_HEIGHT_ONES occlusionTexture.r
+		   42 + #define OCCLUSION_HEIGHT_TENS occlusionTexture.g
+		   43 + #else 
+		37    - #define OCCLUSION_HEIGHT occlusionTexture.g
+		38    - #define OCCLUSION_LUMINANCE occlusionTexture.r
+		39    - #else
+		   44 + #define OCCLUSION_LUMINANCE luminanceTexture.b
+		   45 + #define OCCLUSION_HEIGHT_ONES occlusionTexture.b
+		   46 + #define OCCLUSION_HEIGHT_TENS occlusionTexture.a
+		40    - #define OCCLUSION_HEIGHT occlusionTexture.a
+		41    - #define OCCLUSION_LUMINANCE occlusionTexture.b
+		42 47   #endif
+		   48 + 
+		   49 + 	float occlusion_height = OCCLUSION_HEIGHT_ONES + (OCCLUSION_HEIGHT_TENS * 255.0f) - (OCCLUSION_HEIGHT_OFFSET / 255.0f);
+		43 50   
+		   51 + #ifndef NO_OCCLUSION
+		44 52   	// clamp the uvs
+		45    - #ifndef NO_OCCLUSION
+		46 53   	if ( occlusionUV.x >= 0.0 && occlusionUV.x <= 1.0 && 
+		47 54   		 occlusionUV.y >= 0.0 && occlusionUV.y <= 1.0 && 
+		   55 + 		 worldPosition.y OCCLUSION_OPERATOR occlusion_height) {
+		48    - 		 worldPosition.y OCCLUSION_OPERATOR OCCLUSION_HEIGHT) {
+		49 56   		albedo.a = 0.0;
+		50 57   	}
+		51 58   #endif
+		52 59   
+		   60 + 	float mixAmount = (worldPosition.y - occlusion_height)*25.0;
+		53    - 	float mixAmount = (worldPosition.y - OCCLUSION_HEIGHT)*25.0;
+		54 61   	vec2 lightingUVs = vec2(OCCLUSION_LUMINANCE, 1.0);
+		55 62   	lightingUVs.x = mix(lightingUVs.x, 0.0, mixAmount);
+		56 63   
+		57 64   	vec3 lighting = texture2D( TEXTURE_2, lightingUVs ).rgb;
+		58 65   	vec4 finalOutput = albedo;
+		        ...
+		60 67   
+		61 68   	//apply fog
+		62 69   	gl_FragColor.rgb = mix( finalOutput.rgb, fogColor.rgb, fogColor.a );
+		63 70   	gl_FragColor.a = finalOutput.a;
+		64 71   }
+		65    - 
+		66 72   
+		        '''
+Changed resource pack "uniformPerFrameConstants.h":
+	Changed file "vanilla":
+		Total line: 19 (+1, -0)
+		        '''
+		        ...
+		11 11   UNIFORM float TIME;
+		12 12   UNIFORM vec4 FOG_COLOR;
+		13 13   UNIFORM vec2 FOG_CONTROL;
+		14 14   UNIFORM float RENDER_DISTANCE;
+		15 15   UNIFORM float FAR_CHUNKS_DISTANCE;
+		   16 + UNIFORM float OCCLUSION_HEIGHT_OFFSET;
+		16 17   END_UNIFORM_BLOCK
+		17 18   
+		18 19   #endif
+		        '''

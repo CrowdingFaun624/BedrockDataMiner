@@ -1,0 +1,304 @@
+Difference of "ui" between "1.19.60.20" (beta of "1.19.60") and "1.19.60.22" (beta of "1.19.60").
+
+Changed namespace "gathering_info":
+	Changed element "info_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "left_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "stack":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Total control: 10 (+3, -0)
+									Added control element "pad_fill@common.empty_panel": field "size": ["100%", "fill"].
+									Added control:
+										element "gathering_id_label":
+											field "type": "label"
+											field "text": "#gathering_id_label"
+											field "size": ["100%", "default"]
+											field "color": "$alert_label_background_color"
+											field "text_alignment": "center"
+											field "font_size": "small"
+											field "bindings":
+												binding:
+													field "binding_name": "#gathering_id_label"
+													field "binding_condition": "once"
+									Added control element "pad_5@common.empty_panel": field "size": ["100%", "5px"].
+Changed namespace "general_section":
+	Total element: 133 (+1, -0)
+	Changed element "account_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 20 (+1, -0)
+			Added control:
+				element "use_edu_remember_me@settings_common.option_toggle":
+					field "ignored": "$ignore_profile_sso_toggle"
+					field "$variables":
+						variable "$option_label": "options.adEduRememberMe"
+						variable "$option_binding_name": "#ad_edu_remember_me"
+						variable "$toggle_name": "ad_edu_remember_me"
+	Added element "new_death_grid_item@settings_common.radio_with_label":
+		field "bindings":
+			binding:
+				field "binding_name": "#default_focus_precedence"
+				field "binding_type": "collection"
+				field "binding_condition": "visible"
+				field "binding_collection_name": "dev_new_death_screen_radio"
+		field "$variables":
+			variable "$toggle_state_binding_name": "#initial_selected"
+			variable "$radio_label_text": "#description"
+			variable "$radio_label_bindings":
+				item 0:
+					field "binding_name": "#description"
+					field "binding_type": "collection"
+					field "binding_condition": "once"
+					field "binding_collection_name": "dev_new_death_screen_radio"
+			variable "$radio_toggle_group": true
+			variable "$toggle_binding_type": "collection"
+			variable "$toggle_name": "dev_new_death_screen_radio"
+			variable "$toggle_grid_collection_name": "dev_new_death_screen_radio"
+			variable "$option_enabled_binding_name": ""
+	Changed element "ui_debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 34 (+4, -0)
+			Added control:
+				element "new_death_screen_radio_label":
+					field "type": "label"
+					field "text": "New Death Screen (Experimental - To be added)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+			Added control:
+				element "new_death_screen_radio_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Added control:
+				element "new_death_screen_radio_button":
+					field "type": "grid"
+					field "size": ["100%", "100%c"]
+					field "grid_item_template": "general_section.new_death_grid_item"
+					field "grid_dimension_binding": "#dev_new_death_screen_radio_dimension"
+					field "collection_name": "dev_new_death_screen_radio"
+					field "bindings":
+						binding:
+							field "binding_name": "#dev_new_death_screen_radio_dimension"
+							field "binding_condition": "visible"
+			Added control:
+				element "new_death_screen_radio_button_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+Changed namespace "persona_common":
+	Changed element "emote_label":
+		Unchanged field "type": "label"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from 100 to "default".
+	Changed element "emote_wheel_panel@common_dialogs.main_panel":
+		Changed field "controls":
+			Changed control:
+				Changed element "emote_name@persona_common.emote_label":
+					Changed field "size":
+						Unchanged item 0: 35
+						Changed item 1 from 35 to "default".
+					Removed field "offset" of [0, "7%"].
+					Added field "max_size" of [35, 35].
+Changed namespace "realmsPlus_buy":
+	Changed element "terms_and_conditions_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "terms_string_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "buttons_stack_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "agree_panel":
+											Unchanged field "type": "panel"
+											Changed field "controls":
+												Total control: 1 (+1, -2)
+												Removed control:
+													element "checkbox_control@common.checkbox":
+														field "size": ["50%", "100%"]
+														field "offset": [0, 0]
+														field "anchor_from": "left_middle"
+														field "anchor_to": "left_middle"
+														field "focus_change_up": "2users"
+														field "focus_identifier": "checkbox_control"
+														field "bindings":
+															binding:
+																field "binding_name": "#has_checked_tos"
+																field "binding_name_override": "#toggle_state"
+														field "$variables":
+															variable "$checkbox_alignment": "left_middle"
+															variable "$checkbox_offset":
+																item 0: 7
+																item 1: 0
+															variable "$toggle_name": "#agree_terms_and_conditions"
+												Removed control:
+													element "i_agree_label":
+														field "type": "label"
+														field "color": "$main_header_text_color"
+														field "text": "realmsCreateScreen.termsAndConditionsAgree"
+														field "offset": [22, 0]
+														field "size": ["75%", "default"]
+														field "layer": 3
+														field "anchor_from": "left_middle"
+														field "anchor_to": "left_middle"
+												Added control:
+													element "checkbox_control@settings_common.checkbox_with_highlight_and_label":
+														field "$variables":
+															variable "$toggle_name": "#agree_terms_and_conditions"
+															variable "$checkbox_label_text": "realmsCreateScreen.termsAndConditionsAgree"
+															variable "$checkbox_label_font_type": "smooth"
+Changed namespace "realms_create":
+	Changed element "terms_and_conditions_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "terms_string_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "buttons_stack_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "agree_panel":
+											Unchanged field "type": "panel"
+											Changed field "controls":
+												Total control: 1 (+1, -2)
+												Removed control:
+													element "checkbox_control@common.checkbox":
+														field "size": ["50%", "100%"]
+														field "offset": [0, 0]
+														field "anchor_from": "left_middle"
+														field "anchor_to": "left_middle"
+														field "focus_change_up": "2users"
+														field "focus_identifier": "checkbox_control"
+														field "bindings":
+															binding:
+																field "binding_name": "#has_checked_tos"
+																field "binding_name_override": "#toggle_state"
+														field "$variables":
+															variable "$checkbox_alignment": "left_middle"
+															variable "$checkbox_offset":
+																item 0: 7
+																item 1: 0
+															variable "$toggle_name": "#agree_terms_and_conditions"
+												Removed control:
+													element "i_agree_label":
+														field "type": "label"
+														field "color": "$main_header_text_color"
+														field "text": "realmsCreateScreen.termsAndConditionsAgree"
+														field "font_size": "normal"
+														field "font_type": "smooth"
+														field "offset": [22, 0]
+														field "size": ["75%", "default"]
+														field "layer": 3
+														field "anchor_from": "left_middle"
+														field "anchor_to": "left_middle"
+												Added control:
+													element "checkbox_control@settings_common.checkbox_with_highlight_and_label":
+														field "$variables":
+															variable "$toggle_name": "#agree_terms_and_conditions"
+															variable "$checkbox_label_text": "realmsCreateScreen.termsAndConditionsAgree"
+															variable "$checkbox_label_font_type": "smooth"
+Changed namespace "settings_common":
+	Total element: 83 (+8, -0)
+	Added element "checkbox_visuals":
+		field "type": "panel"
+		field "variables":
+			variable:
+				field "requires": "$selected"
+				field "$variables": variable "$highlight_image": "textures/ui/dropDownSelectBG"
+			variable:
+				field "requires": "$hovered"
+				field "$variables": variable "$highlight_image": "textures/ui/dropDownHoverBG"
+		field "controls":
+			control:
+				element "checkbox_image":
+					field "type": "image"
+					field "texture": "$checkbox_texture"
+					field "alpha": "$alpha"
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "size": [10, 10]
+					field "offset": [5, 0]
+					field "layer": 2
+			control:
+				element "checkbox_label":
+					field "ignored": "($no_label)"
+					field "type": "label"
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "text": "$checkbox_label_text"
+					field "font_type": "$checkbox_label_font_type"
+					field "color": "$checkbox_label_color"
+					field "offset": [21, 0]
+					field "size": ["100% - 21px", "default"]
+					field "alpha": "$alpha"
+					field "bindings": "$checkbox_label_bindings"
+					field "layer": 2
+			control:
+				element "accessibility_selection_highlight":
+					field "type": "image"
+					field "size": "$selection_highlight_size"
+					field "offset": "$selection_highlight_offset"
+					field "ignored": "(not $selected and not $hovered)"
+					field "texture": "$highlight_image"
+					field "tiled": true
+					field "layer": 1
+					field "$variables":
+						variable "$selection_highlight_size|default":
+							item 0: "100%-2px"
+							item 1: "100%-2px"
+						variable "$selection_highlight_offset|default":
+							item 0: 0
+							item 1: 0
+						variable "$highlight_image|default": ""
+		field "$variables":
+			variable "$alpha|default": 1.0
+			variable "$checkbox_label_bindings|default": empty
+			variable "$checkbox_label_color|default": "$main_header_text_color"
+			variable "$checkbox_label_font_type|default": "default"
+			variable "$no_label|default": false
+			variable "$selected|default": false
+			variable "$hovered|default": false
+	Added element "checkbox_visuals_checked@settings_common.checkbox_visuals":
+		field "$variables":
+			variable "$checkbox_texture": "textures/ui/checkbox_check"
+			variable "$selected": true
+	Added element "checkbox_visuals_checked_hover@settings_common.checkbox_visuals":
+		field "$variables":
+			variable "$checkbox_texture": "textures/ui/checkbox_checkHover"
+			variable "$hovered": true
+	Added element "checkbox_visuals_checked_locked@settings_common.checkbox_visuals":
+		field "$variables":
+			variable "$checkbox_texture": "textures/ui/checkbox_checkDisabled"
+			variable "$alpha": 0.5
+			variable "$selected": true
+	Added element "checkbox_visuals_unchecked@settings_common.checkbox_visuals" of field "$variables": variable "$checkbox_texture": "textures/ui/checkbox_space".
+	Added element "checkbox_visuals_unchecked_hover@settings_common.checkbox_visuals":
+		field "$variables":
+			variable "$checkbox_texture": "textures/ui/checkbox_spaceHover"
+			variable "$hovered": true
+	Added element "checkbox_visuals_unchecked_locked@settings_common.checkbox_visuals":
+		field "$variables":
+			variable "$checkbox_texture": "textures/ui/checkbox_spaceDisabled"
+			variable "$alpha": 0.5
+	Added element "checkbox_with_highlight_and_label@common.toggle":
+		field "$variables":
+			variable "$unchecked_control|default": "settings_common.checkbox_visuals_unchecked"
+			variable "$checked_control|default": "settings_common.checkbox_visuals_checked"
+			variable "$unchecked_hover_control|default": "settings_common.checkbox_visuals_unchecked_hover"
+			variable "$checked_hover_control|default": "settings_common.checkbox_visuals_checked_hover"
+			variable "$unchecked_locked_control|default": "settings_common.checkbox_visuals_unchecked_locked"
+			variable "$unchecked_locked_hover_control|default": "settings_common.checkbox_visuals_unchecked_locked"
+			variable "$checked_locked_control|default": "settings_common.checkbox_visuals_checked_locked"
+			variable "$checked_locked_hover_control|default": "settings_common.checkbox_visuals_checked_locked"

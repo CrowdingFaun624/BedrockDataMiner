@@ -1,0 +1,241 @@
+Difference of "ui" between "1.20.40.24" (beta of "1.20.40") and "1.20.40".
+
+Changed namespace "play":
+	Total element: 283 (+6, -0)
+	Added element "bell_icon":
+		field "type": "image"
+		field "texture": "textures/ui/icon_bell"
+		field "size": [20, 20]
+	Added element "copyright":
+		field "type": "label"
+		field "color": "$main_header_text_color"
+		field "layer": 2
+		field "text": "menu.copyright"
+		field "size": ["default", 10]
+		field "max_size": ["100%", "100%"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+	Changed element "create_new_world_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 4 (+0, -0)
+			Changed variable "$button_focus_precedence" from 10 to 1.
+	Added element "development_version":
+		field "type": "label"
+		field "color": "$main_header_text_color"
+		field "layer": 2
+		field "text": "#development_version"
+		field "size": ["default", 10]
+		field "max_size": ["100%", "100%"]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "bindings": binding: field "binding_name": "#development_version"
+	Changed element "editor_play_screen_panel@play.play_screen_panel":
+		Added field "visible" of "(not $is_editor_playtest_roundtrip)".
+	Added element "editor_text_panel":
+		field "type": "panel"
+		field "size": ["100%-2px", 10]
+		field "offset": [0, -1]
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "bottom_middle"
+		field "controls":
+			control: element "copyright@play.copyright": empty
+			control: element "development_version@play.development_version": field "ignored": "$is_publish"
+			control: element "version@play.version": empty
+	Changed element "friends_navigation_tab@play.top_tab":
+		Changed field "$variables":
+			Total variable: 12 (+0, -1)
+			Removed variable "$tab_icon_notification" of "invite_icon".
+	Changed element "friends_navigation_tab_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "icon_section_notification":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 2 (+2, -1)
+						Removed control:
+							element "icon@$tab_icon_notification":
+								field "layer": 3
+								field "offset": [-0.5, -1]
+						Added control:
+							element "icon1@play.invite_icon":
+								field "layer": 3
+								field "offset": [-0.5, -1]
+								field "bindings":
+									binding:
+										field "binding_name": "(not #inbox_enabled)"
+										field "binding_name_override": "#visible"
+						Added control:
+							element "icon2@play.bell_icon":
+								field "layer": 3
+								field "offset": [-0.5, -1]
+								field "bindings":
+									binding:
+										field "binding_name": "#inbox_enabled"
+										field "binding_name_override": "#visible"
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 16 (+1, -0)
+						Changed control:
+							Changed element "joinable_realms_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "placeholder_loading_friends_panel@play.label_background":
+											Changed field "controls":
+												Changed control:
+													Changed element "loading_friends_realms_label":
+														Unchanged field "type": "label"
+														Changed field "max_size":
+															Unchanged item 0: "100% - 4px"
+															Changed item 1 from 20 to 40.
+						Added control element "open_account_setting_button_gamecore@play.open_account_setting_button_gamecore": empty.
+	Changed element "loading_label":
+		Unchanged field "type": "label"
+		Changed field "max_size":
+			Unchanged item 0: "100% - 4px"
+			Changed item 1 from 20 to 40.
+	Changed element "notification_button_text_layout":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+2, -1)
+			Removed control element "image@play.invite_icon": field "layer": 1.
+			Added control:
+				element "image1@play.invite_icon":
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "(not #inbox_enabled)"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "image2@play.bell_icon":
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "#inbox_enabled"
+							field "binding_name_override": "#visible"
+	Added element "open_account_setting_button_gamecore@common_buttons.light_text_button":
+		field "size": ["100%", 30]
+		field "visible": true
+		field "bindings":
+			binding:
+				field "binding_name": "#open_account_setting_button_gamecore_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$pressed_button_name": "button.open_account_setting_gamecore"
+			variable "$button_text": "permissions.open.account.help.button.gamecore"
+	Changed element "play_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+1, -0)
+			Added control element "editor_text_panel@play.editor_text_panel": field "visible": "$is_editor_mode_enabled".
+		Changed field "variables":
+			Total variable: 3 (+3, -3)
+			Removed variable:
+				field "requires": "(not $education_edition and not $is_editor_mode_enabled)"
+				field "$variables": variable "$main_panel": "play.default_play_screen_panel"
+			Removed variable:
+				field "requires": "($education_edition and not $is_editor_mode_enabled)"
+				field "$variables": variable "$main_panel": "play.edu_play_screen_panel"
+			Removed variable:
+				field "requires": "(not $education_edition and $is_editor_mode_enabled)"
+				field "$variables": variable "$main_panel": "play.editor_play_screen_panel"
+			Added variable:
+				field "requires": "(not $education_edition and not $is_editor_mode_enabled and not $is_editor_playtest_roundtrip)"
+				field "$variables": variable "$main_panel": "play.default_play_screen_panel"
+			Added variable:
+				field "requires": "($education_edition and not $is_editor_mode_enabled and not $is_editor_playtest_roundtrip)"
+				field "$variables": variable "$main_panel": "play.edu_play_screen_panel"
+			Added variable:
+				field "requires": "((not $education_edition and $is_editor_mode_enabled) or $is_editor_playtest_roundtrip)"
+				field "$variables": variable "$main_panel": "play.editor_play_screen_panel"
+	Changed element "server_scroll_content@play.common_content":
+		Changed field "controls":
+			Changed control:
+				Changed element "feature_server_message_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 4 (+1, -0)
+						Added control element "open_account_setting_button_gamecore@play.open_account_setting_button_gamecore": empty.
+	Changed element "tab_text_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "count_section":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "count_background_image":
+								Unchanged field "type": "image"
+								Changed field "controls":
+									Changed control:
+										Changed element "count@common_button_text":
+											Changed field "offset":
+												Changed item 0 from 0 to 1.
+												Changed item 1 from 0.5 to 1.
+	Added element "version":
+		field "type": "label"
+		field "color": "$main_header_text_color"
+		field "layer": 2
+		field "text": "#version"
+		field "size": ["default", 10]
+		field "max_size": ["100%", "100%"]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "bindings": binding: field "binding_name": "#version"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "realms_multiplayer_blocked_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 3 (+1, -0)
+						Added control element "open_account_setting_button_gamecore@play.open_account_setting_button_gamecore": empty.
+			Changed control:
+				Changed element "realms_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 9 (+1, -0)
+						Added control:
+							element "realms_previews_panel":
+								field "type": "panel"
+								field "size": ["100%", 30]
+								field "bindings":
+									binding:
+										field "binding_name": "#free_preview_realm_button_visible"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "new_offers_icon@common_store.new_offer_icon":
+											field "layer": 8
+											field "offset": [0, -2]
+											field "anchor_from": "top_right"
+											field "anchor_to": "top_right"
+									control:
+										element "realms_world_item_button@common_buttons.dark_content_button":
+											field "size": ["100%", 30]
+											field "$variables":
+												variable "$pressed_button_name": "button.free_preview_realm_available"
+												variable "$button_content": "play.realms_trial_content_panel"
+												variable "$button_content_text": "#free_preview_realm_available"
+												variable "$world_details_text": "playscreen.withYourPaidRealms"
+												variable "$text_binding_condition": "once"
+												variable "$world_header_text_binding_type": "global"
+												variable "$world_details_text_binding_type": "none"
+												variable "$focus_id": "free_preview_realm_available_button"
+					Removed field "$variables" of variable "$tts_section_header": "playscreen.realms".
+					Added field "variables":
+						variable:
+							field "requires": "(not $pre_release)"
+							field "$variables": variable "$tts_section_header": "playscreen.realms"
+						variable:
+							field "requires": "($pre_release and not $beta_build)"
+							field "$variables": variable "$tts_section_header": "playscreen.previewRealms"
+						variable:
+							field "requires": "($pre_release and $beta_build)"
+							field "$variables": variable "$tts_section_header": "playscreen.betaRealms"

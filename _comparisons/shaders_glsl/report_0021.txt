@@ -1,0 +1,924 @@
+Difference of "shaders_resource_packs" between "a0.15.0_realms4" (beta of "a0.15.0") and "a0.15.0_build1" (beta of "a0.15.0").
+
+Changed resource pack "cloud.vertex":
+	Changed file "vanilla":
+		Total line: 46 (+0, -2)
+		        '''
+		        ...
+		37 37   	POS4 worldPos = WORLD * POSITION;
+		38 38    	gl_Position = pos;
+		39 39   
+		40 40    	color = COLOR * CURRENT_COLOR;
+		41 41   
+		   42 +  	float depth = length(worldPos.xyz) / RENDER_DISTANCE;
+		42    -  	float depth = min(1.0, length(worldPos.xyz) / RENDER_DISTANCE);
+		43 43    	float fog = max(depth - fogNear, 0.0);
+		44 44   
+		45    - 	float alpha = color.a;
+		46    - 	color = mix(color, FOG_COLOR, (1.0 - fog));
+		   45 +  	color.a *= 1.0 - fog;
+		47    -  	color.a = alpha * (1.0 - fog);
+		48 46   }
+		        '''
+Added resource pack "color_grayscale.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+		// attribute to in
+		// varying to out when in vertex shaders or in when in fragment shaders
+		// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+		// texture2D to texture
+		#if __VERSION__ >= 300
+		
+		// version 300 code
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+		#define _centroid centroid
+		#else
+		#define _centroid
+		#endif
+		
+		_centroid in vec2 uv;
+		
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+		
+		#else
+		
+		// version 100 code
+		varying vec2 uv;
+		
+		#endif
+		
+		uniform vec4 CURRENT_COLOR;
+		uniform sampler2D TEXTURE_0;
+		
+		void main()
+		{
+			vec4 diffuse = texture2D( TEXTURE_0, uv );
+		
+		#ifdef ALPHA_TEST
+			if(diffuse.a < 0.5)
+				discard;
+		#endif
+		
+			float grayscale = (CURRENT_COLOR.r * diffuse.r * 0.3 + CURRENT_COLOR.g * diffuse.g * 0.59 + CURRENT_COLOR.b * diffuse.b * 0.11);
+			vec4 gray_color = vec4(grayscale, grayscale, grayscale, CURRENT_COLOR.a * diffuse.a);
+			gl_FragColor = gray_color;
+		}
+		
+		
+		
+		'''
+Changed resource pack "current_color.fragment":
+	Changed file "vanilla":
+		Total line: 33 (+1, -1)
+		        '''
+		        ...
+		25 25   
+		26 26   void main()
+		27 27   {
+		28 28   	gl_FragColor = CURRENT_COLOR;
+		29 29   
+		   30 + #if defined(FORCE_DEPTH_ZERO) && __VERSION__ >= 300
+		30    - #ifdef FORCE_DEPTH_ZERO
+		31 31   	gl_FragDepth = 0.0;
+		32 32   #endif
+		33 33   }
+		        '''
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 143 (+23, -11)
+		          '''
+		          ...
+		  5   5   // attribute to in
+		  6   6   // varying to out when in vertex shaders or in when in fragment shaders
+		  7   7   // defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+		  8   8   // texture2D to texture
+		  9   9   #if __VERSION__ >= 300
+		 10     - 
+		     10 + 	// version 300 code
+		     11 + 	#define varying in
+		     12 + 	#define texture2D texture
+		     13 + 	out vec4 FragColor;
+		     14 + 	#define gl_FragColor FragColor
+		 11     - // version 300 code
+		 12     - #define varying in
+		 13     - #define texture2D texture
+		 14     - out vec4 FragColor;
+		 15     - #define gl_FragColor FragColor
+		 16  15   
+		     16 + 	#ifdef MSAA_FRAMEBUFFER_ENABLED
+		     17 + 		#define _centroid centroid
+		     18 + 	#else
+		     19 + 		#define _centroid
+		     20 + 	#endif
+		 17     - #ifdef MSAA_FRAMEBUFFER_ENABLED
+		 18     - #define _centroid centroid
+		 19     - #else
+		 20     - #define _centroid
+		 21     - #endif
+		 22     - 
+		 23  21   
+		     22 + 	#ifndef NO_TEXTURE
+		 24     - #ifndef COLOR_BASED
+		     23 + 		_centroid in vec2 uv;
+		     24 + 	#endif
+		 25     - 	_centroid in vec2 uv;
+		 26     - #endif
+		 27     - 
+		 28  25   #else
+		 29     - 
+		     26 + 	// version 100 code
+		     27 + 	#ifndef NO_TEXTURE
+		     28 + 		#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+		     29 + 			varying highp vec2 uv;
+		     30 + 		#else
+		     31 + 			varying vec2 uv;
+		 30     - // version 100 code
+		 31     - #ifndef COLOR_BASED
+		 32     - #if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+		 33     - 	varying highp vec2 uv;
+		 34     - #else
+		 35     - 	varying vec2 uv;
+		     32 + 		#endif
+		     33 + 	#endif
+		 36     - #endif
+		 37  34   #endif
+		 38  35   
+		     36 + #include "shaders/util.h"
+		 39     - #endif
+		 40  37   
+		     38 + uniform sampler2D TEXTURE_0;
+		     39 + uniform sampler2D TEXTURE_1;
+		 41     - #include "shaders/util.h"
+		 42  40   
+		     41 + #ifdef USE_MULTITEXTURE
+		 43     - uniform sampler2D TEXTURE_0;
+		     42 + 	uniform sampler2D TEXTURE_2;
+		 44     - uniform sampler2D TEXTURE_1;
+		     43 + #endif
+		 45  44   
+		 46  45   varying vec4 light;
+		 47  46   varying vec4 fogColor;
+		 48  47   
+		 49  48   #ifdef USE_OVERLAY
+		 50  49   	varying vec4 overlayColor;
+		 51  50   #endif
+		 52  51   
+		     52 + #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		 53     - #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND)
+		 54  53   	varying vec4 changeColor;
+		 55  54   #endif
+		 56  55   
+		 57  56   #ifdef GLINT
+		 58  57   	varying vec2 layer1UV;
+		          ...
+		 71  70   #else
+		 72  71   #ifndef USE_COLOR_MASK
+		 73  72   #define NEEDS_DISCARD(C)	(C.a < 0.5)
+		 74  73   #else
+		 75  74   #define NEEDS_DISCARD(C)	(C.a <= 0.0)
+		     75 + #endif
+		 76  76   #endif
+		     77 + 
+		     78 + void main()
+		     79 + {
+		     80 + 	vec4 color = vec4(1.0);
+		 77     - #endif
+		 78  81   
+		     82 + #ifndef NO_TEXTURE
+		     83 + #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		     84 + 	color = texture2D( TEXTURE_0, uv );
+		     85 + #else
+		     86 + 	color = texture2D_AA(TEXTURE_0, uv);
+		     87 + #endif
+		 79     - void main()
+		 80     - {
+		 81     - 	vec4 color = vec4(1.0);
+		 82  88   
+		     89 + 	#ifdef ALPHA_TEST
+		 83     - #ifndef COLOR_BASED
+		 84     - #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		     90 + 		if(NEEDS_DISCARD(color))
+		     91 + 			discard;
+		     92 + 	#endif
+		 85     - 	color = texture2D( TEXTURE_0, uv );
+		 86     - #else
+		 87     - 	color = texture2D_AA(TEXTURE_0, uv);
+		 88  93   #endif
+		 89  94   
+		     95 + #ifdef USE_COLOR_MASK
+		 90     - 	#ifdef ALPHA_TEST
+		     96 + 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		     97 + 	color.a = 1.0;
+		     98 + #endif
+		 91     - 		if(NEEDS_DISCARD(color))
+		 92     - 			discard;
+		 93     - 	#endif
+		     99 + 
+		    100 + #ifdef ITEM_IN_HAND
+		    101 + 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+		 94 102   #endif
+		 95 103   
+		    104 + #ifdef USE_MULTITEXTURE
+		    105 + 	vec4 tex1 = texture2D( TEXTURE_1, uv );
+		    106 + 	vec4 tex2 = texture2D( TEXTURE_2, uv );
+		    107 + 	color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+		 96     - #ifdef USE_COLOR_MASK
+		 97     - 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		    108 + #ifdef COLOR_SECOND_TEXTURE
+		    109 + 	if (tex2.a > 0.0) {
+		    110 + 		color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		    111 + 	}
+		    112 + #else
+		    113 + 	color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+		 98     - 	color.a = 1.0;
+		 99     - #endif
+		100     - 
+		101     - #ifdef ITEM_IN_HAND
+		102     - 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+		    114 + #endif
+		103 115   #endif
+		104 116   
+		105 117   #ifdef USE_OVERLAY
+		106 118   	//use either the diffuse or the OVERLAY_COLOR
+		107 119   	color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+		          ...
+		          '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 144 (+2, -4)
+		          '''
+		          ...
+		  8   8   // texture2D to texture
+		  9   9   #if __VERSION__ >= 300
+		 10  10   
+		 11  11   #define attribute in
+		 12  12   #define varying out
+		 13     - 
+		 14  13   #ifdef MSAA_FRAMEBUFFER_ENABLED
+		 15  14   #define _centroid centroid
+		 16  15   #else
+		 17  16   #define _centroid
+		 18  17   #endif
+		 19     - 
+		 20  18   _centroid out vec2 uv;
+		 21  19   
+		 22  20   #else
+		 23     - 
+		 24  21   varying vec2 uv;
+		 25     - 
+		 26  22   #endif
+		 27  23   
+		 28  24   uniform MAT4 WORLDVIEWPROJ;
+		 29  25   uniform MAT4 WORLD;
+		 30  26   uniform vec4 TILE_LIGHT_COLOR;
+		          ...
+		 52  48   
+		 53  49   #ifdef USE_OVERLAY
+		 54  50   varying vec4 overlayColor;
+		 55  51   #endif
+		 56  52   
+		     53 + #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		 57     - #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND)
+		 58  54   varying vec4 changeColor;
+		 59  55   #endif
+		 60  56   
+		 61  57   #ifdef GLINT
+		 62  58   	varying vec2 layer1UV;
+		          ...
+		114 110   #ifdef USE_OVERLAY
+		115 111   	L += OVERLAY_COLOR.a * 0.35;
+		116 112       overlayColor = OVERLAY_COLOR;
+		117 113   #endif
+		118 114   
+		    115 + #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		119     - #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND)
+		120 116       changeColor = CHANGE_COLOR;
+		121 117   #endif
+		122 118   
+		123 119       light = vec4(vec3(L) * TILE_LIGHT_COLOR.xyz, 1.0);
+		124 120   
+		125 121   #ifdef COLOR_BASED
+		126 122   	light *= COLOR;
+		    123 + #endif
+		    124 +     
+		    125 + #ifndef NO_TEXTURE
+		127     - #else
+		128 126       uv = TEXCOORD_0;
+		129 127   #endif
+		130 128   
+		131 129   #ifdef USE_UV_ANIM
+		132 130   	uv.xy += UV_ANIM.xy;
+		          ...
+		          '''
+Added resource pack "entity_multitexture.fragment":
+	file "vanilla":
+		'''
+		#version 100
+		uniform sampler2D TEXTURE_0;
+		uniform sampler2D TEXTURE_1;
+		uniform sampler2D TEXTURE_2;
+		
+		varying vec4 light;
+		varying vec4 fogColor;
+		
+		#ifndef COLOR_BASED
+			varying vec2 uv;
+		#endif
+		#ifdef USE_OVERLAY
+			varying vec4 overlayColor;
+		#endif
+		
+		#ifdef USE_EMISSIVE
+		#define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+		#else
+		#define NEEDS_DISCARD(C)	(C.a < 0.5)
+		#endif
+		
+		void main()
+		{
+			vec4 color = vec4(1.0);
+		#ifndef COLOR_BASED
+			color = texture2D( TEXTURE_0, uv );
+		
+			#ifdef ALPHA_TEST
+				if(NEEDS_DISCARD(color))
+				 	discard;
+			#endif
+		
+			vec4 markings = texture2D( TEXTURE_1, uv );
+			vec4 armor = texture2D( TEXTURE_2, uv );
+		
+			color.rgb = mix(color, markings, markings.a).rgb;
+			color.rgb = mix(color, armor, armor.a).rgb;
+		#endif
+		
+		#ifdef USE_OVERLAY
+			//use either the diffuse or the OVERLAY_COLOR
+			color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+		#endif
+		
+		#ifdef USE_EMISSIVE
+			//make glowy stuff
+			color *= mix(vec4(1.0), light, color.a );
+		#else
+			color *= light;
+		#endif
+		
+			//apply fog
+			color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+		
+			//WARNING do not refactor this 
+			gl_FragColor = color;
+		}
+		'''
+Changed resource pack "hologram_sr.fragment":
+	Changed file "vanilla":
+		Total line: 15 (+6, -0)
+		        '''
+		    1 + // __multiversion__
+		    2 + //This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		    3 + 
+		    4 + #if __VERSION__ >= 300
+		    5 + #define varying in
+		    6 + out vec4 FragColor;
+		    7 + #define gl_FragColor FragColor
+		    8 + #endif
+		 1    - #version 100
+		 2    - //This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		 3  9   
+		 4 10   varying vec4 color;
+		 5 11   
+		 6 12   void main()
+		 7 13   {
+		        ...
+		        '''
+Changed resource pack "hologram_sr.vertex":
+	Changed file "vanilla":
+		Total line: 21 (+5, -0)
+		        '''
+		    1 + // __multiversion__
+		    2 + //This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		    3 + 
+		    4 + #if __VERSION__ >= 300
+		    5 + #define attribute in
+		    6 + #define varying out
+		    7 + #endif
+		 1    - #version 100
+		 2    - //This file is purely here to let the code compile. It is used only for Hololens, which currently runs only on DX11 compatible devices
+		 3  8   
+		 4  9   uniform MAT4 WORLDVIEWPROJ;
+		 5 10   
+		 6 11   attribute mediump vec4 POSITION;
+		 7 12   attribute vec4 COLOR;
+		        ...
+		        '''
+Changed resource pack "rain_snow.vertex":
+	Changed file "vanilla":
+		Total line: 92 (+2, -0)
+		        '''
+		        ...
+		13 13   #else
+		14 14   
+		15 15   
+		16 16   #endif
+		17 17   
+		   18 + precision highp float;
+		   19 + 
+		18 20   uniform MAT4	WORLDVIEWPROJ;
+		19 21   uniform vec4	POSITION_OFFSET;
+		20 22   uniform vec4	VELOCITY;
+		21 23   uniform vec4	ALPHA;
+		22 24   uniform vec4	VIEW_POSITION;
+		        ...
+		        '''
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 109 (+5, -0)
+		          '''
+		          ...
+		 68  68   	diffuse.a = 1.0;
+		 69  69   	inColor.b = 1.0;
+		 70  70   #endif
+		 71  71   
+		 72  72   #ifdef ALPHA_TEST
+		     73 + 	#ifdef ALPHA_TO_COVERAGE
+		     74 + 		float alphaThreshold = .05;
+		     75 + 	#else
+		     76 + 		float alphaThreshold = .5;
+		     77 + 	#endif
+		     78 + 	if(diffuse.a < alphaThreshold)
+		     79 + 		discard;
+		 73     - 	if(diffuse.a < 0.5)
+		 74     - 	 	discard;
+		 75  80   #endif
+		 76  81   	
+		 77  82   	diffuse = diffuse * texture2D( TEXTURE_1, uv1 );
+		 78  83   
+		 79  84   #ifndef SEASONS
+		          ...
+		          '''
+Changed resource pack "renderchunk.vertex":
+	Changed file "vanilla":
+		Total line: 139 (+15, -8)
+		          '''
+		          ...
+		 34  34   
+		 35  35   #ifdef NEAR_WATER
+		 36  36   	varying float cameraDist;
+		 37  37   #endif
+		 38  38   
+		     39 + #ifdef AS_ENTITY_RENDERER
+		     40 + uniform MAT4 WORLDVIEWPROJ;
+		     41 + #else
+		     42 + uniform MAT4 WORLDVIEW;
+		     43 + uniform MAT4 PROJ;
+		     44 + #endif
+		     45 + uniform vec4 FOG_COLOR;
+		     46 + uniform vec2 FOG_CONTROL;
+		     47 + uniform float RENDER_DISTANCE;
+		     48 + uniform vec2 VIEWPORT_DIMENSION;
+		 39     - uniform MAT4 WORLDVIEW;
+		 40     - uniform MAT4 PROJ;
+		     49 + uniform vec4 CURRENT_COLOR;		//current color r contains the offset to apply to the fog for the "fade in"
+		     50 + uniform POS4 CHUNK_ORIGIN_AND_SCALE;
+		     51 + uniform POS3 VIEW_POS;
+		     52 + uniform float FAR_CHUNKS_DISTANCE;
+		 41     - uniform vec4 FOG_COLOR;
+		 42     - uniform vec2 FOG_CONTROL;
+		 43     - uniform float RENDER_DISTANCE;
+		     53 + 
+		 44     - uniform vec2 VIEWPORT_DIMENSION;
+		     54 + attribute POS4 POSITION;
+		     55 + attribute vec4 COLOR;
+		     56 + attribute vec2 TEXCOORD_0;
+		     57 + attribute vec2 TEXCOORD_1;
+		 45     - uniform vec4 CURRENT_COLOR;		//current color r contains the offset to apply to the fog for the "fade in"
+		 46     - uniform POS4 CHUNK_ORIGIN_AND_SCALE;
+		 47     - uniform POS3 VIEW_POS;
+		 48     - uniform float FAR_CHUNKS_DISTANCE;
+		 49  58   
+		     59 + const float rA = 1.0;
+		 50     - attribute POS4 POSITION;
+		     60 + const float rB = 1.0;
+		     61 + const vec3 UNIT_Y = vec3(0,1,0);
+		     62 + const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+		 51     - attribute vec4 COLOR;
+		 52     - attribute vec2 TEXCOORD_0;
+		 53     - attribute vec2 TEXCOORD_1;
+		 54  63   
+		     64 + void main()
+		     65 + {
+		 55     - const float rA = 1.0;
+		 56     - const float rB = 1.0;
+		     66 +     POS4 worldPos;
+		     67 + #ifdef AS_ENTITY_RENDERER
+		     68 + 		POS4 pos = WORLDVIEWPROJ * POSITION;
+		     69 + 		worldPos = pos;
+		 57     - const vec3 UNIT_Y = vec3(0,1,0);
+		 58     - const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+		 59     - 
+		 60     - void main()
+		 61     - {
+		     70 + #else
+		 62     -     POS4 worldPos;
+		 63  71       worldPos.xyz = (POSITION.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz;
+		 64  72       worldPos.w = 1.0;
+		 65  73   
+		 66  74       // Transform to view space before projection instead of all at once to avoid floating point errors
+		 67  75       // Not required for entities because they are already offset by camera translation before rendering
+		 68  76       // World position here is calculated above and can get huge
+		 69  77       POS4 pos = WORLDVIEW * worldPos;
+		 70  78       pos = PROJ * pos;
+		     79 + #endif
+		 71     -     
+		 72  80       gl_Position = pos;
+		 73  81   
+		 74  82       uv0 = TEXCOORD_0;
+		 75  83       uv1 = TEXCOORD_1;
+		 76  84   	color = COLOR;
+		 77  85   
+		 78  86   ///// find distance from the camera
+		 79  87   
+		 80  88   #if defined(FOG) || defined(NEAR_WATER)
+		     89 + 	#ifdef FANCY
+		     90 + 		vec3 relPos = -worldPos.xyz;
+		     91 + 		float cameraDepth = length(relPos);
+		     92 + 		#ifdef NEAR_WATER
+		     93 + 			cameraDist = cameraDepth / FAR_CHUNKS_DISTANCE;
+		     94 + 		#endif
+		     95 + 	#else
+		 81     - 		#ifdef FANCY
+		 82     - 			vec3 relPos = VIEW_POS - worldPos.xyz;
+		 83     - 			float cameraDepth = length(relPos);
+		 84     - 			#ifdef NEAR_WATER
+		 85     - 				cameraDist = cameraDepth / FAR_CHUNKS_DISTANCE;
+		 86     - 			#endif
+		 87     - 		#else
+		     96 + 		float cameraDepth = pos.z;
+		     97 + 		#ifdef NEAR_WATER
+		     98 + 			vec3 relPos = -worldPos.xyz;
+		     99 + 			float camDist = length(relPos);
+		    100 + 			cameraDist = camDist / FAR_CHUNKS_DISTANCE;
+		    101 + 		#endif
+		 88     - 			#ifdef NEAR_WATER
+		 89     - 				vec3 relPos = VIEW_POS - worldPos.xyz;
+		 90     - 				float camDist = length(relPos);
+		 91     - 				cameraDist = camDist / FAR_CHUNKS_DISTANCE;
+		 92     - 			#endif
+		 93     - 
+		 94     - 			float cameraDepth = pos.z;
+		    102 + 	#endif
+		 95     - 		#endif
+		 96 103   #endif
+		 97 104   
+		 98 105   ///// apply fog
+		 99 106   
+		100 107   #ifdef FOG
+		          ...
+		          '''
+Added resource pack "stitch_blit.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+		// attribute to in
+		// varying to out when in vertex shaders or in when in fragment shaders
+		// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+		// texture2D to texture
+		#if __VERSION__ >= 300
+		
+		// version 300 code
+		
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+		#define _centroid centroid
+		#else
+		#define _centroid
+		#endif
+		
+		_centroid in vec2 uv;
+		#define varying in
+		#define texture2D texture
+		out vec4 FragColor;
+		#define gl_FragColor FragColor
+		
+		#else
+		
+		// version 100 code
+		varying vec2 uv;
+		
+		#endif
+		
+		uniform vec4 CURRENT_COLOR;
+		uniform sampler2D TEXTURE_0;
+		
+		void main()
+		{
+			vec4 color = texture2D( TEXTURE_0, uv );
+		
+			color.rgb = mix(color.rgb, CURRENT_COLOR.rgb * color.rgb, color.a * CURRENT_COLOR.a);
+		    if(CURRENT_COLOR.a > 0.0) {
+		        //the alpha in diffuse is a mask
+		        color.a = 1.0;
+		    }
+		
+			gl_FragColor = color;
+		}
+		'''
+Added resource pack "stitch_blit.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+		// attribute to in
+		// varying to out when in vertex shaders or in when in fragment shaders
+		// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+		// texture2D to texture
+		#if __VERSION__ >= 300
+		#define attribute in
+		#define varying out
+		
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+		#define _centroid centroid
+		#else
+		#define _centroid
+		#endif
+		
+		_centroid out vec2 uv;
+		#else
+		
+		varying vec2 uv;
+		
+		#endif
+		
+		uniform MAT4 WORLDVIEWPROJ;
+		
+		attribute POS4 POSITION;
+		attribute vec2 TEXCOORD_0;
+		
+		
+		void main()
+		{
+			vec4 pos = POSITION;
+			pos.z = 0.0;
+		    gl_Position = WORLDVIEWPROJ * pos;
+		
+		    //position Z contains the padding % to apply
+		    uv = TEXCOORD_0 + 2.0 * POSITION.z * (TEXCOORD_0 - vec2(0.5, 0.5));
+		}
+		'''
+Changed resource pack "texture_ccolor.fragment":
+	Changed file "vanilla":
+		Total line: 56 (+14, -4)
+		        '''
+		        ...
+		 7  7   // defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+		 8  8   // texture2D to texture
+		 9  9   #if __VERSION__ >= 300
+		10 10   
+		11 11   // version 300 code
+		   12 + #ifdef MSAA_FRAMEBUFFER_ENABLED
+		   13 + #define _centroid centroid
+		   14 + #else
+		   15 + #define _centroid
+		   16 + #endif
+		12 17   
+		   18 + #if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+		13    - #ifdef MSAA_FRAMEBUFFER_ENABLED
+		   19 + _centroid in highp vec2 uv;
+		14    - #define _centroid centroid
+		15 20   #else
+		   21 + _centroid in vec2 uv;
+		16    - #define _centroid
+		17 22   #endif
+		18 23   
+		19    - _centroid in vec2 uv;
+		20 24   
+		21 25   #define varying in
+		22 26   #define texture2D texture
+		23 27   out vec4 FragColor;
+		24 28   #define gl_FragColor FragColor
+		25 29   
+		26 30   #else
+		27 31   
+		28 32   // version 100 code
+		29 33   varying vec2 uv;
+		   34 + 
+		   35 + #endif
+		30 36   
+		   37 + #include "shaders/util.h"
+		31    - #endif
+		32 38   
+		33 39   uniform vec4 CURRENT_COLOR;
+		34 40   uniform sampler2D TEXTURE_0;
+		35 41   
+		36 42   void main()
+		37 43   {
+		   44 + #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		   45 + 	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		   46 + #else
+		   47 + 	vec4 diffuse = texture2D_AA(TEXTURE_0, uv );
+		38    - 	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		   48 + #endif
+		39 49   
+		40 50   #ifdef ALPHA_TEST
+		41 51   	if(diffuse.a < 0.5)
+		42 52   		discard;
+		43 53   #endif
+		        ...
+		        '''
+Changed resource pack "util.h":
+	Changed file "vanilla":
+		Total line: 58 (+9, -41)
+		        '''
+		 1  1   #if __VERSION__ >= 300
+		 2  2   
+		 3    - uniform highp vec2 ATLAS_FACE_SIZE;
+		 4    - uniform highp vec3 TEXTURE_DIMENSIONS;
+		 5    - 
+		 6    - highp vec2 clampUVsForMipLevel(in highp vec2 uv, in highp float mipLevel, in highp float textureWidth, in highp float textureHeight)
+		 7    - {
+		 8    - 	highp vec2 uvClamped;
+		 9    - 
+		10    - 	// Clamp UVs to atlas face so that neighboring faces don't bleed across
+		11    - 	highp vec2 numAtlasFaces = vec2(textureWidth, textureHeight) / ATLAS_FACE_SIZE;
+		12    - 	highp vec2 faceUV = fract(uv * numAtlasFaces);
+		13    - 	uvClamped = (uv * numAtlasFaces) - faceUV;
+		14    - 	highp vec2 halfTexel = vec2(.5f, .5f) / (ATLAS_FACE_SIZE / pow(2.0f, mipLevel));
+		15    - 	faceUV = clamp(faceUV, halfTexel, vec2(1.0f, 1.0f) - halfTexel);
+		16    - 	uvClamped += faceUV;
+		17    - 	uvClamped /= numAtlasFaces;
+		18    - 
+		19    - 	return uvClamped;
+		20    - }
+		21    - 
+		22    - vec4 texture2D_AA(in sampler2D tex, in highp vec2 uv)
+		23    - {
+		24    - 	// Texture antialiasing
+		25    - 	//
+		26    - 	// The texture coordinates are modified so that the bilinear filter will be one pixel wide instead of one texel wide. 
+		27    - 
+		28    - 	// Get the UV deltas
+		29    - 	highp vec2 dUVdx = dFdx(uv) * TEXTURE_DIMENSIONS.xy;
+		30    - 	highp vec2 dUVdy = dFdy(uv) * TEXTURE_DIMENSIONS.xy;
+		31    - 	highp vec2 dU = vec2(dUVdx.x, dUVdy.x);
+		32    - 	highp vec2 dV = vec2(dUVdx.y, dUVdy.y);
+		33    - 
+		34    - 	highp float duUV = sqrt(dot(dU, dU));
+		    3 + uniform highp vec3 TEXTURE_DIMENSIONS;
+		35    - 	highp float dvUV = sqrt(dot(dV, dV));
+		36  4   
+		    5 + vec4 texture2D_AA(in sampler2D tex, in highp vec2 uv)
+		    6 + {
+		37    - 	// Determine mip map LOD
+		38    - 	highp float d = max(dot(dUVdx, dUVdx), dot(dUVdy, dUVdy));
+		    7 + 	// Texture antialiasing
+		    8 + 	//
+		    9 + 	// The texture coordinates are modified so that the bilinear filter will be one pixel wide instead of one texel wide. 
+		39    - 	highp float mipLevel = .5f * log2(d);
+		40    - 	mipLevel = mipLevel + .5f;	// Mip bias to reduce aliasing
+		41    - 	mipLevel = clamp(mipLevel, 0.0f, TEXTURE_DIMENSIONS.z);
+		42 10   
+		   11 + 	// Get the UV deltas
+		43    - 	highp vec2 uvModified;
+		44    - 	if( mipLevel >= 1.0f)
+		   12 + 	highp vec2 dUVdx = dFdx(uv) * TEXTURE_DIMENSIONS.xy;
+		   13 + 	highp vec2 dUVdy = dFdy(uv) * TEXTURE_DIMENSIONS.xy;
+		   14 + 	highp vec2 dU = vec2(dUVdx.x, dUVdy.x);
+		   15 + 	highp vec2 dV = vec2(dUVdx.y, dUVdy.y);
+		   16 + 
+		   17 + 	highp float duUV = sqrt(dot(dU, dU));
+		   18 + 	highp float dvUV = sqrt(dot(dV, dV));
+		45    - 	{
+		46    - 		uvModified = uv;
+		47    - 	}
+		48    - 	else
+		49    - 	{
+		50    - 		// First scale the uv so that each texel has a uv range of [0,1]
+		51    - 		highp vec2 texelUV = fract(uv * TEXTURE_DIMENSIONS.xy);
+		52 19   
+		   20 + 	// Determine mip map LOD
+		   21 + 	highp float d = max(dot(dUVdx, dUVdx), dot(dUVdy, dUVdy));
+		   22 + 	highp float mipLevel = .5 * log2(d);
+		   23 + 	mipLevel = mipLevel + .5;	// Mip bias to reduce aliasing
+		   24 + 	mipLevel = clamp(mipLevel, 0.0, TEXTURE_DIMENSIONS.z);
+		53    - 		// Initially set uvModified to the floor of the texel position
+		54    - 		uvModified = (uv * TEXTURE_DIMENSIONS.xy) - texelUV;
+		55 25   
+		   26 + 	highp vec2 uvModified;
+		56    - 		// Modify the texelUV to push the uvs toward the edges.
+		57    - 		//          |                 |       |                   |
+		   27 + 	if( mipLevel >= 1.0)
+		   28 + 	{
+		   29 + 		uvModified = uv;
+		   30 + 	}
+		   31 + 	else
+		   32 + 	{
+		   33 + 		// First scale the uv so that each texel has a uv range of [0,1]
+		   34 + 		highp vec2 texelUV = fract(uv * TEXTURE_DIMENSIONS.xy);
+		58    - 		//          |         _/      |       |           /       |
+		59    - 		//  Change  | U     _/        |  to   | U     ___/        |
+		60    - 		//          |     _/          |       |     /             |
+		61    - 		//          |    /            |       |    /              |
+		62    - 		//          |         X       |       |         X         |
+		63    - 		highp float scalerU = 1.0f / (duUV);
+		64    - 		highp float scalerV = 1.0f / (dvUV);
+		65    - 		highp vec2 scaler = max(vec2(scalerU, scalerV), 1.0f);
+		   35 + 
+		   36 + 		// Initially set uvModified to the floor of the texel position
+		   37 + 		uvModified = (uv * TEXTURE_DIMENSIONS.xy) - texelUV;
+		66    - 		texelUV = clamp(texelUV * scaler, 0.0f, .5f) + clamp(texelUV*scaler - (scaler - .5f), 0.0f, .5f);
+		67    - 		uvModified += texelUV;
+		   38 + 
+		   39 + 		// Modify the texelUV to push the uvs toward the edges.
+		   40 + 		//          |                 |       |                   |
+		   41 + 		//          |         _/      |       |           /       |
+		   42 + 		//  Change  | U     _/        |  to   | U     ___/        |
+		68    - 		uvModified /= TEXTURE_DIMENSIONS.xy;
+		69    - 	}
+		70    - #ifdef ATLAS_TEXTURE
+		71    - 	//Clamp UVs to atlas face
+		72    - 
+		   43 + 		//          |     _/          |       |     /             |
+		   44 + 		//          |    /            |       |    /              |
+		   45 + 		//          |         X       |       |         X         |
+		   46 + 		highp float scalerU = 1.0 / (duUV);
+		   47 + 		highp float scalerV = 1.0 / (dvUV);
+		   48 + 		highp vec2 scaler = max(vec2(scalerU, scalerV), 1.0);
+		   49 + 		texelUV = clamp(texelUV * scaler, 0.0, .5) + clamp(texelUV*scaler - (scaler - .5), 0.0, .5);
+		   50 + 		uvModified += texelUV;
+		73    - 	highp float mipLevel0 = clamp(floor(mipLevel), 0.0f, TEXTURE_DIMENSIONS.z);
+		74    - 	highp float mipLevel1 = clamp(floor(mipLevel+1.0f), 0.0f, TEXTURE_DIMENSIONS.z);
+		75    - 
+		76    - 	highp vec2 uvLOD0 = clampUVsForMipLevel(uvModified, mipLevel0, TEXTURE_DIMENSIONS.x, TEXTURE_DIMENSIONS.y);
+		77    - 	highp vec2 uvLOD1 = clampUVsForMipLevel(uvModified, mipLevel1, TEXTURE_DIMENSIONS.x, TEXTURE_DIMENSIONS.y);
+		78    - 
+		79    - 	vec4 diffuse0 = textureLod(tex, uvLOD0, mipLevel0);
+		80    - 	vec4 diffuse1 = textureLod(tex, uvLOD1, mipLevel1);
+		81    - 
+		   51 + 		uvModified /= TEXTURE_DIMENSIONS.xy;
+		   52 + 	}
+		82    - 	vec4 diffuse = mix(diffuse0, diffuse1, fract(mipLevel));
+		83    - #else
+		84 53   	vec4 diffuse = texture2D(tex, uvModified);
+		85    - #endif
+		86 54   	return diffuse;
+		87 55   
+		88 56   }
+		89 57   
+		90 58   #endif //__VERSION__ >= 300
+		        '''
+Added resource pack "uv_selection_overlay.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		// To use centroid sampling we need to have version 300 es shaders, which requires changing:
+		// attribute to in
+		// varying to out when in vertex shaders or in when in fragment shaders
+		// defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+		// texture2D to texture
+		#if __VERSION__ >= 300
+		#define attribute in
+		#define varying out
+		
+		#ifdef MSAA_FRAMEBUFFER_ENABLED
+		#define _centroid centroid
+		#else
+		#define _centroid
+		#endif
+		
+		_centroid out vec2 uv;
+		
+		#else
+		
+		varying vec2 uv;
+		
+		#endif
+		
+		uniform MAT4 WORLDVIEW;
+		uniform MAT4 PROJ;
+		
+		attribute POS4 POSITION;
+		attribute vec2 TEXCOORD_0;
+		
+		
+		void main()
+		{
+			POS4 pos = WORLDVIEW * POSITION;
+		    gl_Position = PROJ * pos;
+		
+		    uv = TEXCOORD_0;
+		}
+		'''

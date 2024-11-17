@@ -1,0 +1,333 @@
+Difference of "ui" between "1.17.41" and "1.18.0.20" (beta of "1.18.0").
+
+Changed namespace "bed":
+	Changed element "in_bed_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+1, -0)
+			Added control:
+				element "wake_up_label_panel":
+					field "type": "label"
+					field "size": ["default", 49]
+					field "offset": [0, "15.0%"]
+					field "text": "#wake_up_label_panel"
+					field "color": "$main_header_text_color"
+					field "bindings": binding: field "binding_name": "#wake_up_label_panel"
+Changed namespace "common":
+	Changed element "empty_progress_bar":
+		Unchanged field "type": "image"
+		Changed field "color" from "$boss_health_bar_color" to "#color".
+	Changed element "filled_progress_bar":
+		Unchanged field "type": "image"
+		Changed field "color" from "$boss_health_bar_color" to "#color".
+	Changed element "filled_progress_bar_for_collections@common.filled_progress_bar":
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_name": "#bar_color"
+				field "binding_name_override": "#color"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$progress_bar_collection"
+Changed namespace "common_store":
+	Changed element "search_header_stack":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control:
+				element "gamepad_helper_y_alignment_hack":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "controls":
+						control:
+							element "gamepad_helper_y@common.gamepad_helper_y":
+								field "offset": [4, -5]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "bindings":
+									binding:
+										field "binding_name": "#gamepad_helper_visible"
+										field "binding_name_override": "#visible"
+								field "$variables": variable "$hide_description|default": true
+			Added control:
+				element "gamepad_helper_y_alignment_hack":
+					field "type": "panel"
+					field "size": [12, "100%c"]
+					field "controls":
+						control:
+							element "gamepad_helper_y@common.gamepad_helper_y":
+								field "offset": [-11, -5]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "$variables": variable "$hide_description|default": true
+					field "bindings":
+						binding:
+							field "binding_name": "#gamepad_helper_visible"
+							field "binding_name_override": "#visible"
+	Changed element "wallet_button_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 3 (+2, -2)
+			Removed control:
+				element "plus_image@common_buttons.new_ui_button_panel":
+					field "bindings": "$wallet_plus_image_bindings"
+					field "$variables":
+						variable "$button_size_override|default":
+							item 0: 17
+							item 1: 17
+						variable "$button_content": "common_store.plus_icon"
+						variable "$wallet_plus_image_bindings|default":
+							item 0:
+								field "binding_name": "(not #gamepad_helper_visible)"
+								field "binding_name_override": "#visible"
+			Removed control:
+				element "gamepad_helper_x_alignment_hack":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "controls":
+						control:
+							element "gamepad_helper_x@common.gamepad_helper_x":
+								field "offset": [4, -5]
+								field "bindings": "$wallet_gamepad_helper_bindings"
+								field "$variables":
+									variable "$hide_description|default": true
+									variable "$wallet_gamepad_helper_bindings|default":
+										item 0:
+											field "binding_name": "#gamepad_helper_visible"
+											field "binding_name_override": "#visible"
+			Added control:
+				element "plus_image@common_buttons.new_ui_button_panel":
+					field "$variables":
+						variable "$button_size_override|default":
+							item 0: 17
+							item 1: 17
+						variable "$button_content": "common_store.plus_icon"
+			Added control:
+				element "gamepad_helper_x_alignment_hack":
+					field "type": "panel"
+					field "size": [12, "100%c"]
+					field "controls":
+						control:
+							element "gamepad_helper_x@common.gamepad_helper_x":
+								field "offset": [-11, -5]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "$variables": variable "$hide_description|default": true
+					field "bindings": "$wallet_gamepad_helper_bindings"
+					field "$variables":
+						variable "$wallet_gamepad_helper_bindings|default":
+							item 0:
+								field "binding_name": "#gamepad_helper_visible"
+								field "binding_name_override": "#visible"
+Changed namespace "general_section":
+	Total element: 114 (+3, -0)
+	Changed element "automation_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 16 (+1, -0)
+			Added control:
+				element "automation_server_test_assert_on_level_diff_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "Enable Assert on Level Diff While Running Server Tests"
+						variable "$option_binding_name": "#automation_server_test_assert_on_level_diff"
+						variable "$option_enabled_binding_name": "#automation_server_test_assert_on_level_diff_enabled"
+						variable "$toggle_name": "automation_server_test_assert_on_level_diff"
+	Added element "render_distance_popup@common.static_tooltip_popup_with_image_and_text":
+		field "size": ["100% - 4px", "100%cm + 8px"]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "bottom_middle"
+		field "$variables":
+			variable "$tooltip_panel_offset":
+				item 0: 0
+				item 1: -10
+			variable "$tooltip_popup_image": "textures/ui/infobulb"
+			variable "$tooltip_button_binding_type": "global"
+			variable "$tooltip_button_collection_name": ""
+			variable "$tooltip_popup_visible_binding": "#render_distance_warning_tooltip_visible"
+			variable "$tooltip_text_binding_name": "#render_distance_performance_tooltip_text"
+			variable "$tooltip_chevron_anchor": "bottom_right"
+			variable "$tooltip_popup_chevron_offset":
+				item 0: "-30%x"
+				item 1: "100%y - 3px"
+	Added element "render_distance_warning":
+		field "type": "panel"
+		field "size": ["100%", 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "controls":
+			control:
+				element "render_distance_warning_image@general_section.render_distance_warning_image":
+					field "offset": [-14, 0]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "controls":
+						control:
+							element "hover_detection_input_panel":
+								field "type": "input_panel"
+								field "consume_hover_events": false
+								field "focus_enabled": true
+								field "button_mappings":
+									button mapping:
+										field "to_button_id": "button.render_distance_warning_is_hovered"
+										field "mapping_type": "pressed"
+			control: element "render_distance_popup@general_section.render_distance_popup": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#render_distance_warning_visible"
+				field "binding_name_override": "#visible"
+	Added element "render_distance_warning_image":
+		field "type": "image"
+		field "size": [7, 11]
+		field "texture": "textures/ui/WarningGlyph"
+	Changed element "ui_debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 23 (+5, -0)
+			Added control:
+				element "open_core_ui_tests_spacer":
+					field "type": "panel"
+					field "size": ["100%", 7]
+			Added control:
+				element "reset_render_distance_warning_modal_label":
+					field "type": "label"
+					field "text": "Render distance warning modal"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+			Added control:
+				element "reset_render_distance_warning_modal_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Added control:
+				element "reset_render_distance_warning_modal@settings_common.action_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.reset_render_distance_warning_modal"
+						variable "$button_text": "Reset modal"
+			Added control:
+				element "reset_render_distance_warning_modal_spacer":
+					field "type": "panel"
+					field "size": ["100%", 7]
+	Changed element "video_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "render_distance_slider@settings_common.option_slider":
+					Added field "controls":
+						control: element "render_distance_warning@general_section.render_distance_warning": empty
+						control: element "option_generic_core@settings_common.option_generic_core": empty
+Changed namespace "pdp":
+	Changed element "summary_content_left_side":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "full_content":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "top":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "image":
+											Unchanged field "type": "panel"
+											Changed field "controls":
+												Changed control:
+													Changed element "key_image":
+														Unchanged field "type": "image"
+														Changed field "controls":
+															Changed control:
+																Changed element "rtx_label@common_store.rtx_label":
+																	Added field "layer" of 5.
+									Changed control:
+										Changed element "info":
+											Unchanged field "type": "stack_panel"
+											Changed field "controls":
+												Changed control:
+													Changed element "pad_fill":
+														Unchanged field "type": "panel"
+														Changed field "size":
+															Unchanged item 0: "100%"
+															Changed item 1 from "fill" to 5.
+											Changed field "size":
+												Unchanged item 0: "fill"
+												Changed item 1 from 0 to "100%c".
+											Removed field "inherit_max_sibling_height" of true.
+Changed namespace "persona":
+	Changed element "offer_coin_purchase_button@common_buttons.light_content_button":
+		Added field "bindings":
+			binding:
+				field "binding_name": "#is_coin_purchase_enabled"
+				field "binding_name_override": "#enabled"
+Changed namespace "play":
+	Changed element "close_navigation_tab":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "x_image@common.light_close_button":
+					Removed field "ignored" of "$game_pad".
+					Added field "bindings":
+						binding:
+							field "binding_name": "(not #gamepad_helper_visible)"
+							field "binding_name_override": "#visible"
+Changed namespace "update_version":
+	Changed element "update_version_popup@common_dialogs.main_panel_one_button":
+		Removed field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_exit"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+Changed namespace "world_section":
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 8 (+3, -0)
+			Added control:
+				element "game_version_override_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "Enable Game Version Override"
+						variable "$option_binding_name": "#game_version_override_toggle"
+						variable "$option_enabled_binding_name": "#game_version_override_toggle_enabled"
+						variable "$toggle_name": "game_version_override_toggle"
+			Added control:
+				element "game_version_override_textbox@settings_common.option_text_edit":
+					field "$variables":
+						variable "$option_label": "Game Version Override"
+						variable "$option_binding_name": "#game_version_override"
+						variable "$option_place_holder_text": "0.0.0"
+						variable "$option_enabled_binding_name": "#game_version_override_enabled"
+						variable "$text_box_name": "game_version_override_text_box"
+			Added control:
+				element "base_game_version_debug_text":
+					field "type": "label"
+					field "color": "$body_text_color"
+					field "text": "#text"
+					field "bindings":
+						binding:
+							field "binding_name": "#base_game_version_debug_text"
+							field "binding_name_override": "#text"
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 51 (+0, -2)
+			Removed control:
+				element "always_day_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$tts_section_header": "createWorldScreen.cheatSettings"
+						variable "$option_label": "createWorldScreen.alwaysDay"
+						variable "$option_binding_name": "#always_day"
+						variable "$option_enabled_binding_name": "#always_day_enabled"
+						variable "$toggle_name": "always_day"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+						variable "$toggle_binding_condition": "always_when_visible"
+			Removed control:
+				element "base_game_version_debug_text":
+					field "ignored": "$is_publish"
+					field "type": "label"
+					field "color": "$body_text_color"
+					field "text": "#text"
+					field "bindings":
+						binding:
+							field "binding_name": "#base_game_version_debug_text"
+							field "binding_name_override": "#text"

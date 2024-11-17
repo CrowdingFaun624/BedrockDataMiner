@@ -1,0 +1,320 @@
+Difference of "scripts" between "1.18.10.24" (beta of "1.18.10") and "1.18.10.26" (beta of "1.18.10").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 33 (+1, -0)
+	Changed script "APITests.js":
+		Total line: 1153 (+45, -0)
+		            '''
+		            ...
+		1104 1104   
+		1105 1105     test.succeed();
+		1106 1106   })
+		1107 1107     .structureName("ComponentTests:platform")
+		1108 1108     .tag(GameTest.Tags.suiteDefault);
+		     1109 +   
+		     1110 + //Entity Teleport Tests
+		     1111 + GameTest.register("APITests", "teleport_mob", async (test) => {
+		     1112 +   let sheepSpawn = new BlockLocation(0, 2, 0);
+		     1113 +   let teleportBlockLoc = new BlockLocation(2, 2, 2);
+		     1114 +   let sheep = test.spawn("minecraft:sheep", sheepSpawn);
+		     1115 +   let teleportLoc = new Location(2, 2, 2);
+		     1116 +   let teleportWorldLoc = test.worldLocation(teleportLoc);
+		     1117 + 
+		     1118 +   await test.idle(10);
+		     1119 +   sheep.teleport(teleportWorldLoc, sheep.dimension, 0.0, 0.0);
+		     1120 +   test.assertEntityPresent("minecraft:sheep", teleportBlockLoc, true);
+		     1121 +   sheep.kill();
+		     1122 +   test.succeed();
+		     1123 + })
+		     1124 + .structureName("ComponentTests:platform")
+		     1125 +   .tag(GameTest.Tags.suiteDefault);
+		     1126 + 
+		     1127 + GameTest.register("APITests", "teleport_mob_facing", async (test) => {
+		     1128 +   let playerSpawn = new BlockLocation(0, 2, 0);
+		     1129 +   let player = test.spawnSimulatedPlayer(playerSpawn, "simulatedPlayer");
+		     1130 +   let teleportLoc = new Location(2, 2, 2);
+		     1131 +   let teleportBlockLoc = new BlockLocation(2, 2, 2);
+		     1132 +   let teleportWorldLoc = test.worldLocation(teleportLoc);
+		     1133 + 
+		     1134 +   let facingLoc = new Location(2, 3, 0);
+		     1135 +   let facingBlockLoc = new BlockLocation(2, 3, 0);
+		     1136 +   let facingWorldLoc = test.worldLocation(facingLoc);
+		     1137 + 
+		     1138 +   test.setBlockType(MinecraftBlockTypes.diamondBlock, facingBlockLoc);
+		     1139 +   const diamondBlock = test.getBlock(facingBlockLoc);
+		     1140 +   let facingBlock;
+		     1141 + 
+		     1142 +   await test.idle(10);
+		     1143 +   player.teleportFacing(teleportWorldLoc, player.dimension, facingWorldLoc);
+		     1144 +   await test.idle(20);
+		     1145 +   facingBlock = player.getBlockFromViewVector();
+		     1146 +   test.assert(facingBlock.type ===
+		     1147 +     diamondBlock.type, "expected mob to face diamond block but instead got " + facingBlock.type.id);
+		     1148 +   test.assertEntityPresent("minecraft:player", teleportBlockLoc, true);
+		     1149 +   player.kill();
+		     1150 +   test.succeed();
+		     1151 + })
+		     1152 +   .structureName("ComponentTests:platform")
+		     1153 +   .tag(GameTest.Tags.suiteDefault);
+		            '''
+	Changed script "BlockEventTests.js":
+		Total line: 119 (+2, -2)
+		          '''
+		          ...
+		  8   8     GameMode,
+		  9   9     Direction,
+		 10  10   } from "mojang-minecraft";
+		 11  11   
+		 12  12   function registerBlockBreakTest(gameMode, blockType, blockBreakTicks) {
+		     13 +   GameTest.registerAsync("BlockEventTests", `block_break_event_${gameMode}_${blockType.id}`, async (test) => {
+		 13     -   GameTest.register("BlockEventTests", `block_break_event_${gameMode}_${blockType.id}`, async (test) => {
+		 14  14       const spawnLocation = new BlockLocation(1, 2, 3);
+		 15  15       const blockLocation = new BlockLocation(2, 2, 2);
+		 16  16   
+		 17  17       const player = test.spawnSimulatedPlayer(spawnLocation, `${gameMode}_player`, GameMode[gameMode]);
+		 18  18   
+		          ...
+		 54  54       .tag(GameTest.Tags.suiteDefault);
+		 55  55   }
+		 56  56   
+		 57  57   function registerBlockPlaceTest(itemType, belowBlock) {
+		 58  58     const registerTest = function (gameMode) {
+		     59 +     GameTest.registerAsync("BlockEventTests", `block_place_event_${gameMode}_${itemType.id}`, async (test) => {
+		 59     -     GameTest.register("BlockEventTests", `block_place_event_${gameMode}_${itemType.id}`, async (test) => {
+		 60  60         const spawnLocation = new BlockLocation(1, 2, 3);
+		 61  61         const blockLocation = new BlockLocation(2, 1, 2);
+		 62  62   
+		 63  63         const player = test.spawnSimulatedPlayer(spawnLocation, `${gameMode}_player`, GameMode[gameMode]);
+		 64  64   
+		          ...
+		          '''
+	Changed script "CommandTests.js":
+		Total line: 88 (+4, -4)
+		        '''
+		 1  1   import * as GameTest from "mojang-gametest";
+		 2  2   import { world, BlockLocation } from "mojang-minecraft";
+		 3  3   
+		    4 + GameTest.registerAsync("CommandTests", "commands_api_player_teleport", async (test) => {
+		 4    - GameTest.register("CommandTests", "commands_api_player_teleport", async (test) => {
+		 5  5     const startLoc = new BlockLocation(6, 2, 1);
+		 6  6     const endLoc = new BlockLocation(1, 2, 6);
+		 7  7   
+		 8  8     const player = test.spawnSimulatedPlayer(startLoc, "Teleport-o-man"); // This line is never getting hit?!
+		 9  9   
+		        ...
+		20 20     test.succeed();
+		21 21   })
+		22 22     .structureName("CommandTests:commands_teleport")
+		23 23     .tag(GameTest.Tags.suiteDefault);
+		24 24   
+		   25 + GameTest.registerAsync("CommandTests", "commands_api_pig_teleport", async (test) => {
+		25    - GameTest.register("CommandTests", "commands_api_pig_teleport", async (test) => {
+		26 26     const startLoc = new BlockLocation(6, 2, 1);
+		27 27     const endLoc = new BlockLocation(1, 2, 6);
+		28 28   
+		29 29     const entity = test.spawn("minecraft:pig", startLoc);
+		30 30   
+		        ...
+		41 41     test.succeed();
+		42 42   })
+		43 43     .structureName("CommandTests:commands_teleport")
+		44 44     .tag(GameTest.Tags.suiteDefault);
+		45 45   
+		   46 + GameTest.registerAsync("CommandTests", "commands_api_dimension_spawn_pig", async (test) => {
+		46    - GameTest.register("CommandTests", "commands_api_dimension_spawn_pig", async (test) => {
+		47 47     const spawnLoc = new BlockLocation(6, 2, 1);
+		48 48   
+		49 49     const absSpawnLoc = test.worldBlockLocation(new BlockLocation(6, 2, 1));
+		50 50     test.getDimension().runCommand(`summon minecraft:pig ${absSpawnLoc.x} ${absSpawnLoc.y} ${absSpawnLoc.z}`);
+		51 51   
+		        ...
+		55 55     test.succeed();
+		56 56   })
+		57 57     .structureName("CommandTests:commands_teleport")
+		58 58     .tag(GameTest.Tags.suiteDefault);
+		59 59   
+		   60 + GameTest.registerAsync("CommandTests", "commands_api_execute_vs_player", async (test) => {
+		60    - GameTest.register("CommandTests", "commands_api_execute_vs_player", async (test) => {
+		61 61     const spawnLoc1 = new BlockLocation(1, 2, 1);
+		62 62     const spawnLoc2 = new BlockLocation(3, 2, 1);
+		63 63     const playerName1 = "Sim Player (execute at)";
+		64 64     const playerName2 = "Sim Player (runCommand)";
+		65 65     const player1 = test.spawnSimulatedPlayer(spawnLoc1, playerName1);
+		        ...
+		        '''
+	Added script "FrogTests.js":
+		'''
+		import * as GameTest from "mojang-gametest";
+		import { BlockLocation, MinecraftItemTypes, Location, TicksPerSecond } from "mojang-minecraft";
+		import GameTestExtensions from "./GameTestExtensions.js";
+		
+		GameTest.register("FrogTests", "frog_jump", (test) => {
+		    const frogEntityType = "minecraft:frog";
+		    const startPos = new BlockLocation(0, 7, 0);
+		    const endPos = new BlockLocation(3, 7, 0);
+		    test.spawn(frogEntityType, startPos);
+		
+		    test
+		        .startSequence()
+		        .thenWait(() => {
+		            test.assertEntityPresent(frogEntityType, endPos, true);
+		        })
+		        .thenSucceed();
+		}).maxTicks(TicksPerSecond * 20)
+		    .tag("Experiment Wild");
+		
+		GameTest.register("FrogTests", "frog_eat_slime_drop_slimeball", (test) => {
+		    const frogEntityType = "minecraft:frog";
+		    const startPos = new BlockLocation(1, 2, 0);
+		    test.spawn(frogEntityType, startPos);
+		
+		    const slimeEntityType = "minecraft:slime<spawn_small>";
+		    const entityLoc = new Location(1, 2, 3);
+		    test.spawnWithoutBehaviorsAtLocation(slimeEntityType, entityLoc);
+		
+		    test
+		        .startSequence()
+		        .thenWait(() => {
+		            test.assertItemEntityPresent(MinecraftItemTypes.slimeBall, startPos, 10.0, true);
+		        })
+		        .thenSucceed();
+		}).maxTicks(TicksPerSecond * 5)
+		    .tag("Experiment Wild");
+		
+		GameTest.register("FrogTests", "temperate_frog_magmacube_drop_ochre", (test) => {
+		    const frogEntityType = "minecraft:frog";
+		    const startPos = new BlockLocation(1, 2, 0);
+		    test.spawn(frogEntityType, startPos);
+		
+		    const magmacubeEntityType = "minecraft:magma_cube<spawn_small>";
+		    const entityLoc = new Location(1, 2, 3);
+		    test.spawnWithoutBehaviorsAtLocation(magmacubeEntityType, entityLoc);
+		
+		    test
+		        .startSequence()
+		        .thenWait(() => {
+		            test.assertItemEntityPresent(MinecraftItemTypes.ochreFroglight, startPos, 10.0, true);
+		        })
+		        .thenSucceed();
+		}).maxTicks(TicksPerSecond * 5)
+		    .tag("Experiment Wild");
+		
+		GameTest.register("FrogTests", "warm_frog_magmacube_drop_pearlescent", (test) => {
+		    const frogEntityType = "minecraft:frog<spawn_warm>";
+		    const startPos = new BlockLocation(1, 2, 0);
+		    test.spawn(frogEntityType, startPos);
+		
+		    const magmacubeEntityType = "minecraft:magma_cube<spawn_small>";
+		    const entityLoc = new Location(1, 2, 3);
+		    test.spawnWithoutBehaviorsAtLocation(magmacubeEntityType, entityLoc);
+		
+		    test
+		        .startSequence()
+		        .thenWait(() => {
+		            test.assertItemEntityPresent(MinecraftItemTypes.pearlescentFroglight, startPos, 10.0, true);
+		        })
+		        .thenSucceed();
+		}).maxTicks(TicksPerSecond * 5)
+		    .tag("Experiment Wild");
+		
+		GameTest.register("FrogTests", "cold_frog_magmacube_drop_verdant", (test) => {
+		    const frogEntityType = "minecraft:frog<spawn_cold>";
+		    const startPos = new BlockLocation(1, 2, 0);
+		    test.spawn(frogEntityType, startPos);
+		
+		    const magmacubeEntityType = "minecraft:magma_cube<spawn_small>";
+		    const entityLoc = new Location(1, 2, 3);
+		    test.spawnWithoutBehaviorsAtLocation(magmacubeEntityType, entityLoc);
+		
+		    test
+		        .startSequence()
+		        .thenWait(() => {
+		            test.assertItemEntityPresent(MinecraftItemTypes.verdantFroglight, startPos, 10.0, true);
+		        })
+		        .thenSucceed();
+		}).maxTicks(TicksPerSecond * 5)
+		    .tag("Experiment Wild");
+		
+		GameTest.register("FrogTests", "frog_lay_egg_spawn_tadpole", (test) => {
+		    const startPosFrogOne = new BlockLocation(0, 4, 1);
+		    const startPosFrogTwo = new BlockLocation(4, 4, 1);
+		    const startPosPlayer = new BlockLocation(2, 4, 0);
+		
+		    let playerSim = test.spawnSimulatedPlayer(startPosPlayer, "playerSim_frog");
+		    let frogOne = test.spawn("minecraft:frog", startPosFrogOne);
+		    let frogTwo = test.spawn("minecraft:frog", startPosFrogTwo);
+		    const testEx = new GameTestExtensions(test);
+		
+		    test
+		        .startSequence()
+		        .thenExecute(() => testEx.giveItem(playerSim, MinecraftItemTypes.seagrass, 2, 0))
+		        .thenExecute(() => test.assert(playerSim.interactWithEntity(frogOne) == true, ""))
+		        .thenExecute(() => test.assert(playerSim.interactWithEntity(frogTwo) == true, ""))
+		        .thenWait(() => {
+		            test.assertEntityPresentInArea("minecraft:tadpole", true);
+		        })
+		        .thenSucceed();
+		}).maxTicks(TicksPerSecond * 90)
+		    .tag("Experiment Wild");
+		'''
+	Changed script "Main.js":
+		Total line: 32 (+1, -0)
+		        '''
+		        ...
+		10 10   import "scripts/DuplicationTests.js";
+		11 11   import "scripts/EntityQueryTests.js";
+		12 12   import "scripts/EntityTests.js";
+		13 13   import "scripts/ExtensionTests.js";
+		14 14   import "scripts/FireAvoidTests.js";
+		   15 + import "scripts/FrogTests.js";
+		15 16   import "scripts/GameTestExtensions.js";
+		16 17   import "scripts/MinecartTests.js";
+		17 18   import "scripts/MobTests.js";
+		18 19   import "scripts/MultifaceTests.js";
+		19 20   import "scripts/PathFindingTests.js";
+		        ...
+		        '''
+	Changed script "SimulatedPlayerTests.js":
+		Total line: 1142 (+3, -3)
+		            '''
+		            ...
+		1056 1056     test.startSequence();
+		1057 1057   })
+		1058 1058     .structureName("SimulatedPlayerTests:sneaking")
+		1059 1059     .tag(GameTest.Tags.suiteDefault);
+		1060 1060   
+		     1061 + GameTest.registerAsync("SimulatedPlayerTests", "player_join_leave_events", async (test) => {
+		1061      - GameTest.register("SimulatedPlayerTests", "player_join_leave_events", async (test) => {
+		1062 1062     const thePlayerName = "Gary_The_Duck_411";
+		1063 1063   
+		1064 1064     let expectedPlayerJoined = false;
+		1065 1065     const playerJoinCallback = world.events.playerJoin.subscribe((e) => {
+		1066 1066       if (e.player.name == thePlayerName) {
+		            ...
+		1095 1095     test.succeed();
+		1096 1096   })
+		1097 1097     .structureName("ComponentTests:platform")
+		1098 1098     .tag(GameTest.Tags.suiteDefault);
+		1099 1099   
+		     1100 + GameTest.registerAsync("SimulatedPlayerTests", "player_update_selected_slot", async (test) => {
+		1100      - GameTest.register("SimulatedPlayerTests", "player_update_selected_slot", async (test) => {
+		1101 1101     const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		1102 1102   
+		1103 1103     await test.idle(1);
+		1104 1104   
+		1105 1105     test.assert(player.selectedSlot === 0, "Expected default selected slot of the player to be 0");
+		            ...
+		1111 1111     test.succeed();
+		1112 1112   })
+		1113 1113     .structureName("ComponentTests:platform")
+		1114 1114     .tag(GameTest.Tags.suiteDefault);
+		1115 1115   
+		     1116 + GameTest.registerAsync("SimulatedPlayerTests", "player_uses_correct_item_from_updated_slot", async (test) => {
+		1116      - GameTest.register("SimulatedPlayerTests", "player_uses_correct_item_from_updated_slot", async (test) => {
+		1117 1117     const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		1118 1118     const blockLoc = new BlockLocation(2, 1, 1);
+		1119 1119     const dirt = new ItemStack(MinecraftItemTypes.dirt, 1);
+		1120 1120     const stone = new ItemStack(MinecraftItemTypes.stone, 1);
+		1121 1121   
+		            ...
+		            '''

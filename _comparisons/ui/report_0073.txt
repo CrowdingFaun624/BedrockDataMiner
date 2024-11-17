@@ -1,0 +1,633 @@
+Difference of "ui" between "1.2.8" and "1.2.9".
+
+Changed namespace "common":
+	Total element: 195 (+6, -3)
+	Changed element "back_button@common_buttons.no_background_content_button":
+		Changed field "$variables":
+			Total variable: 7 (+1, -0)
+			Added variable "$chevron_image_name|default" of "textures/ui/chevron_left".
+		Changed field "bindings":
+			Total binding: 1 (+1, -1)
+			Removed binding:
+				field "binding_name": "(not #gamepad_helper_visible)"
+				field "binding_name_override": "#visible"
+			Added binding:
+				field "binding_name": "(not #gamepad_helper_visible)"
+				field "binding_name_override": "#focus_enabled"
+	Changed element "back_button_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "chevron_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "left_chevron@common.chevron_image":
+								field "texture": "textures/ui/chevron_left"
+								field "offset": [0, -1]
+								field "color": "$text_color"
+						Added control:
+							element "left_chevron@common.chevron_image":
+								field "offset": [0, -1]
+								field "bindings":
+									binding:
+										field "binding_name": "(not #gamepad_helper_visible)"
+										field "binding_name_override": "#visible"
+	Changed element "back_title_button":
+		Unchanged field "type": "stack_panel"
+		Changed field "$variables":
+			Total variable: 5 (+3, -0)
+			Added variable "$back_title_content_size":
+				item 0: 7
+				item 1: 7
+			Added variable "$button_image_size":
+				item 0: 25
+				item 1: 17
+			Added variable "$button_size_override" of "$button_image_size".
+		Changed field "controls":
+			Total control: 1 (+1, -3)
+			Removed control:
+				element "panel1":
+					field "type": "panel"
+					field "offset": [2, 0]
+					field "size": [16, "100%"]
+					field "controls":
+						control:
+							element "button@common.back_button":
+								field "$variables":
+									variable "$button_text": ""
+									variable "$button_content": "common.back_title_button_content"
+			Removed control:
+				element "padding1":
+					field "type": "panel"
+					field "size": [3, "100%"]
+					field "ignored": "(not $back_button_has_title)"
+			Removed control:
+				element "panel2":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "ignored": "(not $back_button_has_title)"
+					field "controls":
+						control:
+							element "label":
+								field "type": "label"
+								field "layer": 2
+								field "text": "$button_text"
+								field "color": "$title_text_color"
+								field "text_alignment": "center"
+								field "bindings":
+									binding:
+										field "binding_type": "$button_text_binding_type"
+										field "binding_name": "$button_text"
+										field "binding_name_override": "$button_text"
+			Added control:
+				element "back_title_button":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "padding1":
+								field "type": "panel"
+								field "size": [4, "100%"]
+						control:
+							element "panel1":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "controls":
+									control:
+										element "button@common.back_button":
+											field "$variables":
+												variable "$button_text": ""
+												variable "$button_type_panel": "common.back_title_button_content"
+						control:
+							element "button_padding_title":
+								field "type": "panel"
+								field "size": [3, "100%"]
+								field "ignored": "(not $back_button_has_title)"
+						control:
+							element "panel2":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "ignored": "(not $back_button_has_title)"
+								field "controls":
+									control:
+										element "label":
+											field "type": "label"
+											field "layer": 2
+											field "text": "$button_text"
+											field "color": "$title_text_color"
+											field "text_alignment": "center"
+											field "bindings":
+												binding:
+													field "binding_type": "$button_text_binding_type"
+													field "binding_name": "$button_text"
+													field "binding_name_override": "$button_text"
+	Removed element "back_title_button_content":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", 16]
+		field "offset": [0, 2]
+		field "controls":
+			control:
+				element "padding1":
+					field "type": "panel"
+					field "size": [4, "100%"]
+			control:
+				element "chevron_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "controls":
+						control:
+							element "left_chevron@common.chevron_image":
+								field "texture": "textures/ui/chevron_left"
+								field "offset": [0, -1]
+								field "color": "$text_color"
+			control:
+				element "padding2":
+					field "type": "panel"
+					field "size": [4, "100%"]
+	Added element "back_title_button_content@common.chevron_image":
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "size": "$back_title_content_size"
+		field "bindings":
+			binding:
+				field "binding_name": "(not #gamepad_helper_visible)"
+				field "binding_name_override": "#visible"
+	Added element "bottom_safezone_vertical_buffer@common.safezone_buffer" of field "size": "$bottom_vertical_safezone_size".
+	Changed element "chevron_image":
+		Unchanged field "type": "image"
+		Added field "color" of "$text_color".
+	Changed element "gamepad_helper":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "description_panel":
+					Unchanged field "type": "panel"
+					Changed field "size":
+						Unchanged item 0: "100%c + 2px"
+						Changed item 1 from 26 to "100%".
+	Added element "left_safezone_horizontal_buffer@common.safezone_buffer" of field "size": "$left_horizontal_safezone_size".
+	Added element "right_safezone_horizontal_buffer@common.safezone_buffer" of field "size": "$right_horizontal_safezone_size".
+	Added element "safe_zone_stack":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control:
+				element "top_outer_control@$header_safezone_control":
+					field "size": "$top_vertical_safezone_size"
+					field "bindings":
+						binding:
+							field "binding_name": "#safezone_outer_top"
+							field "binding_name_override": "#visible"
+			control:
+				element "top_inner_control@$header_safezone_control":
+					field "size": "$top_vertical_safezone_size"
+					field "bindings":
+						binding:
+							field "binding_name": "#safezone_inner_top"
+							field "binding_name_override": "#visible"
+			control: element "header_bar@$header_bar_control": empty
+			control: element "background@$background_control": field "size": ["100%", "fill"]
+		field "$variables":
+			variable "$background_control|default": "common.empty_panel"
+			variable "$header_bar_control|default": "common.empty_panel"
+			variable "$header_safezone_control|default": "common.empty_panel"
+	Removed element "safezone_horizontal_buffer@common.safezone_buffer" of field "size": "$horizontal_safezone_size".
+	Changed element "safezone_inner_matrix":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 5 (+4, -4)
+			Removed control element "outer_top@common.safezone_vertical_buffer": field "$variables": variable "$safezone_binding_name": "#safezone_outer_top".
+			Removed control element "inner_top@common.safezone_vertical_buffer": field "$variables": variable "$safezone_binding_name": "#safezone_inner_top".
+			Removed control element "inner_bottom@common.safezone_vertical_buffer": field "$variables": variable "$safezone_binding_name": "#safezone_inner_bottom".
+			Removed control element "outer_bottom@common.safezone_vertical_buffer": field "$variables": variable "$safezone_binding_name": "#safezone_outer_bottom".
+			Added control:
+				element "outer_top@common.top_safezone_vertical_buffer":
+					field "controls":
+						control:
+							element "top_side_control@$header_safezone_control":
+								field "size": ["100%", "100%"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+					field "$variables": variable "$safezone_binding_name": "#safezone_outer_top"
+			Added control:
+				element "inner_top@common.top_safezone_vertical_buffer":
+					field "controls":
+						control:
+							element "top_side_control@$header_safezone_control":
+								field "size": ["100%", "100%"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+					field "$variables": variable "$safezone_binding_name": "#safezone_inner_top"
+			Added control:
+				element "inner_bottom@common.bottom_safezone_vertical_buffer":
+					field "controls": control: element "background@$background_control": empty
+					field "$variables": variable "$safezone_binding_name": "#safezone_inner_bottom"
+			Added control:
+				element "outer_bottom@common.bottom_safezone_vertical_buffer":
+					field "controls": control: element "background@$background_control": empty
+					field "$variables": variable "$safezone_binding_name": "#safezone_outer_bottom"
+		Added field "$variables":
+			variable "$header_safezone_control|default": "common.empty_panel"
+			variable "$background_control|default": "common.empty_panel"
+	Changed element "safezone_outer_matrix":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 5 (+4, -4)
+			Removed control element "outer_left@common.safezone_horizontal_buffer": field "$variables": variable "$safezone_binding_name": "#safezone_outer_left".
+			Removed control element "inner_left@common.safezone_horizontal_buffer": field "$variables": variable "$safezone_binding_name": "#safezone_inner_left".
+			Removed control element "inner_right@common.safezone_horizontal_buffer": field "$variables": variable "$safezone_binding_name": "#safezone_inner_right".
+			Removed control element "outer_right@common.safezone_horizontal_buffer": field "$variables": variable "$safezone_binding_name": "#safezone_outer_right".
+			Added control:
+				element "outer_left@common.left_safezone_horizontal_buffer":
+					field "controls": control: element "outer_left_safe_zone_stack@common.safe_zone_stack": empty
+					field "$variables": variable "$safezone_binding_name": "#safezone_outer_left"
+			Added control:
+				element "inner_left@common.left_safezone_horizontal_buffer":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls": control: element "inner_left_safe_zone_stack@common.safe_zone_stack": empty
+					field "$variables": variable "$safezone_binding_name": "#safezone_inner_left"
+			Added control:
+				element "inner_right@common.right_safezone_horizontal_buffer":
+					field "controls": control: element "inner_right_safe_zone_stack@common.safe_zone_stack": empty
+					field "$variables": variable "$safezone_binding_name": "#safezone_inner_right"
+			Added control:
+				element "outer_right@common.right_safezone_horizontal_buffer":
+					field "controls": control: element "outer_right_safe_zone_stack@common.safe_zone_stack": empty
+					field "$variables": variable "$safezone_binding_name": "#safezone_outer_right"
+	Removed element "safezone_vertical_buffer@common.safezone_buffer" of field "size": "$vertical_safezone_size".
+	Added element "top_safezone_vertical_buffer@common.safezone_buffer" of field "size": "$top_vertical_safezone_size".
+Changed namespace "common_buttons":
+	Changed element "borderless_form_fitting_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "$button_image@$button_image":
+					field "size": ["100%c + 4px", "100%c"]
+					field "layer": 1
+					field "controls":
+						control:
+							element "button_content":
+								field "type": "panel"
+								field "size": ["100%c", "100%c"]
+								field "controls": control: element "$button_type_panel@$button_type_panel": field "layer": 3
+			Added control:
+				element "$button_image@$button_image":
+					field "size": "$button_image_size"
+					field "layer": 1
+					field "controls": control: element "$button_type_panel@$button_type_panel": field "layer": 3
+					field "$variables":
+						variable "$button_image_size|default":
+							item 0: "100%c + 4px"
+							item 1: "100%c"
+	Changed element "light_content_button@common_buttons.light_button_assets":
+		Changed field "controls":
+			Changed control:
+				Changed element "locked@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 10 (+1, -0)
+						Added variable "$border_visible" of "$locked_state_border_visible".
+			Changed control:
+				Changed element "pressed@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 11 (+1, -0)
+						Added variable "$border_visible" of "$pressed_state_border_visible".
+			Changed control:
+				Changed element "hover@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 10 (+1, -0)
+						Added variable "$border_visible" of "$hover_state_border_visible".
+			Changed control:
+				Changed element "default@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 11 (+1, -0)
+						Added variable "$border_visible" of "$default_state_border_visible".
+		Changed field "$variables":
+			Total variable: 18 (+4, -0)
+			Added variable "$default_state_border_visible|default" of true.
+			Added variable "$hover_state_border_visible|default" of true.
+			Added variable "$pressed_state_border_visible|default" of true.
+			Added variable "$locked_state_border_visible|default" of true.
+	Changed element "transparent_content_button@common_buttons.light_content_button":
+		Changed field "$variables":
+			Total variable: 12 (+4, -0)
+			Added variable "$default_state_border_visible" of false.
+			Added variable "$hover_state_border_visible" of false.
+			Added variable "$pressed_state_border_visible" of false.
+			Added variable "$locked_state_border_visible" of false.
+Changed namespace "feed":
+	Changed element "feed_image_button@common_buttons.transparent_content_button":
+		Changed field "$variables":
+			Total variable: 13 (+4, -0)
+			Added variable "$default_state_border_visible" of false.
+			Added variable "$hover_state_border_visible" of true.
+			Added variable "$pressed_state_border_visible" of true.
+			Added variable "$locked_state_border_visible" of false.
+Changed namespace "how_to_play_common":
+	Total element: 38 (+1, -0)
+	Changed element "gamepad_bumper_helpers":
+		Unchanged field "type": "stack_panel"
+		Removed field "offset" of ["-4px", "-2px"].
+		Added field "size" of ["100%c", "100%"].
+		Added field "$variables":
+			variable "$gamepad_helper_size":
+				item 0: "100%c"
+				item 1: 17
+			variable "$gamepad_helper_icon_size":
+				item 0: "100%y"
+				item 1: "100%"
+			variable "$gamepad_helper_icon_description_text_color": "$title_text_color"
+			variable "$gamepad_helper_icon_description_shadow": false
+	Changed element "how_to_play_header":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control:
+				element "top_bar@how_to_play_common.top_bar":
+					field "size": ["100%", "100%"]
+					field "layer": 1
+					field "controls":
+						control:
+							element "back_button@common.back_title_button":
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+								field "offset": [2, -1]
+						control:
+							element "how_to_play_title@common.screen_header_title_panel":
+								field "$variables":
+									variable "$screen_header_title": "#section_title"
+									variable "$screen_header_title_binding_type": "global"
+						control: element "gamepad_bumper_helpers@how_to_play_common.gamepad_bumper_helpers": empty
+			Added control:
+				element "top_header_background@how_to_play_common.top_bar":
+					field "size": ["100%", "100%"]
+					field "layer": 1
+			Added control element "top_header_content@how_to_play_common.top_header_content": empty.
+	Added element "top_header_content":
+		field "type": "stack_panel"
+		field "size": ["100%", 17]
+		field "offset": [0, -1]
+		field "orientation": "horizontal"
+		field "layer": 2
+		field "controls":
+			control:
+				element "left_padding_panel":
+					field "type": "panel"
+					field "size": [4, "100%"]
+			control: element "back_button@common.back_title_button": empty
+			control:
+				element "back_padding_title":
+					field "type": "panel"
+					field "size": [10, "100%"]
+			control:
+				element "how_to_play_title@common.screen_header_title_panel":
+					field "$variables":
+						variable "$screen_header_title": "#section_title"
+						variable "$screen_header_title_binding_type": "global"
+			control:
+				element "top_header_fill_panel":
+					field "type": "panel"
+					field "size": ["fill", "100%"]
+			control: element "gamepad_bumper_helpers@how_to_play_common.gamepad_bumper_helpers": empty
+			control:
+				element "right_padding_panel":
+					field "type": "panel"
+					field "size": [4, "100%"]
+Changed namespace "safe_zone":
+	Changed element "content_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 6 (+5, -1)
+			Removed control:
+				element "safe_zone_slider@settings_common.option_slider":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "$variables":
+						variable "$option_label": "#safe_zone_slider_label"
+						variable "$slider_name": "safe_zone"
+						variable "$slider_value_binding_name": "#safe_zone"
+						variable "$option_enabled_binding_name": "#safe_zone_enabled"
+						variable "$default_focus_precedence": 1
+						variable "$slider_select_on_hover": true
+						variable "$label_bindings": item 0: field "binding_name": "#safe_zone_slider_label"
+			Added control:
+				element "safe_zone_slider_all@settings_common.option_slider":
+					field "$variables":
+						variable "$option_label": "#safe_zone_all_slider_label"
+						variable "$slider_name": "safe_zone_all"
+						variable "$slider_value_binding_name": "#safe_zone_all"
+						variable "$option_enabled_binding_name": "#safe_zone_all_enabled"
+						variable "$default_focus_precedence": 1
+						variable "$slider_select_on_hover": true
+						variable "$label_bindings": item 0: field "binding_name": "#safe_zone_all_slider_label"
+			Added control:
+				element "safe_zone_slider_x@settings_common.option_slider":
+					field "ignored": "$is_publish"
+					field "$variables":
+						variable "$option_label": "#safe_zone_x_slider_label"
+						variable "$slider_name": "safe_zone_x"
+						variable "$slider_value_binding_name": "#safe_zone_x"
+						variable "$option_enabled_binding_name": "#safe_zone_x_enabled"
+						variable "$slider_select_on_hover": true
+						variable "$label_bindings": item 0: field "binding_name": "#safe_zone_x_slider_label"
+			Added control:
+				element "safe_zone_slider_y@settings_common.option_slider":
+					field "ignored": "$is_publish"
+					field "$variables":
+						variable "$option_label": "#safe_zone_y_slider_label"
+						variable "$slider_name": "safe_zone_y"
+						variable "$slider_value_binding_name": "#safe_zone_y"
+						variable "$option_enabled_binding_name": "#safe_zone_y_enabled"
+						variable "$slider_select_on_hover": true
+						variable "$label_bindings": item 0: field "binding_name": "#safe_zone_y_slider_label"
+			Added control:
+				element "screen_position_slider_x@settings_common.option_slider":
+					field "ignored": "$is_publish"
+					field "$variables":
+						variable "$option_label": "#screen_position_x_slider_label"
+						variable "$slider_name": "screen_position_x"
+						variable "$slider_value_binding_name": "#screen_position_x"
+						variable "$option_enabled_binding_name": "#screen_position_x_enabled"
+						variable "$slider_select_on_hover": true
+						variable "$label_bindings": item 0: field "binding_name": "#screen_position_x_slider_label"
+			Added control:
+				element "screen_position_slider_y@settings_common.option_slider":
+					field "ignored": "$is_publish"
+					field "$variables":
+						variable "$option_label": "#screen_position_y_slider_label"
+						variable "$slider_name": "screen_position_y"
+						variable "$slider_value_binding_name": "#screen_position_y"
+						variable "$option_enabled_binding_name": "#screen_position_y_enabled"
+						variable "$slider_select_on_hover": true
+						variable "$label_bindings": item 0: field "binding_name": "#screen_position_y_slider_label"
+	Changed element "corner_bl@safe_zone.corner_image_common":
+		Added field "$variables":
+			variable "$local_safe_zone_offset_x": "#left_safe_zone_offset"
+			variable "$local_safe_zone_offset_y": "#bottom_safe_zone_offset"
+	Changed element "corner_br@safe_zone.corner_image_common":
+		Added field "$variables":
+			variable "$local_safe_zone_offset_x": "#right_safe_zone_offset"
+			variable "$local_safe_zone_offset_y": "#bottom_safe_zone_offset"
+	Changed element "corner_image_common":
+		Unchanged field "type": "image"
+		Changed field "property_bag":
+			Removed field "#anchored_offset_value" of 0.0.
+			Added field "#anchored_offset_value_x" of 0.0.
+			Added field "#anchored_offset_value_y" of 0.0.
+		Changed field "bindings":
+			Total binding: 2 (+2, -1)
+			Removed binding:
+				field "binding_name": "#local_safe_zone_offset"
+				field "binding_name_override": "#anchored_offset_value"
+			Added binding:
+				field "binding_name": "$local_safe_zone_offset_x"
+				field "binding_name_override": "#anchored_offset_value_x"
+			Added binding:
+				field "binding_name": "$local_safe_zone_offset_y"
+				field "binding_name_override": "#anchored_offset_value_y"
+	Changed element "corner_tl@safe_zone.corner_image_common":
+		Added field "$variables":
+			variable "$local_safe_zone_offset_x": "#left_safe_zone_offset"
+			variable "$local_safe_zone_offset_y": "#top_safe_zone_offset"
+	Changed element "corner_tr@safe_zone.corner_image_common":
+		Added field "$variables":
+			variable "$local_safe_zone_offset_x": "#right_safe_zone_offset"
+			variable "$local_safe_zone_offset_y": "#top_safe_zone_offset"
+	Changed element "safe_zone_screen@common.base_screen":
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "main_content_panel":
+					field "type": "panel"
+					field "size": [172, 130]
+					field "controls":
+						control:
+							element "common_panel@common.common_panel":
+								field "$variables":
+									variable "$show_close_button": false
+									variable "$dialog_background": "dialog_background_hollow_2"
+						control:
+							element "title_text@safe_zone.title_text":
+								field "offset": [0, 9]
+								field "size": ["default", 15]
+								field "anchor_to": "top_middle"
+								field "anchor_from": "top_middle"
+						control:
+							element "content_panel@safe_zone.content_panel":
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": ["100%-21px", "100%-52px"]
+								field "offset": [10, 24]
+						control:
+							element "confirm_button@safe_zone.confirm_button":
+								field "anchor_from": "bottom_middle"
+								field "anchor_to": "bottom_middle"
+								field "offset": [0, -7]
+			Added control:
+				element "main_content_panel":
+					field "type": "panel"
+					field "size": "$dialog_size"
+					field "controls":
+						control:
+							element "common_panel@common.common_panel":
+								field "$variables":
+									variable "$show_close_button": false
+									variable "$dialog_background": "dialog_background_hollow_2"
+						control:
+							element "title_text@safe_zone.title_text":
+								field "offset": [0, 9]
+								field "size": ["default", 15]
+								field "anchor_to": "top_middle"
+								field "anchor_from": "top_middle"
+						control:
+							element "scrolling_panel@common.scrolling_panel":
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": ["100%-21px", "100%-67px"]
+								field "offset": [10, 24]
+								field "$variables":
+									variable "$scrolling_pane_size":
+										item 0: "100%"
+										item 1: "100%"
+									variable "$scrolling_pane_offset":
+										item 0: 1
+										item 1: 0
+									variable "$scroll_size":
+										item 0: 5
+										item 1: "100% - 4px"
+									variable "$scrolling_content": "safe_zone.content_panel"
+									variable "$scroll_bar_left_padding_size":
+										item 0: 2
+										item 1: 0
+									variable "$scroll_bar_right_padding_size":
+										item 0: 2
+										item 1: 0
+									variable "$show_background": false
+									variable "$bar_visible": true
+						control:
+							element "confirm_button@safe_zone.confirm_button":
+								field "anchor_from": "bottom_middle"
+								field "anchor_to": "bottom_middle"
+								field "offset": [0, -7]
+		Added field "variables":
+			variable:
+				field "requires": "$is_publish"
+				field "$variables":
+					variable "$dialog_size":
+						item 0: 192
+						item 1: 140
+			variable:
+				field "requires": "(not $is_publish)"
+				field "$variables":
+					variable "$dialog_size":
+						item 0: 192
+						item 1: 206
+Changed namespace "screenshotpicker":
+	Changed element "remove_item_button@common_buttons.transparent_content_button":
+		Changed field "$variables":
+			Total variable: 12 (+3, -0)
+			Moved variable "$border_visible" to "$pressed_state_border_visible".
+			Added variable "$default_state_border_visible" of false.
+			Added variable "$hover_state_border_visible" of true.
+			Added variable "$locked_state_border_visible" of false.
+	Changed element "screenshot_button@common_buttons.transparent_content_button":
+		Changed field "$variables":
+			Total variable: 13 (+4, -0)
+			Moved variable "$border_visible" to "$pressed_state_border_visible".
+			Added variable "$default_state_border_visible" of false.
+			Added variable "$hover_state_border_visible" of true.
+			Added variable "$locked_state_border_visible" of false.
+			Added variable "$locked_button_texture" of "".
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_name": "#validation_succeeded"
+				field "binding_name_override": "#enabled"
+				field "binding_type": "collection"
+				field "binding_collection_name": "screenshotpicker_collection"
+		Added field "enabled" of "#validation_succeeded".
+	Changed element "screenshotpicker_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+1, -0)
+			Added control:
+				element "invalid_screenshot_overlay@screenshotpicker.faded_background":
+					field "visible": "#validation_failure_visible"
+					field "layer": 8
+					field "alpha": 0.5
+					field "bindings":
+						binding:
+							field "binding_name": "#validation_failure_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "screenshotpicker_collection"
+Changed namespace "world_section":
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 41 (+1, -0)
+			Added control element "world_options_label@settings_common.option_group_label": field "$variables": variable "$text": "createWorldScreen.worldSettings".

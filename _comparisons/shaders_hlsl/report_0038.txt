@@ -1,0 +1,26 @@
+Difference of "shaders" between "1.15.0.56" (beta of "1.16.0") and "1.16.0.51" (beta of "1.16.0").
+
+Changed file "rain_snow.fragment.hlsl":
+	Total line: 59 (+2, -0)
+	        '''
+	        ...
+	34 34   #else
+	35 35   #define OCCLUSION_HEIGHT occlusionTexture.a
+	36 36   #define OCCLUSION_LUMINANCE occlusionTexture.b
+	37 37   #endif
+	38 38   
+	   39 + #ifndef NO_OCCLUSION
+	39 40   	// clamp the uvs
+	40 41   	if (uv.x >= 0.0f && uv.x <= 1.0f && 
+	41 42   		uv.y >= 0.0f && uv.y <= 1.0f && 
+	42 43   		PSInput.worldPosition.y OCCLUSION_OPERATOR OCCLUSION_HEIGHT) {
+	43 44   		PSOutput.color.a = 0.0f;
+	44 45   	}
+	   46 + #endif
+	45 47   
+	46 48   	float mixAmount = (PSInput.worldPosition.y - OCCLUSION_HEIGHT)*25.0f;
+	47 49   	float2 lightingUVs = float2(OCCLUSION_LUMINANCE, 1.0f);
+	48 50   	lightingUVs.x = lerp(lightingUVs.x, 0.0f, mixAmount);
+	49 51   
+	        ...
+	        '''

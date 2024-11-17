@@ -1,0 +1,1359 @@
+Difference of "ui" between "1.8.1" and "1.9.0.0" (beta of "1.9.0").
+
+Total namespace: 152 (+2, -0)
+Added namespace "braze":
+	element "braze_screen@common.base_screen": field "$variables": variable "$screen_content": "braze.braze_screen_content"
+	element "braze_screen_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "root_panel":
+					field "type": "panel"
+					field "controls": control: element "dialog@braze.screen_dialog": field "layer": 1
+	element "description_label_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "layer": 1
+		field "controls":
+			control:
+				element "line1":
+					field "type": "label"
+					field "size": ["100%", "default"]
+					field "text": "#body_text"
+					field "font_type": "smooth"
+					field "color": "$body_text_color"
+					field "font_scale_factor": "$font_scale"
+					field "bindings": binding: field "binding_name": "#body_text"
+		field "$variables": variable "$font_scale": 1.2
+	element "dialog_content":
+		field "type": "stack_panel"
+		field "size": ["100% - 4px", "100% - 4px"]
+		field "controls":
+			control: element "image_panel@braze.image_panel": empty
+			control: element "padding_0@braze.padding": empty
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "size": ["100%", "fill"]
+					field "$variables":
+						variable "$show_background": false
+						variable "$scroll_box_visible_touch": true
+						variable "$scrolling_content": "braze.description_label_panel"
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100%"
+						variable "$scrolling_pane_size":
+							item 0: "100%"
+							item 1: "100%"
+						variable "$scrolling_pane_offset":
+							item 0: 0
+							item 1: 0
+						variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+			control: element "padding_1@braze.padding": empty
+			control:
+				element "button_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 30]
+					field "controls":
+						control:
+							element "left_button@common_buttons.light_text_button":
+								field "size": ["50% - 1px", 30]
+								field "$variables":
+									variable "$pressed_button_name": "button.left_button"
+									variable "$button_text": "#leftButton_text"
+									variable "$button_text_max_size":
+										item 0: "100%"
+										item 1: 20
+									variable "$button_text_binding_type": "global"
+						control:
+							element "padding":
+								field "type": "panel"
+								field "size": [2, "100%"]
+						control:
+							element "right_button@common_buttons.light_text_button":
+								field "size": ["50% - 1px", 30]
+								field "$variables":
+									variable "$pressed_button_name": "button.right_button"
+									variable "$button_text": "#rightButton_text"
+									variable "$button_text_max_size":
+										item 0: "100%"
+										item 1: 20
+									variable "$button_text_binding_type": "global"
+	element "image_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c + 2px"]
+		field "controls":
+			control:
+				element "image":
+					field "type": "image"
+					field "texture": "#image_texture"
+					field "texture_file_system": "RawPath"
+					field "size": ["100% - 2px", "42.86%x"]
+					field "controls":
+						control:
+							element "border@common.square_image_border_white":
+								field "size": ["100% + 2px", "100% + 2px"]
+								field "layer": 2
+								field "color": [0, 0, 0]
+					field "bindings":
+						binding:
+							field "binding_name": "#image_texture"
+							field "binding_name_override": "#texture"
+	element "padding":
+		field "type": "panel"
+		field "size": ["100%", 2]
+	element "screen_dialog@common_dialogs.main_panel_no_buttons":
+		field "size": [240, "100% - 4px"]
+		field "controls":
+			control: element "common_panel@common.common_panel": field "$variables": variable "$dialog_background": "$custom_background"
+			control: element "title_label@braze.title_label": empty
+			control:
+				element "panel_indent":
+					field "type": "panel"
+					field "size": "$panel_indent_size"
+					field "offset": [0, 23]
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "controls": control: element "inside_header_panel@$child_control": empty
+		field "$variables":
+			variable "$text_name": "#headline_text"
+			variable "$child_control": "braze.dialog_content"
+			variable "$show_close_button": true
+	element "title_label":
+		field "type": "panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": "$title_size"
+		field "offset": "$title_offset"
+		field "controls": control: element "common_dialogs_0@common_dialogs.standard_title_label": field "ignored": "$use_custom_title_control"
+		field "$variables":
+			variable "$title_size|default":
+				item 0: "100%c"
+				item 1: 10
+			variable "$title_offset|default":
+				item 0: 0
+				item 1: 9
+			variable "$use_custom_title_control|default": false
+			variable "$custom_title_label|default": "common.empty_panel"
+			variable "$title_binding_condition|default": "always"
+			variable "$title_text_binding_type|default": "global"
+Changed namespace "chat":
+	Changed element "text_edit_box@common.text_edit_box":
+		Changed field "button_mappings":
+			Changed button mapping:
+				Removed field "consume_event" of false.
+			Changed button mapping:
+				Changed field "handle_deselect" from false to true.
+Changed namespace "chat_settings":
+	Total element: 59 (+15, -6)
+	Changed element "bordered_content_panel":
+		Unchanged field "type": "image"
+		Changed field "controls":
+			Changed control:
+				Changed element "background":
+					Unchanged field "type": "image"
+					Changed field "texture" from "textures/ui/menubackground" to "textures/ui/banners_no_border".
+					Added field "layer" of 1.
+	Removed element "chat_settings_main_menu":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["40%", "100%"]
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+		field "controls":
+			control: element "settings_title_button@chat_settings.main_menu_top_button": empty
+			control: element "font_section_button@chat_settings.menu_button_panel_template": field "$variables": variable "$menu_button": "font_menu_button"
+			control: element "color_section_button@chat_settings.menu_button_panel_template": field "$variables": variable "$menu_button": "color_menu_button"
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_main_enabled"
+				field "binding_name_override": "#visible"
+	Added element "chat_settings_main_menu@chat_settings.section_panel":
+		field "controls":
+			control: element "settings_title_button@chat_settings.main_menu_top_button": empty
+			control: element "main_menu_sections@chat_settings.main_menu_content_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_main_enabled"
+				field "binding_name_override": "#visible"
+	Changed element "chat_settings_screen":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Total control: 6 (+5, -4)
+			Removed control element "main_menu@chat_settings.chat_settings_main_menu": field "layer": 5.
+			Removed control element "font_section@chat_settings.font_section_panel": field "layer": 5.
+			Removed control element "color_section@chat_settings.color_section_panel": field "layer": 5.
+			Removed control element "font_color_section@chat_settings.font_color_section_panel": field "layer": 5.
+			Added control element "main_menu@chat_settings.chat_settings_main_menu": field "layer": "$section_layer".
+			Added control element "mute_section@chat_settings.mute_section_panel": field "layer": "$section_layer".
+			Added control element "font_section@chat_settings.font_section_panel": field "layer": "$section_layer".
+			Added control element "color_section@chat_settings.color_section_panel": field "layer": "$section_layer".
+			Added control element "font_color_section@chat_settings.font_color_section_panel": field "layer": "$section_layer".
+		Added field "$variables" of variable "$section_layer|default": 10.
+	Moved element "color_section_content_panel@chat_settings.section_panel" to "color_section_content_panel@chat_settings.section_content_panel".
+	Removed element "color_section_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["40%", "100%"]
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+		field "controls":
+			control: element "color_title_button@chat_settings.color_section_top_button": empty
+			control: element "color_section_options@chat_settings.color_section_content_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_color_section_enabled"
+				field "binding_name_override": "#visible"
+	Added element "color_section_panel@chat_settings.section_panel":
+		field "controls":
+			control: element "color_title_button@chat_settings.color_section_top_button": empty
+			control: element "color_section_options@chat_settings.color_section_content_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_color_section_enabled"
+				field "binding_name_override": "#visible"
+	Added element "font_color_section_content_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "alignment_panel":
+					field "type": "panel"
+					field "size": ["100% - 16px", "100%"]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "controls":
+						control:
+							element "scrolling_colors@common.scrolling_panel":
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "$variables":
+									variable "$scrolling_content": "chat_settings.font_color_grid"
+									variable "$show_background": false
+	Removed element "font_color_section_content_panel@chat_settings.section_panel" of field "$variables": variable "$section_content": item 0: field "font_colors@chat_settings.font_color_grid": empty.
+	Removed element "font_color_section_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["40%", "100%"]
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+		field "controls":
+			control: element "font_color_title_button@chat_settings.font_color_section_top_button": empty
+			control: element "font_color_section_options@chat_settings.font_color_section_content_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_font_color_section_enabled"
+				field "binding_name_override": "#visible"
+	Added element "font_color_section_panel@chat_settings.section_panel":
+		field "controls":
+			control: element "font_color_title_button@chat_settings.font_color_section_top_button": empty
+			control: element "font_color_section_options@chat_settings.font_color_section_content_panel": field "size": ["100%", "fill"]
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_font_color_section_enabled"
+				field "binding_name_override": "#visible"
+	Moved element "font_section_content_panel@chat_settings.section_panel" to "font_section_content_panel@chat_settings.section_content_panel".
+	Removed element "font_section_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["40%", "100%"]
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+		field "controls":
+			control: element "font_title_button@chat_settings.font_section_top_button": empty
+			control: element "font_section_options@chat_settings.font_section_content_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_font_section_enabled"
+				field "binding_name_override": "#visible"
+	Added element "font_section_panel@chat_settings.section_panel":
+		field "controls":
+			control: element "font_title_button@chat_settings.font_section_top_button": empty
+			control: element "font_section_options@chat_settings.font_section_content_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_font_section_enabled"
+				field "binding_name_override": "#visible"
+	Added element "main_menu_content_panel@chat_settings.section_content_panel":
+		field "$variables":
+			variable "$section_content":
+				item 0:
+					field "main_menu_content":
+						field "type": "stack_panel"
+						field "orientation": "vertical"
+						field "size":
+							item 0: "100%"
+							item 1: "100%c"
+						field "controls":
+							item 0: field "mute_menu_button@chat_settings.mute_menu_button": empty
+							item 1: field "font_menu_button@chat_settings.font_menu_button": empty
+							item 2: field "color_menu_button@chat_settings.color_menu_button": empty
+	Removed element "menu_button_panel_template":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls": control: element "button@chat_settings.$menu_button": empty
+		field "$variables":
+			variable "$menu_button|default": "font_menu_button"
+			variable "$menu_button_size|default":
+				item 0: "100% - 16px"
+				item 1: 30
+	Changed element "menu_button_template@common_buttons.light_content_button":
+		Unchanged field "type": "button"
+		Changed field "size" from "$menu_button_size" to ["100%", 30].
+	Added element "mute_all_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", 30]
+		field "controls":
+			control: element "mute_icon_panel@chat_settings.mute_icon_panel": empty
+			control: element "padding@common.empty_panel": field "size": [2, "100%"]
+			control: element "mute_all_text_panel@chat_settings.mute_all_text_panel": empty
+			control:
+				element "mute_all_toggle@settings_common.option_toggle":
+					field "size": [30, 30]
+					field "$variables":
+						variable "$option_binding_name": "#hide_chat"
+						variable "$option_enabled_binding_name": "#hide_chat_enabled"
+						variable "$toggle_name": "hide_chat"
+	Added element "mute_all_text_panel":
+		field "type": "panel"
+		field "size": ["fill", "100%"]
+		field "controls":
+			control:
+				element "mute_all_text":
+					field "type": "label"
+					field "size": ["100%", 10]
+					field "text_alignment": "left"
+					field "text": "#text"
+					field "color": "$dark_button_default_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#mute_all_text"
+							field "binding_name_override": "#text"
+							field "binding_condition": "visible"
+	Added element "mute_icon_panel":
+		field "type": "panel"
+		field "size": [20, "100%"]
+		field "controls":
+			control:
+				element "mute_icon":
+					field "type": "image"
+					field "size": [20, 20]
+					field "texture": "#texture"
+					field "bindings":
+						binding:
+							field "binding_name": "#mute_all_texture"
+							field "binding_name_override": "#texture"
+							field "binding_condition": "visible"
+	Added element "mute_menu_button@chat_settings.menu_button_template":
+		field "$variables":
+			variable "$pressed_button_name": "button.open_mute_section"
+			variable "$button_content": "chat_settings.expand_button_content_template"
+			variable "$button_text": "chat.mute"
+	Added element "mute_section_content_panel@chat_settings.section_content_panel":
+		field "$variables":
+			variable "$section_content":
+				item 0:
+					field "mute_content@chat_settings.bordered_content_panel":
+						field "$content_panel_size":
+							item 0: "100% - 8px"
+							item 1: "100%c"
+						field "$content_panel_controls": item 0: field "mute_all@chat_settings.mute_all_panel": empty
+	Added element "mute_section_panel@chat_settings.section_panel":
+		field "controls":
+			control: element "mute_title_button@chat_settings.mute_section_top_button": empty
+			control: element "mute_section_options@chat_settings.mute_section_content_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "#chat_settings_mute_section_enabled"
+				field "binding_name_override": "#visible"
+	Added element "mute_section_top_button@chat_settings.top_button_template":
+		field "$variables":
+			variable "$button_content": "chat_settings.mute_section_top_button_content"
+			variable "$pressed_button_name": "button.chat_settings_menu_cancel"
+	Added element "mute_section_top_button_content@chat_settings.left_symbol_button_content_template":
+		field "$variables":
+			variable "$button_text": "chat.mute"
+			variable "$left_symbol": "<"
+	Added element "section_content_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "alignment_panel":
+					field "type": "input_panel"
+					field "size": ["100% - 16px", "100%c"]
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "controls": "$section_content"
+		field "$variables": variable "$section_content|default": empty
+	Changed element "section_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%c"]
+		field "controls":
+			control:
+				element "alignment_panel":
+					field "type": "input_panel"
+					field "size": ["100% - 16px", "100%c"]
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "controls": "$section_content"
+		field "$variables": variable "$section_content|default": empty
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["40%", "100%"]
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+Changed namespace "common":
+	Changed element "text_edit_box":
+		Unchanged field "type": "edit_box"
+		Changed field "button_mappings":
+			Changed button mapping:
+				Removed field "consume_event" of false.
+			Changed button mapping:
+				Changed field "handle_deselect" from false to true.
+Changed namespace "common_store":
+	Changed element "inventory_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "inventory_button@common_buttons.light_content_button":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_id" of "inventory_button".
+	Changed element "search_panel_filter":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "sort_button@common_buttons.light_content_button":
+					Changed field "$variables":
+						Total variable: 3 (+1, -0)
+						Added variable "$focus_override_up" of "inventory_button".
+			Changed control:
+				Changed element "filter_button@common_buttons.light_content_button":
+					Changed field "$variables":
+						Total variable: 6 (+1, -0)
+						Added variable "$focus_override_up" of "inventory_button".
+	Changed element "search_text_box_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "search_text_box@common.text_edit_box":
+					Changed field "$variables":
+						Total variable: 11 (+0, -0)
+						Changed variable "$focus_override_up" from "FOCUS_OVERRIDE_STOP" to "inventory_button".
+	Changed element "store_row":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "content":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "row_header":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "label_panel":
+											Unchanged field "type": "panel"
+											Changed field "controls":
+												Changed control:
+													Changed element "time_remaining_label@common_store.label":
+														Changed field "bindings":
+															Total binding: 3 (+1, -1)
+															Removed binding:
+																field "binding_type": "collection"
+																field "binding_collection_name": "category_collection"
+																field "binding_name": "#show_sales_timer"
+																field "binding_name_override": "#visible"
+															Added binding:
+																field "binding_type": "$store_row_binding_type"
+																field "binding_collection_name": "$store_row_collection_name"
+																field "binding_name": "#show_sales_timer"
+																field "binding_name_override": "#visible"
+Added namespace "game_tip":
+	element "anim_game_tip_txt_alpha":
+		field "anim_type": "alpha"
+		field "easing": "in_quart"
+		field "duration": 1
+		field "from": 1
+		field "to": 0
+	element "anim_game_tip_txt_wait":
+		field "anim_type": "wait"
+		field "duration": "$game_tip_item_lifetime"
+		field "next": "@game_tip.anim_game_tip_txt_alpha"
+	element "game_tip_item":
+		field "type": "panel"
+		field "layer": 1
+		field "size": ["100% + 5px", "100%c"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "game_tip_text@game_tip_label":
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "offset": [2, 0]
+	element "game_tip_label":
+		field "type": "label"
+		field "layer": 31
+		field "text": "#text"
+		field "color": "$body_text_color"
+		field "size": ["100%", "default"]
+		field "anims": animation: "@game_tip.anim_game_tip_txt_wait"
+	element "game_tip_panel":
+		field "type": "stack_panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "100%c"]
+		field "max_size": ["100%", "50%"]
+		field "factory":
+			field "name": "game_tip_item_factory"
+			field "max_children_size": 1
+			field "control_ids": control id "game_tip": "game_tip@game_tip.game_tip_item"
+Changed namespace "general_section":
+	Total element: 46 (+4, -0)
+	Added element "add_treatment_icon":
+		field "type": "image"
+		field "texture": "textures/ui/realms_green_check"
+	Changed element "debug_override_treatments_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "override_treatments_panel_background":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 9 (+5, -0)
+						Changed control:
+							Changed element "override_treatment_options_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "add_treatments_panel":
+											Unchanged field "type": "stack_panel"
+											Changed field "controls":
+												Changed control:
+													Changed element "add_button_panel":
+														Unchanged field "type": "panel"
+														Changed field "controls":
+															Changed control:
+																Changed element "add_button@common_buttons.light_text_button":
+																	Changed field "$variables":
+																		Total variable: 2 (+0, -0)
+																		Changed variable "$pressed_button_name" from "button.add_treatment" to "button.add_treatment_by_name".
+						Added control element "current_sandbox_label@general_section.sandbox_label": empty.
+						Added control:
+							element "spacer_0":
+								field "type": "panel"
+								field "size": [0, 4]
+						Added control:
+							element "unused_treatments_label_panel@common_store.banner_fill":
+								field "size": ["100%", 18]
+								field "controls":
+									control:
+										element "treatments_label":
+											field "type": "label"
+											field "offset": [3, 0]
+											field "text": "options.dev_unusedTreatmentsTitle"
+											field "text_alignment": "left"
+											field "color": "$body_text_color"
+											field "layer": 1
+						Added control:
+							element "unused_treatment_grid":
+								field "type": "grid"
+								field "size": ["100%", "100%c"]
+								field "grid_item_template": "general_section.unused_treatment_grid_item"
+								field "grid_dimension_binding": "#unused_treatments_grid_dimension"
+								field "collection_name": "unused_treatment_collection"
+								field "bindings":
+									binding:
+										field "binding_name": "#unused_treatments_grid_dimension"
+										field "binding_condition": "visible"
+						Added control:
+							element "spacer_1":
+								field "type": "panel"
+								field "size": [0, 2]
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 47 (+6, -2)
+			Removed control:
+				element "option_dropdown_0@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.dev_enableDebugHudOverlay"
+						variable "$dropdown_content": "general_section.dev_debug_hud_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "dev_debug_hud_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_debug_hud_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#dev_debug_hud_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "200%"
+			Removed control:
+				element "option_toggle_dev_xforge_require_sign_in@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_xforgeRequestsRequireSignIn"
+						variable "$option_binding_name": "#dev_xforge_requests_require_sign_in"
+						variable "$option_enabled_binding_name": "#dev_xforge_requests_require_sign_in_enabled"
+						variable "$toggle_name": "dev_xforge_requests_require_sign_in"
+			Added control:
+				element "option_dropdown_0@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.dev_enableDebugHudOverlay"
+						variable "$dropdown_content": "general_section.dev_debug_hud_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "dev_debug_hud_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_debug_hud_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#dev_debug_hud_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "400%"
+			Added control:
+				element "option_toggle_server_chunk_map@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_showServerChunkMap"
+						variable "$option_binding_name": "#dev_show_server_chunk_map"
+						variable "$option_enabled_binding_name": "#dev_show_server_chunk_map_enabled"
+						variable "$toggle_name": "dev_show_server_chunk_map"
+			Added control:
+				element "option_content_log@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.content_log"
+						variable "$option_binding_name": "#content_log"
+						variable "$option_enabled_binding_name": "#content_log_enabled"
+						variable "$toggle_name": "content_log"
+			Added control:
+				element "option_toggle_game_tip@settings_common.option_toggle":
+					field "enabled": "($is_pregame)"
+					field "$variables":
+						variable "$option_label": "options.dev_game_tip"
+						variable "$option_binding_name": "#dev_game_tip"
+						variable "$option_enabled_binding_name": "#dev_game_tip_enabled"
+						variable "$toggle_name": "dev_game_tip"
+			Added control:
+				element "filewatcher_rendering_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_file_watcher"
+						variable "$option_binding_name": "#file_watcher"
+						variable "$option_enabled_binding_name": "#file_watcher_enabled"
+						variable "$toggle_name": "file_watcher"
+			Added control:
+				element "vsync_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.vsync"
+						variable "$dropdown_content": "general_section.vysnc_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "vsync_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#vsync_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#vsync_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "200%"
+	Changed element "dev_debug_hud_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Changed variable "$radio_buttons":
+				Changed item 4:
+					Changed field "@settings_common.radio_with_label":
+						Changed field "$radio_label_text" from "options.dev_enableDebugHudOverlay.debugtextures" to "options.dev_enableDebugHudOverlay.profiler".
+						Changed field "$toggle_state_binding_name" from "#debug_hud_radio_debugtextures" to "#debug_hud_radio_profiler".
+				Changed item 5:
+					Changed field "@settings_common.radio_with_label":
+						Changed field "$radio_label_text" from "options.dev_enableDebugHudOverlay.profiler" to "options.dev_enableDebugHudOverlay.imagememory".
+						Changed field "$toggle_state_binding_name" from "#debug_hud_radio_profiler" to "#debug_hud_radio_imagememory".
+				Changed item 6:
+					Changed field "@settings_common.radio_with_label":
+						Changed field "$radio_label_text" from "debug blocks" to "options.dev_enableDebugHudOverlay.debugBlocks".
+	Changed element "feature_toggle@settings_common.option_toggle":
+		Added field "bindings":
+			binding:
+				field "binding_name": "#feature_toggle_enabled"
+				field "binding_type": "collection"
+				field "binding_name_override": "#enabled"
+				field "binding_collection_name": "feature_toggles"
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "build_info_label_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 7 (+1, -0)
+						Added control:
+							element "MinecraftAccount_id_label":
+								field "ignored": "(not $new_mcid)"
+								field "type": "label"
+								field "color": "$body_text_color"
+								field "offset": [2, 0]
+								field "size": ["100%", "default"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "text": "#MinecraftAccount_id"
+								field "bindings": binding: field "binding_name": "#MinecraftAccount_id"
+	Added element "sandbox_label":
+		field "type": "label"
+		field "offset": [3, 0]
+		field "text": "options.dev_sandboxRetail"
+		field "text_alignment": "left"
+		field "color": "$body_text_color"
+		field "layer": 1
+	Changed element "treatment_grid_item":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "remove_button@common_buttons.light_content_button":
+					Changed field "bindings":
+						Total binding: 2 (+1, -0)
+						Added binding:
+							field "binding_name": "#dev_show_override_treatments"
+							field "binding_name_override": "#visible"
+	Added element "unused_treatment_grid_item":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", 18]
+		field "controls":
+			control:
+				element "unused_treatment_id_panel@common_store.banner_fill":
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "unused_treatment_id":
+								field "type": "label"
+								field "size": ["100% - 3px", 10]
+								field "offset": [3, 0]
+								field "text": "#unused_treatment_id"
+								field "text_alignment": "left"
+								field "color": "$body_text_color"
+								field "layer": 1
+								field "bindings":
+									binding:
+										field "binding_name": "#unused_treatment_id"
+										field "binding_type": "collection"
+										field "binding_collection_name": "unused_treatment_collection"
+										field "binding_condition": "visible"
+			control:
+				element "add_button@common_buttons.light_content_button":
+					field "size": [18, "100%"]
+					field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "unused_treatment_collection"
+							field "binding_condition": "visible"
+						binding:
+							field "binding_name": "#dev_show_override_treatments"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$pressed_button_name": "button.add_treatment"
+						variable "$button_content": "general_section.add_treatment_icon"
+	Added element "vysnc_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#vsync_off"
+						field "$radio_label_text": "options.vsync.off"
+				item 1:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#vsync_on"
+						field "$radio_label_text": "options.vsync.on"
+				item 2:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#vsync_adaptive"
+						field "$radio_label_text": "options.vsync.adaptive"
+Changed namespace "how_to_play":
+	Total element: 137 (+4, -4)
+	Changed element "camera_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 11 (+4, -12)
+			Removed control element "paragraph_1_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.camera.text.1".
+			Removed control element "paragraph_2_keyboard_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.camera.text.2".
+			Removed control element "paragraph_2_keyboard_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.camera.text.2.touch".
+			Removed control element "paragraph_4_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.camera.text.4".
+			Removed control element "paragraph_4_keyboard_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.camera.text.4".
+			Removed control element "paragraph_4_keyboard_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.camera.text.4.touch".
+			Removed control element "padding_4@how_to_play_common.padding": empty.
+			Removed control element "paragraph_5_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.camera.text.5".
+			Removed control element "padding_5@how_to_play_common.padding": empty.
+			Removed control element "paragraph_6_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.camera.text.6".
+			Removed control element "padding_6@how_to_play_common.padding": empty.
+			Removed control element "paragraph_7_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.camera.text.7".
+			Added control element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.camera.text.1".
+			Added control element "paragraph_2_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.camera.text.2".
+			Added control element "paragraph_2_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.camera.text.2.touch".
+			Added control element "paragraph_4@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.camera.text.4".
+	Changed element "chalkboard_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 3 (+3, -1)
+			Removed control element "paragraph_1_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.chalkboard.text.1".
+			Added control element "paragraph_1_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.chalkboard.text.1".
+			Added control element "paragraph_1_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.chalkboard.text.1".
+			Added control element "paragraph_1_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.chalkboard.text.1.touch".
+	Changed element "chemistry_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 3 (+3, -1)
+			Removed control element "paragraph_1_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.chemistry.text.1".
+			Added control element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.chemistry.text.1".
+			Added control element "padding_1@how_to_play_common.padding": empty.
+			Added control element "paragraph_2@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.chemistry.text.2".
+	Changed element "classroom_mode_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 3 (+3, -1)
+			Removed control element "paragraph_1_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.classroomMode.text.1".
+			Added control element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.classroomMode.text.1".
+			Added control element "padding_1@how_to_play_common.padding": empty.
+			Added control:
+				element "paragraph_2@how_to_play_common.paragraph":
+					field "ignored": "$ios"
+					field "$variables": variable "$text": "howtoplay.classroomMode.text.2"
+	Added element "code_builder_button@how_to_play_common.edu_section_toggle_button" of field "$variables": variable "$section_topic": "codeBuilder".
+	Added element "code_builder_section@how_to_play_common.main_sections":
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "codeBuilder_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control: element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.codeBuilder.text.1"
+			control: element "padding_1@how_to_play_common.padding": empty
+			control: element "paragraph_2_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.codeBuilder.text.2"
+			control: element "paragraph_2_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.codeBuilder.text.2"
+			control: element "paragraph_2_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.codeBuilder.text.2.touch"
+	Removed element "code_connection_button@how_to_play_common.edu_section_toggle_button" of field "$variables": variable "$section_topic": "codeConnection".
+	Removed element "code_connection_section@how_to_play_common.main_sections":
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "codeConnection_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control: element "paragraph_1_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.codeConnection.text.1"
+			control: element "padding_1@how_to_play_common.padding": empty
+			control: element "paragraph_2_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.codeConnection.text.2"
+	Removed element "edu_blocks_button@how_to_play_common.edu_section_toggle_button" of field "$variables": variable "$section_topic": "eduBlocks".
+	Removed element "edu_blocks_section@how_to_play_common.main_sections":
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "eduBlocks_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control: element "paragraph_1_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.1"
+			control: element "padding_1@how_to_play_common.padding": empty
+			control: element "header_1@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.eduBlocks.title.1"
+			control: element "padding_2@how_to_play_common.padding": empty
+			control: element "paragraph_2_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.2"
+			control: element "padding_3@how_to_play_common.padding": empty
+			control: element "paragraph_3_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.3"
+			control: element "padding_4@how_to_play_common.padding": empty
+			control: element "paragraph_4_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.4"
+			control: element "padding_5@how_to_play_common.padding": empty
+			control: element "paragraph_5_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.5"
+			control: element "padding_6@how_to_play_common.padding": empty
+			control: element "paragraph_6_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.6"
+			control: element "padding_7@how_to_play_common.padding": empty
+			control: element "header_2@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.eduBlocks.title.2"
+			control: element "padding_8@how_to_play_common.padding": empty
+			control: element "paragraph_7_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.7"
+			control: element "padding_9@how_to_play_common.padding": empty
+			control: element "paragraph_8_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.8"
+			control: element "padding_10@how_to_play_common.padding": empty
+			control: element "paragraph_9_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.9"
+			control: element "padding_11@how_to_play_common.padding": empty
+			control: element "header_3@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.eduBlocks.title.3"
+			control: element "padding_12@how_to_play_common.padding": empty
+			control: element "paragraph_10_eduBlocks@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.eduBlocks.text.10"
+	Changed element "npc_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 5 (+3, -7)
+			Removed control element "paragraph_1_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.npc.text.1".
+			Removed control element "paragraph_2_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.npc.text.2".
+			Removed control element "paragraph_3_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.npc.text.3".
+			Removed control element "padding_3@how_to_play_common.padding": empty.
+			Removed control element "paragraph_4_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.npc.text.4".
+			Removed control element "padding_4@how_to_play_common.padding": empty.
+			Removed control element "paragraph_5_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.npc.text.5".
+			Added control element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.npc.text.1".
+			Added control element "paragraph_2@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.npc.text.2".
+			Added control element "paragraph_3@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.npc.text.3".
+	Added element "permission_blocks_button@how_to_play_common.edu_section_toggle_button" of field "$variables": variable "$section_topic": "permissionBlocks".
+	Added element "permission_blocks_section@how_to_play_common.main_sections":
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "permissionBlocks_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control: element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.permissionBlocks.text.1"
+			control: element "padding_1@how_to_play_common.padding": empty
+			control: element "header_1@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.permissionBlocks.title.1"
+			control: element "paragraph_2@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.permissionBlocks.text.2"
+			control: element "padding_3@how_to_play_common.padding": empty
+			control: element "paragraph_3@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.permissionBlocks.text.3"
+			control: element "padding_4@how_to_play_common.padding": empty
+			control: element "paragraph_4@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.permissionBlocks.text.4"
+			control: element "padding_5@how_to_play_common.padding": empty
+			control: element "paragraph_5@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.permissionBlocks.text.5"
+			control: element "padding_7@how_to_play_common.padding": empty
+			control: element "header_2@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.permissionBlocks.title.2"
+			control: element "paragraph_6@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.permissionBlocks.text.6"
+	Changed element "portfolio_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 3 (+0, -12)
+			Removed control element "padding_1@how_to_play_common.padding": empty.
+			Removed control element "paragraph_2_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.portfolio.text.2".
+			Removed control element "paragraph_2_keyboard_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.portfolio.text.2.gamepad".
+			Removed control element "paragraph_2_keyboard_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.portfolio.text.2.touch".
+			Removed control element "padding_2@how_to_play_common.padding": empty.
+			Removed control element "paragraph_3_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.portfolio.text.3".
+			Removed control element "paragraph_3_keyboard_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.portfolio.text.3.gamepad".
+			Removed control element "paragraph_3_keyboard_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.portfolio.text.3.touch".
+			Removed control element "padding_3@how_to_play_common.padding": empty.
+			Removed control element "paragraph_4_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.portfolio.text.4".
+			Removed control element "paragraph_4_keyboard_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.portfolio.text.4.gamepad".
+			Removed control element "paragraph_4_keyboard_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.portfolio.text.4.touch".
+	Changed element "section_content_panels":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "general_tips_sections":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 69 (+2, -2)
+						Removed control element "edu_blocks_section@how_to_play.edu_blocks_section": field "ignored": "(not $education_edition)".
+						Removed control element "code_connection_section@how_to_play.code_connection_section": field "ignored": "(not $education_edition)".
+						Added control element "permission_blocks_section@how_to_play.permission_blocks_section": field "ignored": "(not $education_edition)".
+						Added control element "code_builder_section@how_to_play.code_builder_section": field "ignored": "(not $education_edition)".
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "how_to_play_selector_pane":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 80 (+2, -2)
+						Changed control:
+							Changed element "action_button@how_to_play_common.action_button":
+								Changed field "ignored" from "$education_edition" to "($education_edition or $trial)".
+						Removed control element "edu_blocks_button@how_to_play.edu_blocks_button": field "$variables": variable "$toggle_group_forced_index": 5.
+						Removed control element "code_connection_button@how_to_play.code_connection_button": field "$variables": variable "$toggle_group_forced_index": 12.
+						Added control element "permission_blocks_button@how_to_play.permission_blocks_button": field "$variables": variable "$toggle_group_forced_index": 5.
+						Added control element "code_builder_button@how_to_play.code_builder_button": field "$variables": variable "$toggle_group_forced_index": 12.
+	Changed element "world_builder_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 16 (+13, -8)
+			Removed control element "paragraph_1_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.1".
+			Removed control element "paragraph_2_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.2".
+			Removed control element "paragraph_3_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.3".
+			Removed control element "padding_3@how_to_play_common.padding": empty.
+			Removed control element "paragraph_4_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.4".
+			Removed control element "paragraph_5_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.5".
+			Removed control element "padding_5@how_to_play_common.padding": empty.
+			Removed control element "paragraph_6_keyboard@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.6".
+			Added control element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.1".
+			Added control element "paragraph_2@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.2".
+			Added control element "paragraph_3@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.3".
+			Added control element "padding_3@how_to_play_common.small_padding": empty.
+			Added control element "paragraph_4@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.4".
+			Added control element "paragraph_5@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.5".
+			Added control element "padding_5@how_to_play_common.small_padding": empty.
+			Added control element "paragraph_6@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.6".
+			Added control element "paragraph_7@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.7".
+			Added control element "padding_7@how_to_play_common.padding": empty.
+			Added control element "paragraph_8@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.8".
+			Added control element "padding_8@how_to_play_common.small_padding": empty.
+			Added control element "paragraph_9@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.worldBuilder.text.9".
+Changed namespace "how_to_play_common":
+	Total element: 39 (+1, -0)
+	Added element "small_padding":
+		field "type": "panel"
+		field "size": ["100%", "4px"]
+Changed namespace "hud":
+	Total element: 95 (+0, -1)
+	Removed element "debug_overlay_renderer":
+		field "type": "custom"
+		field "renderer": "debug_overlay_renderer"
+		field "layer": 1
+	Changed element "root_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 19 (+0, -1)
+			Changed control:
+				Changed element "chat_stack":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 8 (+1, -0)
+						Added control element "game_tip@game_tip.game_tip_panel": empty.
+			Removed control element "debug_overlay_rend@debug_overlay_renderer": empty.
+Changed namespace "library":
+	Changed element "screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "welcome_panel@library_modal.welcome_panel": empty.
+			Added control element "welcome_panel@library_modal.welcome_panel": field "layer": 201.
+	Changed element "world_info":
+		Unchanged field "type": "stack_panel"
+		Changed field "size":
+			Changed item 0 from "100%" to "100% - 4px".
+			Changed item 1 from "100%" to "100%c".
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control:
+				element "title_panel":
+					field "type": "panel"
+					field "size": ["100%", 20]
+					field "controls":
+						control:
+							element "title@library.base_label":
+								field "text": "#library_item_title"
+								field "font_type": "smooth"
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "library_items"
+										field "binding_name": "#library_item_title"
+			Removed control:
+				element "creator_panel":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+					field "controls":
+						control:
+							element "creator@library.base_label":
+								field "text": "#creator"
+								field "font_scale_factor": 0.85
+								field "font_type": "smooth"
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "library_items"
+										field "binding_name": "#creator"
+			Added control:
+				element "title@library.base_label":
+					field "text": "#library_item_title"
+					field "size": ["100%", "default"]
+					field "max_size": "$max_label_size"
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_collection_name": "library_items"
+							field "binding_name": "#library_item_title"
+			Added control:
+				element "creator@library.base_label":
+					field "text": "#creator"
+					field "size": ["100%", "default"]
+					field "max_size": "$max_label_size"
+					field "font_scale_factor": 0.85
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_collection_name": "library_items"
+							field "binding_name": "#creator"
+		Added field "$variables":
+			variable "$max_label_size":
+				item 0: "100%"
+				item 1: 19
+Changed namespace "library_item":
+	Total element: 21 (+1, -0)
+	Changed element "author@library.base_label":
+		Removed field "text_alignment" of "left".
+		Removed field "font_scale_factor" of 1.
+		Removed field "offset" of [3, 0].
+	Moved element "button_panel_wrapper" to "panel_wrapper".
+	Changed element "panel_wrapper":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control element "dark_background@library_item.dark_background": empty.
+	Changed element "title@library.base_label":
+		Removed field "text_alignment" of "left".
+		Removed field "offset" of [3, 0].
+	Added element "world_summary":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control: element "padding_top@common.empty_panel": field "size": ["100%", 3]
+			control:
+				element "title_panel@library_item.panel_wrapper":
+					field "size": ["100%", 15]
+					field "$variables": variable "$content": "title"
+			control:
+				element "author_panel@library_item.panel_wrapper":
+					field "size": ["100%", 15]
+					field "$variables": variable "$content": "author"
+			control:
+				element "button_panel@library_item.panel_wrapper":
+					field "size": ["100%", 20]
+					field "$variables": variable "$content": "button_panel"
+			control: element "padding_before_summary@common.empty_panel": field "size": ["100%", 3]
+			control:
+				element "summary_panel@library_item.panel_wrapper":
+					field "size": ["100%", "fill"]
+					field "$variables": variable "$content": "summary"
+	Changed element "world_top":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control:
+				element "world_summary":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["fill", "100% - 1px"]
+					field "controls":
+						control: element "stack_buffer2@library_item.dark_background": field "size": ["100%", 3]
+						control:
+							element "title_panel@library_item.button_panel_wrapper":
+								field "size": ["100%", 15]
+								field "$variables": variable "$content": "title"
+						control:
+							element "author_panel@library_item.button_panel_wrapper":
+								field "size": ["100%", 15]
+								field "$variables": variable "$content": "author"
+						control:
+							element "button_panel@library_item.button_panel_wrapper":
+								field "size": ["100%", 20]
+								field "$variables": variable "$content": "button_panel"
+						control: element "stack_buffer@library_item.dark_background": field "size": ["100%", 3]
+						control:
+							element "summary_panel@library_item.button_panel_wrapper":
+								field "size": ["100%", "fill"]
+								field "$variables": variable "$content": "summary"
+			Added control:
+				element "world_summary_panel@library_item.dark_background":
+					field "size": ["fill", "100% - 1px"]
+					field "layer": 1
+					field "controls": control: element "world_summary@library_item.world_summary": empty
+Changed namespace "library_modal":
+	Total element: 18 (+2, -0)
+	Moved element "parapgrah" to "paragraph".
+	Changed element "paragraph":
+		Unchanged field "type": "label"
+		Added field "font_type" of "smooth".
+	Changed element "welcome_panel@common.input_panel":
+		Added field "modal" of true.
+	Changed element "welcome_panel_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Changed control:
+				Changed element "background_panel@common.common_panel":
+					Removed field "debug" of "blue".
+			Removed control:
+				element "content":
+					field "layer": 2
+					field "type": "panel"
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "size": ["100%-12px", "100%c"]
+					field "offset": [0, 20]
+					field "controls":
+						control:
+							element "text_panel@library_modal.text_panel":
+								field "size": ["100%-12px", "100%c"]
+								field "controls":
+									control: element "stack_buffer1@common.empty_panel": field "size": ["100%", 10]
+									control:
+										element "paragraph_1_wrapper":
+											field "size": ["100%", "100%cm + 5px"]
+											field "type": "stack_panel"
+											field "orientation": "horizontal"
+											field "controls":
+												control: element "edu_icon@library_modal.edu_icon": field "size": [40, 40]
+												control: element "stack_buffer1@common.empty_panel": field "size": ["2%", 0]
+												control: element "parapgrah_one@library_modal.parapgrah": field "$variables": variable "$welcome_text": "library.welcome.1"
+									control: element "parapgrah_two@library_modal.parapgrah": field "$variables": variable "$welcome_text": "library.welcome.2"
+									control: element "stack_buffer2@common.empty_panel": field "size": ["100%", 10]
+									control: element "parapgrah_three@library_modal.parapgrah": field "$variables": variable "$welcome_text": "library.welcome.3"
+			Added control:
+				element "welcome_scrolling_panel@library_modal.welcome_scrolling_panel":
+					field "size": ["100%-16px", "100% - 15px - 30px - 15px"]
+					field "offset": [0, 15]
+					field "layer": 2
+	Added element "welcome_scrolling_panel@common.scrolling_panel":
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "$variables":
+			variable "$scroll_size":
+				item 0: 6
+				item 1: "100% - 4px"
+			variable "$scrolling_content": "library_modal.welcome_text_panel"
+			variable "$scrolling_content_anchor_from": "top_middle"
+			variable "$scrolling_content_anchor_to": "top_middle"
+			variable "$scroll_bar_left_padding_size":
+				item 0: 0
+				item 1: 0
+			variable "$scroll_bar_right_padding_size":
+				item 0: 2
+				item 1: 0
+			variable "$show_background": false
+	Added element "welcome_text_panel@library_modal.text_panel":
+		field "size": ["100%-12px", "100%c"]
+		field "controls":
+			control: element "padding_1@common.empty_panel": field "size": ["100%", 10]
+			control:
+				element "paragraph_1_wrapper":
+					field "size": ["100%", 40]
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "controls":
+						control: element "edu_icon@library_modal.edu_icon": field "size": [40, "100%"]
+						control: element "stack_buffer1@common.empty_panel": field "size": ["2%", "100%"]
+						control:
+							element "paragraph_1_panel":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "paragraph_1@library_modal.paragraph":
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "$variables": variable "$welcome_text": "library.welcome.1"
+			control: element "padding_2@common.empty_panel": field "size": ["100%", 10]
+			control: element "paragraph_two@library_modal.paragraph": field "$variables": variable "$welcome_text": "library.welcome.2"
+			control: element "padding_3@common.empty_panel": field "size": ["100%", 10]
+			control: element "paragraph_three@library_modal.paragraph": field "$variables": variable "$welcome_text": "library.welcome.3"
+Changed namespace "permissions":
+	Changed element "permissions_options_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 7 (+2, -0)
+			Added control:
+				element "permissions_padding_0":
+					field "type": "panel"
+					field "size": ["100%", 8]
+					field "bindings":
+						binding:
+							field "binding_name": "#is_world_template_locked"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "world_template_option_lock_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "bindings":
+						binding:
+							field "binding_name": "#is_world_template_locked"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "option_info_label@settings_common.option_info_label":
+								field "$variables":
+									variable "$container_text_binding_name": "#world_template_permissions_locked_warning_text"
+									variable "$show_option_label": false
+Changed namespace "realms_settings":
+	Total element: 50 (+1, -0)
+	Changed element "backup_grid_item_date_and_time":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control:
+				element "date_text@realms_settings.label_text":
+					field "text": "#date_text"
+					field "text_alignment": "right"
+					field "size": ["100% - 3px", 10]
+					field "color": "$light_button_secondary_default_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#date_text"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Added control:
+				element "size_text@realms_settings.label_text":
+					field "text": "#size_text"
+					field "text_alignment": "right"
+					field "size": ["100% - 3px", 10]
+					field "color": "$light_button_secondary_default_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#size_text"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+	Changed element "backup_grid_item_name_and_time_since":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control:
+				element "world_name_text@realms_settings.label_text":
+					field "text": "#world_text"
+					field "size": ["100% - 8px", 10]
+					field "color": "$light_button_secondary_default_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#world_text"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Added control:
+				element "version_text@realms_settings.label_text":
+					field "text": "#version_text"
+					field "size": ["100% - 8px", 10]
+					field "color": "$light_button_secondary_default_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#version_text"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+	Added element "delete_realm_button@settings_common.action_button":
+		field "bindings":
+			binding:
+				field "binding_name": "#delete_realm_button_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$button_text": "realmsSettingsScreen.deleteRealmButton"
+			variable "$pressed_button_name": "menu_realms_delete_realm"
+	Changed element "subscriptions_section":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "loaded_view":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 13 (+1, -0)
+						Added control element "delete_realm_button@realms_settings.delete_realm_button": empty.
+Changed namespace "sign":
+	Changed element "sign_background":
+		Unchanged field "type": "image"
+		Changed field "texture" from "textures/ui/sign" to "$sign_texture".
+Changed namespace "simple_inprogress":
+	Changed element "title_text":
+		Unchanged field "type": "label"
+		Changed field "layer" from 1 to 2.
+Changed namespace "skin_picker":
+	Changed element "pack_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "bg@banner_fill":
+					Changed field "controls":
+						Total control: 4 (+1, -0)
+						Changed control:
+							Changed element "progress_loading@common_store.progress_loading":
+								Changed field "layer" from 1000 to 100.
+						Added control:
+							element "progress_loading_no_connection@common_store.progress_loading":
+								field "layer": 100
+								field "bindings":
+									binding:
+										field "binding_type": "collection_details"
+										field "binding_collection_name": "premium_packs_collection"
+									binding:
+										field "binding_name": "#pack_loading_no_connection_visible"
+										field "binding_name_override": "#visible"
+								field "$variables": variable "$hide_failure_text": false
+Changed namespace "world_section":
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 51 (+1, -0)
+			Added control:
+				element "immediate_respawn_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "createWorldScreen.immediaterespawn"
+						variable "$option_binding_name": "#immediaterespawn"
+						variable "$option_enabled_binding_name": "#immediaterespawn_enabled"
+						variable "$toggle_name": "doimmediaterespawn"
+						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
+						variable "$toggle_binding_condition": "always_when_visible"

@@ -1,0 +1,66 @@
+Difference of "shaders_resource_packs" between "1.2.0.22" (beta of "1.2.0") and "1.2.0.25" (beta of "1.2.0").
+
+Changed resource pack "uniformInterFrameConstants.h":
+	Changed file "vanilla":
+		Total line: 16 (+1, -0)
+		        '''
+		        ...
+		 8  8   #endif
+		 9  9   // BEGIN_UNIFORM_BLOCK(InterFrameConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		10 10   // in secs. This is reset every 1 hour. so the range is [0, 3600]
+		11 11   // make sure your shader handles the case when it transitions from 3600 to 0
+		12 12   UNIFORM float TOTAL_REAL_WORLD_TIME;
+		   13 + UNIFORM MAT4 CUBE_MAP_ROTATION;
+		13 14   END_UNIFORM_BLOCK
+		14 15   
+		15 16   #endif
+		        '''
+Changed resource pack "uv_time_rotate.vertex":
+	Changed file "vanilla":
+		Total line: 17 (+0, -31)
+		        '''
+		        ...
+		 8  8   
+		 9  9   attribute POS4 POSITION;
+		10 10   attribute vec2 TEXCOORD_0;
+		11 11   
+		12 12   
+		13    - void main() {
+		14    - #if defined(VR_MODE)
+		15    -     const float ROTATION_Y_SPEED = 0.0;
+		16    -     const float ROTATION_X_SPEED = 0.0;
+		17    -     const float ROTATION_X_SCALE = 0.0;
+		18    -     const float ROTATION_X_ADDITION = 0.0;
+		19    - #else
+		20    -     const float ROTATION_Y_SPEED = 1.5;
+		21    -     const float ROTATION_X_SPEED = 0.1;
+		22    -     const float ROTATION_X_SCALE = 7.0;
+		23    -     const float ROTATION_X_ADDITION = 20.0;
+		24    - #endif
+		25    - 
+		26    -     float theta = radians(-TOTAL_REAL_WORLD_TIME * ROTATION_Y_SPEED);
+		27    -     float s = sin(theta);
+		28    -     float c = cos(theta);
+		29    - 
+		30    -     MAT4 rotationY = mat4(
+		31    -         c, 0, -s, 0,
+		32    -         0, 1, 0, 0,
+		33    -         s, 0, c, 0,
+		34    -         0, 0, 0, 1);
+		35    -     
+		36    -     theta = radians(sin(TOTAL_REAL_WORLD_TIME * ROTATION_X_SPEED) * ROTATION_X_SCALE + ROTATION_X_ADDITION);
+		37    -     s = sin(theta);
+		38    -     c = cos(theta);
+		39    -     MAT4 rotationX = mat4(
+		40    -         1, 0, 0, 0,
+		41    -         0, c, s, 0,
+		42    -         0, -s, c, 0,
+		43    -         0, 0, 0, 1);
+		   13 + void main() {   
+		   14 +     gl_Position = WORLDVIEWPROJ * CUBE_MAP_ROTATION * POSITION;
+		44    -     
+		45    -     gl_Position = WORLDVIEWPROJ * rotationX * rotationY * POSITION;
+		46 15   
+		47 16       uv = TEXCOORD_0;
+		48 17   }
+		        '''

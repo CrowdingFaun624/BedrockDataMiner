@@ -1,3798 +1,510 @@
-Difference of "entities" between "1.20.60.23" (beta of "1.20.60") and "1.20.60.24" (beta of "1.20.60").
+Difference of "entities" between "1.20.70.21" (beta of "1.20.71") and "1.20.70.22" (beta of "1.20.71").
 
-Changed entity "armadillo":
+Changed entity "armadillo.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:armadillo"
+				Changed description "properties":
+					Total property: 1 (+1, -3)
+					Added property "minecraft:armadillo_state":
+						field "type": "enum"
+						field "client_sync": true
+						field "default": "unrolled"
+						field "values":
+							possible property: "unrolled"
+							possible property: "rolled_up"
+							possible property: "rolled_up_peeking"
+							possible property: "rolled_up_relaxing"
+							possible property: "rolled_up_unrolling"
+					Removed property "minecraft:is_rolled_up":
+						field "type": "bool"
+						field "client_sync": true
+						field "default": false
+					Removed property "minecraft:is_threatened":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
+					Removed property "minecraft:is_trying_to_relax":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
 			Changed field "component_groups":
-				Changed component group "minecraft:adult":
-					Changed component "minecraft:interact":
-						Changed field "interactions":
-							Changed interaction:
-								Removed field "vibration" of "entity_interact".
+				Total component group: 8 (+2, -1)
+				Moved component group "minecraft:adult_relaxed" to "minecraft:adult_unrolled".
+				Changed component group "minecraft:baby":
+					Changed component "minecraft:ageable":
+						Changed field "interact_filters":
+							Changed filter property "test" from "bool_property" to "enum_property".
+							Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
+							Removed filter property "operator" of "!=".
+							Added filter property "value" of "unrolled".
+				Moved component group "minecraft:baby_relaxed" to "minecraft:baby_unrolled".
+				Changed component group "minecraft:rolled_up":
+					Total component: 3 (+1, -0)
+					Changed component "minecraft:damage_sensor":
+						Changed field "triggers" from:
+							field "damage_multiplier": 0.5
+							field "damage_modifier": -1.0
+						to:
+							trigger:
+								field "on_damage":
+									field "filters":
+										filter property "any_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "mob"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+									field "event": "minecraft:threat_detected"
+								field "damage_multiplier": 0.5
+								field "damage_modifier": -1.0
+							trigger:
+								field "damage_multiplier": 0.5
+								field "damage_modifier": -1.0
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Total trigger: 1 (+1, -3)
+							Removed trigger:
+								field "filters":
+									filter property "any_of":
+										filter: filter property "test": "on_fire"
+										filter: filter property "test": "in_water"
+										filter: filter property "test": "is_panicking"
+										filter: filter property "test": "is_leashed"
+										filter: filter property "test": "is_riding"
+								field "event": "minecraft:relax"
+							Removed trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "bool_property"
+											filter property "operator": "!="
+											filter property "domain": "minecraft:is_threatened"
+										filter:
+											filter property "test": "bool_property"
+											filter property "operator": "!="
+											filter property "domain": "minecraft:is_trying_to_relax"
+								field "event": "minecraft:start_trying_to_relax"
+							Removed trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "bool_property"
+											filter property "domain": "minecraft:is_threatened"
+										filter:
+											filter property "test": "bool_property"
+											filter property "domain": "minecraft:is_trying_to_relax"
+								field "event": "minecraft:stop_trying_to_relax"
+							Added trigger:
+								field "filters":
+									filter property "any_of":
+										filter: filter property "test": "on_fire"
+										filter: filter property "test": "in_water"
+										filter: filter property "test": "is_panicking"
+										filter: filter property "test": "is_leashed"
+										filter: filter property "test": "is_riding"
+								field "event": "minecraft:unroll"
+					Added component "minecraft:movement" of field "value": 0.0.
+				Removed component group "minecraft:rolled_up_trying_to_relax":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 3
+						field "randomInterval": false
+						field "time_down_event": field "event": "minecraft:relax"
+				Added component group "minecraft:rolled_up_with_threats":
+					component "minecraft:behavior.timer_flag_1":
+						field "priority": 0
+						field "cooldown_range": 2.5
+						field "duration_range": [5.0, 20.0]
+						field "on_start": field "event": "minecraft:stop_peeking"
+						field "on_end": field "event": "minecraft:start_peeking"
+				Added component group "minecraft:rolled_up_without_threats":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 4
+						field "randomInterval": false
+						field "time_down_event": field "event": "minecraft:unroll"
+					component "minecraft:behavior.timer_flag_1":
+						field "priority": 0
+						field "cooldown_range": 2.5
+						field "duration_range": 1.5
+						field "on_start": field "event": "minecraft:start_unrolling"
+				Moved component group "minecraft:relaxed" to "minecraft:unrolled".
+				Changed component group "minecraft:unrolled":
+					Total component: 7 (+1, -0)
+					Added component "minecraft:movement" of field "value": 0.14.
+			Changed field "components":
+				Total component: 20 (+0, -1)
+				Removed component "minecraft:movement" of field "value": 0.14.
 			Changed field "events":
-				Changed event "minecraft:relax":
+				Total event: 12 (+4, -3)
+				Changed event "minecraft:ageable_grow_up":
 					Changed field "sequence":
 						Changed sequence item 0:
-							Added field "emit_vibration" of field "vibration": "entity_act".
+							Changed field "remove":
+								Changed field "component_groups":
+									Total component group: 2 (+1, -1)
+									Removed component group "minecraft:baby_relaxed".
+									Added component group "minecraft:baby_unrolled".
+						Changed sequence item 1:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 1 (+1, -1)
+									Removed component group "minecraft:adult_relaxed".
+									Added component group "minecraft:adult_unrolled".
+							Changed field "filters":
+								Changed filter property "test" from "bool_property" to "enum_property".
+								Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
+								Removed filter property "operator" of "!=".
+								Added filter property "value" of "unrolled".
+				Changed event "minecraft:no_threat_detected":
+					Added field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:rolled_up_without_threats"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "enum_property"
+												filter property "domain": "minecraft:armadillo_state"
+												filter property "value": "rolled_up"
+											filter:
+												filter property "test": "enum_property"
+												filter property "domain": "minecraft:armadillo_state"
+												filter property "value": "rolled_up_peeking"
+									filter:
+										filter property "test": "on_fire"
+										filter property "value": false
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+							field "remove": field "component_groups": component group: "minecraft:rolled_up_with_threats"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_relaxing"
+					Removed field "set_property" of property "minecraft:is_threatened": false.
+				Removed event "minecraft:relax":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:relaxed"
+							field "emit_vibration": field "vibration": "entity_act"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "bool_property"
+										filter property "domain": "minecraft:is_rolled_up"
+									filter:
+										filter property "test": "bool_property"
+										filter property "domain": "minecraft:is_trying_to_relax"
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:rolled_up"
+									component group: "minecraft:rolled_up_trying_to_relax"
+							field "set_property":
+								property "minecraft:is_rolled_up": false
+								property "minecraft:is_trying_to_relax": false
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:baby_relaxed"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_baby"
+						sequence item 2:
+							field "add": field "component_groups": component group: "minecraft:adult_relaxed"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:is_baby"
 				Changed event "minecraft:roll_up":
-					Added field "emit_vibration" of field "vibration": "entity_act".
-Changed entity "breeze":
-	Changed behavior pack "experimental":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:experience_reward":
-					Changed field "on_death" from "query.last_hit_by_player ? Math.Random(1,3) : 0" to "query.last_hit_by_player ? 10 : 0".
-				Changed component "minecraft:navigation.walk":
-					Added field "blocks_to_avoid" of block: field "tags": "query.any_tag('trapdoors')".
-				Changed component "minecraft:reflect_projectiles":
-					Changed field "reflected_projectiles":
-						Total projectile: 2 (+1, -1)
-						Added projectile "thrown_trident".
-						Removed projectile "trident".
-				Changed component "minecraft:behavior.jump_around_target":
-					Changed field "filters":
-						Changed filter property "all_of":
-							Total filter: 3 (+2, -2)
-							Removed filter:
-								filter property "test": "on_ground"
-								filter property "value": true
-							Removed filter:
-								filter property "any_of":
+					Changed field "sequence":
+						Total sequence item: 2 (+1, -0)
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 2 (+1, -0)
+									Added component group "minecraft:rolled_up_with_threats".
+							Removed field "emit_vibration" of field "vibration": "entity_act".
+							Changed field "filters":
+								Removed filter property "test" of "actor_health".
+								Removed filter property "subject" of "self".
+								Removed filter property "operator" of ">".
+								Removed filter property "value" of 0.
+								Added filter property "all_of":
 									filter:
-										filter property "test": "in_water"
-										filter property "value": false
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "rolled_up"
 									filter:
-										filter property "test": "in_lava"
-										filter property "value": false
-							Added filter:
-								filter property "any_of":
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "rolled_up_peeking"
 									filter:
-										filter property "test": "in_water"
-										filter property "value": true
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+							Changed field "remove":
+								Changed field "component_groups":
+									Total component group: 4 (+4, -3)
+									Removed component group "minecraft:adult_relaxed".
+									Added component group "minecraft:adult_unrolled".
+									Removed component group "minecraft:baby_relaxed".
+									Added component group "minecraft:baby_unrolled".
+									Removed component group "minecraft:relaxed".
+									Added component group "minecraft:rolled_up_without_threats".
+									Added component group "minecraft:unrolled".
+							Changed field "set_property":
+								Total property: 1 (+1, -1)
+								Added property "minecraft:armadillo_state" of "rolled_up".
+								Removed property "minecraft:is_rolled_up" of true.
+						Added sequence item 1:
+							field "emit_vibration": field "vibration": "entity_act"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+				Changed event "minecraft:spawn_adult":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 4 (+2, -2)
+							Removed component group "minecraft:adult_relaxed".
+							Added component group "minecraft:adult_unrolled".
+							Removed component group "minecraft:relaxed".
+							Added component group "minecraft:unrolled".
+				Changed event "minecraft:spawn_baby":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 4 (+2, -2)
+							Removed component group "minecraft:baby_relaxed".
+							Added component group "minecraft:baby_unrolled".
+							Removed component group "minecraft:relaxed".
+							Added component group "minecraft:unrolled".
+				Added event "minecraft:start_peeking":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_peeking"
+				Removed event "minecraft:start_trying_to_relax":
+					field "add": field "component_groups": component group: "minecraft:rolled_up_trying_to_relax"
+					field "set_property": property "minecraft:is_trying_to_relax": true
+				Added event "minecraft:start_unrolling":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up_relaxing"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up_unrolling"
+				Added event "minecraft:stop_peeking":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "enum_property"
+								filter property "domain": "minecraft:armadillo_state"
+								filter property "value": "rolled_up_peeking"
+							field "set_property": property "minecraft:armadillo_state": "rolled_up"
+				Removed event "minecraft:stop_trying_to_relax":
+					field "remove": field "component_groups": component group: "minecraft:rolled_up_trying_to_relax"
+					field "set_property": property "minecraft:is_trying_to_relax": false
+				Changed event "minecraft:threat_detected":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Added field "trigger" of "minecraft:roll_up".
+							Added field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
 									filter:
 										filter property "test": "on_ground"
 										filter property "value": true
-							Added filter:
-								filter property "test": "in_lava"
-								filter property "value": false
-Changed entity "pufferfish":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.0"
-			Unchanged behavior pack: "vanilla_1.19.10"
-			Unchanged behavior pack: "vanilla_1.19.50"
-			Added behavior pack "vanilla_1.20.60".
-		Changed field "format_version" from "1.19.50" to "1.20.60".
+									filter:
+										filter property "test": "on_fire"
+										filter property "value": false
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+							Removed field "set_property" of property "minecraft:is_threatened": true.
+						Changed sequence item 1:
+							Removed field "trigger" of "minecraft:roll_up".
+							Added field "add" of field "component_groups": component group: "minecraft:rolled_up_with_threats".
+							Changed field "filters":
+								Removed filter property "all_of":
+									filter:
+										filter property "test": "bool_property"
+										filter property "operator": "!="
+										filter property "domain": "minecraft:is_rolled_up"
+									filter:
+										filter property "test": "on_ground"
+										filter property "value": true
+									filter:
+										filter property "test": "on_fire"
+										filter property "value": false
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+								Added filter property "any_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "rolled_up_relaxing"
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "rolled_up_unrolling"
+							Added field "remove" of field "component_groups": component group: "minecraft:rolled_up_without_threats".
+							Added field "set_property" of property "minecraft:armadillo_state": "rolled_up".
+				Added event "minecraft:unroll":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:unrolled"
+							field "emit_vibration": field "vibration": "entity_act"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:rolled_up"
+									component group: "minecraft:rolled_up_with_threats"
+									component group: "minecraft:rolled_up_without_threats"
+							field "set_property": property "minecraft:armadillo_state": "unrolled"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:baby_unrolled"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+									filter:
+										filter property "test": "has_component"
+										filter property "value": "minecraft:is_baby"
+						sequence item 2:
+							field "add": field "component_groups": component group: "minecraft:adult_unrolled"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "enum_property"
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "operator": "not"
+										filter property "value": "unrolled"
+									filter:
+										filter property "test": "actor_health"
+										filter property "subject": "self"
+										filter property "operator": ">"
+										filter property "value": 0
+									filter:
+										filter property "test": "has_component"
+										filter property "operator": "not"
+										filter property "value": "minecraft:is_baby"
+Changed entity "breeze.json":
+	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
-			Changed field "description":
-				Unchanged description "identifier": "minecraft:pufferfish"
-				Removed description "is_experimental" of false.
-			Changed field "component_groups":
-				Changed component group "minecraft:deflate_sensor":
-					Changed component "minecraft:entity_sensor":
-						Removed field "event" of "minecraft:from_full_puff".
-						Removed field "event_filters":
-							filter property "none_of":
-								filter:
-									filter property "subject": "other"
-									filter property "test": "is_family"
-									filter property "value": "mob"
-								filter:
-									filter property "all_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
-										filter:
-											filter property "none_of":
-												filter property "subject": "other"
-												filter property "test": "has_ability"
-												filter property "value": "instabuild"
-							filter property "operator": ">"
-							filter property "test": "distance_to_nearest_player"
-							filter property "value": 2.9
-						Removed field "require_all" of true.
-						Removed field "sensor_range" of 2.9.
-						Added field "subsensors":
-							subsensor:
-								field "event": "minecraft:from_full_puff"
-								field "event_filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "mob"
-										filter:
-											filter property "all_of":
-												filter:
-													filter property "subject": "other"
-													filter property "test": "is_family"
-													filter property "value": "player"
-												filter:
-													filter property "operator": "not"
-													filter property "subject": "other"
-													filter property "test": "has_ability"
-													filter property "value": "instabuild"
-								field "maximum_count": 0
-								field "minimum_count": 0
-								field "range": 2.9
-				Changed component group "minecraft:half_puff_secondary":
-					Changed component "minecraft:entity_sensor":
-						Removed field "event" of "minecraft:start_full_puff".
-						Removed field "event_filters":
-							filter property "any_of":
-								filter:
-									filter property "subject": "other"
-									filter property "test": "is_family"
-									filter property "value": "mob"
-								filter:
-									filter property "all_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
-										filter:
-											filter property "none_of":
-												filter property "subject": "other"
-												filter property "test": "has_ability"
-												filter property "value": "instabuild"
-						Removed field "minimum_count" of 1.
-						Removed field "sensor_range" of 2.5.
-						Added field "subsensors":
-							subsensor:
-								field "event": "minecraft:start_full_puff"
-								field "event_filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "mob"
-										filter:
-											filter property "all_of":
-												filter:
-													filter property "subject": "other"
-													filter property "test": "is_family"
-													filter property "value": "player"
-												filter:
-													filter property "operator": "not"
-													filter property "subject": "other"
-													filter property "test": "has_ability"
-													filter property "value": "instabuild"
-								field "minimum_count": 1
-								field "range": 2.5
-				Changed component group "minecraft:normal_puff":
-					Changed component "minecraft:entity_sensor":
-						Removed field "event" of "minecraft:start_half_puff".
-						Removed field "event_filters":
-							filter property "any_of":
-								filter:
-									filter property "subject": "other"
-									filter property "test": "is_family"
-									filter property "value": "mob"
-								filter:
-									filter property "all_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "player"
-										filter:
-											filter property "none_of":
-												filter property "subject": "other"
-												filter property "test": "has_ability"
-												filter property "value": "instabuild"
-						Removed field "minimum_count" of 1.
-						Removed field "sensor_range" of 2.5.
-						Added field "subsensors":
-							subsensor:
-								field "event": "minecraft:start_half_puff"
-								field "event_filters":
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "mob"
-										filter:
-											filter property "all_of":
-												filter:
-													filter property "subject": "other"
-													filter property "test": "is_family"
-													filter property "value": "player"
-												filter:
-													filter property "operator": "not"
-													filter property "subject": "other"
-													filter property "test": "has_ability"
-													filter property "value": "instabuild"
-								field "minimum_count": 1
-								field "range": 2.5
-Changed entity "villager_v2":
-	Removed behavior pack "extra":
-		field "defined_in": behavior pack: "test_vanilla_1.11"
-		field "format_version": "1.13.0"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:villager_v2"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": false
-			field "component_groups":
-				component group "adult":
-					component "minecraft:preferred_path":
-						field "default_block_cost": 3
-						field "jump_cost": 20
-						field "max_fall_blocks": 1
-						field "preferred_path_blocks":
-							block category:
-								field "blocks": block: "grass_path"
-								field "cost": 0
-							block category:
-								field "blocks":
-									block: "cobblestone"
-									block: "stone"
-									block: "stonebrick"
-									block: "sandstone"
-									block: "mossy_cobblestone"
-									block: "stone_slab"
-									block: "stone_slab2"
-									block: "stone_slab3"
-									block: "stone_slab4"
-									block: "double_stone_slab"
-									block: "double_stone_slab2"
-									block: "double_stone_slab3"
-									block: "double_stone_slab4"
-									block: "wooden_slab"
-									block: "double_wooden_slab"
-									block: "planks"
-									block: "brick_block"
-									block: "nether_brick"
-									block: "red_nether_brick"
-									block: "end_bricks"
-									block: "red_sandstone"
-									block: "stained_glass"
-									block: "glass"
-									block: "glowstone"
-									block: "prismarine"
-									block: "emerald_block"
-									block: "diamond_block"
-									block: "lapis_block"
-									block: "gold_block"
-									block: "redstone_block"
-									block: "purple_glazed_terracotta"
-									block: "white_glazed_terracotta"
-									block: "orange_glazed_terracotta"
-									block: "magenta_glazed_terracotta"
-									block: "light_blue_glazed_terracotta"
-									block: "yellow_glazed_terracotta"
-									block: "lime_glazed_terracotta"
-									block: "pink_glazed_terracotta"
-									block: "gray_glazed_terracotta"
-									block: "silver_glazed_terracotta"
-									block: "cyan_glazed_terracotta"
-									block: "blue_glazed_terracotta"
-									block: "brown_glazed_terracotta"
-									block: "green_glazed_terracotta"
-									block: "red_glazed_terracotta"
-									block: "black_glazed_terracotta"
-								field "cost": 1
-							block category:
-								field "blocks":
-									block: "bed"
-									block: "lectern"
-									block: "composter"
-									block: "grindstone"
-									block: "blast_furnace"
-									block: "smoker"
-									block: "fletching_table"
-									block: "cartography_table"
-									block: "brewing_stand"
-									block: "smithing_table"
-									block: "cauldron"
-									block: "barrel"
-									block: "loom"
-									block: "stonecutter"
-								field "cost": 50
-					component "minecraft:behavior.make_love": field "priority": 5
-					component "minecraft:behavior.receive_love": field "priority": 6
-				component group "armorer":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "armorer"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.armor"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/armorer_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "blacksmith"
-							family: "armorer"
-					component "minecraft:variant": field "value": 8
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "baby":
-					component "minecraft:ageable":
-						field "duration": 1200
-						field "grow_up":
-							field "event": "minecraft:ageable_grow_up"
-							field "target": "self"
-					component "minecraft:is_baby": empty
-					component "minecraft:preferred_path":
-						field "default_block_cost": 1.5
-						field "jump_cost": 5
-						field "max_fall_blocks": 1
-						field "preferred_path_blocks":
-							block category:
-								field "blocks": block: "grass_path"
-								field "cost": 0
-							block category:
-								field "blocks":
-									block: "cobblestone"
-									block: "stone"
-									block: "stonebrick"
-									block: "sandstone"
-									block: "mossy_cobblestone"
-									block: "stone_slab"
-									block: "stone_slab2"
-									block: "stone_slab3"
-									block: "stone_slab4"
-									block: "double_stone_slab"
-									block: "double_stone_slab2"
-									block: "double_stone_slab3"
-									block: "double_stone_slab4"
-									block: "wooden_slab"
-									block: "double_wooden_slab"
-									block: "planks"
-									block: "brick_block"
-									block: "nether_brick"
-									block: "red_nether_brick"
-									block: "end_bricks"
-									block: "red_sandstone"
-									block: "stained_glass"
-									block: "glass"
-									block: "glowstone"
-									block: "prismarine"
-									block: "emerald_block"
-									block: "diamond_block"
-									block: "lapis_block"
-									block: "gold_block"
-									block: "redstone_block"
-									block: "purple_glazed_terracotta"
-									block: "white_glazed_terracotta"
-									block: "orange_glazed_terracotta"
-									block: "magenta_glazed_terracotta"
-									block: "light_blue_glazed_terracotta"
-									block: "yellow_glazed_terracotta"
-									block: "lime_glazed_terracotta"
-									block: "pink_glazed_terracotta"
-									block: "gray_glazed_terracotta"
-									block: "silver_glazed_terracotta"
-									block: "cyan_glazed_terracotta"
-									block: "blue_glazed_terracotta"
-									block: "brown_glazed_terracotta"
-									block: "green_glazed_terracotta"
-									block: "red_glazed_terracotta"
-									block: "black_glazed_terracotta"
-								field "cost": 1
-							block category:
-								field "blocks":
-									block: "bed"
-									block: "lectern"
-									block: "composter"
-									block: "grindstone"
-									block: "blast_furnace"
-									block: "smoker"
-									block: "fletching_table"
-									block: "cartography_table"
-									block: "brewing_stand"
-									block: "smithing_table"
-									block: "cauldron"
-									block: "barrel"
-									block: "loom"
-									block: "stonecutter"
-								field "cost": 50
-					component "minecraft:scale": field "value": 0.5
-					component "minecraft:behavior.take_flower": field "priority": 9
-				component group "basic_schedule":
-					component "minecraft:scheduler":
-						field "max_delay_secs": 10
-						field "min_delay_secs": 0
-						field "scheduled_events":
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_wander_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 0
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_wander_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_home_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
-				component group "become_witch":
-					component "minecraft:transformation":
-						field "delay": 0.5
-						field "into": "minecraft:witch"
-				component group "become_zombie": component "minecraft:transformation": field "into": "minecraft:zombie_villager_v2"
-				component group "bed_schedule_villager":
-					component "minecraft:behavior.sleep":
-						field "goal_radius": 1.5
-						field "priority": 3
-						field "sleep_collider_height": 0.3
-						field "sleep_collider_width": 1.0
-						field "sleep_y_offset": 0.6
-						field "speed_multiplier": 0.6
-						field "timeout_cooldown": 10.0
-				component group "behavior_non_peasant":
-					component "minecraft:shareables":
-						field "items":
-							item:
-								field "item": "minecraft:bread"
-								field "surplus_amount": 6
-								field "want_amount": 3
-							item:
-								field "item": "minecraft:carrot"
-								field "surplus_amount": 24
-								field "want_amount": 12
-							item:
-								field "item": "minecraft:potato"
-								field "surplus_amount": 24
-								field "want_amount": 12
-							item:
-								field "item": "minecraft:beetroot"
-								field "surplus_amount": 24
-								field "want_amount": 12
-				component group "behavior_peasant":
-					component "minecraft:shareables":
-						field "items":
-							item:
-								field "item": "minecraft:bread"
-								field "surplus_amount": 6
-								field "want_amount": 3
-							item:
-								field "item": "minecraft:carrot"
-								field "surplus_amount": 4
-								field "want_amount": 60
-							item:
-								field "item": "minecraft:potato"
-								field "surplus_amount": 24
-								field "want_amount": 60
-							item:
-								field "item": "minecraft:beetroot"
-								field "surplus_amount": 24
-								field "want_amount": 60
-							item:
-								field "item": "minecraft:wheat_seeds"
-								field "surplus_amount": 64
-								field "want_amount": 64
-							item:
-								field "item": "minecraft:beetroot_seeds"
-								field "surplus_amount": 64
-								field "want_amount": 64
-							item:
-								field "craft_into": "minecraft:bread"
-								field "item": "minecraft:wheat"
-								field "surplus_amount": 18
-								field "want_amount": 45
-				component group "butcher":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "butcher"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.butcher"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/butcher_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "artisan"
-							family: "butcher"
-					component "minecraft:variant": field "value": 11
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "cartographer":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "cartographer"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.cartographer"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/cartographer_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "cartographer"
-					component "minecraft:variant": field "value": 6
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "child_schedule":
-					component "minecraft:scheduler":
-						field "max_delay_secs": 10
-						field "min_delay_secs": 0
-						field "scheduled_events":
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_play_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 0
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_home_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
-				component group "cleric":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "cleric"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.cleric"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/cleric_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "priest"
-							family: "cleric"
-					component "minecraft:variant": field "value": 7
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "desert_villager": component "minecraft:mark_variant": field "value": 1
-				component group "farmer":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "farmer"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.farmer"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/farmer_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "peasant"
-							family: "farmer"
-					component "minecraft:variant": field "value": 1
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "farmer_schedule":
-					component "minecraft:scheduler":
-						field "max_delay_secs": 10
-						field "min_delay_secs": 0
-						field "scheduled_events":
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_farmer"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 0
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_farmer"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_home_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
-				component group "fisher_schedule":
-					component "minecraft:scheduler":
-						field "max_delay_secs": 10
-						field "min_delay_secs": 0
-						field "scheduled_events":
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_fisher"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 0
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_fisher"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_home_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
-				component group "fisherman":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "fisherman"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.fisherman"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/fisherman_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "peasant"
-							family: "fisherman"
-					component "minecraft:variant": field "value": 2
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "fletcher":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "fletcher"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.fletcher"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/fletcher_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "peasant"
-							family: "fletcher"
-					component "minecraft:variant": field "value": 4
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "gather_schedule_villager":
-					component "minecraft:behavior.mingle":
-						field "cooldown_time": 10
-						field "duration": 30
-						field "mingle_distance": 2.0
-						field "mingle_partner_type": "minecraft:villager_v2"
-						field "priority": 7
-						field "speed_multiplier": 0.5
-				component group "home_schedule_villager": empty
-				component group "job_specific_goals":
-					component "minecraft:behavior.explore_outskirts": empty
-					component "minecraft:behavior.harvest_farm_block": empty
-					component "minecraft:behavior.inspect_bookshelf": empty
-					component "minecraft:behavior.mingle": empty
-					component "minecraft:behavior.sleep": empty
-					component "minecraft:behavior.work": empty
-				component group "jobless_schedule":
-					component "minecraft:scheduler":
-						field "max_delay_secs": 10
-						field "min_delay_secs": 0
-						field "scheduled_events":
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_wander_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 2000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 13000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_home_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 13000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 14000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 14000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 0
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 2000
-				component group "jungle_villager": component "minecraft:mark_variant": field "value": 2
-				component group "leatherworker":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "leatherworker"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.leather"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/leather_worker_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "artisan"
-							family: "leatherworker"
-					component "minecraft:variant": field "value": 12
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "librarian":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "librarian"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.librarian"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/librarian_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "librarian"
-					component "minecraft:variant": field "value": 5
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "librarian_schedule":
-					component "minecraft:scheduler":
-						field "max_delay_secs": 10
-						field "min_delay_secs": 0
-						field "scheduled_events":
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_librarian"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 0
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_librarian"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_home_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
-				component group "mason":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "mason"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.mason"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/stone_mason_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "artisan"
-							family: "stone_mason"
-					component "minecraft:variant": field "value": 13
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "nitwit":
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "peasant"
-							family: "nitwit"
-					component "minecraft:variant": field "value": 14
-				component group "play_schedule_villager":
-					component "minecraft:behavior.play":
-						field "priority": 8
-						field "speed_multiplier": 0.32
-				component group "savanna_villager": component "minecraft:mark_variant": field "value": 3
-				component group "shepherd":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "shepherd"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.shepherd"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/shepherd_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "peasant"
-							family: "shepherd"
-					component "minecraft:variant": field "value": 3
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "snow_villager": component "minecraft:mark_variant": field "value": 4
-				component group "swamp_villager": component "minecraft:mark_variant": field "value": 5
-				component group "taiga_villager": component "minecraft:mark_variant": field "value": 6
-				component group "toolsmith":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "toolsmith"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.tool"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/tool_smith_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "blacksmith"
-							family: "toolsmith"
-					component "minecraft:variant": field "value": 10
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "trade_components":
-					component "minecraft:economy_trade_table": empty
-					component "minecraft:behavior.trade_interest": empty
-				component group "trade_resupply_component_group": component "minecraft:trade_resupply": empty
-				component group "unskilled":
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "peasant"
-					component "minecraft:variant": field "value": 0
-				component group "villager_skin_0": component "minecraft:skin_id": field "value": 0
-				component group "villager_skin_1": component "minecraft:skin_id": field "value": 1
-				component group "villager_skin_2": component "minecraft:skin_id": field "value": 2
-				component group "villager_skin_3": component "minecraft:skin_id": field "value": 3
-				component group "villager_skin_4": component "minecraft:skin_id": field "value": 4
-				component group "villager_skin_5": component "minecraft:skin_id": field "value": 5
-				component group "wander_schedule_villager":
-					component "minecraft:behavior.explore_outskirts":
-						field "explore_dist": 6.0
-						field "priority": 9
-						field "speed_multiplier": 0.6
-						field "wait_time": 200
-				component group "weaponsmith":
-					component "minecraft:dweller":
-						field "can_find_poi": true
-						field "can_migrate": true
-						field "dweller_role": "inhabitant"
-						field "dwelling_type": "village"
-						field "first_founding_reward": 5
-						field "preferred_profession": "weaponsmith"
-						field "update_interval_base": 60
-						field "update_interval_variant": 40
-					component "minecraft:economy_trade_table":
-						field "display_name": "entity.villager.weapon"
-						field "new_screen": true
-						field "persist_trades": true
-						field "table": "trading/economy_trades/weapon_smith_trades.json"
-					component "minecraft:type_family":
-						field "family":
-							family: "villager"
-							family: "blacksmith"
-							family: "weaponsmith"
-					component "minecraft:variant": field "value": 9
-					component "minecraft:behavior.trade_interest":
-						field "carried_item_switch_time": 2.0
-						field "cooldown": 2.0
-						field "interest_time": 45.0
-						field "priority": 5
-						field "remove_item_time": 1.0
-						field "within_radius": 6.0
-				component group "work_schedule":
-					component "minecraft:scheduler":
-						field "max_delay_secs": 10
-						field "min_delay_secs": 0
-						field "scheduled_events":
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_pro_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 0
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_gather_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 8000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_work_pro_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 10000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_home_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 11000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-							scheduled event:
-								field "scheduled_event":
-									field "event": "minecraft:schedule_bed_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "operator": ">="
-												filter property "test": "hourly_clock_time"
-												filter property "value": 12000
-											filter:
-												filter property "operator": "<"
-												filter property "test": "hourly_clock_time"
-												filter property "value": 24000
-				component group "work_schedule_farmer":
-					component "minecraft:shareables":
-						field "items":
-							item:
-								field "item": "minecraft:bread"
-								field "surplus_amount": 6
-								field "want_amount": 3
-							item:
-								field "item": "minecraft:carrot"
-								field "surplus_amount": 4
-								field "want_amount": 60
-							item:
-								field "item": "minecraft:potato"
-								field "surplus_amount": 24
-								field "want_amount": 60
-							item:
-								field "item": "minecraft:beetroot"
-								field "surplus_amount": 24
-								field "want_amount": 60
-							item:
-								field "item": "minecraft:wheat_seeds"
-								field "surplus_amount": 64
-								field "want_amount": 64
-							item:
-								field "item": "minecraft:beetroot_seeds"
-								field "surplus_amount": 64
-								field "want_amount": 64
-							item:
-								field "craft_into": "minecraft:bread"
-								field "item": "minecraft:wheat"
-								field "surplus_amount": 18
-								field "want_amount": 45
-					component "minecraft:behavior.harvest_farm_block":
-						field "priority": 8
-						field "speed_multiplier": 0.5
-					component "minecraft:behavior.work":
-						field "active_time": 250
-						field "can_work_in_rain": false
-						field "goal_cooldown": 200
-						field "on_arrival":
-							field "event": "minecraft:resupply_trades"
-							field "target": "self"
-						field "priority": 7
-						field "sound_delay_max": 200
-						field "sound_delay_min": 100
-						field "speed_multiplier": 0.5
-						field "work_in_rain_tolerance": 100
-				component group "work_schedule_fisher":
-					component "minecraft:behavior.work":
-						field "active_time": 250
-						field "can_work_in_rain": false
-						field "goal_cooldown": 200
-						field "on_arrival":
-							field "event": "minecraft:resupply_trades"
-							field "target": "self"
-						field "priority": 7
-						field "sound_delay_max": 200
-						field "sound_delay_min": 100
-						field "speed_multiplier": 0.5
-						field "work_in_rain_tolerance": 100
-				component group "work_schedule_librarian":
-					component "minecraft:behavior.inspect_bookshelf":
-						field "goal_radius": 0.8
-						field "priority": 8
-						field "search_count": 0
-						field "search_height": 3
-						field "search_range": 4
-						field "speed_multiplier": 0.6
-					component "minecraft:behavior.work":
-						field "active_time": 250
-						field "can_work_in_rain": false
-						field "goal_cooldown": 200
-						field "on_arrival":
-							field "event": "minecraft:resupply_trades"
-							field "target": "self"
-						field "priority": 7
-						field "sound_delay_max": 200
-						field "sound_delay_min": 100
-						field "speed_multiplier": 0.5
-						field "work_in_rain_tolerance": 100
-				component group "work_schedule_villager":
-					component "minecraft:behavior.work":
-						field "active_time": 250
-						field "can_work_in_rain": false
-						field "goal_cooldown": 200
-						field "on_arrival":
-							field "event": "minecraft:resupply_trades"
-							field "target": "self"
-						field "priority": 7
-						field "sound_delay_max": 200
-						field "sound_delay_min": 100
-						field "speed_multiplier": 0.5
-						field "work_in_rain_tolerance": 100
-			field "components":
-				component "minecraft:annotation.open_door": empty
-				component "minecraft:breathable":
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "height": 1.8
-					field "width": 0.6
-				component "minecraft:damage_sensor":
-					field "triggers":
-						trigger:
-							field "deals_damage": false
-							field "on_damage":
-								field "event": "become_witch"
-								field "filters":
-									filter property "subject": "other"
-									filter property "test": "is_family"
-									filter property "value": "lightning"
-						trigger:
-							field "on_damage":
-								field "event": "become_zombie"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "test": "has_damage"
-											filter property "value": "fatal"
-									filter property "any_of":
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "zombie"
-										filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "husk"
-				component "minecraft:dweller":
-					field "can_find_poi": true
-					field "can_migrate": true
-					field "dweller_role": "inhabitant"
-					field "dwelling_type": "village"
-					field "first_founding_reward": 5
-					field "update_interval_base": 60
-					field "update_interval_variant": 40
-				component "minecraft:follow_range": field "value": 128
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:hide": empty
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:inventory":
-					field "inventory_size": 8
-					field "private": true
-				component "minecraft:jump.static": empty
-				component "minecraft:mark_variant": field "value": 0
-				component "minecraft:movement": field "value": 5
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk":
-					field "avoid_water": true
-					field "can_open_doors": true
-					field "can_pass_doors": true
-					field "can_path_over_water": true
-				component "minecraft:persistent": empty
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:type_family": field "family": "villager"
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
+			Changed field "components":
+				Changed component "minecraft:behavior.move_away_from_target":
+					Changed field "movement_speed" from 1.0 to 0.4.
+Changed entity "cave_spider.json":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Changed filter property "all_of":
+									Total filter: 2 (+1, -1)
+									Removed filter:
+										filter property "test": "bool_property"
 										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "zombie"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "zombie_villager"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "zombie_pigman"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "illager"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "vex"
-							field "max_dist": 8
-							field "sprint_speed_multiplier": 0.6
-							field "walk_speed_multiplier": 0.6
-					field "priority": 4
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.hide":
-					field "duration": 30.0
-					field "poi_type": "bed"
-					field "priority": 0
-					field "speed_multiplier": 0.8
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8
-					field "priority": 8
-					field "probability": 0.02
-				component "minecraft:behavior.look_at_trading_player": field "priority": 7
-				component "minecraft:behavior.move_indoors":
-					field "priority": 6
-					field "speed_multiplier": 0.8
-					field "timeout_cooldown": 8.0
-				component "minecraft:behavior.move_towards_restriction":
-					field "priority": 10
-					field "speed_multiplier": 0.6
-				component "minecraft:behavior.panic":
-					field "priority": 1
-					field "speed_multiplier": 0.6
-				component "minecraft:behavior.pickup_items":
-					field "goal_radius": 2
-					field "max_dist": 3
-					field "priority": 4
-					field "speed_multiplier": 0.5
-				component "minecraft:behavior.random_stroll":
-					field "priority": 10
-					field "speed_multiplier": 0.6
-				component "minecraft:behavior.share_items":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "villager"
-					field "goal_radius": 2.0
-					field "max_dist": 3
-					field "priority": 9
-					field "speed_multiplier": 0.5
-				component "minecraft:behavior.trade_with_player": field "priority": 2
-			field "events":
-				event "become_witch": field "add": field "component_groups": component group: "become_witch"
-				event "become_zombie":
-					field "sequence":
-						sequence item 0:
-							field "filters":
-								filter property "test": "is_difficulty"
-								filter property "value": "normal"
-							field "randomize":
-								randomize item:
-									field "weight": 50
-									field "add": field "component_groups": component group: "become_zombie"
-								randomize item: field "weight": 50
-						sequence item 1:
-							field "add": field "component_groups": component group: "become_zombie"
-							field "filters":
-								filter property "test": "is_difficulty"
-								filter property "value": "hard"
-				event "minecraft:ageable_grow_up":
-					field "randomize":
-						randomize item:
-							field "weight": 10
-							field "add":
-								field "component_groups":
-									component group: "adult"
-									component group: "nitwit"
-									component group: "behavior_peasant"
-									component group: "jobless_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 90
-							field "add":
-								field "component_groups":
-									component group: "adult"
-									component group: "unskilled"
-									component group: "behavior_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-				event "minecraft:become_armorer":
-					field "add":
-						field "component_groups":
-							component group: "armorer"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_butcher":
-					field "add":
-						field "component_groups":
-							component group: "butcher"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_cartographer":
-					field "add":
-						field "component_groups":
-							component group: "cartographer"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_cleric":
-					field "add":
-						field "component_groups":
-							component group: "cleric"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_farmer":
-					field "add":
-						field "component_groups":
-							component group: "farmer"
-							component group: "adult"
-							component group: "behavior_peasant"
-							component group: "farmer_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_fisherman":
-					field "add":
-						field "component_groups":
-							component group: "fisherman"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "fisher_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_fletcher":
-					field "add":
-						field "component_groups":
-							component group: "fletcher"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_leatherworker":
-					field "add":
-						field "component_groups":
-							component group: "leatherworker"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_librarian":
-					field "add":
-						field "component_groups":
-							component group: "librarian"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "librarian_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_mason":
-					field "add":
-						field "component_groups":
-							component group: "mason"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_sheperd":
-					field "add":
-						field "component_groups":
-							component group: "shepherd"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_toolsmith":
-					field "add":
-						field "component_groups":
-							component group: "toolsmith"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_unskilled":
-					field "add":
-						field "component_groups":
-							component group: "adult"
-							component group: "unskilled"
-							component group: "behavior_peasant"
-							component group: "basic_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:become_weaponsmith":
-					field "add":
-						field "component_groups":
-							component group: "weaponsmith"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "work_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-							component group: "job_specific_goals"
-							component group: "trade_components"
-				event "minecraft:entity_born":
-					field "sequence":
-						sequence item 0:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:skin_id"
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_0"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_1"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_2"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_3"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_4"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_5"
-						sequence item 1:
-							field "add":
-								field "component_groups":
-									component group: "baby"
-									component group: "unskilled"
-									component group: "child_schedule"
-						sequence item 2:
-							field "add": field "component_groups": component group: "desert_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "desert"
-						sequence item 3:
-							field "add": field "component_groups": component group: "jungle_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "jungle"
-						sequence item 4:
-							field "add": field "component_groups": component group: "savanna_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "savanna"
-						sequence item 5:
-							field "add": field "component_groups": component group: "snow_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "cold"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "frozen"
-						sequence item 6:
-							field "add": field "component_groups": component group: "swamp_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "swamp"
-						sequence item 7:
-							field "add": field "component_groups": component group: "taiga_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "taiga"
-				event "minecraft:entity_spawned":
-					field "sequence":
-						sequence item 0:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:skin_id"
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_0"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_1"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_2"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_3"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_4"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_5"
-						sequence item 1:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 5
-									field "add":
-										field "component_groups":
-											component group: "baby"
-											component group: "child_schedule"
-								randomize item:
-									field "weight": 95
-									field "sequence":
-										sequence item 0: field "add": field "component_groups": component group: "adult"
-										sequence item 1:
-											field "randomize":
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "farmer"
-															component group: "behavior_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "fisherman"
-															component group: "behavior_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "shepherd"
-															component group: "behavior_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "fletcher"
-															component group: "behavior_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "librarian"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "cartographer"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "cleric"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "armorer"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "weaponsmith"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "toolsmith"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "butcher"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "leatherworker"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "mason"
-															component group: "behavior_non_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 1
-													field "add":
-														field "component_groups":
-															component group: "nitwit"
-															component group: "behavior_peasant"
-															component group: "jobless_schedule"
-						sequence item 2:
-							field "add": field "component_groups": component group: "desert_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "desert"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "mesa"
-						sequence item 3:
-							field "add": field "component_groups": component group: "jungle_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "jungle"
-						sequence item 4:
-							field "add": field "component_groups": component group: "savanna_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "savanna"
-						sequence item 5:
-							field "add": field "component_groups": component group: "snow_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "all_of":
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "cold"
-											filter:
-												filter property "operator": "!="
-												filter property "test": "has_biome_tag"
-												filter property "value": "ocean"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "frozen"
-						sequence item 6:
-							field "add": field "component_groups": component group: "swamp_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "swamp"
-						sequence item 7:
-							field "add": field "component_groups": component group: "taiga_villager"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "taiga"
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "extreme_hills"
-									filter:
 										filter property "operator": "!="
-										filter property "test": "has_biome_tag"
-										filter property "value": "cold"
-				event "minecraft:entity_transformed":
-					field "sequence":
-						sequence item 0:
-							field "add":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "other"
-								filter property "test": "has_component"
-								filter property "value": "minecraft:is_baby"
-						sequence item 1:
-							field "add": field "component_groups": component group: "adult"
-							field "filters":
-								filter property "operator": "!="
-								filter property "subject": "other"
-								filter property "test": "has_component"
-								filter property "value": "minecraft:is_baby"
-							field "sequence":
-								sequence item 0:
-									field "add":
-										field "component_groups":
-											component group: "farmer"
-											component group: "behavior_peasant"
-											component group: "farmer_schedule"
-									field "filters":
+										filter property "domain": "minecraft:is_rolled_up"
+									Added filter:
+										filter property "test": "enum_property"
 										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "farmer"
-								sequence item 1:
-									field "add":
-										field "component_groups":
-											component group: "fisherman"
-											component group: "behavior_peasant"
-											component group: "fisher_schedule"
-									field "filters":
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+Changed entity "spider.json":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Changed filter property "all_of":
+									Total filter: 2 (+1, -1)
+									Removed filter:
+										filter property "test": "bool_property"
 										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "fisherman"
-								sequence item 2:
-									field "add":
-										field "component_groups":
-											component group: "shepherd"
-											component group: "behavior_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "shepherd"
-								sequence item 3:
-									field "add":
-										field "component_groups":
-											component group: "fletcher"
-											component group: "behavior_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "fletcher"
-								sequence item 4:
-									field "add":
-										field "component_groups":
-											component group: "librarian"
-											component group: "behavior_non_peasant"
-											component group: "librarian_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "librarian"
-								sequence item 5:
-									field "add":
-										field "component_groups":
-											component group: "cartographer"
-											component group: "behavior_non_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "cartographer"
-								sequence item 6:
-									field "add":
-										field "component_groups":
-											component group: "cleric"
-											component group: "behavior_non_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "cleric"
-								sequence item 7:
-									field "add":
-										field "component_groups":
-											component group: "armorer"
-											component group: "behavior_non_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "armorer"
-								sequence item 8:
-									field "add":
-										field "component_groups":
-											component group: "weaponsmith"
-											component group: "behavior_non_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "weaponsmith"
-								sequence item 9:
-									field "add":
-										field "component_groups":
-											component group: "toolsmith"
-											component group: "behavior_non_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "toolsmith"
-								sequence item 10:
-									field "add":
-										field "component_groups":
-											component group: "butcher"
-											component group: "behavior_non_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "butcher"
-								sequence item 11:
-									field "add":
-										field "component_groups":
-											component group: "leatherworker"
-											component group: "behavior_non_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "leatherworker"
-								sequence item 12:
-									field "add":
-										field "component_groups":
-											component group: "mason"
-											component group: "behavior_non_peasant"
-											component group: "work_schedule"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "mason"
-						sequence item 2:
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "zombie_villager"
-							field "sequence":
-								sequence item 0:
-									field "add": field "component_groups": component group: "villager_skin_0"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 0
-								sequence item 1:
-									field "add": field "component_groups": component group: "villager_skin_1"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 1
-								sequence item 2:
-									field "add": field "component_groups": component group: "villager_skin_2"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 2
-								sequence item 3:
-									field "add": field "component_groups": component group: "villager_skin_3"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 3
-								sequence item 4:
-									field "add": field "component_groups": component group: "villager_skin_4"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 4
-								sequence item 5:
-									field "add": field "component_groups": component group: "villager_skin_5"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 5
-								sequence item 6:
-									field "add": field "component_groups": component group: "desert_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 1
-								sequence item 7:
-									field "add": field "component_groups": component group: "jungle_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 2
-								sequence item 8:
-									field "add": field "component_groups": component group: "savanna_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 3
-								sequence item 9:
-									field "add": field "component_groups": component group: "snow_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 4
-								sequence item 10:
-									field "add": field "component_groups": component group: "swamp_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 5
-								sequence item 11:
-									field "add": field "component_groups": component group: "taiga_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 6
-						sequence item 3:
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "villager"
-							field "sequence":
-								sequence item 0:
-									field "randomize":
-										randomize item:
-											field "weight": 1
-											field "add": field "component_groups": component group: "villager_skin_0"
-										randomize item:
-											field "weight": 1
-											field "add": field "component_groups": component group: "villager_skin_1"
-										randomize item:
-											field "weight": 1
-											field "add": field "component_groups": component group: "villager_skin_2"
-										randomize item:
-											field "weight": 1
-											field "add": field "component_groups": component group: "villager_skin_3"
-										randomize item:
-											field "weight": 1
-											field "add": field "component_groups": component group: "villager_skin_4"
-										randomize item:
-											field "weight": 1
-											field "add": field "component_groups": component group: "villager_skin_5"
-								sequence item 1:
-									field "add": field "component_groups": component group: "desert_villager"
-									field "filters":
-										filter property "any_of":
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "desert"
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "mesa"
-								sequence item 2:
-									field "add": field "component_groups": component group: "jungle_villager"
-									field "filters":
-										filter property "test": "has_biome_tag"
-										filter property "value": "jungle"
-								sequence item 3:
-									field "add": field "component_groups": component group: "savanna_villager"
-									field "filters":
-										filter property "test": "has_biome_tag"
-										filter property "value": "savanna"
-								sequence item 4:
-									field "add": field "component_groups": component group: "snow_villager"
-									field "filters":
-										filter property "any_of":
-											filter:
-												filter property "all_of":
-													filter:
-														filter property "test": "has_biome_tag"
-														filter property "value": "cold"
-													filter:
-														filter property "operator": "!="
-														filter property "test": "has_biome_tag"
-														filter property "value": "ocean"
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "frozen"
-								sequence item 5:
-									field "add": field "component_groups": component group: "swamp_villager"
-									field "filters":
-										filter property "test": "has_biome_tag"
-										filter property "value": "swamp"
-								sequence item 6:
-									field "add": field "component_groups": component group: "taiga_villager"
-									field "filters":
-										filter property "all_of":
-											filter:
-												filter property "any_of":
-													filter:
-														filter property "test": "has_biome_tag"
-														filter property "value": "taiga"
-													filter:
-														filter property "test": "has_biome_tag"
-														filter property "value": "extreme_hills"
-											filter:
-												filter property "operator": "!="
-												filter property "test": "has_biome_tag"
-												filter property "value": "cold"
-				event "minecraft:resupply_trades": field "add": field "component_groups": component group: "trade_resupply_component_group"
-				event "minecraft:schedule_bed_villager":
-					field "add": field "component_groups": component group: "bed_schedule_villager"
-					field "remove":
-						field "component_groups":
-							component group: "home_schedule_villager"
-							component group: "gather_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "job_specific_goals"
-							component group: "play_schedule_villager"
-							component group: "trade_resupply_component_group"
-				event "minecraft:schedule_gather_villager":
-					field "add": field "component_groups": component group: "gather_schedule_villager"
-					field "remove":
-						field "component_groups":
-							component group: "bed_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "home_schedule_villager"
-							component group: "job_specific_goals"
-							component group: "play_schedule_villager"
-							component group: "trade_resupply_component_group"
-				event "minecraft:schedule_home_villager":
-					field "add": field "component_groups": component group: "home_schedule_villager"
-					field "remove":
-						field "component_groups":
-							component group: "bed_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "gather_schedule_villager"
-							component group: "job_specific_goals"
-							component group: "play_schedule_villager"
-							component group: "trade_resupply_component_group"
-				event "minecraft:schedule_play_villager":
-					field "add": field "component_groups": component group: "play_schedule_villager"
-					field "remove":
-						field "component_groups":
-							component group: "home_schedule_villager"
-							component group: "gather_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "bed_schedule_villager"
-							component group: "job_specific_goals"
-							component group: "trade_resupply_component_group"
-				event "minecraft:schedule_wander_villager":
-					field "add": field "component_groups": component group: "wander_schedule_villager"
-					field "remove":
-						field "component_groups":
-							component group: "home_schedule_villager"
-							component group: "bed_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "job_specific_goals"
-							component group: "play_schedule_villager"
-							component group: "trade_resupply_component_group"
-				event "minecraft:schedule_work_farmer":
-					field "add": field "component_groups": component group: "work_schedule_farmer"
-					field "remove":
-						field "component_groups":
-							component group: "home_schedule_villager"
-							component group: "gather_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "bed_schedule_villager"
-							component group: "job_specific_goals"
-							component group: "play_schedule_villager"
-				event "minecraft:schedule_work_fisher":
-					field "add": field "component_groups": component group: "work_schedule_fisher"
-					field "remove":
-						field "component_groups":
-							component group: "home_schedule_villager"
-							component group: "gather_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "bed_schedule_villager"
-							component group: "job_specific_goals"
-							component group: "play_schedule_villager"
-				event "minecraft:schedule_work_librarian":
-					field "add": field "component_groups": component group: "work_schedule_librarian"
-					field "remove":
-						field "component_groups":
-							component group: "home_schedule_villager"
-							component group: "gather_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "bed_schedule_villager"
-							component group: "job_specific_goals"
-							component group: "play_schedule_villager"
-				event "minecraft:schedule_work_pro_villager":
-					field "add": field "component_groups": component group: "work_schedule_villager"
-					field "remove":
-						field "component_groups":
-							component group: "home_schedule_villager"
-							component group: "gather_schedule_villager"
-							component group: "wander_schedule_villager"
-							component group: "bed_schedule_villager"
-							component group: "play_schedule_villager"
-				event "minecraft:spawn_armorer":
-					field "randomize":
-						randomize item:
-							field "weight": 6
-							field "add":
-								field "component_groups":
-									component group: "armorer"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 6
-							field "add":
-								field "component_groups":
-									component group: "weaponsmith"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 6
-							field "add":
-								field "component_groups":
-									component group: "toolsmith"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-				event "minecraft:spawn_butcher":
-					field "randomize":
-						randomize item:
-							field "weight": 10
-							field "add":
-								field "component_groups":
-									component group: "butcher"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 10
-							field "add":
-								field "component_groups":
-									component group: "leatherworker"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-				event "minecraft:spawn_cleric":
-					field "add":
-						field "component_groups":
-							component group: "cleric"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-							component group: "basic_schedule"
-					field "remove":
-						field "component_groups":
-							component group: "baby"
-							component group: "child_schedule"
-				event "minecraft:spawn_farmer":
-					field "randomize":
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "farmer"
-									component group: "adult"
-									component group: "behavior_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "fisherman"
-									component group: "adult"
-									component group: "behavior_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "shepherd"
-									component group: "adult"
-									component group: "behavior_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "fletcher"
-									component group: "adult"
-									component group: "behavior_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "mason"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-									component group: "work_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-				event "minecraft:spawn_from_village":
-					field "sequence":
-						sequence item 0:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 5
-									field "add":
-										field "component_groups":
-											component group: "baby"
-											component group: "child_schedule"
-								randomize item:
-									field "weight": 95
-									field "add": field "component_groups": component group: "adult"
-									field "sequence":
-										sequence item 0:
-											field "randomize":
-												randomize item:
-													field "weight": 90
-													field "add":
-														field "component_groups":
-															component group: "unskilled"
-															component group: "behavior_peasant"
-															component group: "basic_schedule"
-												randomize item:
-													field "weight": 10
-													field "add":
-														field "component_groups":
-															component group: "nitwit"
-															component group: "behavior_peasant"
-															component group: "jobless_schedule"
-						sequence item 1:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:skin_id"
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_0"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_1"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_2"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_3"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_4"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_5"
-						sequence item 2:
-							field "add": field "component_groups": component group: "desert_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "desert"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "mesa"
-						sequence item 3:
-							field "add": field "component_groups": component group: "jungle_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "jungle"
-						sequence item 4:
-							field "add": field "component_groups": component group: "savanna_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "savanna"
-						sequence item 5:
-							field "add": field "component_groups": component group: "snow_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "all_of":
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "cold"
-											filter:
-												filter property "operator": "!="
-												filter property "test": "has_biome_tag"
-												filter property "value": "ocean"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "frozen"
-						sequence item 6:
-							field "add": field "component_groups": component group: "swamp_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "swamp"
-						sequence item 7:
-							field "add": field "component_groups": component group: "taiga_villager"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "taiga"
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "extreme_hills"
-									filter:
 										filter property "operator": "!="
-										filter property "test": "has_biome_tag"
-										filter property "value": "cold"
-				event "minecraft:spawn_librarian":
-					field "randomize":
-						randomize item:
-							field "weight": 20
-							field "add":
-								field "component_groups":
-									component group: "librarian"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-						randomize item:
-							field "weight": 20
-							field "add":
-								field "component_groups":
-									component group: "cartographer"
-									component group: "behavior_non_peasant"
-									component group: "basic_schedule"
-							field "remove":
-								field "component_groups":
-									component group: "baby"
-									component group: "child_schedule"
-Changed entity "zombie":
-	Removed behavior pack "extra":
-		field "defined_in": behavior pack: "test_vanilla_1.12"
-		field "format_version": "1.13.0"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:zombie"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
-			field "component_groups":
-				component group "minecraft:can_have_equipment": component "minecraft:equipment": field "table": "loot_tables/entities/zombie_equipment.json"
-				component group "minecraft:convert_to_baby_drowned":
-					component "minecraft:is_shaking": empty
-					component "minecraft:transformation":
-						field "delay": field "value": 15
-						field "drop_equipment": true
-						field "into": "minecraft:drowned<minecraft:as_baby>"
-						field "transformation_sound": "convert_to_drowned"
-				component group "minecraft:convert_to_drowned":
-					component "minecraft:is_shaking": empty
-					component "minecraft:transformation":
-						field "delay": field "value": 15
-						field "drop_equipment": true
-						field "into": "minecraft:drowned<minecraft:as_adult>"
-						field "transformation_sound": "convert_to_drowned"
-				component group "minecraft:look_to_start_drowned_transformation":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "event": "minecraft:start_transforming"
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "is_underwater"
-								filter property "value": true
-				component group "minecraft:start_drowned_transformation":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							field "event": "minecraft:stop_transforming"
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "is_underwater"
-								filter property "value": false
-					component "minecraft:timer":
-						field "looping": false
-						field "time": 30
-						field "time_down_event": field "event": "minecraft:convert_to_drowned"
-				component group "minecraft:zombie_adult":
-					component "minecraft:movement": field "value": 5
-					component "minecraft:rideable":
-						field "family_types": family: "zombie"
-						field "seat_count": 1
-						field "seats":
-							field "lock_rider_rotation": 0
-							field "position": [0.0, 1.1, -0.35]
-					component "minecraft:behavior.mount_pathing":
-						field "priority": 2
-						field "speed_multiplier": 1.25
-						field "target_dist": 0.0
-						field "track_target": true
-				component group "minecraft:zombie_baby":
-					component "minecraft:is_baby": empty
-					component "minecraft:movement": field "value": 5.0
-					component "minecraft:scale": field "value": 0.5
-				component group "minecraft:zombie_jockey":
-					component "minecraft:behavior.find_mount":
-						field "priority": 1
-						field "within_radius": 16
-			field "components":
-				component "minecraft:annotation.break_door": empty
-				component "minecraft:attack": field "damage": 3
-				component "minecraft:breathable":
-					field "breathes_air": true
-					field "breathes_water": true
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:burns_in_daylight": empty
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "height": 1.8
-					field "width": 0.6
-				component "minecraft:environment_sensor":
-					field "triggers":
-						field "event": "minecraft:start_transforming"
-						field "filters":
-							filter property "operator": "=="
-							filter property "test": "is_underwater"
-							filter property "value": true
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:jump.static": empty
-				component "minecraft:loot": field "table": "loot_tables/entities/zombie.json"
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk":
-					field "can_break_doors": true
-					field "can_pass_doors": true
-					field "can_walk": true
-					field "is_amphibious": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:type_family":
-					field "family":
-						family: "zombie"
-						family: "undead"
-						family: "monster"
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6
-					field "priority": 7
-					field "probability": 0.02
-				component "minecraft:behavior.melee_attack":
-					field "priority": 3
-					field "speed_multiplier": 1
-					field "track_target": false
-				component "minecraft:behavior.move_towards_restriction":
-					field "priority": 5
-					field "speed_multiplier": 1
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
+										filter property "domain": "minecraft:is_rolled_up"
+									Added filter:
+										filter property "test": "enum_property"
 										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "snowgolem"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "irongolem"
-							field "max_dist": 35
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "villager"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "wandering_trader"
-							field "max_dist": 35
-							field "must_see": false
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "baby_turtle"
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-							field "max_dist": 35
-					field "must_see": true
-					field "must_see_forget_duration": 17.0
-					field "priority": 2
-					field "reselect_targets": true
-					field "within_radius": 25
-				component "minecraft:behavior.random_look_around": field "priority": 7
-				component "minecraft:behavior.random_stroll":
-					field "priority": 6
-					field "speed_multiplier": 1
-				component "minecraft:behavior.stomp_turtle_egg":
-					field "goal_radius": 1.14
-					field "interval": 20
-					field "priority": 4
-					field "search_count": 4
-					field "search_height": 3
-					field "search_range": 10
-					field "speed_multiplier": 1
-			field "events":
-				event "minecraft:as_adult": field "add": field "component_groups": component group: "minecraft:zombie_adult"
-				event "minecraft:as_baby": field "add": field "component_groups": component group: "minecraft:zombie_baby"
-				event "minecraft:convert_to_drowned":
-					field "sequence":
-						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:convert_to_drowned"
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:is_baby"
-							field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
-						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:convert_to_baby_drowned"
-							field "filters":
-								filter property "test": "has_component"
-								filter property "value": "minecraft:is_baby"
-							field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
-				event "minecraft:entity_spawned":
-					field "randomize":
-						randomize item:
-							field "weight": 380
-							field "add":
-								field "component_groups":
-									component group: "minecraft:zombie_adult"
-									component group: "minecraft:can_have_equipment"
-							field "remove": empty
-						randomize item:
-							field "weight": 17
-							field "add":
-								field "component_groups":
-									component group: "minecraft:zombie_baby"
-									component group: "minecraft:can_have_equipment"
-							field "remove": empty
-						randomize item:
-							field "weight": 3
-							field "add":
-								field "component_groups":
-									component group: "minecraft:zombie_baby"
-									component group: "minecraft:zombie_jockey"
-									component group: "minecraft:can_have_equipment"
-							field "remove": empty
-				event "minecraft:start_transforming":
-					field "add": field "component_groups": component group: "minecraft:start_drowned_transformation"
-					field "remove": field "component_groups": component group: "minecraft:look_to_start_drowned_transformation"
-				event "minecraft:stop_transforming":
-					field "add": field "component_groups": component group: "minecraft:look_to_start_drowned_transformation"
-					field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
-Changed entity "zombie_villager_v2":
-	Removed behavior pack "extra":
-		field "defined_in": behavior pack: "test_vanilla_1.12"
-		field "format_version": "1.12.0"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:zombie_villager_v2"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": false
-			field "component_groups":
-				component group "adult":
-					component "minecraft:movement": field "value": 5
-					component "minecraft:rideable":
-						field "family_types": family: "zombie"
-						field "seat_count": 1
-						field "seats": field "position": [0.0, 1.1, -0.35]
-					component "minecraft:behavior.mount_pathing":
-						field "priority": 5
-						field "speed_multiplier": 1.25
-						field "target_dist": 0.0
-						field "track_target": true
-				component group "armorer":
-					component "minecraft:type_family":
-						field "family":
-							family: "armorer"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "baby":
-					component "minecraft:is_baby": empty
-					component "minecraft:movement": field "value": 5
-					component "minecraft:scale": field "value": 0.5
-				component group "butcher":
-					component "minecraft:type_family":
-						field "family":
-							family: "butcher"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "cartographer":
-					component "minecraft:type_family":
-						field "family":
-							family: "cartographer"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "cleric":
-					component "minecraft:type_family":
-						field "family":
-							family: "cleric"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "desert_villager": component "minecraft:mark_variant": field "value": 1
-				component group "farmer":
-					component "minecraft:type_family":
-						field "family":
-							family: "farmer"
-							family: "zombie"
-							family: "zombie_villager"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "fisherman":
-					component "minecraft:type_family":
-						field "family":
-							family: "fisherman"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "fletcher":
-					component "minecraft:type_family":
-						field "family":
-							family: "fletcher"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "from_abandoned_village":
-					component "minecraft:navigation.walk":
-						field "avoid_sun": true
-						field "avoid_water": true
-						field "can_open_doors": true
-						field "can_pass_doors": true
-						field "is_amphibious": true
-					component "minecraft:behavior.flee_sun":
-						field "priority": 4
-						field "speed_multiplier": 1
-				component group "jockey":
-					component "minecraft:behavior.find_mount":
-						field "priority": 1
-						field "within_radius": 16
-				component group "jungle_villager": component "minecraft:mark_variant": field "value": 2
-				component group "leatherworker":
-					component "minecraft:type_family":
-						field "family":
-							family: "leatherworker"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "librarian":
-					component "minecraft:type_family":
-						field "family":
-							family: "librarian"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "mason":
-					component "minecraft:type_family":
-						field "family":
-							family: "mason"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "nitwit":
-					component "minecraft:type_family":
-						field "family":
-							family: "nitwit"
-							family: "zombie"
-							family: "zombie_villager"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "savanna_villager": component "minecraft:mark_variant": field "value": 3
-				component group "shepherd":
-					component "minecraft:type_family":
-						field "family":
-							family: "shepherd"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "snow_villager": component "minecraft:mark_variant": field "value": 4
-				component group "swamp_villager": component "minecraft:mark_variant": field "value": 5
-				component group "taiga_villager": component "minecraft:mark_variant": field "value": 6
-				component group "to_villager":
-					component "minecraft:is_shaking": empty
-					component "minecraft:spell_effects":
-						field "add_effects":
-							effect:
-								field "duration": 100
-								field "effect": "strength"
-							effect:
-								field "duration": 100
-								field "effect": "heal"
-						field "remove_effects": "weakness"
-					component "minecraft:transformation":
-						field "begin_transform_sound": "remedy"
-						field "delay":
-							field "block_assist_chance": 0.01
-							field "block_chance": 0.3
-							field "block_radius": 4
-							field "block_types":
-								block: "minecraft:bed"
-								block: "minecraft:iron_bars"
-							field "value": 100
-						field "into": "minecraft:villager_v2"
-						field "transformation_sound": "unfect"
-				component group "toolsmith":
-					component "minecraft:type_family":
-						field "family":
-							family: "toolsmith"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "unskilled":
-					component "minecraft:type_family":
-						field "family":
-							family: "unskilled"
-							family: "zombie"
-							family: "zombie_villager"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-				component group "villager_skin_0": component "minecraft:skin_id": field "value": 0
-				component group "villager_skin_1": component "minecraft:skin_id": field "value": 1
-				component group "villager_skin_2": component "minecraft:skin_id": field "value": 2
-				component group "villager_skin_3": component "minecraft:skin_id": field "value": 3
-				component group "villager_skin_4": component "minecraft:skin_id": field "value": 4
-				component group "villager_skin_5": component "minecraft:skin_id": field "value": 5
-				component group "weaponsmith":
-					component "minecraft:type_family":
-						field "family":
-							family: "weaponsmith"
-							family: "zombie_villager"
-							family: "zombie"
-							family: "undead"
-							family: "monster"
-					component "minecraft:variant": field "value": 0
-			field "components":
-				component "minecraft:attack": field "damage": 3
-				component "minecraft:breathable":
-					field "breathes_water": true
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:burns_in_daylight": empty
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "height": 1.8
-					field "width": 0.6
-				component "minecraft:health":
-					field "max": 20
-					field "value": 20
-				component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-				component "minecraft:interact":
-					field "interact_text": "action.interact.cure"
-					field "on_interact":
-						field "event": "villager_converted"
-						field "filters":
-							filter property "all_of":
-								filter:
-									filter property "domain": "hand"
-									filter property "subject": "other"
-									filter property "test": "has_equipment"
-									filter property "value": "golden_apple"
-								filter:
-									filter property "subject": "self"
-									filter property "test": "has_component"
-									filter property "value": "minecraft:effect.weakness"
-						field "target": "self"
-					field "use_item": true
-				component "minecraft:jump.static": empty
-				component "minecraft:loot": field "table": "loot_tables/entities/zombie.json"
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk":
-					field "avoid_sun": false
-					field "can_open_doors": true
-					field "can_pass_doors": true
-					field "is_amphibious": true
-				component "minecraft:physics": empty
-				component "minecraft:pushable":
-					field "is_pushable": true
-					field "is_pushable_by_piston": true
-				component "minecraft:behavior.break_door": field "priority": 1
-				component "minecraft:behavior.hurt_by_target": field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 6
-					field "priority": 9
-					field "probability": 0.02
-				component "minecraft:behavior.melee_attack":
-					field "priority": 6
-					field "speed_multiplier": 1
-					field "track_target": false
-				component "minecraft:behavior.move_towards_restriction":
-					field "priority": 7
-					field "speed_multiplier": 1
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "snowgolem"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "irongolem"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "villager"
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "wandering_trader"
-							field "max_dist": 35
-						entity type:
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "baby_turtle"
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "in_water"
-										filter property "value": true
-							field "max_dist": 35
-					field "must_see": true
-					field "priority": 2
-					field "reselect_targets": true
-				component "minecraft:behavior.random_look_around": field "priority": 9
-				component "minecraft:behavior.random_stroll":
-					field "priority": 8
-					field "speed_multiplier": 1
-				component "minecraft:behavior.stomp_turtle_egg":
-					field "goal_radius": 1.14
-					field "interval": 20
-					field "priority": 4
-					field "search_count": 4
-					field "search_height": 3
-					field "search_range": 24
-					field "speed_multiplier": 1
-			field "events":
-				event "from_village":
-					field "sequence":
-						sequence item 0:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 9500
-									field "add": field "component_groups": component group: "adult"
-									field "remove": empty
-								randomize item:
-									field "weight": 425
-									field "add": field "component_groups": component group: "baby"
-									field "remove": empty
-								randomize item:
-									field "weight": 75
-									field "add":
-										field "component_groups":
-											component group: "baby"
-											component group: "jockey"
-									field "remove": empty
-						sequence item 1:
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_0"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_1"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_2"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_3"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_4"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_5"
-						sequence item 2:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "unskilled"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "nitwit"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "farmer"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "fisherman"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "shepherd"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "fletcher"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "librarian"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "cartographer"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "cleric"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "armorer"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "weaponsmith"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "toolsmith"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "butcher"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "leatherworker"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "mason"
-						sequence item 3:
-							field "add": field "component_groups": component group: "desert_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "desert"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "mesa"
-						sequence item 4:
-							field "add": field "component_groups": component group: "jungle_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "jungle"
-						sequence item 5:
-							field "add": field "component_groups": component group: "savanna_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "savanna"
-						sequence item 6:
-							field "add": field "component_groups": component group: "snow_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "all_of":
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "cold"
-											filter:
-												filter property "operator": "!="
-												filter property "test": "has_biome_tag"
-												filter property "value": "ocean"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "frozen"
-						sequence item 7:
-							field "add": field "component_groups": component group: "swamp_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "swamp"
-						sequence item 8:
-							field "add": field "component_groups": component group: "taiga_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "taiga"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "extreme_hills"
-						sequence item 9: field "add": field "component_groups": component group: "from_abandoned_village"
-				event "minecraft:become_cleric": field "add": field "component_groups": component group: "cleric"
-				event "minecraft:entity_spawned":
-					field "sequence":
-						sequence item 0:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 9500
-									field "add": field "component_groups": component group: "adult"
-									field "remove": empty
-								randomize item:
-									field "weight": 425
-									field "add": field "component_groups": component group: "baby"
-									field "remove": empty
-								randomize item:
-									field "weight": 75
-									field "add":
-										field "component_groups":
-											component group: "baby"
-											component group: "jockey"
-									field "remove": empty
-						sequence item 1:
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_0"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_1"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_2"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_3"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_4"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "villager_skin_5"
-						sequence item 2:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "unskilled"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "nitwit"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "farmer"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "fisherman"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "shepherd"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "fletcher"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "librarian"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "cartographer"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "cleric"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "armorer"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "weaponsmith"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "toolsmith"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "butcher"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "leatherworker"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "mason"
-						sequence item 3:
-							field "add": field "component_groups": component group: "desert_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "desert"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "mesa"
-						sequence item 4:
-							field "add": field "component_groups": component group: "jungle_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "jungle"
-						sequence item 5:
-							field "add": field "component_groups": component group: "savanna_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "savanna"
-						sequence item 6:
-							field "add": field "component_groups": component group: "snow_villager"
-							field "filters":
-								filter property "any_of":
-									filter:
-										filter property "all_of":
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "cold"
-											filter:
-												filter property "operator": "!="
-												filter property "test": "has_biome_tag"
-												filter property "value": "ocean"
-									filter:
-										filter property "test": "has_biome_tag"
-										filter property "value": "frozen"
-						sequence item 7:
-							field "add": field "component_groups": component group: "swamp_villager"
-							field "filters":
-								filter property "test": "has_biome_tag"
-								filter property "value": "swamp"
-						sequence item 8:
-							field "add": field "component_groups": component group: "taiga_villager"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "taiga"
-											filter:
-												filter property "test": "has_biome_tag"
-												filter property "value": "extreme_hills"
-									filter:
-										filter property "operator": "!="
-										filter property "test": "has_biome_tag"
-										filter property "value": "cold"
-				event "minecraft:entity_transformed":
-					field "sequence":
-						sequence item 0:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "sequence":
-								sequence item 0:
-									field "add": field "component_groups": component group: "baby"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "has_component"
-										filter property "value": "minecraft:is_baby"
-								sequence item 1:
-									field "add": field "component_groups": component group: "adult"
-									field "filters":
-										filter property "operator": "!="
-										filter property "subject": "other"
-										filter property "test": "has_component"
-										filter property "value": "minecraft:is_baby"
-								sequence item 2:
-									field "add": field "component_groups": component group: "unskilled"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "unskilled"
-								sequence item 3:
-									field "add": field "component_groups": component group: "nitwit"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "nitwit"
-								sequence item 4:
-									field "add": field "component_groups": component group: "farmer"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "farmer"
-								sequence item 5:
-									field "add": field "component_groups": component group: "fisherman"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "fisherman"
-								sequence item 6:
-									field "add": field "component_groups": component group: "shepherd"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "shepherd"
-								sequence item 7:
-									field "add": field "component_groups": component group: "fletcher"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "fletcher"
-								sequence item 8:
-									field "add": field "component_groups": component group: "librarian"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "librarian"
-								sequence item 9:
-									field "add": field "component_groups": component group: "cartographer"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "cartographer"
-								sequence item 10:
-									field "add": field "component_groups": component group: "cleric"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "cleric"
-								sequence item 11:
-									field "add": field "component_groups": component group: "armorer"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "armorer"
-								sequence item 12:
-									field "add": field "component_groups": component group: "weaponsmith"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "weaponsmith"
-								sequence item 13:
-									field "add": field "component_groups": component group: "toolsmith"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "toolsmith"
-								sequence item 14:
-									field "add": field "component_groups": component group: "butcher"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "butcher"
-								sequence item 15:
-									field "add": field "component_groups": component group: "leatherworker"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "leatherworker"
-								sequence item 16:
-									field "add": field "component_groups": component group: "mason"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "mason"
-						sequence item 1:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:mark_variant"
-							field "sequence":
-								sequence item 0:
-									field "add": field "component_groups": component group: "desert_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 1
-								sequence item 1:
-									field "add": field "component_groups": component group: "jungle_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 2
-								sequence item 2:
-									field "add": field "component_groups": component group: "savanna_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 3
-								sequence item 3:
-									field "add": field "component_groups": component group: "snow_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 4
-								sequence item 4:
-									field "add": field "component_groups": component group: "swamp_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 5
-								sequence item 5:
-									field "add": field "component_groups": component group: "taiga_villager"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_mark_variant"
-										filter property "value": 6
-						sequence item 2:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:skin_id"
-							field "sequence":
-								sequence item 0:
-									field "add": field "component_groups": component group: "villager_skin_0"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 0
-								sequence item 1:
-									field "add": field "component_groups": component group: "villager_skin_1"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 1
-								sequence item 2:
-									field "add": field "component_groups": component group: "villager_skin_2"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 2
-								sequence item 3:
-									field "add": field "component_groups": component group: "villager_skin_3"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 3
-								sequence item 4:
-									field "add": field "component_groups": component group: "villager_skin_4"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 4
-								sequence item 5:
-									field "add": field "component_groups": component group: "villager_skin_5"
-									field "filters":
-										filter property "subject": "other"
-										filter property "test": "is_skin_id"
-										filter property "value": 5
-				event "villager_converted":
-					field "add": field "component_groups": component group: "to_villager"
-					field "remove": empty
+										filter property "domain": "minecraft:armadillo_state"
+										filter property "value": "unrolled"
+Changed entity "wind_charge_projectile.json":
+	Changed behavior pack "experimental":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:projectile":
+					Changed field "on_hit":
+						Changed field "impact_damage":
+							Changed field "damage" from 1 to 3.

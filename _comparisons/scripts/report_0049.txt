@@ -1,0 +1,37 @@
+Difference of "scripts" between "1.19.10.22" (beta of "1.19.10") and "1.19.10.23" (beta of "1.19.10").
+
+Total behavior pack: 3 (+1, -0)
+Added behavior pack "editor":
+	script "Main.js":
+		'''
+		/*
+		Ignore this file - This is just a placeholder file for 
+		    Editor(Server) scripting support
+		*/
+		import {
+		    EditorBlockVolume,
+		} from "editor-common";
+		
+		import {
+		    BlockLocation,
+		    Location
+		} from "mojang-minecraft";
+		
+		console.log( "\n# ---------------------------------------------------- \n# LOADED and executed global state for Editor(Server)::Main.js\n# ---------------------------------------------------- \n");
+		
+		console.log( "\nTesting Editor Block Volume Bindings");
+		
+		const from = new BlockLocation(0, -2, 2);
+		const to = new BlockLocation(-1, 1, -3);
+		
+		let testVol = new EditorBlockVolume(from, to);
+		console.log("\nSimple construction -- " + testVol.toString());
+		
+		let min = testVol.getMin();
+		console.log("\nMin -- (" + min.x + ", " + min.y + ", " + min.z + ")");
+		
+		let max = testVol.getMax();
+		console.log("\nMax -- (" + max.x + ", " + max.y + ", " + max.z + ")");
+		
+		console.log("\n-----Done-----");
+		'''

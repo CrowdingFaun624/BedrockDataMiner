@@ -1,0 +1,915 @@
+Difference of "scripts" between "1.17.0.50" (beta of "1.17.0") and "1.17.0.52" (beta of "1.17.0").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "DoorTests.js":
+		Total line: 115 (+92, -1)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		  2   2   import { BlockLocation } from "Minecraft";
+		  3   3   
+		      4 + const DOOR_TEST_PADDING = 100; // The padding for the door tests will need to be increased some more to prevent the interference
+		      5 + 
+		      6 + GameTest.register("DoorTests", "four_villagers_one_door", (test) => {
+		      7 +   const villagerEntityType = "minecraft:villager_v2";
+		      8 +   const villagerEntitySpawnType =
+		      9 +     "minecraft:villager_v2<minecraft:spawn_farmer>"; // Attempt to spawn the villagers as farmers
+		     10 + 
+		     11 +   test.spawn(villagerEntitySpawnType, new BlockLocation(5, 2, 4));
+		     12 +   test.spawn(villagerEntitySpawnType, new BlockLocation(4, 2, 5));
+		     13 +   test.spawn(villagerEntitySpawnType, new BlockLocation(2, 2, 5));
+		     14 +   test.spawn(villagerEntitySpawnType, new BlockLocation(1, 2, 4));
+		     15 + 
+		     16 +   test.succeedWhen(() => {
+		     17 +     test.assertEntityPresent(villagerEntityType, new BlockLocation(5, 2, 2));
+		     18 +     test.assertEntityPresent(villagerEntityType, new BlockLocation(5, 2, 1));
+		     19 +     test.assertEntityPresent(villagerEntityType, new BlockLocation(1, 2, 2));
+		     20 +     test.assertEntityPresent(villagerEntityType, new BlockLocation(1, 2, 1));
+		     21 +   });
+		     22 + })
+		     23 +   .tag(GameTest.Tags.suiteDisabled) // Villagers can get stuck on the door or on sleeping villagers
+		     24 +   .padding(DOOR_TEST_PADDING) // Space out villager tests to stop them from confusing each other
+		     25 +   .batch("night") // This should be a constant at some point
+		     26 +   .maxTicks(600);  
+		     27 + 
+		     28 + GameTest.register("DoorTests", "villagers_can_pass_open_iron_door", (test) => {
+		     29 + 	const villagerActor = "minecraft:villager_v2<minecraft:spawn_farmer>";
+		     30 + 	
+		     31 + 	test.spawn(villagerActor, new BlockLocation(2, 2, 5));
+		     32 + 	
+		     33 + 	test.succeedWhenEntityPresent(villagerActor, new BlockLocation(1, 2, 1));
+		     34 + })
+		     35 + 	.maxTicks(900)   //Increase max ticks from 200 to 900 (same value as in PathFindingTests), to make sure villager can find and go to bed  
+		     36 + 	.batch("night")
+		     37 + 	.required(false)
+		     38 + 	.padding(DOOR_TEST_PADDING)
+		     39 + 	.tag(GameTest.Tags.suiteDefault);
+		     40 + 	
+		     41 + GameTest.register("DoorTests", "villagers_cant_pass_closed_iron_door", (test) =>{
+		     42 + 	const villagerActor ="minecraft:villager_v2<minecraft:spawn_farmer>"
+		     43 + 	
+		     44 + 	test.spawn(villagerActor, new BlockLocation(2, 2, 5));
+		     45 + 	
+		     46 + 	test.startSequence()
+		     47 + 	.thenExecute(() =>{test.assertEntityNotPresent(villagerActor,new BlockLocation(1, 2, 1));})
+		     48 + 	.thenIdle(200) 
+		     49 + 	.thenSucceed()
+		     50 + })
+		     51 + 	.maxTicks(220)
+		     52 + 	.padding(DOOR_TEST_PADDING)
+		     53 + 	.batch("night")
+		     54 + 	.required(false)
+		     55 + 	.tag(GameTest.Tags.suiteDefault);
+		     56 + 
+		     57 + GameTest.register("DoorTests", "door_maze", (test) => {
+		     58 + 	const villagerActor = "minecraft:villager_v2";
+		     59 + 
+		     60 + 	test.spawn(villagerActor, new BlockLocation(1, 2, 1));
+		     61 + 
+		     62 + 	test.succeedWhenEntityPresent(villagerActor, new BlockLocation(7, 2, 7));
+		     63 + })
+		     64 + 	.maxTicks(400)
+		     65 + 	.padding(DOOR_TEST_PADDING)
+		     66 + 	.batch("night")
+		     67 + 	.required(false)
+		     68 + 	.tag(GameTest.Tags.suiteDisabled); // Both of Java and Bedrock are failed villager is stuck and doesn't find the good way.
+		     69 + 
+		     70 + GameTest.register("DoorTests", "door_maze_3d", (test) => {
+		     71 + 	const villagerActor = "minecraft:villager_v2<minecraft:spawn_farmer>";
+		     72 + 
+		     73 + 	test.spawn(villagerActor, new BlockLocation(1, 2, 1));
+		     74 + 
+		     75 + 	test.succeedWhenEntityPresent(villagerActor, new BlockLocation(7, 2, 7));
+		     76 + })
+		     77 + 	.maxTicks(400)
+		     78 + 	.padding(DOOR_TEST_PADDING)
+		     79 + 	.batch("night")
+		     80 + 	.required(false)
+		     81 + 	.tag(GameTest.Tags.suiteDisabled);  //Both of Java and Bedrock are failed looks like he doesn't cross obstacle and doesn't find the good way.
+		     82 + 
+		     83 + GameTest.register("DoorTests", "door_maze_crowded", (test) => {
+		     84 + 	const villagerActor = "minecraft:villager_v2<minecraft:spawn_farmer>";
+		     85 + 
+		     86 + 	test.spawn(villagerActor, new BlockLocation(1, 2, 1));
+		     87 + 	test.spawn(villagerActor, new BlockLocation(3, 2, 2));
+		     88 + 	test.spawn(villagerActor, new BlockLocation(5, 2, 1));
+		     89 + 	test.spawn(villagerActor, new BlockLocation(1, 2, 1));
+		     90 + 
+		     91 + 	test.succeedWhen(() => {
+		     92 + 		test.assertEntityPresent(villagerActor, new BlockLocation(7, 2, 7));
+		     93 + 		test.assertEntityPresent(villagerActor, new BlockLocation(4, 2, 8));
+		     94 + 		test.assertEntityPresent(villagerActor, new BlockLocation(2, 2, 7));
+		     95 + 		test.assertEntityPresent(villagerActor, new BlockLocation(1, 2, 8));
+		     96 + 	});
+		     97 + })
+		     98 + 	.maxTicks(400)
+		     99 + 	.padding(DOOR_TEST_PADDING)
+		    100 + 	.batch("night")
+		    101 + 	.required(false)
+		    102 + 	.tag(GameTest.Tags.suiteDisabled); //Both of Java and Bedrock are failed, some villiages are stuck behind the door and doesn't find the path.
+		    103 + 	
+		    104 + GameTest.register("DoorTests", "inverted_door", (test) => {
+		    105 + 	const villagerActor = "minecraft:villager_v2<minecraft:spawn_farmer>";
+		    106 + 	
+		    107 + 	test.spawn(villagerActor, new BlockLocation(3, 2, 1));
+		    108 + 	
+		    109 + 	test.succeedWhenEntityPresent(villagerActor, new BlockLocation(3, 2, 5));
+		  4     - GameTest.register("DoorTests", "four_villagers_one_door", (test) => {
+		  5     -   const villagerEntityType = "minecraft:villager_v2";
+		  6     -   const villagerEntitySpawnType =
+		  7     -     "minecraft:villager_v2<minecraft:spawn_farmer>"; // Attempt to spawn the villagers as farmers
+		  8     - 
+		  9     -   test.spawn(villagerEntitySpawnType, new BlockLocation(5, 2, 4));
+		 10     -   test.spawn(villagerEntitySpawnType, new BlockLocation(4, 2, 5));
+		 11     -   test.spawn(villagerEntitySpawnType, new BlockLocation(2, 2, 5));
+		 12     -   test.spawn(villagerEntitySpawnType, new BlockLocation(1, 2, 4));
+		 13     - 
+		 14     -   test.succeedWhen(() => {
+		 15     -     test.assertEntityPresent(villagerEntityType, new BlockLocation(5, 2, 2));
+		 16     -     test.assertEntityPresent(villagerEntityType, new BlockLocation(5, 2, 1));
+		 17     -     test.assertEntityPresent(villagerEntityType, new BlockLocation(1, 2, 2));
+		 18     -     test.assertEntityPresent(villagerEntityType, new BlockLocation(1, 2, 1));
+		 19     -   });
+		 20 110   })
+		    111 + 	.maxTicks(200)
+		    112 + 	.padding(DOOR_TEST_PADDING)
+		 21     -   .tag(GameTest.Tags.suiteDisabled) // Villagers can get stuck on the door or on sleeping villagers
+		    113 + 	.batch("night")
+		    114 + 	.required(false)
+		    115 + 	.tag(GameTest.Tags.suiteDisabled); //Both of Java and Bedrock are failed, village is stuck behind the door, at there all time.
+		 22     -   .padding(50) // Space out villager tests to stop them from confusing each other
+		 23     -   .batch("night") // This should be a constant at some point
+		 24     -   .maxTicks(600);
+		          '''
+	Changed script "MobTests.js":
+		Total line: 117 (+63, -14)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, BlockStates,Effects , Blocks } from "Minecraft";
+		      3 + 
+		      4 + const TicksPerSecond = 20;
+		      5 + 
+		      6 + GameTest.register("MobTests", "zombie_burn", (test) => {
+		      7 +   const zombieEntityType = "minecraft:zombie";
+		      8 +   const zombiePosition = new BlockLocation(1, 2, 1);
+		      9 + 
+		     10 +   test.succeedWhenEntityNotPresent(zombieEntityType, zombiePosition);
+		     11 + })
+		     12 +   .maxTicks(TicksPerSecond * 30)
+		     13 +   .tag(GameTest.Tags.suiteDefault)
+		     14 +   .batch("day");
+		     15 + 
+		     16 + GameTest.register("MobTests", "effect_durations_longer_first", (test) => {
+		     17 +   const villagerId = "minecraft:villager_v2";
+		     18 +   const villagerPos = new BlockLocation(1, 2, 1);
+		     19 +   const buttonPos = new BlockLocation(1, 4, 0);
+		     20 +   const strongPotion = new BlockLocation(0, 4, 0);
+		     21 +   const weakPotion = new BlockLocation(2, 4, 0);
+		     22 + 
+		     23 +   test.spawn(villagerId, villagerPos);
+		     24 + 
+		     25 +   test
+		     26 +     .startSequence()
+		     27 +     .thenExecute(() => test.setBlock(Blocks.air(), weakPotion))
+		     28 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     29 +     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		     30 +     .thenExecute(() => test.setBlock(Blocks.air(), strongPotion))
+		     31 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     32 +     .thenIdle(41)
+		     33 +     .thenWait(() => {
+		     34 +       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getAmplifier() == 0); // Strength level I
+		     35 +       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getDuration() > 120); // At least 6 seconds remaining
+		     36 +     })
+		     37 +     .thenSucceed();
+		     38 + })
+		     39 +   .structureName("MobTests:effect_durations")
+		     40 +   .tag("suite:java_parity")
+		     41 +   .tag(GameTest.Tags.suiteDisabled); // Potions don't explode when shot from dispensers
+		     42 +   
+		     43 + GameTest.register("MobTests", "drowning_test", (test) => {
+		     44 + 	const villagerEntitySpawnType = "minecraft:villager_v2";
+		     45 + 	const pigSpawnType = "minecraft:pig";
+		     46 + 
+		     47 + 	test.spawn(villagerEntitySpawnType, new BlockLocation(3, 2, 2));
+		     48 + 	test.spawn(pigSpawnType, new BlockLocation(3, 2, 4));
+		     49 + 	test.succeedWhen(() => {
+		     50 + 		test.assertEntityNotPresentInArea(pigSpawnType);
+		     51 + 		test.assertEntityNotPresentInArea(villagerEntitySpawnType);
+		     52 + 	});
+		     53 + })  
+		     54 + 	.maxTicks(TicksPerSecond * 45)
+		     55 + 	.tag(GameTest.Tags.suiteDefault);
+		     56 + 
+		     57 + 
+		     58 + GameTest.register("MobTests", "golem_vs_pillager", (test) => {
+		     59 +     const ironGolem = "minecraft:iron_golem";
+		     60 +     const pillager = "minecraft:pillager";
+		     61 +     const ironGolemPos = new BlockLocation(3, 2, 3);
+		  2     - import { BlockLocation, Blocks, Effects } from "Minecraft";
+		  3     - 
+		     62 +     const pillagerPos = new BlockLocation(3, 2, 4);
+		  4     - const TicksPerSecond = 20;
+		  5  63   
+		  6     - GameTest.register("MobTests", "zombie_burn", (test) => {
+		  7     -   const zombieEntityType = "minecraft:zombie";
+		  8     -   const zombiePosition = new BlockLocation(1, 2, 1);
+		  9  64   
+		 10     -   test.succeedWhenEntityNotPresent(zombieEntityType, zombiePosition);
+		 11     - })
+		 12     -   .maxTicks(TicksPerSecond * 30)
+		     65 + 	test.spawn(ironGolem, ironGolemPos);
+		     66 + 	test.spawn(pillager, pillagerPos);
+		 13     -   .tag(GameTest.Tags.suiteDefault)
+		 14     -   .batch("day");
+		 15  67   
+		     68 + 	test.succeedWhen(() => {
+		 16     - GameTest.register("MobTests", "effect_durations_longer_first", (test) => {
+		 17     -   const villagerId = "minecraft:villager_v2";
+		 18     -   const villagerPos = new BlockLocation(1, 2, 1);
+		     69 + 		test.assertEntityNotPresent(pillager, ironGolemPos);
+		     70 + 		test.assertEntityPresent(ironGolem, pillagerPos);
+		     71 + 	});
+		     72 + })
+		     73 + 	.tag(GameTest.Tags.suiteDefault);
+		 19     -   const buttonPos = new BlockLocation(1, 4, 0);
+		 20     -   const strongPotion = new BlockLocation(0, 4, 0);
+		 21     -   const weakPotion = new BlockLocation(2, 4, 0);
+		 22     - 
+		 23     -   test.spawn(villagerId, villagerPos);
+		 24  74   
+		     75 + GameTest.register("MobTests", "effect_durations_stronger_first", (test) => {
+		 25     -   test
+		 26     -     .startSequence()
+		     76 +     const villagerId = "minecraft:villager_v2";
+		     77 +     const villagerPos = new BlockLocation(1, 2, 1);
+		     78 +     const buttonPos = new BlockLocation(1, 4, 0);
+		     79 +     const strongPotion = new BlockLocation(0, 4, 0);
+		     80 +     const weakPotion = new BlockLocation(2, 4, 0);
+		     81 + 
+		     82 +     test.spawn(villagerId, villagerPos);
+		     83 + 
+		     84 +     test
+		     85 +     .startSequence()
+		     86 +     .thenExecute(() => test.setBlock(Blocks.air(), strongPotion))
+		     87 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     88 +     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		     89 +     .thenExecute(() => test.setBlock(Blocks.air(), weakPotion))
+		     90 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     91 +     .thenIdle(41)
+		     92 +     .thenWait(() => {
+		     93 +       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getAmplifier() == 0); // Strength level I
+		     94 +       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getDuration() > 120); // At least 6 seconds remaining
+		     95 +     })
+		     96 +     .thenSucceed();
+		     97 + })
+		     98 +     .structureName("MobTests:effect_durations")
+		     99 +     .tag("suite:java_parity")
+		    100 +     .tag(GameTest.Tags.suiteDisabled); // Potions don't explode when shot from dispensers
+		    101 +   
+		    102 + GameTest.register("MobTests", "silverfish_no_suffocate", (test) => {
+		    103 +     const silverfishPos = new BlockLocation(1, 2, 1);
+		    104 +     const silverfish = "minecraft:silverfish";
+		    105 + 	
+		    106 +     test.startSequence()
+		    107 +         .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		    108 +         .thenIdle(40)
+		    109 +         .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		    110 +         .thenSucceed();
+		    111 +     test.startSequence()
+		    112 +         .thenWait(() => test.assertEntityNotPresent(silverfish, silverfishPos))
+		    113 +         .thenFail("Silverfish died");
+		 27     -     .thenExecute(() => test.setBlock(Blocks.air(), weakPotion))
+		 28     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 29     -     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		 30     -     .thenExecute(() => test.setBlock(Blocks.air(), strongPotion))
+		 31     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 32     -     .thenIdle(41)
+		 33     -     .thenWait(() => {
+		 34     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getAmplifier() == 0); // Strength level I
+		 35     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getDuration() > 120); // At least 6 seconds remaining
+		 36     -     })
+		 37     -     .thenSucceed();
+		 38     - })
+		 39     -   .structureName("MobTests:effect_durations")
+		 40     -   .tag("suite:java_parity")
+		 41     -   .tag(GameTest.Tags.suiteDisabled); // Potions don't explode when shot from dispensers
+		 42     - 
+		 43     - GameTest.register("MobTests", "effect_durations_stronger_first", (test) => {
+		 44     -   const villagerId = "minecraft:villager_v2";
+		 45     -   const villagerPos = new BlockLocation(1, 2, 1);
+		 46     -   const buttonPos = new BlockLocation(1, 4, 0);
+		 47     -   const strongPotion = new BlockLocation(0, 4, 0);
+		 48     -   const weakPotion = new BlockLocation(2, 4, 0);
+		 49     - 
+		 50     -   test.spawn(villagerId, villagerPos);
+		 51     - 
+		 52     -   test
+		 53     -     .startSequence()
+		 54     -     .thenExecute(() => test.setBlock(Blocks.air(), strongPotion))
+		 55     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 56     -     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		 57     -     .thenExecute(() => test.setBlock(Blocks.air(), weakPotion))
+		 58     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 59     -     .thenIdle(41)
+		 60     -     .thenWait(() => {
+		 61     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getAmplifier() == 0); // Strength level I
+		 62     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getDuration() > 120); // At least 6 seconds remaining
+		 63     -     })
+		 64     -     .thenSucceed();
+		 65 114   })
+		    115 +    .maxTicks(TicksPerSecond * 30)
+		    116 +    .required(false)
+		 66     -   .structureName("MobTests:effect_durations")
+		 67     -   .tag("suite:java_parity")
+		    117 +    .tag(GameTest.Tags.suiteDefault);
+		 68     -   .tag(GameTest.Tags.suiteDisabled); // Potions don't explode when shot from dispensers
+		          '''
+	Changed script "PathFindingTests.js":
+		Total line: 410 (+115, -42)
+		          '''
+		          ...
+		  5   5   // Setup constants
+		  6   6   ///
+		  7   7   const VERTICAL_TEST_TEMPLATE_NAME = "PathFindingTests:veritcal_template";
+		  8   8   const VERTICAL_TEST_MAX_TICKS = 900; // This value may need to be increased if additional villager tests are added since village POI search is time sliced across all villagers
+		  9   9   const VERTICAL_TEST_STARTUP_TICKS = 0;
+		     10 + const VERTICAL_TEST_PADDING = 100; // Space these tests apart so that villagers aren't assigned beds from nearby tests. Villages need to be kept separate.
+		     11 + const TEST_MAX_TICKS = 900; //This value is used for other four tests except vertical tests.
+		     12 + const TEST_PADDING = 100; //Space other four tests except vertical tests apart so that villagers aren't assigned beds from nearby tests. 
+		     13 + 
+		     14 + // Here we can define small vertical obstacle courses. Villager moves from left to right.
+		     15 + const VERTICAL_TEST_PLACEMENT_MAP = [
+		     16 +   ["^^##  ", "  ^^  ", "    ^^", "######"],
+		     17 +   ["  ^^^^", "      ", "  ^^  ", "######"],
+		     18 +   ["  ####", "      ", "      ", "____##", "######"],
+		     19 + ];
+		     20 + 
+		     21 + function placeBottomSlab(test, pos) {
+		     22 +   const blockType = Blocks.stoneSlab();
+		     23 +   blockType.setState(BlockStates.stoneSlabType("stoneBrick"));
+		     24 +   test.setBlock(blockType, pos);
+		     25 + }
+		     26 + 
+		     27 + function placeTopSlab(test, pos) {
+		     28 +   const blockType = Blocks.stoneSlab();
+		     29 +   blockType.setState(BlockStates.stoneSlabType("stoneBrick"));
+		     30 +   blockType.setState(BlockStates.topSlotBit(true));
+		     31 +   test.setBlock(blockType, pos);
+		     32 + }
+		     33 + 
+		     34 + function placeBlock(test, pos) {
+		     35 +   const blockType = Blocks.stonebrick();
+		     36 +   test.setBlock(blockType, pos);
+		     37 + }
+		     38 + 
+		     39 + /*
+		     40 +   Places out blocks matching the given pattern (viewed from the side).
+		     41 +   The bottom row (last string in the array) will match the floor level in the structure.
+		     42 +   Sample blockMap:
+		     43 + 
+		     44 +   "######",
+		     45 +   "      ",
+		     46 +   "  __^^",
+		     47 +   "######"
+		     48 + */
+		     49 + function placeBlocksFromMap(test, blockMap) {
+		     50 +   const floorY = 1;
+		     51 + 
+		     52 +   // we start where the villager spawns (left side of the block map)
+		     53 +   const spawnX = 5;
+		     54 +   const spawnZ = 4;
+		     55 + 
+		     56 +   let currentY = floorY;
+		     57 + 
+		     58 +   //We'll start from the bottom layer (last row in the blockMap), and work our way up
+		     59 +   for (let mapRowIndex = blockMap.length - 1; mapRowIndex >= 0; --mapRowIndex) {
+		     60 +     const mapRow = blockMap[mapRowIndex]; // one row, for example ##__##
+		     61 +     let currentX = spawnX;
+		     62 +     for (let mapColIndex = 0; mapColIndex < mapRow.length; mapColIndex += 2) {
+		     63 +       // one block, for example __ (2 chars wide)
+		     64 + 
+		     65 +       // Figure out which type of block to place (full block, bottom slab, or top slab)
+		     66 +       const mapChar = mapRow[mapColIndex];
+		     67 +       if (mapChar != " ") {
+		     68 +         const block = getBlockStateForMapChar(mapChar);
+		     69 + 
+		     70 +         // Place two next to each other
+		     71 +         for (let currentZ = spawnZ; currentZ >= spawnZ - 1; --currentZ) {
+		     72 +           test.setBlock(block, new BlockLocation(currentX, currentY, currentZ));
+		     73 +         }
+		     74 +       }
+		     75 +       --currentX;
+		     76 +     }
+		     77 +     ++currentY;
+		     78 +   }
+		     79 + }
+		     80 + 
+		     81 + /*
+		     82 +   Places blocks on the villager spawn position + the next position to the right.
+		     83 +   The first string (floor1) is about where the floor height should be in the start position.
+		     84 +   The next 3 strings define the next position's floor height, mid block, and ceiling height.
+		     85 +   Here's what the strings mean.
+		     86 + 
+		     87 +   block: ##
+		     88 +   top slab: ""
+		     89 +   bottom slab: __
+		     90 + 
+		     91 +   --------------------------------------------------------------------
+		 10     - const VERTICAL_TEST_PADDING = 50; // Space these tests apart so that villagers aren't assigned beds from nearby tests. Villages need to be kept separate.
+		 11  92   
+		     93 +             |         |__       |##
+		 12     - // Here we can define small vertical obstacle courses. Villager moves from left to right.
+		 13     - const VERTICAL_TEST_PLACEMENT_MAP = [
+		 14     -   ["^^##  ", "  ^^  ", "    ^^", "######"],
+		     94 +             |####     |####     |####
+		     95 +   floor1:    none      0.5       1
+		     96 +   --------------------------------------------------------------------
+		 15     -   ["  ^^^^", "      ", "  ^^  ", "######"],
+		 16     -   ["  ####", "      ", "      ", "____##", "######"],
+		 17     - ];
+		 18  97   
+		     98 +             |         |  __     |  ##
+		 19     - function placeBottomSlab(test, pos) {
+		 20     -   const blockType = Blocks.stoneSlab();
+		     99 +             |####     |####     |####
+		    100 +   floor2:    none      0.5       1
+		    101 +   --------------------------------------------------------------------
+		 21     -   blockType.setState(BlockStates.stoneSlabType("stoneBrick"));
+		 22     -   test.setBlock(blockType, pos);
+		 23     - }
+		 24 102   
+		    103 +             |         |         |  __     |  ^^     |  ##
+		 25     - function placeTopSlab(test, pos) {
+		 26     -   const blockType = Blocks.stoneSlab();
+		    104 +             |         |  ^^     |         |         |
+		    105 +             |####     |####     |####     |####     |####
+		    106 +   mid2:      none      0.5 slab  1 slab    1.5 slab  1 full
+		    107 +   --------------------------------------------------------------------
+		 27     -   blockType.setState(BlockStates.stoneSlabType("stoneBrick"));
+		 28     -   blockType.setState(BlockStates.topSlotBit(true));
+		 29     -   test.setBlock(blockType, pos);
+		 30     - }
+		 31 108   
+		    109 +             |         |  ##     |  ##     |  ##     |  ##     |  ^^
+		    110 +             |         |  ##     |  ##     |  ^^     |         |
+		 32     - function placeBlock(test, pos) {
+		 33     -   const blockType = Blocks.stonebrick();
+		    111 +             |         |  ^^     |         |         |         |
+		    112 +             |####     |####     |####     |####     |####     |####
+		    113 +   ceiling:   none      0.5       1         1.5       2         2.5
+		    114 +   --------------------------------------------------------------------
+		    115 + */
+		    116 + function placeBlocks(test, floor1, floor2, mid2, ceiling2) {
+		    117 +   const spawnPos = new BlockLocation(5, 2, 4);
+		 34     -   test.setBlock(blockType, pos);
+		 35     - }
+		 36     - 
+		 37     - /*
+		 38     -   Places out blocks matching the given pattern (viewed from the side).
+		 39     -   The bottom row (last string in the array) will match the floor level in the structure.
+		 40     -   Sample blockMap:
+		 41 118   
+		    119 +   // we place two of each block, at z and z-1.
+		    120 +   for (let zOffset = 0; zOffset >= -1; --zOffset) {
+		 42     -   "######",
+		    121 +     // floor1 defines how high the block is where the villager spawns
+		    122 +     if (floor1 == "0.5") {
+		    123 +       placeBottomSlab(test, spawnPos.offset(0, 0, zOffset));
+		    124 +     } else if (floor1 == "1") {
+		    125 +       placeBlock(test, spawnPos.offset(0, 0, zOffset));
+		    126 +     }
+		 43     -   "      ",
+		 44     -   "  __^^",
+		 45     -   "######"
+		 46     - */
+		 47     - function placeBlocksFromMap(test, blockMap) {
+		 48     -   const floorY = 1;
+		 49 127   
+		    128 +     // floor2 defines the height of the position to the right of the villager spawn
+		    129 +     if (floor2 == "0.5") {
+		 50     -   // we start where the villager spawns (left side of the block map)
+		    130 +       placeBottomSlab(test, spawnPos.offset(-1, 0, zOffset));
+		    131 +     } else if (floor2 == "1") {
+		    132 +       placeBlock(test, spawnPos.offset(-1, 0, zOffset));
+		    133 +     }
+		 51     -   const spawnX = 5;
+		 52     -   const spawnZ = 4;
+		 53     - 
+		 54     -   let currentY = floorY;
+		 55 134   
+		    135 +     // mid2 defines any mid-level block in the position to the right of the villager spawn
+		 56     -   //We'll start from the bottom layer (last row in the blockMap), and work our way up
+		 57     -   for (let mapRowIndex = blockMap.length - 1; mapRowIndex >= 0; --mapRowIndex) {
+		    136 +     if (mid2 == "0.5 slab") {
+		    137 +       placeTopSlab(test, spawnPos.offset(-1, 0, zOffset));
+		    138 +     } else if (mid2 == "1 slab") {
+		    139 +       placeBottomSlab(test, spawnPos.offset(-1, 1, zOffset));
+		    140 +     } else if (mid2 == "1.5 slab") {
+		    141 +       placeTopSlab(test, spawnPos.offset(-1, 1, zOffset));
+		    142 +     } else if (mid2 == "1 full") {
+		    143 +       placeBlock(test, spawnPos.offset(-1, 1, zOffset));
+		    144 +     }
+		 58     -     const mapRow = blockMap[mapRowIndex]; // one row, for example ##__##
+		 59     -     let currentX = spawnX;
+		 60     -     for (let mapColIndex = 0; mapColIndex < mapRow.length; mapColIndex += 2) {
+		 61     -       // one block, for example __ (2 chars wide)
+		 62     - 
+		 63     -       // Figure out which type of block to place (full block, bottom slab, or top slab)
+		 64     -       const mapChar = mapRow[mapColIndex];
+		 65     -       if (mapChar != " ") {
+		 66     -         const block = getBlockStateForMapChar(mapChar);
+		 67 145   
+		    146 +     // ceiling2 defines the ceiling height in the position to the right of the villager spawn
+		    147 +     if (ceiling2 == "0.5") {
+		    148 +       placeBlock(test, spawnPos.offset(-1, 2, zOffset));
+		 68     -         // Place two next to each other
+		    149 +       placeBlock(test, spawnPos.offset(-1, 1, zOffset));
+		    150 +       placeTopSlab(test, spawnPos.offset(-1, 0, zOffset));
+		    151 +     } else if (ceiling2 == "1") {
+		    152 +       placeBlock(test, spawnPos.offset(-1, 2, zOffset));
+		    153 +       placeBlock(test, spawnPos.offset(-1, 1, zOffset));
+		    154 +     } else if (ceiling2 == "1.5") {
+		    155 +       placeBlock(test, spawnPos.offset(-1, 2, zOffset));
+		    156 +       placeTopSlab(test, spawnPos.offset(-1, 1, zOffset));
+		    157 +     } else if (ceiling2 == "2") {
+		    158 +       placeBlock(test, spawnPos.offset(-1, 2, zOffset));
+		    159 +     } else if (ceiling2 == "2.5") {
+		    160 +       placeTopSlab(test, spawnPos.offset(-1, 2, zOffset));
+		    161 +     }
+		    162 +   }
+		    163 + }
+		 69     -         for (let currentZ = spawnZ; currentZ >= spawnZ - 1; --currentZ) {
+		 70     -           test.setBlock(block, new BlockLocation(currentX, currentY, currentZ));
+		 71     -         }
+		 72     -       }
+		 73     -       --currentX;
+		 74     -     }
+		 75     -     ++currentY;
+		 76     -   }
+		 77     - }
+		 78     - 
+		 79     - /*
+		 80     -   Places blocks on the villager spawn position + the next position to the right.
+		 81     -   The first string (floor1) is about where the floor height should be in the start position.
+		 82     -   The next 3 strings define the next position's floor height, mid block, and ceiling height.
+		 83     -   Here's what the strings mean.
+		 84 164   
+		    165 + function getBlockStateForMapChar(mapChar) {
+		    166 +   if (mapChar == "#") {
+		 85     -   block: ##
+		    167 +     return Blocks.stonebrick();
+		    168 +   } else if (mapChar == "_") {
+		    169 +     let result = Blocks.stoneSlab();
+		    170 +     result.setState(BlockStates.stoneSlabType("stoneBrick"));
+		    171 +     return result;
+		    172 +   } else if (mapChar == "^") {
+		    173 +     let result = Blocks.stoneSlab();
+		    174 +     result.setState(BlockStates.stoneSlabType("stoneBrick"));
+		    175 +     result.setState(BlockStates.topSlotBit(true));
+		    176 +     return result;
+		    177 +   } else {
+		    178 +     return Blocks.air();
+		    179 +   }
+		    180 + }
+		 86     -   top slab: ""
+		 87     -   bottom slab: __
+		 88     - 
+		 89     -   --------------------------------------------------------------------
+		 90     - 
+		 91     -             |         |__       |##
+		 92     -             |####     |####     |####
+		 93     -   floor1:    none      0.5       1
+		 94     -   --------------------------------------------------------------------
+		 95     - 
+		 96     -             |         |  __     |  ##
+		 97     -             |####     |####     |####
+		 98     -   floor2:    none      0.5       1
+		 99     -   --------------------------------------------------------------------
+		100 181   
+		    182 + function createVerticalTestFunctionWithPlacementMap(
+		    183 +   counter,
+		    184 +   placementMap,
+		    185 +   tag
+		    186 + ) {
+		    187 +   if (tag == null) {
+		    188 +     tag = GameTest.Tags.suiteDefault;
+		    189 +   }
+		101     -             |         |         |  __     |  ^^     |  ##
+		102     -             |         |  ^^     |         |         |
+		103     -             |####     |####     |####     |####     |####
+		104     -   mid2:      none      0.5 slab  1 slab    1.5 slab  1 full
+		105     -   --------------------------------------------------------------------
+		106 190   
+		107     -             |         |  ##     |  ##     |  ##     |  ##     |  ^^
+		108     -             |         |  ##     |  ##     |  ^^     |         |
+		109     -             |         |  ^^     |         |         |         |
+		110     -             |####     |####     |####     |####     |####     |####
+		    191 +   const testName = "Vertical" + counter;
+		    192 +   GameTest.register("PathFindingTests", testName, (test) => {
+		    193 +     const villagerEntityType = "minecraft:villager_v2";
+		    194 +     const villagerEntitySpawnType =
+		    195 +       villagerEntityType + "<minecraft:become_farmer>"; // Attempt to spawn the villagers as farmers
+		111     -   ceiling:   none      0.5       1         1.5       2         2.5
+		112     -   --------------------------------------------------------------------
+		113     - */
+		114     - function placeBlocks(test, floor1, floor2, mid2, ceiling2) {
+		115     -   const spawnPos = new BlockLocation(5, 2, 4);
+		116 196   
+		    197 +     // Prepare the map
+		    198 +     placeBlocksFromMap(test, placementMap);
+		117     -   // we place two of each block, at z and z-1.
+		    199 +     const bedPos = new BlockLocation(1, 2, 4);
+		    200 +     const aboveBedPos = bedPos.above().above(); // Check 2 blocks above the bed because under rare circumstances the villager hit box may stick out above the bed block when lying down.
+		    201 +     const spawnPos = new BlockLocation(5, 3, 4);
+		    202 + 
+		    203 +     // Do the test
+		    204 +     test.assertEntityNotPresent(villagerEntityType, bedPos);
+		    205 +     test.spawn(villagerEntitySpawnType, spawnPos);
+		118     -   for (let zOffset = 0; zOffset >= -1; --zOffset) {
+		119     -     // floor1 defines how high the block is where the villager spawns
+		120     -     if (floor1 == "0.5") {
+		121     -       placeBottomSlab(test, spawnPos.offset(0, 0, zOffset));
+		122     -     } else if (floor1 == "1") {
+		123     -       placeBlock(test, spawnPos.offset(0, 0, zOffset));
+		124     -     }
+		125 206   
+		126     -     // floor2 defines the height of the position to the right of the villager spawn
+		127     -     if (floor2 == "0.5") {
+		128     -       placeBottomSlab(test, spawnPos.offset(-1, 0, zOffset));
+		    207 +     test.succeedWhen(() => {
+		    208 +       test.assertEntityNotPresent(villagerEntityType, aboveBedPos);
+		    209 +       test.assertEntityPresent(villagerEntityType, bedPos);
+		129     -     } else if (floor2 == "1") {
+		130     -       placeBlock(test, spawnPos.offset(-1, 0, zOffset));
+		131     -     }
+		132 210   
+		    211 +       test.killAllEntities(); // Clean up villagers so the VillageManager doesn't waste time looking for points of interest (POIs)
+		    212 +     });
+		133     -     // mid2 defines any mid-level block in the position to the right of the villager spawn
+		134     -     if (mid2 == "0.5 slab") {
+		    213 +   })
+		    214 +     .structureName(VERTICAL_TEST_TEMPLATE_NAME)
+		    215 +     .maxTicks(VERTICAL_TEST_MAX_TICKS)
+		    216 +     .setupTicks(VERTICAL_TEST_STARTUP_TICKS)
+		    217 +     .padding(VERTICAL_TEST_PADDING)
+		    218 +     .batch("night")
+		    219 +     .tag(tag);
+		    220 + }
+		135     -       placeTopSlab(test, spawnPos.offset(-1, 0, zOffset));
+		136     -     } else if (mid2 == "1 slab") {
+		137     -       placeBottomSlab(test, spawnPos.offset(-1, 1, zOffset));
+		138     -     } else if (mid2 == "1.5 slab") {
+		139     -       placeTopSlab(test, spawnPos.offset(-1, 1, zOffset));
+		140     -     } else if (mid2 == "1 full") {
+		141     -       placeBlock(test, spawnPos.offset(-1, 1, zOffset));
+		142     -     }
+		143 221   
+		    222 + function createVerticalTestFunctionWithCustomBlocks(
+		144     -     // ceiling2 defines the ceiling height in the position to the right of the villager spawn
+		145     -     if (ceiling2 == "0.5") {
+		    223 +   testName,
+		    224 +   floor1,
+		    225 +   floor2,
+		    226 +   mid2,
+		    227 +   ceiling2,
+		    228 +   tag
+		    229 + ) {
+		    230 +   if (tag == null) {
+		    231 +     tag = GameTest.Tags.suiteDefault;
+		    232 +   }
+		    233 + 
+		    234 +   GameTest.register("PathFindingTests", testName, (test) => {
+		    235 +     const villagerEntityType = "minecraft:villager_v2";
+		    236 +     const villagerEntitySpawnType =
+		146     -       placeBlock(test, spawnPos.offset(-1, 2, zOffset));
+		147     -       placeBlock(test, spawnPos.offset(-1, 1, zOffset));
+		148     -       placeTopSlab(test, spawnPos.offset(-1, 0, zOffset));
+		149     -     } else if (ceiling2 == "1") {
+		150     -       placeBlock(test, spawnPos.offset(-1, 2, zOffset));
+		151     -       placeBlock(test, spawnPos.offset(-1, 1, zOffset));
+		152     -     } else if (ceiling2 == "1.5") {
+		153     -       placeBlock(test, spawnPos.offset(-1, 2, zOffset));
+		154     -       placeTopSlab(test, spawnPos.offset(-1, 1, zOffset));
+		155     -     } else if (ceiling2 == "2") {
+		156     -       placeBlock(test, spawnPos.offset(-1, 2, zOffset));
+		157     -     } else if (ceiling2 == "2.5") {
+		158     -       placeTopSlab(test, spawnPos.offset(-1, 2, zOffset));
+		159     -     }
+		160     -   }
+		    237 +       villagerEntityType + "<minecraft:become_farmer>"; // Attempt to spawn the villagers as farmers
+		161     - }
+		162 238   
+		163     - function getBlockStateForMapChar(mapChar) {
+		164     -   if (mapChar == "#") {
+		165     -     return Blocks.stonebrick();
+		166     -   } else if (mapChar == "_") {
+		    239 +     // Prepare the map
+		    240 +     placeBlocks(test, floor1, floor2, mid2, ceiling2);
+		    241 +     const bedPos = new BlockLocation(1, 2, 4);
+		    242 +     const aboveBedPos = bedPos.above().above(); // Check 2 blocks above the bed because under rare circumstances the villager hit box may stick out above the bed block when lying down.
+		    243 +     const spawnPos = new BlockLocation(5, 3, 4);
+		    244 + 
+		    245 +     // Do the test
+		    246 +     test.assertEntityNotPresent(villagerEntityType, bedPos);
+		    247 +     test.spawn(villagerEntitySpawnType, spawnPos);
+		    248 +     test.succeedWhen(() => {
+		    249 +       test.assertEntityNotPresent(villagerEntityType, aboveBedPos);
+		    250 +       test.assertEntityPresent(villagerEntityType, bedPos);
+		167     -     let result = Blocks.stoneSlab();
+		168     -     result.setState(BlockStates.stoneSlabType("stoneBrick"));
+		169     -     return result;
+		170     -   } else if (mapChar == "^") {
+		171     -     let result = Blocks.stoneSlab();
+		172     -     result.setState(BlockStates.stoneSlabType("stoneBrick"));
+		173     -     result.setState(BlockStates.topSlotBit(true));
+		174     -     return result;
+		175     -   } else {
+		176     -     return Blocks.air();
+		177     -   }
+		178     - }
+		179 251   
+		    252 +       test.killAllEntities(); // Clean up villagers so the VillageManager doesn't waste time looking for points of interest (POIs)
+		    253 +     });
+		    254 +   })
+		180     - function createVerticalTestFunctionWithPlacementMap(
+		    255 +     .structureName(VERTICAL_TEST_TEMPLATE_NAME)
+		    256 +     .maxTicks(VERTICAL_TEST_MAX_TICKS)
+		    257 +     .setupTicks(VERTICAL_TEST_STARTUP_TICKS)
+		    258 +     .padding(VERTICAL_TEST_PADDING)
+		    259 +     .batch("night")
+		    260 +     .tag(tag);
+		    261 + }
+		181     -   counter,
+		182     -   placementMap,
+		183     -   tag
+		184     - ) {
+		185     -   if (tag == null) {
+		186     -     tag = GameTest.Tags.suiteDefault;
+		187     -   }
+		188 262   
+		    263 + function addVerticalTest(counter, floor1, floor2, mid2, ceiling2, tag) {
+		189 264     const testName = "Vertical" + counter;
+		    265 +   createVerticalTestFunctionWithCustomBlocks(
+		190     -   GameTest.register("PathFindingTests", testName, (test) => {
+		191     -     const villagerEntityType = "minecraft:villager_v2";
+		    266 +     testName,
+		    267 +     floor1,
+		    268 +     floor2,
+		    269 +     mid2,
+		    270 +     ceiling2,
+		    271 +     tag
+		    272 +   );
+		    273 + }
+		192     -     const villagerEntitySpawnType =
+		193     -       villagerEntityType + "<minecraft:become_farmer>"; // Attempt to spawn the villagers as farmers
+		194     - 
+		195     -     // Prepare the map
+		196     -     placeBlocksFromMap(test, placementMap);
+		197     -     const bedPos = new BlockLocation(1, 2, 4);
+		198     -     const aboveBedPos = bedPos.above().above(); // Check 2 blocks above the bed because under rare circumstances the villager hit box may stick out above the bed block when lying down.
+		199     -     const spawnPos = new BlockLocation(5, 3, 4);
+		200 274   
+		    275 + GameTest.register("PathFindingTests", "doorway_bottleneck", (test) => {
+		201     -     // Do the test
+		202     -     test.assertEntityNotPresent(villagerEntityType, bedPos);
+		    276 + 	const villagerEntitySpawnType = "minecraft:villager_v2<minecraft:spawn_farmer>";
+		203     -     test.spawn(villagerEntitySpawnType, spawnPos);
+		204 277   
+		    278 + 	test.spawn(villagerEntitySpawnType, new BlockLocation(5, 2, 4));
+		    279 + 	test.spawn(villagerEntitySpawnType, new BlockLocation(4, 2, 5));
+		205     -     test.succeedWhen(() => {
+		    280 + 	test.spawn(villagerEntitySpawnType, new BlockLocation(2, 2, 5));
+		    281 + 	test.spawn(villagerEntitySpawnType, new BlockLocation(1, 2, 4));
+		206     -       test.assertEntityNotPresent(villagerEntityType, aboveBedPos);
+		207     -       test.assertEntityPresent(villagerEntityType, bedPos);
+		208 282   
+		    283 +   test.succeedWhen(() => {
+		209     -       test.killAllEntities(); // Clean up villagers so the VillageManager doesn't waste time looking for points of interest (POIs)
+		210     -     });
+		211     -   })
+		    284 +     test.assertEntityPresent(villagerEntitySpawnType, new BlockLocation(5, 2, 2));
+		    285 +     test.assertEntityPresent(villagerEntitySpawnType, new BlockLocation(5, 2, 1));
+		    286 +     test.assertEntityPresent(villagerEntitySpawnType, new BlockLocation(1, 2, 2));
+		    287 +     test.assertEntityPresent(villagerEntitySpawnType, new BlockLocation(1, 2, 1));
+		    288 +   });
+		    289 + })
+		    290 +     .padding(TEST_PADDING) // Space out villager tests to stop them from confusing each other
+		    291 + 	.batch("night")
+		    292 +     .maxTicks(TEST_MAX_TICKS)
+		    293 +     .tag("suite:java_parity")
+		    294 +     .tag(GameTest.Tags.suiteDisabled)  // Villagers can get stuck on sleeping villagers sometimes
+		    295 +   
+		    296 + GameTest.register("PathFindingTests", "big_obstacle_course", (test) => {
+		    297 + 	const bedPos = new BlockLocation(4, 3, 6);
+		    298 + 	const spawnPos = new BlockLocation(5, 3, 4);
+		    299 + 	const villagerEntitySpawnType ="minecraft:villager_v2<minecraft:spawn_farmer>";
+		    300 + 		
+		    301 + 	test.assertEntityNotPresent(villagerEntitySpawnType,bedPos);
+		    302 + 	test.spawn(villagerEntitySpawnType,spawnPos);
+		212     -     .structureName(VERTICAL_TEST_TEMPLATE_NAME)
+		213     -     .maxTicks(VERTICAL_TEST_MAX_TICKS)
+		214     -     .setupTicks(VERTICAL_TEST_STARTUP_TICKS)
+		215     -     .padding(VERTICAL_TEST_PADDING)
+		216     -     .batch("night")
+		217     -     .tag(tag);
+		218     - }
+		219     - 
+		220     - function createVerticalTestFunctionWithCustomBlocks(
+		221     -   testName,
+		222     -   floor1,
+		223     -   floor2,
+		224     -   mid2,
+		225     -   ceiling2,
+		226     -   tag
+		227     - ) {
+		228     -   if (tag == null) {
+		229     -     tag = GameTest.Tags.suiteDefault;
+		230     -   }
+		231 303   
+		    304 + 	test.succeedWhenEntityPresent(villagerEntitySpawnType,bedPos);
+		    305 + })
+		232     -   GameTest.register("PathFindingTests", testName, (test) => {
+		    306 +     .padding(TEST_PADDING)
+		    307 +     .maxTicks(TEST_MAX_TICKS)
+		    308 + 	.batch("night")
+		    309 + 	.required(false)
+		    310 +     .tag("suite:java_parity")    //Test fails both on Java and Bedrock sometimes.
+		    311 +     .tag(GameTest.Tags.suiteDisabled)   //Village couldn't cross the polished granite most times, so fail to find a path to bed.
+		    312 + 			
+		    313 + GameTest.register("PathFindingTests", "simple", (test) => {
+		    314 + 	const bedPos = new BlockLocation(1, 2, 4);
+		    315 + 	const spawnPos = new BlockLocation(5, 3, 4);
+		    316 +     const villagerEntitySpawnType ="minecraft:villager_v2<minecraft:spawn_farmer>";
+		    317 + 		
+		    318 + 	test.assertEntityNotPresent(villagerEntitySpawnType,bedPos);
+		    319 + 	test.spawn(villagerEntitySpawnType,spawnPos);
+		    320 + 		
+		    321 + 	test.succeedWhenEntityPresent(villagerEntitySpawnType,bedPos);
+		    322 + })
+		    323 +     .maxTicks(TEST_MAX_TICKS)
+		    324 + 	.batch("night")
+		    325 + 	.required(false)
+		    326 +     .padding(TEST_PADDING)
+		    327 +     .tag(GameTest.Tags.suiteDefault); 
+		    328 + 		
+		    329 + GameTest.register("PathFindingTests", "carpet_walk_around", (test) => {
+		    330 + 	const bedPos = new BlockLocation(1, 2, 4);
+		    331 + 	const spawnPos = new BlockLocation(5, 3, 4);
+		    332 + 	const villagerEntitySpawnType ="minecraft:villager_v2<minecraft:spawn_farmer>";
+		    333 + 		
+		    334 + 	test.assertEntityNotPresent(villagerEntitySpawnType,bedPos);
+		    335 + 	test.spawn(villagerEntitySpawnType,spawnPos);
+		    336 + 		
+		    337 + 	test.succeedWhenEntityPresent(villagerEntitySpawnType,bedPos);
+		    338 + })
+		    339 +     .padding(TEST_PADDING)
+		    340 +     .maxTicks(TEST_MAX_TICKS)
+		    341 + 	.batch("night")
+		    342 + 	.required(false)
+		    343 +     .tag("suite:java_parity")  //Test fails both on Java and Bedrock sometimes.
+		    344 +     .tag(GameTest.Tags.suiteDisabled);  // Village couldn't walk around the carpet sometimes.
+		233     -     const villagerEntityType = "minecraft:villager_v2";
+		234     -     const villagerEntitySpawnType =
+		235     -       villagerEntityType + "<minecraft:become_farmer>"; // Attempt to spawn the villagers as farmers
+		236     - 
+		237     -     // Prepare the map
+		238     -     placeBlocks(test, floor1, floor2, mid2, ceiling2);
+		239     -     const bedPos = new BlockLocation(1, 2, 4);
+		240     -     const aboveBedPos = bedPos.above().above(); // Check 2 blocks above the bed because under rare circumstances the villager hit box may stick out above the bed block when lying down.
+		241     -     const spawnPos = new BlockLocation(5, 3, 4);
+		242     - 
+		243     -     // Do the test
+		244     -     test.assertEntityNotPresent(villagerEntityType, bedPos);
+		245     -     test.spawn(villagerEntitySpawnType, spawnPos);
+		246     -     test.succeedWhen(() => {
+		247     -       test.assertEntityNotPresent(villagerEntityType, aboveBedPos);
+		248     -       test.assertEntityPresent(villagerEntityType, bedPos);
+		249     - 
+		250     -       test.killAllEntities(); // Clean up villagers so the VillageManager doesn't waste time looking for points of interest (POIs)
+		251     -     });
+		252     -   })
+		253     -     .structureName(VERTICAL_TEST_TEMPLATE_NAME)
+		254     -     .maxTicks(VERTICAL_TEST_MAX_TICKS)
+		255     -     .setupTicks(VERTICAL_TEST_STARTUP_TICKS)
+		256     -     .padding(VERTICAL_TEST_PADDING)
+		257     -     .batch("night")
+		258     -     .tag(tag);
+		259     - }
+		260     - 
+		261     - function addVerticalTest(counter, floor1, floor2, mid2, ceiling2, tag) {
+		262     -   const testName = "Vertical" + counter;
+		263     -   createVerticalTestFunctionWithCustomBlocks(
+		264     -     testName,
+		265     -     floor1,
+		266     -     floor2,
+		267     -     mid2,
+		268     -     ceiling2,
+		269     -     tag
+		270     -   );
+		271     - }
+		272 345   
+		273 346   ///
+		274 347   // Register tests
+		275 348   ///
+		276 349   createVerticalTestFunctionWithPlacementMap(0, VERTICAL_TEST_PLACEMENT_MAP[0]);
+		          ...
+		          '''

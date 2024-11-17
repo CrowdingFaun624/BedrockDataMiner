@@ -1,0 +1,81 @@
+Difference of "shaders" between "1.2.11" and "1.2.13.5" (beta of "1.2.13").
+
+Changed file "entity_p.pssl":
+	Total line: 120 (+10, -5)
+	          '''
+	          ...
+	 46  46   
+	 47  47   #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	 48  48   //MSAA
+	 49  49   	color = TEXTURE_0.Sample( TextureSampler0, PSInput.uv );
+	 50  50   
+	     51 + #if defined(ALPHA_TEST) && !defined(USE_MULTITEXTURE)
+	 51     - #ifdef ALPHA_TEST
+	 52  52   	if( NEEDS_DISCARD( color ) )
+	 53  53   	{
+	 54  54   		discard;
+	 55  55   	}
+	 56  56   #endif
+	          ...
+	 60  60   	testColor.a = testColor.a * PSInput.alphaTestMultiplier.r;
+	 61  61   	if( NEEDS_DISCARD( testColor ) )
+	 62  62   	{
+	 63  63   		discard;
+	 64  64   	}
+	     65 + #endif
+	     66 + 
+	 65  67   #endif
+	 66  68   
+	     69 + #ifdef USE_COLOR_MASK
+	     70 + 	color.rgb = lerp( color, color * CHANGE_COLOR, color.a ).rgb;
+	     71 + 	color.a *= CHANGE_COLOR.a;
+	 67  72   #endif
+	 68  73   
+	     74 + #ifdef ITEM_IN_HAND
+	 69     - #ifdef USE_COLOR_MASK
+	     75 + 	color.rgb = lerp(color, color * CHANGE_COLOR, PSInput.light.a).rgb;
+	 70     - 	color.rgb = lerp( color, color * CHANGE_COLOR, color.a ).rgb;
+	 71     - 	color.a *= CHANGE_COLOR.a;
+	 72  76   #endif
+	 73  77   
+	     78 + #ifdef USE_MULTITEXTURE
+	     79 + 	float4 tex1 = TEXTURE_1.Sample(TextureSampler1, PSInput.uv);
+	     80 + 	float4 tex2 = TEXTURE_2.Sample(TextureSampler2, PSInput.uv);
+	     81 + 	color.rgb = lerp(color.rgb, tex1, tex1.a);
+	 74     - #ifdef ITEM_IN_HAND
+	 75     - 	color.rgb = lerp(color, color * CHANGE_COLOR, PSInput.light.a).rgb;
+	 76     - #endif
+	 77     - 
+	     82 + #ifdef ALPHA_TEST
+	 78     - #ifdef USE_MULTITEXTURE
+	     83 + 	if (color.a < 0.5f && tex1.a == 0.0f) {
+	     84 + 		discard;
+	     85 + 	}
+	     86 + #endif
+	 79     - 	float4 tex1 = TEXTURE_1.Sample(TextureSampler1, PSInput.uv);
+	 80     - 	float4 tex2 = TEXTURE_2.Sample(TextureSampler2, PSInput.uv);
+	 81     - 	color.rgb = lerp(color.rgb, tex1, tex1.a);
+	 82  87   #ifdef COLOR_SECOND_TEXTURE
+	 83  88   	if (tex2.a > 0.0f) {
+	 84  89   		color.rgb = lerp(tex2.rgb, tex2 * CHANGE_COLOR, tex2.a);
+	 85  90   	}
+	 86  91   #else
+	          ...
+	          '''
+Changed file "rain_snow_vv.pssl":
+	Total line: 72 (+1, -0)
+	        '''
+	        ...
+	59 59   
+	60 60   	//fog
+	61 61   	PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	62 62   	PSInput.fogColor.a = clamp(((PSInput.position.z / RENDER_DISTANCE) - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	63 63   
+	   64 + 	worldPositionBottom.xz += VIEW_POSITION.xz;
+	64 65   	worldPositionBottom.xz *= 1.0f / 64.0f;	// Scale by 1/TextureDimensions to get values between
+	65 66   	worldPositionBottom.xz += 0.5f;			// Offset so that center of view is in the center of occlusion texture
+	66 67   	worldPositionBottom.y += VIEW_POSITION.y - 0.5f;
+	67 68   	worldPositionBottom.y *= 1.0f / 255.0f;
+	68 69   	PSInput.worldPosition = worldPositionBottom;
+	        ...
+	        '''

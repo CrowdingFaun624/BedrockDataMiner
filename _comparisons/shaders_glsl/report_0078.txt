@@ -1,0 +1,39 @@
+Difference of "shaders_resource_packs" between "1.16.0.55" (beta of "1.16.0") and "1.16.0.57" (beta of "1.16.0").
+
+Changed resource pack "banner.vertex":
+	Changed file "vanilla":
+		Total line: 122 (+1, -1)
+		          '''
+		          ...
+		101 101       float L = lightIntensity();
+		102 102       light = vec4(vec3(L) * TILE_LIGHT_COLOR.xyz, 1.0);
+		103 103   #endif
+		104 104      
+		105 105   	int frameIndex = int((COLOR.a * 255.0) + 0.5);
+		    106 + 	uv.xy = (TEXCOORD_0.xy * BANNER_UV_OFFSETS_AND_SCALES[frameIndex].zw) + BANNER_UV_OFFSETS_AND_SCALES[frameIndex].xy;
+		106     - 	uv.xy = TEXCOORD_0.xy + BANNER_UV_OFFSETS[frameIndex].xy;
+		    107 + 	uv.zw = (TEXCOORD_0.xy * BANNER_UV_OFFSETS_AND_SCALES[0].zw) + BANNER_UV_OFFSETS_AND_SCALES[0].xy;
+		107     - 	uv.zw = TEXCOORD_0.xy;
+		108 108   
+		109 109   #ifndef DISABLE_TINTING
+		110 110   	color = BANNER_COLORS[frameIndex];
+		111 111   	color.a = 1.0;
+		112 112   	if (frameIndex > 0) {
+		          ...
+		          '''
+Changed resource pack "uniformBannerConstants.h":
+	Changed file "vanilla":
+		Total line: 14 (+0, -0)
+		        '''
+		        ...
+		 6  6   #ifdef MCPE_PLATFORM_NX
+		 7  7   uniform BannerConstants {
+		 8  8   #endif
+		 9  9   // BEGIN_UNIFORM_BLOCK(BannerConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		10 10   UNIFORM vec4 BANNER_COLORS[7];
+		   11 + UNIFORM vec4 BANNER_UV_OFFSETS_AND_SCALES[7];
+		11    - UNIFORM vec4 BANNER_UV_OFFSETS[7];
+		12 12   END_UNIFORM_BLOCK
+		13 13   
+		14 14   #endif
+		        '''

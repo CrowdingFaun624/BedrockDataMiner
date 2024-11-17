@@ -1,0 +1,21 @@
+Difference of "shaders_resource_packs" between "a0.12.1_build3" (beta of "a0.12.1") and "a0.12.1_build4" (beta of "a0.12.1").
+
+Changed resource pack "rain_snow.vertex":
+	Changed file "vanilla":
+		Total line: 65 (+0, -0)
+		        '''
+		        ...
+		43 43   	// get projected positions of top and bottom of particle, and top of particle in previous frame
+		44 44   	vec4 bottom = WORLDVIEWPROJ * worldPositionBottom;
+		45 45   	vec4 top = WORLDVIEWPROJ * worldPositionTop;
+		46 46   	
+		47 47   	// get 2d vector in screenspace between top and bottom of particle
+		   48 + 	vec2 dir = normalize((top.xy/top.w) - (bottom.xy/bottom.w));
+		48    - 	vec2 dir = (top.xy/top.w) - (bottom.xy/bottom.w);
+		49 49   	
+		50 50   	// get 2d vector perpendicular to velocity
+		51 51   	vec2 dirPerp = normalize(vec2(-dir.y, dir.x));
+		52 52   
+		53 53   	// choose either the top or bottom projected position using uv.y
+		        ...
+		        '''

@@ -1,0 +1,23 @@
+Difference of "shaders" between "1.2.0.11" (beta of "1.2.0") and "1.2.0.22" (beta of "1.2.0").
+Unable to create data files for 2 files between: "1.2.0.15", "1.2.0.18"
+
+Changed file "text.fragment.hlsl":
+	Total line: 67 (+0, -0)
+	        '''
+	        ...
+	47 47   
+	48 48       const float outerEdgeAlpha = smoothstep(max(0.0, OUTLINE_CUTOFF - GLYPH_SMOOTH_RADIUS), min(1.0, OUTLINE_CUTOFF + GLYPH_SMOOTH_RADIUS), sampleDistance);
+	49 49       // Apply stroke (outline) cutoff
+	50 50       resultColor = float4(resultColor.rgb, resultColor.a * outerEdgeAlpha);
+	51 51   
+	   52 +     const float2 topLeft = floor(PSInput.uv / GLYPH_UV_SIZE) * GLYPH_UV_SIZE;
+	   53 +     const float2 bottomRight = floor(PSInput.uv / GLYPH_UV_SIZE) * GLYPH_UV_SIZE + GLYPH_UV_SIZE;
+	52    -     const float2 topLeft = floor(PSInput.uv);
+	53    -     const float2 bottomRight = floor(PSInput.uv + GLYPH_UV_SIZE);
+	54 54   
+	55 55       const float4 shadowSample = TEXTURE_0.Sample(TextureSampler0, clamp(PSInput.uv - SHADOW_OFFSET, topLeft, bottomRight));
+	56 56       const float shadowDistance = shadowSample.a;
+	57 57       const float shadowAlpha = smoothstep(max(0.0, OUTLINE_CUTOFF - SHADOW_SMOOTH_RADIUS), min(1.0, OUTLINE_CUTOFF + SHADOW_SMOOTH_RADIUS), shadowDistance);
+	58 58       // Apply shadow past the stroke
+	        ...
+	        '''

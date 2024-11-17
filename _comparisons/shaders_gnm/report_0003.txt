@@ -1,0 +1,24 @@
+Difference of "shaders" between "1.2.2" and "1.2.3.3" (beta of "1.2.3").
+
+Changed file "entity_p.pssl":
+	Total line: 115 (+4, -0)
+	          '''
+	          ...
+	 20  20   #endif
+	 21  21   
+	 22  22   	float2 uv : TEXCOORD_0;
+	 23  23   };
+	 24  24   #ifdef USE_EMISSIVE
+	     25 + #ifdef USE_ONLY_EMISSIVE
+	     26 + #define NEEDS_DISCARD(C) (C.a == 0.0f ||C.a == 1.0f )
+	     27 + #else
+	     28 + #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+	 25     - 	#define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+	     29 + #endif
+	 26  30   #else
+	 27  31   	#ifndef USE_COLOR_MASK
+	 28  32   		#define NEEDS_DISCARD(C)	(C.a < 0.5)
+	 29  33   	#else
+	 30  34   		#define NEEDS_DISCARD(C)	(C.a <= 0.0)
+	          ...
+	          '''

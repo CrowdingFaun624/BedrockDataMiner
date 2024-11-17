@@ -1,892 +1,439 @@
-Difference of "entities" between "1.2.13.12" (beta of "1.4.0") and "1.2.14.2" (beta of "1.4.0").
+Difference of "entities" between "1.4.4" and "1.5.0.0" (beta of "1.5.0").
 
-Total entity: 87 (+6, -0)
-Added entity "balloon":
-	behavior pack "education":
-		field "defined_in": behavior pack: "chemistry"
-		field "minecraft:entity":
-			field "format_version": "1.2.0"
-			field "components":
-				component "minecraft:balloon": field "lift_force": [0.0, 1.6, 0.0]
-				component "minecraft:collision_box":
-					field "height": 0.4
-					field "width": 0.4
-				component "minecraft:identifier": field "id": "minecraft:balloon"
-				component "minecraft:physics": field "has_gravity": false
-Changed entity "bat":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:bat"
-				Changed component "minecraft:behavior.float_wander":
-					Moved field "y_dist" to "y_distance".
-					Moved field "xz_dist" to "xz_distance".
-Changed entity "boat":
+Changed entity "dolphin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 1 (+1, -0)
-				Added component group "minecraft:boat_leashed":
-					component "minecraft:behavior.move_towards_restriction":
-						field "priority": 2
-						field "speed_multiplier": 1.0
+				Changed component group "minecraft:dolphin_adult":
+					Total component: 3 (+1, -0)
+					Added component "minecraft:bribeable":
+						field "bribe_items":
+							item: "fish"
+							item: "salmon"
 			Changed field "components":
-				Total component: 8 (+1, -0)
-				Unchanged component "minecraft:identifier": field "id": "minecraft:boat"
-				Added component "minecraft:leashable":
-					field "hard_distance": 6.0
-					field "max_distance": 10.0
-					field "on_leash":
-						field "event": "minecraft:on_leash"
-						field "target": "self"
-					field "on_unleash":
-						field "event": "minecraft:on_unleash"
-						field "target": "self"
-					field "soft_distance": 4.0
-			Changed field "events":
-				Total event: 2 (+2, -0)
-				Added event "minecraft:on_leash" of field "add": field "component_groups": component group: "minecraft:boat_leashed".
-				Added event "minecraft:on_unleash" of field "remove": field "component_groups": component group: "minecraft:boat_leashed".
-Changed entity "chicken":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 22 (+1, -0)
-				Added component "minecraft:balloonable" of field "mass": 0.6.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:chicken"
-Changed entity "cow":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 24 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:cow"
-Changed entity "donkey":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 20 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:donkey"
-Changed entity "drowned":
+				Total component: 24 (+2, -0)
+				Unchanged component "minecraft:identifier": field "id": "minecraft:dolphin"
+				Added component "minecraft:behavior.breathe_air" of field "priority": 1.
+				Added component "minecraft:behavior.find_underwater_treasure":
+					field "priority": 2
+					field "speed_multiplier": 2.0
+					field "search_range": 30
+					field "stop_distance": 50
+Changed entity "drowned.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 7 (+2, -0)
-				Added component group "minecraft:adult_drowned" of component "minecraft:loot": field "table": "loot_tables/entities/drowned.json".
-				Added component group "minecraft:baby_drowned":
-					component "minecraft:is_baby": empty
-					component "minecraft:movement": field "value": 0.25
-					component "minecraft:scale": field "value": 0.5
-					component "minecraft:underwater_movement": field "value": 0.08
+				Changed component group "minecraft:hunter_mode":
+					Changed component "minecraft:navigation.generic":
+						Added field "avoid_sun" of true.
+				Changed component group "minecraft:melee_mode":
+					Changed component "minecraft:equipment":
+						Unchanged field "table": "loot_tables/entities/drowned_equipment.json"
+						Added field "slot_drop_chance":
+							slot:
+								field "slot": "slot.weapon.offhand"
+								field "drop_chance": 1.0
+				Changed component group "minecraft:mode_switcher":
+					Changed component "minecraft:equipment":
+						Unchanged field "table": "loot_tables/entities/drowned_ranged_equipment.json"
+						Added field "slot_drop_chance":
+							slot:
+								field "slot": "slot.weapon.offhand"
+								field "drop_chance": 1.0
+				Changed component group "minecraft:wander_mode":
+					Changed component "minecraft:navigation.generic":
+						Added field "avoid_sun" of true.
 			Changed field "components":
-				Total component: 25 (+0, -1)
+				Total component: 24 (+0, -1)
 				Unchanged component "minecraft:identifier": field "id": "minecraft:drowned"
-				Removed component "minecraft:loot" of field "table": "loot_tables/entities/drowned.json".
+				Changed component "minecraft:navigation.generic":
+					Added field "avoid_sun" of true.
+				Removed component "minecraft:behavior.restrict_sun" of field "priority": 1.
+Changed entity "husk.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 7 (+4, -0)
+				Added component group "minecraft:convert_to_baby_zombie":
+					component "minecraft:is_shaking": empty
+					component "minecraft:transformation":
+						field "into": "minecraft:zombie<minecraft:as_baby>"
+						field "transformation_sound": "convert_to_drowned"
+						field "drop_equipment": true
+						field "delay": field "value": 15
+				Added component group "minecraft:convert_to_zombie":
+					component "minecraft:is_shaking": empty
+					component "minecraft:transformation":
+						field "into": "minecraft:zombie"
+						field "transformation_sound": "convert_to_drowned"
+						field "drop_equipment": true
+						field "delay": field "value": 15
+				Added component group "minecraft:look_to_start_zombie_transformation":
+					component "minecraft:environment_sensor":
+						field "filters":
+							filter property "test": "is_underwater"
+							filter property "subject": "self"
+							filter property "operator": "=="
+							filter property "value": "true"
+						field "event": "minecraft:start_transforming"
+				Added component group "minecraft:start_zombie_transformation":
+					component "minecraft:environment_sensor":
+						field "filters":
+							filter property "test": "is_underwater"
+							filter property "subject": "self"
+							filter property "operator": "=="
+							filter property "value": false
+						field "event": "minecraft:stop_transforming"
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 30
+						field "time_down_event": field "event": "minecraft:convert_to_zombie"
+			Changed field "components":
+				Total component: 24 (+1, -1)
+				Changed component "minecraft:breathable":
+					Added field "breathesWater" of true.
+				Added component "minecraft:environment_sensor":
+					trigger:
+						field "filters":
+							filter property "test": "is_underwater"
+							filter property "subject": "self"
+							filter property "operator": "=="
+							filter property "value": true
+						field "event": "minecraft:start_transforming"
+				Unchanged component "minecraft:identifier": field "id": "minecraft:husk"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Removed field "avoid_water" of false.
+					Added field "is_amphibious" of true.
+				Removed component "minecraft:behavior.float" of field "priority": 0.
 			Changed field "events":
-				Total event: 6 (+1, -0)
-				Added event "minecraft:as_baby":
-					field "add":
-						field "component_groups":
-							component group: "minecraft:melee_mode"
-							component group: "minecraft:baby_drowned"
-					field "remove":
-						field "component_groups":
-							component group: "minecraft:mode_switcher"
-							component group: "minecraft:ranged_mode"
+				Total event: 4 (+3, -0)
+				Added event "minecraft:convert_to_zombie":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:convert_to_zombie"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:is_baby"
+							field "remove": field "component_groups": component group: "minecraft:start_zombie_transformation"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:convert_to_baby_zombie"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_baby"
+							field "remove": field "component_groups": component group: "minecraft:start_zombie_transformation"
+				Added event "minecraft:start_transforming":
+					field "add": field "component_groups": component group: "minecraft:start_zombie_transformation"
+					field "remove": field "component_groups": component group: "minecraft:look_to_start_zombie_transformation"
+				Added event "minecraft:stop_transforming":
+					field "add": field "component_groups": component group: "minecraft:look_to_start_zombie_transformation"
+					field "remove": field "component_groups": component group: "minecraft:start_zombie_transformation"
+Changed entity "skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 3 (+2, -0)
+				Added component group "minecraft:melee_attack":
+					component "minecraft:attack": field "damage": 3
+					component "minecraft:environment_sensor":
+						field "on_environment":
+							field "filters":
+								filter property "test": "in_water"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": false
+							field "event": "minecraft:ranged_mode"
+					component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "target_dist": 1.2
+						field "speed_multiplier": 1.25
+						field "track_target": true
+				Added component group "minecraft:ranged_attack":
+					component "minecraft:environment_sensor":
+						field "on_environment":
+							field "filters":
+								filter property "test": "is_underwater"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "minecraft:melee_mode"
+					component "minecraft:shooter":
+						field "type": "Arrow"
+						field "def": "minecraft:arrow"
+					component "minecraft:behavior.ranged_attack":
+						field "attack_interval_min": 1
+						field "attack_interval_max": 3
+						field "attack_radius": 15
+			Changed field "components":
+				Total component: 25 (+1, -2)
+				Changed component "minecraft:breathable":
+					Added field "breathesWater" of true.
+				Added component "minecraft:environment_sensor":
+					field "on_environment":
+						field "filters":
+							filter property "test": "is_underwater"
+							filter property "subject": "self"
+							filter property "operator": "=="
+							filter property "value": true
+						field "event": "minecraft:melee_mode"
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeleton"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Added field "is_amphibious" of true.
+					Added field "avoid_sun" of true.
+					Added field "avoid_water" of true.
+				Removed component "minecraft:behavior.float" of field "priority": 0.
+				Removed component "minecraft:behavior.restrict_sun" of field "priority": 1.
+			Changed field "events":
+				Total event: 4 (+2, -0)
+				Changed event "minecraft:entity_spawned":
+					Added field "add" of field "component_groups": component group: "minecraft:ranged_attack".
+				Added event "minecraft:melee_mode":
+					field "add": field "component_groups": component group: "minecraft:melee_attack"
+					field "remove": field "component_groups": component group: "minecraft:ranged_attack"
+				Added event "minecraft:ranged_mode":
+					field "add": field "component_groups": component group: "minecraft:ranged_attack"
+					field "remove": field "component_groups": component group: "minecraft:melee_attack"
+Changed entity "skeleton_horse.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 24 (+1, -1)
+				Changed component "minecraft:breathable":
+					Added field "breathesWater" of true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:skeleton_horse"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Added field "is_amphibious" of true.
+				Added component "minecraft:underwater_movement" of field "value": 0.08.
+				Removed component "minecraft:behavior.float" of field "priority": 0.
+Changed entity "stray.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 3 (+2, -0)
+				Added component group "minecraft:melee_attack":
+					component "minecraft:attack":
+						field "damage": 3
+						field "effect_name": "slowness"
+						field "effect_duration": 10
+					component "minecraft:environment_sensor":
+						field "on_environment":
+							field "filters":
+								filter property "test": "in_water"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": false
+							field "event": "minecraft:ranged_mode"
+					component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "target_dist": 1.2
+						field "speed_multiplier": 1.25
+						field "track_target": true
+				Added component group "minecraft:ranged_attack":
+					component "minecraft:environment_sensor":
+						field "on_environment":
+							field "filters":
+								filter property "test": "is_underwater"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "minecraft:melee_mode"
+					component "minecraft:shooter":
+						field "type": "Arrow"
+						field "def": "minecraft:arrow"
+						field "auxVal": 19
+					component "minecraft:behavior.ranged_attack":
+						field "attack_interval_min": 1
+						field "attack_interval_max": 3
+						field "attack_radius": 15
+			Changed field "components":
+				Total component: 25 (+1, -2)
+				Changed component "minecraft:breathable":
+					Added field "breathesWater" of true.
+				Added component "minecraft:environment_sensor":
+					field "on_environment":
+						field "filters":
+							filter property "test": "is_underwater"
+							filter property "subject": "self"
+							filter property "operator": "=="
+							filter property "value": true
+						field "event": "minecraft:melee_mode"
+				Unchanged component "minecraft:identifier": field "id": "minecraft:stray"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Added field "is_amphibious" of true.
+					Added field "avoid_sun" of true.
+					Added field "avoid_water" of true.
+				Removed component "minecraft:behavior.float" of field "priority": 0.
+				Removed component "minecraft:behavior.restrict_sun" of field "priority": 1.
+			Changed field "events":
+				Total event: 4 (+3, -0)
+				Added event "minecraft:entity_spawned" of field "add": field "component_groups": component group: "minecraft:ranged_attack".
+				Added event "minecraft:melee_mode":
+					field "add": field "component_groups": component group: "minecraft:melee_attack"
+					field "remove": field "component_groups": component group: "minecraft:ranged_attack"
+				Added event "minecraft:ranged_mode":
+					field "add": field "component_groups": component group: "minecraft:ranged_attack"
+					field "remove": field "component_groups": component group: "minecraft:melee_attack"
+Changed entity "wither_skeleton.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 22 (+0, -1)
+				Changed component "minecraft:breathable":
+					Added field "breathesWater" of true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:wither_skeleton"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Added field "is_amphibious" of true.
+					Added field "avoid_sun" of true.
+					Added field "avoid_water" of true.
+				Removed component "minecraft:behavior.float" of field "priority": 0.
+Changed entity "zombie.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 8 (+5, -0)
+				Added component group "minecraft:can_have_equipment" of component "minecraft:equipment": field "table": "loot_tables/entities/zombie_equipment.json".
+				Added component group "minecraft:convert_to_baby_drowned":
+					component "minecraft:is_shaking": empty
+					component "minecraft:transformation":
+						field "into": "minecraft:drowned<minecraft:as_baby>"
+						field "transformation_sound": "convert_to_drowned"
+						field "drop_equipment": true
+						field "delay": field "value": 15
+				Added component group "minecraft:convert_to_drowned":
+					component "minecraft:is_shaking": empty
+					component "minecraft:transformation":
+						field "into": "minecraft:drowned"
+						field "transformation_sound": "convert_to_drowned"
+						field "drop_equipment": true
+						field "delay": field "value": 15
+				Added component group "minecraft:look_to_start_drowned_transformation":
+					component "minecraft:environment_sensor":
+						field "filters":
+							filter property "test": "is_underwater"
+							filter property "subject": "self"
+							filter property "operator": "=="
+							filter property "value": true
+						field "event": "minecraft:start_transforming"
+				Added component group "minecraft:start_drowned_transformation":
+					component "minecraft:environment_sensor":
+						field "filters":
+							filter property "test": "is_underwater"
+							filter property "subject": "self"
+							filter property "operator": "=="
+							filter property "value": false
+						field "event": "minecraft:stop_transforming"
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 30
+						field "time_down_event": field "event": "minecraft:convert_to_drowned"
+			Changed field "components":
+				Total component: 23 (+1, -2)
+				Changed component "minecraft:breathable":
+					Added field "breathesAir" of true.
+					Added field "breathesWater" of true.
+				Added component "minecraft:environment_sensor":
+					field "filters":
+						filter property "test": "is_underwater"
+						filter property "operator": "=="
+						filter property "value": true
+					field "event": "minecraft:start_transforming"
+				Removed component "minecraft:equipment" of field "table": "loot_tables/entities/zombie_equipment.json".
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Added field "is_amphibious" of true.
+				Removed component "minecraft:behavior.float" of field "priority": 0.
+			Changed field "events":
+				Total event: 5 (+4, -0)
+				Added event "minecraft:as_baby" of field "add": field "component_groups": component group: "minecraft:zombie_baby".
+				Added event "minecraft:convert_to_drowned":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:convert_to_drowned"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:is_baby"
+							field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:convert_to_baby_drowned"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_baby"
+							field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
 				Changed event "minecraft:entity_spawned":
 					Changed field "randomize":
-						Total randomize item: 2 (+1, -1)
 						Changed randomize item:
 							Changed field "add":
 								Changed field "component_groups":
 									Total component group: 3 (+1, -0)
-									Added component group "minecraft:adult_drowned".
-						Removed randomize item:
-							field "weight": 85
-							field "add": field "component_groups": component group: "minecraft:melee_mode"
-							field "remove": empty
-						Added randomize item:
-							field "weight": 85
-							field "randomize":
-								randomize item:
-									field "weight": 95
-									field "add":
-										field "component_groups":
-											component group: "minecraft:melee_mode"
-											component group: "minecraft:adult_drowned"
-									field "remove": empty
-								randomize item:
-									field "weight": 5
-									field "add":
-										field "component_groups":
-											component group: "minecraft:melee_mode"
-											component group: "minecraft:baby_drowned"
-									field "remove": empty
-Changed entity "enderman":
+									Added component group "minecraft:can_have_equipment".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 2 (+1, -0)
+									Added component group "minecraft:can_have_equipment".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 2 (+1, -0)
+									Added component group "minecraft:can_have_equipment".
+				Added event "minecraft:start_transforming":
+					field "add": field "component_groups": component group: "minecraft:start_drowned_transformation"
+					field "remove": field "component_groups": component group: "minecraft:look_to_start_drowned_transformation"
+				Added event "minecraft:stop_transforming":
+					field "add": field "component_groups": component group: "minecraft:look_to_start_drowned_transformation"
+					field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
+Changed entity "zombie_horse.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:enderman"
-				Changed component "minecraft:lookat":
-					Changed field "filters":
-						Changed filter property "all_of":
-							Changed filter:
-								Unchanged filter property "operator": "not"
-								Unchanged filter property "subject": "other"
-								Unchanged filter property "test": "has_equipment"
-								Changed filter property "value" from "pumpkin" to "carved_pumpkin".
-Added entity "fish":
-	behavior pack "core":
-		field "defined_in": behavior pack: "vanilla"
-		field "minecraft:entity":
-			field "format_version": "1.2.0"
-			field "components":
-				component "minecraft:breathable":
-					field "breathesAir": false
-					field "breathesWater": true
-					field "suffocateTime": 0
-					field "totalSupply": 15
-				component "minecraft:bucketable": empty
-				component "minecraft:collision_box":
-					field "height": 0.2
-					field "width": 0.6
-				component "minecraft:flocking":
-					field "acceleration": 0.09
-					field "block_distance": 2.0
-					field "block_weight": 0.85
-					field "breach_influence": 7.0
-					field "cohesion_threshold": 1.25
-					field "cohesion_weight": 2.2
-					field "goal_weight": 2.0
-					field "high_flock_limit": 8
-					field "in_water": true
-					field "influence_radius": 3.0
-					field "loner_chance": 0.1
-					field "low_flock_limit": 4
-					field "max_flee_speed": 0.14
-					field "max_height": 6.0
-					field "max_speed": 0.1
-					field "min_height": 1.5
-					field "rotation_speed": 2.0
-					field "separation_threshold": 0.15
-					field "separation_weight": 0.65
-					field "terrain_avoid_distance": 0.5
-				component "minecraft:health":
-					field "max": 6
-					field "value": 6
-				component "minecraft:identifier": field "id": "minecraft:cod"
-				component "minecraft:loot": field "table": "loot_tables/entities/fish.json"
-				component "minecraft:movement": field "value": 0.1
-				component "minecraft:movement.sway":
-					field "max_turn": 12.0
-					field "sway_amplitude": 0.01
-					field "value": 0.2
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.swim": field "can_sink": false
-				component "minecraft:physics": empty
-				component "minecraft:scale": field "value": 1.0
-				component "minecraft:type_family": field "family": family: "cod"
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "player"
-							field "max_distance": 6
-							field "sprint_speed_multiplier": 1.4
-							field "walk_speed_multiplier": 1.2
-					field "priority": 2
-				component "minecraft:behavior.random_swim":
-					field "priority": 4
-					field "speed_multiplier": 0.25
-					field "xz_distance": 16
-					field "y_distance": 4
-				component "minecraft:behavior.swim_idle": field "priority": 3
-				component "minecraft:behavior.swim_wander":
-					field "priority": 5
-					field "speed_multiplier": 0.09
-Changed entity "guardian":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:guardian_aggressive":
-					Changed component "minecraft:behavior.nearest_attackable_target":
-						Changed field "entity_types":
-							Changed entity type:
-								Changed field "filters":
-									Changed filter property "any_of":
-										Total filter: 3 (+1, -0)
-										Added filter:
-											filter property "subject": "other"
-											filter property "test": "is_family"
-											filter property "value": "fish"
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:guardian"
-				Changed component "minecraft:behavior.nearest_attackable_target":
-					Changed field "entity_types":
-						Changed entity type:
-							Changed field "filters":
-								Changed filter property "any_of":
-									Total filter: 3 (+1, -0)
-									Added filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "fish"
-Changed entity "horse":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 21 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:horse"
-Added entity "ice_bomb":
-	behavior pack "education":
-		field "defined_in": behavior pack: "chemistry"
-		field "minecraft:entity":
-			field "format_version": "1.2.0"
-			field "components":
-				component "minecraft:collision_box":
-					field "height": 0.25
-					field "width": 0.25
-				component "minecraft:identifier": field "id": "minecraft:ice_bomb"
-				component "minecraft:physics": empty
-				component "minecraft:projectile":
-					field "angleoffset": 0.0
-					field "gravity": 0.025
-					field "hitSound": "icebomb.hit"
-					field "hitWater": true
-					field "inertia": 1
-					field "liquid_inertia": 1
-					field "onHit":
-						field "freeze_on_hit":
-							field "shape": "cube"
-							field "size": 1.1
-							field "snap_to_block": true
-						field "particle_on_hit":
-							field "num_particles": 6
-							field "on_entity_hit": true
-							field "on_other_hit": true
-							field "particle_type": "snowballpoof"
-						field "remove_on_hit": empty
-					field "power": 1.5
-Changed entity "iron_golem":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 27 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:iron_golem"
-				Changed component "minecraft:behavior.random_stroll":
-					Moved field "xz_dist" to "xz_distance".
-Changed entity "llama":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 28 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:llama"
-Changed entity "mooshroom":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 24 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:mooshroom"
-Changed entity "mule":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 20 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:mule"
-Changed entity "parrot":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:parrot_wild":
-					Changed component "minecraft:behavior.random_fly":
-						Moved field "y_dist" to "y_distance".
-						Moved field "xz_dist" to "xz_distance".
-Changed entity "pig":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 22 (+1, -0)
-				Added component "minecraft:balloonable" of field "mass": 0.75.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:pig"
-Added entity "pufferfish":
-	behavior pack "core":
-		field "defined_in": behavior pack: "vanilla"
-		field "minecraft:entity":
-			field "format_version": "1.2.0"
-			field "component_groups":
-				component group "minecraft:pufferfish_deflated": component "minecraft:movement": field "value": 0.13
-				component group "minecraft:pufferfish_puffed": component "minecraft:movement": field "value": 0.05
-			field "components":
-				component "minecraft:breathable":
-					field "breathesAir": false
-					field "breathesWater": true
-					field "suffocateTime": 0
-					field "totalSupply": 15
-				component "minecraft:bucketable": empty
-				component "minecraft:collision_box":
-					field "height": 0.8
-					field "width": 0.8
-				component "minecraft:health":
-					field "max": 6
-					field "value": 6
-				component "minecraft:identifier": field "id": "minecraft:pufferfish"
-				component "minecraft:loot": field "table": "loot_tables/entities/pufferfish.json"
-				component "minecraft:movement.sway":
-					field "max_turn": 6.0
-					field "sway_amplitude": 0.02
-					field "value": 0.1
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.swim": field "can_sink": false
-				component "minecraft:physics": empty
-				component "minecraft:scale": field "value": 1.2
-				component "minecraft:type_family": field "family": family: "fish"
-				component "minecraft:behavior.random_swim":
-					field "priority": 3
-					field "speed_multiplier": 0.13
-					field "xz_distance": 16
-					field "y_distance": 4
-				component "minecraft:behavior.swim_wander":
-					field "priority": 5
-					field "speed_multiplier": 0.014
-			field "events":
-				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:pufferfish_deflated"
-				event "minecraft:on_deflate":
-					field "add": field "component_groups": component group: "minecraft:pufferfish_deflated"
-					field "remove": field "component_groups": component group: "minecraft:pufferfish_puffed"
-				event "minecraft:on_puff":
-					field "add": field "component_groups": component group: "minecraft:pufferfish_puffed"
-					field "remove": field "component_groups": component group: "minecraft:pufferfish_deflated"
-Changed entity "rabbit":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 22 (+1, -0)
-				Added component "minecraft:balloonable" of field "mass": 0.75.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:rabbit"
-				Changed component "minecraft:behavior.random_stroll":
-					Moved field "y_dist" to "y_distance".
-					Moved field "xz_dist" to "xz_distance".
-Added entity "salmon":
-	behavior pack "core":
-		field "defined_in": behavior pack: "vanilla"
-		field "minecraft:entity":
-			field "format_version": "1.2.0"
-			field "component_groups":
-				component group "scale_large":
-					component "minecraft:health":
-						field "max": 6
-						field "value": 6
-					component "minecraft:loot": field "table": "loot_tables/entities/salmon_large.json"
-					component "minecraft:scale": field "value": 1.5
-				component group "scale_normal":
-					component "minecraft:health":
-						field "max": 6
-						field "value": 6
-					component "minecraft:loot": field "table": "loot_tables/entities/salmon_normal.json"
-					component "minecraft:scale": field "value": 1
-				component group "scale_small":
-					component "minecraft:health":
-						field "max": 6
-						field "value": 6
-					component "minecraft:loot": field "table": "loot_tables/entities/salmon_normal.json"
-					component "minecraft:scale": field "value": 0.5
-			field "components":
-				component "minecraft:breathable":
-					field "breathesAir": false
-					field "breathesWater": true
-					field "suffocateTime": 0
-					field "totalSupply": 15
-				component "minecraft:bucketable": empty
-				component "minecraft:collision_box":
-					field "height": 0.5
-					field "width": 0.5
-				component "minecraft:flocking":
-					field "acceleration": 0.014
-					field "block_distance": 1.0
-					field "block_weight": 0.75
-					field "breach_influence": 7.0
-					field "cohesion_threshold": 1.5
-					field "cohesion_weight": 2.2
-					field "goal_weight": 2.0
-					field "high_flock_limit": 8
-					field "in_water": true
-					field "influence_radius": 3.0
-					field "loner_chance": 0.1
-					field "low_flock_limit": 4
-					field "max_flee_speed": 0.2
-					field "max_height": 4
-					field "max_speed": 0.1
-					field "min_height": 4
-					field "rotation_speed": 2.0
-					field "separation_threshold": 0.15
-					field "separation_weight": 0.65
-					field "terrain_avoid_distance": 0.5
-				component "minecraft:identifier": field "id": "minecraft:salmon"
-				component "minecraft:movement": field "value": 0.12
-				component "minecraft:movement.sway":
-					field "max_turn": 12.0
-					field "sway_amplitude": 0.01
-					field "value": 0.2
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.swim": field "can_sink": false
-				component "minecraft:physics": empty
-				component "minecraft:type_family": field "family": family: "fish"
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "player"
-							field "max_dist": 3
-							field "max_flee": 10
-							field "sprint_speed_multiplier": 0.2
-							field "walk_speed_multiplier": 0.014
-					field "priority": 2
-				component "minecraft:behavior.random_swim":
-					field "priority": 3
-					field "speed_multiplier": 0.012
-					field "xz_distance": 16
-					field "y_distance": 4
-				component "minecraft:behavior.river_follow":
-					field "centered_gap": 1.0
-					field "follow_speed": 0.09
-					field "look_ahead": 2.0
-					field "priority": 1
-				component "minecraft:behavior.swim_idle": field "priority": 3
-				component "minecraft:behavior.swim_wander":
-					field "priority": 5
-					field "speed_multiplier": 0.014
-			field "events":
-				event "minecraft:entity_spawned":
-					field "randomize":
-						randomize item:
-							field "weight": 30
-							field "add":
-								field "component_groups":
-									component group: "adult"
-									component group: "scale_small"
-						randomize item:
-							field "weight": 50
-							field "add":
-								field "component_groups":
-									component group: "adult"
-									component group: "scale_normal"
-						randomize item:
-							field "weight": 15
-							field "add":
-								field "component_groups":
-									component group: "adult"
-									component group: "scale_large"
-Changed entity "sheep":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 24 (+1, -0)
-				Added component "minecraft:balloonable" of field "mass": 0.75.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:sheep"
-Changed entity "skeleton_horse":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 24 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:skeleton_horse"
-Changed entity "snow_golem":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 25 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:snow_golem"
-Changed entity "squid":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 20 (+1, -0)
-				Added empty component "minecraft:balloonable".
-				Unchanged component "minecraft:identifier": field "id": "minecraft:squid"
-Added entity "tropicalfish":
-	behavior pack "core":
-		field "defined_in": behavior pack: "vanilla"
-		field "minecraft:entity":
-			field "format_version": "1.2.0"
-			field "component_groups":
-				component group "minecraft:anenonme":
-					component "minecraft:color": field "value": 1
-					component "minecraft:color2": field "value": 7
-					component "minecraft:mark_variant": field "value": 1
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:black_tang":
-					component "minecraft:color": field "value": 7
-					component "minecraft:color2": field "value": 7
-					component "minecraft:mark_variant": field "value": 0
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:blue_dory":
-					component "minecraft:color": field "value": 7
-					component "minecraft:color2": field "value": 3
-					component "minecraft:mark_variant": field "value": 1
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:butterfly_fish":
-					component "minecraft:color": field "value": 0
-					component "minecraft:color2": field "value": 7
-					component "minecraft:mark_variant": field "value": 4
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:cc_betta":
-					component "minecraft:color": field "value": 6
-					component "minecraft:color2": field "value": 3
-					component "minecraft:mark_variant": field "value": 5
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:cichlid":
-					component "minecraft:color": field "value": 11
-					component "minecraft:color2": field "value": 7
-					component "minecraft:mark_variant": field "value": 1
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:clownfish":
-					component "minecraft:color": field "value": 1
-					component "minecraft:color2": field "value": 0
-					component "minecraft:mark_variant": field "value": 0
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:dog_fish":
-					component "minecraft:color": field "value": 10
-					component "minecraft:color2": field "value": 4
-					component "minecraft:mark_variant": field "value": 3
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:e_red_snapper":
-					component "minecraft:color": field "value": 0
-					component "minecraft:color2": field "value": 14
-					component "minecraft:mark_variant": field "value": 5
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:goat_fish":
-					component "minecraft:color": field "value": 0
-					component "minecraft:color2": field "value": 4
-					component "minecraft:mark_variant": field "value": 5
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:moorish_idol":
-					component "minecraft:color": field "value": 0
-					component "minecraft:color2": field "value": 7
-					component "minecraft:mark_variant": field "value": 2
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:ornate_butterfly":
-					component "minecraft:color": field "value": 0
-					component "minecraft:color2": field "value": 1
-					component "minecraft:mark_variant": field "value": 5
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:parrot_fish":
-					component "minecraft:color": field "value": 9
-					component "minecraft:color2": field "value": 6
-					component "minecraft:mark_variant": field "value": 3
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:queen_angel_fish":
-					component "minecraft:color": field "value": 5
-					component "minecraft:color2": field "value": 3
-					component "minecraft:mark_variant": field "value": 4
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:red_cichlid":
-					component "minecraft:color": field "value": 14
-					component "minecraft:color2": field "value": 0
-					component "minecraft:mark_variant": field "value": 4
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:red_lipped_benny":
-					component "minecraft:color": field "value": 7
-					component "minecraft:color2": field "value": 14
-					component "minecraft:mark_variant": field "value": 2
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:red_snapper":
-					component "minecraft:color": field "value": 14
-					component "minecraft:color2": field "value": 0
-					component "minecraft:mark_variant": field "value": 3
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:threadfin":
-					component "minecraft:color": field "value": 0
-					component "minecraft:color2": field "value": 4
-					component "minecraft:mark_variant": field "value": 0
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:tomato_clown":
-					component "minecraft:color": field "value": 14
-					component "minecraft:color2": field "value": 0
-					component "minecraft:mark_variant": field "value": 1
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:triggerfish":
-					component "minecraft:color": field "value": 7
-					component "minecraft:color2": field "value": 0
-					component "minecraft:mark_variant": field "value": 1
-					component "minecraft:variant": field "value": 0
-				component group "minecraft:tropicalfish_base_blue": component "minecraft:color": field "value": 11
-				component group "minecraft:tropicalfish_base_brown": component "minecraft:color": field "value": 12
-				component group "minecraft:tropicalfish_base_cyan": component "minecraft:color": field "value": 9
-				component group "minecraft:tropicalfish_base_gray": component "minecraft:color": field "value": 7
-				component group "minecraft:tropicalfish_base_green": component "minecraft:color": field "value": 13
-				component group "minecraft:tropicalfish_base_lightblue": component "minecraft:color": field "value": 3
-				component group "minecraft:tropicalfish_base_lightgreen": component "minecraft:color": field "value": 5
-				component group "minecraft:tropicalfish_base_magenta": component "minecraft:color": field "value": 2
-				component group "minecraft:tropicalfish_base_orange": component "minecraft:color": field "value": 1
-				component group "minecraft:tropicalfish_base_pink": component "minecraft:color": field "value": 6
-				component group "minecraft:tropicalfish_base_purple": component "minecraft:color": field "value": 10
-				component group "minecraft:tropicalfish_base_red": component "minecraft:color": field "value": 14
-				component group "minecraft:tropicalfish_base_silver": component "minecraft:color": field "value": 8
-				component group "minecraft:tropicalfish_base_white": component "minecraft:color": field "value": 0
-				component group "minecraft:tropicalfish_base_yellow": component "minecraft:color": field "value": 4
-				component group "minecraft:tropicalfish_pattern_blue": component "minecraft:color2": field "value": 11
-				component group "minecraft:tropicalfish_pattern_brown": component "minecraft:color2": field "value": 12
-				component group "minecraft:tropicalfish_pattern_cyan": component "minecraft:color2": field "value": 9
-				component group "minecraft:tropicalfish_pattern_gray": component "minecraft:color2": field "value": 7
-				component group "minecraft:tropicalfish_pattern_green": component "minecraft:color2": field "value": 13
-				component group "minecraft:tropicalfish_pattern_lightblue": component "minecraft:color2": field "value": 3
-				component group "minecraft:tropicalfish_pattern_lightgreen": component "minecraft:color2": field "value": 5
-				component group "minecraft:tropicalfish_pattern_magenta": component "minecraft:color2": field "value": 2
-				component group "minecraft:tropicalfish_pattern_orange": component "minecraft:color2": field "value": 1
-				component group "minecraft:tropicalfish_pattern_pink": component "minecraft:color2": field "value": 6
-				component group "minecraft:tropicalfish_pattern_purple": component "minecraft:color2": field "value": 10
-				component group "minecraft:tropicalfish_pattern_red": component "minecraft:color2": field "value": 14
-				component group "minecraft:tropicalfish_pattern_silver": component "minecraft:color2": field "value": 8
-				component group "minecraft:tropicalfish_pattern_white": component "minecraft:color2": field "value": 0
-				component group "minecraft:tropicalfish_pattern_yellow": component "minecraft:color2": field "value": 4
-				component group "minecraft:tropicalfish_variant_a": component "minecraft:variant": field "value": 0
-				component group "minecraft:tropicalfish_variant_b": component "minecraft:variant": field "value": 1
-				component group "minecraft:tropicalfish_variant_pattern_1": component "minecraft:mark_variant": field "value": 0
-				component group "minecraft:tropicalfish_variant_pattern_2": component "minecraft:mark_variant": field "value": 1
-				component group "minecraft:tropicalfish_variant_pattern_3": component "minecraft:mark_variant": field "value": 2
-				component group "minecraft:tropicalfish_variant_pattern_4": component "minecraft:mark_variant": field "value": 3
-				component group "minecraft:tropicalfish_variant_pattern_5": component "minecraft:mark_variant": field "value": 4
-				component group "minecraft:tropicalfish_variant_pattern_6": component "minecraft:mark_variant": field "value": 5
-				component group "minecraft:yellow_tang":
-					component "minecraft:color": field "value": 4
-					component "minecraft:color2": field "value": 4
-					component "minecraft:mark_variant": field "value": 1
-					component "minecraft:variant": field "value": 1
-				component group "minecraft:yellowtail_parrot":
-					component "minecraft:color": field "value": 9
-					component "minecraft:color2": field "value": 4
-					component "minecraft:mark_variant": field "value": 3
-					component "minecraft:variant": field "value": 0
-			field "components":
-				component "minecraft:breathable":
-					field "breathesAir": false
-					field "breathesWater": true
-					field "suffocateTime": 0
-					field "totalSupply": 15
-				component "minecraft:bucketable": empty
-				component "minecraft:collision_box":
-					field "height": 0.2
-					field "width": 0.2
-				component "minecraft:flocking":
-					field "acceleration": 0.04
-					field "block_distance": 2.0
-					field "block_weight": 0.85
-					field "breach_influence": 7.0
-					field "cohesion_threshold": 0.9
-					field "cohesion_weight": 2.2
-					field "goal_weight": 2.0
-					field "high_flock_limit": 10
-					field "in_water": true
-					field "influence_radius": 3.0
-					field "loner_chance": 0.0
-					field "low_flock_limit": 5
-					field "match_variants": true
-					field "max_flee_speed": 0.2
-					field "max_height": 6.0
-					field "max_speed": 0.08
-					field "min_height": 1.5
-					field "rotation_speed": 2.0
-					field "separation_threshold": 0.15
-					field "separation_weight": 0.65
-					field "terrain_avoid_distance": 0.5
-				component "minecraft:health":
-					field "max": 6
-					field "value": 6
-				component "minecraft:identifier": field "id": "minecraft:tropicalfish"
-				component "minecraft:loot": field "table": "loot_tables/entities/tropicalfish.json"
-				component "minecraft:movement": field "value": 0.12
-				component "minecraft:movement.sway":
-					field "max_turn": 12.0
-					field "sway_amplitude": 0.01
-					field "value": 0.2
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.swim": field "can_sink": false
-				component "minecraft:physics": empty
-				component "minecraft:scale": field "value": 0.6
-				component "minecraft:type_family": field "family": family: "fish"
-				component "minecraft:behavior.avoid_mob_type":
-					field "entity_types":
-						entity type:
-							field "filters":
-								filter property "subject": "other"
-								filter property "test": "is_family"
-								filter property "value": "player"
-							field "max_distance": 6
-							field "sprint_speed_multiplier": 0.4
-							field "walk_speed_multiplier": 0.3
-					field "priority": 2
-				component "minecraft:behavior.random_swim":
-					field "priority": 4
-					field "speed_multiplier": 1.0
-					field "xz_distance": 16
-					field "y_distance": 4
-				component "minecraft:behavior.swim_idle": field "priority": 3
-				component "minecraft:behavior.swim_wander":
-					field "priority": 5
-					field "speed_multiplier": 0.09
-			field "events":
-				event "minecraft:become_anenonme": field "add": field "component_groups": component group: "minecraft:anenonme"
-				event "minecraft:become_black_tang": field "add": field "component_groups": component group: "minecraft:black_tang"
-				event "minecraft:become_blue_dory": field "add": field "component_groups": component group: "minecraft:blue_dory"
-				event "minecraft:become_butterfly_fish": field "add": field "component_groups": component group: "minecraft:butterfly_fish"
-				event "minecraft:become_cc_betta": field "add": field "component_groups": component group: "minecraft:cc_betta"
-				event "minecraft:become_cichlid": field "add": field "component_groups": component group: "minecraft:cichlid"
-				event "minecraft:become_clownfish": field "add": field "component_groups": component group: "minecraft:clownfish"
-				event "minecraft:become_dog_fish": field "add": field "component_groups": component group: "minecraft:dog_fish"
-				event "minecraft:become_e_red_snapper": field "add": field "component_groups": component group: "minecraft:e_red_snapper"
-				event "minecraft:become_goat_fish": field "add": field "component_groups": component group: "minecraft:goat_fish"
-				event "minecraft:become_moorish_idol": field "add": field "component_groups": component group: "minecraft:moorish_idol"
-				event "minecraft:become_ornate_butterfly": field "add": field "component_groups": component group: "minecraft:ornate_butterfly"
-				event "minecraft:become_parrot_fish": field "add": field "component_groups": component group: "minecraft:parrot_fish"
-				event "minecraft:become_queen_angel_fish": field "add": field "component_groups": component group: "minecraft:queen_angel_fish"
-				event "minecraft:become_red_cichlid": field "add": field "component_groups": component group: "minecraft:red_cichlid"
-				event "minecraft:become_red_lipped_benny": field "add": field "component_groups": component group: "minecraft:red_lipped_benny"
-				event "minecraft:become_red_snapper": field "add": field "component_groups": component group: "minecraft:red_snapper"
-				event "minecraft:become_threadfin": field "add": field "component_groups": component group: "minecraft:threadfin"
-				event "minecraft:become_tomato_clown": field "add": field "component_groups": component group: "minecraft:tomato_clown"
-				event "minecraft:become_triggerfish": field "add": field "component_groups": component group: "minecraft:triggerfish"
-				event "minecraft:become_yellow_tail_parrot": field "add": field "component_groups": component group: "minecraft:yellow_tail_parrot"
-				event "minecraft:become_yellow_tang": field "add": field "component_groups": component group: "minecraft:yellow_tang"
-				event "minecraft:entity_spawned":
-					field "sequence":
-						sequence item 0: field "add": field "component_groups": component group: "adult"
-						sequence item 1:
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_variant_a"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_variant_b"
-						sequence item 2:
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_variant_pattern_1"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_variant_pattern_2"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_variant_pattern_3"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_variant_pattern_4"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_variant_pattern_5"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_variant_pattern_6"
-						sequence item 3:
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_white"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_orange"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_magenta"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_lightblue"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_yellow"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_lightgreen"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_pink"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_gray"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_silver"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_cyan"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_purple"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_blue"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_brown"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_green"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_base_red"
-						sequence item 4:
-							field "randomize":
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_white"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_orange"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_magenta"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_lightblue"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_yellow"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_lightgreen"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_pink"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_gray"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_silver"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_cyan"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_purple"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_blue"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_brown"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_green"
-								randomize item:
-									field "weight": 1
-									field "add": field "component_groups": component group: "minecraft:tropicalfish_pattern_red"
-Changed entity "zombie_horse":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 24 (+1, -0)
-				Added empty component "minecraft:balloonable".
+				Total component: 23 (+0, -1)
+				Changed component "minecraft:breathable":
+					Added field "breathesWater" of true.
 				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_horse"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Added field "is_amphibious" of true.
+				Removed component "minecraft:behavior.float" of field "priority": 0.
+Changed entity "zombie_pigman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 25 (+0, -1)
+				Changed component "minecraft:breathable":
+					Added field "breathesWater" of true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_pigman"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Added field "is_amphibious" of true.
+					Added field "avoid_water" of true.
+				Removed component "minecraft:behavior.float" of field "priority": 0.
+Changed entity "zombie_villager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "from_abandoned_village":
+					Total component: 2 (+1, -1)
+					Added component "minecraft:navigation.walk":
+						field "is_amphibious": true
+						field "can_pass_doors": true
+						field "can_open_doors": true
+						field "avoid_water": true
+						field "avoid_sun": true
+					Removed component "minecraft:behavior.restrict_sun" of field "priority": 3.
+			Changed field "components":
+				Total component: 22 (+0, -1)
+				Changed component "minecraft:breathable":
+					Added field "breathesWater" of true.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_villager"
+				Changed component "minecraft:navigation.walk":
+					Removed field "can_float" of true.
+					Added field "is_amphibious" of true.
+					Added field "avoid_sun" of false.
+				Removed component "minecraft:behavior.float" of field "priority": 0.

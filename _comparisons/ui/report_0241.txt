@@ -1,0 +1,2241 @@
+Difference of "ui" between "1.18.2" and "1.18.10.20" (beta of "1.18.10").
+
+Total namespace: 200 (+1, -0)
+Changed namespace "achievement":
+	Total element: 2 (+0, -55)
+	Removed element "achievement_data_layout":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100% - 6px", "100% - 4px"]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "layer": 1
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables":
+					variable "$ach_score_offset":
+						item 0: "-2px"
+						item 1: "1px"
+			variable:
+				field "requires": "$pocket_edition"
+				field "$variables":
+					variable "$ach_score_offset":
+						item 0: "-2px"
+						item 1: "7px"
+		field "controls":
+			control:
+				element "achiev_icon":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "achiev_icon@achievement_icon":
+								field "size": ["177.778%y", "100% - 2px"]
+								field "layer": 1
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": [2, "100%"]
+			control:
+				element "achievement_details":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["fill", "100%"]
+					field "controls":
+						control:
+							element "top_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%", "100% - 5px"]
+								field "controls":
+									control:
+										element "achiev_desc":
+											field "type": "panel"
+											field "size": ["fill", "100%"]
+											field "controls":
+												control:
+													element "text_content":
+														field "type": "stack_panel"
+														field "anchor_from": "top_left"
+														field "anchor_to": "top_left"
+														field "orientation": "vertical"
+														field "size": ["100%", "100%"]
+														field "offset": [1, 0]
+														field "controls":
+															control:
+																element "achiev_title@achievement_title_switch":
+																	field "size": ["100%", 12]
+																	field "layer": 3
+															control:
+																element "achiev_desc@achievement_desc":
+																	field "size": ["100% - 35px", "fill"]
+																	field "layer": 2
+												control: element "achiev_score@achievement_score_panel": field "offset": "$ach_score_offset"
+									control:
+										element "pad_0":
+											field "type": "panel"
+											field "size": [7, "100%"]
+									control: element "reward_panel@achievement.persona_reward_panel": empty
+						control:
+							element "achiev_progress@progress_bar_icon":
+								field "size": ["100%", 5]
+								field "layer": 5
+		field "$variables":
+			variable "$ach_score_offset|default":
+				item 0: "-2px"
+				item 1: "1px"
+	Removed element "achievement_data_locked":
+		field "type": "panel"
+		field "visible": "#is_locked"
+		field "bindings":
+			binding:
+				field "binding_name": "#is_locked"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+		field "controls": control: element "ach_data_layout@achievement_data_layout": empty
+	Removed element "achievement_data_unlocked":
+		field "type": "panel"
+		field "visible": "#is_unlocked"
+		field "bindings":
+			binding:
+				field "binding_name": "#is_unlocked"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+		field "controls": control: element "ach_data_layout@achievement_data_layout": empty
+	Removed element "achievement_desc":
+		field "type": "label"
+		field "color": "$achievement_text_color"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "font_size": "normal"
+		field "text": "#achievement_description"
+		field "shadow": false
+		field "layer": 1
+		field "bindings":
+			binding:
+				field "binding_name": "#achievement_description"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+	Removed element "achievement_gamer_score_value":
+		field "type": "label"
+		field "text": "#achievement_gamer_score"
+		field "color": "$achievement_text_color"
+		field "font_size": "normal"
+		field "shadow": false
+		field "bindings":
+			binding:
+				field "binding_name": "#achievement_gamer_score"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+	Removed element "achievement_grid":
+		field "type": "panel"
+		field "offset": [0, 0]
+		field "size": ["100%", "100% - 2px"]
+		field "controls":
+			control:
+				element "main_banner@main_banner":
+					field "size": ["100%", "100%"]
+					field "layer": 1
+			control: element "achievement_data_unlocked@achievement_data_unlocked": field "layer": 2
+			control: element "achievement_data_locked@achievement_data_locked": field "layer": 2
+	Removed element "achievement_grid_focused":
+		field "type": "panel"
+		field "offset": [0, 0]
+		field "size": ["100%", "100% - 2px"]
+		field "controls":
+			control:
+				element "main_banner@main_banner":
+					field "size": ["100%", "100%"]
+					field "layer": 1
+					field "controls": control: empty
+			control: element "achievement_data_unlocked@achievement_data_unlocked": field "layer": 2
+			control: element "achievement_data_locked@achievement_data_locked": field "layer": 2
+	Removed element "achievement_grid_item":
+		field "type": "panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": "$grid_size"
+		field "controls":
+			control: element "achievement_grid@achievement_grid": empty
+			control: element "achievement_focus@focus_border_button": field "size": ["100%", "100% - 2px"]
+		field "$variables": variable "$focus_id": "achievement_panel"
+	Removed element "achievement_icon":
+		field "type": "image"
+		field "bindings":
+			binding:
+				field "binding_name": "#texture_name"
+				field "binding_name_override": "#texture"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+			binding:
+				field "binding_name": "#grayscale_texture"
+				field "binding_name_override": "#grayscale"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+			binding:
+				field "binding_name": "#texture_locationtype"
+				field "binding_name_override": "#texture_file_system"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+	Removed element "achievement_label":
+		field "type": "label"
+		field "size": ["default", 10]
+		field "text": "achievementScreen.achievements:"
+		field "color": "$achievement_text_color"
+		field "shadow": false
+	Removed element "achievement_list_grid":
+		field "type": "grid"
+		field "grid_item_template": "achievement.achievement_grid_item"
+		field "grid_dimension_binding": "#achievement_grid_dimension"
+		field "collection_name": "achievement_list"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "size": ["100%", "default"]
+		field "bindings":
+			binding:
+				field "binding_name": "#achievement_grid_dimension"
+				field "binding_type": "global"
+		field "$variables":
+			variable "$grid_size|default":
+				item 0: "100%"
+				item 1: 54
+	Removed element "achievement_locked_icon":
+		field "type": "image"
+		field "texture": "textures/ui/achievement_locked_icon"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": [7, 7]
+	Removed element "achievement_locked_title":
+		field "type": "panel"
+		field "visible": "#is_locked"
+		field "bindings":
+			binding:
+				field "binding_name": "#is_locked"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+		field "controls":
+			control:
+				element "achievement_locked_icon@achievement_locked_icon":
+					field "offset": [0, "1px"]
+					field "layer": 2
+			control:
+				element "achievement_title@achievement_title":
+					field "offset": ["9px", "1px"]
+					field "layer": 3
+	Removed element "achievement_score_panel":
+		field "type": "panel"
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "controls":
+			control:
+				element "gamer_score_icon@gamer_score_icon":
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "offset": ["-12px", "3px"]
+					field "size": [11, 11]
+					field "layer": 2
+					field "controls":
+						control:
+							element "achievement_gamer_score_value@achievement_gamer_score_value":
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "offset": ["100%+3px", 0]
+								field "layer": 2
+	Removed element "achievement_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "$variables":
+			variable "$screen_content": "achievement.achievement_screen_content"
+			variable "$header_safezone_control": "common_store.store_top_bar_filler"
+			variable "$header_bar_control": "common_store.store_top_bar"
+			variable "$is_full_screen_layout": true
+	Removed element "achievement_screen_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "root_panel":
+					field "type": "panel"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls":
+						control:
+							element "main_panel@common.fullscreen_header":
+								field "$variables":
+									variable "$back_button_has_title": true
+									variable "$button_text": "gui.achievements"
+									variable "$child_control": "achievement.main_content_panel"
+	Removed element "achievement_title":
+		field "type": "label"
+		field "font_size": "normal"
+		field "size": ["default", 10]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "text": "#achievement_name"
+		field "color": "$achievement_text_color"
+		field "shadow": false
+		field "layer": 1
+		field "bindings":
+			binding:
+				field "binding_name": "#achievement_name"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+	Removed element "achievement_title_switch":
+		field "type": "panel"
+		field "controls":
+			control: element "achievement_locked_title@achievement_locked_title": empty
+			control: element "achievement_unlocked_title@achievement_unlocked_title": empty
+	Removed element "achievement_unlocked_title":
+		field "type": "panel"
+		field "visible": "#is_unlocked"
+		field "bindings":
+			binding:
+				field "binding_name": "#is_unlocked"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+		field "controls":
+			control:
+				element "achievement_title@achievement_title":
+					field "offset": [0, "1px"]
+					field "layer": 3
+	Removed element "achievement_value_label":
+		field "type": "label"
+		field "size": ["default", 10]
+		field "text": "#achievements_value"
+		field "color": "$achievement_text_color"
+		field "shadow": false
+		field "bindings": binding: field "binding_name": "#achievements_value"
+	Removed element "achievement_world_score_value":
+		field "type": "label"
+		field "text": "#achievement_world_score"
+		field "color": "$achievement_text_color"
+		field "font_size": "normal"
+		field "shadow": false
+		field "bindings":
+			binding:
+				field "binding_name": "#achievement_world_score"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+	Removed element "achievements_banner@achievement.grey_banner":
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+		field "size": ["100%", "33.33333% - 0.6667px"]
+		field "layer": 1
+		field "controls":
+			control:
+				element "trophy_banner_icon@trophy_icon":
+					field "size": [11, 14]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "offset": ["2px", 0]
+					field "layer": 1
+			control:
+				element "label_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "offset": ["16px", "0px"]
+					field "size": ["100% - 16px", 10]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "controls":
+						control: element "achievement_label@achievement_label": field "layer": 2
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+						control: element "achievement_value_label@achievement_value_label": field "layer": 3
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": [2, "100%"]
+	Removed element "clock_icon":
+		field "type": "image"
+		field "texture": "textures/ui/clock"
+	Removed element "filler_panel":
+		field "type": "panel"
+		field "layer": 1
+	Removed element "focus_border":
+		field "type": "image"
+		field "texture": "textures/ui/square_image_border_white"
+		field "color": "$non_interact_border_color"
+	Removed element "focus_border_button@common.button":
+		field "size": ["100%", "100%"]
+		field "sound_volume": 0.0
+		field "tts_inherit_siblings": true
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "achievement_list"
+				field "binding_collection_prefix": "achievement_list"
+		field "controls":
+			control: element "default@achievement.filler_panel": empty
+			control: element "hover@achievement.is_focused": empty
+			control: element "pressed@achievement.is_focused": empty
+		field "$variables": variable "$pressed_button_name": "button.navigate_to_persona"
+	Removed element "full_progress_bar_icon@achievement.full_progress_bar_icon_base":
+		field "bindings":
+			binding:
+				field "binding_name": "#progress_percentage"
+				field "binding_name_override": "#clip_ratio"
+				field "binding_type": "collection"
+				field "binding_collection_name": "achievement_list"
+	Removed element "gamer_score_banner@achievement.grey_banner":
+		field "size": ["100%", "33.33333% - 0.6667px"]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "layer": 1
+		field "controls":
+			control:
+				element "gamerscore_banner_icon@gamer_score_icon":
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "size": [11, 11]
+					field "offset": ["2px", 0]
+					field "layer": 1
+			control:
+				element "label_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "offset": ["16px", "0px"]
+					field "size": ["100% - 16px", 10]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "controls":
+						control: element "gamerscore_label@gamerscore_label": field "layer": 2
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+						control: element "gamer_score_value_label@gamer_score_value_label": field "layer": 3
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": [2, "100%"]
+	Removed element "gamer_score_icon":
+		field "type": "image"
+		field "texture": "textures/ui/gamerscore"
+	Removed element "gamer_score_value_label":
+		field "type": "label"
+		field "size": ["default", 10]
+		field "text": "#gamerscore_value"
+		field "color": "$achievement_text_color"
+		field "shadow": false
+		field "bindings": binding: field "binding_name": "#gamerscore_value"
+	Removed element "gamerscore_label":
+		field "type": "label"
+		field "size": ["default", 10]
+		field "text": "achievementScreen.gamerscore:"
+		field "color": "$achievement_text_color"
+		field "shadow": false
+	Removed element "grey_alpha_background":
+		field "type": "image"
+		field "texture": "textures/ui/solidtransparency"
+		field "alpha": 0.7
+	Removed element "grey_banner":
+		field "type": "image"
+		field "texture": "textures/ui/White"
+		field "alpha": 0.1
+	Removed element "header_background":
+		field "type": "image"
+		field "texture": "textures/ui/achievements_dialog"
+	Removed element "inside_header_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "padding_indent2_0":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "player_stat_panel":
+					field "type": "panel"
+					field "size": ["100%", 70]
+					field "controls":
+						control: element "player_stats@player_stats": field "layer": 1
+						control: element "focus@focus_border_button": empty
+			control:
+				element "padding_indent2_1":
+					field "type": "panel"
+					field "size": ["100%", 1]
+			control: element "achievement_grid@achievement_list_grid": field "layer": 2
+			control:
+				element "padding_indent2_2":
+					field "type": "panel"
+					field "size": ["100%", 1]
+	Removed element "is_focused@achievement.focus_border":
+		field "size": ["100%", "100%"]
+		field "layer": 3
+	Removed element "main_banner":
+		field "type": "image"
+		field "texture": "textures/ui/White"
+		field "color": "black"
+		field "alpha": 0.5
+	Removed element "main_content_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "controls":
+			control:
+				element "loading_achievement_panel@achievement.main_banner":
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "size": ["100%", 58]
+					field "controls":
+						control: element "loading_achievement_label@play.loading_label": field "$variables": variable "$message_binding_name": "#achievement_loading_display_message"
+						control:
+							element "progress_loading_bars@play.progress_loading_bars":
+								field "offset": [0, 0]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "$variables": variable "$visible_binding_name": "#loading_achievement_data"
+					field "bindings":
+						binding:
+							field "binding_name": "#loading_achievement_panel_visible"
+							field "binding_name_override": "#visible"
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "size": ["100%", "100%"]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #loading_achievement_panel_visible)"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$show_background": false
+						variable "$scrolling_content": "achievement.inside_header_panel"
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100% - 4px"
+						variable "$scrolling_pane_size":
+							item 0: "100% - 4px"
+							item 1: "100%"
+						variable "$scrolling_pane_offset":
+							item 0: 2
+							item 1: 0
+						variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+	Removed element "normal_thin_button":
+		field "type": "image"
+		field "texture": "textures/ui/NormalButtonThinNewBevel"
+	Removed element "panel_indent":
+		field "type": "panel"
+		field "size": ["100% - 4px", "100% - 4px"]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+	Removed element "percentage_label":
+		field "type": "label"
+		field "color": "$achievement_text_color"
+		field "font_size": "normal"
+		field "text": "#achievement_percentage"
+		field "shadow": false
+		field "bindings":
+			binding:
+				field "binding_name": "#achievement_percentage"
+				field "binding_type": "global"
+	Removed element "persona_item_content@common.empty_panel":
+		field "controls":
+			control:
+				element "locked_icon":
+					field "type": "image"
+					field "size": [12, 11]
+					field "anchor_to": "bottom_right"
+					field "anchor_from": "bottom_right"
+					field "texture": "textures/ui/icon_lock"
+					field "bindings":
+						binding:
+							field "binding_type": "$item_binding_type"
+							field "binding_collection_name": "$item_collection_name"
+							field "binding_name": "#is_offer_locked"
+							field "binding_name_override": "#visible"
+			control:
+				element "unlocked_icon":
+					field "type": "image"
+					field "size": [12, 11]
+					field "anchor_to": "bottom_right"
+					field "anchor_from": "bottom_right"
+					field "texture": "textures/ui/icon_unlocked"
+					field "bindings":
+						binding:
+							field "binding_type": "$item_binding_type"
+							field "binding_collection_name": "$item_collection_name"
+							field "binding_name": "(not #is_offer_locked)"
+							field "binding_name_override": "#visible"
+	Removed element "persona_reward_label":
+		field "type": "label"
+		field "size": ["100%", "default"]
+		field "text": "achievementScreen.reward"
+		field "text_alignment": "center"
+		field "color": "$achievement_text_color"
+	Removed element "persona_reward_panel":
+		field "type": "panel"
+		field "size": [60, "100%"]
+		field "controls":
+			control:
+				element "reward_stack":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "bindings":
+						binding:
+							field "binding_type": "$item_binding_type"
+							field "binding_collection_name": "$item_collection_name"
+							field "binding_name": "#has_persona_reward"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "seperator_panel":
+								field "type": "panel"
+								field "size": [1, "100%"]
+								field "controls":
+									control:
+										element "seperator":
+											field "type": "image"
+											field "size": ["100%", "80%"]
+											field "texture": "textures/ui/White"
+											field "alpha": 0.1
+						control:
+							element "pad_1":
+								field "type": "panel"
+								field "size": [7, "100%"]
+						control:
+							element "reward_info_stack":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "size": ["fill", "100%"]
+								field "controls":
+									control: element "reward_label@achievement.persona_reward_label": empty
+									control:
+										element "reward_image_info@persona_common.item_display":
+											field "$variables":
+												variable "$item_display_size":
+													item 0: "100%"
+													item 1: "fill"
+												variable "$item_content_control": "achievement.persona_item_content"
+												variable "$item_texture_file_system_binding_name": "#thumbnail_texture_file_system"
+												variable "$item_texture_path_binding_name": "#thumbnail_texture_path"
+									control:
+										element "pad_0":
+											field "type": "panel"
+											field "size": ["100%", 5]
+						control:
+							element "pad_2":
+								field "type": "panel"
+								field "size": [7, "100%"]
+		field "$variables":
+			variable "$item_binding_type": "collection"
+			variable "$item_collection_name": "achievement_list"
+	Removed element "player_scores_banner@achievement.panel_indent":
+		field "type": "panel"
+		field "size": "$control_size"
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+		field "variables":
+			variable:
+				field "requires": "$pocket_edition"
+				field "$variables":
+					variable "$control_size":
+						item 0: "100% - 80px"
+						item 1: "100% - 2px"
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables":
+					variable "$control_size":
+						item 0: "100% - 85px"
+						item 1: "100% - 2px"
+		field "controls":
+			control: element "gamer_score_banner@gamer_score_banner": empty
+			control: element "achievements_banner@achievements_banner": empty
+			control: element "time_played_banner@time_played_banner": empty
+		field "$variables":
+			variable "$control_size|default":
+				item 0: "100% - 85px"
+				item 1: "100% - 2px"
+	Removed element "player_stats@achievement.main_banner":
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control:
+				element "panel_indent@panel_indent":
+					field "controls":
+						control:
+							element "trophy_progress_bar_icon@trophy_progress_bar_icon":
+								field "layer": 2
+								field "offset": [14, -5]
+						control:
+							element "scores@player_scores_banner":
+								field "offset": ["-1px", 0]
+								field "layer": 1
+	Removed element "progress_bar_icon":
+		field "type": "panel"
+		field "anchor_from": "bottom_right"
+		field "anchor_to": "bottom_right"
+		field "controls":
+			control: element "full_progress_bar_icon@achievement.full_progress_bar_icon": field "layer": 2
+			control: element "empty_progress_bar_icon@achievement.empty_progress_bar_icon": field "layer": 1
+			control:
+				element "progress_bar_nub@achievement.progress_bar_nub":
+					field "size": ["100% - 10px", 5]
+					field "layer": 4
+	Removed element "progress_bar_nub":
+		field "type": "image"
+		field "texture": "textures/ui/experiencenub"
+		field "tiled": true
+	Removed element "time_played_banner@achievement.grey_banner":
+		field "anchor_from": "bottom_right"
+		field "anchor_to": "bottom_right"
+		field "size": ["100%", "33.33333% - 0.6667px"]
+		field "layer": 1
+		field "controls":
+			control:
+				element "clock_banner_icon@clock_icon":
+					field "size": [11, 11]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "offset": ["2px", 0]
+					field "layer": 1
+			control:
+				element "label_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "offset": ["16px", "0px"]
+					field "size": ["100% - 16px", 10]
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "controls":
+						control: element "time_played_label@time_played_label": field "layer": 2
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+						control: element "time_played_value_label@time_played_value_label": field "layer": 3
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": [2, "100%"]
+	Removed element "time_played_label":
+		field "type": "label"
+		field "size": ["default", 10]
+		field "text": "achievementScreen.timeplayed:"
+		field "color": "$achievement_text_color"
+		field "shadow": false
+	Removed element "time_played_value_label":
+		field "type": "label"
+		field "size": ["default", 10]
+		field "text": "#time_played_value"
+		field "color": "$achievement_text_color"
+		field "shadow": false
+		field "bindings": binding: field "binding_name": "#time_played_value"
+	Removed element "trophy_icon":
+		field "type": "image"
+		field "texture": "textures/ui/trophy_banner_icon"
+	Removed element "trophy_progress_bar_icon":
+		field "type": "panel"
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "size": [50, 55]
+		field "controls":
+			control:
+				element "trophy_icon_0@trophy_icon":
+					field "layer": 3
+					field "size": ["78.571428571%y", "100%"]
+					field "color": [0.545, 0.745, 0.384]
+					field "clip_direction": "down"
+					field "controls": empty
+					field "bindings":
+						binding:
+							field "binding_name": "#trophy_progress_percentage"
+							field "binding_name_override": "#clip_ratio"
+			control:
+				element "trophy_icon_1@trophy_icon":
+					field "layer": 2
+					field "size": ["78.5714285%y", "100%"]
+					field "color": [1.0, 1.0, 1.0]
+			control:
+				element "percentage_label@percentage_label":
+					field "offset": [0, 35]
+					field "layer": 4
+	Removed element "worlds_greyed_icon":
+		field "type": "image"
+		field "texture": "textures/ui/World"
+		field "grayscale": true
+	Removed element "worlds_icon":
+		field "type": "image"
+		field "texture": "textures/ui/World"
+Changed namespace "chat":
+	Total element: 27 (+1, -0)
+	Changed element "auto_complete_panel_contents_with_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+1, -0)
+			Added control:
+				element "autocomplete_button@common.button":
+					field "tts_inherit_siblings": true
+					field "controls":
+						control: element "default": field "type": "panel"
+						control: element "hover@chat.click_autocomplete_is_focused": empty
+						control: element "pressed@chat.click_autocomplete_is_focused": empty
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_name": "#is_autocomplete_suggestion"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "auto_complete"
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "auto_complete"
+					field "$variables": variable "$pressed_button_name": "button.click_autocomplete"
+	Added element "click_autocomplete_is_focused":
+		field "type": "image"
+		field "texture": "textures/ui/square_image_border_white"
+		field "color": "$non_interact_border_color"
+	Changed element "text_edit_box@common.text_edit_box":
+		Changed field "$variables":
+			Total variable: 5 (+0, -1)
+			Removed variable "$focus_override_right" of "keyboard_button_focus_id".
+Changed namespace "coin_purchase":
+	Total element: 22 (+5, -0)
+	Changed element "bonus_coins_stack":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 12 (+5, -2)
+			Changed control:
+				Changed element "bonus_coin_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "bonus_coin_label_panel":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "bonus_coins":
+											Unchanged field "type": "label"
+											Changed field "color" from "$coin_color" to "$store_white_text_color".
+			Changed control:
+				Changed element "bonus_label_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "bonus_label":
+								Unchanged field "type": "label"
+								Changed field "color" from "$coin_color" to "$store_white_text_color".
+			Removed control:
+				element "non_bonus_padding":
+					field "type": "panel"
+					field "size": ["100%", 21]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #bonus_coins_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+			Removed control:
+				element "currency_panel":
+					field "type": "panel"
+					field "size": ["100%", 10]
+					field "controls":
+						control:
+							element "currency_price_panel":
+								field "type": "image"
+								field "size": ["100% + 6px", 10]
+								field "texture": "textures/ui/bonus_banner"
+								field "controls":
+									control:
+										element "price@coin_purchase.price":
+											field "$variables":
+												variable "$price_color": "$coin_bonus_price_color"
+												variable "$price_visible": "(not #debug_price_visible)"
+									control:
+										element "debug_price@coin_purchase.price":
+											field "$variables":
+												variable "$price_color": "$c_color_format"
+												variable "$price_visible": "#debug_price_visible"
+			Added control:
+				element "image_padding":
+					field "type": "panel"
+					field "size": ["100%", 12]
+			Added control:
+				element "image_panel":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+					field "controls":
+						control:
+							element "image":
+								field "type": "image"
+								field "size": ["85.711%y", "100% + 7px"]
+								field "max_size": ["100%", "100% + 7px"]
+								field "layer": 2
+								field "bilinear": true
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+										field "binding_name": "#coin_offer_texture_name"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+										field "binding_name": "#coin_offer_texture_file_system"
+										field "binding_name_override": "#texture_file_system"
+			Added control:
+				element "non_bonus_padding_0":
+					field "type": "panel"
+					field "size": ["100%", 10]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #bonus_coins_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+			Added control:
+				element "non_bonus_padding_1":
+					field "type": "panel"
+					field "size": ["100%", 21]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #bonus_coins_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+			Added control:
+				element "currency_panel":
+					field "type": "panel"
+					field "size": ["100%", 14]
+					field "controls":
+						control:
+							element "currency_price_panel":
+								field "type": "image"
+								field "offset": [0, 4]
+								field "size": ["100% + 8px", 14]
+								field "layer": -4
+								field "texture": "textures/ui/bonus_banner"
+								field "color": "$coin_color"
+								field "controls":
+									control:
+										element "price@coin_purchase.price":
+											field "$variables":
+												variable "$price_color": "$coin_offer_text_color"
+												variable "$price_visible": "(not #debug_price_visible)"
+									control:
+										element "debug_price@coin_purchase.price":
+											field "$variables":
+												variable "$price_color": "$c_color_format"
+												variable "$price_visible": "#debug_price_visible"
+		Changed field "size":
+			Changed item 0 from "100% - 4px" to "100% - 6px".
+			Changed item 1 from "100%c" to "100%".
+	Changed element "button_content":
+		Unchanged field "type": "panel"
+		Changed field "size":
+			Changed item 0 from "100%" to "100% + 2px".
+			Unchanged item 1: "100%"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "image":
+					field "type": "image"
+					field "size": ["100%", "116.67%x"]
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "layer": 2
+					field "bilinear": true
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+							field "binding_name": "#coin_offer_texture_name"
+							field "binding_name_override": "#texture"
+						binding:
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+							field "binding_name": "#coin_offer_texture_file_system"
+							field "binding_name_override": "#texture_file_system"
+			Added control:
+				element "call_out_background":
+					field "type": "image"
+					field "size": ["100% + 2px", "100%"]
+					field "layer": -8
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "texture": "textures/ui/cointier_backdrop"
+					field "controls":
+						control:
+							element "bevel":
+								field "type": "image"
+								field "size": ["100% + 2px", "100% + 6px"]
+								field "color": "$coin_screen_callout_bevel_color"
+								field "layer": 9
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "texture": "textures/ui/coin_bevel"
+		Added field "offset" of [0, -3].
+	Added element "call_out_bonus_coins_stack":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100% - 4px", "100%"]
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "bottom_middle"
+		field "layer": 4
+		field "controls":
+			control:
+				element "image_padding":
+					field "type": "panel"
+					field "size": ["100%", 16]
+			control:
+				element "image_panel":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+					field "controls":
+						control:
+							element "image":
+								field "type": "image"
+								field "size": ["85.711%y", "100% + 7px"]
+								field "max_size": ["100%", "100% + 7px"]
+								field "layer": 1
+								field "bilinear": true
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+										field "binding_name": "#coin_offer_texture_name"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+										field "binding_name": "#coin_offer_texture_file_system"
+										field "binding_name_override": "#texture_file_system"
+			control:
+				element "non_bonus_padding_0":
+					field "type": "panel"
+					field "size": ["100%", 10]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #bonus_coins_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+			control:
+				element "price_panel":
+					field "type": "panel"
+					field "layer": 2
+					field "size": ["100%", "100%c"]
+					field "controls": control: element "call_out_coins_stack_panel@coin_purchase.call_out_coins_stack_panel": field "layer": 1
+			control:
+				element "plus_label":
+					field "type": "panel"
+					field "size": ["100%", 10]
+					field "controls":
+						control:
+							element "plus_label":
+								field "type": "label"
+								field "size": ["default", 10]
+								field "layer": 2
+								field "text": "+"
+								field "color": "$store_white_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#bonus_coins_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+			control:
+				element "non_bonus_padding":
+					field "type": "panel"
+					field "size": ["100%", 21]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #bonus_coins_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+			control:
+				element "bonus_label_panel":
+					field "type": "panel"
+					field "size": ["100%", 10]
+					field "bindings":
+						binding:
+							field "binding_name": "#bonus_coins_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+					field "controls":
+						control:
+							element "bonus_label":
+								field "type": "label"
+								field "size": ["default", "100%"]
+								field "text": "store.coin.bonus"
+								field "layer": 2
+								field "color": "$store_white_text_color"
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+										field "binding_name": "#call_out_color"
+										field "binding_name_override": "#color"
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 1]
+			control:
+				element "bonus_coin_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 11]
+					field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_name": "#bonus_coins_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+					field "controls":
+						control:
+							element "fill_panel_0":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+						control:
+							element "bonus_coin_label_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "controls":
+									control:
+										element "bonus_coins":
+											field "type": "label"
+											field "layer": 1
+											field "text": "#bonus_coins"
+											field "size": ["default", 10]
+											field "color": "$store_white_text_color"
+											field "bindings":
+												binding:
+													field "binding_name": "#bonus_coins"
+													field "binding_type": "collection"
+													field "binding_collection_name": "coin_purchase_grid"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "coin_purchase_grid"
+													field "binding_name": "#call_out_color"
+													field "binding_name_override": "#color"
+						control:
+							element "coin_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "controls": control: element "coin@common_store.coin_icon": empty
+						control:
+							element "fill_panel_1":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "currency_panel":
+					field "type": "panel"
+					field "size": ["100%", 14]
+					field "controls":
+						control:
+							element "currency_price_panel":
+								field "type": "image"
+								field "offset": [0, 3]
+								field "layer": 2
+								field "size": ["100% + 9px", 14]
+								field "texture": "textures/ui/bonus_banner"
+								field "color": "$coin_color"
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+										field "binding_name": "#call_out_color"
+										field "binding_name_override": "#color"
+								field "controls":
+									control:
+										element "price@coin_purchase.price":
+											field "$variables":
+												variable "$price_color": "$coin_offer_text_color"
+												variable "$price_visible": "(not #debug_price_visible)"
+									control:
+										element "debug_price@coin_purchase.price":
+											field "$variables":
+												variable "$price_color": "$c_color_format"
+												variable "$price_visible": "#debug_price_visible"
+			control:
+				element "padding_2":
+					field "type": "panel"
+					field "size": ["100%", 1]
+	Added element "call_out_button_content":
+		field "type": "panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control: element "call_out_header@coin_purchase.call_out_header": empty
+			control: element "call_out_bonus_coins_stack@coin_purchase.call_out_bonus_coins_stack": empty
+			control:
+				element "call_out_background":
+					field "type": "image"
+					field "size": ["100% + 4px", "100%"]
+					field "layer": 1
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "texture": "textures/ui/cointier_backdrop"
+					field "controls":
+						control:
+							element "bevel":
+								field "type": "image"
+								field "size": ["100% + 2px", "100% + 6px"]
+								field "offset": [0, -3]
+								field "layer": 2
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "texture": "textures/ui/coin_bevel"
+						control:
+							element "call_out_border":
+								field "type": "image"
+								field "size": ["100% + 2px", "100% + 5px"]
+								field "offset": [0, -3]
+								field "layer": 3
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "texture": "textures/ui/focus_border_white"
+								field "bindings":
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+										field "binding_name": "#call_out_color"
+										field "binding_name_override": "#color"
+	Added element "call_out_coins_stack_panel":
+		field "type": "stack_panel"
+		field "layer": 1
+		field "orientation": "horizontal"
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "bottom_middle"
+		field "size": ["default", 13]
+		field "controls":
+			control:
+				element "text_padding":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "controls":
+						control:
+							element "coins_without_bonus":
+								field "type": "label"
+								field "layer": 3
+								field "offset": [0, 1]
+								field "text": "#coins_without_bonus"
+								field "color": "$store_white_text_color"
+								field "bindings":
+									binding:
+										field "binding_name": "#coins_without_bonus"
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "coin_purchase_grid"
+										field "binding_name": "#call_out_color"
+										field "binding_name_override": "#color"
+			control: element "coin@common_store.coin_icon": empty
+	Added element "call_out_header":
+		field "type": "panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["100%", 18]
+		field "offset": [0, -3]
+		field "layer": 8
+		field "controls":
+			control:
+				element "call_out_banner":
+					field "type": "image"
+					field "size": ["100% + 6px", "100% + 2px"]
+					field "layer": 1
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "texture": "textures/ui/call_out_header"
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+							field "binding_name": "#call_out_banner_color"
+							field "binding_name_override": "#color"
+			control:
+				element "call_out_label":
+					field "type": "label"
+					field "size": ["default", 10]
+					field "layer": 2
+					field "color": "$coin_header_text_color"
+					field "text_alignment": "center"
+					field "font_type": "smooth"
+					field "text": "#call_out_text"
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_collection_name": "coin_purchase_grid"
+							field "binding_name": "#call_out_text"
+	Added element "call_out_offer_panel@common_buttons.light_content_button":
+		field "offset": [0, 4]
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "coin_purchase_grid"
+			binding:
+				field "binding_name": "#is_call_out"
+				field "binding_type": "collection"
+				field "binding_collection_name": "coin_purchase_grid"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$button_size_override":
+				item 0: "100%"
+				item 1: "100% + 8px"
+			variable "$button_content": "coin_purchase.call_out_button_content"
+			variable "$pressed_button_name": "button.purchase_coins"
+			variable "$anchor": "top_left"
+			variable "$border_hover_layer": 15
+			variable "$border_pressed_layer": 15
+	Changed element "coin_purchase_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 6 (+2, -0)
+			Changed control:
+				Changed element "not_enough_coins_panel":
+					Unchanged field "type": "panel"
+					Removed field "visible" of "$show_need_more_coins_string".
+					Added field "bindings":
+						binding:
+							field "binding_name": "#needs_more_coins"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 5]
+					field "bindings":
+						binding:
+							field "binding_name": "#needs_more_coins"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+					field "bindings":
+						binding:
+							field "binding_name": "#needs_more_coins"
+							field "binding_name_override": "#visible"
+		Changed field "size":
+			Changed item 0 from "100%" to "100% - 4px".
+			Unchanged item 1: "100%"
+		Added field "offset" of [2, 0].
+	Changed element "coin_purchase_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "dialog@common_dialogs.main_panel_no_buttons":
+					Removed field "variables":
+						variable:
+							field "requires": "($show_tokens_faq_button and $show_need_more_coins_string)"
+							field "$variables": variable "$window_size": "$purchase_coin_screen_size_extended_not_enough"
+						variable:
+							field "requires": "(not $show_tokens_faq_button and not $show_need_more_coins_string)"
+							field "$variables": variable "$window_size": "$purchase_coin_screen_size"
+						variable:
+							field "requires": "(not $show_tokens_faq_button and $show_need_more_coins_string)"
+							field "$variables": variable "$window_size": "$purchase_coin_screen_size_not_enough"
+						variable:
+							field "requires": "($show_tokens_faq_button and not $show_need_more_coins_string)"
+							field "$variables": variable "$window_size": "$purchase_coin_screen_size_extended"
+	Changed element "coins_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "text_padding":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "coins_without_bonus":
+								Unchanged field "type": "label"
+								Changed field "color" from "$coin_color" to "$store_white_text_color".
+	Changed element "main_panel":
+		Unchanged field "type": "panel"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from "100%" to "17%x + 82px".
+		Added field "clip_state_change_event" of "$store_factory_clipping_event".
+		Added field "bindings":
+			binding:
+				field "binding_type": "$store_factory_collection_details"
+				field "binding_collection_name": "$store_factory_collection_name"
+				field "binding_collection_prefix": "$store_factory_collection_prefix"
+	Changed element "offer_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "$variables":
+			Total variable: 7 (+3, -0)
+			Changed variable "$hover_button_texture" from "textures/ui/coin_button_borderless" to "textures/ui/focus_border_white".
+			Changed variable "$default_button_texture" from "textures/ui/coin_button_borderless" to "textures/ui/focus_border_white".
+			Changed variable "$pressed_button_texture" from "textures/ui/coin_button_borderless_pressed" to "textures/ui/focus_border_white".
+			Changed variable "$grid_item_size":
+				Changed item 1 from "100%" to "100% - 8px".
+			Added variable "$button_image_size":
+				item 0: "100%"
+				item 1: "100%"
+			Added variable "$border_hover_layer" of 9.
+			Added variable "$border_pressed_layer" of 9.
+	Changed element "offer_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control element "call_out_offer_panel@coin_purchase.call_out_offer_panel": field "layer": 3.
+		Changed field "size":
+			Changed item 0 from "100% - 2px" to "100% - 4px".
+			Changed item 1 from "100% - 2px" to "100% - 6px".
+	Changed element "offer_panel@common_buttons.light_content_button":
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding:
+				field "binding_name": "(not #is_call_out)"
+				field "binding_type": "collection"
+				field "binding_collection_name": "coin_purchase_grid"
+				field "binding_name_override": "#visible"
+		Added field "offset" of [0, 8].
+	Changed element "price":
+		Unchanged field "type": "label"
+		Changed field "size":
+			Unchanged item 0: "default"
+			Changed item 1 from 10 to 14.
+		Added field "offset" of [0, 2].
+Changed namespace "common_buttons":
+	Changed element "light_content_button@common_buttons.light_button_assets":
+		Changed field "controls":
+			Changed control:
+				Changed element "locked@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 10 (+0, -0)
+						Changed variable "$border_layer" from 1 to "$border_locked_layer".
+			Changed control:
+				Changed element "pressed@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 11 (+0, -0)
+						Changed variable "$border_layer" from 3 to "$border_pressed_layer".
+			Changed control:
+				Changed element "hover@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 10 (+0, -0)
+						Changed variable "$border_layer" from 3 to "$border_hover_layer".
+			Changed control:
+				Changed element "default@$button_state_panel":
+					Changed field "$variables":
+						Total variable: 11 (+0, -0)
+						Changed variable "$border_layer" from 2 to "$border_default_layer".
+		Changed field "$variables":
+			Total variable: 23 (+4, -0)
+			Added variable "$border_default_layer|default" of 2.
+			Added variable "$border_hover_layer|default" of 3.
+			Added variable "$border_pressed_layer|default" of 3.
+			Added variable "$border_locked_layer|default" of 1.
+	Changed element "text_body_focus_border_for_controller_button@common.button":
+		Changed field "controls":
+			Changed control:
+				Changed element "hover@common.empty_panel":
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "focus_border@achievement.focus_border":
+								field "size": ["100%", "100% + 4px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_using_gamepad"
+										field "binding_name_override": "#visible"
+						Added control:
+							element "focus_border@common_buttons.focus_border":
+								field "size": ["100%", "100% + 4px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#is_using_gamepad"
+										field "binding_name_override": "#visible"
+Changed namespace "common_store":
+	Changed element "image_glyphs_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 4 (+2, -1)
+			Removed control:
+				element "image":
+					field "type": "panel"
+					field "size": ["50%", "56.25%x"]
+					field "controls":
+						control:
+							element "key_image":
+								field "type": "image"
+								field "layer": 1
+								field "size": ["100%", "100%"]
+								field "bilinear": true
+								field "bindings":
+									binding:
+										field "binding_name": "#promo_key_art_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#promo_key_art_file_system"
+										field "binding_name_override": "#texture_file_system"
+								field "controls":
+									control:
+										element "border@common.focus_border_white":
+											field "size": ["100% + 2px", "100% + 2px"]
+											field "color": "$light_border_default_color"
+											field "layer": 1
+									control:
+										element "persona_key_art_frame@common.square_image_border_white":
+											field "size": ["100%y", "80%"]
+											field "layer": 6
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "offset": [-10, 0]
+											field "bindings":
+												binding:
+													field "binding_name": "#promo_item_is_persona"
+													field "binding_name_override": "#visible"
+											field "controls":
+												control:
+													element "persona_image_panel":
+														field "type": "image"
+														field "size": ["100% - 2px", "100% - 2px"]
+														field "layer": 5
+														field "bilinear": true
+														field "anchor_from": "center"
+														field "anchor_to": "center"
+														field "bindings":
+															binding:
+																field "binding_name": "#promo_persona_thumbnail_texture"
+																field "binding_name_override": "#texture"
+															binding:
+																field "binding_name": "#promo_persona_thumbnail_file_system"
+																field "binding_name_override": "#texture_file_system"
+												control:
+													element "background@persona_common.item_rarity_color_background":
+														field "size": ["100% - 2px", "100% - 2px"]
+														field "layer": 1
+														field "$variables":
+															variable "$rarity_background_alpha": 1
+															variable "$rarity_color_background_texture": "textures/ui/button_borderless_light"
+															variable "$rarity_background_bindings":
+																item 0:
+																	field "binding_name": "#rarity_color"
+																	field "binding_name_override": "#color"
+												control:
+													element "rarity_bar_panel@persona_common.rarity_bar":
+														field "size": ["100% - 2px", 3]
+														field "layer": 6
+														field "offset": [0, -1]
+														field "bindings":
+															binding:
+																field "binding_name": "#rarity_bar_texture"
+																field "binding_name_override": "#texture"
+															binding:
+																field "binding_name": "#promotion_offer_visible"
+																field "binding_name_override": "#visible"
+			Added control:
+				element "world_panel":
+					field "type": "panel"
+					field "size": ["50%", "56.25%x"]
+					field "controls":
+						control:
+							element "border@common.square_image_border_white":
+								field "type": "image"
+								field "layer": 6
+								field "size": ["100%", "100%"]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "texture": "textures/ui/black_border"
+						control:
+							element "world_key_image":
+								field "type": "image"
+								field "layer": 1
+								field "size": ["100%", "100%"]
+								field "bilinear": true
+								field "bindings":
+									binding:
+										field "binding_name": "#promo_key_art_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#promo_key_art_file_system"
+										field "binding_name_override": "#texture_file_system"
+					field "bindings":
+						binding:
+							field "binding_name": "#promo_item_is_world"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "persona_panel":
+					field "type": "panel"
+					field "size": ["25%", "100%x"]
+					field "controls":
+						control:
+							element "border@common.square_image_border_white":
+								field "type": "image"
+								field "layer": 6
+								field "size": ["100%", "100%"]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "texture": "textures/ui/black_border"
+						control:
+							element "persona_image":
+								field "type": "image"
+								field "size": ["100%", "100%"]
+								field "layer": 5
+								field "bilinear": true
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "bindings":
+									binding:
+										field "binding_name": "#promo_persona_thumbnail_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#promo_persona_thumbnail_file_system"
+										field "binding_name_override": "#texture_file_system"
+						control:
+							element "background@persona_common.item_rarity_color_background":
+								field "size": ["100%", "100%"]
+								field "layer": 1
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "$variables":
+									variable "$rarity_background_alpha": 1
+									variable "$rarity_color_background_texture": "textures/ui/button_borderless_light"
+									variable "$rarity_background_bindings":
+										item 0:
+											field "binding_name": "#rarity_color"
+											field "binding_name_override": "#color"
+						control:
+							element "rarity_bar_panel@persona_common.rarity_bar":
+								field "size": ["100% - 2px", 3]
+								field "layer": 6
+								field "anchor_from": "bottom_middle"
+								field "anchor_to": "bottom_middle"
+								field "bindings":
+									binding:
+										field "binding_name": "#rarity_bar_texture"
+										field "binding_name_override": "#texture"
+					field "bindings":
+						binding:
+							field "binding_name": "#promo_item_is_persona"
+							field "binding_name_override": "#visible"
+	Changed element "store_section_factory":
+		Unchanged field "type": "stack_panel"
+		Changed field "factory":
+			Changed field "control_ids":
+				Total control id: 24 (+1, -0)
+				Added control id "coin_row_section" of "@coin_purchase.main_panel".
+Changed namespace "create_world_upsell":
+	Changed element "new_realm_button@common_buttons.light_content_button":
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#allow_purchase_realm"
+				field "binding_name_override": "#enabled"
+Changed namespace "general_section":
+	Total element: 115 (+2, -1)
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 92 (+3, -1)
+			Removed control:
+				element "option_toggle_server_chunk_map@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_showServerChunkMap"
+						variable "$option_binding_name": "#dev_show_server_chunk_map"
+						variable "$option_enabled_binding_name": "#dev_show_server_chunk_map_enabled"
+						variable "$toggle_name": "dev_show_server_chunk_map"
+			Added control:
+				element "option_dropdown_skin_rotation_speed@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "Display Skin Rotation Speed Multiplier"
+						variable "$dropdown_content": "general_section.dev_debug_speed_multiplier_options"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "dev_debug_skin_rotation_speed_multiplier_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_debug_skin_rotation_speed_multiplier_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#dev_debug_skin_rotation_speed_multiplier_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "400%"
+			Added control:
+				element "option_toggle_all_skins_rotate@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "Toggle All Skins Rotate"
+						variable "$option_binding_name": "#dev_marketplace_toggle_all_skins_rotate"
+						variable "$option_enabled_binding_name": "#dev_marketplace_toggle_all_skins_rotate_enabled"
+						variable "$toggle_name": "dev_marketplace_toggle_all_skins_rotate"
+			Added control:
+				element "option_dropdown_server_chunk_map@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.dev_chunkMapMode"
+						variable "$dropdown_content": "general_section.dev_chunkMapMode_content"
+						variable "$option_enabled_binding_name": "#dev_chunk_map_mode_dropdown_enabled"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "dev_chunk_map_mode_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_chunk_map_mode_dropdown_toggle_label"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "200%"
+	Added element "dev_chunkMapMode_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					field "dev_chunkMapMode_client@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#chunk_map_mode_client"
+						field "$radio_label_text": "options.dev_chunk_map_mode_client"
+				item 1:
+					field "dev_chunkMapMode_server@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#chunk_map_mode_server_chunk_state"
+						field "$radio_label_text": "options.dev_chunk_map_mode_server_chunk_state"
+				item 2:
+					field "dev_chunkMapMode_server_debug_display@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#chunk_map_mode_server_chunk_debug_display_state"
+						field "$radio_label_text": "options.dev_chunk_map_mode_server_chunk_debug_display_state"
+	Added element "dev_debug_speed_multiplier_options@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#dev_marketplace_rotation_speed_multiplier_one"
+						field "$radio_label_text": "x1.0"
+				item 1:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#dev_marketplace_rotation_speed_multiplier_two"
+						field "$radio_label_text": "x2.0"
+				item 2:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#dev_marketplace_rotation_speed_multiplier_three"
+						field "$radio_label_text": "x3.0"
+				item 3:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#dev_marketplace_rotation_speed_multiplier_four"
+						field "$radio_label_text": "x4.0"
+	Removed element "new_achievements_grid_item@settings_common.radio_with_label":
+		field "bindings":
+			binding:
+				field "binding_name": "#default_focus_precedence"
+				field "binding_type": "collection"
+				field "binding_condition": "visible"
+				field "binding_collection_name": "dev_new_achievements_screens_radio"
+		field "$variables":
+			variable "$toggle_state_binding_name": "#initial_selected"
+			variable "$radio_label_text": "#description"
+			variable "$radio_label_bindings":
+				item 0:
+					field "binding_name": "#description"
+					field "binding_type": "collection"
+					field "binding_condition": "once"
+					field "binding_collection_name": "dev_new_achievements_screens_radio"
+			variable "$radio_toggle_group": true
+			variable "$toggle_binding_type": "collection"
+			variable "$toggle_name": "dev_new_achievements_screens_radio"
+			variable "$toggle_grid_collection_name": "dev_new_achievements_screens_radio"
+			variable "$option_enabled_binding_name": ""
+	Changed element "ui_debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 22 (+6, -12)
+			Changed control:
+				Changed element "new_create_world_screen_radio_button":
+					Unchanged field "type": "grid"
+					Changed field "bindings":
+						Total binding: 1 (+0, -1)
+						Removed binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+			Changed control:
+				Changed element "new_create_world_screen_radio_label":
+					Unchanged field "type": "label"
+					Changed field "text" from "New Create World Screen (requires the infrastructure)" to "New Create World Screen".
+					Removed field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "new_achievements_screens_radio_label":
+					field "type": "label"
+					field "text": "New Achievements Screens (requires the infrastructure)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "new_achievements_screens_radio_label_disabled":
+					field "type": "label"
+					field "text": "New Achievements Screens (requires the infrastructure)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "alpha": 0.5
+					field "bindings":
+						binding:
+							field "binding_name": "(not #core_ui_enabled)"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "new_achievements_screens_radio_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Removed control:
+				element "new_achievements_screens_radio_button":
+					field "type": "grid"
+					field "size": ["100%", "100%c"]
+					field "grid_item_template": "general_section.new_achievements_grid_item"
+					field "grid_dimension_binding": "#dev_new_achievements_screens_radio_dimension"
+					field "collection_name": "dev_new_achievements_screens_radio"
+					field "bindings":
+						binding:
+							field "binding_name": "#dev_new_achievements_screens_radio_dimension"
+							field "binding_condition": "visible"
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+			Removed control:
+				element "new_achievements_screens_radio_button_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Removed control:
+				element "new_create_world_screen_radio_label_disabled":
+					field "type": "label"
+					field "text": "New Create World Screen (requires the infrastructure)"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "alpha": 0.5
+					field "bindings":
+						binding:
+							field "binding_name": "(not #core_ui_enabled)"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "open_core_ui_label":
+					field "type": "label"
+					field "text": "Core UI developer pages"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "open_core_ui_label_disabled":
+					field "type": "label"
+					field "text": "Core UI developer pages"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "alpha": 0.5
+					field "bindings":
+						binding:
+							field "binding_name": "(not #core_ui_enabled)"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "open_core_ui_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+			Removed control:
+				element "open_core_ui_docs@settings_common.action_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+					field "$variables":
+						variable "$pressed_button_name": "button.open_core_ui_docs"
+						variable "$button_text": "Open Core UI Docs"
+			Removed control:
+				element "open_core_ui_tests@settings_common.action_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#core_ui_enabled"
+							field "binding_name_override": "#enabled"
+					field "$variables":
+						variable "$pressed_button_name": "button.open_core_ui_tests"
+						variable "$button_text": "Open Core UI Tests"
+			Removed control:
+				element "open_core_ui_tests_spacer":
+					field "type": "panel"
+					field "size": ["100%", 7]
+			Added control:
+				element "open_ore_ui_label":
+					field "type": "label"
+					field "text": "Ore UI developer pages"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+			Added control:
+				element "open_ore_ui_label_spacer":
+					field "type": "panel"
+					field "size": ["100%", 3]
+			Added control:
+				element "open_ore_ui_docs@settings_common.action_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.open_ore_ui_docs"
+						variable "$button_text": "Open Ore UI Documentation"
+			Added control:
+				element "open_ore_ui_tests@settings_common.action_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.open_ore_ui_tests"
+						variable "$button_text": "Open Ore UI Test Screens"
+			Added control:
+				element "open_ore_ui_test_modal@settings_common.action_button":
+					field "$variables":
+						variable "$pressed_button_name": "button.open_ore_ui_test_modal"
+						variable "$button_text": "Open Ore UI Test Modal"
+			Added control:
+				element "open_ore_ui_tests_spacer":
+					field "type": "panel"
+					field "size": ["100%", 7]
+Changed namespace "pause":
+	Changed element "achievements_icon_button":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "achievements_button@pause.achievements_button":
+					Added field "$variables" of variable "$focus_id": "achievements_button_focus".
+	Changed element "feedback_icon_button":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "feedback_button@pause.feedback_button":
+					Added field "$variables" of variable "$focus_override_left": "FOCUS_OVERRIDE_STOP".
+	Changed element "how_to_play_button@pause.pause_button_template":
+		Changed field "$variables":
+			Total variable: 2 (+0, -1)
+			Removed variable "$focus_override_right" of "change_skin_button".
+	Changed element "invite_players_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "size":
+			Changed item 0 from "100%" to "100% - 1px".
+			Unchanged item 1: "100%c"
+	Changed element "player_grid_item_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "player_permission_button_panel":
+					Unchanged field "type": "panel"
+					Added field "offset" of ["-1px", 0].
+	Changed element "quit_button@pause.pause_button_template":
+		Changed field "$variables":
+			Total variable: 3 (+1, -1)
+			Removed variable "$focus_override_right" of "change_skin_button".
+			Added variable "$focus_override_down" of "achievements_button_focus".
+		Removed field "focus_change_down" of "button.feedback".
+	Changed element "return_to_game_button@pause.pause_button_template":
+		Changed field "$variables":
+			Total variable: 4 (+1, -1)
+			Removed variable "$focus_override_right" of "change_skin_button".
+			Added variable "$focus_override_up" of "achievements_button_focus".
+		Removed field "focus_change_up" of "button.menu_quit".
+	Changed element "settings_button@pause.pause_button_template":
+		Changed field "$variables":
+			Total variable: 2 (+0, -1)
+			Removed variable "$focus_override_right" of "change_skin_button".
+Changed namespace "persona":
+	Changed element "emote_wheel_screen_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "dressing_room_button_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "dressing_room_button@common_buttons.light_text_button":
+								Added field "bindings":
+									binding:
+										field "binding_name": "#dressing_room_button_visible"
+										field "binding_name_override": "#visible"
+	Changed element "equip_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "a_button_helper@common.gamepad_helper_a":
+					Changed field "offset":
+						Changed item 0 from "-34%" to "-38%".
+						Unchanged item 1: 0
+		Changed field "size":
+			Changed item 0 from "40% - 1px" to "50% - 1px".
+			Unchanged item 1: "100%"
+	Changed element "purchase_buttons":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "view_achievement_button@persona.view_achievement":
+					Changed field "size":
+						Changed item 0 from "60% - 1px" to "50% - 1px".
+						Unchanged item 1: "100%"
+Changed namespace "play":
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 6 (+0, -1)
+						Changed control:
+							Changed element "servers_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "more_servers_panel":
+											Unchanged field "type": "stack_panel"
+											Changed field "controls":
+												Total control: 7 (+1, -0)
+												Added control element "add_server_button@play.add_server_toggle_button": empty.
+						Removed control element "add_server_button@play.add_server_toggle_button": empty.
+Changed namespace "portfolio":
+	Changed element "close_button":
+		Unchanged field "type": "button"
+		Changed field "size":
+			Changed item 0 from 7 to 14.
+			Changed item 1 from 7 to 14.
+		Changed field "offset":
+			Changed item 0 from -12 to -14.
+			Changed item 1 from 12 to 14.
+	Changed element "close_button_default":
+		Unchanged field "type": "image"
+		Changed field "texture" from "textures/ui/x_default" to "textures/ui/close_button_default".
+	Changed element "close_button_hover":
+		Unchanged field "type": "image"
+		Changed field "texture" from "textures/ui/x_hover" to "textures/ui/close_button_hover".
+	Changed element "close_button_pressed":
+		Unchanged field "type": "image"
+		Changed field "texture" from "textures/ui/x_pressed" to "textures/ui/close_button_pressed".
+Changed namespace "profile":
+	Changed element "bottom_panel_framework":
+		Unchanged field "type": "panel"
+		Added field "bindings":
+			binding:
+				field "binding_name": "(not #marketplace_disabled)"
+				field "binding_name_override": "#visible"
+	Changed element "edit_appearance_error_button@common_buttons.dynamic_tooltip_notification_panel":
+		Changed field "bindings":
+			Total binding: 1 (+1, -0)
+			Added binding:
+				field "binding_name": "(not #marketplace_disabled)"
+				field "binding_name_override": "#visible"
+	Changed element "profile_screen_main_panel_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "profile_screen_main_content":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "featured_section_disabled_padding":
+								Unchanged field "type": "panel"
+								Added field "bindings":
+									binding:
+										field "binding_name": "(not #marketplace_disabled)"
+										field "binding_name_override": "#visible"
+Changed namespace "progress":
+	Total element: 66 (+1, -0)
+	Changed element "fancy_progress_loading_bars":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control:
+				element "progress_bar_nub@achievement.progress_bar_nub":
+					field "size": ["100% - 10px", 5]
+					field "layer": 4
+			Added control:
+				element "progress_bar_nub@progress.progress_bar_nub":
+					field "size": ["100% - 10px", 5]
+					field "layer": 4
+	Added element "progress_bar_nub":
+		field "type": "image"
+		field "texture": "textures/ui/experiencenub"
+		field "tiled": true
+Changed namespace "sidebar_navigation":
+	Changed element "sidebar_option_factory_panel":
+		Unchanged field "type": "input_panel"
+		Added field "size" of ["100%", "100%c"].
+Changed namespace "start":
+	Changed element "main_buttons_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_rows":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "stacked_row_2@start.stacked_row":
+								Changed field "controls":
+									Changed control:
+										Changed element "stacked_columns":
+											Unchanged field "type": "stack_panel"
+											Changed field "controls":
+												Changed control:
+													Changed element "stacked_col_1":
+														Unchanged field "type": "panel"
+														Changed field "controls":
+															Changed control:
+																Changed element "store_button@start.store_button":
+																	Added field "bindings":
+																		binding:
+																			field "binding_name": "(not #marketplace_disabled)"
+																			field "binding_name_override": "#visible"
+	Changed element "store_button_stack@start.stacked_row":
+		Changed field "controls":
+			Changed control:
+				Changed element "marketplace_error_button@common_buttons.dynamic_tooltip_notification_panel":
+					Changed field "bindings":
+						Total binding: 1 (+1, -1)
+						Removed binding:
+							field "binding_name": "#has_marketplace_errors"
+							field "binding_name_override": "#visible"
+						Added binding:
+							field "binding_name": "#marketplace_disabled"
+							field "binding_name_override": "#visible"
+			Changed control:
+				Changed element "marketplace_error_icon@start.marketplace_error_icon":
+					Changed field "bindings":
+						Total binding: 1 (+1, -1)
+						Removed binding:
+							field "binding_name": "#has_marketplace_errors"
+							field "binding_name_override": "#visible"
+						Added binding:
+							field "binding_name": "#marketplace_disabled"
+							field "binding_name_override": "#visible"
+			Changed control:
+				Changed element "store_button@start.store_button":
+					Changed field "bindings":
+						Total binding: 1 (+1, -1)
+						Removed binding:
+							field "binding_name": "(not #has_marketplace_errors)"
+							field "binding_name_override": "#visible"
+						Added binding:
+							field "binding_name": "(not #marketplace_disabled)"
+							field "binding_name_override": "#visible"
+Changed namespace "structure_editor":
+	Changed element "mode_panel@settings_common.option_dropdown":
+		Added field "ignored" of "$education_edition".
+	Changed element "structure_name_wrapper":
+		Unchanged field "type": "panel"
+		Added field "ignored" of "$education_edition".
+Added namespace "world_recovery":
+	element "background@common.screen_background":
+		field "alpha": 0.65
+		field "layer": 1
+	element "button_panel@common_buttons.light_text_button":
+		field "size": ["100% - 14px", 30]
+		field "anchor_from": "bottom_middle"
+		field "anchor_to": "bottom_middle"
+		field "$variables":
+			variable "$pressed_button_name": "button.select_worlds"
+			variable "$button_text": "world_recovery.select_worlds"
+			variable "$button_text_binding_type": "none"
+	element "description_label":
+		field "type": "label"
+		field "text": "world_recovery.description"
+		field "size": ["100%", "default"]
+		field "color": "$body_text_color"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+	element "description_panel@common.tts_label_focus_wrapper":
+		field "size": ["100%-1px", "100%-1px"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "$variables":
+			variable "$tts_label_panel": "world_recovery.scrolling_panel"
+			variable "$focus_border_anchor": "top_middle"
+	element "scrolling_panel@common.scrolling_panel":
+		field "size": ["100%", "100%"]
+		field "$variables":
+			variable "$scrolling_content": "world_recovery.description_label"
+			variable "$scrolling_pane_size":
+				item 0: "100%-2px"
+				item 1: "100%"
+			variable "$scrolling_pane_offset":
+				item 0: 2
+				item 1: 0
+			variable "$scroll_size":
+				item 0: 4
+				item 1: "100%-4px"
+			variable "$show_background": false
+			variable "$always_handle_scrolling": true
+	element "world_recovery_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "force_render_below": true
+		field "$variables":
+			variable "$screen_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+				item 2: "@common.screen_entrance_animation_push_fade"
+				item 3: "@common.screen_entrance_animation_pop_fade"
+			variable "$background_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+				item 2: "@common.screen_entrance_animation_push_fade"
+				item 3: "@common.screen_entrance_animation_pop_fade"
+			variable "$screen_content": "world_recovery.world_recovery_screen_content"
+			variable "$screen_background_control": "world_recovery.background"
+	element "world_recovery_screen_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "dialog@common_dialogs.main_panel_one_button":
+					field "size": [260, "100% - 70px"]
+					field "layer": 3
+					field "$variables":
+						variable "$button_panel": "world_recovery.button_panel"
+						variable "$text_name": "world_recovery.title"
+						variable "$child_control": "world_recovery.description_panel"
+Changed namespace "world_section":
+	Changed element "multiplayer_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 8 (+1, -1)
+			Removed control:
+				element "platform_settings_dropdown@settings_common.option_dropdown":
+					field "ignored": "(not $nx_os and not $is_ps4)"
+					field "bindings":
+						binding:
+							field "binding_name": "#can_be_platform_network_enabled"
+							field "binding_name_override": "#enabled"
+					field "$variables":
+						variable "$show_option_label": true
+						variable "$option_label": "options.thirdPartyConsoleVisible"
+						variable "$dropdown_content": "world_section.platform_broadcast_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "platform_broadcast_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#platform_broadcast_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#platform_show_broadcast_dropdown"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: 60
+			Added control:
+				element "platform_settings_dropdown@settings_common.option_dropdown":
+					field "bindings":
+						binding:
+							field "binding_name": "#platform_settings_dropdown_visible"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$show_option_label": true
+						variable "$option_label": "options.thirdPartyConsoleVisible"
+						variable "$dropdown_content": "world_section.platform_broadcast_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "platform_broadcast_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#platform_broadcast_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#platform_broadcast_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: 60
+Changed namespace "world_templates":
+	Changed element "world_list_grids_stack":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "store_panel":
+					Unchanged field "type": "panel"
+					Added field "bindings":
+						binding:
+							field "binding_name": "(not #marketplace_disabled)"
+							field "binding_name_override": "#visible"

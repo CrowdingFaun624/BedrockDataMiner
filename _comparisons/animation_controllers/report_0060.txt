@@ -1,44 +1,48 @@
-Difference of "animation_controllers" between "1.18.10.20" (beta of "1.18.10") and "1.18.10.21" (beta of "1.18.10").
+Difference of "animation_controllers" between "1.18.10.22" (beta of "1.18.10") and "1.18.10.24" (beta of "1.18.10").
 
-Changed file "player.animation_controllers":
-	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 7 (+1, -0)
-			Added resource pack "vanilla_1.18.10".
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.player.root":
-				Changed field "states":
-					Changed state "first_person":
-						Changed field "animations":
-							Total animation dict: 9 (+2, -1)
-							Removed animation dict "first_person_swap_item".
-							Added animation dict animation "first_person_swap_item": "!query.blocking".
-							Added animation dict animation "first_person_shield_block": "query.blocking".
-Changed file "shield.animation_controllers":
-	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 4 (+1, -0)
-			Added resource pack "vanilla_1.18.10".
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.shield.wield":
-				Changed field "states":
-					Total state: 2 (+0, -1)
-					Removed state "blocking":
-						field "animations":
-							animation dict: animation "wield_main_hand_first_person_block": "query.get_equipped_item_name('off_hand') != 'shield' && query.get_equipped_item_name == 'shield' && c.item_slot == 'main_hand'"
-							animation dict: animation "wield_off_hand_first_person_block": "query.get_equipped_item_name('off_hand') == 'shield' && c.item_slot != 'main_hand'"
+Total file: 58 (+2, -0)
+Added file "frog.animation_controllers.json":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "animation_controllers":
+			animation controller "controller.animation.frog.croaking":
+				field "initial_state": "default"
+				field "states":
+					state "croaking":
+						field "animations": animation dict: "croak"
+						field "transitions": transition list: transition "default": "!query.is_croaking"
+					state "default": field "transitions": transition list: transition "croaking": "query.is_croaking"
+			animation controller "controller.animation.frog.eat_mob":
+				field "initial_state": "default"
+				field "states":
+					state "default": field "transitions": transition list: transition "eating": "query.is_eating_mob"
+					state "eating":
+						field "animations": animation dict: "tongue"
+						field "transitions": transition list: transition "default": "!query.is_eating_mob"
+			animation controller "controller.animation.frog.general":
+				field "initial_state": "on_land"
+				field "states":
+					state "idling_water":
+						field "animations": animation dict: "idle_water"
 						field "transitions":
-							transition list: transition "default": "!query.blocking"
-							transition list: transition "third_person": "!c.is_first_person"
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+0, -1)
-							Removed transition list transition "blocking": "query.blocking".
-						Changed field "animations":
-							Total animation dict: 4 (+4, -2)
-							Removed animation dict animation "wield_main_hand_first_person": "c.item_slot == 'main_hand'".
-							Removed animation dict animation "wield_off_hand_first_person": "c.item_slot != 'main_hand'".
-							Added animation dict animation "wield_main_hand_first_person": "!variable.is_blocking_main_hand && c.item_slot == 'main_hand'".
-							Added animation dict animation "wield_off_hand_first_person": "!variable.is_blocking_off_hand && c.item_slot == 'off_hand'".
-							Added animation dict animation "wield_main_hand_first_person_block": "variable.is_blocking_main_hand && c.item_slot == 'main_hand'".
-							Added animation dict animation "wield_off_hand_first_person_block": "variable.is_blocking_off_hand && c.item_slot == 'off_hand'".
+							transition list: transition "on_land": "!query.is_in_water"
+							transition list: transition "swimming": "query.is_in_water && query.modified_move_speed > 0.15"
+					state "on_land":
+						field "animations":
+							animation dict: animation "walk": "math.min(1.0, query.modified_move_speed * 10)"
+							animation dict: animation "jump_up": "query.vertical_speed > 0.25"
+						field "transitions":
+							transition list: transition "idling_water": "query.is_in_water && query.modified_move_speed < 0.15"
+							transition list: transition "swimming": "query.is_in_water && query.modified_move_speed > 0.15"
+					state "swimming":
+						field "animations": animation dict: animation "swim": "math.min(1.0, query.modified_move_speed * 10)"
+						field "transitions":
+							transition list: transition "on_land": "!query.is_in_water"
+							transition list: transition "idling_water": "query.is_in_water && query.modified_move_speed < 0.15"
+Added file "tadpole.animation_controllers.json":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "animation_controllers":
+			animation controller "controller.animation.tadpole.general":
+				field "initial_state": "default"
+				field "states": state "default": field "animations": animation dict: animation "swim": "math.min(1.0, query.modified_move_speed * 10)"

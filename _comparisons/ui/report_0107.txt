@@ -1,0 +1,207 @@
+Difference of "ui" between "1.8.0.13" (beta of "1.8.0") and "1.8.0.14" (beta of "1.8.0").
+
+Changed namespace "common_buttons":
+	Total element: 32 (+2, -0)
+	Added element "horizontal_form_fitting":
+		field "type": "panel"
+		field "size": ["100%c", "100%"]
+		field "offset": "$button_offset"
+		field "controls": control: element "content@$button_content": field "layer": 2
+	Added element "light_content_form_fitting_button@common_buttons.light_content_button":
+		field "size": ["100%c", "20px"]
+		field "$variables":
+			variable "$button_state_panel|default": "common_buttons.new_ui_form_fitting_button_panel"
+			variable "$anchor": "top_left"
+			variable "$button_offset|default":
+				item 0: 3
+				item 1: 3
+			variable "$button_pressed_offset|default":
+				item 0: 3
+				item 1: 4
+			variable "$button_type_panel": "common_buttons.horizontal_form_fitting"
+	Changed element "new_ui_form_fitting_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "border@common_buttons.focus_border":
+					Changed field "controls":
+						Changed control:
+							Changed element "$button_image@$button_image":
+								Changed field "controls":
+									Changed control:
+										Changed element "button_content":
+											Unchanged field "type": "panel"
+											Changed field "size" from ["100%c + 6px", "100%c + 6px"] to "$button_content_size_override".
+								Changed field "size" from ["100%c + 2px", "100%c + 2px"] to "$button_image_size_override".
+					Changed field "size" from ["100%c + 2px", "100%c + 2px"] to "$focus_border_size_override".
+		Changed field "$variables":
+			Total variable: 5 (+3, -0)
+			Added variable "$focus_border_size_override|default":
+				item 0: "100%c + 2px"
+				item 1: "100%c + 2px"
+			Added variable "$button_image_size_override|default":
+				item 0: "100%c + 2px"
+				item 1: "100%c + 2px"
+			Added variable "$button_content_size_override|default":
+				item 0: "100%c + 6px"
+				item 1: "100%c + 6px"
+Changed namespace "common_store":
+	Changed element "hero_offer_grid":
+		Unchanged field "type": "stack_panel"
+		Changed field "$variables":
+			Total variable: 11 (+0, -1)
+			Removed variable "$content_offer_texture_type" of "key_art".
+Changed namespace "mashup":
+	Total element: 90 (+1, -0)
+	Added element "smooth_coin_purchase_label_formfitting":
+		field "type": "stack_panel"
+		field "size": ["100%c", "100%"]
+		field "orientation": "horizontal"
+		field "controls":
+			control:
+				element "sales_banner_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "markdown_banner@common_store.markdown_background":
+								field "size": ["100%c", "100%"]
+								field "offset": [-7, -3]
+								field "ignored": "(not $default_state)"
+								field "layer": 9
+								field "$variables":
+									variable "$markdown_label": "mashup.discount_label"
+									variable "$banner_size":
+										item 0: "20px"
+										item 1: "100%"
+									variable "$triangle_offset":
+										item 0: 0
+										item 1: 0
+									variable "$triangle_texture": "textures/ui/saleflagtrianglebeveldefault"
+									variable "$banner_texture": "textures/ui/sale_button_borderless_lighthoverflag"
+						control:
+							element "discount_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "ignored": "$default_state"
+								field "controls":
+									control:
+										element "discount_label@mashup.discount_label":
+											field "anchor_from": "left_middle"
+											field "anchor_to": "left_middle"
+											field "offset": [1, -4]
+											field "layer": 9
+					field "bindings":
+						binding:
+							field "binding_name": "#is_on_sale"
+							field "binding_name_override": "#visible"
+			control:
+				element "sales_padding_0":
+					field "type": "panel"
+					field "size": ["4px", "100%"]
+			control:
+				element "markdown_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "markdown_label@mashup.price_markdown_panel":
+								field "size": ["100%c + 4px", "100%"]
+								field "offset": [0, -2]
+								field "$variables":
+									variable "$strike_thru_offset":
+										item 0: 0
+										item 1: -1
+					field "bindings":
+						binding:
+							field "binding_name": "#is_on_sale"
+							field "binding_name_override": "#visible"
+			control:
+				element "coin_purchase_label_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "coin_purchase_label_text@mashup.coin_purchase_label_text":
+								field "text_alignment": "center"
+								field "offset": [0, -3]
+			control:
+				element "coin_purchase_label_panel_2":
+					field "type": "panel"
+					field "size": ["100%c", "100%"]
+					field "controls":
+						control:
+							element "sales_coin_purchase_label_text@mashup.coin_purchase_label_text":
+								field "color": "$light_button_default_text_color"
+								field "text_alignment": "center"
+								field "offset": [0, -3]
+								field "$variables": variable "$coin_label_visibility_binding|default": "#is_on_sale"
+			control:
+				element "coin_image_offset_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "controls": control: element "coin@mashup.coin_image": field "offset": [-2, 1]
+			control:
+				element "fill_padding_1":
+					field "type": "panel"
+					field "size": ["4px", "100%"]
+					field "ignored": "$is_on_sale"
+	Changed element "smooth_purchase_buttons_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "$variables":
+			Total variable: 3 (+0, -1)
+			Removed variable "$panel_size_override|default":
+				item 0: "50%"
+				item 1: "100%"
+		Changed field "variables":
+			Total variable: 1 (+0, -1)
+			Removed variable:
+				field "requires": "#expand_purchase_button"
+				field "$variables":
+					variable "$panel_size_override":
+						item 0: "70%"
+						item 1: "100%"
+		Changed field "size" from "$panel_size_override" to ["100%c", "20px"].
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "smooth_purchase_with_coins_button@common_buttons.light_content_button":
+					field "type": "button"
+					field "size": ["fill", "100%"]
+					field "$variables":
+						variable "$button_focus_precedence": 8
+						variable "$pressed_button_name": "$button_action"
+						variable "$interact_button_id|default": "button.purchase_with_coins"
+						variable "$focus_id": "$interact_button_id"
+						variable "$button_content": "mashup.smooth_coin_purchase_label"
+						variable "$is_purchase_button": true
+			Added control:
+				element "smooth_purchase_with_coins_button@common_buttons.light_content_form_fitting_button":
+					field "type": "button"
+					field "$variables":
+						variable "$button_size_override":
+							item 0: "100%c"
+							item 1: "100%"
+						variable "$focus_border_size_override":
+							item 0: "100%c + 2px"
+							item 1: "100%"
+						variable "$button_image_size_override":
+							item 0: "100%c + 2px"
+							item 1: "100% - 2px"
+						variable "$button_content_size_override":
+							item 0: "100%c + 6px"
+							item 1: "100%"
+						variable "$button_focus_precedence": 8
+						variable "$pressed_button_name": "$button_action"
+						variable "$interact_button_id|default": "button.purchase_with_coins"
+						variable "$focus_id": "$interact_button_id"
+						variable "$button_content": "mashup.smooth_coin_purchase_label_formfitting"
+						variable "$is_purchase_button": true
+		Changed field "anchor_to" from "left_middle" to "top_left".
+		Changed field "anchor_from" from "left_middle" to "top_left".
+	Changed element "summary_box_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control element "buttons_panel@mashup.smooth_buttons_panel": empty.
+			Added control element "buttons_panel@mashup.smooth_buttons_panel": field "$variables": variable "$is_primary_purchase_button": true.

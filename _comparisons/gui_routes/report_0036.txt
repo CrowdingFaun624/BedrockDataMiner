@@ -1,25 +1,56 @@
-Difference of "gui_routes" between "1.20.60.20" (beta of "1.20.60") and "1.20.60.21" (beta of "1.20.60").
+Difference of "gui_routes" between "1.20.51" and "1.20.60.20" (beta of "1.20.60").
 
 Changed field "routes":
 	Changed route "/hbui/index.html":
 		Unchanged field "fileName": "/hbui/index.html"
 		Changed field "supportedRoutes":
-			Total supported route: 36 (+3, -0)
-			Added supported route "/sign-in-dressing-room":
-				field "knownEntries": empty
-				field "modes": empty
+			Total supported route: 33 (+2, -1)
+			Removed supported route "/privacy-and-online-safety-modal":
+				field "route": "/privacy-and-online-safety-modal"
+				field "modes": mode: "modal"
+				field "regexp": "^\/privacy-and-online-safety-modal(?:\/)?$"
 				field "params": empty
-				field "regexp": "^\/sign-in-dressing-room(?:\/)?$"
-				field "route": "/sign-in-dressing-room"
-			Added supported route "/sign-in-marketplace":
 				field "knownEntries": empty
+			Added supported route "/realms-story-comments/:id":
+				field "route": "/realms-story-comments/:id"
 				field "modes": empty
-				field "params": empty
-				field "regexp": "^\/sign-in-marketplace(?:\/)?$"
-				field "route": "/sign-in-marketplace"
-			Added supported route "/sign-in-worlds-friends-servers":
+				field "regexp": "^\/realms-story-comments\/([^\/]+?)(?:\/)?$"
+				field "params":
+					parameter "id":
+						field "name": "id"
+						field "prefix": "/"
+						field "delimiter": "/"
+						field "optional": false
+						field "repeat": false
+						field "pattern": "[^\/]+?"
 				field "knownEntries": empty
-				field "modes": empty
-				field "params": empty
-				field "regexp": "^\/sign-in-worlds-friends-servers(?:\/)?$"
-				field "route": "/sign-in-worlds-friends-servers"
+			Moved supported route "/realms-story-owner-opt-in-notice-modal" to "/realms-story-entry-route".
+			Changed supported route "/realms-story-entry-route":
+				Changed field "regexp" from "^\/realms-story-owner-opt-in-notice-modal(?:\/)?$" to "^\/realms-story-entry-route(?:\/)?$".
+				Changed field "route" from "/realms-story-owner-opt-in-notice-modal" to "/realms-story-entry-route".
+				Changed field "modes":
+					Total mode: 0 (+0, -1)
+					Removed mode "modal".
+			Added supported route "/realms-story-entry-route/:tab/:realmId?":
+				field "route": "/realms-story-entry-route/:tab/:realmId?"
+				field "modes": mode: "modal"
+				field "regexp": "^\/realms-story-entry-route\/([^\/]+?)(?:\/([^\/]+?))?(?:\/)?$"
+				field "params":
+					parameter "realmId":
+						field "name": "realmId"
+						field "prefix": "/"
+						field "delimiter": "/"
+						field "optional": true
+						field "repeat": false
+						field "pattern": "[^\/]+?"
+					parameter "tab":
+						field "name": "tab"
+						field "prefix": "/"
+						field "delimiter": "/"
+						field "optional": false
+						field "repeat": false
+						field "pattern": "[^\/]+?"
+				field "knownEntries":
+					entry: field "tab": "feed"
+					entry: field "tab": "members"
+					entry: field "tab": "timeline"

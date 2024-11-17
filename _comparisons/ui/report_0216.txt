@@ -1,0 +1,1744 @@
+Difference of "ui" between "1.17.10.20" (beta of "1.17.10") and "1.17.10.22" (beta of "1.17.10").
+Unable to create data files for 1 file between: "1.17.10.21"
+
+Total namespace: 195 (+1, -0)
+Changed namespace "choose_realm":
+	Total element: 17 (+4, -0)
+	Changed element "choose_realm_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control:
+				element "dialog@common_dialogs.main_panel_no_buttons":
+					field "size": "$choose_realm_screen_size"
+					field "layer": 2
+					field "$variables":
+						variable "$title_panel": "common_dialogs.standard_title_label"
+						variable "$title_size":
+							item 0: "100% - 14px"
+							item 1: 10
+						variable "$text_name": "#window_title_text"
+						variable "$title_text_binding_type": "global"
+						variable "$child_control": "choose_realm.main_panel"
+			Added control:
+				element "realm_dialog@common_dialogs.main_panel_no_buttons":
+					field "size": "$choose_realm_screen_size"
+					field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_name": "(not #slots_view_toggle)"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$title_panel": "common_dialogs.standard_title_label"
+						variable "$title_size":
+							item 0: "100% - 14px"
+							item 1: 10
+						variable "$text_name": "#window_title_text"
+						variable "$title_text_binding_type": "global"
+						variable "$child_control": "choose_realm.main_panel"
+			Added control:
+				element "slot_dialog@common_dialogs.main_panel_no_buttons":
+					field "size": "$choose_realm_screen_size"
+					field "layer": 2
+					field "bindings":
+						binding:
+							field "binding_name": "#slots_view_toggle"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$use_custom_title_control": true
+						variable "$custom_title_label": "common.back_content_panel"
+						variable "$back_button_has_title": true
+						variable "$button_text": "#slot_dialog_header"
+						variable "$button_text_binding_type": "global"
+						variable "$back_button_pressed_button_name": "modal.back"
+						variable "$title_size":
+							item 0: "100% - 14px"
+							item 1: 10
+						variable "$child_control": "choose_realm.slot_panel"
+	Changed element "main_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -1)
+			Removed control element "realms_scroll_content@choose_realm.realms_scroll_content": empty.
+			Added control:
+				element "progress_loading_bars@progress.progress_loading_bars":
+					field "size": ["100% - 14px", 10]
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "bindings":
+						binding:
+							field "binding_name": "#progress_loading_visible"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "realms_scroll_content@choose_realm.realms_scroll_content":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #progress_loading_visible)"
+							field "binding_name_override": "#visible"
+	Added element "slot_content_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control:
+				element "world_slot_top":
+					field "type": "panel"
+					field "size": ["100% + 4px", "70%"]
+					field "controls":
+						control:
+							element "plus_image@realms_slots.plus":
+								field "bindings":
+									binding:
+										field "binding_name": "(not #realm_slot_is_filled)"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "slots_collection"
+						control:
+							element "world_thumbnail":
+								field "type": "image"
+								field "size": ["100%", "100% + 4.5px"]
+								field "offset": [-2, 0.5]
+								field "layer": 1
+								field "force_texture_reload": true
+								field "fill": true
+								field "bindings":
+									binding:
+										field "binding_name": "#realm_slot_is_filled"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "slots_collection"
+									binding:
+										field "binding_name": "#slot_world_image"
+										field "binding_name_override": "#texture"
+										field "binding_type": "collection"
+										field "binding_collection_name": "slots_collection"
+									binding:
+										field "binding_name": "#slot_world_texture_source"
+										field "binding_name_override": "#texture_file_system"
+										field "binding_type": "collection"
+										field "binding_collection_name": "slots_collection"
+			control:
+				element "world_slot_bottom":
+					field "type": "panel"
+					field "size": ["100% + 4px", "30% - 2px"]
+					field "controls":
+						control:
+							element "white_line_hover":
+								field "visible": "($hover_state or $pressed_state)"
+								field "type": "image"
+								field "size": ["100% + 1px", 2]
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "offset": [-2, 2]
+								field "tiled": true
+								field "texture": "textures/ui/whiteline"
+								field "layer": 3
+						control:
+							element "world_text_panel":
+								field "type": "panel"
+								field "controls":
+									control:
+										element "background_grey":
+											field "visible": "$default_state"
+											field "type": "image"
+											field "offset": [-2, 3]
+											field "alpha": 0.4
+											field "texture": "textures/ui/Grey"
+											field "layer": 1
+									control:
+										element "background_green":
+											field "visible": "($hover_state or $pressed_state)"
+											field "type": "image"
+											field "offset": [-2, 3]
+											field "alpha": 0.4
+											field "texture": "textures/ui/banners_no_border_dark_hover"
+											field "layer": 1
+									control:
+										element "world_text":
+											field "type": "label"
+											field "size": ["100% - 2px", 10]
+											field "text_alignment": "center"
+											field "font_type": "smooth"
+											field "text": "#slot_name"
+											field "color": "$dark_button_default_text_color"
+											field "bindings":
+												binding:
+													field "binding_name": "#slot_name"
+													field "binding_type": "collection"
+													field "binding_collection_name": "slots_collection"
+											field "layer": 2
+	Added element "slot_panel":
+		field "type": "panel"
+		field "layer": 1
+		field "size": ["100%", "100%"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "slots_scroll_content":
+					field "type": "input_panel"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": ["100%", "100%"]
+					field "focus_container": true
+					field "use_last_focus": true
+					field "focus_nagivation_mode_down": "contained"
+					field "focus_nagivation_mode_up": "contained"
+					field "focus_nagivation_mode_right": "contained"
+					field "focus_nagivation_mode_left": "contained"
+					field "controls":
+						control:
+							element "scrolling_panel@common.scrolling_panel":
+								field "size": ["100%-4px", "100% - 4px"]
+								field "offset": [2, 2]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "layer": 1
+								field "$variables":
+									variable "$scrolling_pane_size":
+										item 0: "100% - 1px"
+										item 1: "100%"
+									variable "$scrolling_content": "choose_realm.slots_scroll_panel"
+									variable "$scroll_size":
+										item 0: 5
+										item 1: "100% - 4px"
+									variable "$show_background": false
+	Added element "slots_grid":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "100%cm"]
+		field "collection_name": "slots_collection"
+		field "controls":
+			control:
+				element "slot_1@common_buttons.dark_content_button":
+					field "size": ["fill", "80%x"]
+					field "collection_index": 0
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "slots_collection"
+					field "$variables":
+						variable "$pressed_button_name": "button.menu_choose_slot"
+						variable "$button_content": "choose_realm.slot_content_panel"
+						variable "$hover_button_texture": "$default_button_texture"
+						variable "$pressed_button_texture": "$default_button_texture"
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": [2, "100%sm"]
+			control:
+				element "slot_2@common_buttons.dark_content_button":
+					field "size": ["fill", "80%x"]
+					field "collection_index": 1
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "slots_collection"
+					field "$variables":
+						variable "$pressed_button_name": "button.menu_choose_slot"
+						variable "$button_content": "choose_realm.slot_content_panel"
+						variable "$hover_button_texture": "$default_button_texture"
+						variable "$pressed_button_texture": "$default_button_texture"
+			control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": [2, "100%sm"]
+			control:
+				element "slot_3@common_buttons.dark_content_button":
+					field "size": ["fill", "80%x"]
+					field "collection_index": 2
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "slots_collection"
+					field "$variables":
+						variable "$pressed_button_name": "button.menu_choose_slot"
+						variable "$button_content": "choose_realm.slot_content_panel"
+						variable "$hover_button_texture": "$default_button_texture"
+						variable "$pressed_button_texture": "$default_button_texture"
+	Added element "slots_scroll_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%-4px", "100%c"]
+		field "offset": [2, 0]
+		field "controls":
+			control:
+				element "slots_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control:
+							element "choose_slot_text":
+								field "type": "label"
+								field "size": ["default", 10]
+								field "text": "realmsSlotsScreen.chooseSlot"
+								field "color": "$dark_button_default_text_color"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control: element "slots_grid@choose_realm.slots_grid": empty
+Changed namespace "common_store":
+	Changed element "promo_banner_image":
+		Unchanged field "type": "image"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from "17%x" to "14.43%x".
+	Changed element "promo_banner_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "promo_banner_panel_content":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "banner_button@common_buttons.light_content_button":
+								Changed field "offset":
+									Unchanged item 0: 5
+									Changed item 1 from -13 to -8.
+						Changed control:
+							Changed element "banner_text_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "offset":
+									Unchanged item 0: 5
+									Changed item 1 from 9 to 5.
+Changed namespace "gift_promo":
+	Changed element "promotion_screen_top":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+2, -0)
+			Added control:
+				element "left_corner_art":
+					field "type": "image"
+					field "size": [128, 124]
+					field "offset": [1, 0]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "texture": "textures/ui/bubbles_left_corner"
+					field "layer": 1
+			Added control:
+				element "right_corner_art":
+					field "type": "image"
+					field "size": [128, 124]
+					field "offset": [-1, 0]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "texture": "textures/ui/bubbles_right_corner"
+					field "layer": 1
+Changed namespace "host_options":
+	Changed element "host_teleport_player_list_buttons":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "toggle":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "host_time_panel@scrolling_panel":
+								Changed field "$variables":
+									Moved variable "$master_scrolling_content" to "$main_scrolling_content".
+	Changed element "host_time_buttons":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "sub_tab":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "scrolli_scrolli_ravioli@scrolling_panel":
+								Changed field "$variables":
+									Moved variable "$master_scrolling_content" to "$main_scrolling_content".
+	Changed element "scrolling_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "scrollable_tab@host_options.scrollable_selector_area":
+					Changed field "$variables":
+						Total variable: 3 (+0, -0)
+						Changed variable "$offset_scrollable_panel" from "$master_offset_scrollable_panel" to "$main_offset_scrollable_panel".
+						Changed variable "$size_scrollable_panel" from "$master_size_scrollable_panel" to "$main_size_scrollable_panel".
+						Changed variable "$scrolling_content" from "$master_scrolling_content" to "$main_scrolling_content".
+			Changed control:
+				Changed element "background":
+					Unchanged field "type": "image"
+					Changed field "visible" from "$master_background_visible" to "$main_background_visible".
+					Changed field "offset" from "$master_offset_background" to "$main_offset_background".
+		Changed field "$variables":
+			Moved variable "$master_size_scrollable_panel|default" to "$main_size_scrollable_panel|default".
+			Moved variable "$master_scrolling_content|default" to "$main_scrolling_content|default".
+			Moved variable "$master_offset_scrollable_panel|default" to "$main_offset_scrollable_panel|default".
+			Moved variable "$master_offset_background|default" to "$main_offset_background|default".
+			Moved variable "$master_background_visible" to "$main_background_visible".
+Changed namespace "npc_interact":
+	Total element: 69 (+3, -0)
+	Moved element "button_mode" to "action_mode".
+	Changed element "action_mode":
+		Unchanged field "type": "stack_panel"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from 16 to 25.
+		Changed field "controls":
+			Total control: 3 (+3, -2)
+			Removed control element "toggle@npc_interact.button_mode_toggle": empty.
+			Removed control:
+				element "offset_wrap@common.empty_panel":
+					field "size": ["100%c", "100%c"]
+					field "controls":
+						control:
+							element "label@edu_common.dark_label":
+								field "text": "npcscreen.action.buttonmode"
+								field "offset": [2, 3]
+			Added control:
+				element "button_mode_toggle_panel@npc_interact.command_toggle_panel":
+					field "$variables":
+						variable "$toggle_name": "button_mode_toggle"
+						variable "$toggle_state_binding_name": "#button_mode_enabled"
+						variable "$toggle_label_text": "npcscreen.action.buttonmode"
+			Added control:
+				element "on_enter_toggle_panel@npc_interact.command_toggle_panel":
+					field "$variables":
+						variable "$toggle_name": "on_enter_toggle"
+						variable "$toggle_state_binding_name": "#on_enter_enabled"
+						variable "$toggle_label_text": "npcscreen.action.onEnter"
+			Added control:
+				element "on_exit_toggle_panel@npc_interact.command_toggle_panel":
+					field "$variables":
+						variable "$toggle_name": "on_exit_toggle"
+						variable "$toggle_state_binding_name": "#on_exit_enabled"
+						variable "$toggle_label_text": "npcscreen.action.onExit"
+	Changed element "action_template@npc_interact.main_stack_panel":
+		Changed field "controls":
+			Total control: 8 (+1, -1)
+			Removed control element "button_mode@npc_interact.button_mode": empty.
+			Added control element "action_mode@npc_interact.action_mode": empty.
+	Changed element "close_button_holder":
+		Unchanged field "type": "panel"
+		Changed field "offset":
+			Unchanged item 0: 8
+			Changed item 1 from -2 to -3.
+	Moved element "button_mode_toggle@edu_common.slider_toggle" to "command_toggle@edu_common.slider_toggle".
+	Changed element "command_toggle@edu_common.slider_toggle":
+		Changed field "$variables":
+			Total variable: 2 (+0, -2)
+			Removed variable "$toggle_name" of "button_mode_toggle".
+			Removed variable "$toggle_state_binding_name" of "#button_mode_enabled".
+	Added element "command_toggle_panel@common.empty_panel":
+		field "size": ["30% + 10px", "100%"]
+		field "controls":
+			control:
+				element "command_toggle@npc_interact.command_toggle":
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "$variables":
+						variable "$toggle_name": "$toggle_name"
+						variable "$toggle_state_binding_name": "$toggle_state_binding_name"
+			control:
+				element "toggle_label@edu_common.dark_label":
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "max_size": ["70%", "100%"]
+					field "text": "$toggle_label_text"
+					field "offset": [32, 0]
+	Changed element "message_model_window@npc_interact.banner_fill":
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control:
+				element "immersive_reader_button@im_reader.reader_button":
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "offset": [-2, -2]
+					field "size": [18, 18]
+					field "layer": 5
+					field "ignored": "($is_worldbuilder or not $education_edition)"
+					field "bindings":
+						binding:
+							field "binding_name": "#im_reader_button_visible"
+							field "binding_name_override": "#visible"
+	Changed element "npc_message@npc_interact.multiline_text_edit_control":
+		Removed field "min_size" of ["100%", "90px"].
+		Added field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "$text_edit_box_selected_to_button_id"
+				field "handle_select": true
+				field "handle_deselect": true
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "$text_edit_box_selected_to_button_id"
+				field "handle_select": false
+				field "handle_deselect": true
+				field "mapping_type": "global"
+				field "consume_event": false
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "$text_edit_box_deselected_to_button_id"
+				field "handle_select": false
+				field "handle_deselect": true
+				field "mapping_type": "global"
+			button mapping:
+				field "to_button_id": "$text_edit_box_hovered_button_id"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "$text_edit_box_clear_from_button_id"
+				field "to_button_id": "$text_edit_box_clear_to_button_id"
+				field "handle_select": false
+				field "handle_deselect": false
+				field "mapping_type": "focused"
+	Changed element "skin_model_clipper":
+		Unchanged field "type": "panel"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from "100% - 2px" to "100% - 1px".
+		Removed field "offset" of [0, 2].
+	Changed element "student_button@common.empty_panel":
+		Changed field "controls":
+			Total control: 1 (+0, -2)
+			Changed control:
+				Changed element "button@common_buttons.light_text_button":
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Added variable "$button_type_panel" of "npc_interact.student_button_label_panel".
+			Removed control:
+				element "url_label@edu_common.dark_label":
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "text": "#text"
+					field "color": "$npc_url_text_color"
+					field "layer": 50
+					field "bindings":
+						binding:
+							field "binding_name": "#student_button_text"
+							field "binding_type": "collection"
+							field "binding_name_override": "#text"
+							field "binding_collection_name": "student_buttons_collection"
+						binding:
+							field "binding_name": "#is_url_button"
+							field "binding_type": "collection"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "student_buttons_collection"
+			Removed control:
+				element "command_label@edu_common.dark_label":
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "text": "#text"
+					field "layer": 50
+					field "bindings":
+						binding:
+							field "binding_name": "#student_button_text"
+							field "binding_type": "collection"
+							field "binding_name_override": "#text"
+							field "binding_collection_name": "student_buttons_collection"
+						binding:
+							field "binding_name": "#is_command_button"
+							field "binding_type": "collection"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "student_buttons_collection"
+	Added element "student_button_label":
+		field "type": "label"
+		field "color": "$text_color"
+		field "text": "#student_button_text"
+		field "bindings":
+			binding:
+				field "binding_name": "#student_button_text"
+				field "binding_type": "collection"
+				field "binding_collection_name": "student_buttons_collection"
+			binding:
+				field "binding_name": "$visible_binding"
+				field "binding_type": "collection"
+				field "binding_name_override": "#visible"
+				field "binding_collection_name": "student_buttons_collection"
+	Added element "student_button_label_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control:
+				element "url@npc_interact.student_button_label":
+					field "variables":
+						variable:
+							field "requires": "$default_state"
+							field "$variables": variable "$text_color": "$npc_url_text_color"
+					field "$variables": variable "$visible_binding": "#is_url_button"
+			control: element "command@npc_interact.student_button_label": field "$variables": variable "$visible_binding": "#is_command_button"
+	Changed element "student_buttons@common.empty_panel":
+		Changed field "controls":
+			Changed control:
+				Changed element "buttons":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 1 (+0, -1)
+						Removed control:
+							element "immersive_reader_panel":
+								field "type": "panel"
+								field "size": ["100%c + 1px", "100%sm"]
+								field "min_size": ["100%c + 1px", "100%c"]
+								field "controls":
+									control:
+										element "immersive_reader_button@im_reader.reader_button":
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": [18, 18]
+											field "offset": [0, 1]
+								field "ignored": "($is_worldbuilder or not $education_edition)"
+								field "bindings":
+									binding:
+										field "binding_name": "#im_reader_button_visible"
+										field "binding_name_override": "#visible"
+	Changed element "student_message_bubble":
+		Unchanged field "type": "image"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "text_scroll@common.scrolling_panel":
+					field "size": ["100% - 7px", "100% - 6px"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "offset": [3, 2]
+					field "$variables":
+						variable "$always_handle_scrolling": true
+						variable "$scrolling_content": "npc_interact.npc_message"
+						variable "$show_background": false
+						variable "$scroll_bar_left_padding_size":
+							item 0: 0
+							item 1: 0
+						variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100% - 4px"
+						variable "$scroll_size_touch": "$scroll_size"
+			Added control:
+				element "text_scroll@common.scrolling_panel":
+					field "size": ["100% - 10px", "100% - 11px"]
+					field "offset": [0, -1]
+					field "variables":
+						variable:
+							field "requires": "($is_worldbuilder)"
+							field "$variables": variable "$jump_to_bottom_on_update": true
+					field "$variables":
+						variable "$always_handle_scrolling": true
+						variable "$jump_to_bottom_on_update": false
+						variable "$scrolling_content": "npc_interact.npc_message"
+						variable "$scroll_box_visible_touch": false
+						variable "$show_background": false
+						variable "$scroll_bar_left_padding_size":
+							item 0: 0
+							item 1: 0
+						variable "$scroll_bar_right_padding_size":
+							item 0: 0
+							item 1: 0
+						variable "$scroll_size":
+							item 0: 5
+							item 1: "100%"
+						variable "$scroll_size_touch": "$scroll_size"
+		Added field "$variables" of variable "$virtual_keyboard_buffer_control": "text_scroll".
+	Changed element "student_message_section@common.empty_panel":
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from 100 to 97.
+Changed namespace "play":
+	Total element: 260 (+10, -0)
+	Added element "create_on_realms_button_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%cm"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "create_on_realms_button@settings_common.action_button":
+					field "size": ["100%", 29]
+					field "variables":
+						variable:
+							field "requires": "$realms_plus_on"
+							field "$variables":
+								variable "$default_button_texture": "textures/ui/realmsContent"
+								variable "$hover_button_texture": "textures/ui/realmsContentHover"
+								variable "$pressed_button_texture": "textures/ui/realmsContentPressed"
+					field "bindings":
+						binding:
+							field "binding_name": "#create_on_realms_button_visible"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$button_text": "createWorldScreen.createOnRealms"
+						variable "$pressed_button_name": "button.create_on_realms_button"
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "joinable_realms_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Total control: 6 (+1, -0)
+									Added control element "sign_in_to_view_realms_button_friends@play.sign_in_to_view_realms_button_friends": empty.
+	Added element "realms_chevron":
+		field "type": "image"
+		field "texture": "textures/ui/realms_chevron_play"
+		field "size": [23, 28]
+	Changed element "realms_list_text":
+		Unchanged field "type": "label"
+		Changed field "bindings":
+			Changed binding:
+				Added field "binding_condition" of "$text_binding_condition".
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Added variable "$text_binding_condition|default" of "none".
+	Added element "realms_sign_in_prompt":
+		field "type": "panel"
+		field "size": ["fill", "100%sm"]
+		field "controls": control: element "realms_sign_in_prompt_label@play.realms_sign_in_prompt_label": empty
+	Added element "realms_sign_in_prompt_friends@play.realms_sign_in_prompt":
+		field "controls":
+			control:
+				element "realms_sign_in_prompt_label_friends@play.realms_sign_in_prompt_label":
+					field "text": "#realms_sign_in_prompt_friends"
+					field "bindings": binding: field "binding_name": "#realms_sign_in_prompt_friends"
+	Added element "realms_sign_in_prompt_label":
+		field "type": "label"
+		field "color": "$text_color"
+		field "text": "#realms_sign_in_prompt"
+		field "anchor_to": "left_middle"
+		field "anchor_from": "left_middle"
+		field "bindings": binding: field "binding_name": "#realms_sign_in_prompt"
+	Changed element "realms_world_trial_text_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "realms_world_details@play.realms_list_text":
+					Changed field "$variables":
+						Total variable: 1 (+0, -1)
+						Changed variable "$text" from "#player_gamertag" to "$world_details_text".
+						Removed variable "$text_binding_type" of "global".
+			Changed control:
+				Changed element "realms_world_header_text@play.realms_list_text":
+					Changed field "$variables":
+						Total variable: 2 (+0, -0)
+						Changed variable "$text_binding_type" from "none" to "$world_header_text_binding_type".
+		Added field "$variables":
+			variable "$world_header_text_binding_type|default": "none"
+			variable "$world_details_text|default": "#player_gamertag"
+			variable "$world_details_text_binding_type|default": "global"
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 6 (+0, -1)
+						Changed control:
+							Changed element "servers_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "more_servers_panel":
+											Unchanged field "type": "stack_panel"
+											Changed field "controls":
+												Total control: 7 (+1, -0)
+												Added control element "add_server_button@play.add_server_toggle_button": empty.
+						Removed control element "add_server_button@play.add_server_toggle_button": empty.
+	Added element "sign_in_realms_image":
+		field "type": "panel"
+		field "size": ["100%cm", "100%cm"]
+		field "controls":
+			control:
+				element "chevron@play.realms_chevron":
+					field "layer": 1
+					field "offset": "$chevron_offset"
+			control:
+				element "portal@play.realms_icon":
+					field "layer": 2
+					field "offset": "$portal_offset"
+		field "variables":
+			variable:
+				field "requires": "$pressed_state"
+				field "$variables":
+					variable "$chevron_offset":
+						item 0: -3
+						item 1: -1
+					variable "$portal_offset":
+						item 0: -6
+						item 1: -1
+			variable:
+				field "requires": "(not $pressed_state)"
+				field "$variables":
+					variable "$chevron_offset":
+						item 0: -3
+						item 1: 0
+					variable "$portal_offset":
+						item 0: -6
+						item 1: 0
+	Added element "sign_in_to_view_realms_button@common_buttons.dark_content_button":
+		field "size": ["100%", 29]
+		field "bindings":
+			binding:
+				field "binding_name": "#realms_sign_in_button_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_sign_in_to_view_realms"
+			variable "$button_content": "play.sign_in_to_view_realms_content_panel"
+	Added element "sign_in_to_view_realms_button_friends@play.sign_in_to_view_realms_button" of field "$variables": variable "$button_content": "play.sign_in_to_view_realms_content_panel_friends".
+	Added element "sign_in_to_view_realms_content_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%cm"]
+		field "orientation": "horizontal"
+		field "controls":
+			control: element "sign_in_realms_image@play.sign_in_realms_image": empty
+			control: element "realms_sign_in_prompt@$prompt": empty
+		field "$variables": variable "$prompt": "play.realms_sign_in_prompt"
+	Added element "sign_in_to_view_realms_content_panel_friends@play.sign_in_to_view_realms_content_panel" of field "$variables": variable "$prompt": "play.realms_sign_in_prompt_friends".
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "realms_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 8 (+2, -0)
+						Changed control:
+							Changed element "realms_trial_panel":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "realms_world_item_button@common_buttons.dark_content_button":
+											Changed field "$variables":
+												Total variable: 8 (+4, -0)
+												Changed variable "$button_content_text" from "playscreen.realmsTrialWorld" to "#realms_trial_text".
+												Added variable "$world_details_text" of "playscreen.realmsTrialWorld".
+												Added variable "$text_binding_condition" of "once".
+												Added variable "$world_header_text_binding_type" of "global".
+												Added variable "$world_details_text_binding_type" of "none".
+						Added control element "sign_in_to_view_realms_button@play.sign_in_to_view_realms_button": empty.
+						Added control element "create_on_realms_button_panel@play.create_on_realms_button_panel": empty.
+Changed namespace "profile":
+	Changed element "featured_info_panel@profile.bottom_dialog_panel":
+		Unchanged field "type": "panel"
+		Changed field "$variables":
+			Changed variable "$category_featured_offer_size":
+				Changed item 0 from "20%" to "20% - 2px".
+Changed namespace "realms_settings":
+	Changed element "section_content_panels":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "backup_section@realms_settings.generic_section_wrapper":
+					Added field "ignored" of "$realm_no_world_edit".
+			Changed control:
+				Changed element "dev_options_section@realms_settings.generic_section_wrapper":
+					Changed field "ignored" from "$non_config_realms_env" to "($non_config_realms_env or $is_realm_slot)".
+			Changed control:
+				Changed element "subscription_section@realms_settings.generic_section_wrapper":
+					Added field "ignored" of "$is_realm_slot".
+			Changed control:
+				Changed element "players_section@realms_settings.generic_section_wrapper":
+					Added field "ignored" of "$is_realm_slot".
+	Changed element "selector_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 10 (+1, -1)
+			Changed control:
+				Changed element "dev_options_button@settings_common.section_toggle_base":
+					Changed field "ignored" from "$non_config_realms_env" to "($non_config_realms_env or $is_realm_slot)".
+			Changed control:
+				Changed element "backup_button@settings_common.section_toggle_base":
+					Added field "ignored" of "$realm_no_world_edit".
+			Changed control:
+				Changed element "subscription_button@settings_common.section_toggle_base":
+					Added field "ignored" of "$is_realm_slot".
+			Changed control:
+				Changed element "members_button@settings_common.section_toggle_base":
+					Added field "ignored" of "$is_realm_slot".
+			Changed control:
+				Changed element "world_button@settings_common.section_toggle_base":
+					Added field "variables":
+						field "requires": "$is_realm_slot"
+						field "$variables": variable "$button_text": "realmsSlotsScreen.gamesettings"
+			Changed control:
+				Changed element "selector_group_label@settings_common.selector_group_label":
+					Changed field "text" from "realmsSettingsScreen.selectorSectionLabelRealm" to "$group_label_text".
+					Added field "variables":
+						variable:
+							field "requires": "$is_realm_slot"
+							field "$variables": variable "$group_label_text": "realmsSettingsScreen.worldSectionTitle"
+					Added field "$variables" of variable "$group_label_text|default": "realmsSettingsScreen.selectorSectionLabelRealm".
+			Removed control:
+				element "play_button@settings_common.action_button":
+					field "size": ["100%", "30px"]
+					field "bindings":
+						binding:
+							field "binding_name": "#play_button_visible"
+							field "binding_name_override": "#visible"
+						binding:
+							field "binding_name": "#play_button_enabled"
+							field "binding_name_override": "#enabled"
+					field "$variables":
+						variable "$button_text": "realmsSettingsScreen.playRealmButton"
+						variable "$pressed_button_name": "play_world_button"
+			Added control:
+				element "play_button@settings_common.action_button":
+					field "variables":
+						field "requires": "$realm_no_world_edit"
+						field "ignored": "$is_realm_slot"
+						field "bindings":
+							binding:
+								field "binding_name": "#play_button_visible"
+								field "binding_name_override": "#visible"
+							binding:
+								field "binding_name": "#play_button_enabled"
+								field "binding_name_override": "#enabled"
+						field "$variables":
+							variable "$button_text": "realmsSettingsScreen.playRealmButton"
+							variable "$pressed_button_name": "play_world_button"
+							variable "$default_button_texture": "textures/ui/button_borderless_light"
+							variable "$hover_button_texture": "textures/ui/button_borderless_lighthover"
+							variable "$pressed_button_texture": "textures/ui/button_borderless_lightpressed"
+					field "size": ["100%", "30px"]
+					field "default_focus_precedence": 1
+					field "bindings":
+						binding:
+							field "binding_name": "#create_button_visible"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$focus_override_up": "FOCUS_OVERRIDE_STOP"
+						variable "$button_text": "createWorldScreen.create"
+						variable "$pressed_button_name": "create_world_button"
+						variable "$default_button_texture": "textures/ui/realmsContent"
+						variable "$hover_button_texture": "textures/ui/realmsContentHover"
+						variable "$pressed_button_texture": "textures/ui/realmsContentPressed"
+Added namespace "realms_slots":
+	element "check":
+		field "type": "image"
+		field "size": [34, 28]
+		field "texture": "textures/ui/realms_slot_check"
+		field "layer": 3
+	element "edit_realm_button@common_buttons.light_text_button":
+		field "size": ["fill", "100%"]
+		field "$variables":
+			variable "$pressed_button_name": "button.edit_realm"
+			variable "$button_text": "realmsSlotsScreen.editRealm"
+			variable "$button_text_binding_type": "none"
+	element "edit_world_button_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100% - 4px", 46]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "controls":
+			control:
+				element "edit_world_button@common_buttons.light_text_button":
+					field "size": ["100%", 22]
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "world_slots"
+					field "$variables":
+						variable "$pressed_button_name": "button.edit_world"
+						variable "$button_text": "realmsSlotsScreen.editWorld"
+						variable "$button_text_binding_type": "none"
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "activate_world_button@common_buttons.light_text_button":
+					field "size": ["100%", 22]
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "world_slots"
+						binding:
+							field "binding_name": "(not #slot_is_current_world)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "world_slots"
+					field "$variables":
+						variable "$pressed_button_name": "button.activate_world"
+						variable "$button_text": "realmsSlotsScreen.activateWorld"
+						variable "$button_text_binding_type": "none"
+		field "$variables":
+			variable "$default_button_texture": "textures/ui/button_borderless_light"
+			variable "$hover_button_texture": "textures/ui/button_borderless_lighthover"
+			variable "$pressed_button_texture": "textures/ui/button_borderless_lightpressed"
+	element "horizontal_padding":
+		field "type": "panel"
+		field "size": [2, "100%"]
+	element "horizontal_padding_sibling_height":
+		field "type": "panel"
+		field "size": [2, "100%sm"]
+	element "main_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100% - 20px", "100%c"]
+		field "controls":
+			control: element "padding_0@realms_slots.vertical_padding": empty
+			control:
+				element "button_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 30]
+					field "controls":
+						control: element "play_button@realms_slots.play_button": empty
+						control: element "padding@realms_slots.horizontal_padding": empty
+						control: element "edit_realm_button@realms_slots.edit_realm_button": empty
+			control: element "padding_1@realms_slots.vertical_padding": empty
+			control:
+				element "text_panel_0":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "controls":
+						control:
+							element "text":
+								field "type": "label"
+								field "size": ["60%", "default"]
+								field "text": "realmsSlotsScreen.description"
+								field "color": "$dark_button_default_text_color"
+								field "text_alignment": "center"
+			control: element "padding_2@realms_slots.vertical_padding": empty
+			control:
+				element "worlds_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%cm"]
+					field "collection_name": "world_slots"
+					field "controls":
+						control: element "world_slot_1@realms_slots.world_slot_button": field "collection_index": 0
+						control: element "padding_0@realms_slots.horizontal_padding_sibling_height": empty
+						control: element "world_slot_2@realms_slots.world_slot_button": field "collection_index": 1
+						control: element "padding_1@realms_slots.horizontal_padding_sibling_height": empty
+						control: element "world_slot_3@realms_slots.world_slot_button": field "collection_index": 2
+			control: element "padding_3@realms_slots.vertical_padding": empty
+			control:
+				element "text_panel_1":
+					field "type": "panel"
+					field "size": ["100%", "100%c"]
+					field "bindings":
+						binding:
+							field "binding_name": "#warning_text_visible"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control:
+							element "text":
+								field "type": "label"
+								field "size": ["60%", "default"]
+								field "text": "realmsSlotsScreen.activateWarning"
+								field "color": "$dark_button_default_text_color"
+								field "text_alignment": "center"
+	element "play_button@common_buttons.light_text_button":
+		field "size": ["fill", "100%"]
+		field "$variables":
+			variable "$pressed_button_name": "button.play_realm"
+			variable "$button_text": "menu.play"
+			variable "$button_text_binding_type": "none"
+			variable "$default_button_texture": "textures/ui/realmsContent"
+			variable "$hover_button_texture": "textures/ui/realmsContentHover"
+			variable "$pressed_button_texture": "textures/ui/realmsContentPressed"
+	element "plus":
+		field "type": "image"
+		field "size": [22, 22]
+		field "texture": "textures/ui/color_plus"
+	element "realms_background":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "gradient":
+					field "type": "image"
+					field "size": ["100%", "100%"]
+					field "texture": "textures/ui/verticalgradient"
+					field "tiled": "x"
+					field "variables":
+						variable:
+							field "requires": "$is_holographic"
+							field "$variables": variable "$fill_alpha": 1.0
+					field "alpha": "$fill_alpha"
+					field "layer": 1
+					field "$variables": variable "$fill_alpha|default": 0.6
+			control:
+				element "particle_1":
+					field "type": "image"
+					field "size": ["40%", "40%"]
+					field "texture": "textures/ui/realms_particles"
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "offset": [0, 0]
+					field "variables":
+						variable:
+							field "requires": "$is_holographic"
+							field "$variables": variable "$fill_alpha": 1.0
+					field "alpha": "$fill_alpha"
+					field "layer": 2
+					field "$variables": variable "$fill_alpha|default": 0.4
+			control:
+				element "particle_2":
+					field "type": "image"
+					field "size": ["40%", "40%"]
+					field "texture": "textures/ui/realms_particles"
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "offset": [0, 10]
+					field "variables":
+						variable:
+							field "requires": "$is_holographic"
+							field "$variables": variable "$fill_alpha": 1.0
+					field "alpha": "$fill_alpha"
+					field "layer": 2
+					field "$variables": variable "$fill_alpha|default": 0.4
+	element "realms_slots_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.menu_select"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.exit_or_toggle"
+				field "mapping_type": "global"
+		field "$variables":
+			variable "$screen_content": "realms_slots.realms_slots_screen_content"
+			variable "$header_safezone_control": "common_store.store_top_bar_filler"
+			variable "$header_bar_control": "common_store.store_top_bar"
+			variable "$screen_background_control": "realms_slots.realms_background"
+			variable "$is_full_screen_layout": true
+	element "realms_slots_screen_content":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control:
+				element "background@common.fullscreen_header":
+					field "$variables":
+						variable "$back_button_has_title": true
+						variable "$button_text": "#slots_screen_header"
+						variable "$button_text_binding_type": "global"
+						variable "$child_control": "realms_slots.realms_slots_screen_content_panel"
+						variable "$show_close_button": true
+	element "realms_slots_screen_content_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control:
+				element "main_scroll_panel@common.scrolling_panel":
+					field "layer": 3
+					field "$variables":
+						variable "$scrolling_content_anchor_from": "top_middle"
+						variable "$scrolling_content_anchor_to": "top_middle"
+						variable "$scrolling_content": "realms_slots.main_stack_panel"
+						variable "$show_background": false
+						variable "$scroll_size":
+							item 0: "5px"
+							item 1: "100% - 8px"
+						variable "$scroll_bar_left_padding_size":
+							item 0: 4
+							item 1: 0
+	element "vertical_padding":
+		field "type": "panel"
+		field "size": ["100%", 10]
+	element "world_info_stack_panel":
+		field "type": "stack_panel"
+		field "size": ["100% - 10px", "100% - 2px"]
+		field "orientation": "vertical"
+		field "offset": [-3, 4]
+		field "layer": 2
+		field "controls":
+			control:
+				element "world_name_panel":
+					field "type": "panel"
+					field "size": ["100%", 10]
+					field "controls":
+						control:
+							element "world_name":
+								field "type": "label"
+								field "size": ["default", "default"]
+								field "max_size": ["100%", 10]
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+								field "font_type": "smooth"
+								field "text": "#world_slot_name"
+								field "color": "$dark_button_default_text_color"
+								field "bindings":
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "#world_slot_name"
+										field "binding_type": "collection"
+			control:
+				element "world_type_panel":
+					field "type": "panel"
+					field "size": ["100%", 9]
+					field "controls":
+						control:
+							element "world_type":
+								field "type": "label"
+								field "size": ["default", "default"]
+								field "max_size": ["100%", 10]
+								field "font_scale_factor": 0.9
+								field "anchor_from": "left_middle"
+								field "anchor_to": "left_middle"
+								field "font_type": "smooth"
+								field "color": "$tab_unchecked_text_color"
+								field "text": "#world_slot_type"
+								field "bindings":
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "#world_slot_type"
+										field "binding_type": "collection"
+			control:
+				element "bottom_padding":
+					field "type": "panel"
+					field "size": ["100%", "fill"]
+	element "world_slot_button@common_buttons.dark_content_button":
+		field "size": ["fill", "80%x"]
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "world_slots"
+			binding:
+				field "binding_collection_name": "world_slots"
+				field "binding_name": "(not #slot_edit_buttons_toggle)"
+				field "binding_name_override": "#focus_enabled"
+				field "binding_type": "collection"
+		field "$variables":
+			variable "$pressed_button_name": "button.world_slot"
+			variable "$button_content": "realms_slots.world_slot_button_content"
+			variable "$default_button_texture": "textures/ui/button_border_dark"
+			variable "$hover_button_texture": "$default_button_texture"
+			variable "$pressed_button_texture": "$default_button_texture"
+	element "world_slot_button_content":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control:
+				element "world_slot_top":
+					field "type": "panel"
+					field "size": ["100% + 4px", "70%"]
+					field "controls":
+						control:
+							element "background":
+								field "type": "image"
+								field "size": ["100% - 2px", "100% + 4px"]
+								field "offset": [-2, 1]
+								field "fill": true
+								field "texture": "textures/ui/banners_no_border"
+								field "layer": 1
+						control:
+							element "add_world_image_panel":
+								field "type": "panel"
+								field "size": ["121.429%y", "50% - 4px"]
+								field "offset": [-2, 0]
+								field "layer": 2
+								field "controls": control: element "plus_image@realms_slots.plus": empty
+								field "bindings":
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "(not #slot_image_visible)"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+						control:
+							element "world_thumbnail_image_panel":
+								field "type": "panel"
+								field "size": ["100% - 2px", "100% + 4px"]
+								field "offset": [-2, 1]
+								field "layer": 3
+								field "controls": control: element "world_thumbnail@realms_slots.world_thumbnail": empty
+								field "bindings":
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "#slot_image_visible"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+						control:
+							element "edit_world_button_panel@realms_slots.edit_world_button_panel":
+								field "offset": [-2, 0.25]
+								field "layer": 9
+								field "bindings":
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "#slot_edit_buttons_toggle"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+						control:
+							element "foreground":
+								field "type": "image"
+								field "size": ["100% - 2px", "100% + 4px"]
+								field "offset": [-2, 1]
+								field "alpha": 0.6
+								field "texture": "textures/ui/Black"
+								field "layer": 8
+								field "bindings":
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "#slot_edit_buttons_toggle"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+						control:
+							element "check_image@realms_slots.check":
+								field "size": ["121.429%y", "50% - 4px"]
+								field "anchor_to": "bottom_middle"
+								field "anchor_from": "bottom_middle"
+								field "offset": [-2, -1.75]
+								field "layer": 7
+								field "bindings":
+									binding:
+										field "binding_type": "collection_details"
+										field "binding_collection_name": "world_slots"
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "#slot_is_current_world"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+			control:
+				element "world_slot_bottom":
+					field "type": "panel"
+					field "size": ["100% + 2px", "30% - 2.3px"]
+					field "controls":
+						control:
+							element "divider_line_black":
+								field "type": "image"
+								field "size": ["100% + 2px", 3]
+								field "texture": "textures/ui/blackline"
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "offset": [-1, 2]
+								field "tiled": true
+								field "fill": true
+								field "layer": 5
+						control:
+							element "divider_line_white":
+								field "visible": "($hover_state or $pressed_state)"
+								field "type": "image"
+								field "size": ["100% + 2px", 2]
+								field "texture": "textures/ui/whiteline"
+								field "anchor_from": "top_middle"
+								field "anchor_to": "top_middle"
+								field "offset": [-1, 2]
+								field "tiled": true
+								field "fill": true
+								field "layer": 10
+						control:
+							element "add_world_text_panel":
+								field "type": "panel"
+								field "controls":
+									control:
+										element "background_grey":
+											field "visible": "$default_state"
+											field "type": "image"
+											field "fill": true
+											field "offset": [-1, 4]
+											field "texture": "textures/ui/button_inside_dark"
+											field "layer": 1
+									control:
+										element "background_green":
+											field "visible": "($hover_state or $pressed_state)"
+											field "type": "image"
+											field "size": ["100% + 2px", "100% + 1px"]
+											field "fill": true
+											field "offset": [-1, 4]
+											field "texture": "textures/ui/banners_no_border_dark_hover"
+											field "layer": 1
+									control:
+										element "add_world_text":
+											field "type": "label"
+											field "size": ["default", "60%"]
+											field "layer": 2
+											field "offset": [0, 4]
+											field "font_scale_factor": 1.2
+											field "font_type": "smooth"
+											field "text": "#new_slot_label"
+											field "color": "$dark_button_default_text_color"
+											field "bindings":
+												binding:
+													field "binding_collection_name": "world_slots"
+													field "binding_name": "#new_slot_label"
+													field "binding_type": "collection"
+								field "bindings":
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "(not #slot_is_filled)"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+						control:
+							element "world_info_panel":
+								field "type": "panel"
+								field "controls":
+									control:
+										element "background":
+											field "visible": "$default_state"
+											field "type": "image"
+											field "fill": true
+											field "offset": [-1, 4]
+											field "alpha": 0.8
+											field "texture": "textures/ui/Black"
+											field "layer": 1
+									control:
+										element "background_green":
+											field "visible": "($hover_state or $pressed_state)"
+											field "type": "image"
+											field "size": ["100% + 2px", "100% + 1px"]
+											field "fill": true
+											field "offset": [-1, 4]
+											field "texture": "textures/ui/banners_no_border_dark_hover"
+											field "layer": 1
+									control: element "world_info_stack_panel@realms_slots.world_info_stack_panel": empty
+								field "bindings":
+									binding:
+										field "binding_collection_name": "world_slots"
+										field "binding_name": "#slot_is_filled"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+	element "world_thumbnail":
+		field "type": "image"
+		field "fill": true
+		field "layer": 1
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "world_slots"
+			binding:
+				field "binding_name": "#world_image"
+				field "binding_name_override": "#texture"
+				field "binding_type": "collection"
+				field "binding_collection_name": "world_slots"
+			binding:
+				field "binding_name": "#world_texture_source"
+				field "binding_name_override": "#texture_file_system"
+				field "binding_type": "collection"
+				field "binding_collection_name": "world_slots"
+			binding:
+				field "binding_name": "(not #slot_is_filled)"
+				field "binding_name_override": "#grayscale"
+				field "binding_type": "collection"
+				field "binding_collection_name": "world_slots"
+Changed namespace "realms_world_section":
+	Total element: 11 (+1, -0)
+	Changed element "club_info_label@settings_common.option_info_label":
+		Added field "ignored" of "$is_realm_slot".
+	Changed element "difficulty_dropdown@settings_common.option_dropdown":
+		Added field "ignored" of "$realm_no_world_edit".
+	Changed element "download_world_button@settings_common.action_button":
+		Changed field "ignored" from "(not $is_pregame)" to "($realm_no_world_edit or not $is_pregame)".
+		Added field "bindings":
+			binding:
+				field "binding_name": "#download_button_visible"
+				field "binding_name_override": "#visible"
+	Changed element "game_mode_dropdown@settings_common.option_dropdown":
+		Added field "ignored" of "$realm_no_world_edit".
+	Changed element "manage_feed_button@settings_common.action_button":
+		Added field "ignored" of "$is_realm_slot".
+	Changed element "panel_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 15 (+1, -0)
+			Changed control:
+				Changed element "padding_2":
+					Unchanged field "type": "panel"
+					Added field "ignored" of "$realm_no_world_edit".
+			Changed control:
+				Changed element "padding_1":
+					Unchanged field "type": "panel"
+					Added field "ignored" of "$realm_no_world_edit".
+			Changed control:
+				Changed element "allow_cheats_toggle@settings_common.option_toggle":
+					Added field "ignored" of "$realm_no_world_edit".
+			Added control element "world_name_edit@realms_world_section.world_name_edit": empty.
+	Changed element "realm_description_edit@settings_common.option_text_edit":
+		Added field "ignored" of "$is_realm_slot".
+	Changed element "realm_name_edit@settings_common.option_text_edit":
+		Added field "ignored" of "$is_realm_slot".
+	Changed element "reset_world_button@settings_common.action_button":
+		Added field "ignored" of "$realm_no_world_edit".
+	Changed element "upload_world_button@settings_common.action_button":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Changed variable "$button_text" from "realmsSettingsScreen.uploadWorldButton" to "#upload_button_text".
+			Added variable "$button_text_binding_type" of "global".
+		Changed field "ignored" from "(not $is_pregame)" to "($realm_no_world_edit or not $is_pregame)".
+		Changed field "bindings":
+			Total binding: 1 (+1, -1)
+			Removed binding:
+				field "binding_name": "#upload_button_enabled"
+				field "binding_name_override": "#enabled"
+			Added binding field "binding_name": "#upload_button_text".
+	Added element "world_name_edit@settings_common.option_text_edit":
+		field "ignored": "$realm_no_world_edit"
+		field "$variables":
+			variable "$option_label": "selectWorld.enterName"
+			variable "$option_binding_name": "#world_name"
+			variable "$option_enabled_binding_name": "#realm_name_enabled"
+			variable "$option_place_holder_text": "realmsSlotsScreen.new"
+			variable "$text_box_name": "world_name_text_box"
+			variable "$allow_data_binding": true
+			variable "$max_text_edit_length": 64
+Changed namespace "settings":
+	Total element: 14 (+2, -0)
+	Added element "screen_realm_manage@settings.settings_screen_base":
+		field "$variables":
+			variable "$include_realm_section": true
+			variable "$realm_no_world_edit": true
+			variable "$_include_world_section": false
+			variable "$include_controls_and_settings_sections": false
+			variable "$realms_pack_feature_enabled": false
+	Added element "screen_world_slot_edit@settings.settings_screen_base":
+		field "$variables":
+			variable "$include_realm_section": true
+			variable "$is_realm_slot": true
+			variable "$_include_world_section": false
+	Changed element "settings_screen_base@settings_common.screen_base":
+		Changed field "$variables":
+			Total variable: 14 (+2, -0)
+			Added variable "$is_realm_slot|default" of false.
+			Added variable "$realm_no_world_edit|default" of false.
+Changed namespace "settings_common":
+	Changed element "dynamic_dialog_screen@common.base_screen":
+		Unchanged field "type": "screen"
+		Added field "variables":
+			variable:
+				field "requires": "($is_realm_slot or $realm_no_world_edit)"
+				field "$variables": variable "$screen_background_control": "realms_slots.realms_background"
+	Changed element "settings_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "background":
+					Unchanged field "type": "image"
+					Changed field "layer" from -1 to "$layer".
+					Added field "variables":
+						variable:
+							field "requires": "($is_realm_slot or $realm_no_world_edit)"
+							field "$variables": variable "$layer": -2
+					Added field "$variables" of variable "$layer|default": -1.
+Changed namespace "start":
+	Total element: 59 (+1, -0)
+	Changed element "main_buttons_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_rows":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 11 (+1, -1)
+						Removed control:
+							element "store@start.stacked_row":
+								field "ignored": "(($trial and not $use_single_column_for_buttons) or ($store_ignored))"
+								field "controls":
+									control:
+										element "store_button@start.store_button":
+											field "enabled": "(not $store_disabled)"
+											field "bindings":
+												binding:
+													field "binding_name": "(not #has_marketplace_errors)"
+													field "binding_name_override": "#visible"
+									control:
+										element "update_icon@start.update_prompt_icon":
+											field "ignored": "$store_disabled"
+											field "size": ["52.38%y", 15]
+											field "offset": [-16, -6]
+											field "bindings":
+												binding:
+													field "binding_name": "#update_icon_visible"
+													field "binding_name_override": "#visible"
+													field "binding_condition": "always"
+									control:
+										element "new_offers_icon@start.new_offers_icon":
+											field "ignored": "$store_disabled"
+											field "offset": [8, -6]
+											field "anchor_from": "top_right"
+											field "anchor_to": "top_right"
+											field "bindings":
+												binding:
+													field "binding_name": "#new_offers"
+													field "binding_name_override": "#visible"
+									control:
+										element "marketplace_error_button@common_buttons.dynamic_tooltip_notification_panel":
+											field "size": ["100%", "100%"]
+											field "button_mappings":
+												button mapping:
+													field "from_button_id": "button.menu_select"
+													field "to_button_id": "button.menu_store_error"
+													field "mapping_type": "pressed"
+												button mapping:
+													field "to_button_id": "button.is_hovered"
+													field "mapping_type": "pressed"
+											field "consume_hover_events": false
+											field "focus_enabled": true
+											field "bindings":
+												binding:
+													field "binding_name": "#has_marketplace_errors"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$dynamic_tooltip_button_visibility_binding_name": "#has_marketplace_errors"
+												variable "$tooltip_popup_visible_binding": "#marketplace_errors_tooltip_visible"
+												variable "$override_tooltip_popup_image": true
+												variable "$tooltip_popup_override_image_panel": "start.store_error_image"
+												variable "$tooltip_text_binding_name": "#marketplace_error_text"
+												variable "$tool_tip_text_max_size":
+													item 0: "300px"
+													item 1: "default"
+												variable "$tooltip_panel_content": "start.store_error_content"
+									control:
+										element "marketplace_error_icon@start.marketplace_error_icon":
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "offset": [-2, 0]
+											field "bindings":
+												binding:
+													field "binding_name": "#has_marketplace_errors"
+													field "binding_name_override": "#visible"
+						Added control element "store@start.store_button_stack": field "ignored": "(($trial and not $use_single_column_for_buttons) or ($store_ignored))".
+	Added element "store_button_stack@start.stacked_row":
+		field "controls":
+			control:
+				element "store_button@start.store_button":
+					field "enabled": "(not $store_disabled)"
+					field "bindings":
+						binding:
+							field "binding_name": "(not #has_marketplace_errors)"
+							field "binding_name_override": "#visible"
+			control:
+				element "update_icon@start.update_prompt_icon":
+					field "ignored": "$store_disabled"
+					field "size": ["52.38%y", 15]
+					field "offset": [-16, -6]
+					field "bindings":
+						binding:
+							field "binding_name": "#update_icon_visible"
+							field "binding_name_override": "#visible"
+							field "binding_condition": "always"
+			control:
+				element "new_offers_icon@start.new_offers_icon":
+					field "ignored": "$store_disabled"
+					field "offset": [8, -6]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "bindings":
+						binding:
+							field "binding_name": "#new_offers"
+							field "binding_name_override": "#visible"
+			control:
+				element "marketplace_error_button@common_buttons.dynamic_tooltip_notification_panel":
+					field "size": ["100%", "100%"]
+					field "button_mappings":
+						button mapping:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "button.menu_store_error"
+							field "mapping_type": "pressed"
+						button mapping:
+							field "to_button_id": "button.is_hovered"
+							field "mapping_type": "pressed"
+					field "consume_hover_events": false
+					field "focus_enabled": true
+					field "bindings":
+						binding:
+							field "binding_name": "#has_marketplace_errors"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$dynamic_tooltip_button_visibility_binding_name": "#has_marketplace_errors"
+						variable "$tooltip_popup_visible_binding": "#marketplace_errors_tooltip_visible"
+						variable "$override_tooltip_popup_image": true
+						variable "$tooltip_popup_override_image_panel": "start.store_error_image"
+						variable "$tooltip_text_binding_name": "#marketplace_error_text"
+						variable "$tool_tip_text_max_size":
+							item 0: "300px"
+							item 1: "default"
+						variable "$tooltip_panel_content": "start.store_error_content"
+			control:
+				element "marketplace_error_icon@start.marketplace_error_icon":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "offset": [-2, 0]
+					field "bindings":
+						binding:
+							field "binding_name": "#has_marketplace_errors"
+							field "binding_name_override": "#visible"
+Changed namespace "store_item_list":
+	Changed element "store_offer_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@common_store.store_description_background":
+					Changed field "controls":
+						Changed control:
+							Changed element "offer_price_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "offer_prompt_panel":
+											Unchanged field "type": "panel"
+											Changed field "controls":
+												Changed control:
+													Changed element "offer_prompt":
+														Unchanged field "type": "label"
+														Changed field "bindings":
+															Total binding: 3 (+1, -0)
+															Added binding:
+																field "binding_type": "$offer_binding_type"
+																field "binding_name": "#offer_prompt_text_visibility"
+																field "binding_collection_name": "$offer_collection_name"
+																field "binding_name_override": "#visible"
+Changed namespace "world_section":
+	Changed element "edu_play_host_button@settings_common.action_button":
+		Changed field "size":
+			Unchanged item 0: "fill"
+			Changed item 1 from 30 to 35.
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 58 (+2, -0)
+			Added control:
+				element "upload_download_slot_panel":
+					field "ignored": "(not $is_realm_slot)"
+					field "type": "panel"
+					field "size": ["100%", "100%c + 2px"]
+					field "controls":
+						control:
+							element "upload_download_slot_button@settings_common.action_button":
+								field "size": ["100%", 30]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "bindings": binding: field "binding_name": "#slot_upload_or_download"
+								field "$variables":
+									variable "$button_text": "#lot_upload_or_download"
+									variable "$pressed_button_name": "upload_download_slot_button"
+			Added control:
+				element "replace_slot_panel":
+					field "ignored": "(not $is_realm_slot)"
+					field "type": "panel"
+					field "size": ["100%", "100%c + 2px"]
+					field "controls":
+						control:
+							element "replace_slot_button@settings_common.action_button":
+								field "size": ["100%", 30]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "bindings":
+									binding:
+										field "binding_name": "(not #slot_new_world)"
+										field "binding_name_override": "#enabled"
+								field "$variables":
+									variable "$button_text": "realmsSettingsScreen.uploadWorldButton"
+									variable "$pressed_button_name": "replace_slot_button"
+	Changed element "launch_world_button_stack_def":
+		Unchanged field "type": "stack_panel"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from 30 to 35.
+	Changed element "play_or_create_stack_bedrock@world_section.launch_world_button_stack_def":
+		Changed field "controls":
+			Changed control:
+				Changed element "create_or_play_button@settings_common.action_button":
+					Changed field "size":
+						Unchanged item 0: "fill"
+						Changed item 1 from 30 to 35.
+			Changed control:
+				Changed element "play_on_realm_button@settings_common.action_button":
+					Changed field "$variables":
+						Changed variable "$button_text_max_size":
+							Changed item 1 from 20 to 25.
+					Changed field "size":
+						Unchanged item 0: "50%"
+						Changed item 1 from 30 to 35.

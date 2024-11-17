@@ -1,0 +1,39 @@
+Difference of "shaders_resource_packs" between "1.20.10.20" (beta of "1.20.10") and "1.20.10.21" (beta of "1.20.10").
+
+Changed resource pack "hb_text.fragment":
+	Changed file "vanilla":
+		Total line: 35 (+0, -2)
+		        '''
+		        ...
+		 4  4   // some numbers and values seem arbitrary or "magic".
+		 5  5   
+		 6  6   #include "fragmentVersionSimple.h"
+		 7  7   #include "uniformMacro.h"
+		 8  8   
+		 9    - #include "uniformUITextPSConstants.h"
+		10    - 
+		11  9   varying vec4 ColorOut;
+		12 10   varying vec4 AdditionalOut;
+		13 11   // We need this here even if we do not use it as some drivers require
+		14 12   // the verying variables to match between the vertex and fragment shaders.
+		15 13   varying vec3 ScreenNormalPosition;
+		        ...
+		        '''
+Removed resource pack "uniformUITextPSConstants.h":
+	file "vanilla":
+		'''
+		#ifndef _UNIFORM_UI_TEXT_PS_CONSTANTS_H
+		#define _UNIFORM_UI_TEXT_PS_CONSTANTS_H
+		
+		#include "uniformMacro.h"
+		
+		#ifdef MCPE_PLATFORM_NX
+		#extension GL_ARB_enhanced_layouts : enable
+		layout(binding = 3) uniform UITextPSConstants {
+		#endif
+		// BEGIN_UNIFORM_BLOCK(UITextPSConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		UNIFORM float BITMAP;
+		END_UNIFORM_BLOCK
+		
+		#endif
+		'''

@@ -1,0 +1,757 @@
+Difference of "scripts" between "1.19.0.20" (beta of "1.19.0") and "1.19.0.24" (beta of "1.19.0").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 38 (+1, -0)
+	Changed script "AllayTests.js":
+		Total line: 23 (+1, -2)
+		        '''
+		        ...
+		18 18           .thenExecute(() => test.assert(playerSim.interactWithEntity(allay) == true, ""))
+		19 19           .thenWait(() => {
+		20 20               test.assertEntityPresentInArea("minecraft:item", false); // Make sure the torch is picked up
+		21 21           })
+		22 22           .thenSucceed();
+		   23 + }).maxTicks(TicksPerSecond * 10);
+		23    - }).maxTicks(TicksPerSecond * 10)
+		24    -     .tag("Experiment Wild");
+		        '''
+	Changed script "FrogTests.js":
+		Total line: 107 (+6, -12)
+		          '''
+		          ...
+		 12  12           .startSequence()
+		 13  13           .thenWait(() => {
+		 14  14               test.assertEntityPresent(frogEntityType, endPos, true);
+		 15  15           })
+		 16  16           .thenSucceed();
+		     17 + }).maxTicks(TicksPerSecond * 20);
+		 17     - }).maxTicks(TicksPerSecond * 20)
+		 18     -     .tag("Experiment Wild");
+		 19  18   
+		 20  19   GameTest.register("FrogTests", "frog_eat_slime_drop_slimeball", (test) => {
+		 21  20       const frogEntityType = "minecraft:frog";
+		 22  21       const startPos = new BlockLocation(1, 2, 1);
+		 23  22       test.spawn(frogEntityType, startPos);
+		          ...
+		 30  29           .startSequence()
+		 31  30           .thenWait(() => {
+		 32  31               test.assertItemEntityPresent(MinecraftItemTypes.slimeBall, startPos, 10.0, true);
+		 33  32           })
+		 34  33           .thenSucceed();
+		     34 + }).maxTicks(TicksPerSecond * 5);
+		 35     - }).maxTicks(TicksPerSecond * 5)
+		 36     -     .tag("Experiment Wild");
+		 37  35   
+		 38  36   GameTest.register("FrogTests", "temperate_frog_magmacube_drop_ochre", (test) => {
+		 39  37       const frogEntityType = "minecraft:frog";
+		 40  38       const startPos = new BlockLocation(1, 2, 1);
+		 41  39       test.spawn(frogEntityType, startPos);
+		          ...
+		 48  46           .startSequence()
+		 49  47           .thenWait(() => {
+		 50  48               test.assertItemEntityPresent(MinecraftItemTypes.ochreFroglight, startPos, 10.0, true);
+		 51  49           })
+		 52  50           .thenSucceed();
+		     51 + }).maxTicks(TicksPerSecond * 5);
+		 53     - }).maxTicks(TicksPerSecond * 5)
+		 54     -     .tag("Experiment Wild");
+		 55  52   
+		 56  53   GameTest.register("FrogTests", "warm_frog_magmacube_drop_pearlescent", (test) => {
+		 57  54       const frogEntityType = "minecraft:frog<spawn_warm>";
+		 58  55       const startPos = new BlockLocation(1, 2, 1);
+		 59  56       test.spawn(frogEntityType, startPos);
+		          ...
+		 66  63           .startSequence()
+		 67  64           .thenWait(() => {
+		 68  65               test.assertItemEntityPresent(MinecraftItemTypes.pearlescentFroglight, startPos, 10.0, true);
+		 69  66           })
+		 70  67           .thenSucceed();
+		     68 + }).maxTicks(TicksPerSecond * 5);
+		 71     - }).maxTicks(TicksPerSecond * 5)
+		 72     -     .tag("Experiment Wild");
+		 73  69   
+		 74  70   GameTest.register("FrogTests", "cold_frog_magmacube_drop_verdant", (test) => {
+		 75  71       const frogEntityType = "minecraft:frog<spawn_cold>";
+		 76  72       const startPos = new BlockLocation(1, 2, 1);
+		 77  73       test.spawn(frogEntityType, startPos);
+		          ...
+		 84  80           .startSequence()
+		 85  81           .thenWait(() => {
+		 86  82               test.assertItemEntityPresent(MinecraftItemTypes.verdantFroglight, startPos, 10.0, true);
+		 87  83           })
+		 88  84           .thenSucceed();
+		     85 + }).maxTicks(TicksPerSecond * 5);
+		 89     - }).maxTicks(TicksPerSecond * 5)
+		 90     -     .tag("Experiment Wild");
+		 91  86   
+		 92  87   GameTest.register("FrogTests", "frog_lay_egg", (test) => {
+		 93  88       const startPosFrogOne = new BlockLocation(0, 4, 1);
+		 94  89       const startPosFrogTwo = new BlockLocation(4, 4, 1);
+		 95  90       const startPosPlayer = new BlockLocation(2, 4, 0);
+		          ...
+		107 102           .thenExecute(() => test.assert(playerSim.interactWithEntity(frogTwo) == true, ""))
+		108 103           .thenWait(() => {
+		109 104               test.assertBlockPresent(MinecraftBlockTypes.frogSpawn, spawnPos, true);
+		110 105           })
+		111 106           .thenSucceed();
+		    107 + }).maxTicks(TicksPerSecond * 90);
+		112     - }).maxTicks(TicksPerSecond * 90)
+		113     -     .tag("Experiment Wild");
+		          '''
+	Changed script "Main.js":
+		Total line: 37 (+1, -0)
+		        '''
+		        ...
+		32 32   import "scripts/RespawnAnchorTests.js";
+		33 33   import "scripts/PlaceSeedsTests.js";
+		34 34   import "scripts/ItemTests.js";
+		35 35   import "scripts/ItemEnchantmentsTests.js";
+		36 36   import "scripts/SculkTests.js";
+		   37 + import "scripts/VibrationTests.js";
+		        '''
+	Changed script "SculkTests.js":
+		Total line: 654 (+25, -0)
+		          '''
+		          ...
+		625 625           test.assert(sculkCount >= 5, "Sculk is expected to spread on slow enough moving blocks!");
+		626 626       }).thenSucceed();
+		627 627   })
+		628 628       .maxTicks(TicksPerSecond * 15)
+		629 629       .padding(TEST_PADDING)
+		    630 + 
+		    631 + GameTest.register("SculkTests", "spread_on_player_death", (test) => {
+		    632 +     const DIE_BY_FALL_DAMAGE_HEIGHT = 25;
+		    633 +     const DIE_BY_FALL_DAMAGE_TIME = TicksPerSecond * 2;
+		    634 + 
+		    635 +     const sculkCatalystPos = new BlockLocation(2, 2, 2);
+		    636 +     const sculkSpreader = test.getSculkSpreader(sculkCatalystPos);
+		    637 +     test.assert(sculkSpreader != undefined, "No Sculk Spreader has been retrieved!");
+		    638 + 
+		    639 +     const grassPos = new BlockLocation(1, 4, 2);
+		    640 +     const grassWithTallGrassPos = new BlockLocation(3, 4, 2);
+		    641 + 
+		    642 +     test.startSequence().thenExecute(() => {
+		    643 +         const player1 = test.spawnSimulatedPlayer(grassPos.offset(0, DIE_BY_FALL_DAMAGE_HEIGHT, 0), "Giovanni");
+		    644 +         player1.addExperience(10);
+		    645 +     }).thenExecuteAfter(DIE_BY_FALL_DAMAGE_TIME, () => {
+		    646 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, grassPos);
+		    647 +     }).thenExecute(() => {
+		    648 +         const player2 = test.spawnSimulatedPlayer(grassWithTallGrassPos.offset(0, DIE_BY_FALL_DAMAGE_HEIGHT, 0), "Giorgio");
+		    649 +         player2.addExperience(10);
+		    650 +     }).thenExecuteAfter(DIE_BY_FALL_DAMAGE_TIME, () => {
+		    651 +         test.assertBlockPresent(MinecraftBlockTypes.sculk, grassWithTallGrassPos);
+		    652 +     }).thenSucceed();
+		    653 + })
+		    654 +     .padding(TEST_PADDING)
+		          '''
+	Added script "VibrationTests.js":
+		'''
+		import * as GameTest from "mojang-gametest";
+		import { BlockLocation, Direction, ItemStack, Location, MinecraftBlockTypes, MinecraftItemTypes, TicksPerSecond } from "mojang-minecraft";
+		import GameTestExtensions from "./GameTestExtensions.js";
+		
+		const SENSOR_ACTIVE_TICKS = 40;
+		const SENSOR_COOLDOWN_TICKS = 1;
+		const SENSOR_MAX_DELAY_TICKS = 8;
+		const REDSTONE_DELAY_TICKS = 2;
+		
+		function succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency) {
+		    test.succeedWhen(() => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		        test.assertRedstonePower(comparatorPos, expectedFrequency);
+		    });
+		}
+		
+		function failOnVibrationDetected(test, sensorPos, duration) {
+		    test.startSequence().thenExecuteFor(duration, () => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 0, sensorPos);
+		    }).thenSucceed();
+		}
+		
+		// Tests that a Sculk Sensor does not detect Dirt being destroyed in a 9 blocks radius around it.
+		GameTest.register("VibrationTests", "detection_radius", (test) => {
+		    const sensorPos = new BlockLocation(9, 11, 9);
+		
+		    const minDestroyPos = new BlockLocation(0, 2, 0);
+		    const maxDestroyPos = new BlockLocation(18, 20, 18);
+		
+		    minDestroyPos.blocksBetween(maxDestroyPos).forEach((pos) => {
+		        if (test.getBlock(pos).id == "minecraft:dirt") {
+		            test.destroyBlock(pos);
+		        }
+		    });
+		
+		    failOnVibrationDetected(test, sensorPos, SENSOR_MAX_DELAY_TICKS);
+		})
+		
+		function destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, destroyPos, expectedLitPos) {
+		    sequence.thenExecute(() => {
+		        test.destroyBlock(destroyPos);
+		    }).thenExecuteAfter(SENSOR_MAX_DELAY_TICKS + REDSTONE_DELAY_TICKS, () => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		        test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, expectedLitPos);
+		    }).thenIdle(SENSOR_ACTIVE_TICKS + SENSOR_COOLDOWN_TICKS);
+		}
+		
+		function spawnCreeperAndTestComparatorOutput(test, sequence, sensorPos, spawnPos, expectedLitPos) {
+		    sequence.thenExecute(() => {
+		        test.spawnWithoutBehaviorsAtLocation("minecraft:creeper", spawnPos);
+		    }).thenExecuteAfter(SENSOR_MAX_DELAY_TICKS + REDSTONE_DELAY_TICKS, () => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		        test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, expectedLitPos);
+		    }).thenIdle(SENSOR_ACTIVE_TICKS + SENSOR_COOLDOWN_TICKS);
+		}
+		
+		// Tests that the output strenght of a Sculk Sensor (verified by checking Redstone Lamps being powered) is correct for a vibration
+		// emitted at a certain distance (produced by destroying a block).
+		GameTest.register("VibrationTests", "output_distance", (test) => {
+		    const sensorPos = new BlockLocation(16, 2, 9);
+		
+		    let sequence = test.startSequence();
+		
+		    destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, sensorPos.offset(0, 0, -8), sensorPos.offset(-1, -1, 1));
+		    destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, sensorPos.offset(0, 0, -7), sensorPos.offset(-2, -1, 1));
+		    destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, sensorPos.offset(0, 0, -6), sensorPos.offset(-4, -1, 1));
+		    destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, sensorPos.offset(0, 0, -5), sensorPos.offset(-6, -1, 1));
+		    destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, sensorPos.offset(0, 0, -4), sensorPos.offset(-8, -1, 1));
+		    destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, sensorPos.offset(0, 0, -3), sensorPos.offset(-10, -1, 1));
+		    destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, sensorPos.offset(0, 0, -2), sensorPos.offset(-12, -1, 1));
+		    destroyBlockAndTestComparatorOutput(test, sequence, sensorPos, sensorPos.offset(0, 0, -1), sensorPos.offset(-14, -1, 1));
+		    spawnCreeperAndTestComparatorOutput(test, sequence, sensorPos, new Location(16.5, 3, 9.5), sensorPos.offset(-15, -1, 1));
+		
+		    sequence.thenSucceed();
+		})
+		    .maxTicks(TicksPerSecond * 60)
+		
+		// Tests that a Sculk Sensor reacts to an in-range vibration and ignores closer ones emitted after it.
+		GameTest.register("VibrationTests", "activation_multiple_vibrations", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		
+		    const testEx = new GameTestExtensions(test);
+		
+		    const destroyPosFar = new BlockLocation(9, 2, 1);
+		    const destroyPosClose = new BlockLocation(9, 2, 10);
+		
+		    test.startSequence().thenExecute(() => {
+		        // Executed at tick 0.
+		        test.destroyBlock(destroyPosFar);
+		        test.destroyBlock(destroyPosClose);
+		    }).thenExecuteAfter(1, () => {
+		        // Executed at tick 1. Sensor shouldn't have been activated by second vibration.
+		        testEx.assertBlockProperty("powered_bit", 0, sensorPos);
+		    }).thenExecuteAfter(6, () => {
+		        // Executed at tick 7. Sensor shouldn't have been activated yet by first vibration.
+		        testEx.assertBlockProperty("powered_bit", 0, sensorPos);
+		    }).thenExecuteAfter(3, () => {
+		        // Executed at tick 8. Sensor should have been activated by first vibration already.
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		    }).thenSucceed();
+		})
+		
+		function destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, destroyPos, delay) {
+		    sequence.thenExecute(() => {
+		        test.destroyBlock(destroyPos);
+		    }).thenExecuteAfter(delay, () => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		    }).thenIdle(SENSOR_ACTIVE_TICKS + SENSOR_COOLDOWN_TICKS);
+		}
+		
+		// Tests that a Sculk Sensor activates with a delay in ticks equal to the distance a vibration has been emitted at.
+		GameTest.register("VibrationTests", "activation_delay", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		
+		    let sequence = test.startSequence();
+		
+		    destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, sensorPos.offset(0, 0, -8), 8);
+		    destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, sensorPos.offset(0, 0, -7), 7);
+		    destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, sensorPos.offset(0, 0, -6), 6);
+		    destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, sensorPos.offset(0, 0, -5), 5);
+		    destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, sensorPos.offset(0, 0, -4), 4);
+		    destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, sensorPos.offset(0, 0, -3), 3);
+		    destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, sensorPos.offset(0, 0, -2), 2);
+		    destroyBlockAndTestVibrationDetected(test, sequence, sensorPos, sensorPos.offset(0, 0, -1), 1);
+		
+		    sequence.thenSucceed();
+		})
+		    .maxTicks(TicksPerSecond * 60)
+		
+		// Tests that a Sculk Sensor activates and stays active for the expected amount of time when receiving a vibration.
+		GameTest.register("VibrationTests", "activation_duration", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		
+		    const testEx = new GameTestExtensions(test);
+		
+		    const destroyPos = new BlockLocation(8, 2, 9);
+		
+		    test.startSequence().thenExecute(() => {
+		        test.destroyBlock(destroyPos);
+		    }).thenWaitAfter(1, () => {
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		    }).thenWaitAfter(SENSOR_ACTIVE_TICKS, () => {
+		        testEx.assertBlockProperty("powered_bit", 0, sensorPos);
+		    }).thenSucceed();
+		})
+		
+		// Tests that a Sculk Sensor ignores vibrations while on cooldown.
+		GameTest.register("VibrationTests", "activation_cooldown", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		
+		    const testEx = new GameTestExtensions(test);
+		
+		    const destroyPos1 = new BlockLocation(8, 2, 9);
+		    const destroyPos2 = new BlockLocation(10, 2, 9);
+		
+		    test.startSequence().thenExecute(() => {
+		        test.destroyBlock(destroyPos1);
+		    }).thenWaitAfter(1, () => {
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		    }).thenWaitAfter(SENSOR_ACTIVE_TICKS, () => {
+		        testEx.assertBlockProperty("powered_bit", 0, sensorPos);
+		    }).thenExecute(() => {
+		        test.destroyBlock(destroyPos2);
+		    }).thenWaitAfter(SENSOR_COOLDOWN_TICKS, () => {
+		        testEx.assertBlockProperty("powered_bit", 0, sensorPos);
+		    }).thenSucceed();
+		})
+		
+		// Tests that a Sculk Sensor can react to vibrations (emitted by destroying a block) only if they are not occluded by Wool.
+		GameTest.register("VibrationTests", "activation_wool_occlusion", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		
+		    const testEx = new GameTestExtensions(test);
+		
+		    const occuledDestroyPos1 = new BlockLocation(5, 2, 9);
+		    const occuledDestroyPos2 = new BlockLocation(9, 2, 13);
+		    const occuledDestroyPos3 = new BlockLocation(13, 2, 9);
+		    const unocculedDestroyPos1 = new BlockLocation(9, 2, 5);
+		    const unocculedDestroyPos2 = new BlockLocation(9, 6, 9);
+		
+		    test.startSequence().thenExecute(() => {
+		        test.destroyBlock(occuledDestroyPos1);
+		        test.destroyBlock(occuledDestroyPos2);
+		        test.destroyBlock(occuledDestroyPos3);
+		    }).thenExecuteAfter(SENSOR_MAX_DELAY_TICKS, () => {
+		        testEx.assertBlockProperty("powered_bit", 0, sensorPos);
+		    }).thenExecute(() => {
+		        test.destroyBlock(unocculedDestroyPos1);
+		    }).thenWait(() => {
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		    }).thenExecuteAfter(SENSOR_ACTIVE_TICKS + SENSOR_COOLDOWN_TICKS, () => {
+		        test.destroyBlock(unocculedDestroyPos2);
+		    }).thenWait(() => {
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		    }).thenSucceed();
+		})
+		
+		// Tests that a moving entity produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_entity_move", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 1;
+		
+		    const spawnPos = new Location(16.5, 2, 7.5);
+		    const pig = test.spawnWithoutBehaviorsAtLocation("minecraft:pig", spawnPos);
+		
+		    const targetPos = new BlockLocation(2, 2, 7);
+		    test.walkTo(pig, targetPos, 1);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a moving entity does not produce vibrations while on wool.
+		GameTest.register("VibrationTests", "event_entity_move_wool", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		
+		    const spawnPos = new Location(16.5, 2, 7.5);
+		    const pig = test.spawnWithoutBehaviorsAtLocation("minecraft:pig", spawnPos);
+		
+		    const targetPos = new BlockLocation(2, 2, 7);
+		    test.walkTo(pig, targetPos, 1);
+		
+		    failOnVibrationDetected(test, sensorPos, TicksPerSecond * 2);
+		})
+		
+		// Tests that a moving player does not produce vibrations when sneaking, but does otherwise.
+		GameTest.register("VibrationTests", "event_entity_move_sneaking", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 1;
+		
+		    const spawnPos = new BlockLocation(11, 2, 7);
+		    const targetPos = new BlockLocation(7, 2, 7);
+		    const player = test.spawnSimulatedPlayer(spawnPos, "Gordon");
+		
+		    test.startSequence().thenExecute(() => {
+		        player.isSneaking = true;
+		        player.moveToBlock(targetPos);
+		    }).thenExecuteFor(TicksPerSecond * 5, () => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 0, sensorPos);
+		    }).thenExecute(() => {
+		        player.isSneaking = false;
+		        player.moveToBlock(spawnPos);
+		    }).thenWait(() => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		        test.assertRedstonePower(comparatorPos, expectedFrequency);
+		    }).thenSucceed();
+		})
+		    .maxTicks(TicksPerSecond * 30)
+		
+		// Tests that a flying entity produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_flap", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 2;
+		
+		    const spawnPos = new Location(11.5, 2, 9.5);
+		    const parrot = test.spawnWithoutBehaviorsAtLocation("minecraft:parrot", spawnPos);
+		
+		    const targetPos = new BlockLocation(7, 2, 9);
+		    test.walkTo(parrot, targetPos, 1);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a swimming entity produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_swim", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 3;
+		
+		    const spawnPos = new Location(11.5, 2, 9.5);
+		    const fish = test.spawnWithoutBehaviorsAtLocation("minecraft:tropicalfish", spawnPos);
+		
+		    const targetPos = new BlockLocation(7, 2, 9);
+		    test.walkTo(fish, targetPos, 1);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that an entity hitting ground produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_hit_ground", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 5;
+		
+		    const spawnPos = new Location(9.5, 5, 7.5);
+		    test.spawnWithoutBehaviorsAtLocation("minecraft:creeper", spawnPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that an entity falling on Wool does not produce vibrations.
+		GameTest.register("VibrationTests", "event_hit_ground_wool", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		
+		    const spawnPos = new Location(9.5, 5, 7.5);
+		    test.spawnWithoutBehaviorsAtLocation("minecraft:creeper", spawnPos);
+		
+		    failOnVibrationDetected(test, sensorPos, TicksPerSecond * 2);
+		})
+		
+		// Tests that an entity falling in Water produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_splash", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 6;
+		
+		    const spawnPos = new Location(9.5, 5, 7.5);
+		    test.spawnWithoutBehaviorsAtLocation("minecraft:creeper", spawnPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a projectile being shot (by powering a Dispenser) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_projectile_shoot", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 8);
+		    const expectedFrequency = 7;
+		
+		    const placeAtPos = new BlockLocation(9, 4, 4);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a landing projectile (shot by powering a Dispenser) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_projectile_land", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 8;
+		
+		    const placeAtPos = new BlockLocation(9, 4, 4);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that an entity being damaged (by standing on Magma) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_entity_damage", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 8;
+		
+		    const spawnPos = new Location(9.5, 2, 7.5);
+		    test.spawnWithoutBehaviorsAtLocation("minecraft:creeper", spawnPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that an emtpy Dispenser trying to dispense produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_dispense_fail", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 10;
+		
+		    const placeAtPos = new BlockLocation(9, 2, 3);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a Fence Gate being closed (by removing the Redstone Block powering it) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_block_close", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 10;
+		
+		    const placeAtPos = new BlockLocation(12, 2, 5);
+		    test.setBlockType(MinecraftBlockTypes.air, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a Fence Gate being opened (by placing a Redstone Block to power it) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_block_open", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 11;
+		
+		    const placeAtPos = new BlockLocation(12, 2, 5);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that picking-up Water (by powering a Dispenser with an Empty Bucket in it) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_fluid_pickup", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 12;
+		
+		    const placeAtPos = new BlockLocation(9, 2, 3);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that placing Water (by powering a Dispenser with a Water Bucket in it) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_fluid_place", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 13;
+		
+		    const placeAtPos = new BlockLocation(9, 2, 3);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a player destroying a block produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_block_destroy", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 13;
+		
+		    const spawnPos = new BlockLocation(9, 2, 6);
+		    const player = test.spawnSimulatedPlayer(spawnPos, "Ralph");
+		
+		    const breakPos = new BlockLocation(9, 2, 7);
+		    player.lookAtBlock(breakPos);
+		    player.breakBlock(breakPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a player closing a Chest produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_container_close", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 14;
+		
+		    const spawnPos = new BlockLocation(9, 2, 5);
+		    const chestPos = new BlockLocation(9, 2, 7);
+		    const player = test.spawnSimulatedPlayer(spawnPos, "Corvo");
+		
+		    test.startSequence().thenExecuteAfter(20, () => {
+		        player.interactWithBlock(chestPos);
+		    }).thenExecuteAfter(SENSOR_MAX_DELAY_TICKS + SENSOR_ACTIVE_TICKS + SENSOR_COOLDOWN_TICKS, () => {
+		        player.stopInteracting();
+		    }).thenWait(() => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		        test.assertRedstonePower(comparatorPos, expectedFrequency);
+		    }).thenSucceed();
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a player opening a Chest produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_container_open", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 15;
+		
+		    const spawnPos = new BlockLocation(9, 2, 5);
+		    const chestPos = new BlockLocation(9, 2, 7);
+		    const player = test.spawnSimulatedPlayer(spawnPos, "John");
+		
+		    test.startSequence().thenExecuteAfter(20, () => {
+		        player.interactWithBlock(chestPos);
+		    }).thenWait(() => {
+		        const testEx = new GameTestExtensions(test);
+		        testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		        test.assertRedstonePower(comparatorPos, expectedFrequency);
+		    }).thenSucceed();
+		})
+		
+		// Tests that exploding TNT (ignited by placing a Redstone Block) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_explode", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 15;
+		
+		    const placeAtPos = new BlockLocation(9, 3, 6);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a piston being contracted (by removing the Redstone Block powering it) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_piston_contract", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 14;
+		
+		    const placeAtPos = new BlockLocation(9, 2, 5);
+		    test.setBlockType(MinecraftBlockTypes.air, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a piston being extened (by placing a Redstone Block to power it) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_piston_extend", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 15;
+		
+		    const placeAtPos = new BlockLocation(9, 2, 5);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a Cake with Candle being ignited (by powering a Dispenser with a Flint and Steel in it) produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_block_change", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 6;
+		
+		    const placeAtPos = new BlockLocation(9, 2, 5);
+		    test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		
+		// Tests that a lightning produces vibrations of the expected frequency.
+		GameTest.register("VibrationTests", "event_lightning_strike", (test) => {
+		    const sensorPos = new BlockLocation(9, 2, 9);
+		    const comparatorPos = new BlockLocation(9, 2, 10);
+		    const expectedFrequency = 15;
+		
+		    const spawnPos = new Location(9.5, 2, 5.5);
+		    test.spawnAtLocation("minecraft:lightning_bolt", spawnPos);
+		
+		    succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		})
+		'''
+	Changed script "WardenTests.js":
+		Total line: 98 (+7, -12)
+		          '''
+		          ...
+		 11  11           .startSequence()
+		 12  12           .thenWait(() => {
+		 13  13               test.assertEntityPresentInArea(wardenEntityType, false);
+		 14  14           })
+		 15  15           .thenSucceed();
+		     16 + }).maxTicks(TicksPerSecond * 90); //timeout after 90 seconds
+		 16     - }).maxTicks(TicksPerSecond * 90) //timeout after 90 seconds
+		 17     -     .tag("Experiment Wild");
+		 18  17   
+		 19  18   GameTest.register("WardenTests", "warden_kill_moving_entity", (test) => {
+		 20  19       const wardenEntityType = "minecraft:warden";
+		 21  20       const pigEntityType = "minecraft:pig";
+		 22  21       const startPosWarden = new BlockLocation(1, 1, 1);
+		          ...
+		 38  37               })
+		 39  38               .thenIdle(TicksPerSecond * 3)
+		 40  39       }
+		 41  40       sequence
+		 42  41           .thenWait(() => {
+		     42 +             test.assertEntityPresentInArea(pigEntityType, false);
+		     43 +         })
+		 43     -         test.assertEntityPresentInArea(pigEntityType, false);
+		 44     -     })
+		 45  44           .thenSucceed();
+		     45 + }).maxTicks(TicksPerSecond * 90); //timeout after 90 seconds
+		 46     - }).maxTicks(TicksPerSecond * 90) //timeout after 90 seconds
+		 47     -     .tag("Experiment Wild");
+		 48  46   
+		 49  47   GameTest.register("WardenTests", "warden_sniff_and_kill_static_entity", (test) => {
+		 50  48       const wardenEntityType = "minecraft:warden";
+		 51  49       const pigEntityType = "minecraft:pig";
+		 52  50       const startPosWarden = new BlockLocation(1, 1, 1);
+		          ...
+		 58  56           .startSequence()
+		 59  57           .thenWait(() => {
+		 60  58               test.assertEntityPresentInArea(pigEntityType, false);
+		 61  59           })
+		 62  60           .thenSucceed();
+		     61 + }).maxTicks(TicksPerSecond * 60); //timeout after 60 seconds
+		 63     - }).maxTicks(TicksPerSecond * 60) //timeout after 60 seconds
+		 64     -     .tag("Experiment Wild");
+		 65  62   
+		 66  63   GameTest.register("WardenTests", "warden_go_to_projectile", (test) => {
+		 67  64       const wardenEntityType = "minecraft:warden";
+		 68  65       const startPosWarden = new BlockLocation(1, 1, 1);
+		 69  66       const snowballEntityType = "minecraft:snowball";
+		          ...
+		 75  72           .startSequence()
+		 76  73           .thenWait(() => {
+		 77  74               test.assertEntityPresent(wardenEntityType, startPosSnowball, true);
+		 78  75           })
+		 79  76           .thenSucceed();
+		     77 + }).maxTicks(TicksPerSecond * 10); //timeout after 10 seconds
+		 80     - }).maxTicks(TicksPerSecond * 10) //timeout after 10 seconds
+		 81     -     .tag("Experiment Wild");
+		 82  78   
+		 83  79   GameTest.register("WardenTests", "warden_sniff_and_kill_player_before_mob", (test) => {
+		 84  80       const wardenEntityType = "minecraft:warden";
+		 85  81       const pigEntityType = "minecraft:pig";
+		 86  82       const startPosWarden = new BlockLocation(1, 1, 1);
+		          ...
+		 97  93           })
+		 98  94           .thenWait(() => {
+		 99  95               test.assertEntityPresentInArea("minecraft:pig", true);
+		100  96           })
+		101  97           .thenSucceed();
+		     98 + }).maxTicks(TicksPerSecond * 60); //timeout after 60 seconds
+		102     - }).maxTicks(TicksPerSecond * 60) //timeout after 60 seconds
+		103     -     .tag("Experiment Wild");
+		          '''

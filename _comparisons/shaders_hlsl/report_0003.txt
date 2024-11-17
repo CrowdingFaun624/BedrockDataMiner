@@ -1,0 +1,33 @@
+Difference of "shaders" between "a0.12.1_build9" (beta of "a0.12.1") and "a0.12.1_build10" (beta of "a0.12.1").
+
+Changed file "renderchunk.fragment.hlsl":
+	Total line: 59 (+2, -0)
+	        '''
+	        ...
+	16 16       float4 color : SV_Target;
+	17 17   };
+	18 18   
+	19 19   void main( in PS_Input PSInput, out PS_Output PSOutput )
+	20 20   {
+	   21 + 	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv0);
+	21    - 	float4 diffuse = TEXTURE_0.Sample( TextureSampler0, PSInput.uv0 ) * TEXTURE_1.Sample( TextureSampler1, PSInput.uv1 );
+	22 22   
+	23 23   #ifdef SEASONS_FAR
+	24 24   	diffuse.a = 1.0f;
+	25 25   	PSInput.color.b = 1.0f;
+	26 26   #endif
+	        ...
+	29 29       if( diffuse.a < 0.5 )
+	30 30       {
+	31 31           discard;
+	32 32       }
+	33 33   #endif
+	   34 + 
+	   35 + 	diffuse = diffuse * TEXTURE_1.Sample(TextureSampler1, PSInput.uv1);
+	34 36   
+	35 37   #ifndef SEASONS
+	36 38   
+	37 39   #if !defined(ALPHA_TEST) && !defined(BLEND)
+	38 40   	PSInput.color.rgb = lerp(PSInput.color.aaa, PSInput.color.rgb, diffuse.a);
+	        ...
+	        '''

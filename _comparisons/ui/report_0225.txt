@@ -1,0 +1,280 @@
+Difference of "ui" between "1.17.30.21" (beta of "1.17.30") and "1.17.30.22" (beta of "1.17.30").
+
+Changed namespace "common_store":
+	Total element: 151 (+2, -0)
+	Changed element "coin_balance_panel@common_store.ribbon_bar_text_background":
+		Changed field "controls":
+			Changed control:
+				Changed element "coin_purchase_in_progress_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "coin_purchase_in_progress@common_store.progress_loading_bars":
+								field "size": ["100%", "100%"]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+						Added control:
+							element "coin_purchase_in_progress@common_store.progress_loading_spinner":
+								field "size": ["100%", "100%"]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+	Changed element "progress_loading":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "centerer_1":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Total control: 1 (+1, -1)
+									Removed control element "progress_loading_bars@common_store.progress_loading_bars": field "layer": "($baseLayer + 1)".
+									Added control element "progress_loading_spinner@common_store.progress_loading_spinner": field "layer": "($baseLayer + 1)".
+	Added element "progress_loading_spinner":
+		field "type": "image"
+		field "layer": 1
+		field "texture": "textures/ui/loading_spin"
+		field "anchor_from": "$progress_loading_spinner_anchor"
+		field "anchor_to": "$progress_loading_spinner_anchor"
+		field "uv_size": [7, 7]
+		field "size": [14, 14]
+		field "uv": "@common_store.spinner_animation"
+		field "disable_anim_fast_forward": true
+		field "$variables": variable "$progress_loading_spinner_anchor|default": "center"
+	Changed element "promo_banner_button_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "progress_loading_bars@common_store.progress_loading_bars":
+					field "color": "$light_button_default_text_color"
+					field "size": ["100%sm - 4px", "8%x"]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #promo_page_is_ready)"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "progress_loading_spinner@common_store.progress_loading_spinner":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #promo_page_is_ready)"
+							field "binding_name_override": "#visible"
+	Added element "spinner_animation":
+		field "anim_type": "flip_book"
+		field "initial_uv": [0, 0]
+		field "frame_count": 10
+		field "frame_step": 7
+		field "fps": 10
+Changed namespace "edu_quit_button":
+	Changed element "quit_button@pause.quit_button":
+		Changed field "focus_change_right" from "change_skin_button" to "profile_button".
+Changed namespace "general_section":
+	Total element: 110 (+2, -0)
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 87 (+2, -0)
+			Added control:
+				element "option_dropdown_raytracing_mode@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.dev_raytracing_mode"
+						variable "$dropdown_content": "general_section.dev_raytracing_mode_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "raytracing_mode_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_raytracing_mode_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#dev_raytracing_mode_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "140%"
+			Added control:
+				element "education_azure_notebooks_env_dropdown@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.dev_education_azure_notebooks_environment"
+						variable "$dropdown_content": "general_section.dev_education_azure_notebooks_environment_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "dev_education_azure_notebooks_env_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_education_azure_notebooks_env_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#dev_education_azure_notebooks_env_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "200%"
+	Added element "dev_education_azure_notebooks_environment_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					field "education_azure_notebooks_environment_dev@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#education_azure_notebooks_environment_dev"
+						field "$radio_label_text": "options.dev_education_environment.dev"
+				item 1:
+					field "education_azure_notebooks_environment_staging@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#education_azure_notebooks_environment_staging"
+						field "$radio_label_text": "options.dev_education_environment.staging"
+				item 2:
+					field "education_azure_notebooks_environment_prod@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#education_azure_notebooks_environment_prod"
+						field "$radio_label_text": "options.dev_education_environment.prod"
+				item 3:
+					field "education_azure_notebooks_environment_local@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#education_azure_notebooks_environment_local"
+						field "$radio_label_text": "options.dev_education_environment.local"
+	Added element "dev_raytracing_mode_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#raytracing_mode_compatibility"
+						field "$radio_label_text": "options.dev_raytracing_mode.compatibility"
+				item 1:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#raytracing_mode_full"
+						field "$radio_label_text": "options.dev_raytracing_mode.full"
+Changed namespace "gift_promo":
+	Changed element "progress_loading":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "progress_loading_outline@common_store.banner_fill":
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "progress_loading_bars@common_store.progress_loading_bars":
+								field "size": ["100% - 4px", "80%"]
+								field "layer": "($baseLayer + 1)"
+						Added control element "progress_loading_spinner@common_store.progress_loading_spinner": field "layer": "($baseLayer + 1)".
+Changed namespace "hud":
+	Changed element "exp_progress_bar_and_hotbar":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "resizing_xp_bar_with_hotbar":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "empty_progress_bar@empty_progress_bar":
+								Changed field "controls":
+									Changed control:
+										Changed element "full_progress_bar@full_progress_bar":
+											Changed field "controls":
+												Changed control:
+													Changed element "progress_bar_nub@progress_bar_nub":
+														Changed field "controls":
+															Total control: 1 (+1, -1)
+															Removed control element "hotbar@hotbar_chooser": field "offset": [3, 16].
+															Added control element "hotbar@hotbar_chooser": field "offset": [4, 16].
+			Changed control:
+				Changed element "hotbar@hotbar_chooser":
+					Changed field "offset":
+						Changed item 0 from 3 to 4.
+						Unchanged item 1: 16
+Changed namespace "persona":
+	Changed element "loading_progress_bars":
+		Unchanged field "type": "image"
+		Changed field "uv_size":
+			Changed item 0 from 64 to 7.
+			Changed item 1 from 8 to 7.
+		Changed field "uv" from "@progress.bar_animation" to "@progress.spinner_animation".
+		Changed field "texture" from "textures/ui/loading_bar" to "textures/ui/loading_spin".
+		Changed field "size":
+			Changed item 0 from 64 to 14.
+			Changed item 1 from 8 to 14.
+		Removed field "color" of [0.7, 0.7, 0.7, 1.0].
+Changed namespace "persona_common":
+	Changed element "item_display@common.empty_panel":
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "loading_progress_bars":
+					field "type": "image"
+					field "layer": 2
+					field "texture": "textures/ui/loading_bar"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "offset": [0, 6]
+					field "size": [64, 8]
+					field "uv_size": [64, 8]
+					field "uv": "@progress.bar_animation"
+					field "color": [0.7, 0.7, 0.7, 1.0]
+					field "visible": "$is_loading"
+			Added control:
+				element "loading_progress_spinner":
+					field "type": "image"
+					field "layer": 2
+					field "texture": "textures/ui/loading_spinner"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "offset": [0, 6]
+					field "uv_size": [7, 7]
+					field "size": [14, 14]
+					field "uv": "@progress.spinner_animation"
+					field "visible": "$is_loading"
+Changed namespace "profile_card":
+	Changed element "xbl_dialog_scrolling_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "adding_friend_progress_bars":
+					Unchanged field "type": "image"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "searching_bars@common_store.progress_loading_bars":
+								field "size": ["100%", "100%"]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+						Added control:
+							element "searching_bars@common_store.progress_loading_spinner":
+								field "size": ["100%", "100%"]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+Changed namespace "progress":
+	Total element: 65 (+2, -0)
+	Added element "progress_loading_spinner":
+		field "type": "image"
+		field "layer": 2
+		field "texture": "textures/ui/loading_spin"
+		field "offset": [0, 24]
+		field "uv_size": [7, 7]
+		field "size": [14, 14]
+		field "uv": "@progress.spinner_animation"
+		field "bindings":
+			binding:
+				field "binding_name": "#spinner_animation_visible"
+				field "binding_name_override": "#visible"
+	Added element "spinner_animation":
+		field "anim_type": "flip_book"
+		field "initial_uv": [0, 0]
+		field "frame_count": 10
+		field "frame_step": 7
+		field "fps": 10
+Changed namespace "world_section":
+	Total element: 33 (+1, -0)
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 5 (+1, -0)
+			Added control:
+				element "option_dropdown_raytracing_mode@settings_common.option_dropdown":
+					field "$variables":
+						variable "$option_label": "options.dev_raytracing_mode"
+						variable "$dropdown_content": "general_section.dev_raytracing_mode_dropdown_content"
+						variable "$dropdown_area": "content_area"
+						variable "$dropdown_name": "raytracing_mode_dropdown"
+						variable "$options_dropdown_toggle_label_binding": "#dev_raytracing_mode_dropdown_toggle_label"
+						variable "$option_enabled_binding_name": "#dev_raytracing_mode_dropdown_enabled"
+						variable "$dropdown_scroll_content_size":
+							item 0: "100%"
+							item 1: "140%"
+	Added element "dev_raytracing_mode_dropdown_content@settings_common.option_radio_dropdown_group":
+		field "$variables":
+			variable "$radio_buttons":
+				item 0:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#raytracing_mode_compatibility"
+						field "$radio_label_text": "options.dev_raytracing_mode.compatibility"
+				item 1:
+					field "@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#raytracing_mode_full"
+						field "$radio_label_text": "options.dev_raytracing_mode.full"

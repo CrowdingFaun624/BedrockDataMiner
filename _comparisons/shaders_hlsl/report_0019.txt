@@ -1,0 +1,150 @@
+Difference of "shaders" between "1.2.20.1" (beta of "1.4.0") and "1.2.20.2" (beta of "1.4.0").
+
+Changed file "entity.fragment.hlsl":
+	Total line: 159 (+1, -4)
+	          '''
+	          ...
+	 19  19   
+	 20  20   #ifdef TINTED_ALPHA_TEST
+	 21  21   	float4 alphaTestMultiplier : ALPHA_MULTIPLIER;
+	 22  22   #endif
+	 23  23   
+	 24     - #ifdef MULTIPLICATIVE_TINT_COLOR
+	 25     - 	float3 multiplicativeTintColor : MULTI_TINT_COLOR;
+	 26     - #endif
+	 27  24   	float2 uv : TEXCOORD_0_FB_MSAA;
+	 28  25   
+	 29  26   };
+	 30  27   
+	 31  28   struct PS_Output
+	          ...
+	112 109   
+	113 110   #ifdef MULTIPLICATIVE_TINT
+	114 111   	float4 tintTex = TEXTURE_1.Sample(TextureSampler1, PSInput.uv);
+	115 112   
+	116 113   #ifdef MULTIPLICATIVE_TINT_COLOR 
+	    114 + 	tintTex.rgb = tintTex.rgb * MULTIPLICATIVE_TINT_CHANGE_COLOR.rgb;
+	117     - 	tintTex.rgb = tintTex.rgb * PSInput.multiplicativeTintColor;
+	118 115   #endif
+	119 116   
+	120 117   #ifdef ALPHA_TEST
+	121 118   	color.rgb = lerp(color.rgb, tintTex.rgb, tintTex.a);
+	122 119   	if (color.a + tintTex.a <= 0.0f) {
+	          ...
+	          '''
+Changed file "entity.vertex.hlsl":
+	Total line: 156 (+17, -25)
+	          '''
+	          ...
+	 33  33   	// With MSAA Enabled, making this field a float results in a DX11 internal compiler error
+	 34  34   	// We assume it is trying to pack the single float with the centroid-interpolated UV coordinates, which it can't do
+	 35  35   	float4 alphaTestMultiplier : ALPHA_MULTIPLIER;
+	 36  36   #endif
+	 37  37   
+	 38     - #ifdef MULTIPLICATIVE_TINT_COLOR
+	 39     - 	float3 multiplicativeTintColor : MULTI_TINT_COLOR;
+	 40     - #endif
+	 41     - 
+	 42  38   	float2 uv : TEXCOORD_0_FB_MSAA;
+	 43  39   	
+	 44  40   #ifdef GEOMETRY_INSTANCEDSTEREO
+	 45  41   	uint instanceID : SV_InstanceID;
+	 46  42   #endif
+	          ...
+	101  97   	float rsin = sin(rotation);
+	102  98   	float rcos = cos(rotation);
+	103  99   	uv = mul(uv, float2x2(rcos, -rsin, rsin, rcos));
+	104 100   	uv.x += offset;
+	105 101   	uv += 0.5;
+	106     - 
+	107     - 	return uv * GLINT_UV_SCALE;
+	108     - }
+	109     - #endif
+	110 102   
+	111     - void main(in VS_Input VSInput, out PS_Input PSInput) {
+	112     - #ifdef INSTANCEDSTEREO
+	113     - 	int i = VSInput.instanceID;
+	114     - 	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	    103 + 	return uv * GLINT_UV_SCALE;
+	    104 + }
+	115     - #else
+	116     - 	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	117 105   #endif
+	    106 + 
+	    107 + void main(in VS_Input VSInput, out PS_Input PSInput) {
+	    108 + #ifdef INSTANCEDSTEREO
+	    109 + 	int i = VSInput.instanceID;
+	118     - #ifdef GEOMETRY_INSTANCEDSTEREO
+	119     - 	PSInput.instanceID = VSInput.instanceID;
+	    110 + 	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	120     - #endif 
+	    111 + #else
+	    112 + 	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	121     - #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	122     - 	PSInput.renTarget_id = VSInput.instanceID;
+	123 113   #endif
+	    114 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	124     - 	float4 normal = TransformRGBA8_SNORM(VSInput.normal);
+	125     - 
+	    115 + 	PSInput.instanceID = VSInput.instanceID;
+	126     - 	float L = lightIntensity(float4(VSInput.position, 1), normal);
+	127     - 
+	    116 + #endif 
+	    117 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	    118 + 	PSInput.renTarget_id = VSInput.instanceID;
+	128     - #ifdef USE_OVERLAY
+	129     - 	L += OVERLAY_COLOR.a * 0.35;
+	130     - 	PSInput.overlayColor = OVERLAY_COLOR;
+	131 119   #endif
+	    120 + 	float4 normal = TransformRGBA8_SNORM(VSInput.normal);
+	    121 + 
+	    122 + 	float L = lightIntensity(float4(VSInput.position, 1), normal);
+	132 123   
+	    124 + #ifdef USE_OVERLAY
+	    125 + 	L += OVERLAY_COLOR.a * 0.35;
+	133     - #ifdef TINTED_ALPHA_TEST
+	    126 + 	PSInput.overlayColor = OVERLAY_COLOR;
+	134     - 	PSInput.alphaTestMultiplier = OVERLAY_COLOR.aaaa;
+	135 127   #endif
+	136     - 
+	137     - 	PSInput.light = float4(L.xxx * TILE_LIGHT_COLOR.rgb, 1.0);
+	138 128   
+	    129 + #ifdef TINTED_ALPHA_TEST
+	139     - #ifdef COLOR_BASED
+	    130 + 	PSInput.alphaTestMultiplier = OVERLAY_COLOR.aaaa;
+	140     - 	PSInput.light *= VSInput.color;
+	141 131   #endif
+	    132 + 
+	    133 + 	PSInput.light = float4(L.xxx * TILE_LIGHT_COLOR.rgb, 1.0);
+	142 134   
+	    135 + #ifdef COLOR_BASED
+	143     - #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	    136 + 	PSInput.light *= VSInput.color;
+	144     - 	PSInput.uv = VSInput.texCoords;
+	145 137   #endif
+	146 138   
+	    139 + #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	147     - #ifdef USE_UV_ANIM
+	    140 + 	PSInput.uv = VSInput.texCoords;
+	148     - 	PSInput.uv.xy = UV_ANIM.xy + (PSInput.uv.xy * UV_ANIM.zw);
+	149 141   #endif
+	150 142   
+	    143 + #ifdef USE_UV_ANIM
+	151     - #ifdef GLINT
+	152     - 	PSInput.layerUV.xy = calculateLayerUV(VSInput.texCoords, UV_OFFSET.x, UV_ROTATION.x);
+	    144 + 	PSInput.uv.xy = UV_ANIM.xy + (PSInput.uv.xy * UV_ANIM.zw);
+	153     - 	PSInput.layerUV.zw = calculateLayerUV(VSInput.texCoords, UV_OFFSET.y, UV_ROTATION.y);
+	154 145   #endif
+	155 146   
+	    147 + #ifdef GLINT
+	    148 + 	PSInput.layerUV.xy = calculateLayerUV(VSInput.texCoords, UV_OFFSET.x, UV_ROTATION.x);
+	156     - #ifdef MULTIPLICATIVE_TINT_COLOR
+	    149 + 	PSInput.layerUV.zw = calculateLayerUV(VSInput.texCoords, UV_OFFSET.y, UV_ROTATION.y);
+	157     - 	PSInput.multiplicativeTintColor = MULTIPLICATIVE_TINT_CHANGE_COLOR.rgb;
+	158 150   #endif
+	159 151   
+	160 152   	//fog
+	161 153   	PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	162 154   	PSInput.fogColor.a = clamp(((PSInput.position.z / RENDER_DISTANCE) - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	          ...
+	          '''

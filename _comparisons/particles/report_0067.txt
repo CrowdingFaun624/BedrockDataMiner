@@ -1,124 +1,392 @@
-Difference of "particles" between "1.21.0.20" (beta of "1.21.0") and "1.21.0.21" (beta of "1.21.0").
+Difference of "particles" between "1.21.0.21" (beta of "1.21.0") and "1.21.0.22" (beta of "1.21.0").
 
-Total particle: 154 (+3, -0)
-Added particle "ominous_spawning_particle":
-	resource pack "experimental":
+Total particle: 166 (+12, -0)
+Changed particle "breeze_ground_particle.json":
+	Moved resource pack "experimental" to "core".
+Changed particle "breeze_wind_explosion.json":
+	Moved resource pack "experimental" to "core".
+Added particle "infested_ambient.json":
+	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "experimental_update_announced_live2023"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:infested_ambient"
+				field "basic_render_parameters":
+					field "material": "particles_blend"
+					field "texture": "textures/particle/infested"
 			field "components":
-				field "minecraft:emitter_lifetime_once": field "active_time": "variable.lifetime"
-				field "minecraft:emitter_rate_steady":
-					field "max_particles": 100
-					field "spawn_rate": 10
-				field "minecraft:emitter_shape_sphere":
-					field "direction": "inwards"
-					field "radius": 2
-					field "surface_only": true
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_custom": field "direction": ["Math.random(-0.25, 0.25)", "Math.random(0, 1)", "Math.random(-0.25, 0.25)"]
 				field "minecraft:particle_appearance_billboard":
-					field "direction": field "mode": "derive_from_velocity"
-					field "facing_camera_mode": "lookat_direction"
-					field "size": ["1 * variable.shrink", "0.5 * variable.shrink"]
-				field "minecraft:particle_appearance_tinting":
-					field "color":
-						field "gradient":
-							value "0.0": "#FF45AEFE"
-							value "1.0": "#FFFFFFFF"
-						field "interpolant": "v.particle_age / v.particle_lifetime"
-				field "minecraft:particle_initial_speed": "2 * variable.speed"
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [0, 0]
+						field "uv_size": [16, 16]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "(Math.random(0, 1) + Math.random(0, 1) + 1) * 0.55"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.85, 1.35)"
+				field "minecraft:particle_motion_collision":
+					field "enabled": 1
+					field "collision_drag": 1.0
+					field "coefficient_of_restitution": 1.0
+					field "collision_radius": 0.5
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["(variable.particle_random_1 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5", "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4) * 1.5", "(variable.particle_random_2 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5"]
+Added particle "infested_emitter.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:infested_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/infested"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_custom": field "direction": ["Math.random(-0.25, 0.25)", "Math.random(0, 1)", "Math.random(-0.25, 0.25)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [0, 0]
+						field "uv_size": [16, 16]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "(Math.random(0, 1) + Math.random(0, 1) + 1) * 0.55"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.85, 1.35)"
+				field "minecraft:particle_motion_collision":
+					field "enabled": 1
+					field "expire_on_contact": true
+					field "collision_drag": 1.0
+					field "coefficient_of_restitution": 1.0
+					field "collision_radius": 0.01
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["(variable.particle_random_1 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5", "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4) * 1.5", "(variable.particle_random_2 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5"]
+Changed particle "ominous_spawning_particle.json":
+	Moved resource pack "experimental" to "core".
+Added particle "oozing_ambient.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:oozing_ambient"
+				field "basic_render_parameters":
+					field "material": "particles_blend"
+					field "texture": "textures/items/slimeball"
+			field "components":
+				field "minecraft:emitter_lifetime_looping": field "active_time": "math.random(0.1, 0.8)"
+				field "minecraft:emitter_rate_instant": field "num_particles": "math.random(2, 4)"
+				field "minecraft:emitter_shape_point": field "offset": [0, 0, 0]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.0625, 0.0625]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": ["Math.round(variable.particle_random_1 * 12.0)", "Math.round(variable.particle_random_2 * 12.0)"]
+						field "uv_size": [4, 4]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "math.random(1,2)"
 				field "minecraft:particle_lifetime_expression": field "max_lifetime": 1
-				field "minecraft:particle_motion_dynamic": empty
-			field "curves":
-				curve "variable.shrink":
-					field "horizontal_range": "v.particle_lifetime"
-					field "input": "v.particle_age"
-					field "nodes": [1, 0]
-					field "type": "linear"
-				curve "variable.speed":
-					field "horizontal_range": "v.particle_lifetime"
-					field "input": "v.particle_age"
-					field "nodes": [1, 2, 2, 2]
-					field "type": "bezier"
-			field "description":
-				field "identifier": "minecraft:ominous_spawning_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/ominous_spawning"
-Added particle "smash_ground_particle":
-	resource pack "experimental":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "experimental_update_announced_live2023"
-		field "particle_effect":
-			field "components":
-				field "minecraft:emitter_lifetime_once": field "active_time": 1.0
-				field "minecraft:emitter_rate_instant": field "num_particles": 500
-				field "minecraft:emitter_shape_disc":
-					field "direction": ["math.random( -0.2, 0.2 )", 1.0, "math.random( -0.2, 0.2 )"]
-					field "offset": ["math.random( -0.5, 0.5 )", 0, "math.random( -0.5, 0.5 )"]
-					field "radius": 3.5
-					field "surface_only": true
-				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
-					field "size": ["variable.particle_random_1 * 0.0375 + 0.0375", "variable.particle_random_1 * 0.0375 + 0.0375"]
-					field "uv":
-						field "texture_height": 1
-						field "texture_width": 1
-						field "uv": ["variable.surface_particle_texture_coordinate.u + (variable.surface_particle_texture_size.u/4) * (variable.particle_random_1*3)", "variable.surface_particle_texture_coordinate.v + (variable.surface_particle_texture_size.v/4) * (variable.particle_random_2*3)"]
-						field "uv_size": ["variable.surface_particle_texture_size.u/4", "variable.surface_particle_texture_size.v/4"]
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_initial_speed": "math.random(4, 12)"
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random( 2.0, 2.5 )"
 				field "minecraft:particle_motion_collision":
-					field "coefficient_of_restitution": 0.1
-					field "collision_drag": 5
-					field "collision_radius": 0.1
-				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["math.random(-2, 2)", -9.81, "math.random(-2, 2)"]
-			field "curves":
-				curve "variable.smash_particle":
-					field "horizontal_range": "v.particle_lifetime"
-					field "input": "v.particle_age"
-					field "nodes": [0, 2, -1, -1]
-					field "type": "linear"
-			field "description":
-				field "identifier": "minecraft:smash_ground_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "atlas.terrain"
-Added particle "smash_ground_particle_center":
-	resource pack "experimental":
+					field "collision_drag": 10.0
+					field "collision_radius": 0.5
+					field "expire_on_contact": true
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["math.random(-2, 2)", "math.random(-2, -10)", "math.random(-2, 2)"]
+Added particle "oozing_emitter.json":
+	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "experimental_update_announced_live2023"
 		field "particle_effect":
-			field "components":
-				field "minecraft:emitter_lifetime_once": field "active_time": 1.0
-				field "minecraft:emitter_rate_instant": field "num_particles": 250
-				field "minecraft:emitter_shape_point":
-					field "direction": ["math.random( -0.2, 0.2 )", 1.0, "math.random( -0.2, 0.2 )"]
-					field "offset": [0, 0.1, 0]
-				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
-					field "size": ["variable.particle_random_1 * 0.0375 + 0.0375", "variable.particle_random_1 * 0.0375 + 0.0375"]
-					field "uv":
-						field "texture_height": 1
-						field "texture_width": 1
-						field "uv": ["variable.surface_particle_texture_coordinate.u + (variable.surface_particle_texture_size.u/4) * (variable.particle_random_1*3)", "variable.surface_particle_texture_coordinate.v + (variable.surface_particle_texture_size.v/4) * (variable.particle_random_2*3)"]
-						field "uv_size": ["variable.surface_particle_texture_size.u/4", "variable.surface_particle_texture_size.v/4"]
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_initial_speed": "math.random(6, 16)"
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random( 2.0, 2.5 )"
-				field "minecraft:particle_motion_collision":
-					field "coefficient_of_restitution": 0.1
-					field "collision_drag": 5
-					field "collision_radius": 0.1
-				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["math.random(-2, 2)", -9.81, "math.random(-2, 2)"]
-			field "curves":
-				curve "variable.smash_particle":
-					field "horizontal_range": "v.particle_lifetime"
-					field "input": "v.particle_age"
-					field "nodes": [0, 2, -1, -1]
-					field "type": "linear"
 			field "description":
-				field "identifier": "minecraft:smash_ground_particle_center"
+				field "identifier": "minecraft:oozing_emitter"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
-					field "texture": "atlas.terrain"
+					field "texture": "textures/items/slimeball"
+			field "components":
+				field "minecraft:emitter_lifetime_looping": field "active_time": "math.random(0.1, 0.8)"
+				field "minecraft:emitter_rate_instant": field "num_particles": "math.random(2, 4)"
+				field "minecraft:emitter_shape_point": field "offset": [0, 0, 0]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.0625, 0.0625]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": ["Math.round(variable.particle_random_1 * 12.0)", "Math.round(variable.particle_random_2 * 12.0)"]
+						field "uv_size": [4, 4]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "math.random(1,2)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 1
+				field "minecraft:particle_motion_collision":
+					field "collision_drag": 10.0
+					field "collision_radius": 0.2
+					field "expire_on_contact": true
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["math.random(-2, 2)", "math.random(-2, -10)", "math.random(-2, 2)"]
+Added particle "raid_omen_ambient.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:raid_omen_ambient"
+				field "basic_render_parameters":
+					field "material": "particles_blend"
+					field "texture": "textures/particle/raid_omen"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_custom": field "direction": ["Math.random(-0.25, 0.25)", "Math.random(0, 1)", "Math.random(-0.25, 0.25)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [0, 0]
+						field "uv_size": [16, 16]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "(Math.random(0, 1) + Math.random(0, 1) + 1) * 0.55"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.85, 1.35)"
+				field "minecraft:particle_motion_collision":
+					field "enabled": 1
+					field "collision_drag": 1.0
+					field "coefficient_of_restitution": 1.0
+					field "collision_radius": 0.5
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["(variable.particle_random_1 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5", "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4) * 1.5", "(variable.particle_random_2 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5"]
+Added particle "raid_omen_emitter.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:raid_omen_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/raid_omen"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_custom": field "direction": ["Math.random(-0.25, 0.25)", "Math.random(0, 1)", "Math.random(-0.25, 0.25)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [0, 0]
+						field "uv_size": [16, 16]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "(Math.random(0, 1) + Math.random(0, 1) + 1) * 0.55"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.85, 1.35)"
+				field "minecraft:particle_motion_collision":
+					field "enabled": 1
+					field "expire_on_contact": true
+					field "collision_drag": 1.0
+					field "coefficient_of_restitution": 1.0
+					field "collision_radius": 0.01
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["(variable.particle_random_1 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5", "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4) * 1.5", "(variable.particle_random_2 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5"]
+Changed particle "small_flame.json":
+	Moved resource pack "experimental" to "core".
+Changed particle "small_soul_fire_flame.json":
+	Moved resource pack "experimental" to "core".
+Changed particle "smash_ground_particle.json":
+	Moved resource pack "experimental" to "core".
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Total field: 10 (+1, -0)
+				Added field "minecraft:particle_appearance_tinting" of field "color": color: ["variable.surface_particle_tint.r", "variable.surface_particle_tint.g", "variable.surface_particle_tint.b", "variable.surface_particle_tint.a"].
+Changed particle "smash_ground_particle_center.json":
+	Moved resource pack "experimental" to "core".
+	Changed resource pack "core":
+		Changed field "particle_effect":
+			Changed field "components":
+				Total field: 10 (+1, -0)
+				Added field "minecraft:particle_appearance_tinting" of field "color": color: ["variable.surface_particle_tint.r", "variable.surface_particle_tint.g", "variable.surface_particle_tint.b", "variable.surface_particle_tint.a"].
+Added particle "trial_omen_ambient.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:trial_omen_ambient"
+				field "basic_render_parameters":
+					field "material": "particles_blend"
+					field "texture": "textures/particle/trial_omen"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_custom": field "direction": ["Math.random(-0.25, 0.25)", "Math.random(0, 1)", "Math.random(-0.25, 0.25)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [0, 0]
+						field "uv_size": [16, 16]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "(Math.random(0, 1) + Math.random(0, 1) + 1) * 0.55"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.85, 1.35)"
+				field "minecraft:particle_motion_collision":
+					field "enabled": 1
+					field "collision_drag": 1.0
+					field "coefficient_of_restitution": 1.0
+					field "collision_radius": 0.5
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["(variable.particle_random_1 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5", "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4) * 1.5", "(variable.particle_random_2 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5"]
+Added particle "trial_omen_emitter.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:trial_omen_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/trial_omen"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_custom": field "direction": ["Math.random(-0.25, 0.25)", "Math.random(0, 1)", "Math.random(-0.25, 0.25)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [0, 0]
+						field "uv_size": [16, 16]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "(Math.random(0, 1) + Math.random(0, 1) + 1) * 0.55"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.85, 1.35)"
+				field "minecraft:particle_motion_collision":
+					field "enabled": 1
+					field "expire_on_contact": true
+					field "collision_drag": 1.0
+					field "coefficient_of_restitution": 1.0
+					field "collision_radius": 0.01
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["(variable.particle_random_1 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5", "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4) * 1.5", "(variable.particle_random_2 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5"]
+Changed particle "trial_spawner_detection.particle.json":
+	Moved resource pack "experimental" to "core".
+Changed particle "trial_spawner_detection_ominous.particle.json":
+	Moved resource pack "experimental" to "core".
+Changed particle "vault_connection.json":
+	Moved resource pack "experimental" to "core".
+Added particle "weaving_ambient.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:weaving_ambient"
+				field "basic_render_parameters":
+					field "material": "particles_blend"
+					field "texture": "textures/blocks/web"
+			field "components":
+				field "minecraft:emitter_lifetime_looping": field "active_time": "math.random(0.1, 0.8)"
+				field "minecraft:emitter_rate_instant": field "num_particles": "math.random(2, 4)"
+				field "minecraft:emitter_shape_point": field "offset": [0, 0, 0]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.0625, 0.0625]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": ["Math.round(variable.particle_random_1 * 12.0)", "Math.round(variable.particle_random_2 * 12.0)"]
+						field "uv_size": [4, 4]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "math.random(1,2)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 1
+				field "minecraft:particle_motion_collision":
+					field "collision_drag": 10.0
+					field "collision_radius": 0.5
+					field "expire_on_contact": true
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["math.random(-2, 2)", "math.random(-2, -10)", "math.random(-2, 2)"]
+Added particle "weaving_emitter.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:weaving_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/blocks/web"
+			field "components":
+				field "minecraft:emitter_lifetime_looping": field "active_time": "math.random(0.1, 0.8)"
+				field "minecraft:emitter_rate_instant": field "num_particles": "math.random(2, 4)"
+				field "minecraft:emitter_shape_point": field "offset": [0, 0, 0]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.0625, 0.0625]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": ["Math.round(variable.particle_random_1 * 12.0)", "Math.round(variable.particle_random_2 * 12.0)"]
+						field "uv_size": [4, 4]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": "math.random(1,2)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 1
+				field "minecraft:particle_motion_collision":
+					field "collision_drag": 10.0
+					field "collision_radius": 0.2
+					field "expire_on_contact": true
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["math.random(-2, 2)", "math.random(-2, -10)", "math.random(-2, 2)"]
+Changed particle "white_smoke.json":
+	Moved resource pack "experimental" to "core".
+Added particle "wind_charged_ambient.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:wind_charged_ambient"
+				field "basic_render_parameters":
+					field "material": "particles_blend"
+					field "texture": "textures/particle/small_gust"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 1
+				field "minecraft:emitter_rate_instant": field "num_particles": 2
+				field "minecraft:emitter_shape_point": field "offset": [0, 0, 0]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 56
+						field "texture_height": 8
+						field "flipbook":
+							field "base_UV": [0, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [8, 0]
+							field "frames_per_second": 12
+							field "max_frame": 6
+							field "stretch_to_lifetime": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 0.5
+Added particle "wind_charged_emitter.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:wind_charged_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/small_gust"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 1
+				field "minecraft:emitter_rate_instant": field "num_particles": 2
+				field "minecraft:emitter_shape_point": field "offset": [0, 0, 0]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 56
+						field "texture_height": 8
+						field "flipbook":
+							field "base_UV": [0, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [8, 0]
+							field "frames_per_second": 12
+							field "max_frame": 6
+							field "stretch_to_lifetime": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 0.5
+Changed particle "wind_explosion.json":
+	Moved resource pack "experimental" to "core".

@@ -1,0 +1,21 @@
+Difference of "shaders_resource_packs" between "a0.12.1_build8" (beta of "a0.12.1") and "a0.12.1_build9" (beta of "a0.12.1").
+
+Changed resource pack "rain_snow.fragment":
+	Changed file "vanilla":
+		Total line: 37 (+1, -1)
+		        '''
+		        ...
+		23 23   	occlusionTexture.a *= 255.0;	// Alpha stores height of world
+		24 24   
+		25 25   	// clamp the uvs
+		26 26   	vec2 uvclamp = clamp(occlusionUV, 0.0, 1.0);
+		27 27   	if (uvclamp.x == occlusionUV.x && uvclamp.y == occlusionUV.y && worldPosition.y < occlusionTexture.a) {
+		   28 + 		albedo.a = 0.0;
+		28    - 		discard;
+		29 29   	}
+		30 30   
+		31 31   	float mixAmount = clamp ( (worldPosition.y - occlusionTexture.a)*0.1, 0.0, 1.0);
+		32 32   	vec3 lighting = mix(occlusionTexture.rgb, color.rgb, mixAmount);
+		33 33   	gl_FragColor = albedo;
+		        ...
+		        '''

@@ -1,0 +1,435 @@
+Difference of "shaders" between "1.2.13.12" (beta of "1.4.0") and "1.2.14.2" (beta of "1.4.0").
+
+Changed file "ShaderConstants.fxh":
+	Total line: 172 (+1, -0)
+	          '''
+	          ...
+	 58  58       float4 GLINT_COLOR;
+	 59  59       float4 UV_ANIM;
+	 60  60       float2 UV_OFFSET;
+	 61  61       float2 UV_ROTATION;
+	 62  62       float2 GLINT_UV_SCALE;
+	     63 +     float4 MULTIPLICATIVE_TINT_CHANGE_COLOR;
+	 63  64   }
+	 64  65   
+	 65  66   cbuffer PerFrameConstants : register(b2)
+	 66  67   {
+	 67  68   
+	          ...
+	          '''
+Changed file "entity.fragment.hlsl":
+	Total line: 162 (+49, -31)
+	          '''
+	          ...
+	 19  19   
+	 20  20   #ifdef TINTED_ALPHA_TEST
+	 21  21   	float4 alphaTestMultiplier : ALPHA_MULTIPLIER;
+	 22  22   #endif
+	 23  23   
+	     24 + #ifdef MULTIPLICATIVE_TINT_COLOR
+	     25 + 	float3 multiplicativeTintColor : MULTI_TINT_COLOR;
+	     26 + #endif
+	     27 + 	float2 uv : TEXCOORD_0_FB_MSAA;
+	     28 + 
+	     29 + };
+	     30 + 
+	     31 + struct PS_Output
+	     32 + {
+	     33 + 	float4 color : SV_Target;
+	     34 + };
+	     35 + 
+	     36 + #ifdef USE_EMISSIVE
+	     37 + #ifdef USE_ONLY_EMISSIVE
+	     38 + #define NEEDS_DISCARD(C) (C.a == 0.0f ||C.a == 1.0f )
+	     39 + #else
+	     40 + #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+	     41 + #endif
+	     42 + #else
+	     43 + #ifndef USE_COLOR_MASK
+	     44 + #define NEEDS_DISCARD(C)	(C.a < 0.5)
+	     45 + #else
+	     46 + #define NEEDS_DISCARD(C)	(C.a == 0.0)
+	     47 + #endif
+	     48 + #endif
+	     49 + 
+	     50 + float4 glintBlend(float4 dest, float4 source) {
+	     51 + 	// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+	     52 + 	return float4(source.rgb * source.rgb, source.a) + float4(dest.rgb, 0.0);
+	     53 + }
+	 24     - 	float2 uv : TEXCOORD_0_FB_MSAA;
+	 25  54   
+	     55 + void main( in PS_Input PSInput, out PS_Output PSOutput )
+	     56 + {
+	     57 + 	float4 color = float4( 1.0f, 1.0f, 1.0f, 1.0f );
+	 26     - };
+	 27  58   
+	 28     - struct PS_Output
+	 29     - {
+	 30     - 	float4 color : SV_Target;
+	     59 + #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	 31     - };
+	 32  60   
+	     61 + #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE) || (VERSION < 0xa000 /*D3D_FEATURE_LEVEL_10_0*/)
+	 33     - #ifdef USE_EMISSIVE
+	 34     - #ifdef USE_ONLY_EMISSIVE
+	     62 + 	color = TEXTURE_0.Sample( TextureSampler0, PSInput.uv );
+	 35     - #define NEEDS_DISCARD(C) (C.a == 0.0f ||C.a == 1.0f )
+	 36  63   #else
+	     64 + 	color = texture2D_AA(TEXTURE_0, TextureSampler0, PSInput.uv);
+	 37     - #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+	 38  65   #endif
+	     66 + 
+	 39     - #else
+	     67 + #if defined(ALPHA_TEST) && !defined(USE_MULTITEXTURE) && !defined(MULTIPLICATIVE_TINT)
+	     68 + 	if( NEEDS_DISCARD( color ) )
+	 40     - #ifndef USE_COLOR_MASK
+	 41     - #define NEEDS_DISCARD(C)	(C.a < 0.5)
+	     69 + 	{
+	 42     - #else
+	     70 + 		discard;
+	     71 + 	}
+	 43     - #define NEEDS_DISCARD(C)	(C.a == 0.0)
+	 44     - #endif
+	 45  72   #endif
+	 46  73   
+	     74 + #ifdef TINTED_ALPHA_TEST
+	     75 + 	float4 testColor = color;
+	     76 + 	testColor.a = testColor.a * PSInput.alphaTestMultiplier.r;
+	     77 + 	if( NEEDS_DISCARD( testColor ) )
+	     78 + 	{
+	     79 + 		discard;
+	     80 + 	}
+	 47     - float4 glintBlend(float4 dest, float4 source) {
+	 48     - 	// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+	 49     - 	return float4(source.rgb * source.rgb, source.a) + float4(dest.rgb, 0.0);
+	 50     - }
+	 51     - 
+	 52     - void main( in PS_Input PSInput, out PS_Output PSOutput )
+	 53     - {
+	     81 + #endif
+	 54     - 	float4 color = float4( 1.0f, 1.0f, 1.0f, 1.0f );
+	 55  82   
+	     83 + #endif
+	 56     - #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	 57  84   
+	     85 + #ifdef USE_COLOR_MASK
+	 58     - #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE) || (VERSION < 0xa000 /*D3D_FEATURE_LEVEL_10_0*/)
+	 59     - 	color = TEXTURE_0.Sample( TextureSampler0, PSInput.uv );
+	     86 + 	color.rgb = lerp( color, color * CHANGE_COLOR, color.a ).rgb;
+	     87 + 	color.a *= CHANGE_COLOR.a;
+	 60     - #else
+	 61     - 	color = texture2D_AA(TEXTURE_0, TextureSampler0, PSInput.uv);
+	 62  88   #endif
+	 63  89   
+	 64     - #if defined(ALPHA_TEST) && !defined(USE_MULTITEXTURE)
+	 65     - 	if( NEEDS_DISCARD( color ) )
+	 66     - 	{
+	     90 + #ifdef ITEM_IN_HAND
+	     91 + 	color.rgb = lerp(color, color * CHANGE_COLOR, PSInput.light.a).rgb;
+	 67     - 		discard;
+	 68     - 	}
+	 69  92   #endif
+	 70  93   
+	     94 + #ifdef USE_MULTITEXTURE
+	     95 + 	float4 tex1 = TEXTURE_1.Sample(TextureSampler1, PSInput.uv);
+	 71     - #ifdef TINTED_ALPHA_TEST
+	     96 + 	float4 tex2 = TEXTURE_2.Sample(TextureSampler2, PSInput.uv);
+	     97 + 	color.rgb = lerp(color.rgb, tex1, tex1.a);
+	     98 + #ifdef ALPHA_TEST
+	     99 + 	if (color.a < 0.5f && tex1.a == 0.0f) {
+	 72     - 	float4 testColor = color;
+	 73     - 	testColor.a = testColor.a * PSInput.alphaTestMultiplier.r;
+	 74     - 	if( NEEDS_DISCARD( testColor ) )
+	 75     - 	{
+	 76 100   		discard;
+	 77 101   	}
+	 78     - #endif
+	 79     - 
+	 80 102   #endif
+	 81 103   
+	    104 + #ifdef COLOR_SECOND_TEXTURE
+	    105 + 	if (tex2.a > 0.0f) {
+	 82     - #ifdef USE_COLOR_MASK
+	    106 + 		color.rgb = lerp(tex2.rgb, tex2 * CHANGE_COLOR, tex2.a);
+	 83     - 	color.rgb = lerp( color, color * CHANGE_COLOR, color.a ).rgb;
+	    107 + 	}
+	    108 + #else
+	    109 + 	color.rgb = lerp(color.rgb, tex2, tex2.a);
+	 84     - 	color.a *= CHANGE_COLOR.a;
+	 85 110   #endif
+	 86     - 
+	 87     - #ifdef ITEM_IN_HAND
+	 88     - 	color.rgb = lerp(color, color * CHANGE_COLOR, PSInput.light.a).rgb;
+	 89 111   #endif
+	 90 112   
+	    113 + #ifdef MULTIPLICATIVE_TINT
+	 91     - #ifdef USE_MULTITEXTURE
+	 92     - 	float4 tex1 = TEXTURE_1.Sample(TextureSampler1, PSInput.uv);
+	    114 + 	float4 tintTex = TEXTURE_1.Sample(TextureSampler1, PSInput.uv);
+	 93     - 	float4 tex2 = TEXTURE_2.Sample(TextureSampler2, PSInput.uv);
+	 94     - 	color.rgb = lerp(color.rgb, tex1, tex1.a);
+	 95     - #ifdef ALPHA_TEST
+	    115 + 
+	    116 + #ifdef MULTIPLICATIVE_TINT_COLOR 
+	    117 + 	tintTex.rgb = tintTex.rgb * PSInput.multiplicativeTintColor;
+	 96     - 	if (color.a < 0.5f && tex1.a == 0.0f) {
+	 97     - 		discard;
+	 98     - 	}
+	 99 118   #endif
+	100 119   
+	    120 + #ifdef ALPHA_TEST
+	    121 + 	color.rgb = lerp(color.rgb, tintTex.rgb, tintTex.a);
+	101     - #ifdef COLOR_SECOND_TEXTURE
+	    122 + 	if (color.a + tintTex.a <= 0.0f) {
+	    123 + 		discard;
+	102     - 	if (tex2.a > 0.0f) {
+	103     - 		color.rgb = lerp(tex2.rgb, tex2 * CHANGE_COLOR, tex2.a);
+	104 124   	}
+	105     - #else
+	106     - 	color.rgb = lerp(color.rgb, tex2, tex2.a);
+	107 125   #endif
+	108 126   #endif
+	109 127   
+	110 128   #ifdef USE_OVERLAY
+	111 129   	//use either the diffuse or the OVERLAY_COLOR
+	          ...
+	          '''
+Changed file "entity.vertex.hlsl":
+	Total line: 164 (+48, -40)
+	          '''
+	          ...
+	 33  33   	// With MSAA Enabled, making this field a float results in a DX11 internal compiler error
+	 34  34   	// We assume it is trying to pack the single float with the centroid-interpolated UV coordinates, which it can't do
+	 35  35   	float4 alphaTestMultiplier : ALPHA_MULTIPLIER;
+	 36  36   #endif
+	 37  37   
+	     38 + #ifdef MULTIPLICATIVE_TINT_COLOR
+	     39 + 	float3 multiplicativeTintColor : MULTI_TINT_COLOR;
+	     40 + #endif
+	     41 + 
+	     42 + 	float2 uv : TEXCOORD_0_FB_MSAA;
+	     43 + 	
+	     44 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	     45 + 	uint instanceID : SV_InstanceID;
+	     46 + #endif
+	     47 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	     48 + 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	     49 + #endif
+	     50 + };
+	     51 + 
+	     52 + static const float AMBIENT = 0.45;
+	     53 + 
+	     54 + static const float XFAC = -0.1;
+	     55 + static const float ZFAC = 0.1;
+	     56 + 
+	     57 + 
+	     58 + float4 TransformRGBA8_SNORM(const float4 RGBA8_SNORM) {
+	     59 + #ifdef R8G8B8A8_SNORM_UNSUPPORTED
+	     60 + 	return RGBA8_SNORM * float(2.0).xxxx - float(1.0).xxxx;
+	     61 + #else
+	 38     - 	float2 uv : TEXCOORD_0_FB_MSAA;
+	 39     - 	
+	 40     - #ifdef GEOMETRY_INSTANCEDSTEREO
+	 41     - 	uint instanceID : SV_InstanceID;
+	 42     - #endif
+	 43     - #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	     62 + 	return RGBA8_SNORM;
+	 44     - 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	 45  63   #endif
+	     64 + }
+	     65 + 
+	 46     - };
+	 47  66   
+	     67 + float lightIntensity(const float4 position, const float4 normal) {
+	     68 + #ifdef FANCY
+	 48     - static const float AMBIENT = 0.45;
+	 49  69   
+	     70 + #if !defined(INSTANCEDSTEREO)
+	     71 + 	float3 N = normalize(mul(WORLD, normal)).xyz;
+	     72 + #else
+	     73 + 	float3 N = normalize(mul(WORLD_STEREO, normal)).xyz;
+	     74 + #endif
+	 50     - static const float XFAC = -0.1;
+	 51     - static const float ZFAC = 0.1;
+	 52  75   
+	     76 + 	N.y *= TILE_LIGHT_COLOR.a;
+	 53  77   
+	     78 + 	//take care of double sided polygons on materials without culling
+	     79 + #ifdef FLIP_BACKFACES
+	 54     - float4 TransformRGBA8_SNORM(const float4 RGBA8_SNORM) {
+	     80 + #if !defined(INSTANCEDSTEREO)
+	     81 + 	float3 viewDir = normalize((mul(WORLD, position)).xyz);
+	 55     - #ifdef R8G8B8A8_SNORM_UNSUPPORTED
+	 56     - 	return RGBA8_SNORM * float(2.0).xxxx - float(1.0).xxxx;
+	 57  82   #else
+	     83 + 	float3 viewDir = normalize((mul(WORLD_STEREO, position)).xyz);
+	 58     - 	return RGBA8_SNORM;
+	 59  84   #endif
+	     85 + 	if (dot(N, viewDir) > 0.0) {
+	 60     - }
+	 61     - 
+	     86 + 		N *= -1.0;
+	     87 + 	}
+	     88 + #endif
+	 62     - 
+	 63     - float lightIntensity(const float4 position, const float4 normal) {
+	 64     - #ifdef FANCY
+	 65  89   
+	     90 + 	float yLight = (1.0 + N.y) * 0.5;
+	 66     - #if !defined(INSTANCEDSTEREO)
+	     91 + 	return yLight * (1.0 - AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+	 67     - 	float3 N = normalize(mul(WORLD, normal)).xyz;
+	 68  92   #else
+	     93 + 	return 1.0;
+	 69     - 	float3 N = normalize(mul(WORLD_STEREO, normal)).xyz;
+	 70  94   #endif
+	     95 + }
+	 71     - 
+	 72     - 	N.y *= TILE_LIGHT_COLOR.a;
+	 73  96   
+	 74     - 	//take care of double sided polygons on materials without culling
+	 75     - #ifdef FLIP_BACKFACES
+	 76     - #if !defined(INSTANCEDSTEREO)
+	 77     - 	float3 viewDir = normalize((mul(WORLD, position)).xyz);
+	 78     - #else
+	     97 + #ifdef GLINT
+	     98 + float2 calculateLayerUV(float2 origUV, float offset, float rotation) {
+	     99 + 	float2 uv = origUV;
+	    100 + 	uv -= 0.5;
+	 79     - 	float3 viewDir = normalize((mul(WORLD_STEREO, position)).xyz);
+	 80     - #endif
+	 81     - 	if (dot(N, viewDir) > 0.0) {
+	 82     - 		N *= -1.0;
+	 83     - 	}
+	 84     - #endif
+	 85     - 
+	    101 + 	float rsin = sin(rotation);
+	 86     - 	float yLight = (1.0 + N.y) * 0.5;
+	 87     - 	return yLight * (1.0 - AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+	    102 + 	float rcos = cos(rotation);
+	    103 + 	uv = mul(uv, float2x2(rcos, -rsin, rsin, rcos));
+	    104 + 	uv.x += offset;
+	    105 + 	uv += 0.5;
+	 88     - #else
+	 89     - 	return 1.0;
+	 90     - #endif
+	 91     - }
+	 92 106   
+	 93     - #ifdef GLINT
+	 94     - float2 calculateLayerUV(float2 origUV, float offset, float rotation) {
+	    107 + 	return uv * GLINT_UV_SCALE;
+	 95     - 	float2 uv = origUV;
+	    108 + }
+	    109 + #endif
+	    110 + 
+	    111 + void main(in VS_Input VSInput, out PS_Input PSInput) {
+	    112 + #ifdef INSTANCEDSTEREO
+	    113 + 	int i = VSInput.instanceID;
+	    114 + 	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	 96     - 	uv -= 0.5;
+	 97     - 	float rsin = sin(rotation);
+	 98     - 	float rcos = cos(rotation);
+	 99     - 	uv = mul(uv, float2x2(rcos, -rsin, rsin, rcos));
+	100     - 	uv.x += offset;
+	101     - 	uv += 0.5;
+	102     - 
+	    115 + #else
+	    116 + 	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	103     - 	return uv * GLINT_UV_SCALE;
+	104     - }
+	105 117   #endif
+	106     - 
+	107     - void main(in VS_Input VSInput, out PS_Input PSInput) {
+	    118 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	    119 + 	PSInput.instanceID = VSInput.instanceID;
+	108     - #ifdef INSTANCEDSTEREO
+	109     - 	int i = VSInput.instanceID;
+	    120 + #endif 
+	110     - 	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	    121 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	    122 + 	PSInput.renTarget_id = VSInput.instanceID;
+	111     - #else
+	112     - 	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	113 123   #endif
+	    124 + 	float4 normal = TransformRGBA8_SNORM(VSInput.normal);
+	    125 + 
+	114     - #ifdef GEOMETRY_INSTANCEDSTEREO
+	    126 + 	float L = lightIntensity(float4(VSInput.position, 1), normal);
+	115     - 	PSInput.instanceID = VSInput.instanceID;
+	    127 + 
+	    128 + #ifdef USE_OVERLAY
+	    129 + 	L += OVERLAY_COLOR.a * 0.35;
+	    130 + 	PSInput.overlayColor = OVERLAY_COLOR;
+	116     - #endif 
+	117     - #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	118     - 	PSInput.renTarget_id = VSInput.instanceID;
+	119 131   #endif
+	120     - 	float4 normal = TransformRGBA8_SNORM(VSInput.normal);
+	121     - 
+	122     - 	float L = lightIntensity(float4(VSInput.position, 1), normal);
+	123 132   
+	    133 + #ifdef TINTED_ALPHA_TEST
+	124     - #ifdef USE_OVERLAY
+	125     - 	L += OVERLAY_COLOR.a * 0.35;
+	    134 + 	PSInput.alphaTestMultiplier = OVERLAY_COLOR.aaaa;
+	126     - 	PSInput.overlayColor = OVERLAY_COLOR;
+	127 135   #endif
+	    136 + 
+	    137 + 	PSInput.light = float4(L.xxx * TILE_LIGHT_COLOR.rgb, 1.0);
+	128 138   
+	    139 + #ifdef COLOR_BASED
+	129     - #ifdef TINTED_ALPHA_TEST
+	    140 + 	PSInput.light *= VSInput.color;
+	130     - 	PSInput.alphaTestMultiplier = OVERLAY_COLOR.aaaa;
+	131 141   #endif
+	132     - 
+	133     - 	PSInput.light = float4(L.xxx * TILE_LIGHT_COLOR.rgb, 1.0);
+	134 142   
+	    143 + #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	135     - #ifdef COLOR_BASED
+	    144 + 	PSInput.uv = VSInput.texCoords;
+	136     - 	PSInput.light *= VSInput.color;
+	137 145   #endif
+	138 146   
+	    147 + #ifdef USE_UV_ANIM
+	139     - #if( !defined(NO_TEXTURE) || !defined(COLOR_BASED) || defined(USE_COLOR_BLEND) )
+	    148 + 	PSInput.uv.xy = UV_ANIM.xy + (PSInput.uv.xy * UV_ANIM.zw);
+	140     - 	PSInput.uv = VSInput.texCoords;
+	141 149   #endif
+	142 150   
+	    151 + #ifdef GLINT
+	    152 + 	PSInput.layerUV.xy = calculateLayerUV(VSInput.texCoords, UV_OFFSET.x, UV_ROTATION.x);
+	143     - #ifdef USE_UV_ANIM
+	    153 + 	PSInput.layerUV.zw = calculateLayerUV(VSInput.texCoords, UV_OFFSET.y, UV_ROTATION.y);
+	144     - 	PSInput.uv.xy = UV_ANIM.xy + (PSInput.uv.xy * UV_ANIM.zw);
+	145 154   #endif
+	146 155   
+	    156 + #ifdef MULTIPLICATIVE_TINT_COLOR
+	147     - #ifdef GLINT
+	148     - 	PSInput.layerUV.xy = calculateLayerUV(VSInput.texCoords, UV_OFFSET.x, UV_ROTATION.x);
+	    157 + 	PSInput.multiplicativeTintColor = MULTIPLICATIVE_TINT_CHANGE_COLOR.rgb;
+	149     - 	PSInput.layerUV.zw = calculateLayerUV(VSInput.texCoords, UV_OFFSET.y, UV_ROTATION.y);
+	150 158   #endif
+	151 159   
+	152 160   	//fog
+	153 161   	PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	154 162   	PSInput.fogColor.a = clamp(((PSInput.position.z / RENDER_DISTANCE) - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	          ...
+	          '''
+Changed file "renderchunk.fragment.hlsl":
+	Total line: 93 (+0, -1)
+	        '''
+	        ...
+	38 38   	float4 diffuse = TEXTURE_0.Sample(TextureSampler0, PSInput.uv0);
+	39 39   #endif
+	40 40   
+	41 41   #ifdef SEASONS_FAR
+	42 42   	diffuse.a = 1.0f;
+	43    - 	PSInput.color.b = 1.0f;
+	44 43   #endif
+	45 44   
+	46 45   #if USE_ALPHA_TEST
+	47 46   	#ifdef ALPHA_TO_COVERAGE
+	48 47   	#define ALPHA_THRESHOLD 0.05
+	        ...
+	        '''

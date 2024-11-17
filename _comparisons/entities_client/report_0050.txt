@@ -1,7 +1,7 @@
 Difference of "entities_client" between "1.16.10" and "1.16.20.50" (beta of "1.16.20").
 
 Total entity: 145 (+1, -0)
-Changed entity "piglin.entity":
+Changed entity "piglin.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "minecraft:client_entity":
@@ -48,9 +48,8 @@ Changed entity "piglin.entity":
 						script: "look_at_target_controller"
 						script: "piglin_attack_controller"
 						script: "riding_controller"
-Added entity "piglin_brute.entity":
+Added entity "piglin_brute.entity.json":
 	resource pack "core":
-		field "defined_in": resource pack: "vanilla_1.16"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -75,6 +74,12 @@ Added entity "piglin_brute.entity":
 				field "materials": materials "default": "piglin_brute"
 				field "render_controllers": render controller: "controller.render.piglin_brute"
 				field "scripts":
+					field "pre_animation":
+						script: "variable.tcos0 = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
+						script: "variable.attack = Math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3;"
+						script: "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
+						script: "variable.z_bob = Math.cos(query.life_time * 103.13244) * 2.865 + 2.865;"
+						script: "variable.x_bob = Math.sin(query.life_time * 76.776372) * 2.865;"
 					field "animate":
 						script: script item "humanoid_big_head": "query.is_baby"
 						script: "move"
@@ -82,12 +87,6 @@ Added entity "piglin_brute.entity":
 						script: "look_at_target_controller"
 						script: "piglin_attack_controller"
 						script: "riding_controller"
-					field "pre_animation":
-						script: "variable.tcos0 = (Math.cos(query.modified_distance_moved * 38.17) * query.modified_move_speed / variable.gliding_speed_value) * 57.3;"
-						script: "variable.attack = Math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3;"
-						script: "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
-						script: "variable.z_bob = Math.cos(query.life_time * 103.13244) * 2.865 + 2.865;"
-						script: "variable.x_bob = Math.sin(query.life_time * 76.776372) * 2.865;"
 				field "spawn_egg":
 					field "base_color": "#592A10"
 					field "overlay_color": "#F9F3A4"

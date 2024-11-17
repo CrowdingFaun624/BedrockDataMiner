@@ -1,0 +1,305 @@
+Difference of "ui" between "1.20.40.22" (beta of "1.20.40") and "1.20.40.23" (beta of "1.20.40").
+
+Changed namespace "common_store":
+	Changed element "horizontal_store_offer_row_factory":
+		Unchanged field "type": "stack_panel"
+		Changed field "bindings":
+			Changed binding:
+				Removed field "binding_condition" of "once".
+Changed namespace "general_section":
+	Total element: 171 (+7, -0)
+	Added element "available_gatherings_grid":
+		field "type": "grid"
+		field "size": ["100%", "default"]
+		field "grid_item_template": "general_section.gathering_item_template"
+		field "grid_dimension_binding": "#gatherings_grid_dimension"
+		field "collection_name": "gatherings_collection"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "bindings":
+			binding:
+				field "binding_name": "#gatherings_grid_dimension"
+				field "binding_condition": "always"
+		field "$variables": variable "$collection_binding_name": "gatherings_collection"
+	Added element "available_gatherings_panel":
+		field "type": "stack_panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "orientation": "vertical"
+		field "size": "$available_gatherings_panel_size"
+		field "controls":
+			control:
+				element "available_label@settings_common.selector_group_label":
+					field "offset": [2, 0]
+					field "text": "options.dev_gatherings_available_gatherings"
+					field "layer": 2
+			control: element "gatherings_grid@available_gatherings_grid": empty
+			control:
+				element "spacing_gap":
+					field "type": "panel"
+					field "size": ["100%", 10]
+	Added element "available_gatherings_section":
+		field "type": "stack_panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "controls": control: element "available_gatherings_panel@available_gatherings_panel": empty
+		field "$variables":
+			variable "$available_gatherings_panel_size":
+				item 0: "100% - 1px"
+				item 1: "100%c"
+	Changed element "debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 82 (+0, -1)
+			Removed control:
+				element "gathering_override@settings_common.option_text_edit":
+					field "$variables":
+						variable "$option_label": "options.dev.gathering_config_id_override"
+						variable "$option_binding_name": "#gathering_config_id_override_text_box"
+						variable "$option_enabled_binding_name": "#gathering_config_id_override_text_box_enabled"
+						variable "$max_text_edit_length": 40
+						variable "$text_box_name": "gathering_config_id_override_text_box"
+	Added element "gathering_grid_item_content":
+		field "type": "stack_panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "orientation": "vertical"
+		field "size": ["100%", 29]
+		field "offset": [5, 4]
+		field "controls":
+			control:
+				element "gathering_name":
+					field "type": "label"
+					field "color": "$light_button_default_text_color"
+					field "text": "#gathering_name"
+					field "size": ["100% - 8px", 10]
+					field "bindings":
+						binding:
+							field "binding_name": "#gathering_name"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+							field "binding_condition": "always"
+			control:
+				element "gathering_uuid":
+					field "type": "label"
+					field "color": "$light_button_default_text_color"
+					field "text": "#gathering_uuid"
+					field "size": ["100% - 8px", 10]
+					field "bindings":
+						binding:
+							field "binding_name": "#gathering_uuid"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+							field "binding_condition": "always"
+	Added element "gathering_item_template":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", 29]
+		field "controls":
+			control:
+				element "gathering_item_button@common_buttons.light_content_button":
+					field "size": ["100%", 29]
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "$collection_binding_name"
+					field "$variables":
+						variable "$pressed_button_name": "select_gathering"
+						variable "$button_content": "general_section.gathering_grid_item_content"
+	Added element "gatherings_debug_button@settings_common.section_toggle_base":
+		field "$variables":
+			variable "$toggle_view_binding_name": "gatherings_debug_button_toggle"
+			variable "$glyph_texture": "textures/ui/onlineLight"
+			variable "$glyph_color_texture": "textures/ui/onlineLight"
+			variable "$glyph_size":
+				item 0: 18
+				item 1: 18
+			variable "$button_text": "options.dev_gatherings_section"
+			variable "$toggle_property_bag": field "#panel_title": "options.dev_gatherings_section"
+	Added element "gatherings_debug_section":
+		field "type": "stack_panel"
+		field "size": ["100%", "100%c"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "gatherings_debug_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control:
+				element "gatherings_enabled_label":
+					field "type": "label"
+					field "text": "#gatherings_enabled_label_text"
+					field "size": ["100%", "default"]
+					field "color": "$body_text_color"
+					field "bindings": binding: field "binding_name": "#gatherings_enabled_label_text"
+			control:
+				element "enable_gatherings_button@settings_common.action_button":
+					field "visible": false
+					field "bindings":
+						binding:
+							field "binding_name_override": "#visible"
+							field "binding_name": "#gatherings_button_enabled"
+					field "$variables":
+						variable "$pressed_button_name": "button.enable_gatherings"
+						variable "$button_text": "#enable_gatherings_button_text"
+						variable "$button_text_binding_type": "global"
+			control:
+				element "spacer_1":
+					field "type": "panel"
+					field "size": ["100%", 10]
+			control:
+				element "add_gathering_stack":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 40]
+					field "use_child_anchors": true
+					field "controls":
+						control:
+							element "gathering_text_box@settings_common.option_text_edit":
+								field "size": ["fill", "100%c"]
+								field "$variables":
+									variable "$option_label": "options.dev_gatherings_add_gathering"
+									variable "$option_binding_name": "#add_gathering_text_box"
+									variable "$option_enabled_binding_name": "#add_gathering_text_box_enabled"
+									variable "$max_text_edit_length": 40
+									variable "$text_box_name": "add_gathering_text_box"
+						control:
+							element "add_button@common_buttons.light_text_button":
+								field "size": [40, "100%"]
+								field "$variables":
+									variable "$pressed_button_name": "button.add_gathering"
+									variable "$button_text": "options.dev_addLabel"
+			control:
+				element "spacer_2":
+					field "type": "panel"
+					field "size": ["100%", 10]
+			control:
+				element "active_gathering_label":
+					field "type": "label"
+					field "text": "#active_gathering_text"
+					field "color": "$body_text_color"
+					field "bindings": binding: field "binding_name": "#active_gathering_text"
+			control:
+				element "spacer_3":
+					field "type": "panel"
+					field "size": ["100%", 10]
+			control: element "available_gatherings_section@available_gatherings_section": empty
+Changed namespace "horse_pocket":
+	Total element: 36 (+1, -0)
+	Changed element "half_screen_renderer@horse_pocket.half_screen":
+		Changed field "controls":
+			Total control: 3 (+2, -1)
+			Removed control:
+				element "horse_custom_panel":
+					field "type": "panel"
+					field "size": ["40%", "40%"]
+					field "offset": ["5%", "30%"]
+					field "controls":
+						control:
+							element "horse_custom":
+								field "type": "custom"
+								field "renderer": "live_horse_renderer"
+								field "layer": 4
+								field "animation_reset_name": "screen_animation_reset"
+								field "anims":
+									animation: "@common.screen_exit_size_animation_push"
+									animation: "@common.screen_exit_size_animation_pop"
+									animation: "@common.screen_entrance_size_animation_push"
+									animation: "@common.screen_entrance_size_animation_pop"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "bindings": binding: field "binding_name": "#entity_id"
+			Added control element "horse_custom_panel@horse_pocket.horse_renderer": field "$variables": variable "$visible_binding": "(not #is_camel)".
+			Added control:
+				element "camel_custom_panel@horse_pocket.horse_renderer":
+					field "$variables":
+						variable "$size":
+							item 0: "28%"
+							item 1: "28%"
+						variable "$offset":
+							item 0: "5%"
+							item 1: "35%"
+						variable "$visible_binding": "#is_camel"
+	Added element "horse_renderer":
+		field "type": "panel"
+		field "size": "$size"
+		field "offset": "$offset"
+		field "controls":
+			control:
+				element "horse_custom":
+					field "type": "custom"
+					field "renderer": "live_horse_renderer"
+					field "layer": 4
+					field "animation_reset_name": "screen_animation_reset"
+					field "anims":
+						animation: "@common.screen_exit_size_animation_push"
+						animation: "@common.screen_exit_size_animation_pop"
+						animation: "@common.screen_entrance_size_animation_push"
+						animation: "@common.screen_entrance_size_animation_pop"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "bindings":
+						binding: field "binding_name": "#entity_id"
+						binding:
+							field "binding_name": "$visible_binding"
+							field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$size|default":
+				item 0: "40%"
+				item 1: "40%"
+			variable "$offset|default":
+				item 0: "5%"
+				item 1: "30%"
+Changed namespace "online_safety":
+	Changed element "online_safety_screen@common.base_screen":
+		Removed field "should_be_skipped_during_automation" of true.
+Changed namespace "pdp":
+	Changed element "ratings_interact_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "rating_stars_and_button_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "submit_button_panel":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "submit@common_buttons.light_content_button":
+											Changed field "$variables":
+												Total variable: 6 (+0, -0)
+												Changed variable "$focus_id" from "interact_button" to "submit_button".
+Changed namespace "settings":
+	Changed element "section_content_panels":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "general_and_controls_sections":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 23 (+1, -0)
+						Added control:
+							element "gatherings_debug_section@general_section.gatherings_debug_section":
+								field "ignored": "$is_publish"
+								field "visible": false
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "controls_and_settings_selector_pane":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 26 (+1, -0)
+						Added control:
+							element "gatherings_debug_button@general_section.gatherings_debug_button":
+								field "ignored": "$is_publish"
+								field "$variables":
+									variable "$toggle_group_forced_index": "$gatherings_debug_forced_index"
+									variable "$tts_section_header": "$general_section_header"

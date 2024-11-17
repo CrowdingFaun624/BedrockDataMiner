@@ -1,0 +1,361 @@
+Difference of "ui" between "a0.12.1_build1" (beta of "a0.12.1") and "a0.12.1_build2" (beta of "a0.12.1").
+
+Total namespace: 8 (+1, -0)
+Changed namespace "common":
+	Changed element "button_default_state":
+		Unchanged field "type": "image"
+		Added field "tiled" of true.
+Added namespace "gamepad_layout":
+	element "accept_button@common.button":
+		field "size": ["50%-2px", "100%"]
+		field "offset": [1, 0]
+		field "anchor_to": "bottom_left"
+		field "anchor_from": "bottom_left"
+		field "z_order": 10
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.menu_save_and_exit"
+				field "condition": "hover"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.menu_save_and_exit"
+				field "condition": "focus"
+		field "controls":
+			control: element "default@normal_thin_button": field "controls": control: element "accept_button_text@common.button_text": field "text": "controllerLayoutScreen.save"
+			control:
+				element "hover@hover_thin_button":
+					field "controls":
+						control:
+							element "accept_button_text@common.button_text":
+								field "text": "controllerLayoutScreen.save"
+								field "color": [1.0, 1.0, 0.2]
+			control:
+				element "pressed@normal_thin_button":
+					field "controls":
+						control:
+							element "accept_button_text@common.button_text":
+								field "text": "controllerLayoutScreen.save"
+								field "color": [1.0, 1.0, 0.2]
+								field "alpha": 0.65
+	element "actions@gamepad_layout.gamepad_action_text":
+		field "text": "controllerLayoutScreen.actions"
+		field "offset": ["-25%", "-38%"]
+	element "back_button@common.button":
+		field "size": ["50%-2px", "100%"]
+		field "offset": [-1, 0]
+		field "anchor_to": "bottom_right"
+		field "anchor_from": "bottom_right"
+		field "z_order": 10
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.menu_exit"
+				field "condition": "hover"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.menu_exit"
+				field "condition": "focus"
+		field "controls":
+			control: element "default@normal_thin_button": field "controls": control: element "back_button_text@common.button_text": field "text": "controllerLayoutScreen.cancel"
+			control:
+				element "hover@hover_thin_button":
+					field "controls":
+						control:
+							element "back_button_text@common.button_text":
+								field "text": "controllerLayoutScreen.cancel"
+								field "color": [1.0, 1.0, 0.2]
+			control:
+				element "pressed@normal_thin_button":
+					field "controls":
+						control:
+							element "back_button_text@common.button_text":
+								field "text": "controllerLayoutScreen.cancel"
+								field "color": [1.0, 1.0, 0.2]
+								field "alpha": 0.65
+	element "bindings@gamepad_layout.gamepad_action_text":
+		field "text": "controllerLayoutScreen.bindings"
+		field "offset": ["20%", "-38%"]
+	element "bottom_buttons":
+		field "type": "panel"
+		field "anchor_to": "bottom_middle"
+		field "anchor_from": "bottom_middle"
+		field "size": ["100%-6px", "15%"]
+		field "offset": [0, -4]
+		field "controls":
+			control: element "accept@accept_button": empty
+			control: element "back@back_button": empty
+	element "dark_thin_button":
+		field "type": "image"
+		field "nineslice_size": 4.0
+		field "texture": "gui/newgui/play_screen/DarkButtonThinStroke1.png"
+		field "uv": [0, 0]
+		field "uv_size": [7, 7]
+		field "z_order": 3
+	element "gamepad_action@gamepad_layout.gamepad_action_text":
+		field "text": "#action"
+		field "offset": [0, 0]
+		field "binding_collection_name": "#gamepad_action_item"
+		field "bindings":
+			binding:
+				field "binding_name": "#action"
+				field "binding_type": "collection"
+	element "gamepad_action_binding":
+		field "type": "panel"
+		field "anchor_to": "top_right"
+		field "anchor_from": "top_right"
+		field "size": ["45%", 25]
+		field "offset": [-2, 2]
+		field "controls":
+			control: element "binding_bg@dark_thin_button": empty
+			control: element "binding_txt@gamepad_binding": empty
+	element "gamepad_action_grid":
+		field "type": "grid"
+		field "grid_item_template": "gamepad_action_item"
+		field "grid_dimension_binding": "#gamepad_action_item_grid_dimension"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "size": ["95%-5px", "100%"]
+		field "bindings":
+			binding:
+				field "binding_name": "#gamepad_action_item_grid_dimension"
+				field "binding_type": "global"
+	element "gamepad_action_item":
+		field "type": "grid_item"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", 26]
+		field "controls":
+			control: element "action_button@gamepad_action_item_button": empty
+			control: element "binding_panel@gamepad_action_binding": empty
+	element "gamepad_action_item_button@common.button":
+		field "size": ["53%-1px", 25]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "offset": [2, 2]
+		field "binding_collection_name": "#gamepad_action_item"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.menu_binding_start"
+				field "condition": "hover"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.menu_binding_start"
+				field "condition": "focus"
+		field "controls":
+			control: element "default@gamepad_action_item_button_default_state": empty
+			control: element "hover@gamepad_action_item_button_hover_state": empty
+			control: element "pressed@gamepad_action_item_button_hover_state": empty
+	element "gamepad_action_item_button_default_state":
+		field "type": "panel"
+		field "z_order": 4
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control: element "action_bg@dark_thin_button": empty
+			control: element "action_text@gamepad_action": empty
+	element "gamepad_action_item_button_hover_state":
+		field "type": "panel"
+		field "z_order": 4
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control: element "action_bg@hover_thin_stroke_button": empty
+			control: element "action_text@gamepad_action": field "color": [1.0, 1.0, 0.2]
+	element "gamepad_action_text":
+		field "type": "label"
+		field "shadow": true
+		field "z_order": 5
+		field "alignment": "center"
+	element "gamepad_binding@gamepad_layout.gamepad_action_text":
+		field "text": "#binding"
+		field "offset": [0, 0]
+		field "binding_collection_name": "#gamepad_action_item"
+		field "bindings":
+			binding:
+				field "binding_name": "#binding"
+				field "binding_type": "collection"
+	element "gamepad_edit_panel":
+		field "type": "panel"
+		field "anchor_to": "top_middle"
+		field "anchor_from": "top_middle"
+		field "size": ["90%", "68%"]
+		field "offset": [0, "15%"]
+		field "controls":
+			control:
+				element "@indent":
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "size": ["95%-5px", "100%"]
+			control:
+				element "@indent":
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "size": ["5%", "100%"]
+					field "offset": [0, 0]
+			control:
+				element "scroll_section":
+					field "type": "panel"
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "size": ["100%", "100%-2px"]
+					field "offset": [0, 0]
+					field "clips_children": true
+					field "controls":
+						control:
+							element "scroll@common.scroll":
+								field "size": ["5%", "100%"]
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "scrollbar_box": "box"
+								field "controls":
+									control:
+										element "box@common.scroll_box":
+											field "anchor_to": "top_left"
+											field "anchor_from": "top_left"
+											field "size": ["100%", 16]
+											field "controls": control: element "thin_button@gamepad_layout.normal_thin_button": empty
+						control: element "gamepad_grid@gamepad_action_grid": empty
+	element "ghost_binding":
+		field "type": "input_panel"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "any"
+				field "condition": "none"
+		field "bindings":
+			binding:
+				field "binding_name": "#binding_state"
+				field "binding_name_override": "#visible"
+				field "binding_type": "global"
+	element "header@gamepad_layout.gamepad_action_text":
+		field "text": "options.controllerLayout"
+		field "offset": [0, "-45%"]
+		field "anchor_to": "top_middle"
+		field "anchor_from": "top_middle"
+	element "hover_thin_button":
+		field "type": "image"
+		field "nineslice_size": 4.0
+		field "texture": "gui/newgui/play_screen/HoverButtonThinNewBevel2.png"
+		field "uv": [0, 0]
+		field "uv_size": [8, 8]
+		field "z_order": 3
+	element "hover_thin_stroke_button":
+		field "type": "image"
+		field "nineslice_size": 4.0
+		field "texture": "gui/newgui/play_screen/HoverButtonThinStroke.png"
+		field "uv": [0, 0]
+		field "uv_size": [7, 7]
+		field "z_order": 3
+	element "indent":
+		field "type": "image"
+		field "nineslice_size": 3.0
+		field "texture": "gui/newgui/play_screen/Indent2.png"
+		field "uv": [0, 0]
+		field "uv_size": [5, 5]
+		field "z_order": 3
+	element "layout@gamepad_layout.screen_common":
+		field "controls":
+			control:
+				element "menu_background":
+					field "type": "custom"
+					field "renderer": "menu_background_renderer"
+			control: element "root_panel@root_panel_common": empty
+	element "normal_stroke_button":
+		field "type": "image"
+		field "nineslice_size": 4.0
+		field "texture": "gui/newgui/play_screen/NormalButtonStroke.png"
+		field "uv": [0, 0]
+		field "uv_size": [12, 12]
+		field "z_order": 3
+	element "normal_thin_button":
+		field "type": "image"
+		field "nineslice_size": 4.0
+		field "texture": "gui/newgui/play_screen/NormalButtonThinNewBevel.png"
+		field "uv": [0, 0]
+		field "uv_size": [8, 8]
+		field "z_order": 3
+	element "root_panel_common":
+		field "type": "panel"
+		field "anchor_to": "top_middle"
+		field "anchor_from": "top_middle"
+		field "size": ["70%", "100%"]
+		field "controls":
+			control: element "root_button@normal_stroke_button": field "z_order": 1
+			control: element "header_text@header": empty
+			control: element "bindings_text@bindings": empty
+			control: element "actions_text@actions": empty
+			control: element "root_edit_panel@gamepad_edit_panel": empty
+			control: element "root_bottom_buttons@bottom_buttons": field "z_order": 2
+			control: element "input_siphon@ghost_binding": field "visible": false
+	element "screen_common":
+		field "type": "screen"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "condition": "none"
+			button mapping:
+				field "from_button_id": "button.menu_up"
+				field "to_button_id": "button.menu_up"
+				field "condition": "none"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_down"
+				field "to_button_id": "button.menu_down"
+				field "condition": "none"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_left"
+				field "to_button_id": "button.menu_left"
+				field "condition": "none"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_right"
+				field "to_button_id": "button.menu_right"
+				field "condition": "none"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_tab_left"
+				field "to_button_id": "button.menu_tab_left"
+				field "condition": "none"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_tab_right"
+				field "to_button_id": "button.menu_tab_right"
+				field "condition": "none"
+				field "scope": "view"
+Changed namespace "xbl_login":
+	Changed element "screen":
+		Unchanged field "type": "screen"
+		Changed field "controls":
+			Total control: 8 (+1, -1)
+			Removed control:
+				element "message":
+					field "type": "label"
+					field "shadow": true
+					field "text": "xbox.signin.error"
+					field "offset": [0, "-10%"]
+			Added control:
+				element "message_panel":
+					field "type": "panel"
+					field "offset": [0, "-10%"]
+					field "controls":
+						control:
+							element "messageline1":
+								field "type": "label"
+								field "shadow": true
+								field "text": "xbox.signin.error.line1"
+								field "offset": [0, 10]
+						control:
+							element "messageline2":
+								field "type": "label"
+								field "shadow": true
+								field "text": "xbox.signin.error.line2"
+								field "offset": [0, 20]
+						control:
+							element "messageline3":
+								field "type": "label"
+								field "shadow": true
+								field "text": "xbox.signin.error.line3"
+								field "offset": [0, 30]

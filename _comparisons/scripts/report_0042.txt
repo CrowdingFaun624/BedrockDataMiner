@@ -1,0 +1,55 @@
+Difference of "scripts" between "1.19.0.24" (beta of "1.19.0") and "1.19.0.26" (beta of "1.19.0").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "VibrationTests.js":
+		Total line: 570 (+36, -0)
+		          '''
+		          ...
+		471 471           testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		472 472           test.assertRedstonePower(comparatorPos, expectedFrequency);
+		473 473       }).thenSucceed();
+		474 474   })
+		475 475   
+		    476 + // Tests that spawning a Pillager (by powering a Dispenser with a Spawn Egg in it) produces vibrations of the expected frequency.
+		    477 + GameTest.register("VibrationTests", "event_entity_place", (test) => {
+		    478 +     const sensorPos = new BlockLocation(9, 2, 9);
+		    479 +     const comparatorPos = new BlockLocation(9, 2, 10);
+		    480 +     const expectedFrequency = 12;
+		    481 + 
+		    482 +     const placeAtPos = new BlockLocation(9, 2, 4);
+		    483 +     test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtPos);
+		    484 + 
+		    485 +     succeedOnVibrationDetected(test, sensorPos, comparatorPos, expectedFrequency);
+		    486 + })
+		    487 + 
+		    488 + // Tests that equipping an Armor Stand (by powering a Dispenser with equipment in it) produces vibrations of the expected frequency.
+		    489 + GameTest.register("VibrationTests", "event_equip", (test) => {
+		    490 +     const sensorPos = new BlockLocation(9, 2, 9);
+		    491 +     const comparatorPos = new BlockLocation(9, 2, 10);
+		    492 +     const expectedFrequency = 9;
+		    493 + 
+		    494 +     const placeAtToDispenseSwordPos = new BlockLocation(7, 2, 6);
+		    495 +     const placeAtToDispenseHelmetPos = new BlockLocation(11, 2, 6);
+		    496 + 
+		    497 +     const testEx = new GameTestExtensions(test);
+		    498 + 
+		    499 +     test.startSequence().thenExecute(() => {
+		    500 +         test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtToDispenseSwordPos);
+		    501 +     }).thenWait(() => {
+		    502 +         testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		    503 +         test.assertRedstonePower(comparatorPos, expectedFrequency);
+		    504 +     }).thenExecuteAfter(SENSOR_MAX_DELAY_TICKS + SENSOR_ACTIVE_TICKS + SENSOR_COOLDOWN_TICKS, () => {
+		    505 +         test.setBlockType(MinecraftBlockTypes.redstoneBlock, placeAtToDispenseHelmetPos);
+		    506 +     }).thenWait(() => {
+		    507 +         testEx.assertBlockProperty("powered_bit", 1, sensorPos);
+		    508 +         test.assertRedstonePower(comparatorPos, expectedFrequency);
+		    509 +     }).thenSucceed();
+		    510 + })
+		    511 + 
+		476 512   // Tests that exploding TNT (ignited by placing a Redstone Block) produces vibrations of the expected frequency.
+		477 513   GameTest.register("VibrationTests", "event_explode", (test) => {
+		478 514       const sensorPos = new BlockLocation(9, 2, 9);
+		479 515       const comparatorPos = new BlockLocation(9, 2, 10);
+		480 516       const expectedFrequency = 15;
+		          ...
+		          '''

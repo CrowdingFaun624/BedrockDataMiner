@@ -1,0 +1,136 @@
+Difference of "ui" between "1.17.30.23" (beta of "1.17.30") and "1.17.30.24" (beta of "1.17.30").
+
+Changed namespace "common_buttons":
+	Changed element "horizontal_form_fitting":
+		Unchanged field "type": "panel"
+		Changed field "size":
+			Unchanged item 0: "100%c"
+			Changed item 1 from "100%" to "100%c".
+Changed namespace "pause":
+	Total element: 76 (+2, -3)
+	Moved element "change_profile_button_gamepad@common_buttons.light_content_button" to "change_profile_button_gamepad@common_buttons.light_content_form_fitting_button".
+	Changed element "change_profile_button_gamepad@common_buttons.light_content_form_fitting_button":
+		Changed field "$variables":
+			Total variable: 10 (+4, -1)
+			Changed variable "$button_content" from "pause.change_profile_button_panel" to "pause.dressing_room_controller_button_content".
+			Removed variable "$button_content_offset":
+				item 0: 3
+				item 1: 2
+			Added variable "$button_content_size_override":
+				item 0: "100%c - 4px"
+				item 1: "100%c - 4px"
+			Added variable "$button_offset":
+				item 0: -3
+				item 1: 1
+			Added variable "$new_ui_label_offset":
+				item 0: 0
+				item 1: -1
+			Added variable "$text_alignment" of "left".
+		Changed field "size":
+			Changed item 0 from 70 to "100%".
+			Changed item 1 from 26 to "100%c".
+	Removed element "change_profile_button_panel":
+		field "type": "panel"
+		field "size": [70, 26]
+		field "controls":
+			control:
+				element "enabled_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "100%"]
+					field "controls":
+						control:
+							element "button_x@common.gamepad_helper_x":
+								field "layer": 3
+								field "$variables": variable "$gamepad_helper_visible_binding_type": "none"
+						control: element "skin_icon_panel@pause.profile_skin_icon_panel": field "size": ["100%c", 26]
+					field "bindings":
+						binding:
+							field "binding_name": "#can_change_skin"
+							field "binding_name_override": "#visible"
+			control:
+				element "disabled_panel@pause.profile_skin_icon_panel":
+					field "size": ["100%", 26]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #can_change_skin)"
+							field "binding_name_override": "#visible"
+	Removed element "change_skin_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": [49, 26]
+		field "controls":
+			control:
+				element "button_x@common.gamepad_helper_x":
+					field "layer": 3
+					field "$variables": variable "$gamepad_helper_visible_binding_type": "none"
+			control:
+				element "skin_icon_panel":
+					field "type": "panel"
+					field "size": ["100%c", 26]
+					field "controls": control: element "change_skin_icon@pause.change_skin_icon": field "offset": [0, 2]
+	Added element "controller_button_label@common_buttons.new_ui_binding_button_label":
+		field "size": ["100%", "100%c"]
+		field "$variables":
+			variable "$anchor": "left_middle"
+			variable "$button_text": "profileScreen.header"
+			variable "$button_text_binding_type": "none"
+			variable "$button_binding_condition": "none"
+			variable "$button_text_grid_collection_name": ""
+	Added element "dressing_room_controller_button_content":
+		field "type": "panel"
+		field "size": ["100%c", "100%cm"]
+		field "min_size": [82, 22]
+		field "controls":
+			control:
+				element "button_x@common.gamepad_helper_x":
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "bindings":
+						binding:
+							field "binding_name": "#can_change_skin"
+							field "binding_name_override": "#visible"
+					field "$variables": variable "$gamepad_helper_visible_binding_type": "none"
+			control:
+				element "button_label_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "controls":
+						control:
+							element "button_label_text_left@pause.controller_button_label":
+								field "size": ["default", "default"]
+								field "max_size": [75, 20]
+	Removed element "profile_skin_icon_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "profile_label":
+					field "type": "label"
+					field "text": "profileScreen.header"
+					field "size": ["default", 10]
+					field "color": "$light_button_default_text_color"
+	Changed element "skin_viewer_panel":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "paper_doll_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "paper_doll":
+								Unchanged field "type": "custom"
+								Changed field "bindings":
+									Total binding: 3 (+1, -0)
+									Added binding field "binding_name": "#paper_doll_skin".
+								Added field "use_selected_skin" of false.
+Changed namespace "play":
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 6 (+0, -1)
+						Removed control element "add_server_button@play.add_server_toggle_button": empty.

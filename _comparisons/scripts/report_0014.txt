@@ -1,0 +1,2727 @@
+Difference of "scripts" between "1.17.20.21" (beta of "1.17.30") and "1.17.20.22" (beta of "1.17.30").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "APITests.js":
+		Total line: 794 (+105, -82)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		  2   2   import {
+		  3   3     BlockLocation,
+		  4   4     BlockProperties,
+		      5 +   MinecraftBlockTypes,
+		      6 +   Direction,
+		      7 +   ExplosionOptions,
+		      8 +   MinecraftEffectTypes,
+		      9 +   MinecraftItemTypes,
+		     10 +   ItemStack,
+		     11 +   Location,
+		     12 +   World,
+		     13 + } from "Minecraft";
+		     14 + 
+		     15 + GameTest.register("APITests", "on_entity_created", (test) => {
+		     16 +   const entityCreatedCallback = World.events.entityCreate.subscribe((entity) => {
+		     17 +     if (entity) {
+		     18 +       test.succeed();
+		     19 +     } else {
+		     20 +       test.fail("Expected entity");
+		     21 +     }
+		     22 +   });
+		     23 +   test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     24 +   World.events.entityCreate.unsubscribe(entityCreatedCallback);
+		     25 + })
+		     26 +   .structureName("ComponentTests:animal_pen")
+		     27 +   .tag(GameTest.Tags.suiteDefault);
+		  5     -   BlockTypes,
+		  6     -   Direction,
+		  7     -   ExplosionOptions,
+		  8     -   Effects,
+		  9     -   Items,
+		 10     -   ItemStack,
+		 11     -   Location,
+		 12     -   World,
+		 13     - } from "Minecraft";
+		 14  28   
+		     29 + GameTest.register("APITests", "assert_is_waterlogged", (test) => {
+		 15     - GameTest.register("APITests", "on_entity_created", (test) => {
+		 16     -   const entityCreatedCallback = World.events.createEntity.subscribe((entity) => {
+		     30 +   const waterChestLoc = new BlockLocation(5, 2, 1);
+		     31 +   const waterLoc = new BlockLocation(4, 2, 1);
+		     32 +   const chestLoc = new BlockLocation(2, 2, 1);
+		     33 +   const airLoc = new BlockLocation(1, 2, 1);
+		     34 + 
+		     35 +   test.assertIsWaterlogged(waterChestLoc, true);
+		     36 +   test.assertIsWaterlogged(waterLoc, false);
+		     37 +   test.assertIsWaterlogged(chestLoc, false);
+		     38 +   test.assertIsWaterlogged(airLoc, false);
+		     39 +   test.succeed();
+		     40 + }).tag(GameTest.Tags.suiteDefault);
+		 17     -     if (entity) {
+		 18     -       test.succeed();
+		 19     -     } else {
+		 20     -       test.fail("Expected entity");
+		 21     -     }
+		 22     -   });
+		 23     -   test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		 24     -   World.events.createEntity.unsubscribe(entityCreatedCallback);
+		 25     - })
+		 26     -   .structureName("ComponentTests:animal_pen")
+		 27     -   .tag(GameTest.Tags.suiteDefault);
+		 28  41   
+		     42 + GameTest.register("APITests", "assert_redstone_power", (test) => {
+		     43 +   const redstoneBlockLoc = new BlockLocation(3, 2, 1);
+		     44 +   const redstoneTorchLoc = new BlockLocation(2, 2, 1);
+		 29     - GameTest.register("APITests", "assert_is_waterlogged", (test) => {
+		     45 +   const poweredLampLoc = new BlockLocation(1, 2, 1);
+		     46 +   const unpoweredLampLoc = new BlockLocation(0, 2, 1);
+		     47 +   const airLoc = new BlockLocation(3, 2, 0);
+		     48 +   const redstoneWireLoc = new BlockLocation(0, 1, 0);
+		 30     -   const waterChestLoc = new BlockLocation(5, 2, 1);
+		 31     -   const waterLoc = new BlockLocation(4, 2, 1);
+		 32     -   const chestLoc = new BlockLocation(2, 2, 1);
+		 33     -   const airLoc = new BlockLocation(1, 2, 1);
+		 34  49   
+		     50 +   test.succeedWhen(() => {
+		 35     -   test.assertIsWaterlogged(waterChestLoc, true);
+		 36     -   test.assertIsWaterlogged(waterLoc, false);
+		 37     -   test.assertIsWaterlogged(chestLoc, false);
+		     51 +     test.assertRedstonePower(redstoneBlockLoc, 15);
+		     52 +     test.assertRedstonePower(redstoneTorchLoc, 15);
+		     53 +     test.assertRedstonePower(poweredLampLoc, 15);
+		 38     -   test.assertIsWaterlogged(airLoc, false);
+		 39     -   test.succeed();
+		 40     - }).tag(GameTest.Tags.suiteDefault);
+		 41     - 
+		     54 +     test.assertRedstonePower(unpoweredLampLoc, 0);
+		     55 +     test.assertRedstonePower(airLoc, -1);
+		     56 +     test.assertRedstonePower(redstoneWireLoc, 13); // 3 length wire
+		     57 +   });
+		     58 + })
+		     59 +   .maxTicks(20)
+		     60 +   .tag(GameTest.Tags.suiteDefault);
+		 42     - GameTest.register("APITests", "assert_redstone_power", (test) => {
+		 43     -   const redstoneBlockLoc = new BlockLocation(3, 2, 1);
+		 44     -   const redstoneTorchLoc = new BlockLocation(2, 2, 1);
+		 45     -   const poweredLampLoc = new BlockLocation(1, 2, 1);
+		 46     -   const unpoweredLampLoc = new BlockLocation(0, 2, 1);
+		 47     -   const airLoc = new BlockLocation(3, 2, 0);
+		 48     -   const redstoneWireLoc = new BlockLocation(0, 1, 0);
+		 49  61   
+		     62 + GameTest.register("APITests", "spawn_item", (test) => {
+		 50     -   test.succeedWhen(() => {
+		 51     -     test.assertRedstonePower(redstoneBlockLoc, 15);
+		 52     -     test.assertRedstonePower(redstoneTorchLoc, 15);
+		     63 +   const featherItem = new ItemStack(MinecraftItemTypes.feather, 1, 0);
+		     64 +   test.spawnItem(featherItem, new Location(1.5, 3.5, 1.5));
+		     65 +   test.succeedWhen(() => {
+		     66 +     test.assertEntityPresent("minecraft:item", new BlockLocation(1, 2, 1));
+		 53     -     test.assertRedstonePower(poweredLampLoc, 15);
+		 54     -     test.assertRedstonePower(unpoweredLampLoc, 0);
+		 55     -     test.assertRedstonePower(airLoc, -1);
+		 56     -     test.assertRedstonePower(redstoneWireLoc, 13); // 3 length wire
+		 57  67     });
+		     68 + }).tag(GameTest.Tags.suiteDefault);
+		 58     - })
+		 59     -   .maxTicks(20)
+		 60     -   .tag(GameTest.Tags.suiteDefault);
+		 61  69   
+		     70 + GameTest.register("APITests", "assert_entity_data", (test) => {
+		     71 +   const pigId = "minecraft:pig<minecraft:ageable_grow_up>";
+		 62     - GameTest.register("APITests", "spawn_item", (test) => {
+		     72 +   const pigLoc = new BlockLocation(1, 2, 1);
+		     73 +   test.spawn(pigId, pigLoc);
+		 63     -   const featherItem = new ItemStack(Items.feather, 1, 0);
+		 64     -   test.spawnItem(featherItem, new Location(1.5, 3.5, 1.5));
+		 65  74     test.succeedWhen(() => {
+		     75 +     test.assertEntityData(pigLoc, pigId, (entity) => entity.id !== undefined);
+		 66     -     test.assertEntityPresent("minecraft:item", new BlockLocation(1, 2, 1));
+		 67  76     });
+		     77 + })
+		     78 +   .structureName("ComponentTests:animal_pen")
+		     79 +   .tag(GameTest.Tags.suiteDefault);
+		 68     - }).tag(GameTest.Tags.suiteDefault);
+		 69  80   
+		     81 + GameTest.register("APITests", "add_effect", (test) => {
+		     82 +   const villagerId = "minecraft:villager_v2<minecraft:ageable_grow_up>";
+		 70     - GameTest.register("APITests", "assert_entity_data", (test) => {
+		     83 +   const villagerLoc = new BlockLocation(1, 2, 1);
+		     84 +   const villager = test.spawn(villagerId, villagerLoc);
+		     85 +   const duration = 20;
+		     86 +   villager.addEffect(MinecraftEffectTypes.poison, duration, 1);
+		     87 + 
+		     88 +   test.assertEntityData(
+		     89 +     villagerLoc,
+		     90 +     villagerId,
+		     91 +     (entity) => entity.getEffect(MinecraftEffectTypes.poison).duration == duration
+		 71     -   const pigId = "minecraft:pig<minecraft:ageable_grow_up>";
+		 72     -   const pigLoc = new BlockLocation(1, 2, 1);
+		 73     -   test.spawn(pigId, pigLoc);
+		 74     -   test.succeedWhen(() => {
+		 75     -     test.assertEntityData(pigLoc, pigId, (entity) => entity.id !== undefined);
+		 76     -   });
+		 77     - })
+		 78     -   .structureName("ComponentTests:animal_pen")
+		 79     -   .tag(GameTest.Tags.suiteDefault);
+		 80     - 
+		     92 +   );
+		     93 +   test.assertEntityData(
+		     94 +     villagerLoc,
+		     95 +     villagerId,
+		     96 +     (entity) => entity.getEffect(MinecraftEffectTypes.poison).amplifier == 1
+		     97 +   );
+		 81     - GameTest.register("APITests", "add_effect", (test) => {
+		 82     -   const villagerId = "minecraft:villager_v2<minecraft:ageable_grow_up>";
+		 83     -   const villagerLoc = new BlockLocation(1, 2, 1);
+		 84     -   const villager = test.spawn(villagerId, villagerLoc);
+		 85     -   const duration = 20;
+		 86     -   villager.addEffect(Effects.poison, duration, 1);
+		 87  98   
+		     99 +   test.runAfterDelay(duration, () => {
+		    100 +     test.assertEntityData(
+		    101 +       villagerLoc,
+		 88     -   test.assertEntityData(villagerLoc, villagerId, (entity) => entity.getEffect(Effects.poison).duration == duration);
+		    102 +       villagerId,
+		    103 +       (entity) => entity.getEffect(MinecraftEffectTypes.poison) === undefined
+		 89     -   test.assertEntityData(villagerLoc, villagerId, (entity) => entity.getEffect(Effects.poison).amplifier == 1);
+		 90     - 
+		 91     -   test.runAfterDelay(duration, () => {
+		    104 +     );
+		 92     -     test.assertEntityData(villagerLoc, villagerId, (entity) => entity.getEffect(Effects.poison) === undefined);
+		 93 105       test.succeed();
+		 94 106     });
+		 95 107   })
+		 96 108     .structureName("ComponentTests:animal_pen")
+		 97 109     .tag(GameTest.Tags.suiteDefault);
+		 98 110   
+		 99 111   GameTest.register("APITests", "assert_entity_present", (test) => {
+		100 112     const villagerId = "minecraft:villager_v2";
+		101 113     const villagerLoc = new BlockLocation(1, 2, 3);
+		    114 +   const emeraldItem = new ItemStack(MinecraftItemTypes.emerald, 1, 0);
+		102     -   const emeraldItem = new ItemStack(Items.emerald, 1, 0);
+		103 115     const emeraldItemLoc = new BlockLocation(3, 2, 3);
+		104 116     const minecartId = "minecraft:minecart";
+		105 117     const minecartLoc = new BlockLocation(3, 2, 1);
+		106 118     const armorStandId = "minecraft:armor_stand";
+		107 119     const armorStandLoc = new BlockLocation(1, 2, 1);
+		    120 + 
+		    121 +   test.spawn(villagerId, villagerLoc);
+		    122 +   test.spawnItem(emeraldItem, new Location(3.5, 4.5, 3.5));
+		108 123   
+		    124 +   test.succeedWhen(() => {
+		    125 +     test.assertEntityPresent(villagerId, villagerLoc);
+		    126 +     test.assertItemEntityPresent(MinecraftItemTypes.emerald, emeraldItemLoc, 0);
+		109     -   test.spawn(villagerId, villagerLoc);
+		    127 +     test.assertEntityPresent(armorStandId, armorStandLoc);
+		110     -   test.spawnItem(emeraldItem, new Location(3.5, 4.5, 3.5));
+		111 128   
+		    129 +     // Check all blocks surrounding the minecart
+		    130 +     for (let x = -1; x <= 1; x++) {
+		112     -   test.succeedWhen(() => {
+		    131 +       for (let z = -1; z <= 1; z++) {
+		    132 +         let offsetLoc = new BlockLocation(minecartLoc.x + x, minecartLoc.y, minecartLoc.z + z);
+		    133 +         if (x == 0 && z == 0) {
+		    134 +           test.assertEntityPresent(minecartId, offsetLoc);
+		    135 +         } else {
+		    136 +           test.assertEntityNotPresent(minecartId, offsetLoc);
+		    137 +         }
+		    138 +       }
+		    139 +     }
+		    140 +   });
+		    141 + }).tag(GameTest.Tags.suiteDefault);
+		    142 + 
+		    143 + GameTest.register("APITests", "assert_entity_not_present", (test) => {
+		    144 +   const armorStandId = "minecraft:armor_stand";
+		    145 +   const pigId = "minecraft:pig";
+		    146 +   const armorStandLoc = new BlockLocation(1, 2, 1);
+		    147 +   const airLoc = new BlockLocation(0, 2, 1);
+		113     -     test.assertEntityPresent(villagerId, villagerLoc);
+		114     -     test.assertItemEntityPresent(Items.emerald, emeraldItemLoc, 0);
+		115     -     test.assertEntityPresent(armorStandId, armorStandLoc);
+		116     - 
+		117     -     // Check all blocks surrounding the minecart
+		118     -     for (let x = -1; x <= 1; x++) {
+		119     -       for (let z = -1; z <= 1; z++) {
+		120     -         let offsetLoc = new BlockLocation(minecartLoc.x + x, minecartLoc.y, minecartLoc.z + z);
+		121     -         if (x == 0 && z == 0) {
+		122     -           test.assertEntityPresent(minecartId, offsetLoc);
+		123     -         } else {
+		124     -           test.assertEntityNotPresent(minecartId, offsetLoc);
+		125     -         }
+		126     -       }
+		127     -     }
+		128     -   });
+		129     - }).tag(GameTest.Tags.suiteDefault);
+		130 148   
+		    149 +   try {
+		131     - GameTest.register("APITests", "assert_entity_not_present", (test) => {
+		132     -   const armorStandId = "minecraft:armor_stand";
+		    150 +     test.assertEntityNotPresentInArea(armorStandId);
+		    151 +     test.fail(); // this assert should throw
+		    152 +   } catch (e) {}
+		133     -   const pigId = "minecraft:pig";
+		134     -   const armorStandLoc = new BlockLocation(1, 2, 1);
+		135     -   const airLoc = new BlockLocation(0, 2, 1);
+		136 153   
+		137 154     try {
+		    155 +     test.assertEntityNotPresent(armorStandId, armorStandLoc);
+		138     -     test.assertEntityNotPresentInArea(armorStandId);
+		139 156       test.fail(); // this assert should throw
+		140 157     } catch (e) {}
+		    158 + 
+		    159 +   test.assertEntityNotPresent(armorStandId, airLoc);
+		    160 +   test.assertEntityNotPresentInArea(pigId);
+		141 161   
+		    162 +   test.succeed();
+		    163 + })
+		142     -   try {
+		143     -     test.assertEntityNotPresent(armorStandId, armorStandLoc);
+		    164 +   .structureName("APITests:armor_stand")
+		    165 +   .tag(GameTest.Tags.suiteDefault);
+		144     -     test.fail(); // this assert should throw
+		145     -   } catch (e) {}
+		146 166   
+		    167 + GameTest.register("APITests", "assert_item_entity_count_is", (test) => {
+		    168 +   let oneItemLoc = new BlockLocation(3, 2, 1);
+		    169 +   let fiveItemsLoc = new BlockLocation(1, 2, 1);
+		    170 +   let noItemsLoc = new BlockLocation(2, 2, 1);
+		    171 +   let diamondPickaxeLoc = new BlockLocation(2, 2, 4);
+		147     -   test.assertEntityNotPresent(armorStandId, airLoc);
+		148     -   test.assertEntityNotPresentInArea(pigId);
+		149 172   
+		    173 +   const oneEmerald = new ItemStack(MinecraftItemTypes.emerald, 1, 0);
+		150     -   test.succeed();
+		151     - })
+		    174 +   const onePickaxe = new ItemStack(MinecraftItemTypes.diamondPickaxe, 1, 0);
+		    175 +   const fiveEmeralds = new ItemStack(MinecraftItemTypes.emerald, 5, 0);
+		152     -   .structureName("APITests:armor_stand")
+		153     -   .tag(GameTest.Tags.suiteDefault);
+		154 176   
+		155     - GameTest.register("APITests", "assert_item_entity_count_is", (test) => {
+		156     -   let oneItemLoc = new BlockLocation(3, 2, 1);
+		157     -   let fiveItemsLoc = new BlockLocation(1, 2, 1);
+		    177 +   test.spawnItem(oneEmerald, new Location(3.5, 3, 1.5));
+		    178 +   test.spawnItem(fiveEmeralds, new Location(1.5, 3, 1.5));
+		158     -   let noItemsLoc = new BlockLocation(2, 2, 1);
+		159     -   let diamondPickaxeLoc = new BlockLocation(2, 2, 4);
+		160 179   
+		    180 +   // spawn 9 pickaxes in a 3x3 grid
+		    181 +   for (let x = 1.5; x <= 3.5; x++) {
+		    182 +     for (let z = 3.5; z <= 5.5; z++) {
+		    183 +       test.spawnItem(onePickaxe, new Location(x, 3, z));
+		    184 +     }
+		    185 +   }
+		161     -   const oneEmerald = new ItemStack(Items.emerald, 1, 0);
+		162     -   const onePickaxe = new ItemStack(Items.diamondPickaxe, 1, 0);
+		163     -   const fiveEmeralds = new ItemStack(Items.emerald, 5, 0);
+		164 186   
+		    187 +   test.assertItemEntityCountIs(MinecraftItemTypes.emerald, noItemsLoc, 0, 0);
+		165     -   test.spawnItem(oneEmerald, new Location(3.5, 3, 1.5));
+		166     -   test.spawnItem(fiveEmeralds, new Location(1.5, 3, 1.5));
+		167 188   
+		    189 +   test.succeedWhen(() => {
+		    190 +     test.assertItemEntityCountIs(MinecraftItemTypes.feather, oneItemLoc, 0, 0);
+		    191 +     test.assertItemEntityCountIs(MinecraftItemTypes.emerald, oneItemLoc, 0, 1);
+		168     -   // spawn 9 pickaxes in a 3x3 grid
+		    192 +     test.assertItemEntityCountIs(MinecraftItemTypes.feather, fiveItemsLoc, 0, 0);
+		    193 +     test.assertItemEntityCountIs(MinecraftItemTypes.emerald, fiveItemsLoc, 0, 5);
+		    194 +     test.assertItemEntityCountIs(MinecraftItemTypes.emerald, fiveItemsLoc, 0, 5);
+		    195 +     test.assertItemEntityCountIs(MinecraftItemTypes.diamondPickaxe, diamondPickaxeLoc, 1, 9);
+		    196 +     test.assertItemEntityCountIs(MinecraftItemTypes.diamondPickaxe, diamondPickaxeLoc, 0, 1);
+		    197 +   });
+		    198 + }).tag(GameTest.Tags.suiteDefault);
+		169     -   for (let x = 1.5; x <= 3.5; x++) {
+		170     -     for (let z = 3.5; z <= 5.5; z++) {
+		171     -       test.spawnItem(onePickaxe, new Location(x, 3, z));
+		172     -     }
+		173     -   }
+		174     - 
+		175     -   test.assertItemEntityCountIs(Items.emerald, noItemsLoc, 0, 0);
+		176 199   
+		177     -   test.succeedWhen(() => {
+		178     -     test.assertItemEntityCountIs(Items.feather, oneItemLoc, 0, 0);
+		179     -     test.assertItemEntityCountIs(Items.emerald, oneItemLoc, 0, 1);
+		    200 + GameTest.register("APITests", "assert_entity_touching", (test) => {
+		    201 +   const armorStandId = "minecraft:armor_stand";
+		    202 + 
+		    203 +   test.assertEntityTouching(armorStandId, new Location(1.5, 2.5, 1.5));
+		    204 +   test.assertEntityTouching(armorStandId, new Location(1.5, 3.5, 1.5));
+		    205 +   test.assertEntityNotTouching(armorStandId, new Location(1.0, 2.5, 1.5));
+		    206 +   test.assertEntityNotTouching(armorStandId, new Location(2.0, 2.5, 1.5));
+		180     -     test.assertItemEntityCountIs(Items.feather, fiveItemsLoc, 0, 0);
+		181     -     test.assertItemEntityCountIs(Items.emerald, fiveItemsLoc, 0, 5);
+		182     -     test.assertItemEntityCountIs(Items.emerald, fiveItemsLoc, 0, 5);
+		183     -     test.assertItemEntityCountIs(Items.diamondPickaxe, diamondPickaxeLoc, 1, 9);
+		184     -     test.assertItemEntityCountIs(Items.diamondPickaxe, diamondPickaxeLoc, 0, 1);
+		185     -   });
+		186     - }).tag(GameTest.Tags.suiteDefault);
+		187     - 
+		    207 +   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 1.0));
+		    208 +   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 2.0));
+		188     - GameTest.register("APITests", "assert_entity_touching", (test) => {
+		189     -   const armorStandId = "minecraft:armor_stand";
+		190 209   
+		    210 +   test.succeed();
+		191     -   test.assertEntityTouching(armorStandId, new Location(1.5, 2.5, 1.5));
+		192     -   test.assertEntityTouching(armorStandId, new Location(1.5, 3.5, 1.5));
+		193     -   test.assertEntityNotTouching(armorStandId, new Location(1.0, 2.5, 1.5));
+		    211 + })
+		    212 +   .structureName("APITests:armor_stand")
+		    213 +   .tag(GameTest.Tags.suiteDefault);
+		194     -   test.assertEntityNotTouching(armorStandId, new Location(2.0, 2.5, 1.5));
+		195     -   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 1.0));
+		196     -   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 2.0));
+		197 214   
+		    215 + GameTest.register("APITests", "pulse_redstone", (test) => {
+		    216 +   const pulseLoc = new BlockLocation(1, 2, 2);
+		198     -   test.succeed();
+		    217 +   const lampLoc = new BlockLocation(1, 2, 1);
+		    218 +   test.assertRedstonePower(lampLoc, 0);
+		    219 +   test.pulseRedstone(pulseLoc, 2);
+		199     - })
+		200     -   .structureName("APITests:armor_stand")
+		201     -   .tag(GameTest.Tags.suiteDefault);
+		202 220   
+		    221 +   test
+		    222 +     .startSequence()
+		    223 +     .thenIdle(2)
+		    224 +     .thenExecute(() => test.assertRedstonePower(lampLoc, 15))
+		    225 +     .thenIdle(1)
+		    226 +     .thenExecute(() => test.assertRedstonePower(lampLoc, 0))
+		    227 +     .thenSucceed();
+		    228 + }).tag(GameTest.Tags.suiteDefault);
+		203     - GameTest.register("APITests", "pulse_redstone", (test) => {
+		204     -   const pulseLoc = new BlockLocation(1, 2, 2);
+		205     -   const lampLoc = new BlockLocation(1, 2, 1);
+		206     -   test.assertRedstonePower(lampLoc, 0);
+		207     -   test.pulseRedstone(pulseLoc, 2);
+		208 229   
+		    230 + GameTest.register("APITests", "block_location", (test) => {
+		    231 +   let testLoc = new BlockLocation(1, 1, 1);
+		    232 +   let worldLoc = test.worldBlockLocation(testLoc);
+		209     -   test
+		    233 +   let relativeLoc = test.relativeBlockLocation(worldLoc);
+		    234 +   test.assert(!relativeLoc.equals(worldLoc), "Expected relativeLoc and worldLoc to be different");
+		    235 +   test.assert(relativeLoc.equals(testLoc), "Expected relativeLoc to match testLoc");
+		    236 +   test.succeed();
+		    237 + })
+		    238 +   .structureName("ComponentTests:platform")
+		    239 +   .tag(GameTest.Tags.suiteDefault);
+		210     -     .startSequence()
+		211     -     .thenIdle(2)
+		212     -     .thenExecute(() => test.assertRedstonePower(lampLoc, 15))
+		213     -     .thenIdle(1)
+		214     -     .thenExecute(() => test.assertRedstonePower(lampLoc, 0))
+		215     -     .thenSucceed();
+		216     - }).tag(GameTest.Tags.suiteDefault);
+		217 240   
+		218 241   GameTest.register("APITests", "location", (test) => {
+		    242 +   let testLoc = new Location(1.2, 1.2, 1.2);
+		    243 +   let worldLoc = test.worldLocation(testLoc);
+		219     -   let testLoc = new BlockLocation(1, 1, 1);
+		220     -   let worldLoc = test.worldBlockLocation(testLoc);
+		    244 +   let relativeLoc = test.relativeLocation(worldLoc);
+		    245 +   test.assert(!relativeLoc.isNear(worldLoc, 0.01), "Expected relativeLoc and worldLoc to be different");
+		    246 +   test.assert(relativeLoc.isNear(testLoc, 0.01), "Expected relativeLoc to match testLoc");
+		221     -   let relativeLoc = test.relativeBlockLocation(worldLoc);
+		222     -   test.assert(!relativeLoc.equals(worldLoc), "Expected relativeLoc and worldLoc to be different");
+		223     -   test.assert(relativeLoc.equals(testLoc), "Expected relativeLoc to match testLoc");
+		224 247     test.succeed();
+		225 248   })
+		226 249     .structureName("ComponentTests:platform")
+		227 250     .tag(GameTest.Tags.suiteDefault);
+		228 251   
+		229 252   GameTest.register("APITests", "create_explosion_basic", (test) => {
+		230 253     let overworld = World.getDimension("overworld");
+		231 254     const center = new BlockLocation(2, 3, 2);
+		232 255   
+		    256 +   test.assertBlockTypePresent(MinecraftBlockTypes.cobblestone, center);
+		233     -   test.assertBlockTypePresent(BlockTypes.cobblestone, center);
+		234 257   
+		235 258     const loc = test.worldBlockLocation(center);
+		236 259     const explosionLoc = new Location(loc.x + 0.5, loc.y + 0.5, loc.z + 0.5);
+		237 260     overworld.createExplosion(explosionLoc, 10, new ExplosionOptions());
+		238 261   
+		239 262     for (let x = 1; x <= 3; x++) {
+		240 263       for (let y = 2; y <= 4; y++) {
+		241 264         for (let z = 1; z <= 3; z++) {
+		    265 +         test.assertBlockTypeNotPresent(MinecraftBlockTypes.cobblestone, new BlockLocation(x, y, z));
+		242     -         test.assertBlockTypeNotPresent(BlockTypes.cobblestone, new BlockLocation(x, y, z));
+		243 266         }
+		244 267       }
+		245 268     }
+		246 269   
+		247 270     test.succeed();
+		          ...
+		259 282   
+		260 283     const loc = test.worldBlockLocation(center);
+		261 284     const explosionLoc = new Location(loc.x + 0.5, loc.y + 0.5, loc.z + 0.5);
+		262 285     let explosionOptions = new ExplosionOptions();
+		263 286   
+		    287 +   test.assertBlockTypePresent(MinecraftBlockTypes.cobblestone, center);
+		264     -   test.assertBlockTypePresent(BlockTypes.cobblestone, center);
+		265 288   
+		266 289     // Start by exploding without breaking blocks
+		267 290     explosionOptions.breaksBlocks = false;
+		268 291     const creeper = test.spawn("minecraft:creeper", new BlockLocation(1, 2, 1));
+		269 292     explosionOptions.source = creeper;
+		270 293     test.assertEntityPresent(pigId, pigLoc);
+		271 294     overworld.createExplosion(explosionLoc, 10, explosionOptions);
+		272 295     creeper.kill();
+		273 296     test.assertEntityNotPresent(pigId, pigLoc);
+		    297 +   test.assertBlockTypePresent(MinecraftBlockTypes.cobblestone, center);
+		274     -   test.assertBlockTypePresent(BlockTypes.cobblestone, center);
+		275 298   
+		276 299     // Next, explode with fire
+		277 300     explosionOptions = new ExplosionOptions();
+		278 301     explosionOptions.causesFire = true;
+		279 302   
+		280 303     let findFire = () => {
+		281 304       let foundFire = false;
+		282 305       for (let x = 0; x <= 6; x++) {
+		283 306         for (let z = 0; z <= 6; z++) {
+		284 307           try {
+		    308 +           test.assertBlockTypePresent(MinecraftBlockTypes.fire, new BlockLocation(x, 3, z));
+		285     -           test.assertBlockTypePresent(BlockTypes.fire, new BlockLocation(x, 3, z));
+		286 309             foundFire = true;
+		287 310             break;
+		288 311           } catch (e) {}
+		289 312         }
+		290 313       }
+		291 314       return foundFire;
+		292 315     };
+		293 316   
+		294 317     test.assert(!findFire(), "Unexpected fire");
+		295 318     overworld.createExplosion(explosionLoc, 15, explosionOptions);
+		    319 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.cobblestone, center);
+		296     -   test.assertBlockTypeNotPresent(BlockTypes.cobblestone, center);
+		297 320     test.assert(findFire(), "No fire found");
+		298 321   
+		299 322     // Finally, explode in water
+		300 323     explosionOptions.allowUnderwater = true;
+		301 324     const belowWaterLoc = new BlockLocation(3, 1, 3);
+		    325 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.air, belowWaterLoc);
+		302     -   test.assertBlockTypeNotPresent(BlockTypes.air, belowWaterLoc);
+		303 326     overworld.createExplosion(explosionLoc, 10, explosionOptions);
+		    327 +   test.assertBlockTypePresent(MinecraftBlockTypes.air, belowWaterLoc);
+		304     -   test.assertBlockTypePresent(BlockTypes.air, belowWaterLoc);
+		305 328     test.succeed();
+		306 329   })
+		307 330     .padding(10) // The blast can destroy nearby items and mobs
+		308 331     .tag(GameTest.Tags.suiteDefault);
+		309 332   
+		          ...
+		350 373   
+		351 374   GameTest.register("APITests", "add_effect_event", (test) => {
+		352 375     const villagerId = "minecraft:villager_v2<minecraft:ageable_grow_up>";
+		353 376     const villager = test.spawn(villagerId, new BlockLocation(1, 2, 1));
+		354 377   
+		    378 +   const effectAddCallback = World.events.effectAdd.subscribe((eventData) => {
+		355     -   const addEffectCallback = World.events.addEffect.subscribe((eventData) => {
+		356 379       test.assert(eventData.entity.id === "minecraft:villager_v2", "Unexpected id");
+		357 380       test.assert(eventData.effect.displayName === "Poison II", "Unexpected display name");
+		358 381       test.assert(eventData.effectState === 1, "Unexpected effect state");
+		359 382       test.succeed();
+		360 383     });
+		361 384   
+		    385 +   villager.addEffect(MinecraftEffectTypes.poison, 5, 1);
+		    386 +   World.events.effectAdd.unsubscribe(effectAddCallback);
+		362     -   villager.addEffect(Effects.poison, 5, 1);
+		363     -   World.events.beforeChat.unsubscribe(addEffectCallback);
+		364 387   })
+		365 388     .structureName("ComponentTests:animal_pen")
+		366 389     .tag(GameTest.Tags.suiteDefault);
+		367 390   
+		368 391   GameTest.register("APITests", "piston", (test) => {
+		          ...
+		384 407     test
+		385 408       .startSequence()
+		386 409       .thenExecute(() => {
+		387 410         test.assert(pistonComp.attachedBlocks.length === 0, "Expected 0 attached blocks");
+		388 411         assertPistonState(false, false, false, true, false); // isRetracted
+		    412 +       test.setBlockType(MinecraftBlockTypes.redstoneBlock, redstoneLoc);
+		389     -       test.setBlockType(BlockTypes.redstoneBlock, redstoneLoc);
+		390 413       })
+		391 414       .thenIdle(4)
+		392 415       .thenExecute(() => {
+		393 416         test.assert(pistonComp.attachedBlocks.length === 3, "Expected 3 attached blocks");
+		394 417         assertPistonState(true, false, true, false, false); // isMoving, isExpanding
+		395 418       })
+		396 419       .thenIdle(2)
+		397 420       .thenExecute(() => {
+		398 421         assertPistonState(false, true, false, false, false); // isExpanded
+		399 422   
+		    423 +       test.setBlockType(MinecraftBlockTypes.air, redstoneLoc);
+		400     -       test.setBlockType(BlockTypes.air, redstoneLoc);
+		401 424       })
+		402 425       .thenIdle(4)
+		403 426       .thenExecute(() => {
+		404 427         assertPistonState(true, false, false, false, true); // isMoving, isRetracting
+		405 428       })
+		          ...
+		415 438     let retracted = false;
+		416 439     const redstoneLoc = new BlockLocation(1, 2, 0);
+		417 440     const pistonLoc = new BlockLocation(1, 2, 1);
+		418 441     const planksLoc = new BlockLocation(2, 2, 1);
+		419 442   
+		    443 +   const pistonCallback = World.events.pistonActivate.subscribe((pistonEvent) => {
+		420     -   const pistonCallback = World.events.activatePiston.subscribe((pistonEvent) => {
+		421 444       test.assert(pistonEvent.piston !== undefined, "Expected piston");
+		422 445       if (pistonEvent.piston.location.equals(test.worldBlockLocation(pistonLoc))) {
+		423 446         if (pistonEvent.isExpanding) {
+		424 447           expanded = true;
+		425 448         } else {
+		          ...
+		432 455       .startSequence()
+		433 456       .thenExecute(() => {
+		434 457         test.pulseRedstone(redstoneLoc, 2);
+		435 458       })
+		436 459       .thenExecuteAfter(8, () => {
+		    460 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, planksLoc);
+		437     -       test.assertBlockTypePresent(BlockTypes.air, planksLoc);
+		438 461         test.assert(expanded, "Expected piston expanding event");
+		439 462         test.assert(retracted, "Expected piston retracting event");
+		    463 +       World.events.beforePistonActivate.unsubscribe(pistonCallback);
+		440     -       World.events.beforeActivatePiston.unsubscribe(pistonCallback);
+		441 464       })
+		442 465       .thenSucceed();
+		443 466   })
+		444 467     .structureName("APITests:piston")
+		445 468     .tag(GameTest.Tags.suiteDefault);
+		          ...
+		448 471     let canceled = false;
+		449 472     const redstoneLoc = new BlockLocation(1, 2, 0);
+		450 473     const pistonLoc = new BlockLocation(1, 2, 1);
+		451 474     const planksLoc = new BlockLocation(2, 2, 1);
+		452 475   
+		    476 +   const pistonCallback = World.events.beforePistonActivate.subscribe((pistonEvent) => {
+		453     -   const pistonCallback = World.events.beforeActivatePiston.subscribe((pistonEvent) => {
+		454 477       test.assert(pistonEvent.piston !== undefined, "Expected piston");
+		455 478       if (pistonEvent.piston.location.equals(test.worldBlockLocation(pistonLoc))) {
+		456 479         pistonEvent.cancel = true;
+		457 480         canceled = true;
+		458 481       }
+		          ...
+		462 485       .startSequence()
+		463 486       .thenExecute(() => {
+		464 487         test.pulseRedstone(redstoneLoc, 2);
+		465 488       })
+		466 489       .thenExecuteAfter(8, () => {
+		    490 +       test.assert(canceled, "Expected canceled beforePistonActivate event");
+		    491 +       test.assertBlockTypePresent(MinecraftBlockTypes.planks, planksLoc);
+		467     -       test.assert(canceled, "Expected canceled beforeActivatePiston event");
+		468     -       test.assertBlockTypePresent(BlockTypes.planks, planksLoc);
+		    492 +       World.events.beforePistonActivate.unsubscribe(pistonCallback);
+		469     -       World.events.beforeActivatePiston.unsubscribe(pistonCallback);
+		470 493       })
+		471 494       .thenSucceed();
+		472 495   })
+		473 496     .structureName("APITests:piston")
+		474 497     .tag(GameTest.Tags.suiteDefault);
+		          ...
+		513 536     const beforeExplosionCallback = World.events.beforeExplosion.subscribe((explosionEvent) => {
+		514 537       if (!isLocationInTest(test, explosionEvent.impactedBlocks[0])) return;
+		515 538       test.assert(explosionEvent.dimension !== undefined, "Expected dimension");
+		516 539       test.assert(explosionEvent.source !== undefined, "Expected source");
+		517 540       test.assert(explosionEvent.impactedBlocks.length === 10, "Unexpected number of impacted blocks");
+		    541 +     test.assertBlockTypePresent(MinecraftBlockTypes.cobblestone, cobblestoneLoc);
+		518     -     test.assertBlockTypePresent(BlockTypes.cobblestone, cobblestoneLoc);
+		519 542       explosionEvent.impactedBlocks = [test.worldBlockLocation(cobblestoneLoc)];
+		520 543     });
+		521 544   
+		522 545     const explosionCallback = World.events.explosion.subscribe((explosionEvent) => {
+		523 546       test.assert(explosionEvent.dimension !== undefined, "Expected dimension");
+		          ...
+		527 550     });
+		528 551   
+		529 552     test
+		530 553       .startSequence()
+		531 554       .thenExecute(() => {
+		    555 +       test.setBlockType(MinecraftBlockTypes.cobblestone, cobblestoneLoc);
+		532     -       test.setBlockType(BlockTypes.cobblestone, cobblestoneLoc);
+		533 556         test.spawn("tnt", new BlockLocation(1, 2, 1));
+		534 557       })
+		535 558       .thenExecuteAfter(60, () => {
+		536 559         test.assert(exploded, "Expected explosion event");
+		    560 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, polishedAndesiteLoc);
+		    561 +       test.assertBlockTypeNotPresent(MinecraftBlockTypes.cobblestone, cobblestoneLoc);
+		537     -       test.assertBlockTypePresent(BlockTypes.stone, polishedAndesiteLoc);
+		538     -       test.assertBlockTypeNotPresent(BlockTypes.cobblestone, cobblestoneLoc);
+		539 562         World.events.beforeExplosion.unsubscribe(beforeExplosionCallback);
+		540 563         World.events.explosion.unsubscribe(explosionCallback);
+		541 564       })
+		542 565       .thenSucceed();
+		543 566   })
+		          ...
+		559 582     });
+		560 583   
+		561 584     test
+		562 585       .startSequence()
+		563 586       .thenExecute(() => {
+		    587 +       test.setBlockType(MinecraftBlockTypes.cobblestone, cobblestoneLoc);
+		564     -       test.setBlockType(BlockTypes.cobblestone, cobblestoneLoc);
+		565 588         test.spawn("tnt", new BlockLocation(1, 2, 1));
+		566 589       })
+		567 590       .thenExecuteAfter(60, () => {
+		568 591         test.assert(canceled, "Expected canceled beforeExplosionEvent event");
+		    592 +       test.assertBlockTypePresent(MinecraftBlockTypes.cobblestone, cobblestoneLoc);
+		569     -       test.assertBlockTypePresent(BlockTypes.cobblestone, cobblestoneLoc);
+		570 593         World.events.beforeExplosion.unsubscribe(explosionCallback);
+		571 594       })
+		572 595       .thenSucceed();
+		573 596   })
+		574 597     .padding(10) // The blast can destroy nearby items and mobs
+		          ...
+		577 600   
+		578 601   GameTest.register("APITests", "explode_block_event", (test) => {
+		579 602     let explodedCount = 0;
+		580 603     const cobblestoneLoc = new BlockLocation(1, 3, 1);
+		581 604   
+		    605 +   const blockExplodeCallback = World.events.blockExplode.subscribe((blockExplodeEvent) => {
+		    606 +     if (!isLocationInTest(test, blockExplodeEvent.destroyedBlock.getLocation())) return;
+		582     -   const explodeBlockCallback = World.events.explodeBlock.subscribe((explodeBlockEvent) => {
+		583     -     if (!isLocationInTest(test, explodeBlockEvent.destroyedBlock.getLocation())) return;
+		    607 +     test.assert(blockExplodeEvent.source !== undefined, "Expected source");
+		584     -     test.assert(explodeBlockEvent.source !== undefined, "Expected source");
+		585 608       explodedCount++;
+		586 609     });
+		587 610   
+		588 611     test
+		589 612       .startSequence()
+		590 613       .thenExecute(() => {
+		    614 +       test.setBlockType(MinecraftBlockTypes.cobblestone, cobblestoneLoc);
+		591     -       test.setBlockType(BlockTypes.cobblestone, cobblestoneLoc);
+		592 615         test.spawn("tnt", new BlockLocation(1, 2, 1));
+		593 616       })
+		594 617       .thenExecuteAfter(60, () => {
+		595 618         test.assert(explodedCount === 10, "Unexpected number of exploded blocks");
+		    619 +       World.events.blockExplode.unsubscribe(blockExplodeCallback);
+		596     -       World.events.explodeBlock.unsubscribe(explodeBlockCallback);
+		597 620       })
+		598 621       .thenSucceed();
+		599 622   })
+		600 623     .padding(10) // The blast can destroy nearby items and mobs
+		601 624     .structureName("ComponentTests:platform")
+		          ...
+		652 675   
+		653 676   GameTest.register("APITests", "spread_from_face_toward_direction", (test) => {
+		654 677     let multifaceLoc = new BlockLocation(1, 4, 0);
+		655 678     let spreadLoc = new BlockLocation(1, 3, 0);
+		656 679   
+		    680 +   const glowLichenPermutation = MinecraftBlockTypes.glowLichen.createDefaultBlockPermutation();
+		657     -   const glowLichenPermutation = BlockTypes.glowLichen.createDefaultBlockPermutation();
+		658 681     glowLichenPermutation.getProperty(BlockProperties.multiFaceDirectionBits).value = 1 << test.getTestDirection();
+		659 682     test.setBlockPermutation(glowLichenPermutation, multifaceLoc);
+		660 683   
+		    684 +   test.assertBlockTypePresent(MinecraftBlockTypes.glowLichen, multifaceLoc);
+		    685 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.glowLichen, spreadLoc);
+		661     -   test.assertBlockTypePresent(BlockTypes.glowLichen, multifaceLoc);
+		662     -   test.assertBlockTypeNotPresent(BlockTypes.glowLichen, spreadLoc);
+		663 686   
+		664 687     test.spreadFromFaceTowardDirection(multifaceLoc, test.getTestDirection(), Direction.down);
+		665 688     test
+		666 689       .startSequence()
+		667 690       .thenExecuteAfter(1, () => {
+		    691 +       test.assertBlockTypePresent(MinecraftBlockTypes.glowLichen, spreadLoc);
+		668     -       test.assertBlockTypePresent(BlockTypes.glowLichen, spreadLoc);
+		669 692       })
+		670 693       .thenSucceed();
+		671 694   })
+		672 695     .rotateTest(true)
+		673 696     .tag(GameTest.Tags.suiteDefault);
+		          ...
+		754 777       default:
+		755 778         test.assert(false, "Invalid test direction");
+		756 779     }
+		757 780   
+		758 781     const buttonLoc = new BlockLocation(1, 2, 1);
+		    782 +   const buttonPermutation = MinecraftBlockTypes.stoneButton.createDefaultBlockPermutation();
+		759     -   const buttonPermutation = BlockTypes.stoneButton.createDefaultBlockPermutation();
+		760 783     buttonPermutation.getProperty(BlockProperties.facingDirection).value = test.rotateDirection(Direction.north);
+		761 784     test.setBlockPermutation(buttonPermutation, buttonLoc);
+		762 785   
+		763 786     test
+		764 787       .startSequence()
+		765 788       .thenExecuteAfter(2, () => {
+		    789 +       test.assertBlockTypePresent(MinecraftBlockTypes.stoneButton, buttonLoc);
+		766     -       test.assertBlockTypePresent(BlockTypes.stoneButton, buttonLoc);
+		767 790       })
+		768 791       .thenSucceed();
+		769 792   })
+		770 793     .rotateTest(true)
+		771 794     .tag(GameTest.Tags.suiteDefault);
+		          '''
+	Changed script "BlockTests.js":
+		Total line: 252 (+34, -48)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, BlockProperties, Direction } from "Minecraft";
+		  2     - import { BlockLocation, BlockTypes, Items, BlockProperties, Direction } from "Minecraft";
+		  3   3   
+		  4   4   const TicksPerSecond = 20;
+		  5   5   const FiveSecondsInTicks = 5 * TicksPerSecond;
+		  6   6   
+		  7   7   const FALLING_SAND_TEMPLATE_NAME = "BlockTests:falling_sand_template";
+		  8   8   const FALLING_SAND_STARTUP_TICKS = 1;
+		  9   9   const FALLING_SAND_TIMEOUT_TICKS = 20;
+		 10  10   
+		 11  11   const BLOCKS_THAT_POP_SAND = [
+		     12 +   [MinecraftBlockTypes.woodenSlab, MinecraftBlockTypes.air], //replace missing oakSlab() with woodenSlab()
+		     13 +   [MinecraftBlockTypes.chest, MinecraftBlockTypes.stone],
+		 12     -   [BlockTypes.woodenSlab, BlockTypes.air], //replace missing oakSlab() with woodenSlab()
+		 13     -   [BlockTypes.chest, BlockTypes.stone],
+		     14 +   [MinecraftBlockTypes.rail, MinecraftBlockTypes.stone],
+		     15 +   [MinecraftBlockTypes.stoneButton, MinecraftBlockTypes.stone],
+		     16 +   [MinecraftBlockTypes.woodenPressurePlate, MinecraftBlockTypes.stone], //replace missing OakPressurePlate() with woodenPressurePlate()
+		     17 +   [MinecraftBlockTypes.torch, MinecraftBlockTypes.stone],
+		     18 +   [MinecraftBlockTypes.soulSand, MinecraftBlockTypes.air],
+		 14     -   [BlockTypes.rail, BlockTypes.stone],
+		 15     -   [BlockTypes.stoneButton, BlockTypes.stone],
+		 16     -   [BlockTypes.woodenPressurePlate, BlockTypes.stone], //replace missing OakPressurePlate() with woodenPressurePlate()
+		 17     -   [BlockTypes.torch, BlockTypes.stone],
+		 18     -   [BlockTypes.soulSand, BlockTypes.air],
+		 19  19   ];
+		 20  20   
+		 21  21   const BLOCKS_REPLACED_BY_SAND = [
+		     22 +   MinecraftBlockTypes.water,
+		     23 +   MinecraftBlockTypes.air,
+		 22     -   BlockTypes.water,
+		 23     -   BlockTypes.air,
+		     24 +   MinecraftBlockTypes.tallgrass, //replace grass() with tallgrass(). It needs grass, not grass block, MinecraftBlockTypes.grass is actually grass block.
+		 24     -   BlockTypes.tallgrass, //replace grass() with tallgrass(). It needs grass, not grass block, BlockTypes.grass is actually grass block.
+		 25  25   ];
+		 26  26   
+		 27  27   const BLOCKS_THAT_SUPPORT_SAND = [
+		     28 +   MinecraftBlockTypes.stone,
+		     29 +   MinecraftBlockTypes.fence, //replace missing oakFence() with fence()
+		 28     -   BlockTypes.stone,
+		 29     -   BlockTypes.fence, //replace missing oakFence() with fence()
+		     30 +   MinecraftBlockTypes.oakStairs,
+		     31 +   MinecraftBlockTypes.scaffolding,
+		 30     -   BlockTypes.oakStairs,
+		 31     -   BlockTypes.scaffolding,
+		 32  32   ];
+		 33     - 
+		 34     - function testThatFallingSandPopsIntoItem(test) {
+		 35     -   test.setBlockType(BlockTypes.sand, new BlockLocation(1, 4, 1));
+		 36     -   const targetPos = new BlockLocation(1, 2, 1);
+		 37  33   
+		     34 + function testThatFallingSandPopsIntoItem(test) {
+		 38     -   test.succeedWhen(() => {
+		 39     -     test.assertEntityPresentInArea("minecraft:item");
+		 40     -     test.assertEntityNotPresent("minecraft:falling_block", targetPos);
+		     35 +   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		     36 +   const targetPos = new BlockLocation(1, 2, 1);
+		 41     -   });
+		 42     - }
+		 43  37   
+		     38 +   test.succeedWhen(() => {
+		     39 +     test.assertEntityPresentInArea("minecraft:item");
+		 44     - function testThatFallingSandReplaces(test) {
+		     40 +     test.assertEntityNotPresent("minecraft:falling_block", targetPos);
+		     41 +   });
+		 45     -   test.setBlockType(BlockTypes.sand, new BlockLocation(1, 4, 1));
+		 46     -   test.succeedWhenBlockTypePresent(BlockTypes.sand, new BlockLocation(1, 2, 1));
+		 47  42   }
+		 48  43   
+		     44 + function testThatFallingSandReplaces(test) {
+		     45 +   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		 49     - function testThatFallingSandLandsOnTop(test) {
+		 50     -   test.setBlockType(BlockTypes.sand, new BlockLocation(1, 4, 1));
+		     46 +   test.succeedWhenBlockTypePresent(MinecraftBlockTypes.sand, new BlockLocation(1, 2, 1));
+		 51     -   test.succeedWhenBlockTypePresent(BlockTypes.sand, new BlockLocation(1, 3, 1));
+		 52  47   }
+		 53  48   
+		 54     - ///
+		 55     - // Concrete Tests
+		 56     - ///
+		 57     - for (let i = 0; i < BLOCKS_THAT_POP_SAND.length; i++) {
+		     49 + function testThatFallingSandLandsOnTop(test) {
+		     50 +   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		     51 +   test.succeedWhenBlockTypePresent(MinecraftBlockTypes.sand, new BlockLocation(1, 3, 1));
+		     52 + }
+		 58     -   const topBlock = BLOCKS_THAT_POP_SAND[i][0];
+		 59     -   const bottomBlock = BLOCKS_THAT_POP_SAND[i][1];
+		 60     -   const testName = "blocktests.falling_sand_pops_on_" + topBlock.getName();
+		 61     -   let tag = null;
+		 62  53   
+		     54 + ///
+		     55 + // Concrete Tests
+		     56 + ///
+		 63     -   //When sand block falls on soul sand, it should pop into item.
+		     57 + for (let i = 0; i < BLOCKS_THAT_POP_SAND.length; i++) {
+		     58 +   const topBlock = BLOCKS_THAT_POP_SAND[i][0];
+		     59 +   const bottomBlock = BLOCKS_THAT_POP_SAND[i][1];
+		     60 +   const testName = "blocktests.falling_sand_pops_on_" + topBlock.getName();
+		     61 +   let tag = null;
+		 64     -   if (topBlock.getName() == "minecraft:soul_sand") {
+		 65     -     tag = GameTest.Tags.suiteDisabled;
+		 66     -   } else {
+		 67     -     tag = GameTest.Tags.suiteDefault;
+		 68     -   }
+		 69  62   
+		 70  63     GameTest.register("BlockTests", testName, (test) => {
+		 71  64       if (topBlock.getName() == "minecraft:stone_button") {
+		     65 +       const buttonPermutation = MinecraftBlockTypes.stoneButton.createDefaultBlockPermutation();
+		 72     -       const buttonPermutation = BlockTypes.stoneButton.createDefaultBlockPermutation();
+		 73  66         buttonPermutation.getProperty(BlockProperties.facingDirection).value = Direction.north;
+		 74  67         test.setBlockPermutation(buttonPermutation, new BlockLocation(1, 2, 1));
+		 75  68       } else {
+		 76  69         test.setBlockType(topBlock, new BlockLocation(1, 2, 1));
+		 77  70       }
+		          ...
+		 81  74       .batch("day")
+		 82  75       .structureName(FALLING_SAND_TEMPLATE_NAME)
+		 83  76       .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		 84  77       .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		 85  78       .required(true)
+		     79 +     .tag(GameTest.Tags.suiteDefault);
+		 86     -     .tag(tag);
+		 87  80   }
+		 88  81   
+		 89  82   for (const block of BLOCKS_REPLACED_BY_SAND) {
+		 90  83     const testName = "blocktests.falling_sand_replaces_" + block.getName();
+		 91  84   
+		          ...
+		101  94       .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		102  95       .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		103  96       .required(true)
+		104  97       .tag(GameTest.Tags.suiteDefault);
+		105  98   }
+		106     - 
+		107     - for (const block of BLOCKS_THAT_SUPPORT_SAND) {
+		108     -   const testName = "blocktests.falling_sand_lands_on_" + block.getName();
+		109     -   let tag = null;
+		110  99   
+		111     -   //When sand block falls on fence or stair, it shouldn't pop into item.
+		112     -   if (block.getName() == "minecraft:fence" || block.getName() == "minecraft:oak_stairs") {
+		113     -     tag = GameTest.Tags.suiteDisabled;
+		    100 + for (const block of BLOCKS_THAT_SUPPORT_SAND) {
+		    101 +   const testName = "blocktests.falling_sand_lands_on_" + block.getName();
+		    102 +   let tag = null;
+		114     -   } else {
+		115     -     tag = GameTest.Tags.suiteDefault;
+		116     -   }
+		117 103   
+		118 104     GameTest.register("BlockTests", testName, (test) => {
+		119 105       test.setBlockType(block, new BlockLocation(1, 2, 1));
+		120 106       testThatFallingSandLandsOnTop(test);
+		121 107     })
+		122 108       .batch("day")
+		123 109       .structureName(FALLING_SAND_TEMPLATE_NAME)
+		124 110       .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		125 111       .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		126 112       .required(true)
+		    113 +     .tag(GameTest.Tags.suiteDefault);
+		127     -     .tag(tag);
+		128 114   }
+		129 115   
+		130 116   GameTest.register("BlockTests", "concrete_solidifies_in_shallow_water", (test) => {
+		    117 +   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 3, 1));
+		131     -   test.setBlockType(BlockTypes.concretepowder, new BlockLocation(1, 3, 1));
+		132 118   
+		133 119     test.succeedWhen(() => {
+		    120 +     test.assertBlockTypePresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1));
+		134     -     test.assertBlockTypePresent(BlockTypes.concrete, new BlockLocation(1, 2, 1));
+		135 121     });
+		136 122   })
+		137 123     .maxTicks(FiveSecondsInTicks)
+		138 124     .tag(GameTest.Tags.suiteDefault);
+		139 125   
+		140 126   GameTest.register("BlockTests", "concrete_solidifies_in_deep_water", (test) => {
+		    127 +   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 4, 1));
+		141     -   test.setBlockType(BlockTypes.concretepowder, new BlockLocation(1, 4, 1));
+		142 128   
+		143 129     test.succeedWhen(() => {
+		    130 +     test.assertBlockTypePresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1));
+		144     -     test.assertBlockTypePresent(BlockTypes.concrete, new BlockLocation(1, 2, 1));
+		145 131     });
+		146 132   })
+		147 133     .maxTicks(FiveSecondsInTicks)
+		148 134     .tag(GameTest.Tags.suiteDefault);
+		149 135   
+		150 136   GameTest.register("BlockTests", "concrete_solidifies_next_to_water", (test) => {
+		    137 +   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 3, 1));
+		151     -   test.setBlockType(BlockTypes.concretepowder, new BlockLocation(1, 3, 1));
+		152 138   
+		153 139     test.succeedWhen(() => {
+		    140 +     test.assertBlockTypePresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1));
+		154     -     test.assertBlockTypePresent(BlockTypes.concrete, new BlockLocation(1, 2, 1));
+		155 141     });
+		156 142   })
+		157 143     .maxTicks(FiveSecondsInTicks)
+		158 144     .tag(GameTest.Tags.suiteDefault);
+		159 145   
+		160 146   GameTest.register("BlockTests", "sand_fall_boats", (test) => {
+		    147 +   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		161     -   test.setBlockType(BlockTypes.sand, new BlockLocation(1, 4, 1));
+		162 148   
+		163 149     test.succeedWhen(() => {
+		    150 +     test.assertBlockTypePresent(MinecraftBlockTypes.sand, new BlockLocation(1, 2, 1));
+		164     -     test.assertBlockTypePresent(BlockTypes.sand, new BlockLocation(1, 2, 1));
+		165 151     });
+		166 152   })
+		167 153     .maxTicks(FiveSecondsInTicks)
+		168 154     .tag(GameTest.Tags.suiteDefault);
+		169 155   
+		          ...
+		189 175       test.spawn(xpOrb, spawnPos);
+		190 176     }
+		191 177   
+		192 178     // Fail if the turtle egg dies
+		193 179     test.failIf(() => {
+		    180 +     test.assertBlockTypePresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1));
+		194     -     test.assertBlockTypePresent(BlockTypes.air, new BlockLocation(1, 2, 1));
+		195 181     });
+		196 182   
+		197 183     // Succeed after 4 seconds
+		198 184     test.startSequence().thenIdle(80).thenSucceed();
+		199 185   })
+		          ...
+		203 189   GameTest.register("BlockTests", "turtle_eggs_survive_item", (test) => {
+		204 190     test.pressButton(new BlockLocation(2, 4, 0));
+		205 191   
+		206 192     // Fail if the turtle egg dies
+		207 193     test.failIf(() => {
+		    194 +     test.assertBlockTypePresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1));
+		208     -     test.assertBlockTypePresent(BlockTypes.air, new BlockLocation(1, 2, 1));
+		209 195     });
+		210 196   
+		211 197     // Succeed after 4 seconds
+		212 198     test.startSequence().thenIdle(80).thenSucceed();
+		213 199   })
+		          ...
+		216 202   
+		217 203   GameTest.register("BlockTests", "turtle_eggs_squished_by_mob", (test) => {
+		218 204     const zombieEntityType = "minecraft:husk";
+		219 205     const zombiePosition = new BlockLocation(1, 5, 1);
+		220 206     test.spawn(zombieEntityType, zombiePosition);
+		    207 +   test.succeedWhenBlockTypePresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1));
+		221     -   test.succeedWhenBlockTypePresent(BlockTypes.air, new BlockLocation(1, 2, 1));
+		222 208   })
+		223 209     .required(false)
+		224 210     .maxTicks(TicksPerSecond * 20)
+		225 211     .tag(GameTest.Tags.suiteDefault);
+		226 212   
+		          ...
+		229 215   
+		230 216     test.succeedWhen(() => {
+		231 217       const redSandstonePos = new BlockLocation(6, 2, 4);
+		232 218       const sandstonePos = new BlockLocation(2, 2, 4);
+		233 219   
+		    220 +     test.assertBlockTypeNotPresent(MinecraftBlockTypes.redSandstone, redSandstonePos);
+		    221 +     test.assertBlockTypeNotPresent(MinecraftBlockTypes.sandstone, sandstonePos);
+		234     -     test.assertBlockTypeNotPresent(BlockTypes.redSandstone, redSandstonePos);
+		235     -     test.assertBlockTypeNotPresent(BlockTypes.sandstone, sandstonePos);
+		    222 +     test.assertItemEntityPresent(MinecraftItemTypes.redSandstone, redSandstonePos, 2.0);
+		    223 +     test.assertItemEntityPresent(MinecraftItemTypes.sandstone, sandstonePos, 2.0);
+		236     -     test.assertItemEntityPresent(Items.redSandstone, redSandstonePos, 2.0);
+		237     -     test.assertItemEntityPresent(Items.sandstone, sandstonePos, 2.0);
+		238 224     });
+		239 225   })
+		240 226     .maxTicks(TicksPerSecond * 10)
+		241 227     .tag("suite:java_parity")
+		242 228     .tag(GameTest.Tags.suiteDisabled) //redSandstone and sandstone items should be present.
+		243 229     .maxAttempts(3);
+		244 230   
+		245 231   GameTest.register("BlockTests", "concrete_pops_off_waterlogged_chest", (test) => {
+		    232 +   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 4, 1));
+		246     -   test.setBlockType(BlockTypes.concretepowder, new BlockLocation(1, 4, 1));
+		247 233     test.succeedWhen(() => {
+		248 234       const chestPos = new BlockLocation(1, 2, 1);
+		    235 +     test.assertBlockTypePresent(MinecraftBlockTypes.chest, chestPos);
+		    236 +     test.assertItemEntityPresent(MinecraftItemTypes.concretePowder, chestPos, 2);
+		249     -     test.assertBlockTypePresent(BlockTypes.chest, chestPos);
+		250     -     test.assertItemEntityPresent(Items.concretePowder, chestPos, 2);
+		251 237       test.assertEntityNotPresentInArea("falling_block");
+		252 238     });
+		253 239   })
+		254 240     .maxTicks(TicksPerSecond * 5)
+		255 241     .tag(GameTest.Tags.suiteDefault);
+		          ...
+		          '''
+	Changed script "ComponentTests.js":
+		Total line: 463 (+4, -4)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, MinecraftItemTypes, ItemStack } from "Minecraft";
+		  2     - import { BlockLocation, Items, ItemStack } from "Minecraft";
+		  3   3   
+		  4   4   function isNear(n1, n2) {
+		  5   5     return Math.abs(n1 - n2) < 0.01;
+		  6   6   }
+		  7   7   
+		          ...
+		411 411     test.assert(rightContainer !== undefined, "Expected container");
+		412 412   
+		413 413     const leftContainer = leftInventoryComp.container;
+		414 414     test.assert(leftContainer !== undefined, "Expected container");
+		415 415   
+		    416 +   rightContainer.setItem(0, new ItemStack(MinecraftItemTypes.apple, 10, 0));
+		416     -   rightContainer.setItem(0, new ItemStack(Items.apple, 10, 0));
+		417 417     test.assert(rightContainer.getItem(0).id === "apple", "Expected apple in right container slot index 0");
+		418 418   
+		    419 +   rightContainer.setItem(1, new ItemStack(MinecraftItemTypes.emerald, 10, 0));
+		419     -   rightContainer.setItem(1, new ItemStack(Items.emerald, 10, 0));
+		420 420     test.assert(rightContainer.getItem(1).id === "emerald", "Expected emerald in right container slot index 1");
+		421 421   
+		422 422     test.assert(rightContainer.size === 27, "Unexpected size");
+		423 423     test.assert(rightContainer.emptySlotsCount === 25, "Unexpected emptySlotsCount");
+		424 424   
+		425 425     const itemStack = rightContainer.getItem(0);
+		426 426     test.assert(itemStack.id === "apple", "Expected apple");
+		427 427     test.assert(itemStack.amount === 10, "Expected 10 apples");
+		428 428     test.assert(itemStack.data === 0, "Expected 0 data");
+		429 429   
+		    430 +   leftContainer.setItem(0, new ItemStack(MinecraftItemTypes.cake, 10, 0));
+		430     -   leftContainer.setItem(0, new ItemStack(Items.cake, 10, 0));
+		431 431   
+		432 432     test.assert(rightContainer.transferItem(0, 4, leftContainer), "Expected transferItem to succeed"); // transfer the apple from the right container to the left container
+		433 433     test.assert(rightContainer.swapItems(1, 0, leftContainer), "Expected swapItems to succeed"); // swap the cake and emerald
+		434 434   
+		435 435     test.assert(leftContainer.getItem(4).id === "apple", "Expected apple in left container slot index 4");
+		          ...
+		          '''
+	Changed script "DispenserTests.js":
+		Total line: 245 (+7, -7)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, ItemStack } from "Minecraft";
+		  2     - import { BlockLocation, BlockTypes, Items, ItemStack } from "Minecraft";
+		  3   3   
+		  4   4   const dispenserDelay = 5; // Number of ticks to wait for the dispenser to use or dispense an item
+		  5   5   const armorSlotTorso = 1;
+		  6   6   const pinkCarpet = 6;
+		  7   7   const tameMountComponentName = "minecraft:tamemount";
+		          ...
+		175 175     .tag(GameTest.Tags.suiteDefault);
+		176 176   
+		177 177   GameTest.register("DispenserTests", "dispenser_water", (test) => {
+		178 178     const waterPos = new BlockLocation(1, 2, 1);
+		179 179     const dispenserPos = new BlockLocation(0, 2, 1);
+		    180 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.water, waterPos);
+		    181 +   test.assertContainerContains(new ItemStack(MinecraftItemTypes.waterBucket, 1, 0), dispenserPos);
+		180     -   test.assertBlockTypeNotPresent(BlockTypes.water, waterPos);
+		181     -   test.assertContainerContains(new ItemStack(Items.waterBucket, 1, 0), dispenserPos);
+		182 182   
+		183 183     test.pressButton(new BlockLocation(0, 2, 0));
+		184 184   
+		185 185     test.succeedOnTickWhen(dispenserDelay, () => {
+		    186 +     test.assertContainerContains(new ItemStack(MinecraftItemTypes.bucket, 1, 0), dispenserPos);
+		    187 +     test.assertBlockTypePresent(MinecraftBlockTypes.water, waterPos);
+		186     -     test.assertContainerContains(new ItemStack(Items.bucket, 1, 0), dispenserPos);
+		187     -     test.assertBlockTypePresent(BlockTypes.water, waterPos);
+		188 188     });
+		189 189   })
+		190 190     .maxTicks(threeSecondsInTicks)
+		191 191     .tag(GameTest.Tags.suiteDefault);
+		192 192   
+		          ...
+		203 203   
+		204 204   GameTest.register("DispenserTests", "dispenser_charge_respawn_anchor", (test) => {
+		205 205     test.pressButton(new BlockLocation(0, 2, 0));
+		206 206     const respawnAnchorPos = new BlockLocation(1, 2, 1);
+		207 207     const dispenserPos = new BlockLocation(0, 2, 1);
+		    208 +   test.assertContainerContains(new ItemStack(MinecraftItemTypes.glowstone, 1, 0), dispenserPos);
+		208     -   test.assertContainerContains(new ItemStack(Items.glowstone, 1, 0), dispenserPos);
+		209 209   
+		210 210     test.assertBlockState("respawn_anchor_charge", 0, respawnAnchorPos);
+		211 211     test.succeedWhen(() => {
+		212 212       test.assertBlockState("respawn_anchor_charge", 1, respawnAnchorPos);
+		213 213       test.assertContainerEmpty(dispenserPos);
+		          ...
+		227 227       new BlockLocation(2, 7, 1),
+		228 228     ];
+		229 229   
+		230 230     test.succeedOnTickWhen(dispenserDelay, () => {
+		231 231       for (const pos of firePositions) {
+		    232 +       test.assertBlockTypePresent(MinecraftBlockTypes.fire, pos);
+		232     -       test.assertBlockTypePresent(BlockTypes.fire, pos);
+		233 233       }
+		234 234     });
+		235 235   })
+		236 236     .maxTicks(threeSecondsInTicks)
+		237 237     .tag(GameTest.Tags.suiteDefault);
+		          ...
+		          '''
+	Changed script "DuplicationTests.js":
+		Total line: 68 (+4, -4)
+		        '''
+		 1  1   import * as GameTest from "GameTest";
+		    2 + import { BlockLocation, MinecraftItemTypes } from "Minecraft";
+		 2    - import { BlockLocation, Items } from "Minecraft";
+		 3  3   
+		 4  4   function poweredRailTest(test, pulseTicks) {
+		 5  5     test.pulseRedstone(new BlockLocation(1, 2, 3), pulseTicks);
+		 6  6   
+		 7  7     test
+		 8  8       .startSequence()
+		 9  9       .thenIdle(3)
+		   10 +     .thenExecute(() => test.assertItemEntityCountIs(MinecraftItemTypes.goldenRail, new BlockLocation(1, 2, 1), 1.0, 1)) // powered rail
+		10    -     .thenExecute(() => test.assertItemEntityCountIs(Items.goldenRail, new BlockLocation(1, 2, 1), 1.0, 1)) // powered rail
+		11 11       .thenSucceed();
+		12 12   }
+		13 13   
+		14 14   GameTest.register("DuplicationTests", "powered_rail_twist_bedrock", (test) => {
+		15 15     poweredRailTest(test, 2);
+		        ...
+		39 39     test.spawn("minecraft:minecart", new BlockLocation(1, 3, 2));
+		40 40   
+		41 41     test
+		42 42       .startSequence()
+		43 43       .thenIdle(3)
+		   44 +     .thenExecute(() => test.assertItemEntityCountIs(MinecraftItemTypes.detectorRail, new BlockLocation(1, 2, 1), 1.0, 1))
+		44    -     .thenExecute(() => test.assertItemEntityCountIs(Items.detectorRail, new BlockLocation(1, 2, 1), 1.0, 1))
+		45 45       .thenSucceed();
+		46 46   }).tag(GameTest.Tags.suiteDefault);
+		47 47   
+		48 48   function railClassicTest(test, pulseTicks) {
+		49 49     test.pulseRedstone(new BlockLocation(1, 5, 5), pulseTicks);
+		50 50   
+		51 51     test
+		52 52       .startSequence()
+		53 53       .thenIdle(3)
+		   54 +     .thenExecute(() => test.assertItemEntityCountIs(MinecraftItemTypes.rail, new BlockLocation(1, 4, 2), 1.0, 0))
+		54    -     .thenExecute(() => test.assertItemEntityCountIs(Items.rail, new BlockLocation(1, 4, 2), 1.0, 0))
+		55 55       .thenSucceed();
+		56 56   }
+		57 57   
+		58 58   GameTest.register("DuplicationTests", "rail_classic_bedrock", (test) => {
+		59 59     railClassicTest(test, 2);
+		        ...
+		        '''
+	Changed script "EntityTests.js":
+		Total line: 44 (+11, -11)
+		        '''
+		 1  1   import * as GameTest from "GameTest";
+		    2 + import { BlockLocation, MinecraftItemTypes, ItemStack, Location } from "Minecraft";
+		 2    - import { BlockLocation, Items, ItemStack, Location } from "Minecraft";
+		 3  3   
+		 4  4   function shallowItemStream(test) {
+		 5  5     const lampPos = new BlockLocation(0, 1, 1);
+		    6 +   let emerald = new ItemStack(MinecraftItemTypes.emerald, 1, 0);
+		 6    -   let emerald = new ItemStack(Items.emerald, 1, 0);
+		 7  7     test.assertRedstonePower(lampPos, 0);
+		 8  8     test.spawnItem(emerald, new Location(1.5, 1.5, 1.5));
+		 9  9     test.succeedWhen(() => {
+		10 10       test.assertRedstonePower(lampPos, 1);
+		11 11     });
+		12 12   }
+		13 13   
+		14 14   GameTest.register("EntityTests", "shallow_item_stream", shallowItemStream)
+		   15 +   .tag("suite:java_parity")
+		   16 +   .tag(GameTest.Tags.suiteDisabled); // The slab should be waterlogged
+		15    - .tag("suite:java_parity")
+		16    - .tag(GameTest.Tags.suiteDisabled); // The slab should be waterlogged
+		17 17   
+		   18 + GameTest.register("EntityTests", "shallow_item_stream_bedrock", shallowItemStream).tag(GameTest.Tags.suiteDefault);
+		18    - GameTest.register("EntityTests", "shallow_item_stream_bedrock", shallowItemStream)
+		19    - .tag(GameTest.Tags.suiteDefault);
+		20 19   
+		21 20   GameTest.register("EntityTests", "items_float_up", (test) => {
+		   21 +   const diamondHelmet = new ItemStack(MinecraftItemTypes.diamondHelmet, 1, 0);
+		   22 +   const netheriteHelmet = new ItemStack(MinecraftItemTypes.netheriteHelmet, 1, 0);
+		22    -   const diamondHelmet = new ItemStack(Items.diamondHelmet, 1, 0);
+		23    -   const netheriteHelmet = new ItemStack(Items.netheriteHelmet, 1, 0);
+		24 23     const itemEntityId = "minecraft:item";
+		25 24   
+		26 25     test.spawnItem(diamondHelmet, new Location(1.5, 4.0, 1.5));
+		27 26     test.spawnItem(diamondHelmet, new Location(2.5, 4.0, 1.5));
+		28 27     test.spawnItem(diamondHelmet, new Location(3.5, 4.0, 1.5));
+		29 28     test.spawnItem(netheriteHelmet, new Location(5.5, 4.0, 1.5));
+		30 29     test.spawnItem(netheriteHelmet, new Location(6.5, 4.0, 1.5));
+		31 30     test.spawnItem(netheriteHelmet, new Location(7.5, 4.0, 1.5));
+		32 31   
+		   32 +   test
+		   33 +     .startSequence()
+		33    -   test.startSequence()
+		   34 +     .thenIdle(60)
+		   35 +     .thenExecute(() => test.assertEntityPresent(itemEntityId, new BlockLocation(1, 2, 1))) // sink
+		   36 +     .thenExecute(() => test.assertEntityNotPresent(itemEntityId, new BlockLocation(2, 2, 1))) // float
+		   37 +     .thenExecute(() => test.assertEntityNotPresent(itemEntityId, new BlockLocation(3, 2, 1))) // float
+		   38 +     .thenExecute(() => test.assertEntityPresent(itemEntityId, new BlockLocation(5, 2, 1))) // sink
+		   39 +     .thenExecute(() => test.assertEntityNotPresent(itemEntityId, new BlockLocation(6, 2, 1))) // float
+		   40 +     .thenExecute(() => test.assertEntityNotPresent(itemEntityId, new BlockLocation(7, 2, 1))) // float
+		   41 +     .thenSucceed();
+		34    - 	.thenIdle(60)
+		35    - 	.thenExecute(() => test.assertEntityPresent(itemEntityId, new BlockLocation(1, 2, 1))) // sink
+		36    -   .thenExecute(() => test.assertEntityNotPresent(itemEntityId, new BlockLocation(2, 2, 1))) // float
+		37    -   .thenExecute(() => test.assertEntityNotPresent(itemEntityId, new BlockLocation(3, 2, 1))) // float
+		38    -   .thenExecute(() => test.assertEntityPresent(itemEntityId, new BlockLocation(5, 2, 1))) // sink
+		39    -   .thenExecute(() => test.assertEntityNotPresent(itemEntityId, new BlockLocation(6, 2, 1))) // float
+		40    -   .thenExecute(() => test.assertEntityNotPresent(itemEntityId, new BlockLocation(7, 2, 1))) // float
+		41    -   .thenSucceed();
+		42 42   })
+		   43 +   .tag("suite:java_parity")
+		   44 +   .tag(GameTest.Tags.suiteDisabled); // In Bedrock, item entities don't rest on the enchanting table after falling through the water block
+		43    - .tag("suite:java_parity")
+		44    - .tag(GameTest.Tags.suiteDisabled); // In Bedrock, item entities don't rest on the enchanting table after falling through the water block
+		        '''
+	Changed script "FlyingMachineTests.js":
+		Total line: 264 (+40, -40)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, MinecraftBlockTypes } from "Minecraft";
+		  2     - import { BlockLocation, BlockTypes } from "Minecraft";
+		  3   3   
+		  4   4   GameTest.register("FlyingMachineTests", "machine_a", (test) => {
+		  5   5     const triggerPos = new BlockLocation(1, 5, 1);
+		  6   6     const farPos = new BlockLocation(2, 3, 5);
+		  7   7     const nearPos = new BlockLocation(2, 3, 1);
+		  8   8   
+		  9   9     test
+		 10  10       .startSequence()
+		 11  11       .thenExecute(() => {
+		     12 +       test.setBlockType(MinecraftBlockTypes.fire, triggerPos);
+		 12     -       test.setBlockType(BlockTypes.fire, triggerPos);
+		 13  13       })
+		 14  14       .thenExecuteAfter(20, () => {
+		     15 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, farPos);
+		 15     -       test.assertBlockTypePresent(BlockTypes.slime, farPos);
+		 16  16       })
+		 17  17       .thenExecuteAfter(20, () => {
+		     18 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, nearPos);
+		 18     -       test.assertBlockTypePresent(BlockTypes.slime, nearPos);
+		 19  19       })
+		 20  20       .thenSucceed();
+		 21  21   })
+		 22  22     .tag("suite:java_parity") // The behavior is different between Java and Bedrock.In Java the flying machine move forward to the end and then returns to its original position, but in Bedrock it returns before it reaches the end.That cause the far point or near point been judged fail.
+		 23  23     .tag(GameTest.Tags.suiteDisabled); // Unstable, about 50% pass rate.
+		          ...
+		 31  31       .startSequence()
+		 32  32       .thenExecute(() => {
+		 33  33         test.pulseRedstone(triggerPos, 2);
+		 34  34       })
+		 35  35       .thenExecuteAfter(20, () => {
+		     36 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, farPos);
+		 36     -       test.assertBlockTypePresent(BlockTypes.slime, farPos);
+		 37  37       })
+		 38  38       .thenExecuteAfter(20, () => {
+		     39 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, nearPos);
+		 39     -       test.assertBlockTypePresent(BlockTypes.slime, nearPos);
+		 40  40       })
+		 41  41       .thenSucceed();
+		 42  42   })
+		 43  43     .tag("suite:java_parity")
+		 44  44     .tag(GameTest.Tags.suiteDisabled); // After I use redstone instead of set fire block to active the observer, I can see this machine use 2 reverse sticky-piston for flying forward and back in Java. It didn't work well in bedrock.
+		          ...
+		 53  53       .startSequence()
+		 54  54       .thenExecute(() => {
+		 55  55         test.pulseRedstone(triggerPos, 2);
+		 56  56       })
+		 57  57       .thenExecuteAfter(20, () => {
+		     58 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, farPos);
+		 58     -       test.assertBlockTypePresent(BlockTypes.slime, farPos);
+		 59  59       })
+		 60  60       .thenExecuteAfter(20, () => {
+		     61 +       test.setBlockType(MinecraftBlockTypes.obsidian, stopBlock);
+		 61     -       test.setBlockType(BlockTypes.obsidian, stopBlock);
+		 62  62       })
+		 63  63       .thenExecuteAfter(2, () => {
+		     64 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, nearPos);
+		 64     -       test.assertBlockTypePresent(BlockTypes.stickyPiston, nearPos);
+		 65  65       })
+		 66  66       .thenSucceed();
+		 67  67   })
+		 68  68     .tag("suite:java_parity")
+		 69  69     .tag(GameTest.Tags.suiteDisabled); // Could not set fire block in the air even I use pulseRedstone() the machine didn't move.
+		          ...
+		 75  75     const nearPos = new BlockLocation(3, 5, 1);
+		 76  76   
+		 77  77     test
+		 78  78       .startSequence()
+		 79  79       .thenExecute(() => {
+		     80 +       test.setBlockType(MinecraftBlockTypes.fire, triggerPos);
+		 80     -       test.setBlockType(BlockTypes.fire, triggerPos);
+		 81  81       })
+		 82  82       .thenExecuteAfter(16, () => {
+		     83 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, dropPos);
+		     84 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, farPos);
+		 83     -       test.assertBlockTypePresent(BlockTypes.slime, dropPos);
+		 84     -       test.assertBlockTypePresent(BlockTypes.slime, farPos);
+		 85  85       })
+		 86  86       .thenSucceed();
+		 87  87   })
+		 88  88     .tag("suite:java_parity")
+		 89  89     .tag(GameTest.Tags.suiteDisabled); // Can't fly as a whole thing as expectation
+		          ...
+		 94  94     const nearPos = new BlockLocation(1, 3, 1);
+		 95  95   
+		 96  96     test
+		 97  97       .startSequence()
+		 98  98       .thenExecute(() => {
+		     99 +       test.setBlockType(MinecraftBlockTypes.dirt, triggerPos);
+		 99     -       test.setBlockType(BlockTypes.dirt, triggerPos);
+		100 100       })
+		101 101       .thenExecuteAfter(16, () => {
+		    102 +       test.assertBlockTypePresent(MinecraftBlockTypes.honeyBlock, farPos);
+		102     -       test.assertBlockTypePresent(BlockTypes.honeyBlock, farPos);
+		103 103       })
+		104 104       .thenExecuteAfter(20, () => {
+		    105 +       test.assertBlockTypePresent(MinecraftBlockTypes.observer, nearPos);
+		105     -       test.assertBlockTypePresent(BlockTypes.observer, nearPos);
+		106 106       })
+		107 107       .thenSucceed();
+		108 108   })
+		109 109     .tag("suite:java_parity") // The behavior is different between Java and Bedrock. In Java the flying machine move forward to the end and then returns to its original position, but in Bedrock it returns before it reaches the end. That cause the far point or near point been judged fail.
+		110 110     .tag(GameTest.Tags.suiteDisabled); // Unstable
+		          ...
+		116 116     const nearPos = new BlockLocation(3, 4, 1);
+		117 117   
+		118 118     test
+		119 119       .startSequence()
+		120 120       .thenExecute(() => {
+		    121 +       test.setBlockType(MinecraftBlockTypes.fire, triggerPos);
+		121     -       test.setBlockType(BlockTypes.fire, triggerPos);
+		122 122       })
+		123 123       .thenExecuteAfter(18, () => {
+		    124 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, farPos);
+		124     -       test.assertBlockTypePresent(BlockTypes.slime, farPos);
+		125 125       })
+		126 126       .thenExecuteAfter(40, () => {
+		    127 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, dropPos);
+		    128 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, nearPos);
+		127     -       test.assertBlockTypePresent(BlockTypes.slime, dropPos);
+		128     -       test.assertBlockTypePresent(BlockTypes.slime, nearPos);
+		129 129       })
+		130 130       .thenSucceed();
+		131 131   })
+		132 132     .tag("suite:java_parity")
+		133 133     .tag(GameTest.Tags.suiteDisabled); // Unstable, when noFinishingSequence appears, it failed.
+		          ...
+		141 141       .startSequence()
+		142 142       .thenExecute(() => {
+		143 143         test.pulseRedstone(triggerPos, 2);
+		144 144       })
+		145 145       .thenExecuteAfter(16, () => {
+		    146 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, farPos);
+		146     -       test.assertBlockTypePresent(BlockTypes.slime, farPos);
+		147 147       })
+		148 148       .thenExecuteAfter(20, () => {
+		    149 +       test.assertBlockTypePresent(MinecraftBlockTypes.observer, nearPos);
+		149     -       test.assertBlockTypePresent(BlockTypes.observer, nearPos);
+		150 150       })
+		151 151       .thenSucceed();
+		152 152   })
+		153 153     .tag("suite:java_parity")
+		154 154     .tag(GameTest.Tags.suiteDisabled); // Could not set fire in the air, so I use pulseRedstone to active the observer. It's 50% pass rate.
+		          ...
+		163 163       .startSequence()
+		164 164       .thenExecute(() => {
+		165 165         test.pulseRedstone(triggerPos, 2);
+		166 166       })
+		167 167       .thenExecuteAfter(20, () => {
+		    168 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, farPos);
+		168     -       test.assertBlockTypePresent(BlockTypes.slime, farPos);
+		169 169       })
+		170 170       .thenExecuteAfter(20, () => {
+		    171 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, dropPos);
+		    172 +       test.assertBlockTypePresent(MinecraftBlockTypes.observer, nearPos);
+		171     -       test.assertBlockTypePresent(BlockTypes.slime, dropPos);
+		172     -       test.assertBlockTypePresent(BlockTypes.observer, nearPos);
+		173 173       })
+		174 174       .thenSucceed();
+		175 175   })
+		176 176     .tag("suite:java_parity")
+		177 177     .tag(GameTest.Tags.suiteDisabled); // Could not set fire in the air, so I use pulseRedstone to active the observer, pass rate is less than 10%, the sticky-piston always unstick.
+		          ...
+		182 182     const nearPos = new BlockLocation(4, 3, 1);
+		183 183   
+		184 184     test
+		185 185       .startSequence()
+		186 186       .thenExecute(() => {
+		    187 +       test.setBlockType(MinecraftBlockTypes.dirt, triggerPos);
+		187     -       test.setBlockType(BlockTypes.dirt, triggerPos);
+		188 188       })
+		189 189       .thenExecuteAfter(18, () => {
+		    190 +       test.assertBlockTypePresent(MinecraftBlockTypes.honeyBlock, farPos);
+		190     -       test.assertBlockTypePresent(BlockTypes.honeyBlock, farPos);
+		191 191       })
+		192 192       .thenExecuteAfter(18, () => {
+		    193 +       test.assertBlockTypePresent(MinecraftBlockTypes.observer, nearPos);
+		193     -       test.assertBlockTypePresent(BlockTypes.observer, nearPos);
+		194 194       })
+		195 195       .thenSucceed();
+		196 196   })
+		197 197     .tag("suite:java_parity") // The behavior is different between Java and Bedrock. In Java the flying machine move forward to the end and then returns to its original position, but in Bedrock it returns before it reaches the end. That cause the far point or near point been judged fail.
+		198 198     .tag(GameTest.Tags.suiteDisabled); // Unstable.
+		          ...
+		204 204     const targetPos = new BlockLocation(8, 3, 1);
+		205 205   
+		206 206     test
+		207 207       .startSequence()
+		208 208       .thenExecute(() => {
+		    209 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, sourcePos);
+		    210 +       test.assertBlockTypeNotPresent(MinecraftBlockTypes.slime, targetPos);
+		209     -       test.assertBlockTypePresent(BlockTypes.slime, sourcePos);
+		210     -       test.assertBlockTypeNotPresent(BlockTypes.slime, targetPos);
+		    211 +       test.setBlockType(MinecraftBlockTypes.redstoneBlock, triggerPos);
+		211     -       test.setBlockType(BlockTypes.redstoneBlock, triggerPos);
+		212 212       })
+		213 213       .thenExecuteAfter(10, () => {
+		    214 +       test.assertBlockTypeNotPresent(MinecraftBlockTypes.slime, sourcePos);
+		214     -       test.assertBlockTypeNotPresent(BlockTypes.slime, sourcePos);
+		215 215       })
+		216 216       .thenExecuteAfter(10, () => {
+		    217 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, targetPos);
+		217     -       test.assertBlockTypePresent(BlockTypes.slime, targetPos);
+		218 218       })
+		219 219       .thenSucceed();
+		220 220   }).tag(GameTest.Tags.suiteDefault);
+		221 221   
+		222 222   GameTest.register("FlyingMachineTests", "m2_bedrock", (test) => {
+		          ...
+		226 226     const targetPos = new BlockLocation(6, 3, 1);
+		227 227   
+		228 228     test
+		229 229       .startSequence()
+		230 230       .thenExecute(() => {
+		    231 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, sourcePos);
+		    232 +       test.assertBlockTypeNotPresent(MinecraftBlockTypes.slime, targetPos);
+		231     -       test.assertBlockTypePresent(BlockTypes.slime, sourcePos);
+		232     -       test.assertBlockTypeNotPresent(BlockTypes.slime, targetPos);
+		    233 +       test.setBlockType(MinecraftBlockTypes.redstoneBlock, triggerPos);
+		233     -       test.setBlockType(BlockTypes.redstoneBlock, triggerPos);
+		234 234       })
+		235 235       .thenExecuteAfter(10, () => {
+		    236 +       test.assertBlockTypeNotPresent(MinecraftBlockTypes.slime, sourcePos);
+		236     -       test.assertBlockTypeNotPresent(BlockTypes.slime, sourcePos);
+		237 237       })
+		238 238       .thenExecuteAfter(10, () => {
+		    239 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, targetPos);
+		239     -       test.assertBlockTypePresent(BlockTypes.slime, targetPos);
+		240 240       })
+		241 241       .thenSucceed();
+		242 242   }).tag(GameTest.Tags.suiteDefault);
+		243 243   
+		244 244   GameTest.register("FlyingMachineTests", "m3_bedrock", (test) => {
+		          ...
+		248 248     const targetPos = new BlockLocation(7, 3, 2);
+		249 249   
+		250 250     test
+		251 251       .startSequence()
+		252 252       .thenExecute(() => {
+		    253 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, sourcePos);
+		    254 +       test.assertBlockTypeNotPresent(MinecraftBlockTypes.slime, targetPos);
+		253     -       test.assertBlockTypePresent(BlockTypes.slime, sourcePos);
+		254     -       test.assertBlockTypeNotPresent(BlockTypes.slime, targetPos);
+		    255 +       test.setBlockType(MinecraftBlockTypes.redstoneBlock, triggerPos);
+		255     -       test.setBlockType(BlockTypes.redstoneBlock, triggerPos);
+		256 256       })
+		257 257       .thenExecuteAfter(10, () => {
+		    258 +       test.assertBlockTypeNotPresent(MinecraftBlockTypes.slime, sourcePos);
+		258     -       test.assertBlockTypeNotPresent(BlockTypes.slime, sourcePos);
+		259 259       })
+		260 260       .thenExecuteAfter(10, () => {
+		    261 +       test.assertBlockTypePresent(MinecraftBlockTypes.slime, targetPos);
+		261     -       test.assertBlockTypePresent(BlockTypes.slime, targetPos);
+		262 262       })
+		263 263       .thenSucceed();
+		    264 + }).tag(GameTest.Tags.suiteDefault);
+		264     - }).tag(GameTest.Tags.suiteDefault); 
+		          '''
+	Changed script "MinecartTests.js":
+		Total line: 245 (+3, -3)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, MinecraftBlockTypes, Direction } from "Minecraft";
+		  2     - import { BlockLocation, BlockTypes, Direction } from "Minecraft";
+		  3   3   
+		  4   4   GameTest.register("MinecartTests", "turn", (test) => {
+		  5   5     const minecartEntityType = "minecart";
+		  6   6   
+		  7   7     const endPos = new BlockLocation(1, 2, 2);
+		          ...
+		 43  43         break;
+		 44  44       case Direction.south:
+		 45  45         ascendingValue = 5;
+		 46  46         break;
+		 47  47     }
+		     48 +   test.assertBlockTypePresent(MinecraftBlockTypes.detectorRail, poweredDetectorPos);
+		 48     -   test.assertBlockTypePresent(BlockTypes.detectorRail, poweredDetectorPos);
+		 49  49     test.assertBlockState("rail_direction", ascendingValue, poweredDetectorPos);
+		 50  50   
+		 51  51     test.pressButton(new BlockLocation(0, 3, 3));
+		 52  52     test.runAfterDelay(20, () => {
+		 53  53       test.succeedWhen(() => {
+		     54 +       test.assertBlockTypePresent(MinecraftBlockTypes.detectorRail, poweredDetectorPos);
+		 54     -       test.assertBlockTypePresent(BlockTypes.detectorRail, poweredDetectorPos);
+		 55  55         test.assertBlockState("rail_direction", ascendingValue, poweredDetectorPos);
+		 56  56       });
+		 57  57     });
+		 58  58   })
+		 59  59     .rotateTest(true)
+		          ...
+		          '''
+	Changed script "MobTests.js":
+		Total line: 138 (+15, -7)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		  2   2   import GameTestExtensions from "./GameTestExtensions.js";
+		  3   3   
+		      4 + import { BlockLocation, MinecraftEffectTypes, MinecraftBlockTypes } from "Minecraft";
+		  4     - import { BlockLocation, Effects, BlockTypes } from "Minecraft";
+		  5   5   
+		  6   6   const TicksPerSecond = 20;
+		  7   7   
+		  8   8   GameTest.register("MobTests", "zombie_burn", (test) => {
+		  9   9     const zombieEntityType = "minecraft:zombie";
+		          ...
+		 25  25   
+		 26  26     test.spawn(villagerId, villagerPos);
+		 27  27   
+		 28  28     test
+		 29  29       .startSequence()
+		     30 +     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, weakPotion))
+		     31 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     32 +     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		     33 +     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, strongPotion))
+		 30     -     .thenExecute(() => test.setBlockType(BlockTypes.air, weakPotion))
+		 31  34       .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     35 +     .thenIdle(strongPotionDuration)
+		     36 +     .thenWait(() => {
+		     37 +       test.assertEntityData(
+		 32     -     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		     38 +         villagerPos,
+		     39 +         villagerId,
+		     40 +         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).amplifier == 0
+		 33     -     .thenExecute(() => test.setBlockType(BlockTypes.air, strongPotion))
+		 34     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 35     -     .thenIdle(strongPotionDuration)
+		 36     -     .thenWait(() => {
+		     41 +       ); // Strength level I
+		 37     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).amplifier == 0); // Strength level I
+		 38  42         test.assertEntityData(
+		 39  43           villagerPos,
+		 40  44           villagerId,
+		     45 +         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).duration > TicksPerSecond * 10
+		 41     -         (entity) => entity.getEffect(Effects.regeneration).duration > TicksPerSecond * 10
+		 42  46         );
+		 43  47       })
+		 44  48       .thenSucceed();
+		 45  49   })
+		 46  50     .structureName("MobTests:effect_durations")
+		          ...
+		 87  91   
+		 88  92     test.spawn(villagerId, villagerPos);
+		 89  93   
+		 90  94     test
+		 91  95       .startSequence()
+		     96 +     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, strongPotion))
+		     97 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     98 +     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		     99 +     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, weakPotion))
+		 92     -     .thenExecute(() => test.setBlockType(BlockTypes.air, strongPotion))
+		 93 100       .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		    101 +     .thenIdle(strongPotionDuration)
+		    102 +     .thenWait(() => {
+		    103 +       test.assertEntityData(
+		 94     -     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		    104 +         villagerPos,
+		    105 +         villagerId,
+		    106 +         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).amplifier == 0
+		 95     -     .thenExecute(() => test.setBlockType(BlockTypes.air, weakPotion))
+		 96     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 97     -     .thenIdle(strongPotionDuration)
+		 98     -     .thenWait(() => {
+		    107 +       ); // Strength level I
+		 99     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).amplifier == 0); // Strength level I
+		100 108         test.assertEntityData(
+		101 109           villagerPos,
+		102 110           villagerId,
+		    111 +         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).duration > TicksPerSecond * 10
+		103     -         (entity) => entity.getEffect(Effects.regeneration).duration > TicksPerSecond * 10
+		104 112         );
+		105 113       })
+		106 114       .thenSucceed();
+		107 115   })
+		108 116     .structureName("MobTests:effect_durations")
+		          ...
+		          '''
+	Changed script "PathFindingTests.js":
+		Total line: 389 (+8, -8)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { MinecraftBlockTypes, BlockProperties, BlockLocation } from "Minecraft";
+		  2     - import { BlockTypes, BlockProperties, BlockLocation } from "Minecraft";
+		  3   3   
+		  4   4   ///
+		  5   5   // Setup constants
+		  6   6   ///
+		  7   7   const VERTICAL_TEST_TEMPLATE_NAME = "PathFindingTests:veritcal_template";
+		          ...
+		 17  17     ["  ^^^^", "      ", "  ^^  ", "######"],
+		 18  18     ["  ####", "      ", "      ", "____##", "######"],
+		 19  19   ];
+		 20  20   
+		 21  21   function placeBottomSlab(test, pos) {
+		     22 +   const blockPermutation = MinecraftBlockTypes.stoneSlab.createDefaultBlockPermutation();
+		 22     -   const blockPermutation = BlockTypes.stoneSlab.createDefaultBlockPermutation();
+		 23  23     blockPermutation.getProperty(BlockProperties.stoneSlabType).value = "stone_brick";
+		 24  24     test.setBlockPermutation(blockPermutation, pos);
+		 25  25   }
+		 26  26   
+		 27  27   function placeTopSlab(test, pos) {
+		     28 +   const blockPermutation = MinecraftBlockTypes.stoneSlab.createDefaultBlockPermutation();
+		 28     -   const blockPermutation = BlockTypes.stoneSlab.createDefaultBlockPermutation();
+		 29  29     blockPermutation.getProperty(BlockProperties.stoneSlabType).value = "stone_brick";
+		 30  30     blockPermutation.getProperty(BlockProperties.topSlotBit).value = true;
+		 31  31     test.setBlockPermutation(blockPermutation, pos);
+		 32  32   }
+		 33  33   
+		 34  34   function placeBlock(test, pos) {
+		     35 +   test.setBlockType(MinecraftBlockTypes.stonebrick, pos);
+		 35     -   test.setBlockType(BlockTypes.stonebrick, pos);
+		 36  36   }
+		 37  37   
+		 38  38   /*
+		 39  39     Places out blocks matching the given pattern (viewed from the side).
+		 40  40     The bottom row (last string in the array) will match the floor level in the structure.
+		          ...
+		161 161     }
+		162 162   }
+		163 163   
+		164 164   function getBlockPermutationForMapChar(mapChar) {
+		165 165     if (mapChar == "#") {
+		    166 +     return MinecraftBlockTypes.stonebrick.createDefaultBlockPermutation();
+		166     -     return BlockTypes.stonebrick.createDefaultBlockPermutation();
+		167 167     } else if (mapChar == "_") {
+		    168 +     let result = MinecraftBlockTypes.stoneSlab.createDefaultBlockPermutation();
+		168     -     let result = BlockTypes.stoneSlab.createDefaultBlockPermutation();
+		169 169       result.getProperty(BlockProperties.stoneSlabType).value = "stone_brick";
+		170 170       return result;
+		171 171     } else if (mapChar == "^") {
+		    172 +     let result = MinecraftBlockTypes.stoneSlab.createDefaultBlockPermutation();
+		172     -     let result = BlockTypes.stoneSlab.createDefaultBlockPermutation();
+		173 173       result.getProperty(BlockProperties.stoneSlabType).value = "stone_brick";
+		174 174       result.getProperty(BlockProperties.topSlotBit).value = true;
+		175 175       return result;
+		176 176     } else {
+		    177 +     return MinecraftBlockTypes.air.createDefaultBlockPermutation();
+		177     -     return BlockTypes.air.createDefaultBlockPermutation();
+		178 178     }
+		179 179   }
+		180 180   
+		181 181   function createVerticalTestFunctionWithPlacementMap(counter, placementMap, tag) {
+		182 182     if (tag == null) {
+		          ...
+		          '''
+	Changed script "PistonTests.js":
+		Total line: 811 (+104, -104)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, Location, MinecraftBlockTypes, ItemStack } from "Minecraft";
+		  2     - import { BlockLocation, Location, BlockTypes, ItemStack } from "Minecraft";
+		  3   3   
+		  4   4   GameTest.register("PistonTests", "honey_block_entity_drag_sideways", (test) => {
+		  5   5     const startPos = new BlockLocation(3, 4, 1);
+		  6   6     const endPos = new BlockLocation(2, 4, 1);
+		  7   7     const pullLeverPos = new BlockLocation(0, 3, 0);
+		          ...
+		 29  29   
+		 30  30     test.pullLever(pullLeverPos);
+		 31  31     test
+		 32  32       .startSequence()
+		 33  33       .thenWaitWithDelay(3, () => {
+		     34 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, topStartPos);
+		     35 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, bottomStartPos);
+		 34     -       test.assertBlockTypePresent(BlockTypes.stone, topStartPos);
+		 35     -       test.assertBlockTypePresent(BlockTypes.stone, bottomStartPos);
+		 36  36       })
+		 37  37       .thenExecute(() => {
+		 38  38         test.pullLever(pullLever);
+		 39  39       })
+		 40  40       .thenWaitWithDelay(3, () => {
+		     41 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, topEndPos);
+		     42 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, bottomEndPos);
+		 41     -       test.assertBlockTypePresent(BlockTypes.stone, topEndPos);
+		 42     -       test.assertBlockTypePresent(BlockTypes.stone, bottomEndPos);
+		 43  43       })
+		 44  44       .thenSucceed();
+		 45  45   })
+		 46  46     .tag("suite:java_parity")
+		 47  47     .tag(GameTest.Tags.suiteDisabled); //There are version differences. Java version has a switch, which can control one piston at the same time, while bedrock version can only control one piston. All the structures have been modified, and the pull rod and its coordinates have been changed to (0, 3, 0) ,next to "quasiconnectivity_bedrock"
+		          ...
+		 57  57   
+		 58  58     test
+		 59  59       .startSequence()
+		 60  60       .thenIdle(6) //it's not possible to time it exactly due to redstone differences then you can just pull the lever, wait 6 ticks, assert, pull, wait 6, assert.
+		 61  61       .thenExecute(() => {
+		     62 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, topStartPos);
+		     63 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, bottomStartPos);
+		 62     -       test.assertBlockTypePresent(BlockTypes.stone, topStartPos);
+		 63     -       test.assertBlockTypePresent(BlockTypes.stone, bottomStartPos);
+		 64  64       })
+		 65  65       .thenExecute(() => {
+		 66  66         test.pullLever(pullLeverPos);
+		 67  67       })
+		 68  68       .thenIdle(6)
+		 69  69       .thenExecute(() => {
+		     70 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, topEndPos);
+		     71 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, bottomEndPos);
+		 70     -       test.assertBlockTypePresent(BlockTypes.stone, topEndPos);
+		 71     -       test.assertBlockTypePresent(BlockTypes.stone, bottomEndPos);
+		 72  72       })
+		 73  73       .thenSucceed();
+		 74  74   }).tag(GameTest.Tags.suiteDefault);
+		 75  75   
+		 76  76   GameTest.register("PistonTests", "redstone_simple_vertical_bud", (test) => {
+		 77  77     const blockPos = new BlockLocation(0, 5, 0);
+		 78  78     const setblockPos = new BlockLocation(0, 1, 0);
+		     79 +   test.setBlockType(MinecraftBlockTypes.stone, setblockPos);
+		 79     -   test.setBlockType(BlockTypes.stone, setblockPos);
+		 80  80   
+		 81  81     test
+		 82  82       .startSequence()
+		 83  83       .thenIdle(3)
+		 84  84       .thenWait(() => {
+		     85 +       test.assertBlockTypePresent(MinecraftBlockTypes.redstoneBlock, blockPos);
+		 85     -       test.assertBlockTypePresent(BlockTypes.redstoneBlock, blockPos);
+		 86  86       })
+		 87  87       .thenIdle(1)
+		 88  88       .thenWait(() => {
+		     89 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, blockPos);
+		 89     -       test.assertBlockTypePresent(BlockTypes.air, blockPos);
+		 90  90       })
+		 91  91       .thenSucceed();
+		 92  92   })
+		 93  93     .tag("suite:java_parity")
+		 94  94     .tag(GameTest.Tags.suiteDisabled); //The lack of quasi-connectivity in bedrock is parity difference that causes this test not to succeed.
+		 95  95   
+		 96  96   GameTest.register("PistonTests", "redstone_simple_horizontal_bud", (test) => {
+		 97  97     const extendedPos = new BlockLocation(3, 2, 0);
+		 98  98     const retractedPos = new BlockLocation(2, 2, 0);
+		     99 +   test.setBlockType(MinecraftBlockTypes.stone, new BlockLocation(0, 1, 0));
+		 99     -   test.setBlockType(BlockTypes.stone, new BlockLocation(0, 1, 0));
+		100 100   
+		101 101     test
+		102 102       .startSequence()
+		103 103       .thenWaitWithDelay(3, () => {
+		    104 +       test.assertBlockTypePresent(MinecraftBlockTypes.redstoneBlock, extendedPos);
+		    105 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, retractedPos);
+		104     -       test.assertBlockTypePresent(BlockTypes.redstoneBlock, extendedPos);
+		105     -       test.assertBlockTypePresent(BlockTypes.air, retractedPos);
+		106 106       })
+		107 107       .thenWaitWithDelay(3, () => {
+		    108 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, extendedPos);
+		    109 +       test.assertBlockTypePresent(MinecraftBlockTypes.redstoneBlock, retractedPos);
+		108     -       test.assertBlockTypePresent(BlockTypes.air, extendedPos);
+		109     -       test.assertBlockTypePresent(BlockTypes.redstoneBlock, retractedPos);
+		110 110       })
+		111 111       .thenSucceed();
+		112 112   })
+		113 113     .tag("suite:java_parity")
+		114 114     .tag(GameTest.Tags.suiteDisabled); // The lack of quasi-connectivity in bedrock is parity difference that causes this test not to succeed.
+		          ...
+		118 118     const pullLeverPos = new BlockLocation(0, 4, 0);
+		119 119     test.pullLever(pullLeverPos);
+		120 120     test
+		121 121       .startSequence()
+		122 122       .thenWaitWithDelay(3, () => {
+		    123 +       test.assertBlockTypePresent(MinecraftBlockTypes.redstoneBlock, blockPos);
+		123     -       test.assertBlockTypePresent(BlockTypes.redstoneBlock, blockPos);
+		124 124       })
+		125 125       .thenWaitWithDelay(5, () => {
+		    126 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, blockPos);
+		126     -       test.assertBlockTypePresent(BlockTypes.air, blockPos);
+		127 127       })
+		128 128       .thenWait(() => {
+		129 129         test.pullLever(pullLeverPos);
+		130 130       })
+		131 131       .thenWaitWithDelay(3, () => {
+		    132 +       test.assertBlockTypePresent(MinecraftBlockTypes.redstoneBlock, blockPos);
+		132     -       test.assertBlockTypePresent(BlockTypes.redstoneBlock, blockPos);
+		133 133       })
+		134 134       .thenWaitWithDelay(5, () => {
+		    135 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, blockPos);
+		135     -       test.assertBlockTypePresent(BlockTypes.air, blockPos);
+		136 136       })
+		137 137       .thenSucceed();
+		138 138   })
+		139 139     .setupTicks(10)
+		140 140     .tag("suite:java_parity")
+		          ...
+		142 142   
+		143 143   GameTest.register("PistonTests", "slime_block_pull", (test) => {
+		144 144     const targetPos = new BlockLocation(3, 3, 0);
+		145 145     const pullLeverPos = new BlockLocation(0, 4, 0);
+		146 146   
+		    147 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.planks, targetPos);
+		147     -   test.assertBlockTypeNotPresent(BlockTypes.planks, targetPos);
+		148 148     test.pullLever(pullLeverPos);
+		    149 +   test.succeedWhenBlockTypePresent(MinecraftBlockTypes.planks, targetPos);
+		149     -   test.succeedWhenBlockTypePresent(BlockTypes.planks, targetPos);
+		150 150   }).tag(GameTest.Tags.suiteDefault);
+		151 151   
+		152 152   GameTest.register("PistonTests", "normal_extend", (test) => {
+		153 153     const targetPos = new BlockLocation(3, 2, 0);
+		154 154     const pullLeverPos = new BlockLocation(0, 3, 0);
+		155 155   
+		    156 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.stone, targetPos);
+		156     -   test.assertBlockTypeNotPresent(BlockTypes.stone, targetPos);
+		157 157     test.pullLever(pullLeverPos);
+		158 158     test.succeedOnTickWhen(3, () => {
+		    159 +     test.assertBlockTypePresent(MinecraftBlockTypes.stone, targetPos);
+		159     -     test.assertBlockTypePresent(BlockTypes.stone, targetPos);
+		160 160     });
+		161 161   }).tag(GameTest.Tags.suiteDefault);
+		162 162   
+		163 163   GameTest.register("PistonTests", "normal_extend_retract", (test) => {
+		164 164     const extendedPos = new BlockLocation(3, 2, 0);
+		165 165     const retractedPos = new BlockLocation(2, 2, 0);
+		166 166     const pullLeverPos = new BlockLocation(0, 3, 0);
+		167 167   
+		    168 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.stone, extendedPos);
+		168     -   test.assertBlockTypeNotPresent(BlockTypes.stone, extendedPos);
+		169 169     test.pullLever(pullLeverPos);
+		170 170   
+		171 171     test
+		172 172       .startSequence()
+		173 173       .thenWaitWithDelay(3, () => {
+		    174 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, extendedPos);
+		    175 +       test.assertBlockTypePresent(MinecraftBlockTypes.pistonarmcollision, retractedPos);
+		174     -       test.assertBlockTypePresent(BlockTypes.stone, extendedPos);
+		175     -       test.assertBlockTypePresent(BlockTypes.pistonarmcollision, retractedPos);
+		176 176       })
+		177 177       .thenExecute(() => {
+		178 178         test.pullLever(pullLeverPos);
+		179 179       })
+		180 180       .thenWaitWithDelay(1, () => {
+		    181 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, retractedPos);
+		    182 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, extendedPos);
+		181     -       test.assertBlockTypePresent(BlockTypes.air, retractedPos);
+		182     -       test.assertBlockTypePresent(BlockTypes.stone, extendedPos);
+		183 183       })
+		184 184       .thenSucceed();
+		185 185   })
+		186 186     .structureName("PistonTests:normal_extend")
+		187 187     .tag("suite:java_parity")
+		          ...
+		190 190   GameTest.register("PistonTests", "normal_extend_retract_bedrock", (test) => {
+		191 191     const extendedPos = new BlockLocation(3, 2, 0);
+		192 192     const retractedPos = new BlockLocation(2, 2, 0);
+		193 193     const pullLeverPos = new BlockLocation(0, 3, 0);
+		194 194   
+		    195 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.stone, extendedPos);
+		195     -   test.assertBlockTypeNotPresent(BlockTypes.stone, extendedPos);
+		196 196     test.pullLever(pullLeverPos);
+		197 197   
+		198 198     //it's not possible to time it exactly due to redstone differences, so just validate assert can pass before given delay.
+		199 199     test
+		200 200       .startSequence()
+		201 201       .thenIdle(6)
+		202 202       .thenExecute(() => {
+		    203 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, extendedPos);
+		    204 +       test.assertBlockTypePresent(MinecraftBlockTypes.pistonarmcollision, retractedPos);
+		203     -       test.assertBlockTypePresent(BlockTypes.stone, extendedPos);
+		204     -       test.assertBlockTypePresent(BlockTypes.pistonarmcollision, retractedPos);
+		205 205       })
+		206 206       .thenExecute(() => {
+		207 207         test.pullLever(pullLeverPos);
+		208 208       })
+		209 209       .thenIdle(4)
+		210 210       .thenExecute(() => {
+		    211 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, retractedPos);
+		    212 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, extendedPos);
+		211     -       test.assertBlockTypePresent(BlockTypes.air, retractedPos);
+		212     -       test.assertBlockTypePresent(BlockTypes.stone, extendedPos);
+		213 213       })
+		214 214       .thenSucceed();
+		215 215   })
+		216 216     .structureName("PistonTests:normal_extend")
+		217 217     .tag(GameTest.Tags.suiteDefault);
+		218 218   
+		219 219   GameTest.register("PistonTests", "sticky_extend", (test) => {
+		220 220     const targetPos = new BlockLocation(3, 2, 0);
+		221 221     const pullLeverPos = new BlockLocation(0, 3, 0);
+		222 222   
+		    223 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.stone, targetPos);
+		223     -   test.assertBlockTypeNotPresent(BlockTypes.stone, targetPos);
+		224 224     test.pullLever(pullLeverPos);
+		225 225     test.succeedOnTickWhen(3, () => {
+		    226 +     test.assertBlockTypePresent(MinecraftBlockTypes.stone, targetPos);
+		226     -     test.assertBlockTypePresent(BlockTypes.stone, targetPos);
+		227 227     });
+		228 228   }).tag(GameTest.Tags.suiteDefault);
+		229 229   
+		230 230   GameTest.register("PistonTests", "sticky_extend_retract", (test) => {
+		231 231     const extendedPos = new BlockLocation(3, 2, 0);
+		232 232     const retractedPos = new BlockLocation(2, 2, 0);
+		233 233     const pullLeverPos = new BlockLocation(0, 3, 0);
+		234 234   
+		    235 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.stone, extendedPos);
+		235     -   test.assertBlockTypeNotPresent(BlockTypes.stone, extendedPos);
+		236 236     test.pullLever(pullLeverPos);
+		237 237   
+		238 238     test
+		239 239       .startSequence()
+		240 240       .thenWaitWithDelay(3, () => {
+		    241 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, extendedPos);
+		    242 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickypistonarmcollision, retractedPos);
+		241     -       test.assertBlockTypePresent(BlockTypes.stone, extendedPos);
+		242     -       test.assertBlockTypePresent(BlockTypes.stickypistonarmcollision, retractedPos);
+		243 243       })
+		244 244       .thenExecute(() => {
+		245 245         test.pullLever(pullLeverPos);
+		246 246       })
+		247 247       .thenWaitWithDelay(3, () => {
+		    248 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, retractedPos);
+		    249 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, extendedPos);
+		248     -       test.assertBlockTypePresent(BlockTypes.stone, retractedPos);
+		249     -       test.assertBlockTypePresent(BlockTypes.air, extendedPos);
+		250 250       })
+		251 251       .thenSucceed();
+		252 252   })
+		253 253     .structureName("PistonTests:sticky_extend")
+		254 254     .tag("suite:java_parity")
+		          ...
+		257 257   GameTest.register("PistonTests", "sticky_extend_retract_bedrock", (test) => {
+		258 258     const extendedPos = new BlockLocation(3, 2, 0);
+		259 259     const retractedPos = new BlockLocation(2, 2, 0);
+		260 260     const pullLeverPos = new BlockLocation(0, 3, 0);
+		261 261   
+		    262 +   test.assertBlockTypeNotPresent(MinecraftBlockTypes.stone, extendedPos);
+		262     -   test.assertBlockTypeNotPresent(BlockTypes.stone, extendedPos);
+		263 263     test.pullLever(pullLeverPos);
+		264 264   
+		265 265     //it's not possible to time it exactly due to redstone differences, so just validate assert can pass before given delay.
+		266 266     test
+		267 267       .startSequence()
+		268 268       .thenIdle(6)
+		269 269       .thenExecute(() => {
+		    270 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, extendedPos);
+		    271 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickypistonarmcollision, retractedPos);
+		270     -       test.assertBlockTypePresent(BlockTypes.stone, extendedPos);
+		271     -       test.assertBlockTypePresent(BlockTypes.stickypistonarmcollision, retractedPos);
+		272 272       })
+		273 273       .thenExecute(() => {
+		274 274         test.pullLever(pullLeverPos);
+		275 275       })
+		276 276       .thenIdle(6)
+		277 277       .thenExecute(() => {
+		    278 +       test.assertBlockTypePresent(MinecraftBlockTypes.stone, retractedPos);
+		    279 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, extendedPos);
+		278     -       test.assertBlockTypePresent(BlockTypes.stone, retractedPos);
+		279     -       test.assertBlockTypePresent(BlockTypes.air, extendedPos);
+		280 280       })
+		281 281       .thenSucceed();
+		282 282   })
+		283 283     .structureName("PistonTests:sticky_extend")
+		284 284     .tag(GameTest.Tags.suiteDefault);
+		          ...
+		287 287     const underLimitTip = new BlockLocation(0, 2, 6);
+		288 288     const overLimitTip = new BlockLocation(2, 2, 6);
+		289 289     const pullLeverPos = new BlockLocation(1, 2, 0);
+		290 290     const underLimitExtendedTip = new BlockLocation(0, 2, 7);
+		291 291   
+		    292 +   test.assertBlockTypePresent(MinecraftBlockTypes.goldBlock, underLimitTip);
+		    293 +   test.assertBlockTypePresent(MinecraftBlockTypes.emeraldBlock, overLimitTip);
+		292     -   test.assertBlockTypePresent(BlockTypes.goldBlock, underLimitTip);
+		293     -   test.assertBlockTypePresent(BlockTypes.emeraldBlock, overLimitTip);
+		294 294     test.pullLever(pullLeverPos);
+		295 295   
+		296 296     test.succeedOnTickWhen(3, () => {
+		    297 +     test.assertBlockTypePresent(MinecraftBlockTypes.goldBlock, underLimitExtendedTip);
+		    298 +     test.assertBlockTypePresent(MinecraftBlockTypes.emeraldBlock, overLimitTip);
+		297     -     test.assertBlockTypePresent(BlockTypes.goldBlock, underLimitExtendedTip);
+		298     -     test.assertBlockTypePresent(BlockTypes.emeraldBlock, overLimitTip);
+		299 299     });
+		300 300   }).tag(GameTest.Tags.suiteDefault);
+		301 301   
+		302 302   GameTest.register("PistonTests", "block_leave", (test) => {
+		303 303     const trigger = new BlockLocation(3, 1, 1);
+		          ...
+		306 306   
+		307 307     test.pulseRedstone(trigger, 2);
+		308 308     test
+		309 309       .startSequence()
+		310 310       .thenWaitWithDelay(3, () => {
+		    311 +       test.assertBlockTypePresent(MinecraftBlockTypes.concrete, extended);
+		    312 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, retracted);
+		311     -       test.assertBlockTypePresent(BlockTypes.concrete, extended);
+		312     -       test.assertBlockTypePresent(BlockTypes.air, retracted);
+		313 313       })
+		314 314       .thenExecuteAfter(3, () => {
+		315 315         test.pulseRedstone(trigger, 2);
+		316 316       })
+		317 317       .thenWaitWithDelay(5, () => {
+		    318 +       test.assertBlockTypePresent(MinecraftBlockTypes.concrete, retracted);
+		    319 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, extended);
+		318     -       test.assertBlockTypePresent(BlockTypes.concrete, retracted);
+		319     -       test.assertBlockTypePresent(BlockTypes.air, extended);
+		320 320       })
+		321 321       .thenSucceed();
+		322 322   })
+		323 323     .tag("suite:java_parity")
+		324 324     .tag(GameTest.Tags.suiteDisabled); //In Java Edition, pistons finish extending early and start retracting if given a pulse shorter than 3 game ticks (1.5 redstone ticks; 0.15 seconds). These shorter pulses cause sticky pistons to "drop" their block, leaving it behind when trying to push it with a short pulse. Also, this causes the block to end up in its final position earlier.Therefore, the bedrock version can't be modified, and can only be verified according to the piston tension,
+		          ...
+		331 331     test.pulseRedstone(trigger, 2);
+		332 332     test
+		333 333       .startSequence()
+		334 334       .thenIdle(2)
+		335 335       .thenWait(() => {
+		    336 +       test.assertBlockTypePresent(MinecraftBlockTypes.concrete, extended);
+		    337 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, retracted);
+		336     -       test.assertBlockTypePresent(BlockTypes.concrete, extended);
+		337     -       test.assertBlockTypePresent(BlockTypes.air, retracted);
+		338 338       })
+		339 339       .thenExecuteAfter(3, () => {
+		340 340         test.pulseRedstone(trigger, 2);
+		341 341       })
+		342 342       .thenIdle(6)
+		343 343       .thenWait(() => {
+		    344 +       test.assertBlockTypePresent(MinecraftBlockTypes.concrete, retracted);
+		    345 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, extended);
+		344     -       test.assertBlockTypePresent(BlockTypes.concrete, retracted);
+		345     -       test.assertBlockTypePresent(BlockTypes.air, extended);
+		346 346       })
+		347 347       .thenSucceed();
+		348 348   }).tag(GameTest.Tags.suiteDefault);
+		349 349   
+		350 350   GameTest.register("PistonTests", "update_order", (test) => {
+		          ...
+		352 352     const posB = new BlockLocation(2, 1, 0);
+		353 353     const posC = new BlockLocation(3, 1, 0);
+		354 354     const posD = new BlockLocation(1, 1, 0);
+		355 355   
+		356 356     const trigger = new BlockLocation(6, 2, 2);
+		    357 +   test.setBlockType(trigger, MinecraftBlockTypes.greenWool);
+		357     -   test.setBlockType(trigger, BlockTypes.greenWool);
+		358 358   
+		359 359     test
+		360 360       .startSequence()
+		361 361       .thenWaitWithDelay(4, () => {
+		    362 +       test.assertBlockTypePresent(MinecraftBlockTypes.yellowWool, posB);
+		362     -       test.assertBlockTypePresent(BlockTypes.yellowWool, posB);
+		363 363       })
+		364 364       .thenExecuteAfter(4, () => {
+		    365 +       test.setBlockType(trigger, MinecraftBlockTypes.blueWool);
+		365     -       test.setBlockType(trigger, BlockTypes.blueWool);
+		366 366       })
+		367 367       .thenWaitWithDelay(6, () => {
+		    368 +       test.assertBlockTypePresent(MinecraftBlockTypes.yellowWool, posC);
+		368     -       test.assertBlockTypePresent(BlockTypes.yellowWool, posC);
+		369 369       })
+		370 370       .thenExecuteAfter(4, () => {
+		    371 +       test.setBlockType(trigger, MinecraftBlockTypes.purpleWool);
+		371     -       test.setBlockType(trigger, BlockTypes.purpleWool);
+		372 372       })
+		373 373       .thenWaitWithDelay(6, () => {
+		    374 +       test.assertBlockTypePresent(MinecraftBlockTypes.yellowWool, posD);
+		374     -       test.assertBlockTypePresent(BlockTypes.yellowWool, posD);
+		375 375       })
+		376 376       .thenExecuteAfter(4, () => {
+		    377 +       test.setBlockType(trigger, MinecraftBlockTypes.cyanWool);
+		377     -       test.setBlockType(trigger, BlockTypes.cyanWool);
+		378 378       })
+		379 379       .thenWaitWithDelay(6, () => {
+		    380 +       test.assertBlockTypePresent(MinecraftBlockTypes.yellowWool, posA);
+		380     -       test.assertBlockTypePresent(BlockTypes.yellowWool, posA);
+		381 381       })
+		382 382       .thenSucceed();
+		383 383   })
+		384 384     .required(false)
+		385 385     .tag("suite:java_parity")
+		          ...
+		390 390     const posB = new BlockLocation(2, 1, 0);
+		391 391     const posC = new BlockLocation(3, 1, 0);
+		392 392     const posD = new BlockLocation(1, 1, 0);
+		393 393   
+		394 394     const trigger = new BlockLocation(6, 2, 2);
+		    395 +   test.setBlockType(MinecraftBlockTypes.greenGlazedTerracotta, trigger);
+		395     -   test.setBlockType(BlockTypes.greenGlazedTerracotta, trigger);
+		396 396     test
+		397 397       .startSequence()
+		398 398       .thenIdle(5)
+		399 399       .thenWait(() => {
+		    400 +       test.assertBlockTypePresent(MinecraftBlockTypes.wool, posB);
+		400     -       test.assertBlockTypePresent(BlockTypes.wool, posB);
+		401 401       })
+		402 402       .thenIdle(4)
+		403 403       .thenWait(() => {
+		    404 +       test.setBlockType(MinecraftBlockTypes.blueGlazedTerracotta, trigger);
+		404     -       test.setBlockType(BlockTypes.blueGlazedTerracotta, trigger);
+		405 405       })
+		406 406       .thenIdle(6)
+		407 407       .thenWait(() => {
+		    408 +       test.assertBlockTypePresent(MinecraftBlockTypes.wool, posC);
+		408     -       test.assertBlockTypePresent(BlockTypes.wool, posC);
+		409 409       })
+		410 410       .thenIdle(4)
+		411 411       .thenWait(() => {
+		    412 +       test.setBlockType(MinecraftBlockTypes.purpleGlazedTerracotta, trigger);
+		412     -       test.setBlockType(BlockTypes.purpleGlazedTerracotta, trigger);
+		413 413       })
+		414 414       .thenIdle(6)
+		415 415       .thenWait(() => {
+		    416 +       test.assertBlockTypePresent(MinecraftBlockTypes.wool, posD);
+		416     -       test.assertBlockTypePresent(BlockTypes.wool, posD);
+		417 417       })
+		418 418       .thenIdle(4)
+		419 419       .thenWait(() => {
+		    420 +       test.setBlockType(MinecraftBlockTypes.cyanGlazedTerracotta, trigger);
+		420     -       test.setBlockType(BlockTypes.cyanGlazedTerracotta, trigger);
+		421 421       })
+		422 422       .thenIdle(6)
+		423 423       .thenWait(() => {
+		    424 +       test.assertBlockTypePresent(MinecraftBlockTypes.wool, posA);
+		424     -       test.assertBlockTypePresent(BlockTypes.wool, posA);
+		425 425       })
+		426 426       .thenSucceed();
+		427 427   })
+		428 428   
+		429 429     .required(false)
+		          ...
+		433 433     const pullLeverPos = new BlockLocation(2, 3, 2);
+		434 434     const blockPresentPosA = new BlockLocation(0, 2, 2);
+		435 435     const blockPresentPosB = new BlockLocation(0, 2, 4);
+		436 436   
+		437 437     test.pullLever(pullLeverPos);
+		    438 +   test.assertBlockTypePresent(MinecraftBlockTypes.emeraldBlock, blockPresentPosA);
+		438     -   test.assertBlockTypePresent(BlockTypes.emeraldBlock, blockPresentPosA);
+		439 439   
+		440 440     test
+		441 441       .startSequence()
+		442 442       .thenWaitWithDelay(11, () => {
+		    443 +       test.assertBlockTypePresent(MinecraftBlockTypes.emeraldBlock, blockPresentPosB);
+		443     -       test.assertBlockTypePresent(BlockTypes.emeraldBlock, blockPresentPosB);
+		444 444         test.pullLever(pullLeverPos);
+		445 445       })
+		446 446       .thenWaitWithDelay(12, () => {
+		    447 +       test.assertBlockTypePresent(MinecraftBlockTypes.emeraldBlock, blockPresentPosA);
+		447     -       test.assertBlockTypePresent(BlockTypes.emeraldBlock, blockPresentPosA);
+		448 448       })
+		449 449       .thenSucceed();
+		450 450   })
+		451 451     .tag("suite:java_parity")
+		452 452     .tag(GameTest.Tags.suiteDisabled); //Pistons react at different speeds in Bedrock, create a new test called double_extender_bedrock.
+		          ...
+		455 455     const pullLeverPos = new BlockLocation(2, 3, 2);
+		456 456     const blockPresentPosA = new BlockLocation(0, 2, 2);
+		457 457     const blockPresentPosB = new BlockLocation(0, 2, 4);
+		458 458   
+		459 459     test.pullLever(pullLeverPos);
+		    460 +   test.assertBlockTypePresent(MinecraftBlockTypes.emeraldBlock, blockPresentPosA);
+		460     -   test.assertBlockTypePresent(BlockTypes.emeraldBlock, blockPresentPosA);
+		461 461   
+		462 462     //it's not possible to time it exactly due to redstone differences, so just validate assert can pass before given delay.
+		463 463     test
+		464 464       .startSequence()
+		465 465       .thenIdle(17)
+		466 466       .thenExecute(() => {
+		    467 +       test.assertBlockTypePresent(MinecraftBlockTypes.emeraldBlock, blockPresentPosB);
+		467     -       test.assertBlockTypePresent(BlockTypes.emeraldBlock, blockPresentPosB);
+		468 468         test.pullLever(pullLeverPos);
+		469 469       })
+		470 470       .thenIdle(18)
+		471 471       .thenExecute(() => {
+		    472 +       test.assertBlockTypePresent(MinecraftBlockTypes.emeraldBlock, blockPresentPosA);
+		472     -       test.assertBlockTypePresent(BlockTypes.emeraldBlock, blockPresentPosA);
+		473 473       })
+		474 474       .thenSucceed();
+		475 475   })
+		476 476     .structureName("PistonTests:double_extender")
+		477 477     .tag(GameTest.Tags.suiteDefault);
+		          ...
+		488 488   
+		489 489     test
+		490 490       .startSequence()
+		491 491       .thenIdle(30)
+		492 492       .thenWait(() => {
+		    493 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentA);
+		    494 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentB);
+		493     -       test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentA);
+		494     -       test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentB);
+		    495 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentC);
+		    496 +       test.assertBlockTypePresent(MinecraftBlockTypes.concrete, extended);
+		495     -       test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentC);
+		496     -       test.assertBlockTypePresent(BlockTypes.concrete, extended);
+		497 497       })
+		498 498       .thenIdle(20)
+		499 499       .thenWait(() => {
+		500 500         test.pressButton(trigger);
+		501 501       })
+		502 502       .thenIdle(42)
+		503 503       .thenWait(() => {
+		    504 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, new assertBlockPresentA());
+		    505 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, new assertBlockPresentB());
+		504     -       test.assertBlockTypePresent(BlockTypes.stickyPiston, new assertBlockPresentA());
+		505     -       test.assertBlockTypePresent(BlockTypes.stickyPiston, new assertBlockPresentB());
+		    506 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, new assertBlockPresentC());
+		    507 +       test.assertBlockTypePresent(MinecraftBlockTypes.concrete, retracted);
+		506     -       test.assertBlockTypePresent(BlockTypes.stickyPiston, new assertBlockPresentC());
+		507     -       test.assertBlockTypePresent(BlockTypes.concrete, retracted);
+		508 508       })
+		509 509       .thenSucceed();
+		510 510   })
+		511 511     .tag("suite:java_parity")
+		512 512     .tag(GameTest.Tags.suiteDisabled); // Game parity issue. Create a new test called triple_extender_bedrock using new structure, and updated piston react time.
+		513 513   
+		514 514   GameTest.register("PistonTests", "triple_extender_bedrock", (test) => {
+		    515 +   const retracted = new BlockLocation(0, 4, 4);
+		    516 +   const extended = new BlockLocation(0, 1, 4);
+		515     -     const retracted = new BlockLocation(0, 4, 4);
+		516     -     const extended = new BlockLocation(0, 1, 4);
+		    517 +   const trigger = new BlockLocation(0, 7, 0);
+		    518 +   const assertBlockPresentA = new BlockLocation(0, 7, 4);
+		    519 +   const assertBlockPresentB = new BlockLocation(0, 6, 4);
+		    520 +   const assertBlockPresentC = new BlockLocation(0, 5, 4);
+		    521 +   const assertBlockPresentD = new BlockLocation(0, 3, 4);
+		    522 +   test.pressButton(trigger);
+		    523 +   test
+		    524 +     .startSequence()
+		    525 +     .thenWait(() => {
+		    526 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentA);
+		    527 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentC);
+		    528 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentD);
+		    529 +       test.assertBlockTypePresent(MinecraftBlockTypes.concrete, extended);
+		    530 +     })
+		    531 +     .thenWait(() => {
+		    532 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentA);
+		    533 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentB);
+		    534 +       test.assertBlockTypePresent(MinecraftBlockTypes.stickyPiston, assertBlockPresentC);
+		    535 +       test.assertBlockTypePresent(MinecraftBlockTypes.concrete, retracted);
+		    536 +     })
+		    537 +     .thenSucceed();
+		517     -     const trigger = new BlockLocation(0, 7, 0);
+		518     -     const assertBlockPresentA = new BlockLocation(0, 7, 4);
+		519     -     const assertBlockPresentB = new BlockLocation(0, 6, 4);
+		520     -     const assertBlockPresentC = new BlockLocation(0, 5, 4);
+		521     -     const assertBlockPresentD = new BlockLocation(0, 3, 4);
+		522     -     test.pressButton(trigger);
+		523     -     test
+		524     -         .startSequence()
+		525     -         .thenWait(() => {
+		526     -             test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentA);
+		527     -             test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentC);
+		528     -             test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentD);
+		529     -             test.assertBlockTypePresent(BlockTypes.concrete, extended);
+		530     -         })
+		531     -         .thenWait(() => {
+		532     -             test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentA);
+		533     -             test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentB);
+		534     -             test.assertBlockTypePresent(BlockTypes.stickyPiston, assertBlockPresentC);
+		535     -             test.assertBlockTypePresent(BlockTypes.concrete, retracted);
+		536     -         })
+		537     -         .thenSucceed();
+		538 538   })
+		    539 +   .setupTicks(20)
+		    540 +   .tag(GameTest.Tags.suiteDefault)
+		539     -     .setupTicks(20)
+		540     -     .tag(GameTest.Tags.suiteDefault)
+		    541 +   .maxTicks(100);
+		541     -     .maxTicks(100);
+		542 542   
+		543 543   GameTest.register("PistonTests", "monostable", (test) => {
+		544 544     const lampPos = new BlockLocation(0, 3, 5);
+		545 545     const pullLeverPos = new BlockLocation(0, 2, 0);
+		546 546   
+		          ...
+		587 587   
+		588 588   GameTest.register("PistonTests", "instant_retraction", (test) => {
+		589 589     const airPos = new BlockLocation(2, 1, 1);
+		590 590     const concretePos = new BlockLocation(0, 1, 3);
+		591 591   
+		    592 +   test.setBlockType(MinecraftBlockTypes.air, airPos);
+		592     -   test.setBlockType(BlockTypes.air, airPos);
+		593 593     test.succeedOnTickWhen(3, () => {
+		    594 +     test.assertBlockTypePresent(MinecraftBlockTypes.concrete, concretePos);
+		594     -     test.assertBlockTypePresent(BlockTypes.concrete, concretePos);
+		595 595     });
+		596 596   }).tag(GameTest.Tags.suiteDefault);
+		597 597   
+		598 598   GameTest.register("PistonTests", "instant_repeater", (test) => {
+		599 599     const triggerPos = new BlockLocation(0, 3, 0);
+		          ...
+		624 624     test.pressButton(buttonPos);
+		625 625     test
+		626 626       .startSequence()
+		627 627       .thenIdle(30)
+		628 628       .thenWait(() => {
+		    629 +       test.assertBlockTypeNotPresent(MinecraftBlockTypes.redstoneLamp, lampFailPos);
+		629     -       test.assertBlockTypeNotPresent(BlockTypes.redstoneLamp, lampFailPos);
+		630 630       })
+		631 631       .thenSucceed();
+		632 632   }).tag(GameTest.Tags.suiteDefault);
+		633 633   
+		634 634   GameTest.register("PistonTests", "redstone_matrix", (test) => {
+		          ...
+		638 638     test.pressButton(buttonPos);
+		639 639     test
+		640 640       .startSequence()
+		641 641       .thenIdle(30)
+		642 642       .thenWait(() => {
+		    643 +       test.assertBlockTypePresent(MinecraftBlockTypes.redstoneWire, wirePos);
+		643     -       test.assertBlockTypePresent(BlockTypes.redstoneWire, wirePos);
+		644 644       })
+		645 645       .thenSucceed();
+		646 646   }).tag(GameTest.Tags.suiteDefault);
+		647 647   
+		648 648   GameTest.register("PistonTests", "one_tick_pulse", (test) => {
+		          ...
+		654 654   
+		655 655     test
+		656 656       .startSequence()
+		657 657   
+		658 658       .thenWaitWithDelay(2, () => {
+		    659 +       test.assertBlockTypePresent(MinecraftBlockTypes.stainedGlass, extendedPos);
+		659     -       test.assertBlockTypePresent(BlockTypes.stainedGlass, extendedPos);
+		660 660       })
+		661 661       .thenIdle(30)
+		662 662       .thenWait(() => {
+		663 663         test.pressButton(pressButtonPos);
+		664 664       })
+		665 665       .thenWaitWithDelay(4, () => {
+		    666 +       test.assertBlockTypePresent(MinecraftBlockTypes.stainedGlass, retractedPos);
+		    667 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, extendedPos);
+		666     -       test.assertBlockTypePresent(BlockTypes.stainedGlass, retractedPos);
+		667     -       test.assertBlockTypePresent(BlockTypes.air, extendedPos);
+		668 668       })
+		669 669       .thenSucceed();
+		670 670   })
+		671 671     .tag("suite:java_parity")
+		672 672     .tag(GameTest.Tags.suiteDisabled); //It's Gameplay differences. In Java Edition, pistons finish extending early and start retracting if given a pulse shorter than 3 game ticks, this causes the block to end up in its final position earlier.
+		          ...
+		680 680   
+		681 681     test
+		682 682       .startSequence()
+		683 683       .thenIdle(2)
+		684 684       .thenWait(() => {
+		    685 +       test.assertBlockTypePresent(MinecraftBlockTypes.stainedGlass, extendedPos);
+		685     -       test.assertBlockTypePresent(BlockTypes.stainedGlass, extendedPos);
+		686 686       })
+		687 687       .thenIdle(30)
+		688 688       .thenWait(() => {
+		689 689         test.pressButton(pressButtonPos);
+		690 690       })
+		691 691       .thenIdle(4)
+		692 692       .thenWait(() => {
+		    693 +       test.assertBlockTypePresent(MinecraftBlockTypes.stainedGlass, retractedPos);
+		    694 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, extendedPos);
+		693     -       test.assertBlockTypePresent(BlockTypes.stainedGlass, retractedPos);
+		694     -       test.assertBlockTypePresent(BlockTypes.air, extendedPos);
+		695 695       })
+		696 696       .thenSucceed();
+		697 697   }).tag(GameTest.Tags.suiteDefault);
+		698 698   
+		699 699   GameTest.register("PistonTests", "backside", (test) => {
+		          ...
+		712 712     test
+		713 713       .startSequence()
+		714 714       .thenIdle(30)
+		715 715       .thenWait(() => {
+		716 716         for (const buttonPos of buttonsBlockPos) {
+		    717 +         test.assertBlockTypePresent(MinecraftBlockTypes.stoneButton, buttonPos);
+		717     -         test.assertBlockTypePresent(BlockTypes.stoneButton, buttonPos);
+		718 718         }
+		719 719       })
+		720 720       .thenSucceed();
+		721 721   }).tag(GameTest.Tags.suiteDefault);
+		722 722   
+		          ...
+		745 745     test.pressButton(buttonPos);
+		746 746     test
+		747 747       .startSequence()
+		748 748       .thenIdle(20)
+		749 749       .thenExecute(() => {
+		    750 +       test.assertBlockTypePresent(MinecraftBlockTypes.chorusFlower, flower);
+		    751 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, aboveFlower);
+		750     -       test.assertBlockTypePresent(BlockTypes.chorusFlower, flower);
+		751     -       test.assertBlockTypePresent(BlockTypes.air, aboveFlower);
+		752 752       })
+		753 753       .thenSucceed();
+		754 754   })
+		755 755     .batch("no_random_ticks")
+		756 756     .tag("suite:java_parity")
+		          ...
+		764 764     test.pressButton(buttonPos);
+		765 765     test
+		766 766       .startSequence()
+		767 767       .thenIdle(10)
+		768 768       .thenExecute(() => {
+		    769 +       test.assertBlockTypePresent(MinecraftBlockTypes.chorusFlower, flower);
+		    770 +       test.assertBlockTypePresent(MinecraftBlockTypes.air, aboveFlower);
+		769     -       test.assertBlockTypePresent(BlockTypes.chorusFlower, flower);
+		770     -       test.assertBlockTypePresent(BlockTypes.air, aboveFlower);
+		771 771       })
+		772 772       .thenSucceed();
+		773 773   }).tag(GameTest.Tags.suiteDisabled);
+		774 774   
+		775 775   GameTest.register("PistonTests", "honey_block_entity_drag_down", (test) => {
+		          ...
+		          '''
+	Changed script "RedstoneTests.js":
+		Total line: 727 (+9, -9)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, MinecraftBlockTypes, BlockProperties, World } from "Minecraft";
+		  2     - import { BlockLocation, BlockTypes, BlockProperties, World } from "Minecraft";
+		  3   3   
+		  4   4   const TicksPerSecond = 20;
+		  5   5   
+		  6   6   GameTest.register("RedstoneTests", "itemframe_override", (test) => {
+		  7   7     const itemFrameTest = new BlockLocation(3, 2, 5);
+		          ...
+		165 165   GameTest.register("RedstoneTests", "repeater_regeneration", (test) => {
+		166 166     const input = new BlockLocation(0, 2, 0);
+		167 167     const inactiveOutput = new BlockLocation(6, 3, 4);
+		168 168     const activeOutput = new BlockLocation(6, 3, 3);
+		169 169   
+		    170 +   test.setBlockType(MinecraftBlockTypes.redstoneBlock, input);
+		170     -   test.setBlockType(BlockTypes.redstoneBlock, input);
+		171 171     test.succeedOnTickWhen(2, () => {
+		172 172       test.assertBlockState("open_bit", 0, inactiveOutput);
+		173 173       test.assertBlockState("open_bit", 1, activeOutput);
+		174 174     });
+		175 175   }).tag(GameTest.Tags.suiteDefault);
+		          ...
+		177 177   GameTest.register("RedstoneTests", "repeater_lock", (test) => {
+		178 178     const input = new BlockLocation(0, 2, 2);
+		179 179     const lock = new BlockLocation(1, 2, 0);
+		180 180     const output = new BlockLocation(2, 2, 1);
+		181 181   
+		    182 +   test.setBlockType(MinecraftBlockTypes.redstoneBlock, input);
+		182     -   test.setBlockType(BlockTypes.redstoneBlock, input);
+		183 183   
+		184 184     test
+		185 185       .startSequence()
+		186 186   
+		187 187       .thenIdle(2)
+		188 188       .thenExecute(() => {
+		189 189         test.assertBlockState("open_bit", 1, output);
+		190 190       })
+		191 191       .thenExecute(() => {
+		    192 +       test.setBlockType(MinecraftBlockTypes.redstoneBlock, lock);
+		    193 +       test.setBlockType(MinecraftBlockTypes.air, input);
+		192     -       test.setBlockType(BlockTypes.redstoneBlock, lock);
+		193     -       test.setBlockType(BlockTypes.air, input);
+		194 194         test.assertBlockState("open_bit", 1, output);
+		195 195       })
+		196 196       .thenExecuteAfter(2, () => {
+		    197 +       test.setBlockType(MinecraftBlockTypes.air, lock);
+		197     -       test.setBlockType(BlockTypes.air, lock);
+		198 198       })
+		199 199       .thenIdle(4)
+		200 200       .thenExecute(() => {
+		201 201         test.assertBlockState("open_bit", 0, output);
+		202 202       })
+		          ...
+		327 327   }).tag(GameTest.Tags.suiteDefault);
+		328 328   
+		329 329   let observerClock = (test, initialOpenBit) => {
+		330 330     const outputPos = new BlockLocation(2, 2, 0);
+		331 331   
+		    332 +   const blockPermutation = MinecraftBlockTypes.trapdoor.createDefaultBlockPermutation();
+		332     -   const blockPermutation = BlockTypes.trapdoor.createDefaultBlockPermutation();
+		333 333     blockPermutation.getProperty(BlockProperties.openBit).value = initialOpenBit;
+		334 334   
+		335 335     test.setBlockPermutation(blockPermutation, outputPos);
+		336 336   
+		337 337     let sequence = test.startSequence();
+		          ...
+		675 675       })
+		676 676       .thenSucceed();
+		677 677   }).tag(GameTest.Tags.suiteDefault);
+		678 678   
+		679 679   GameTest.register("RedstoneTests", "repeater_delay", (test) => {
+		    680 +   test.setBlockType(MinecraftBlockTypes.stone, new BlockLocation(0, 2, 5));
+		680     -   test.setBlockType(BlockTypes.stone, new BlockLocation(0, 2, 5));
+		681 681   
+		682 682     const lamp1 = new BlockLocation(1, 2, 0);
+		683 683     const lamp2 = new BlockLocation(3, 2, 0);
+		684 684   
+		685 685     test
+		          ...
+		700 700   })
+		701 701     .maxTicks(TicksPerSecond * 10)
+		702 702     .tag(GameTest.Tags.suiteDisabled); //The ticks of Redstone repeater is too short in structure, causing the Redstone lamp will not go out.
+		703 703   
+		704 704   GameTest.register("RedstoneTests", "repeater_delay_bedrock", (test) => {
+		    705 +   test.setBlockType(MinecraftBlockTypes.stone, new BlockLocation(0, 2, 5));
+		705     -   test.setBlockType(BlockTypes.stone, new BlockLocation(0, 2, 5));
+		706 706   
+		707 707     const lamp1 = new BlockLocation(1, 2, 0);
+		708 708     const lamp2 = new BlockLocation(3, 2, 0);
+		709 709   
+		710 710     test
+		          ...
+		          '''
+	Changed script "TntTests.js":
+		Total line: 103 (+30, -20)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, MinecraftBlockTypes } from "Minecraft";
+		      3 + 
+		      4 + function locToStr(loc) {
+		      5 +   return [loc.x.toFixed(3), loc.y.toFixed(3), loc.z.toFixed(3)].join(", ");
+		      6 + }
+		      7 + 
+		      8 + function locationToBlockLocation(loc) {
+		      9 +   return new BlockLocation(Math.floor(loc.x), Math.floor(loc.y), Math.floor(loc.z));
+		     10 + }
+		     11 + 
+		     12 + // because of the barrier blocks, these positions are offset (2, 0, 40) from the Java tests
+		     13 + GameTest.register("TntTests", "cannon", (test) => {
+		     14 +   const projectilePosition = new BlockLocation(3, 10, 41);
+		     15 +   const chargePosition = new BlockLocation(3, 10, 43);
+		  2     - import { BlockLocation, BlockTypes } from "Minecraft";
+		  3     - 
+		  4  16   
+		     17 +   for (var i = 0; i < 5; i++) {
+		     18 +     var chargeTnt = test.spawn("minecraft:tnt", chargePosition);
+		  5     - function locToStr(loc) {
+		     19 +     test.setTntFuse(chargeTnt, 20);
+		     20 +   }
+		  6     -     return [loc.x.toFixed(3), loc.y.toFixed(3), loc.z.toFixed(3)].join(', ');
+		  7     - }
+		  8  21   
+		     22 +   var projectiles = new Array(5);
+		  9     - function locationToBlockLocation(loc) {
+		 10     -     return new BlockLocation(Math.floor(loc.x), Math.floor(loc.y), Math.floor(loc.z));;
+		 11     - }
+		 12  23   
+		     24 +   test
+		     25 +     .startSequence()
+		     26 +     .thenExecuteAfter(10, () => {
+		     27 +       for (var projectile of projectiles) {
+		     28 +         projectile = test.spawn("minecraft:tnt", projectilePosition);
+		     29 +         test.setTntFuse(projectile, 30);
+		     30 +       }
+		     31 +     })
+		     32 +     .thenExecuteAfter(1, () => {
+		     33 +       test.setBlockType(MinecraftBlockTypes.air, new BlockLocation(2, 10, 40));
+		     34 +     })
+		     35 +     .thenExecuteFor(19, () => {
+		     36 +       const expectedBlockLocation = locationToBlockLocation(projectiles[0].location);
+		     37 +       const expectedVelocity = projectiles[0].velocity;
+		 13     - // because of the barrier blocks, these positions are offset (2, 0, 40) from the Java tests
+		 14     - GameTest.register("TntTests", "cannon", (test) => {
+		 15     -     const projectilePosition = new BlockLocation(3, 10, 41);
+		 16     -     const chargePosition = new BlockLocation(3, 10, 43);
+		 17     - 
+		 18     -     for (var i = 0; i < 5; i++) {
+		 19     -         var chargeTnt = test.spawn("minecraft:tnt", chargePosition);
+		 20     -         test.setTntFuse(chargeTnt, 20);
+		 21     -     }
+		 22     - 
+		 23     -     var projectiles = new Array(5)
+		 24  38   
+		 25     -     test.startSequence()
+		 26     -         .thenExecuteAfter(10, () => {
+		 27     -             for (var projectile of projectiles) {
+		     39 +       for (var i = 1; i < projectiles.length; i++) {
+		     40 +         const blockLoc = locationToBlockLocation(projectiles[i].location);
+		     41 +         if (!blockLoc.equals(expectedBlockLocation)) {
+		     42 +           test.fail(
+		     43 +             "All projectile tnt should be in the same location, but they have spread apart. Expected " +
+		     44 +               locToStr(expectedBlockLocation) +
+		     45 +               ", but got " +
+		     46 +               locToStr(blockLoc)
+		     47 +           );
+		     48 +         }
+		 28     -                 projectile = test.spawn("minecraft:tnt", projectilePosition);
+		 29     -                 test.setTntFuse(projectile, 30);
+		 30     -             }
+		 31     -         })
+		 32     -         .thenExecuteAfter(1, () => {
+		 33     -             test.setBlockType(BlockTypes.air, new BlockLocation(2, 10, 40));
+		 34     -         })
+		 35     -         .thenExecuteFor(19, () => {
+		 36     -             const expectedBlockLocation = locationToBlockLocation(projectiles[0].location);
+		 37     -             const expectedVelocity = projectiles[0].velocity;
+		 38  49   
+		     50 +         if (!projectiles[i].velocity.equals(expectedVelocity)) {
+		 39     -             for (var i = 1; i < projectiles.length; i++) {
+		 40     -                 const blockLoc = locationToBlockLocation(projectiles[i].location);
+		     51 +           test.fail(
+		     52 +             "All projectile tnt should have the same velocity, but they do not. Expected " +
+		     53 +               locToStr(expectedVelocity) +
+		     54 +               ", but got " +
+		     55 +               locToStr(projectiles[i].velocity)
+		     56 +           );
+		     57 +         }
+		 41     -                 if (!blockLoc.equals(expectedBlockLocation)) {
+		 42     -                     test.fail("All projectile tnt should be in the same location, but they have spread apart. Expected " + locToStr(expectedBlockLocation) + ", but got " + locToStr(blockLoc));
+		 43     -                 }
+		 44     - 
+		 45     -                 if (!projectiles[i].velocity.equals(expectedVelocity)) {
+		 46     -                     test.fail("All projectile tnt should have the same velocity, but they do not. Expected " + locToStr(expectedVelocity) + ", but got " + locToStr(projectiles[i].velocity));
+		 47     -                 }
+		 48  58   
+		     59 +         // java tests the projectiles are still "alive". This seems unecessary because the TNT shouldn't be moving unless it is alive.
+		 49     -                 // java tests the projectiles are still "alive". This seems unecessary because the TNT shouldn't be moving unless it is alive.
+		 50     -             };
+		     60 +       }
+		     61 +     })
+		     62 +     .thenExecute(() => {
+		     63 +       const expectedLocation = new BlockLocation(3, 14, 4);
+		     64 +       for (const projectile of projectiles) {
+		     65 +         test.assertEntityInstancePresent(projectile, expectedLocation);
+		     66 +       }
+		     67 +     })
+		     68 +     .thenSucceed();
+		 51     -         })
+		 52     -         .thenExecute(() => {
+		 53     -             const expectedLocation = new BlockLocation(3, 14, 4);
+		 54     -             for (const projectile of projectiles) {
+		 55     -                 test.assertEntityInstancePresent(projectile, expectedLocation);
+		 56     -             }
+		 57     - 
+		 58     -         })
+		 59     -         .thenSucceed();
+		 60  69   })
+		 61  70     .maxTicks(30)
+		 62  71     .tag("suite:java_parity");
+		 63  72   
+		 64  73   GameTest.register("TntTests", "bedrock_cannon", (test) => {
+		     74 +   const projectilePosition = new BlockLocation(3, 9, 19);
+		     75 +   const chargePosition = new BlockLocation(3, 9, 22);
+		 65     -     const projectilePosition = new BlockLocation(3, 9, 19);
+		 66     -     const chargePosition = new BlockLocation(3, 9, 22);
+		 67  76   
+		     77 +   for (var i = 0; i < 5; i++) {
+		     78 +     var chargeTnt = test.spawn("minecraft:tnt", chargePosition);
+		 68     -     for (var i = 0; i < 5; i++) {
+		 69     -         var chargeTnt = test.spawn("minecraft:tnt", chargePosition);
+		     79 +     test.setTntFuse(chargeTnt, 20);
+		     80 +   }
+		 70     -         test.setTntFuse(chargeTnt, 20);
+		 71     -     }
+		 72  81   
+		     82 +   var projectile = null;
+		 73     -     var projectile = null
+		 74  83   
+		     84 +   test
+		     85 +     .startSequence()
+		 75     -     test.startSequence()
+		     86 +     .thenExecuteAfter(10, () => {
+		     87 +       for (var i = 0; i < 5; i++) {
+		     88 +         projectile = test.spawn("minecraft:tnt", projectilePosition);
+		     89 +         test.setTntFuse(projectile, 15);
+		     90 +       }
+		     91 +     })
+		     92 +     .thenExecuteAfter(10, () => {
+		     93 +       test.setBlockType(MinecraftBlockTypes.air, new BlockLocation(3, 9, 18));
+		     94 +     })
+		     95 +     .thenExecuteAfter(5, () => {
+		     96 +       const expectedLocation = new BlockLocation(3, 9, 7);
+		 76     -         .thenExecuteAfter(10, () => {
+		 77     -             for (var i = 0; i < 5; i++) {
+		 78     -                 projectile = test.spawn("minecraft:tnt", projectilePosition);
+		 79     -                 test.setTntFuse(projectile, 15);
+		 80     -             }
+		 81     -         })
+		 82     -         .thenExecuteAfter(10, () => {
+		 83     -             test.setBlockType(BlockTypes.air, new BlockLocation(3, 9, 18));
+		 84     -         })
+		 85     -         .thenExecuteAfter(5, () => {
+		 86     -             const expectedLocation = new BlockLocation(3, 9, 7);
+		 87  97   
+		     98 +       test.assertEntityInstancePresent(projectile, expectedLocation);
+		     99 +     })
+		 88     -             test.assertEntityInstancePresent(projectile, expectedLocation);
+		 89     -         })
+		    100 +     .thenSucceed();
+		 90     -         .thenSucceed();
+		 91 101   })
+		 92 102     .maxTicks(26)
+		 93 103     .tag(GameTest.Tags.suiteDefault);
+		          '''

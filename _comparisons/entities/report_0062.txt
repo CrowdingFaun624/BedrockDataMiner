@@ -1,136 +1,706 @@
-Difference of "entities" between "1.8.1" and "1.9.0.0" (beta of "1.9.0").
+Difference of "entities" between "1.11.0.1" (beta of "1.11.0") and "1.11.0.3" (beta of "1.11.0").
 
-Total entity: 93 (+1, -0)
-Changed entity "dolphin":
+Changed entity "cat.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 22 (+0, -1)
-				Removed component "minecraft:behavior.breathe_air" of field "priority": 1.
-Changed entity "panda":
+				Total component: 21 (+1, -0)
+				Added component "minecraft:dweller":
+					field "dwelling_type": "village"
+					field "dweller_role": "passive"
+					field "update_interval_base": 60
+					field "update_interval_variant": 40
+					field "can_find_poi": false
+					field "can_migrate": true
+					field "first_founding_reward": 0
+Changed entity "llama.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:giveable":
-					Added field "cooldown" of 3.0.
-Added entity "pillager":
-	behavior pack "core":
-		field "defined_in": behavior pack: "vanilla"
-		field "format_version": "1.8.0"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:pillager"
-				description "minecraft:is_experimental": field "value": true
-				description "minecraft:is_summonable": field "value": true
-				description "minecraft:spawn_egg": field "value": true
-			field "component_groups":
-				component group "minecraft:melee_attack":
-					component "minecraft:attack": field "damage": 3
-					component "minecraft:environment_sensor":
-						field "on_environment":
-							field "event": "minecraft:ranged_mode"
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_water"
-								filter property "value": false
-					component "minecraft:behavior.melee_attack":
-						field "priority": 4
-						field "speed_multiplier": 1
-						field "target_dist": 1.2
-						field "track_target": true
-				component group "minecraft:ranged_attack":
-					component "minecraft:environment_sensor":
-						field "on_environment":
-							field "event": "minecraft:melee_mode"
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "is_underwater"
-								filter property "value": true
-					component "minecraft:shooter":
-						field "def": "minecraft:arrow"
-						field "type": "Arrow"
-					component "minecraft:behavior.ranged_attack":
-						field "attack_interval_max": 0
-						field "attack_interval_min": 0
-						field "attack_radius": 6
-						field "charge_charged_trigger": 1.25
-						field "charge_shoot_trigger": 1.5
-			field "components":
-				component "minecraft:breathable":
-					field "suffocateTime": 0
-					field "totalSupply": 15
-				component "minecraft:collision_box":
-					field "height": 1.95
-					field "width": 0.6
-				component "minecraft:equipment": field "table": "loot_tables/entities/pillager_gear.json"
-				component "minecraft:health":
-					field "max": 24
-					field "value": 24
-				component "minecraft:jump.static": empty
-				component "minecraft:loot": field "table": "loot_tables/entities/pillager.json"
-				component "minecraft:movement": field "value": 0.35
-				component "minecraft:movement.basic": empty
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk": field "can_path_over_water": true
-				component "minecraft:physics": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "pillager"
-						family: "monster"
-						family: "illager"
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.hurt_by_target":
-					field "entity_types":
-						field "filters":
+			Changed field "component_groups":
+				Total component group: 21 (+1, -0)
+				Changed component group "minecraft:llama_adult":
+					Changed component "minecraft:breedable":
+						Added field "love_filters":
+							filter property "test": "is_mark_variant"
+							filter property "subject": "self"
 							filter property "operator": "!="
-							filter property "subject": "other"
-							filter property "test": "is_family"
-							filter property "value": "illager"
-					field "priority": 1
-				component "minecraft:behavior.look_at_player":
-					field "look_distance": 8
-					field "priority": 6
-				component "minecraft:behavior.nearest_attackable_target":
-					field "entity_types":
-						entity type:
+							filter property "value": 1
+				Added component group "minecraft:llama_defend_trader":
+					component "minecraft:angry":
+						field "duration": 10
+						field "broadcastAnger": false
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+					component "minecraft:behavior.ranged_attack":
+						field "priority": 2
+						field "attack_radius": 64
+						field "charge_shoot_trigger": 2
+						field "charge_charged_trigger": 1
+				Changed component group "minecraft:llama_wandering_trader":
+					Total component: 3 (+1, -0)
+					Added component "minecraft:on_friendly_anger":
+						field "event": "minecraft:defend_wandering_trader"
+						field "target": "self"
+			Changed field "events":
+				Total event: 14 (+1, -0)
+				Added event "minecraft:defend_wandering_trader" of field "add": field "component_groups": component group: "minecraft:llama_defend_trader".
+				Changed event "minecraft:on_calm":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 3 (+1, -0)
+							Added component group "minecraft:llama_defend_trader".
+Changed entity "pillager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 6 (+2, -0)
+				Changed component group "minecraft:illager_squad_captain":
+					Total component: 3 (+1, -0)
+					Added component "minecraft:damage_sensor":
+						field "on_damage":
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "has_damage"
+										filter property "value": "fatal"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "player"
+							field "event": "minecraft:gain_bad_omen"
+							field "target": "other"
+				Added component group "minecraft:patrol_captain":
+					component "minecraft:damage_sensor":
+						field "on_damage":
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "has_damage"
+										filter property "value": "fatal"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "player"
+							field "event": "minecraft:gain_bad_omen"
+							field "target": "other"
+					component "minecraft:equipment":
+						field "table": "loot_tables/entities/pillager_captain_equipment.json"
+						field "slot_drop_chance":
+							slot:
+								field "slot": "slot.armor.chest"
+								field "drop_chance": 1.0
+					component "minecraft:is_illager_captain": empty
+					component "minecraft:behavior.move_to_random_block":
+						field "priority": 5
+						field "speed_multiplier": 0.55
+						field "within_radius": 8
+						field "block_distance": 512
+				Added component group "minecraft:patrol_follower":
+					component "minecraft:behavior.follow_target_captain":
+						field "priority": 5
+						field "speed_multiplier": 0.8
+						field "within_radius": 64
+						field "follow_distance": 5
+				Changed component group "minecraft:raid_configuration":
+					Total component: 2 (+1, -0)
+					Added component "minecraft:behavior.move_to_village":
+						field "priority": 1
+						field "speed_multiplier": 1.0
+			Changed field "components":
+				Changed component "minecraft:behavior.look_at_player":
+					Changed field "priority" from 6 to 7.
+				Changed component "minecraft:behavior.random_look_around":
+					Changed field "priority" from 6 to 7.
+				Changed component "minecraft:behavior.random_stroll":
+					Changed field "priority" from 5 to 6.
+			Changed field "events":
+				Total event: 8 (+2, -0)
+				Changed event "minecraft:promote_to_illager_captain":
+					Added field "remove" of field "component_groups": component group: "minecraft:patrol_follower".
+				Added event "minecraft:promote_to_patrol_captain":
+					field "add": field "component_groups": component group: "minecraft:patrol_captain"
+					field "remove": field "component_groups": component group: "minecraft:patrol_follower"
+				Added event "minecraft:spawn_as_patrol_follower":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:ranged_attack"
+							component group: "minecraft:patrol_follower"
+Changed entity "player.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Added field "component_groups":
+				component group "minecraft:add_bad_omen":
+					component "minecraft:spell_effects":
+						field "add_effects":
+							effect:
+								field "effect": "bad_omen"
+								field "duration": 24000
+				component group "minecraft:raid_trigger":
+					component "minecraft:raid_trigger":
+						field "triggered_event":
+							field "event": "minecraft:remove_raid_trigger"
+							field "target": "self"
+					component "minecraft:spell_effects": field "remove_effects": "bad_omen"
+			Changed field "components":
+				Total component: 17 (+1, -0)
+				Added component "minecraft:environment_sensor":
+					field "filters":
+						filter property "all_of":
+							filter:
+								filter property "test": "has_mob_effect"
+								filter property "subject": "self"
+								filter property "value": "bad_omen"
+							filter:
+								filter property "test": "is_in_village"
+								filter property "subject": "self"
+								filter property "value": true
+					field "event": "minecraft:trigger_raid"
+			Added field "events":
+				event "minecraft:gain_bad_omen": field "add": field "component_groups": component group: "minecraft:add_bad_omen"
+				event "minecraft:remove_raid_trigger": field "remove": field "component_groups": component group: "minecraft:raid_trigger"
+				event "minecraft:trigger_raid": field "add": field "component_groups": component group: "minecraft:raid_trigger"
+Changed entity "ravager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:ravager"
+				Changed description "is_experimental" from true to false.
+			Changed field "component_groups":
+				Changed component group "minecraft:raid_configuration":
+					Total component: 2 (+1, -0)
+					Added component "minecraft:behavior.move_to_village":
+						field "priority": 1
+						field "speed_multiplier": 1.0
+Changed entity "villager_v2.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:villager_v2"
+				Changed description "is_experimental" from true to false.
+				Changed description "is_summonable" from true to false.
+			Changed field "component_groups":
+				Changed component group "bed_schedule_villager":
+					Changed component "minecraft:behavior.sleep":
+						Changed field "priority" from 4 to 3.
+				Changed component group "work_schedule_farmer":
+					Changed component "minecraft:behavior.work":
+						Changed field "priority" from 4 to 3.
+						Added field "can_work_in_rain" of false.
+						Added field "work_in_rain_tolerance" of 100.
+				Changed component group "work_schedule_fisher":
+					Changed component "minecraft:behavior.work":
+						Added field "can_work_in_rain" of false.
+						Added field "work_in_rain_tolerance" of 100.
+				Changed component group "work_schedule_librarian":
+					Changed component "minecraft:behavior.work":
+						Changed field "priority" from 4 to 3.
+						Added field "can_work_in_rain" of false.
+						Added field "work_in_rain_tolerance" of 100.
+				Changed component group "work_schedule_villager":
+					Changed component "minecraft:behavior.work":
+						Changed field "priority" from 4 to 3.
+						Added field "can_work_in_rain" of false.
+						Added field "work_in_rain_tolerance" of 100.
+			Changed field "events":
+				Total event: 35 (+1, -0)
+				Changed event "minecraft:ageable_grow_up":
+					Changed field "randomize":
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 4 (+1, -0)
+									Added component group "behavior_peasant".
+						Changed randomize item:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 4 (+1, -0)
+									Added component group "behavior_peasant".
+				Changed event "minecraft:become_unskilled":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 4 (+1, -1)
+							Removed component group "behavior_non_peasant".
+							Added component group "behavior_peasant".
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "randomize":
+								Total randomize item: 2 (+1, -1)
+								Removed randomize item:
+									field "weight": 95
+									field "add":
+										field "component_groups":
+											component group: "adult"
+											component group: "basic_schedule"
+									field "sequence":
+										sequence item 0:
+											field "randomize":
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "farmer"
+															component group: "behavior_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "fisherman"
+															component group: "behavior_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "shepherd"
+															component group: "behavior_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "fletcher"
+															component group: "behavior_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "librarian"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "cartographer"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "cleric"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "armorer"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "weaponsmith"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "toolsmith"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "butcher"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "leatherworker"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "mason"
+															component group: "behavior_non_peasant"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "nitwit"
+															component group: "behavior_peasant"
+								Added randomize item:
+									field "weight": 95
+									field "add": field "component_groups": component group: "adult"
+									field "sequence":
+										sequence item 0:
+											field "randomize":
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "farmer"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "fisherman"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "shepherd"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "fletcher"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "librarian"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "cartographer"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "cleric"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "armorer"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "weaponsmith"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "toolsmith"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "butcher"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "leatherworker"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "mason"
+															component group: "behavior_non_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 1
+													field "add":
+														field "component_groups":
+															component group: "nitwit"
+															component group: "behavior_peasant"
+															component group: "jobless_schedule"
+				Added event "minecraft:spawn_from_village":
+					field "sequence":
+						sequence item 0:
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:variant"
+							field "randomize":
+								randomize item:
+									field "weight": 5
+									field "add":
+										field "component_groups":
+											component group: "baby"
+											component group: "child_schedule"
+								randomize item:
+									field "weight": 95
+									field "add": field "component_groups": component group: "adult"
+									field "sequence":
+										sequence item 0:
+											field "randomize":
+												randomize item:
+													field "weight": 90
+													field "add":
+														field "component_groups":
+															component group: "unskilled"
+															component group: "behavior_peasant"
+															component group: "basic_schedule"
+												randomize item:
+													field "weight": 10
+													field "add":
+														field "component_groups":
+															component group: "nitwit"
+															component group: "behavior_peasant"
+															component group: "jobless_schedule"
+						sequence item 1:
+							field "add": field "component_groups": component group: "desert_villager"
 							field "filters":
 								filter property "any_of":
 									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "player"
+										filter property "test": "has_biome_tag"
+										filter property "value": "desert"
 									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "villager"
+										filter property "test": "has_biome_tag"
+										filter property "value": "mesa"
+						sequence item 2:
+							field "add": field "component_groups": component group: "jungle_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "jungle"
+						sequence item 3:
+							field "add": field "component_groups": component group: "savanna_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "savanna"
+						sequence item 4:
+							field "add": field "component_groups": component group: "snow_villager"
+							field "filters":
+								filter property "any_of":
 									filter:
-										filter property "subject": "other"
-										filter property "test": "is_family"
-										filter property "value": "irongolem"
-							field "max_dist": 16
-					field "must_see": true
-					field "priority": 2
-					field "reselect_targets": true
-					field "within_radius": 16.0
-				component "minecraft:behavior.random_look_around": field "priority": 6
-				component "minecraft:behavior.random_stroll":
-					field "priority": 5
-					field "speed_multiplier": 1
-			field "events":
-				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
-				event "minecraft:melee_mode":
-					field "add": field "component_groups": component group: "minecraft:melee_attack"
-					field "remove": field "component_groups": component group: "minecraft:ranged_attack"
-				event "minecraft:ranged_mode":
-					field "add": field "component_groups": component group: "minecraft:ranged_attack"
-					field "remove": field "component_groups": component group: "minecraft:melee_attack"
-Changed entity "salmon":
+										filter property "all_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "cold"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "operator": "!="
+												filter property "value": "ocean"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "frozen"
+						sequence item 5:
+							field "add": field "component_groups": component group: "swamp_villager"
+							field "filters":
+								filter property "test": "has_biome_tag"
+								filter property "value": "swamp"
+						sequence item 6:
+							field "add": field "component_groups": component group: "taiga_villager"
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "taiga"
+											filter:
+												filter property "test": "has_biome_tag"
+												filter property "value": "extreme_hills"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "operator": "!="
+										filter property "value": "cold"
+Changed entity "vindicator.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 7 (+2, -0)
+				Changed component group "minecraft:illager_squad_captain":
+					Total component: 3 (+1, -0)
+					Added component "minecraft:damage_sensor":
+						field "on_damage":
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "has_damage"
+										filter property "value": "fatal"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "player"
+							field "event": "minecraft:gain_bad_omen"
+							field "target": "other"
+				Added component group "minecraft:patrol_captain":
+					component "minecraft:damage_sensor":
+						field "on_damage":
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "has_damage"
+										filter property "value": "fatal"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "player"
+							field "event": "minecraft:gain_bad_omen"
+							field "target": "other"
+					component "minecraft:equipment":
+						field "table": "loot_tables/entities/vindicator_captain_equipment.json"
+						field "slot_drop_chance":
+							slot:
+								field "slot": "slot.armor.chest"
+								field "drop_chance": 1.0
+					component "minecraft:is_illager_captain": empty
+					component "minecraft:behavior.move_to_random_block":
+						field "priority": 5
+						field "speed_multiplier": 0.55
+						field "within_radius": 8
+						field "block_distance": 512
+				Added component group "minecraft:patrol_follower":
+					component "minecraft:behavior.follow_target_captain":
+						field "priority": 5
+						field "speed_multiplier": 0.8
+						field "within_radius": 64
+						field "follow_distance": 5
+				Changed component group "minecraft:raid_configuration":
+					Total component: 2 (+1, -0)
+					Added component "minecraft:behavior.move_to_village":
+						field "priority": 1
+						field "speed_multiplier": 1.0
+			Changed field "events":
+				Total event: 10 (+2, -0)
+				Changed event "minecraft:promote_to_illager_captain":
+					Added field "remove" of field "component_groups": component group: "minecraft:patrol_follower".
+				Added event "minecraft:promote_to_patrol_captain":
+					field "add": field "component_groups": component group: "minecraft:patrol_captain"
+					field "remove": field "component_groups": component group: "minecraft:patrol_follower"
+				Added event "minecraft:spawn_as_patrol_follower":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:default_targeting"
+							component group: "minecraft:patrol_follower"
+Changed entity "wandering_trader.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 3 (+1, -0)
+				Added component group "minecraft:scared":
+					component "minecraft:angry":
+						field "duration": 5
+						field "broadcastAnger": true
+						field "broadcastRange": 10
+						field "broadcast_targets": entity: "llama"
+						field "broadcast_filters":
+							filter property "test": "is_leashed_to"
+							filter property "subject": "other"
+							filter property "value": true
+						field "calm_event":
+							field "event": "minecraft:become_calm"
+							field "target": "self"
 			Changed field "components":
-				Total component: 13 (+0, -1)
-				Removed component "minecraft:behavior.follow_flock":
-					field "priority": 2
-					field "speed_multiplier": 0.12
+				Total component: 27 (+2, -0)
+				Added component "minecraft:damage_sensor":
+					trigger:
+						field "cause": "entity_attack"
+						field "deals_damage": true
+						field "on_damage": field "event": "minecraft:become_scared"
+					trigger:
+						field "cause": "projectile"
+						field "deals_damage": true
+						field "on_damage": field "event": "minecraft:become_scared"
+					trigger:
+						field "cause": "magic"
+						field "deals_damage": true
+						field "on_damage": field "event": "minecraft:become_scared"
+				Added component "minecraft:behavior.drink_potion":
+					field "priority": 1
+					field "speed_modifier": -0.25
+					field "potions":
+						potion:
+							field "id": 7
+							field "chance": 1.0
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "hourly_clock_time"
+												filter property "operator": ">="
+												filter property "value": 18000
+											filter:
+												filter property "test": "hourly_clock_time"
+												filter property "operator": "<"
+												filter property "value": 12000
+									filter:
+										filter property "test": "is_visible"
+										filter property "subject": "self"
+										filter property "value": true
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_avoiding_mobs"
+												filter property "subject": "self"
+												filter property "value": true
+											filter:
+												filter property "all_of":
+													filter:
+														filter property "test": "has_component"
+														filter property "subject": "self"
+														filter property "value": "minecraft:angry"
+													filter:
+														filter property "test": "is_family"
+														filter property "subject": "target"
+														filter property "operator": "!="
+														filter property "value": "player"
+						potion:
+							field "id": 8
+							field "chance": 1.0
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "hourly_clock_time"
+										filter property "operator": ">="
+										filter property "value": 12000
+									filter:
+										filter property "test": "hourly_clock_time"
+										filter property "operator": "<"
+										filter property "value": 18000
+									filter:
+										filter property "test": "is_visible"
+										filter property "subject": "self"
+										filter property "value": true
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_avoiding_mobs"
+												filter property "subject": "self"
+												filter property "value": true
+											filter:
+												filter property "test": "has_component"
+												filter property "subject": "self"
+												filter property "value": "minecraft:angry"
+			Changed field "events":
+				Total event: 4 (+2, -0)
+				Added event "minecraft:become_calm" of field "remove": field "component_groups": component group: "minecraft:scared".
+				Added event "minecraft:become_scared" of field "add": field "component_groups": component group: "minecraft:scared".
+Changed entity "witch.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:raid_configuration":
+					Total component: 2 (+1, -0)
+					Added component "minecraft:behavior.move_to_village":
+						field "priority": 1
+						field "speed_multiplier": 1.0
+Changed entity "zombie_villager_v2.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:zombie_villager_v2"
+				Changed description "is_experimental" from true to false.
+				Changed description "is_summonable" from true to false.

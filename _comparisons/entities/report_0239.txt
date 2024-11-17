@@ -1,0 +1,143 @@
+Difference of "entities" between "1.21.50.24" (beta of "1.21.50") and "1.21.50.25" (beta of "1.21.50").
+
+Changed entity "bee.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "look_for_food":
+					Changed component "minecraft:behavior.move_to_block":
+						Changed field "target_blocks":
+							Total block: 26 (+2, -0)
+							Added block "minecraft:closed_eyeblossom".
+							Added block "minecraft:open_eyeblossom".
+Changed entity "creaking.json":
+	Changed behavior pack "core":
+		Added field "use_beta_features" of true.
+		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:creaking"
+				Changed description "properties":
+					Changed property "minecraft:creaking_state":
+						Unchanged field "type": "enum"
+						Changed field "values":
+							Total possible property: 5 (+2, -0)
+							Added possible property "crumbling".
+							Added possible property "twitching".
+			Changed field "component_groups":
+				Total component group: 10 (+2, -1)
+				Added component group "minecraft:crumbling" of component "minecraft:instant_despawn": empty.
+				Removed component group "minecraft:hostile_observed" of component "minecraft:body_rotation_blocked": empty.
+				Changed component group "minecraft:hostile_unobserved":
+					Changed component "minecraft:behavior.melee_box_attack":
+						Added field "cooldown_time" of 2.0.
+				Changed component group "minecraft:immobile":
+					Total component: 4 (+1, -0)
+					Added empty component "minecraft:body_rotation_blocked".
+				Changed component group "minecraft:mobile":
+					Changed component "minecraft:movement":
+						Changed field "value" from 0.3 to 0.4.
+				Changed component group "minecraft:neutral":
+					Changed component "minecraft:behavior.random_stroll":
+						Changed field "speed_multiplier" from 0.667 to 0.5.
+				Changed component group "minecraft:spawned_by_creaking_heart":
+					Total component: 6 (+2, -0)
+					Added empty component "minecraft:fire_immune".
+					Added component "minecraft:navigation.walk":
+						field "can_path_over_water": true
+						field "can_path_over_lava": true
+						field "avoid_damage_blocks": false
+				Changed component group "minecraft:spawned_by_player":
+					Total component: 3 (+2, -0)
+					Added component "minecraft:hurt_on_condition":
+						field "damage_conditions":
+							damage condition:
+								field "filters": filter property "test": "in_lava"
+								field "cause": "lava"
+								field "damage_per_tick": 4
+					Added component "minecraft:navigation.walk":
+						field "can_path_over_water": true
+						field "can_path_over_lava": false
+						field "avoid_damage_blocks": true
+				Added component group "minecraft:twitching":
+					component "minecraft:behavior.timer_flag_2":
+						field "priority": 0
+						field "cooldown_range": 0.0
+						field "duration_range": [2.25, 2.25]
+						field "on_end":
+							field "event": "minecraft:crumble"
+							field "target": "self"
+			Changed field "components":
+				Total component: 12 (+0, -2)
+				Changed component "minecraft:attack":
+					Changed field "damage" from 2 to 3.
+				Removed empty component "minecraft:fire_immune".
+				Removed component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "can_path_over_lava": true
+					field "avoid_damage_blocks": true
+			Changed field "events":
+				Total event: 12 (+2, -0)
+				Changed event "minecraft:become_hostile":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+0, -1)
+							Removed component group "minecraft:hostile_observed".
+				Changed event "minecraft:become_neutral":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 3 (+0, -1)
+							Removed component group "minecraft:hostile_observed".
+				Added event "minecraft:crumble":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:immobile"
+							component group: "minecraft:crumbling"
+					field "emit_particle": field "particle": "creakingcrumble"
+					field "emit_vibration": field "vibration": "entity_die"
+					field "filters":
+						filter property "test": "enum_property"
+						filter property "domain": "minecraft:creaking_state"
+						filter property "operator": "not"
+						filter property "value": "crumbling"
+					field "play_sound": field "sound": "death"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:neutral"
+							component group: "minecraft:hostile"
+							component group: "minecraft:hostile_unobserved"
+							component group: "minecraft:twitching"
+							component group: "minecraft:mobile"
+					field "set_property": property "minecraft:creaking_state": "crumbling"
+				Changed event "minecraft:on_target_start_looking":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+0, -1)
+							Removed component group "minecraft:hostile_observed".
+				Changed event "minecraft:on_target_stop_looking":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 2 (+0, -1)
+							Removed component group "minecraft:hostile_observed".
+				Added event "minecraft:start_twitching":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:immobile"
+							component group: "minecraft:twitching"
+					field "filters":
+						filter property "test": "enum_property"
+						filter property "domain": "minecraft:creaking_state"
+						filter property "operator": "not"
+						filter property "value": "twitching"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:neutral"
+							component group: "minecraft:hostile"
+							component group: "minecraft:hostile_unobserved"
+							component group: "minecraft:mobile"
+					field "set_property": property "minecraft:creaking_state": "twitching"
+Changed entity "ghast.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 26 (+1, -0)
+				Added empty component "minecraft:cannot_be_attacked".

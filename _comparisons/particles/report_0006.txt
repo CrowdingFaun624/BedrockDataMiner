@@ -1,34 +1,35 @@
-Difference of "particles" between "1.9.0" and "1.10.0.3" (beta of "1.10.0").
+Difference of "particles" between "1.9.0.5" (beta of "1.9.0") and "1.10.0.3" (beta of "1.10.0").
+Unable to create data files for 1 file between: "1.9.0"
 
-Total particle: 79 (+32, -0)
-Changed particle "arrowspell":
+Total particle: 79 (+46, -14)
+Changed particle "arrowspell.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
 				Changed field "minecraft:particle_motion_dynamic":
 					Changed field "linear_acceleration":
 						Changed vector item 0 from "(variable.particlerandom1 * 2 - 1) - (variable.particleage * 0.4) * 1.25" to "(variable.particle_random_1 * 2 - 1) - (variable.particle_age * 0.4) * 1.25".
 						Changed vector item 1 from "1 + (0.08 * variable.particleage) - (variable.particleage * 0.4)" to "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4)".
 						Changed vector item 2 from "(variable.particlerandom2 * 2 - 1) - (variable.particleage * 0.4) * 1.25" to "(variable.particle_random_2 * 2 - 1) - (variable.particle_age * 0.4) * 1.25".
-Changed particle "balloon_gas":
+Changed particle "balloon_gas.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(variable.ParticleRandom1 * 0.5f + 0.5f) * 0.2" to "(variable.particle_random_1 * 0.5f + 0.5f) * 0.2".
 						Changed vector item 1 from "(variable.ParticleRandom1 * 0.5f + 0.5f) * 0.2" to "(variable.particle_random_1 * 0.5f + 0.5f) * 0.2".
@@ -37,21 +38,25 @@ Changed particle "balloon_gas":
 						Total color: 1 (+1, -1)
 						Removed color ["variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0153 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0387 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0636 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - 0.60 * ((variable.particleage - (variable.particlelifetime / 2.0)) / (variable.particlelifetime / 2.0)) : 1.0"].
 						Added color ["variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0153 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0387 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0636 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - 0.60 * ((variable.particle_age - (variable.particle_lifetime / 2.0)) / (variable.particle_lifetime / 2.0)) : 1.0"].
-Added particle "basic_bubble":
+Added particle "basic_bubble.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:basic_bubble_particle"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -63,22 +68,17 @@ Added particle "basic_bubble":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
-			field "description":
-				field "identifier": "minecraft:basic_bubble_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "basic_crit":
+Changed particle "basic_crit.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "0.10 + variable.ParticleRandom1*0.05" to "0.10 + variable.particle_random_1*0.05".
 						Changed vector item 1 from "0.10 + variable.ParticleRandom1*0.05" to "0.10 + variable.particle_random_1*0.05".
@@ -95,21 +95,21 @@ Changed particle "basic_crit":
 							Removed color ["variable.ParticleRandom1*0.3 + 0.6", "variable.ParticleRandom2*0.3+ 0.6", "variable.ParticleRandom2*0.3+ 0.6", 1.0].
 							Added color ["variable.particle_random_1*0.3 + 0.6", "variable.particle_random_2*0.3+ 0.6", "variable.particle_random_2*0.3+ 0.6", 1.0].
 						Changed field "interpolant" from "variable.ParticleAge/variable.ParticleLifetime" to "variable.particle_age/variable.particle_lifetime".
-Changed particle "basic_flame":
+Changed particle "basic_flame.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(0.1 + variable.ParticleRandom1*0.1) - (0.1 * variable.ParticleAge)" to "(0.1 + variable.particle_random_1*0.1) - (0.1 * variable.particle_age)".
 						Changed vector item 1 from "(0.1 + variable.ParticleRandom1*0.1) - (0.1 * variable.ParticleAge)" to "(0.1 + variable.particle_random_1*0.1) - (0.1 * variable.particle_age)".
-Changed particle "basic_portal":
+Changed particle "basic_portal.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -119,10 +119,10 @@ Changed particle "basic_portal":
 						Changed field "uv":
 							Changed vector item 0 from "Math.round(variable.ParticleRandom1*8)*8" to "Math.round(variable.particle_random_1*8)*8".
 							Unchanged vector item 1: 0
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(variable.ParticleRandom2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.ParticleAge/variable.ParticleLifetime)),2))" to "(variable.particle_random_2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.particle_age/variable.particle_lifetime)),2))".
 						Changed vector item 1 from "(variable.ParticleRandom2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.ParticleAge/variable.ParticleLifetime)),2))" to "(variable.particle_random_2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.particle_age/variable.particle_lifetime)),2))".
@@ -136,35 +136,35 @@ Changed particle "basic_portal":
 						Unchanged vector item 0: 0.0
 						Changed vector item 1 from "-1.0 * (variable.ParticleAge/variable.ParticleLifetime)" to "-1.0 * (variable.particle_age/variable.particle_lifetime)".
 						Unchanged vector item 2: 0.0
-Changed particle "basic_smoke":
+Changed particle "basic_smoke.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 				Changed field "minecraft:particle_appearance_tinting":
 					Changed field "color":
 						Total color: 1 (+1, -1)
 						Removed color ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0].
 						Added color ["variable.particle_random_1*0.5", "variable.particle_random_1*0.5", "variable.particle_random_1*0.5", 1.0].
-Changed particle "bleach":
+Changed particle "bleach.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-Changed particle "block_destruct":
+Changed particle "block_destruct.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -177,31 +177,35 @@ Changed particle "block_destruct":
 						Changed field "uv":
 							Changed vector item 0 from "variable.EmitterTextureCoord.u + (variable.EmitterTextureSize.u/4) * (variable.ParticleRandom1*3)" to "variable.emitter_texture_coordinate.u + (variable.emitter_texture_size.u/4) * (variable.particle_random_1*3)".
 							Changed vector item 1 from "variable.EmitterTextureCoord.v + (variable.EmitterTextureSize.v/4) * (variable.ParticleRandom2*3)" to "variable.emitter_texture_coordinate.v + (variable.emitter_texture_size.v/4) * (variable.particle_random_2*3)".
-						Removed field "textureheight" of 1.
 						Removed field "texturewidth" of 1.
-						Added field "texture_height" of 1.
+						Removed field "textureheight" of 1.
 						Added field "texture_width" of 1.
+						Added field "texture_height" of 1.
 					Changed field "size":
 						Changed vector item 0 from "variable.ParticleRandom1 * 0.0375 + 0.0375" to "variable.particle_random_1 * 0.0375 + 0.0375".
 						Changed vector item 1 from "variable.ParticleRandom1 * 0.0375 + 0.0375" to "variable.particle_random_1 * 0.0375 + 0.0375".
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
 				Changed field "minecraft:particle_lifetime_expression":
 					Changed field "max_lifetime" from "Math.random(0.2, 2)" to "0.2f / (Math.random(0.0, 1.0) * 0.9f + 0.1f)".
-Added particle "bubble_column_bubble":
+Added particle "bubble_column_bubble.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:bubble_column_bubble"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [16, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -214,22 +218,17 @@ Added particle "bubble_column_bubble":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
-			field "description":
-				field "identifier": "minecraft:bubble_column_bubble"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "bubble_column_down":
+Changed particle "bubble_column_down.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(0.05 * variable.ParticleRandom1+0.1)*(variable.ParticleRandom2*0.9+0.2)" to "(0.05 * variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)".
 						Changed vector item 1 from "(0.05*variable.ParticleRandom1+0.1)*(variable.ParticleRandom2*0.9+0.2)" to "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)".
@@ -239,36 +238,40 @@ Changed particle "bubble_column_down":
 						Changed vector item 0 from "0.6 * Math.cos(91.67 * variable.particleage)" to "0.6 * Math.cos(91.67 * variable.particle_age)".
 						Changed vector item 1 from "-1.0 * variable.particleage" to "-1.0 * variable.particle_age".
 						Changed vector item 2 from "0.6 *Math.sin(91.67 * variable.particleage)" to "0.6 *Math.sin(91.67 * variable.particle_age)".
-Changed particle "bubble_column_up":
+Changed particle "bubble_column_up.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(0.05 * variable.ParticleRandom1 + 0.1) * (variable.ParticleRandom2 * 0.9 + 0.2)" to "(0.05 * variable.particle_random_1 + 0.1) * (variable.particle_random_2 * 0.9 + 0.2)".
 						Changed vector item 1 from "(0.05 * variable.ParticleRandom1 + 0.1) * (variable.ParticleRandom2 * 0.9 + 0.2)" to "(0.05 * variable.particle_random_1 + 0.1) * (variable.particle_random_2 * 0.9 + 0.2)".
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-Added particle "cauldron_bubble":
+Added particle "cauldron_bubble.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:cauldron_bubble_particle"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -280,26 +283,25 @@ Added particle "cauldron_bubble":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "cauldron_splash.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:cauldron_bubble_particle"
+				field "identifier": "minecraft:cauldron_splash_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "cauldron_splash":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": ["variable.texture_coord.u", "variable.texture_coord.v"]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -312,39 +314,34 @@ Added particle "cauldron_splash":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
-			field "description":
-				field "identifier": "minecraft:cauldron_splash_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "cauldronspell":
+Changed particle "cauldronspell.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
 				Changed field "minecraft:particle_motion_dynamic":
 					Changed field "linear_acceleration":
 						Changed vector item 0 from "(variable.particlerandom1 * 2 - 1) - (variable.particleage * 0.4)" to "(variable.particle_random_1 * 2 - 1) - (variable.particle_age * 0.4)".
 						Changed vector item 1 from "1 + (0.08 * variable.particleage) - (variable.particleage * 0.4)" to "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4)".
 						Changed vector item 2 from "(variable.particlerandom2 * 2 - 1) - (variable.particleage * 0.4)" to "(variable.particle_random_2 * 2 - 1) - (variable.particle_age * 0.4)".
-Changed particle "crit":
+Changed particle "crit.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "0.10 + variable.ParticleRandom1*0.05" to "0.10 + variable.particle_random_1*0.05".
 						Changed vector item 1 from "0.10 + variable.ParticleRandom1*0.05" to "0.10 + variable.particle_random_1*0.05".
@@ -361,21 +358,25 @@ Changed particle "crit":
 							Removed color ["variable.ParticleRandom1*0.3 + 0.6", "variable.ParticleRandom2*0.3+ 0.6", "variable.ParticleRandom2*0.3+ 0.6", 1.0].
 							Added color ["variable.particle_random_1*0.3 + 0.6", "variable.particle_random_2*0.3+ 0.6", "variable.particle_random_2*0.3+ 0.6", 1.0].
 						Changed field "interpolant" from "variable.ParticleAge/variable.ParticleLifetime" to "variable.particle_age/variable.particle_lifetime".
-Added particle "dolphin_move":
+Added particle "dolphin_move.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:dolphin_move_particle"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -387,12 +388,7 @@ Added particle "dolphin_move":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
-			field "description":
-				field "identifier": "minecraft:dolphin_move_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "end_chest":
+Changed particle "end_chest.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -407,10 +403,10 @@ Changed particle "end_chest":
 						Changed field "uv":
 							Changed vector item 0 from "Math.round(variable.CustomRandom1*8)*8" to "Math.round(variable.custom_random1*8)*8".
 							Unchanged vector item 1: 0
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(variable.ParticleRandom2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.ParticleAge/variable.ParticleLifetime)),2))" to "(variable.particle_random_2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.particle_age/variable.particle_lifetime)),2))".
 						Changed vector item 1 from "(variable.ParticleRandom2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.ParticleAge/variable.ParticleLifetime)),2))" to "(variable.particle_random_2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.particle_age/variable.particle_lifetime)),2))".
@@ -424,17 +420,17 @@ Changed particle "end_chest":
 						Changed vector item 0 from "variable.Alpha = variable.ParticleAge/variable.ParticleLifetime; variable.Distance = (1-(-1*(variable.Alpha)+Math.Pow((variable.Alpha),2)*2)); variable.RandomDirectionX = (Math.Round(variable.CustomRandom3)*2-1); return 0.25*variable.RandomDirectionX + variable.CustomRandom2*variable.RandomDirectionX * variable.Distance;" to "variable.alpha = variable.particle_age/variable.particle_lifetime; variable.distance = (1-(-1*(variable.alpha)+Math.Pow((variable.alpha),2)*2)); variable.random_directionX = (Math.Round(variable.custom_random3)*2-1); return 0.25*variable.random_directionX + variable.custom_random2*variable.random_directionX * variable.distance;".
 						Changed vector item 1 from "1.0 + ((variable.CustomRandom6 - 0.5) * 0.125) * variable.Distance - variable.Alpha" to "1.0 + ((variable.custom_random6 - 0.5) * 0.125) * variable.distance - variable.alpha".
 						Changed vector item 2 from "variable.RandomDirectionZ = (Math.Round(variable.CustomRandom5)*2-1); return 0.25*variable.RandomDirectionZ + variable.CustomRandom4*variable.RandomDirectionZ * variable.Distance;" to "variable.random_directionZ = (Math.Round(variable.custom_random5)*2-1); return 0.25*variable.random_directionZ + variable.custom_random4*variable.random_directionZ * variable.distance;".
-Changed particle "endrod":
+Changed particle "endrod.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(variable.ParticleRandom1 * 0.5f + 0.5f) * 0.2" to "(variable.particle_random_1 * 0.5f + 0.5f) * 0.2".
 						Changed vector item 1 from "(variable.ParticleRandom1 * 0.5f + 0.5f) * 0.2" to "(variable.particle_random_1 * 0.5f + 0.5f) * 0.2".
@@ -443,29 +439,33 @@ Changed particle "endrod":
 						Total color: 1 (+1, -1)
 						Removed color ["variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0153 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0387 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0636 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - 0.60 * ((variable.particleage - (variable.particlelifetime / 2.0)) / (variable.particlelifetime / 2.0)) : 1.0"].
 						Added color ["variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0153 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0387 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0636 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - 0.60 * ((variable.particle_age - (variable.particle_lifetime / 2.0)) / (variable.particle_lifetime / 2.0)) : 1.0"].
-Added particle "evaporation_elephant_toothpaste":
+Added particle "evaporation_elephant_toothpaste.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:elephant_tooth_paste_vapor_particle"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x + Math.random(-0.05, 0.05)", "variable.direction.y + Math.random(-0.05, 0.05)", "variable.direction.z + Math.random(-0.05, 0.05)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": 2
@@ -477,22 +477,17 @@ Added particle "evaporation_elephant_toothpaste":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 4, 0]
 					field "linear_drag_coefficient": 5.25
-			field "description":
-				field "identifier": "minecraft:elephant_tooth_paste_vapor_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "evocation_fang":
+Changed particle "evocation_fang.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "0.10 + variable.ParticleRandom1*0.05" to "0.10 + variable.particle_random_1*0.05".
 						Changed vector item 1 from "0.10 + variable.ParticleRandom1*0.05" to "0.10 + variable.particle_random_1*0.05".
@@ -509,138 +504,195 @@ Changed particle "evocation_fang":
 							Removed color ["variable.ParticleRandom1*0.3 + 0.6", "variable.ParticleRandom2*0.3+ 0.6", "variable.ParticleRandom2*0.3+ 0.6", 1.0].
 							Added color ["variable.particle_random_1*0.3 + 0.6", "variable.particle_random_2*0.3+ 0.6", "variable.particle_random_2*0.3+ 0.6", 1.0].
 						Changed field "interpolant" from "variable.ParticleAge/variable.ParticleLifetime" to "variable.particle_age/variable.particle_lifetime".
-Changed particle "evoker_spell":
+Changed particle "evoker_spell.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 16.
 						Removed field "texturewidth" of 16.
-						Added field "texture_height" of 16.
-						Added field "texture_width" of 16.
-Moved particle "test/test_beziercurve" to "examples/example_beziercurve".
-Changed particle "examples/example_beziercurve":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
 						Removed field "textureheight" of 16.
-						Removed field "texturewidth" of 16.
-						Added field "texture_height" of 16.
 						Added field "texture_width" of 16.
-				Changed field "minecraft:particle_appearance_tinting":
-					Changed field "color":
-						Changed field "interpolant" from "variable.colorcurve" to "variable.color_curve".
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_beziercurve" to "minecraft:example_beziercurve".
-			Changed field "curves":
-				Total curve: 1 (+1, -1)
-				Added curve "variable.color_curve":
-					field "horizontal_range": "variable.particle_lifetime"
-					field "input": "variable.particle_age"
-					field "nodes": [0.0, 0.1, 1.0, 0.8]
+						Added field "texture_height" of 16.
+Added particle "examples/example_beziercurve.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_beziercurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "curves":
+				curve "variable.color_curve":
 					field "type": "bezier"
-				Removed curve "variable.colorcurve":
-					field "horizontal_range": "variable.particlelifetime"
-					field "input": "variable.particleage"
 					field "nodes": [0.0, 0.1, 1.0, 0.8]
-					field "type": "bezier"
-Moved particle "test/test_bounce" to "examples/example_bounce".
-Changed particle "examples/example_bounce":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
-						Added field "texture_width" of 128.
-					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_bounce" to "minecraft:example_bounce".
-Moved particle "test/test_catmullromcurve" to "examples/example_catmullromcurve".
-Changed particle "examples/example_catmullromcurve":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 16.
-						Removed field "texturewidth" of 16.
-						Added field "texture_height" of 16.
-						Added field "texture_width" of 16.
-					Changed field "size":
-						Changed vector item 0 from "variable.sizecurve" to "variable.size_curve".
-						Changed vector item 1 from "variable.sizecurve" to "variable.size_curve".
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_catmullromcurve" to "minecraft:example_catmullromcurve".
-			Changed field "curves":
-				Total curve: 1 (+1, -1)
-				Added curve "variable.size_curve":
-					field "horizontal_range": "variable.particle_lifetime"
 					field "input": "variable.particle_age"
-					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.0, 0.3]
+					field "horizontal_range": "variable.particle_lifetime"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [2, 2]
+						field "uv_size": [1, 1]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "gradient":
+							color: [1, 0, 0, 1]
+							color: [0, 1, 1, 1]
+						field "interpolant": "variable.color_curve"
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+Added particle "examples/example_bounce.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_bounce"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 2
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "offset": ["Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)"]
+					field "direction": "outwards"
+					field "radius": 1
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": 5.0
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": 0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "5"
+				field "minecraft:particle_motion_collision":
+					field "coefficient_of_restitution": 0.5
+					field "collision_drag": 4
+					field "collision_radius": 0.1
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, -9.8, 0]
+Added particle "examples/example_catmullromcurve.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_catmullromcurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "curves":
+				curve "variable.size_curve":
 					field "type": "catmull_rom"
-				Removed curve "variable.sizecurve":
-					field "horizontal_range": "variable.particlelifetime"
-					field "input": "variable.particleage"
 					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.0, 0.3]
-					field "type": "catmull_rom"
-Moved particle "test/test_colorcurve" to "examples/example_colorcurve".
-Changed particle "examples/example_colorcurve":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 16.
-						Removed field "texturewidth" of 16.
-						Added field "texture_height" of 16.
-						Added field "texture_width" of 16.
-				Changed field "minecraft:particle_appearance_tinting":
-					Changed field "color":
-						Changed field "interpolant" from "variable.particleage/variable.particlelifetime" to "variable.particle_age/variable.particle_lifetime".
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_colorcurve" to "minecraft:example_colorcurve".
-Moved particle "test/test_mule" to "examples/example_colorcurve2".
-Changed particle "examples/example_colorcurve2":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_mule" to "minecraft:example_colorcurve2".
-			Changed field "components":
-				Total field: 10 (+1, -1)
-				Changed field "minecraft:emitter_lifetime_once":
-					Changed field "active_time" from 2 to 0.
-				Changed field "minecraft:emitter_shape_sphere":
-					Changed field "radius" from 1 to 0.1.
-					Removed field "offset" of ["Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)"].
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Changed field "uv_size":
-							Changed vector item 0 from 8 to 1.
-							Changed vector item 1 from 8 to 1.
-						Changed field "uv":
-							Changed vector item 0 from 0 to 2.
-							Changed vector item 1 from 16 to 2.
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 16.
-						Added field "texture_width" of 16.
-					Changed field "size":
-						Changed vector item 0 from "0.1" to 0.1.
-						Changed vector item 1 from "0.1" to 0.1.
-					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-				Added field "minecraft:particle_appearance_tinting":
+					field "input": "variable.particle_age"
+					field "horizontal_range": "variable.particle_lifetime"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["variable.size_curve", "variable.size_curve"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [0, 2]
+						field "uv_size": [1, 1]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+Added particle "examples/example_colorcurve.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_colorcurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.1, 0.1]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [2, 2]
+						field "uv_size": [1, 1]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "gradient":
+							color: "#FFFF0000"
+							color: "#00FF00"
+							color: [0, 0, 1]
+							color: [1, 1, 0, 1]
+							color: [1, 0, 1, 1]
+							color: [0, 1, 1, 1]
+							color: [1, 1, 1, 0]
+						field "interpolant": "variable.particle_age/variable.particle_lifetime"
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+Added particle "examples/example_colorcurve2.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_colorcurve2"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.1, 0.1]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "uv": [2, 2]
+						field "uv_size": [1, 1]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting":
 					field "color":
 						field "gradient":
 							value "0.1": "#FFFF0000"
@@ -651,143 +703,166 @@ Changed particle "examples/example_colorcurve2":
 							value "1.7": [0, 1, 1, 1]
 							value "2.2": [1, 1, 1, 0]
 						field "interpolant": "variable.particle_age"
-				Changed field "minecraft:particle_initial_speed" from 5.0 to "Math.random(0.0, 15.0)".
-				Changed field "minecraft:particle_initial_spin":
-					Removed field "rotation_rate" of 0.
-				Changed field "minecraft:particle_lifetime_expression":
-					Changed field "max_lifetime" from "15" to "math.random(1.0, 3.0)".
-				Removed field "minecraft:particle_motion_collision":
-					field "coefficient_of_restitution": 0.5
-					field "collision_drag": 4
-					field "collision_radius": 0.1
-				Changed field "minecraft:particle_motion_dynamic":
-					Changed field "linear_acceleration":
-						Unchanged vector item 0: 0
-						Changed vector item 1 from -9.8 to 2.0.
-						Unchanged vector item 2: 0
-					Added field "linear_drag_coefficient" of 5.
-Moved particle "test/test_combocurve" to "examples/example_combocurve".
-Changed particle "examples/example_combocurve":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
-						Added field "texture_width" of 128.
-					Changed field "size":
-						Changed vector item 0 from "variable.sizecurve" to "variable.size_curve".
-						Changed vector item 1 from "variable.sizecurve" to "variable.size_curve".
-				Changed field "minecraft:particle_appearance_tinting":
-					Changed field "color":
-						Changed field "interpolant" from "variable.colorcurve" to "variable.color_curve".
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_combocurve" to "minecraft:example_combocurve".
-			Changed field "curves":
-				Total curve: 3 (+2, -2)
-				Added curve "variable.color_curve":
-					field "horizontal_range": "variable.particle_lifetime"
-					field "input": "variable.particle_age"
-					field "nodes": [0.0, 0.1, 1.0, 0.8]
-					field "type": "bezier"
-				Removed curve "variable.colorcurve":
-					field "horizontal_range": "variable.particlelifetime"
-					field "input": "variable.particleage"
-					field "nodes": [0.0, 0.1, 1.0, 0.8]
-					field "type": "bezier"
-				Changed curve "variable.rotation_acceleration":
-					Changed field "input" from "variable.particleage" to "variable.particle_age".
-					Changed field "horizontal_range" from "variable.particlelifetime" to "variable.particle_lifetime".
-				Added curve "variable.size_curve":
-					field "horizontal_range": "variable.particle_lifetime"
-					field "input": "variable.particle_age"
-					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.1, 0.3]
-					field "type": "catmull_rom"
-				Removed curve "variable.sizecurve":
-					field "horizontal_range": "variable.particlelifetime"
-					field "input": "variable.particleage"
-					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.1, 0.3]
-					field "type": "catmull_rom"
-Moved particle "test/test_sphere" to "examples/example_directional_sphere".
-Changed particle "examples/example_directional_sphere":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "facing_camera_mode" from "direction" to "direction_z".
-				Changed field "minecraft:particle_motion_parametric":
-					Changed field "rotation" from "variable.ParticleRandom1 * 360 + variable.ParticleAge * 500" to "variable.particle_random_1 * 360 + variable.particle_age * 500".
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_sphere" to "minecraft:example_directional_sphere".
-Added particle "examples/example_enitity_sparkle_box":
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+Added particle "examples/example_combocurve.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_combocurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "curves":
+				curve "variable.color_curve":
+					field "type": "bezier"
+					field "nodes": [0.0, 0.1, 1.0, 0.8]
+					field "input": "variable.particle_age"
+					field "horizontal_range": "variable.particle_lifetime"
+				curve "variable.rotation_acceleration":
+					field "type": "linear"
+					field "nodes": [1000.0, -2000.0, 4000.0, -8000.0, 16000.0, -32000.0]
+					field "input": "variable.particle_age"
+					field "horizontal_range": "variable.particle_lifetime"
+				curve "variable.size_curve":
+					field "type": "catmull_rom"
+					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.1, 0.3]
+					field "input": "variable.particle_age"
+					field "horizontal_range": "variable.particle_lifetime"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["variable.size_curve", "variable.size_curve"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "gradient":
+							color: "#FFFF0000"
+							color: "#00FF00"
+							color: [0, 0, 1]
+							color: [1, 1, 0, 1]
+							color: [1, 0, 1, 1]
+							color: [0, 1, 1, 1]
+							color: [1, 1, 1, 0]
+						field "interpolant": "variable.color_curve"
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+					field "rotation_acceleration": "variable.rotation_acceleration"
+Added particle "examples/example_directional_sphere.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_directional_sphere"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/items/diamond_pickaxe"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 150
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 1
+					field "direction": "outwards"
+					field "surface_only": true
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.2, 0.2]
+					field "facing_camera_mode": "direction_z"
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 10
+				field "minecraft:particle_motion_parametric": field "rotation": "variable.particle_random_1 * 360 + variable.particle_age * 500"
+Added particle "examples/example_enitity_sparkle_box.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_entity_sparkle_box"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_expression": field "activation_expression": 1
 				field "minecraft:emitter_local_space":
 					field "position": true
 					field "rotation": true
 				field "minecraft:emitter_rate_steady":
-					field "max_particles": 100
 					field "spawn_rate": "math.random(30, 60)"
+					field "max_particles": 100
 				field "minecraft:emitter_shape_box":
-					field "direction": "outwards"
-					field "half_dimensions": ["0.5 * variable.entity_scale", "0.5 * variable.entity_scale", "0.75 * variable.entity_scale"]
 					field "offset": [0, "0.5 * variable.entity_scale", "0.2 * variable.entity_scale"]
+					field "half_dimensions": ["0.5 * variable.entity_scale", "0.5 * variable.entity_scale", "0.75 * variable.entity_scale"]
+					field "direction": "outwards"
 					field "surface_only": true
 				field "minecraft:particle_appearance_billboard":
-					field "face_camera_mode": "lookat_xyz"
 					field "size": ["variable.size", "variable.size"]
+					field "face_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
 						field "flipbook":
 							field "base_UV": [8, 12]
-							field "max_frame": 8
 							field "size_UV": [1, 1]
 							field "step_UV": [-1, 0]
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 16
-						field "texture_width": 16
 				field "minecraft:particle_appearance_tinting": field "color": color: [1, 0.85, 0]
 				field "minecraft:particle_initial_speed": 0.0
 				field "minecraft:particle_initialization": field "per_render_expression": "variable.size = (variable.particle_random_1*0.05 + 0.05) * variable.entity_scale;"
 				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(0.5, 0.75)"
+Added particle "examples/example_entity_sparkle_aabb.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:example_entity_sparkle_box"
+				field "identifier": "minecraft:example_entity_sparkle_aabb"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "examples/example_entity_sparkle_aabb":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_expression": field "activation_expression": 1
 				field "minecraft:emitter_local_space": field "velocity": true
 				field "minecraft:emitter_rate_steady":
-					field "max_particles": 100
 					field "spawn_rate": "math.random(30, 60)"
+					field "max_particles": 100
 				field "minecraft:emitter_shape_entity_aabb":
 					field "direction": "outwards"
 					field "surface_only": true
 				field "minecraft:particle_appearance_billboard":
-					field "face_camera_mode": "lookat_xyz"
 					field "size": ["variable.size", "variable.size"]
+					field "face_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
 						field "flipbook":
 							field "base_UV": [8, 12]
-							field "max_frame": 8
 							field "size_UV": [1, 1]
 							field "step_UV": [-1, 0]
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 16
-						field "texture_width": 16
 				field "minecraft:particle_appearance_tinting": field "color": color: [1, 0.85, 0]
 				field "minecraft:particle_initial_speed": 2.0
 				field "minecraft:particle_initialization": field "per_render_expression": "variable.size = variable.particle_random_1*0.05 + 0.05;"
@@ -795,176 +870,300 @@ Added particle "examples/example_entity_sparkle_aabb":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, -9.8, 0]
 					field "linear_drag_coefficient": 0.5
+Added particle "examples/example_flipbook.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:example_entity_sparkle_aabb"
+				field "identifier": "minecraft:example_flipbook"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Moved particle "test/test_flipbook" to "examples/example_flipbook".
-Changed particle "examples/example_flipbook":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Changed field "flipbook":
-							Changed field "base_UV":
-								Unchanged vector item 0: 7
-								Changed vector item 1 from "8 + math.floor(variable.particlerandom1 * 5.999)" to "8 + math.floor(variable.particle_random_1 * 5.999)".
-							Changed field "max_frame" from "8 - math.floor(variable.particlerandom2*4)" to "8 - math.floor(variable.particle_random_2*4)".
-						Removed field "textureheight" of 16.
-						Removed field "texturewidth" of 16.
-						Added field "texture_height" of 16.
-						Added field "texture_width" of 16.
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_flipbook" to "minecraft:example_flipbook".
-Moved particle "test/test_highrestitution" to "examples/example_highrestitution".
-Changed particle "examples/example_highrestitution":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
-						Added field "texture_width" of 128.
-					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_highrestitution" to "minecraft:example_highrestitution".
-Moved particle "test/test_linearcurve" to "examples/example_linearcurve".
-Changed particle "examples/example_linearcurve":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_linearcurve" to "minecraft:example_linearcurve".
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
-						Added field "texture_width" of 128.
-				Changed field "minecraft:particle_appearance_tinting":
-					Changed field "color":
-						Total color: 1 (+1, -1)
-						Removed color ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0].
-						Added color ["variable.particle_random_1*0.5", "variable.particle_random_1*0.5", "variable.particle_random_1*0.5", 1.0].
-			Changed field "curves":
-				Changed curve "variable.rotation_acceleration":
-					Changed field "input" from "variable.particleage" to "variable.particle_age".
-					Changed field "horizontal_range" from "variable.particlelifetime" to "variable.particle_lifetime".
-Moved particle "test/test_smoke_puff" to "examples/example_smoke_puff".
-Changed particle "examples/example_smoke_puff":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_smoke_puff" to "minecraft:example_smoke_puff".
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
-						Added field "texture_width" of 128.
-					Changed field "size":
-						Changed vector item 0 from "0.1 + variable.ParticleAge * 0.3f" to "0.1 + variable.particle_age * 0.3f".
-						Changed vector item 1 from "0.1 + variable.ParticleAge * 0.3f" to "0.1 + variable.particle_age * 0.3f".
-				Changed field "minecraft:particle_appearance_tinting":
-					Changed field "color":
-						Total color: 1 (+1, -1)
-						Removed color ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0].
-						Added color ["variable.particle_random_1*0.5", "variable.particle_random_1*0.5", "variable.particle_random_1*0.5", 1.0].
-Moved particle "test/test_spiral" to "examples/example_spiral".
-Changed particle "examples/example_spiral":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_spiral" to "minecraft:example_spiral".
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
-						Added field "texture_width" of 128.
-				Changed field "minecraft:particle_appearance_tinting":
-					Changed field "color":
-						Total color: 1 (+1, -1)
-						Removed color ["variable.ParticleRandom1", "0", "variable.ParticleRandom2", 1.0].
-						Added color ["variable.particle_random_1", "0", "variable.particle_random_2", 1.0].
-				Changed field "minecraft:particle_motion_parametric":
-					Changed field "relative_position":
-						Changed vector item 0 from "Math.cos((variable.ParticleAge * 360) + (variable.ParticleRandom1 * 360))" to "Math.cos((variable.particle_age * 360) + (variable.particle_random_1 * 360))".
-						Changed vector item 1 from "variable.ParticleAge*3" to "variable.particle_age*3".
-						Changed vector item 2 from "Math.sin((variable.ParticleAge * 360) + (variable.ParticleRandom1 * 360))" to "Math.sin((variable.particle_age * 360) + (variable.particle_random_1 * 360))".
-Moved particle "test/test_vertexrandom" to "examples/example_vertexrandom".
-Changed particle "examples/example_vertexrandom":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_vertexrandom" to "minecraft:example_vertexrandom".
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
-						Added field "texture_width" of 128.
-					Changed field "size":
-						Changed vector item 0 from "0.1 + variable.ParticleAge * 0.3f" to "0.1 + variable.particle_age * 0.3f".
-						Changed vector item 1 from "0.1 + variable.ParticleAge * 0.3f" to "0.1 + variable.particle_age * 0.3f".
-				Changed field "minecraft:particle_appearance_tinting":
-					Changed field "color":
-						Total color: 1 (+1, -1)
-						Removed color ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0].
-						Added color ["variable.particle_random_1*0.5", "variable.particle_random_1*0.5", "variable.particle_random_1*0.5", 1.0].
-Moved particle "test/test_watertest" to "examples/example_watertest".
-Changed particle "examples/example_watertest":
-	Changed resource pack "core":
-		Changed field "format_version" from "1.8.0" to "1.10.0".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "uv":
-						Removed field "textureheight" of 128.
-						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
-						Added field "texture_width" of 128.
-					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-			Changed field "description":
-				Changed field "identifier" from "minecraft:test_watertest" to "minecraft:example_watertest".
-Added particle "explosion_cauldron":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 16
+						field "texture_height": 16
+						field "flipbook":
+							field "base_UV": [7, "8 + math.floor(variable.particle_random_1 * 5.999)"]
+							field "size_UV": [1, 1]
+							field "step_UV": [-1, 0]
+							field "frames_per_second": 8
+							field "max_frame": "8 - math.floor(variable.particle_random_2*4)"
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: [1, 1, 1, 1]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+Added particle "examples/example_highrestitution.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_highrestitution"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 2
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+					field "surface_only": true
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": 5.0
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": 0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0) + 10"
+				field "minecraft:particle_motion_collision":
+					field "coefficient_of_restitution": 1.1
+					field "collision_drag": 1
+					field "collision_radius": 0.1
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, -9.8, 0]
+					field "linear_drag_coefficient": 0.1
+Added particle "examples/example_linearcurve.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_linearcurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "curves":
+				curve "variable.rotation_acceleration":
+					field "type": "linear"
+					field "nodes": [1000.0, -2000.0, 4000.0, -8000.0, 16000.0, -32000.0]
+					field "input": "variable.particle_age"
+					field "horizontal_range": "variable.particle_lifetime"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.2, 0.2]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1*0.5", "variable.particle_random_1*0.5", "variable.particle_random_1*0.5", 1.0]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+					field "rotation_acceleration": "variable.rotation_acceleration"
+Added particle "examples/example_smoke_puff.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_smoke_puff"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1 + variable.particle_age * 0.3f", "0.1 + variable.particle_age * 0.3f"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1*0.5", "variable.particle_random_1*0.5", "variable.particle_random_1*0.5", 1.0]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": "Math.random(-300, 300)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+					field "rotation_drag_coefficient": 0.3
+Added particle "examples/example_spiral.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_spiral"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 10
+				field "minecraft:emitter_rate_steady":
+					field "spawn_rate": "Math.random(10, 30)"
+					field "max_particles": 100
+				field "minecraft:emitter_shape_point": empty
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.1, 0.1]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [0, 80]
+							field "size_UV": [8, 8]
+							field "step_UV": [8, 0]
+							field "frames_per_second": 1
+							field "max_frame": 16
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1", "0", "variable.particle_random_2", 1.0]
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0)"
+				field "minecraft:particle_motion_parametric": field "relative_position": ["Math.cos((variable.particle_age * 360) + (variable.particle_random_1 * 360))", "variable.particle_age*3", "Math.sin((variable.particle_age * 360) + (variable.particle_random_1 * 360))"]
+Added particle "examples/example_vertexrandom.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_vertexrandom"
+				field "basic_render_parameters":
+					field "material": "particles_random_test"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1 + variable.particle_age * 0.3f", "0.1 + variable.particle_age * 0.3f"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1*0.5", "variable.particle_random_1*0.5", "variable.particle_random_1*0.5", 1.0]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": "Math.random(-300, 300)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+					field "rotation_drag_coefficient": 0.3
+Added particle "examples/example_watertest.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:example_watertest"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 2
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "offset": ["Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)"]
+					field "direction": "outwards"
+					field "radius": 1
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_expire_if_not_in_blocks":
+					block: "minecraft:water"
+					block: "minecraft:flowing_water"
+				field "minecraft:particle_initial_speed": 5.0
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": 0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "15"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 9.8, 0]
+					field "linear_drag": 5
+Added particle "explosion_cauldron.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:cauldron_explosion_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 10
 				field "minecraft:emitter_shape_custom":
-					field "direction": ["Math.random(0, 0.02)", "Math.random(0, 0.02)", "Math.random(0, 0.02)"]
 					field "offset": ["Math.random(-0.5, 0.5)", 0, "Math.random(-0.5, 0.5)"]
+					field "direction": ["Math.random(0, 0.02)", "Math.random(0, 0.02)", "Math.random(0, 0.02)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": 2
@@ -976,34 +1175,33 @@ Added particle "explosion_cauldron":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 4, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "explosion_death.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:cauldron_explosion_emitter"
+				field "identifier": "minecraft:death_explosion_emitter"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "explosion_death":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 20
 				field "minecraft:emitter_shape_custom": field "offset": ["variable.aabb.x * Math.random(0, 2) - variable.aabb.x", "variable.aabb.y * Math.random(0, 1)", "variable.aabb.z * Math.random(0, 2) - variable.aabb.z"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": ["Math.random(0, 0.4) + Math.random(-1, 1)", "Math.random(0, 0.4) + Math.random(-1, 1)", "Math.random(0, 0.4) + Math.random(-1, 1)"]
@@ -1015,34 +1213,33 @@ Added particle "explosion_death":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 2, 0]
 					field "linear_drag_coefficient": 2.5
+Added particle "explosion_egg_destroy.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:death_explosion_emitter"
+				field "identifier": "minecraft:egg_destroy_emitter"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "explosion_egg_destroy":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 20
 				field "minecraft:emitter_shape_point": field "direction": ["variable.emitter_random_1 * 0.02 + Math.random(-0.05, 0.05)", "variable.emitter_random_2 * 0.02 + Math.random(-0.05, 0.05)", "variable.emitter_random_3 * 0.02 + Math.random(-0.05, 0.05)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": 7
@@ -1054,34 +1251,33 @@ Added particle "explosion_egg_destroy":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 4, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "explosion_eyeofender_death.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:egg_destroy_emitter"
+				field "identifier": "minecraft:eyeofender_death_explode_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "explosion_eyeofender_death":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": empty
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0.0]
 				field "minecraft:particle_initial_speed": ["variable.velocity.x * 20 + Math.random(-1, 1)", "variable.velocity.y * 20 + Math.random(-1, 1)", "variable.velocity.z * 20 + Math.random(-1, 1)"]
@@ -1093,34 +1289,33 @@ Added particle "explosion_eyeofender_death":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 2, 0]
 					field "linear_drag_coefficient": 2.5
+Added particle "explosion_labtable_fire.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:eyeofender_death_explode_particle"
+				field "identifier": "minecraft:misc_fire_vapor_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "explosion_labtable_fire":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x + Math.random(-0.05, 0.05)", "variable.direction.y + Math.random(-0.05, 0.05)", "variable.direction.z + Math.random(-0.05, 0.05)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": 2
@@ -1132,34 +1327,33 @@ Added particle "explosion_labtable_fire":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 4, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "explosion_level.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:misc_fire_vapor_particle"
+				field "identifier": "minecraft:explosion_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "explosion_level":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": empty
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0.0]
 				field "minecraft:particle_initial_speed": ["variable.velocity.x * 10 + Math.random(-1, 1)", "variable.velocity.y * 10 + Math.random(-1, 1)", "variable.velocity.z * 10 + Math.random(-1, 1)"]
@@ -1171,57 +1365,25 @@ Added particle "explosion_level":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 2, 0]
 					field "linear_drag_coefficient": 2.5
-			field "description":
-				field "identifier": "minecraft:explosion_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Added particle "eye_of_ender_bubble":
+Added particle "eye_of_ender_bubble.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
-			field "components":
-				field "minecraft:emitter_lifetime_once": empty
-				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
-				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
-					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
-					field "uv":
-						field "texture_height": 128
-						field "texture_width": 128
-						field "uv": [0, 16]
-						field "uv_size": [8, 8]
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_expire_if_not_in_blocks":
-					block: "minecraft:water"
-					block: "minecraft:flowing_water"
-					block: "minecraft:bubble_column"
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "2 / ((Math.Random(0.0, 1.0) * 0.8 + 0.2) * 5)"
-				field "minecraft:particle_motion_dynamic":
-					field "linear_acceleration": [0, 0.8, 0]
-					field "linear_drag_coefficient": 5.25
 			field "description":
 				field "identifier": "minecraft:eye_of_ender_bubble_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "fish_hook":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -1233,26 +1395,25 @@ Added particle "fish_hook":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "fish_hook.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
 				field "identifier": "minecraft:fish_hook_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "fish_pos":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -1264,26 +1425,25 @@ Added particle "fish_pos":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "fish_pos.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
 				field "identifier": "minecraft:fish_pos_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "guardian_attack":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02"]
+				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -1295,26 +1455,25 @@ Added particle "guardian_attack":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "guardian_attack.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
 				field "identifier": "minecraft:guardian_attack_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "guardian_water_move":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -1326,49 +1485,78 @@ Added particle "guardian_water_move":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "guardian_water_move.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
 				field "identifier": "minecraft:guardian_water_move_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Changed particle "heart":
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_expire_if_not_in_blocks":
+					block: "minecraft:water"
+					block: "minecraft:flowing_water"
+					block: "minecraft:bubble_column"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "2 / ((Math.Random(0.0, 1.0) * 0.8 + 0.2) * 5)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 0.8, 0]
+					field "linear_drag_coefficient": 5.25
+Changed particle "heart.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(0.2 + variable.ParticleRandom1*0.1)" to "(0.2 + variable.particle_random_1*0.1)".
 						Changed vector item 1 from "(0.2 + variable.ParticleRandom1*0.1)" to "(0.2 + variable.particle_random_1*0.1)".
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-Added particle "ice_evaporation":
+Added particle "ice_evaporation.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:ice_evaporation_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 5
 				field "minecraft:emitter_shape_custom": field "offset": ["Math.random(0, 1)", "Math.random(0, 1)", "Math.random(0, 1)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": ["Math.random(-0.25, 0.25)", "0.6", "Math.random(-0.25, 0.25)"]
@@ -1378,16 +1566,15 @@ Added particle "ice_evaporation":
 					field "collision_drag": 10.0
 					field "collision_radius": 0.1
 				field "minecraft:particle_motion_dynamic": empty
+Added particle "ink.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:ice_evaporation_emitter"
+				field "identifier": "minecraft:ink_emitter"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "ink":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_expression":
 					field "activation_expression": "(variable.emitter_age > 0.45 ? 1.0 : 0.0)"
@@ -1395,46 +1582,41 @@ Added particle "ink":
 				field "minecraft:emitter_rate_instant": field "num_particles": "variable.particlecount"
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction_vector.x + Math.random(0, 1) * variable.aabb_dimension.x * 2 - variable.aabb_dimension.x", "variable.direction_vector.y + 0.5 + Math.random(0, 1) * variable.aabb_dimension.y", "variable.direction_vector.z + Math.random(0, 1) * variable.aabb_dimension.x * 2 - variable.aabb_dimension.x"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "rotate_xyz"
 					field "size": ["variable.particlesize", "variable.particlesize"]
+					field "facing_camera_mode": "rotate_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["Math.random(0, 0.05)", "Math.random(0, 0.05)", "Math.random(0, 0.05)", 1.0]
 				field "minecraft:particle_initial_speed": "(1.0 + Math.random(0, 1) + Math.random(0, 1))"
 				field "minecraft:particle_lifetime_expression": field "max_lifetime": "(variable.particlesize * 4) / (Math.random(0.2, 1))"
 				field "minecraft:particle_motion_collision":
-					field "coefficient_of_restitution": 0.0
 					field "collision_drag": 4.0
+					field "coefficient_of_restitution": 0.0
 					field "collision_radius": 0.1
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0.0, "variable.is_outside_water * (-3)", 0.0]
 					field "linear_drag_coefficient": 1.5
-			field "description":
-				field "identifier": "minecraft:ink_emitter"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "lava_drip":
+Changed particle "lava_drip.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 				Changed field "minecraft:particle_appearance_tinting":
 					Changed field "color":
 						Total color: 1 (+1, -1)
@@ -1442,46 +1624,50 @@ Changed particle "lava_drip":
 						Added color [1.0, "0.8 / (variable.stuck_time - (variable.stuck_time-variable.particle_age) + 0.8)", "0.2 / (variable.stuck_time - (variable.stuck_time-variable.particle_age) + 0.4)", 1.0].
 				Changed field "minecraft:particle_motion_dynamic":
 					Changed field "linear_drag_coefficient" from "variable.StuckTime = 2.0; return variable.ParticleAge < variable.StuckTime ? 277 : 0.01" to "variable.stuck_time = 2.0; return variable.particle_age < variable.stuck_time ? 277 : 0.01;".
-Changed particle "magnesium_salts":
+Changed particle "magnesium_salts.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
 				Changed field "minecraft:particle_motion_dynamic":
 					Changed field "linear_acceleration":
 						Changed vector item 0 from "(variable.particlerandom1 * 2 - 1) - (variable.particleage * 0.4)" to "(variable.particle_random_1 * 2 - 1) - (variable.particle_age * 0.4)".
 						Changed vector item 1 from "1 + (0.08 * variable.particleage) - (variable.particleage * 0.4)" to "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4)".
 						Changed vector item 2 from "(variable.particlerandom2 * 2 - 1) - (variable.particleage * 0.4)" to "(variable.particle_random_2 * 2 - 1) - (variable.particle_age * 0.4)".
-Added particle "mob_block_spawn":
+Added particle "mob_block_spawn.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:mob_block_spawn_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 20
 				field "minecraft:emitter_shape_custom": field "offset": ["variable.aabb.x * Math.random(0, 2) - variable.emitter_random_1 * 0.2 - variable.aabb.x", "variable.aabb.y * Math.random(0, 1) - variable.emitter_random_2 * 0.2", "variable.aabb.z * Math.random(0, 2) - variable.emitter_random_3 * 0.2 - variable.aabb.z"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": ["Math.random(-1, 1) + variable.emitter_random_1 * 0.4", "Math.random(-1, 1) + variable.emitter_random_2 * 0.4", "Math.random(-1, 1) + variable.emitter_random_3 * 0.4"]
@@ -1493,12 +1679,7 @@ Added particle "mob_block_spawn":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 2, 0]
 					field "linear_drag_coefficient": 2.5
-			field "description":
-				field "identifier": "minecraft:mob_block_spawn_emitter"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "mob_portal":
+Changed particle "mob_portal.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -1513,10 +1694,10 @@ Changed particle "mob_portal":
 						Changed field "uv":
 							Changed vector item 0 from "Math.round(variable.CustomRandom1*8)*8" to "Math.round(variable.custom_random1*8)*8".
 							Unchanged vector item 1: 0
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(variable.ParticleRandom2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.ParticleAge/variable.ParticleLifetime)),2))" to "(variable.particle_random_2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.particle_age/variable.particle_lifetime)),2))".
 						Changed vector item 1 from "(variable.ParticleRandom2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.ParticleAge/variable.ParticleLifetime)),2))" to "(variable.particle_random_2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.particle_age/variable.particle_lifetime)),2))".
@@ -1530,45 +1711,45 @@ Changed particle "mob_portal":
 						Changed vector item 0 from "variable.Alpha = variable.ParticleAge/variable.ParticleLifetime; variable.Distance = (1-(-1*(variable.Alpha)+Math.Pow((variable.Alpha),2)*2)); return ((variable.CustomRandom2 - 0.5) * 2.0) * variable.Distance;" to "variable.alpha = variable.particle_age/variable.particle_lifetime; variable.distance = (1-(-1*(variable.alpha)+Math.Pow((variable.alpha),2)*2)); return ((variable.custom_random2 - 0.5) * 2.0) * variable.distance;".
 						Changed vector item 1 from "1.0 + (variable.CustomRandom3 * -1.0) * variable.Distance - variable.Alpha" to "1.0 + (variable.custom_random3 * -1.0) * variable.distance - variable.alpha".
 						Changed vector item 2 from "((variable.CustomRandom4 - 0.5) * 2.0) * variable.Distance" to "((variable.custom_random4 - 0.5) * 2.0) * variable.distance".
-Changed particle "mobflame":
+Changed particle "mobflame.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 32.
 						Removed field "texturewidth" of 1.
-						Added field "texture_height" of 32.
+						Removed field "textureheight" of 32.
 						Added field "texture_width" of 1.
-Changed particle "mobspell":
+						Added field "texture_height" of 32.
+Changed particle "mobspell.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
 				Changed field "minecraft:particle_motion_dynamic":
 					Changed field "linear_acceleration":
 						Changed vector item 0 from "(variable.particlerandom1 * 2 - 1)*0.5 - (variable.particleage * 0.4) * 2.5" to "(variable.particle_random_1 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5".
 						Changed vector item 1 from "1 + (0.08 * variable.particleage) - (variable.particleage * 0.4) * 1.5" to "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4) * 1.5".
 						Changed vector item 2 from "(variable.particlerandom2 * 2 - 1)*0.5 - (variable.particleage * 0.4) * 2.5" to "(variable.particle_random_2 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5".
-Changed particle "note":
+Changed particle "note.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(0.1 + variable.ParticleRandom1*0.05)" to "(0.1 + variable.particle_random_1*0.05)".
 						Changed vector item 1 from "(0.1 + variable.ParticleRandom1*0.05)" to "(0.1 + variable.particle_random_1*0.05)".
@@ -1578,7 +1759,7 @@ Changed particle "note":
 						Total color: 1 (+1, -1)
 						Removed color ["Math.sin(variable.ParticleRandom2*120) * 0.65 + 0.35", "Math.sin((variable.ParticleRandom2+1.0f)*120) * 0.65 + 0.35", "Math.sin((variable.ParticleRandom2+2.0f)*120) * 0.65 + 0.35", "variable.color.a"].
 						Added color ["Math.sin(variable.particle_random_2*120) * 0.65 + 0.35", "Math.sin((variable.particle_random_2+1.0f)*120) * 0.65 + 0.35", "Math.sin((variable.particle_random_2+2.0f)*120) * 0.65 + 0.35", 1].
-Changed particle "portal_directional":
+Changed particle "portal_directional.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -1588,10 +1769,10 @@ Changed particle "portal_directional":
 						Changed field "uv":
 							Changed vector item 0 from "Math.round(variable.ParticleRandom1*8)*8" to "Math.round(variable.particle_random_1*8)*8".
 							Unchanged vector item 1: 0
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(variable.ParticleRandom2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.ParticleAge/variable.ParticleLifetime)),2))" to "(variable.particle_random_2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.particle_age/variable.particle_lifetime)),2))".
 						Changed vector item 1 from "(variable.ParticleRandom2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.ParticleAge/variable.ParticleLifetime)),2))" to "(variable.particle_random_2 * 0.02 + 0.05) * (1 - Math.Pow((1-(variable.particle_age/variable.particle_lifetime)),2))".
@@ -1605,11 +1786,15 @@ Changed particle "portal_directional":
 						Changed vector item 0 from "variable.Alpha = variable.ParticleAge/variable.ParticleLifetime; variable.Distance = (1-(-1*(variable.Alpha)+Math.Pow((variable.Alpha),2)*2)); return variable.direction.x * variable.Distance;" to "variable.alpha = variable.particle_age/variable.particle_lifetime; variable.distance = (1-(-1*(variable.alpha)+Math.Pow((variable.alpha),2)*2)); return variable.direction.x * variable.distance;".
 						Changed vector item 1 from "variable.direction.y * variable.Distance - variable.Alpha" to "variable.direction.y * variable.distance - variable.alpha".
 						Changed vector item 2 from "variable.direction.z * variable.Distance" to "variable.direction.z * variable.distance".
-Added particle "portal_east_west":
+Added particle "portal_east_west.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:portal_east_west"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_expression":
 					field "activation_expression": 1
@@ -1619,11 +1804,11 @@ Added particle "portal_east_west":
 					field "direction": ["variable.particle_random_2 < 0.5 ? math.random(-1.5, -0.5) : math.random(0.5, 1.5)", -1, 0]
 					field "offset": ["variable.particle_random_2 < 0.5 ? math.random(-2.5, -1.5) : math.random(1.5, 2.5)", "math.random(-0.5f, 0.5f) + 1.25", "math.random(-0.5f, 0.5f)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.size", "variable.size"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": ["Math.round(variable.particle_random_3*8)*8", 0]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.color_base", "variable.color_base * 0.3", "variable.color_base * 0.9", 1.0]
@@ -1632,16 +1817,15 @@ Added particle "portal_east_west":
 				field "minecraft:particle_kill_plane": [1, 0, 0, 0]
 				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.Random(2.0,2.45)"
 				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["variable.particle_random_2 < 0.5 ? 1.5 : -1.5", 0, 0]
+Added particle "portal_north_south.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:portal_east_west"
+				field "identifier": "minecraft:portal_north_south"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "portal_north_south":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_expression":
 					field "activation_expression": 1
@@ -1651,11 +1835,11 @@ Added particle "portal_north_south":
 					field "direction": [0, -1, "variable.particle_random_2 < 0.5 ? math.random(-1.5, -0.5) : math.random(0.5, 1.5)"]
 					field "offset": ["math.random(-0.5f, 0.5f)", "math.random(-0.5f, 0.5f) + 1.25", "variable.particle_random_2 < 0.5 ? math.random(-2.5, -1.5) : math.random(1.5, 2.5)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.size", "variable.size"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": ["Math.round(variable.particle_random_3*8)*8", 0]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.color_base", "variable.color_base * 0.3", "variable.color_base * 0.9", 1.0]
@@ -1664,12 +1848,7 @@ Added particle "portal_north_south":
 				field "minecraft:particle_kill_plane": [0, 0, 1, 0]
 				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.Random(2.0,2.45)"
 				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, 0, "variable.particle_random_2 < 0.5 ? 1.5 : -1.5"]
-			field "description":
-				field "identifier": "minecraft:portal_north_south"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "rain_splash":
+Changed particle "rain_splash.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -1679,26 +1858,26 @@ Changed particle "rain_splash":
 						Changed field "uv":
 							Changed vector item 0 from "24+Math.Round(variable.ParticleRandom1*3.0)*8" to "24+Math.Round(variable.particle_random_1*3.0)*8".
 							Unchanged vector item 1: 8
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 				Changed field "minecraft:particle_motion_dynamic":
 					Changed field "linear_acceleration":
 						Unchanged vector item 0: 0.0
 						Changed vector item 1 from "30.0 + variable.ParticleRandom2*60.0 - variable.ParticleAge*480.0" to "30.0 + variable.particle_random_2*60.0 - variable.particle_age*480.0".
 						Unchanged vector item 2: 0.0
-Changed particle "shulker_bullet":
+Changed particle "shulker_bullet.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(variable.ParticleRandom1 * 0.5f + 0.5f) * 0.2" to "(variable.particle_random_1 * 0.5f + 0.5f) * 0.2".
 						Changed vector item 1 from "(variable.ParticleRandom1 * 0.5f + 0.5f) * 0.2" to "(variable.particle_random_1 * 0.5f + 0.5f) * 0.2".
@@ -1707,31 +1886,35 @@ Changed particle "shulker_bullet":
 						Total color: 1 (+1, -1)
 						Removed color ["variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0153 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0387 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - (0.0636 * (1 - Math.pow(0.7, variable.particleage)) / (1 - 0.7)) : 1.0", "variable.particleage > (variable.particlelifetime / 2.0) ? 1 - 0.60 * ((variable.particleage - (variable.particlelifetime / 2.0)) / (variable.particlelifetime / 2.0)) : 1.0"].
 						Added color ["variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0153 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0387 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - (0.0636 * (1 - Math.pow(0.7, variable.particle_age)) / (1 - 0.7)) : 1.0", "variable.particle_age > (variable.particle_lifetime / 2.0) ? 1 - 0.60 * ((variable.particle_age - (variable.particle_lifetime / 2.0)) / (variable.particle_lifetime / 2.0)) : 1.0"].
-Added particle "silverfish_grief":
+Added particle "silverfish_grief.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:silverfish_grief_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 20
 				field "minecraft:emitter_shape_custom":
-					field "direction": ["Math.random(0, 0.02)", "Math.random(0, 0.02)", "Math.random(0, 0.02)"]
 					field "offset": ["variable.aabb.x * Math.random(0, 2) - Math.random(0, 0.2) - variable.aabb.x", "variable.aabb.y * Math.random(0, 1) - Math.random(0, 0.2)", "variable.aabb.z * Math.random(0, 2) - Math.random(0, 0.2) - variable.aabb.z"]
+					field "direction": ["Math.random(0, 0.02)", "Math.random(0, 0.02)", "Math.random(0, 0.02)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": 2
@@ -1743,12 +1926,7 @@ Added particle "silverfish_grief":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 4, 0]
 					field "linear_drag_coefficient": 5.25
-			field "description":
-				field "identifier": "minecraft:silverfish_grief_emitter"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "splashpotionspell":
+Changed particle "splashpotionspell.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -1765,10 +1943,10 @@ Changed particle "splashpotionspell":
 						Changed vector item 2 from "(variable.isvertical > 0 ? 0.15 : 1.0) * Math.random(-1,1)" to "(variable.is_vertical > 0 ? 0.15 : 1.0) * Math.random(-1,1)".
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
 				Changed field "minecraft:particle_appearance_tinting":
 					Changed field "color":
@@ -1781,52 +1959,25 @@ Changed particle "splashpotionspell":
 						Changed vector item 0 from "(variable.particlerandom1 * 2 - 1) * variable.splashpower * (variable.isvertical > 0 ? 0.2 : 0.5) * 2.5" to "(variable.particle_random_1 * 2 - 1) * variable.splash_power * (variable.is_vertical > 0 ? 0.2 : 0.5) * 2.5".
 						Changed vector item 1 from "(-0.1 * variable.splashpower + 1) * (variable.isvertical > 0 ? 0.9 : 1.3) * 2.5" to "(-0.1 * variable.splash_power + 1) * (variable.is_vertical > 0 ? 0.9 : 1.3) * 2.5".
 						Changed vector item 2 from "(variable.particlerandom2 * 2 - 1) * variable.splashpower * (variable.isvertical > 0 ? 0.2 : 0.5) * 2.5" to "(variable.particle_random_2 * 2 - 1) * variable.splash_power * (variable.is_vertical > 0 ? 0.2 : 0.5) * 2.5".
-Added particle "sponge_absorb_bubble":
+Added particle "sponge_absorb_bubble.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
-			field "components":
-				field "minecraft:emitter_lifetime_once": empty
-				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
-				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
-					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
-					field "uv":
-						field "texture_height": 128
-						field "texture_width": 128
-						field "uv": [0, 16]
-						field "uv_size": [8, 8]
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_expire_if_not_in_blocks":
-					block: "minecraft:water"
-					block: "minecraft:flowing_water"
-					block: "minecraft:bubble_column"
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "2 / ((Math.Random(0.0, 1.0) * 0.8 + 0.2) * 5)"
-				field "minecraft:particle_motion_dynamic":
-					field "linear_acceleration": [0, 0.8, 0]
-					field "linear_drag_coefficient": 5.25
 			field "description":
 				field "identifier": "minecraft:sponge_absorb_water_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "squid_flee":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
-				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02"]
+				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -1838,26 +1989,55 @@ Added particle "squid_flee":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "squid_flee.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
 				field "identifier": "minecraft:squid_flee_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "squid_ink_bubble":
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_point": field "direction": ["Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02", "Math.random(-1, 1) * 0.02"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_expire_if_not_in_blocks":
+					block: "minecraft:water"
+					block: "minecraft:flowing_water"
+					block: "minecraft:bubble_column"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "2 / ((Math.Random(0.0, 1.0) * 0.8 + 0.2) * 5)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 0.8, 0]
+					field "linear_drag_coefficient": 5.25
+Added particle "squid_ink_bubble.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:squid_ink_bubble"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [16, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -1871,26 +2051,25 @@ Added particle "squid_ink_bubble":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
+Added particle "squid_move.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:squid_ink_bubble"
+				field "identifier": "minecraft:squid_move_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "squid_move":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [16, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -1903,22 +2082,556 @@ Added particle "squid_move":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
+Removed particle "test/test_beziercurve.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "curves":
+				curve "variable.colorcurve":
+					field "type": "bezier"
+					field "nodes": [0.0, 0.1, 1.0, 0.8]
+					field "input": "variable.particleage"
+					field "horizontal_range": "variable.particlelifetime"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 16
+						field "textureheight": 16
+						field "uv": [2, 2]
+						field "uv_size": [1, 1]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "gradient":
+							color: [1, 0, 0, 1]
+							color: [0, 1, 1, 1]
+						field "interpolant": "variable.colorcurve"
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
 			field "description":
-				field "identifier": "minecraft:squid_move_particle"
+				field "identifier": "minecraft:test_beziercurve"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Changed particle "totem":
+Removed particle "test/test_bounce.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 2
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "offset": ["Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)"]
+					field "direction": "outwards"
+					field "radius": 1
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "rotate_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": 5.0
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": 0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "5"
+				field "minecraft:particle_motion_collision":
+					field "coefficient_of_restitution": 0.5
+					field "collision_drag": 4
+					field "collision_radius": 0.1
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, -9.8, 0]
+			field "description":
+				field "identifier": "minecraft:test_bounce"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_catmullromcurve.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "curves":
+				curve "variable.sizecurve":
+					field "type": "catmull_rom"
+					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.0, 0.3]
+					field "input": "variable.particleage"
+					field "horizontal_range": "variable.particlelifetime"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["variable.sizecurve", "variable.sizecurve"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 16
+						field "textureheight": 16
+						field "uv": [0, 2]
+						field "uv_size": [1, 1]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+			field "description":
+				field "identifier": "minecraft:test_catmullromcurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_colorcurve.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.1, 0.1]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 16
+						field "textureheight": 16
+						field "uv": [2, 2]
+						field "uv_size": [1, 1]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "gradient":
+							color: "#FFFF0000"
+							color: "#00FF00"
+							color: [0, 0, 1]
+							color: [1, 1, 0, 1]
+							color: [1, 0, 1, 1]
+							color: [0, 1, 1, 1]
+							color: [1, 1, 1, 0]
+						field "interpolant": "variable.particleage/variable.particlelifetime"
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+			field "description":
+				field "identifier": "minecraft:test_colorcurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_combocurve.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "curves":
+				curve "variable.colorcurve":
+					field "type": "bezier"
+					field "nodes": [0.0, 0.1, 1.0, 0.8]
+					field "input": "variable.particleage"
+					field "horizontal_range": "variable.particlelifetime"
+				curve "variable.rotation_acceleration":
+					field "type": "linear"
+					field "nodes": [1000.0, -2000.0, 4000.0, -8000.0, 16000.0, -32000.0]
+					field "input": "variable.particleage"
+					field "horizontal_range": "variable.particlelifetime"
+				curve "variable.sizecurve":
+					field "type": "catmull_rom"
+					field "nodes": [0.25, 0.2, 0.1, 0.3, 0.1, 0.5, 0.1, 0.3]
+					field "input": "variable.particleage"
+					field "horizontal_range": "variable.particlelifetime"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["variable.sizecurve", "variable.sizecurve"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "gradient":
+							color: "#FFFF0000"
+							color: "#00FF00"
+							color: [0, 0, 1]
+							color: [1, 1, 0, 1]
+							color: [1, 0, 1, 1]
+							color: [0, 1, 1, 1]
+							color: [1, 1, 1, 0]
+						field "interpolant": "variable.colorcurve"
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+					field "rotation_acceleration": "variable.rotation_acceleration"
+			field "description":
+				field "identifier": "minecraft:test_combocurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_flipbook.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 16
+						field "textureheight": 16
+						field "flipbook":
+							field "base_UV": [7, "8 + math.floor(variable.particlerandom1 * 5.999)"]
+							field "size_UV": [1, 1]
+							field "step_UV": [-1, 0]
+							field "frames_per_second": 8
+							field "max_frame": "8 - math.floor(variable.particlerandom2*4)"
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: [1, 1, 1, 1]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+			field "description":
+				field "identifier": "minecraft:test_flipbook"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_highrestitution.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 2
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+					field "surface_only": true
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "rotate_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": 5.0
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": 0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0) + 10"
+				field "minecraft:particle_motion_collision":
+					field "coefficient_of_restitution": 1.1
+					field "collision_drag": 1
+					field "collision_radius": 0.1
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, -9.8, 0]
+					field "linear_drag_coefficient": 0.1
+			field "description":
+				field "identifier": "minecraft:test_highrestitution"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_linearcurve.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "curves":
+				curve "variable.rotation_acceleration":
+					field "type": "linear"
+					field "nodes": [1000.0, -2000.0, 4000.0, -8000.0, 16000.0, -32000.0]
+					field "input": "variable.particleage"
+					field "horizontal_range": "variable.particlelifetime"
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.2, 0.2]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin": field "rotation": "Math.random(0, 360)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random(1.0, 3.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+					field "rotation_acceleration": "variable.rotation_acceleration"
+			field "description":
+				field "identifier": "minecraft:test_linearcurve"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_mule.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 2
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "offset": ["Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)"]
+					field "direction": "outwards"
+					field "radius": 1
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "rotate_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_initial_speed": 5.0
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": 0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "15"
+				field "minecraft:particle_motion_collision":
+					field "coefficient_of_restitution": 0.5
+					field "collision_drag": 4
+					field "collision_radius": 0.1
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": [0, -9.8, 0]
+			field "description":
+				field "identifier": "minecraft:test_mule"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_smoke_puff.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1 + variable.ParticleAge * 0.3f", "0.1 + variable.ParticleAge * 0.3f"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": "Math.random(-300, 300)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+					field "rotation_drag_coefficient": 0.3
+			field "description":
+				field "identifier": "minecraft:test_smoke_puff"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_sphere.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 150
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 1
+					field "direction": "outwards"
+					field "surface_only": true
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.2, 0.2]
+					field "facing_camera_mode": "direction"
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": 10
+				field "minecraft:particle_motion_parametric": field "rotation": "variable.ParticleRandom1 * 360 + variable.ParticleAge * 500"
+			field "description":
+				field "identifier": "minecraft:test_sphere"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/items/diamond_pickaxe"
+Removed particle "test/test_spiral.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 10
+				field "minecraft:emitter_rate_steady":
+					field "spawn_rate": "Math.random(10, 30)"
+					field "max_particles": 100
+				field "minecraft:emitter_shape_point": empty
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.1, 0.1]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "flipbook":
+							field "base_UV": [0, 80]
+							field "size_UV": [8, 8]
+							field "step_UV": [8, 0]
+							field "frames_per_second": 1
+							field "max_frame": 16
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.ParticleRandom1", "0", "variable.ParticleRandom2", 1.0]
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0)"
+				field "minecraft:particle_motion_parametric": field "relative_position": ["Math.cos((variable.ParticleAge * 360) + (variable.ParticleRandom1 * 360))", "variable.ParticleAge*3", "Math.sin((variable.ParticleAge * 360) + (variable.ParticleRandom1 * 360))"]
+			field "description":
+				field "identifier": "minecraft:test_spiral"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_vertexrandom.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 0
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "radius": 0.1
+					field "direction": "outwards"
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1 + variable.ParticleAge * 0.3f", "0.1 + variable.ParticleAge * 0.3f"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", "variable.ParticleRandom1*0.5", 1.0]
+				field "minecraft:particle_initial_speed": "Math.random(0.0, 15.0)"
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": "Math.random(-300, 300)"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(1.0, 4.0)"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2.0, 0]
+					field "linear_drag_coefficient": 5
+					field "rotation_drag_coefficient": 0.3
+			field "description":
+				field "identifier": "minecraft:test_vertexrandom"
+				field "basic_render_parameters":
+					field "material": "particles_random_test"
+					field "texture": "textures/particle/particles"
+Removed particle "test/test_watertest.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "particle_effect":
+			field "components":
+				field "minecraft:emitter_lifetime_once": field "active_time": 2
+				field "minecraft:emitter_rate_instant": field "num_particles": 100
+				field "minecraft:emitter_shape_sphere":
+					field "offset": ["Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)", "Math.random(-0.5, 0.5)"]
+					field "direction": "outwards"
+					field "radius": 1
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["0.1", "0.1"]
+					field "facing_camera_mode": "rotate_xyz"
+					field "uv":
+						field "texturewidth": 128
+						field "textureheight": 128
+						field "uv": [0, 16]
+						field "uv_size": [8, 8]
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_expire_if_not_in_blocks":
+					block: "minecraft:water"
+					block: "minecraft:flowing_water"
+				field "minecraft:particle_initial_speed": 5.0
+				field "minecraft:particle_initial_spin":
+					field "rotation": "Math.random(0, 360)"
+					field "rotation_rate": 0
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "15"
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 9.8, 0]
+					field "linear_drag": 5
+			field "description":
+				field "identifier": "minecraft:test_watertest"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+Changed particle "totem.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "(0.05 + variable.ParticleRandom1*0.05)" to "(0.05 + variable.particle_random_1*0.05)".
 						Changed vector item 1 from "(0.05 + variable.ParticleRandom1*0.05)" to "(0.05 + variable.particle_random_1*0.05)".
@@ -1952,21 +2665,25 @@ Changed particle "totem":
 								Unchanged channel 2: 0
 								Changed channel 3 from "variable.color.a" to 1.
 						Changed field "interpolant" from "variable.ParticleRandom2" to "variable.particle_random_2".
-Added particle "underwater_torch_bubble":
+Added particle "underwater_torch_bubble.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:underwater_torch_particle"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
 				field "minecraft:emitter_rate_instant": field "num_particles": 1
 				field "minecraft:emitter_shape_point": field "direction": ["variable.direction.x * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.y * 0.2 + Math.random(-1, 1) * 0.02", "variable.direction.z * 0.2 + Math.random(-1, 1) * 0.02"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)", "(0.05*variable.particle_random_1+0.1)*(variable.particle_random_2*0.9+0.2)"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [0, 16]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
@@ -1978,97 +2695,57 @@ Added particle "underwater_torch_bubble":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 0.8, 0]
 					field "linear_drag_coefficient": 5.25
-			field "description":
-				field "identifier": "minecraft:underwater_torch_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"
-Changed particle "villager_angry":
+Changed particle "villager_angry.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-Changed particle "villager_happy":
+Changed particle "villager_happy.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
-Added particle "water_evaporation_actor":
+Added particle "water_evaporation_actor.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
 		field "particle_effect":
-			field "components":
-				field "minecraft:emitter_lifetime_once": empty
-				field "minecraft:emitter_rate_instant": field "num_particles": 5
-				field "minecraft:emitter_shape_custom": field "offset": ["variable.aabb.x * Math.random(0, 1)", "variable.aabb.y * Math.random(0, 1)", "variable.aabb.z * Math.random(0, 1)"]
-				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
-					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
-					field "uv":
-						field "flipbook":
-							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
-							field "size_UV": [8, 8]
-							field "step_UV": [-8, 0]
-							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
-				field "minecraft:particle_appearance_lighting": empty
-				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
-				field "minecraft:particle_initial_speed": ["Math.random(-1, 1)", "Math.random(-1, 1)", "Math.random(-1, 1)"]
-				field "minecraft:particle_lifetime_expression": field "max_lifetime": "4 / Math.Random(1, 5) + 0.1"
-				field "minecraft:particle_motion_collision":
-					field "coefficient_of_restitution": 0.1
-					field "collision_drag": 10.0
-					field "collision_radius": 0.1
-				field "minecraft:particle_motion_dynamic":
-					field "linear_acceleration": [0, 2, 0]
-					field "linear_drag_coefficient": 2.5
 			field "description":
 				field "identifier": "minecraft:water_evaporation_actor_emitter"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Added particle "water_evaporation_bucket":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_once": empty
-				field "minecraft:emitter_rate_instant": field "num_particles": 8
-				field "minecraft:emitter_shape_custom": field "offset": ["Math.random(0, 1)", "Math.random(0, 1)", "Math.random(0, 1)"]
+				field "minecraft:emitter_rate_instant": field "num_particles": 5
+				field "minecraft:emitter_shape_custom": field "offset": ["variable.aabb.x * Math.random(0, 1)", "variable.aabb.y * Math.random(0, 1)", "variable.aabb.z * Math.random(0, 1)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
 						field "flipbook":
 							field "base_UV": [56, 0]
-							field "frames_per_second": 8
-							field "loop": false
-							field "max_frame": 8
 							field "size_UV": [8, 8]
 							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
 							field "stretch_to_lifetime": true
-						field "texture_height": 128
-						field "texture_width": 128
+							field "loop": false
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
 				field "minecraft:particle_initial_speed": ["Math.random(-1, 1)", "Math.random(-1, 1)", "Math.random(-1, 1)"]
@@ -2080,12 +2757,45 @@ Added particle "water_evaporation_bucket":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, 2, 0]
 					field "linear_drag_coefficient": 2.5
+Added particle "water_evaporation_bucket.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
 				field "identifier": "minecraft:water_evaporation_bucket_emitter"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-Changed particle "water_splash":
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 8
+				field "minecraft:emitter_shape_custom": field "offset": ["Math.random(0, 1)", "Math.random(0, 1)", "Math.random(0, 1)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": ["variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1", "variable.particle_random_1 * variable.particle_random_2 * 0.6 + 0.1"]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [56, 0]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 8
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", "variable.particle_random_1 * 0.3 + 0.7", 0]
+				field "minecraft:particle_initial_speed": ["Math.random(-1, 1)", "Math.random(-1, 1)", "Math.random(-1, 1)"]
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "4 / Math.Random(1, 5) + 0.1"
+				field "minecraft:particle_motion_collision":
+					field "coefficient_of_restitution": 0.1
+					field "collision_drag": 10.0
+					field "collision_radius": 0.1
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": [0, 2, 0]
+					field "linear_drag_coefficient": 2.5
+Changed particle "water_splash.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -2100,16 +2810,16 @@ Changed particle "water_splash":
 						Changed field "uv":
 							Changed vector item 0 from "24+Math.Round(variable.ParticleRandom1*3.0)*8" to "24+Math.Round(variable.particle_random_1*3.0)*8".
 							Unchanged vector item 1: 8
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 				Changed field "minecraft:particle_motion_dynamic":
 					Changed field "linear_acceleration":
 						Unchanged vector item 0: 6.0
 						Changed vector item 1 from "30.0 + variable.ParticleRandom2*60.0 - variable.ParticleAge*410.0" to "30.0 + variable.particle_random_2*60.0 - variable.particle_age*410.0".
 						Unchanged vector item 2: 6.0
-Changed particle "water_wake":
+Changed particle "water_wake.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
@@ -2124,10 +2834,10 @@ Changed particle "water_wake":
 						Changed field "uv":
 							Changed vector item 0 from "24 + Math.mod(Math.Round(60 - (variable.ParticleLifetime * 20)), 4) * 8" to "24 + Math.mod(Math.Round(60 - (variable.particle_lifetime * 20)), 4) * 8".
 							Unchanged vector item 1: 8
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "size":
 						Changed vector item 0 from "variable.ParticleLife = 3 - variable.ParticleLifetime; return variable.ParticleLife * 0.1" to "variable.particle_life = 3 - variable.particle_lifetime; return variable.particle_life * 0.1;".
 						Changed vector item 1 from "variable.ParticleLife * 0.1" to "variable.particle_life * 0.1".
@@ -2136,17 +2846,17 @@ Changed particle "water_wake":
 						Unchanged vector item 0: 2.0
 						Changed vector item 1 from "variable.ParticleRandom1 * 4 + 2" to "variable.particle_random_1 * 4 + 2".
 						Unchanged vector item 2: 2.0
-Changed particle "wither_boss_invulnerable":
+Changed particle "wither_boss_invulnerable.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
 		Changed field "particle_effect":
 			Changed field "components":
 				Changed field "minecraft:particle_appearance_billboard":
 					Changed field "uv":
-						Removed field "textureheight" of 128.
 						Removed field "texturewidth" of 128.
-						Added field "texture_height" of 128.
+						Removed field "textureheight" of 128.
 						Added field "texture_width" of 128.
+						Added field "texture_height" of 128.
 					Changed field "facing_camera_mode" from "rotate_xyz" to "lookat_xyz".
 				Changed field "minecraft:particle_motion_dynamic":
 					Changed field "linear_acceleration":

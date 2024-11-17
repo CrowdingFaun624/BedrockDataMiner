@@ -1,0 +1,70 @@
+Difference of "shaders_resource_packs" between "a0.14.0_build2" (beta of "a0.14.0") and "a0.14.0_build3" (beta of "a0.14.0").
+
+Changed resource pack "color_texture.fragment":
+	Changed file "vanilla":
+		Total line: 75 (+5, -2)
+		        '''
+		        ...
+		38 38   	if(diffuse.a < 0.5)
+		39 39   #endif
+		40 40   	 	discard;
+		41 41   #endif
+		42 42   
+		   43 + #ifdef ENABLE_VERTEX_TINT_MASK
+		   44 + 	diffuse.rgb = mix(diffuse.rgb, diffuse.rgb*color.rgb, diffuse.a);
+		   45 + 	diffuse.a = (diffuse.a > 0.0) ? 1.0 : 0.0;
+		   46 + #endif
+		   47 + 
+		43 48   #ifdef GLINT
+		   49 + 	vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * GLINT_COLOR;
+		   50 + 	vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * GLINT_COLOR;
+		44    - 	vec4 layer1 = texture2D(TEXTURE_1, layer1UV).rgbr * GLINT_COLOR;
+		45    - 	vec4 layer2 = texture2D(TEXTURE_1, layer2UV).rgbr * GLINT_COLOR;
+		46 51   	vec4 glint = (layer1 + layer2);
+		47 52   
+		48 53   	#ifdef INVENTORY
+		   54 + 		diffuse.rgb = glint.rgb;
+		49    - 		diffuse = glint;
+		50 55   	#else
+		   56 + 		diffuse.rgb = glintBlend(diffuse, glint).rgb;
+		51    - 		diffuse = glintBlend(diffuse, glint);
+		52 57   	#endif
+		53 58   #endif
+		54 59   
+		55 60   #ifdef USE_OVERLAY
+		56 61   	//use either the diffuse or the OVERLAY_COLOR
+		        ...
+		61 66   	//apply fog
+		62 67   	diffuse.rgb = mix( diffuse.rgb, fogColor.rgb, fogColor.a );
+		63 68   #endif
+		64 69   
+		65 70   #ifdef ENABLE_VERTEX_TINT_MASK
+		66    - 	diffuse.rgb = mix(diffuse.rgb, diffuse.rgb*color.rgb, diffuse.a);
+		67    - 	diffuse.a = (diffuse.a > 0.0) ? 1.0 : 0.0;
+		68 71   	gl_FragColor = diffuse;
+		69 72   #else
+		70 73   	gl_FragColor = diffuse * color;
+		71 74   #endif
+		72 75   }
+		        '''
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 89 (+0, -0)
+		        '''
+		        ...
+		75 75   	//apply fog
+		76 76   	color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+		77 77   
+		78 78   #ifdef GLINT
+		79 79   	// Applies color mask to glint texture instead and blends with original color
+		   80 + 	vec4 layer1 = texture2D(TEXTURE_1, fract(layer1UV)).rgbr * glintColor;
+		   81 + 	vec4 layer2 = texture2D(TEXTURE_1, fract(layer2UV)).rgbr * glintColor;
+		80    - 	vec4 layer1 = texture2D(TEXTURE_1, layer1UV).rgbr * glintColor;
+		81    - 	vec4 layer2 = texture2D(TEXTURE_1, layer2UV).rgbr * glintColor;
+		82 82   	vec4 glint = (layer1 + layer2) * tileLightColor;
+		83 83   
+		84 84   	color = glintBlend(color, glint);
+		85 85   #endif
+		86 86   
+		        ...
+		        '''

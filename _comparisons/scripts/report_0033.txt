@@ -1,0 +1,62 @@
+Difference of "scripts" between "1.18.20.21" (beta of "1.18.30") and "1.18.20.23" (beta of "1.18.30").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "APITests.js":
+		Total line: 1342 (+20, -0)
+		            '''
+		            ...
+		 930  930     test.assert(block.getComponent("potionContainer") != null, "This is a potion container");
+		 931  931   
+		 932  932     test.succeed();
+		 933  933   }).tag(GameTest.Tags.suiteDefault);
+		 934  934   
+		      935 + // test for bug: 678331
+		      936 + GameTest.register("APITests", "cauldron_nocrash", (test) => {
+		      937 +   const loc = new BlockLocation(0, 1, 0);
+		      938 +   var block = test.getBlock(loc);
+		      939 + 
+		      940 +   test.setBlockType(MinecraftBlockTypes.air, loc);
+		      941 +   test.setBlockType(MinecraftBlockTypes.cauldron, loc);
+		      942 +   test.setFluidContainer(loc, GameTest.FluidType.potion);
+		      943 + 
+		      944 +   let cauldron = block.getComponent("potionContainer");
+		      945 +   cauldron.fillLevel = 2;
+		      946 + 
+		      947 +   const poisonPotion = new ItemStack(MinecraftItemTypes.splashPotion, 1, 32);
+		      948 +   cauldron.setPotionType(poisonPotion); //this line crashes the title
+		      949 + 
+		      950 +   test.succeed();
+		      951 + })
+		      952 +   .structureName("APITests:cauldron")
+		      953 +   .tag(GameTest.Tags.suiteDefault);
+		      954 + 
+		 935  955   GameTest.register("APITests", "jukebox", (test) => {
+		 936  956     var jukeboxBlock = test.getBlock(new BlockLocation(0, 1, 0));
+		 937  957     var musicPlayerComp = jukeboxBlock.getComponent("recordPlayer");
+		 938  958   
+		 939  959     try {
+		            ...
+		            '''
+	Changed script "ComponentTests.js":
+		Total line: 503 (+13, -0)
+		          '''
+		          ...
+		486 486     test.assert(strengthComp.max === 5, "Unexpected max");
+		487 487     test.succeed();
+		488 488   })
+		489 489     .structureName("ComponentTests:animal_pen")
+		490 490     .tag(GameTest.Tags.suiteDefault);
+		    491 + 
+		    492 + GameTest.register("ComponentTests", "item_component", async (test) => {
+		    493 +   const itemLoc = test.worldBlockLocation(new BlockLocation(1, 2, 1));
+		    494 +   test.pressButton(new BlockLocation(0, 2, 0));
+		    495 +   await test.idle(40);
+		    496 +   const entities = test.getDimension().getEntitiesAtBlockLocation(itemLoc);
+		    497 +   test.assert(entities.length === 1, "Expected 1 entity");
+		    498 +   const itemComp = entities[0].getComponent("item");
+		    499 +   test.assert(itemComp !== undefined, "Expected item component");
+		    500 +   test.assert(itemComp.itemStack.id === "minecraft:torch", "Unexpected item id");
+		    501 +   test.assert(itemComp.itemStack.amount === 1, "Unexpected item amount");
+		    502 +   test.succeed();
+		    503 + }).tag(GameTest.Tags.suiteDefault);
+		          '''

@@ -1,23 +1,27 @@
 Difference of "particles" between "1.13.3" and "1.14.0.1" (beta of "1.14.0").
 
 Total particle: 116 (+3, -0)
-Added particle "block_slide":
+Added particle "block_slide.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla_1.14"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:block_slide"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "atlas.terrain"
 			field "components":
 				field "minecraft:emitter_lifetime_once": field "active_time": 0
 				field "minecraft:emitter_rate_instant": field "num_particles": "variable.emitter_intensity * variable.emitter_intensity * (variable.emitter_intensity)"
 				field "minecraft:emitter_shape_point":
-					field "direction": ["Math.random(-1,1)", -1, "Math.random(-1, 1)"]
 					field "offset": ["Math.random(-variable.emitter_radius, variable.emitter_radius)", "Math.random(-variable.emitter_radius, variable.emitter_radius)", "Math.random(-variable.emitter_radius, variable.emitter_radius)"]
+					field "direction": ["Math.random(-1,1)", -1, "Math.random(-1, 1)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": ["variable.particle_random_1 * 0.0375 + 0.0375", "variable.particle_random_1 * 0.0375 + 0.0375"]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 1
 						field "texture_width": 1
+						field "texture_height": 1
 						field "uv": ["variable.emitter_texture_coordinate.u + (variable.emitter_texture_size.u/4) * (variable.particle_random_1*3)", "variable.emitter_texture_coordinate.v + (variable.emitter_texture_size.v/4) * (variable.particle_random_2*3)"]
 						field "uv_size": ["variable.emitter_texture_size.u/4", "variable.emitter_texture_size.v/4"]
 				field "minecraft:particle_appearance_lighting": empty
@@ -31,40 +35,40 @@ Added particle "block_slide":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0, -9.8, 0]
 					field "linear_drag_coefficient": 0.5
-			field "description":
-				field "identifier": "minecraft:block_slide"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "atlas.terrain"
-Added particle "honey_drip":
+Added particle "honey_drip.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla_1.14"
 		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:honey_drip_particle"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "events": event "hit_ground": field "sound_effect": field "event_name": "block.beehive.drip"
 			field "components":
 				field "minecraft:emitter_lifetime_expression":
 					field "activation_expression": 1
 					field "expiration_expression": 0
 				field "minecraft:emitter_rate_manual": field "max_particles": 50
 				field "minecraft:emitter_shape_box":
-					field "direction": [0, 0, 0]
-					field "half_dimensions": [0.5, 0, 0.5]
 					field "offset": [0.5, 0, 0.5]
+					field "half_dimensions": [0.5, 0, 0.5]
+					field "direction": [0, 0, 0]
 					field "surface_only": true
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": [0.15, 0.15]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [8, 56]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: [0.582, 0.448, 0.082, 1.0]
 				field "minecraft:particle_initial_speed": 0.0
 				field "minecraft:particle_initialization":
-					field "per_render_expression": "variable.stuck_time = variable.particle_random_1 * 4 + 1;"
 					field "per_update_expression": "variable.stuck_time = variable.particle_random_1 * 4 + 1;"
+					field "per_render_expression": "variable.stuck_time = variable.particle_random_1 * 4 + 1;"
 				field "minecraft:particle_lifetime_expression": field "max_lifetime": 10.0
 				field "minecraft:particle_motion_collision":
 					field "coefficient_of_restitution": 0.1
@@ -77,48 +81,41 @@ Added particle "honey_drip":
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0.0, -3.5, 0]
 					field "linear_drag_coefficient": "variable.stuck_time = variable.particle_random_1 * 4 + 1; return variable.particle_age < variable.stuck_time ? 277 : 0.01;"
+Added particle "nectar_drip.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
 			field "description":
-				field "identifier": "minecraft:honey_drip_particle"
+				field "identifier": "minecraft:nectar_drip_particle"
 				field "basic_render_parameters":
 					field "material": "particles_alpha"
 					field "texture": "textures/particle/particles"
-			field "events": event "hit_ground": field "sound_effect": field "event_name": "block.beehive.drip"
-Added particle "nectar_drip":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "defined_in": resource pack: "vanilla_1.14"
-		field "particle_effect":
 			field "components":
 				field "minecraft:emitter_lifetime_expression":
 					field "activation_expression": 1
 					field "expiration_expression": 0
 				field "minecraft:emitter_rate_steady":
-					field "max_particles": 20
 					field "spawn_rate": "Math.random(1, 4)"
+					field "max_particles": 20
 				field "minecraft:emitter_shape_point": field "offset": ["Math.random(-0.3, 0.3)", 0.1, "Math.random(-0.3, 0.3)"]
 				field "minecraft:particle_appearance_billboard":
-					field "facing_camera_mode": "lookat_xyz"
 					field "size": [0.15, 0.15]
+					field "facing_camera_mode": "lookat_xyz"
 					field "uv":
-						field "texture_height": 128
 						field "texture_width": 128
+						field "texture_height": 128
 						field "uv": [8, 56]
 						field "uv_size": [8, 8]
 				field "minecraft:particle_appearance_lighting": empty
 				field "minecraft:particle_appearance_tinting": field "color": color: [0.92, 0.782, 0.72, 1.0]
 				field "minecraft:particle_initial_speed": 0.0
 				field "minecraft:particle_initialization":
-					field "per_render_expression": "variable.stuck_time = 0.1;"
 					field "per_update_expression": "variable.stuck_time = 0.1;"
+					field "per_render_expression": "variable.stuck_time = 0.1;"
 				field "minecraft:particle_lifetime_expression": field "max_lifetime": 5.0
 				field "minecraft:particle_motion_collision":
-					field "collision_radius": 0.01
 					field "expire_on_contact": true
+					field "collision_radius": 0.01
 				field "minecraft:particle_motion_dynamic":
 					field "linear_acceleration": [0.0, -3.5, 0]
 					field "linear_drag_coefficient": "variable.stuck_time = 0.1; return variable.particle_age < variable.stuck_time ? 277 : 0.01;"
-			field "description":
-				field "identifier": "minecraft:nectar_drip_particle"
-				field "basic_render_parameters":
-					field "material": "particles_alpha"
-					field "texture": "textures/particle/particles"

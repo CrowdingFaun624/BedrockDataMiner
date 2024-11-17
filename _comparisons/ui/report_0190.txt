@@ -1,0 +1,1231 @@
+Difference of "ui" between "1.16.200.51" (beta of "1.16.200") and "1.16.200.52" (beta of "1.16.200").
+
+Changed namespace "achievement":
+	Changed element "achievement_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "ach_grid@focus_border_button": field "size": ["100%", "100% - 2px"].
+			Added control element "achievement_focus@focus_border_button": field "size": ["100%", "100% - 2px"].
+		Added field "$variables" of variable "$focus_id": "achievement_panel".
+Changed namespace "chat":
+	Changed element "back_content_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "gamepad_back_helper":
+					field "type": "panel"
+					field "size": ["100%c", 26]
+					field "offset": [-4, -1]
+					field "controls": control: element "gamepad_helper_button@common.gamepad_helper_b": field "$variables": variable "$icon_description_bind": "#back_button_text"
+					field "bindings":
+						binding:
+							field "binding_name": "#is_using_gamepad"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$gamepad_helper_icon_description_text_color": "$light_glyph_default_color"
+						variable "$gamepad_helper_icon_description_shadow": false
+			Added control:
+				element "gamepad_back_helper":
+					field "type": "input_panel"
+					field "size": ["100%c", 26]
+					field "offset": [-4, -1]
+					field "tts_name": "accessibility.button.tts.title"
+					field "tts_control_header": "#back_button_accessibility_text"
+					field "controls": control: element "gamepad_helper_button@common.gamepad_helper_b": field "$variables": variable "$icon_description_bind": "#back_button_text"
+					field "bindings":
+						binding:
+							field "binding_name": "#is_using_gamepad"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$gamepad_helper_icon_description_text_color": "$light_glyph_default_color"
+						variable "$gamepad_helper_icon_description_shadow": false
+	Changed element "messages_text":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "text":
+					Unchanged field "type": "label"
+					Added field "text_tts" of "#text_tts".
+	Changed element "send_button@common_buttons.light_text_form_fitting_button":
+		Changed field "$variables":
+			Total variable: 5 (+0, -0)
+			Changed variable "$button_tts_header" from "accessibility.chat.tts.sendChatMessage" to "#send_button_accessibility_text".
+		Changed field "bindings":
+			Total binding: 2 (+1, -0)
+			Added binding field "binding_name": "#send_button_accessibility_text".
+Changed namespace "common_buttons":
+	Total element: 56 (+1, -0)
+	Added element "light_content_button_control_content@common_buttons.light_content_button":
+		field "controls":
+			control:
+				element "default@$button_state_panel":
+					field "layer": 1
+					field "$variables":
+						variable "$button_content": "$button_content"
+						variable "$new_ui_button_texture": "$default_button_texture"
+						variable "$text_color": "$default_text_color"
+						variable "$content_alpha": "$default_content_alpha"
+						variable "$secondary_text_color": "$light_button_secondary_default_text_color"
+						variable "$glyph_color": "$light_glyph_default_color"
+						variable "$border_color": "$light_border_default_color"
+						variable "$button_alpha": "$default_button_alpha"
+						variable "$border_visible": "$default_state_border_visible"
+						variable "$border_layer": 2
+						variable "$default_state": true
+						variable "$border_alpha": "$border_default_alpha"
+			control:
+				element "hover@$button_state_panel":
+					field "layer": 2
+					field "$variables":
+						variable "$button_content": "$button_content_hover"
+						variable "$new_ui_button_texture": "$hover_button_texture"
+						variable "$text_color": "$light_button_hover_text_color"
+						variable "$secondary_text_color": "$light_button_secondary_hover_text_color"
+						variable "$glyph_color": "$light_glyph_hover_color"
+						variable "$content_alpha": "$hover_content_alpha"
+						variable "$border_color": "$light_border_hover_color"
+						variable "$border_visible": "$hover_state_border_visible"
+						variable "$border_layer": 3
+						variable "$hover_state": true
+						variable "$button_alpha": "$default_hover_alpha"
+			control:
+				element "pressed@$button_state_panel":
+					field "layer": 3
+					field "$variables":
+						variable "$button_content": "$button_content_pressed"
+						variable "$new_ui_button_texture": "$pressed_button_texture"
+						variable "$text_color": "$light_button_pressed_text_color"
+						variable "$secondary_text_color": "$light_button_secondary_pressed_text_color"
+						variable "$glyph_color": "$light_glyph_pressed_color"
+						variable "$content_alpha": "$pressed_alpha"
+						variable "$button_offset": "$button_pressed_offset"
+						variable "$border_color": "$light_border_pressed_color"
+						variable "$border_visible": "$pressed_state_border_visible"
+						variable "$border_layer": 3
+						variable "$button_alpha": "$default_pressed_alpha"
+						variable "$pressed_state": true
+			control:
+				element "locked@$button_state_panel":
+					field "layer": 1
+					field "$variables":
+						variable "$button_content": "$button_content_locked"
+						variable "$new_ui_button_texture": "$locked_button_texture"
+						variable "$text_color": "$light_button_locked_text_color"
+						variable "$secondary_text_color": "$light_button_secondary_locked_text_color"
+						variable "$glyph_color": "$light_glyph_locked_color"
+						variable "$content_alpha": "$locked_alpha"
+						variable "$border_color": "$light_border_locked_color"
+						variable "$button_image": "common_buttons.locked_button_image"
+						variable "$border_visible": "$locked_state_border_visible"
+						variable "$border_layer": 1
+						variable "$locked_state": true
+		field "$variables":
+			variable "$button_content|default": "common.empty_panel"
+			variable "$button_content_hover|default": "common.empty_panel"
+			variable "$button_content_pressed|default": "common.empty_panel"
+			variable "$button_content_locked|default": "common.empty_panel"
+Changed namespace "common_tabs":
+	Changed element "base_tab":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "$tab_view_binding_name@common.toggle":
+					Changed field "controls":
+						Changed control:
+							Changed element "checked_hover@$tab_panel":
+								Changed field "$variables":
+									Total variable: 7 (+1, -0)
+									Added variable "$is_hover_state" of true.
+						Changed control:
+							Changed element "unchecked_hover@$tab_panel":
+								Changed field "$variables":
+									Total variable: 6 (+1, -0)
+									Added variable "$is_hover_state" of true.
+		Changed field "$variables":
+			Total variable: 29 (+1, -0)
+			Added variable "$is_hover_state|default" of false.
+	Changed element "tab_left@common_tabs.base_tab":
+		Changed field "variables":
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 8 (+0, -0)
+					Changed variable "$checked_hover_image" from "textures/ui/TabLeftFrontTopMost" to "textures/ui/TabLeftFrontTopMostHover".
+					Changed variable "$unchecked_hover_image" from "textures/ui/TabLeftBackTopMost" to "textures/ui/TabLeftBackTopMostHover".
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 8 (+0, -0)
+					Changed variable "$checked_hover_image" from "textures/ui/TabLeftFrontBottomMost" to "textures/ui/TabLeftFrontBottomMostHover".
+					Changed variable "$unchecked_hover_image" from "textures/ui/TabLeftBackBottomMost" to "textures/ui/TabLeftBackBottomMostHover".
+		Changed field "$variables":
+			Total variable: 10 (+0, -0)
+			Changed variable "$checked_hover_image|default" from "textures/ui/TabLeftFront" to "textures/ui/TabLeftFrontHover".
+			Changed variable "$unchecked_hover_image" from "textures/ui/TabLeftBack" to "textures/ui/TabLeftBackHover".
+	Changed element "tab_right@common_tabs.base_tab":
+		Changed field "variables":
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 8 (+0, -0)
+					Changed variable "$checked_hover_image" from "textures/ui/TabRightFrontTopMost" to "textures/ui/TabRightFrontTopMostHover".
+					Changed variable "$unchecked_hover_image" from "textures/ui/TabRightBackTopMost" to "textures/ui/TabRightBackTopMostHover".
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 8 (+0, -0)
+					Changed variable "$checked_hover_image" from "textures/ui/TabRightFrontBottomMost" to "textures/ui/TabRightFrontBottomMostHover".
+					Changed variable "$unchecked_hover_image" from "textures/ui/TabRightBackBottomMost" to "textures/ui/TabRightBackBottomMostHover".
+		Changed field "$variables":
+			Total variable: 10 (+0, -0)
+			Changed variable "$checked_hover_image|default" from "textures/ui/TabRightFront" to "textures/ui/TabRightFrontHover".
+			Changed variable "$unchecked_hover_image" from "textures/ui/TabRightBack" to "textures/ui/TabRightBackHover".
+	Changed element "tab_top@common_tabs.base_tab":
+		Changed field "variables":
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 8 (+0, -0)
+					Changed variable "$checked_hover_image" from "textures/ui/TabTopFrontRightMost" to "textures/ui/TabTopFrontRightMostHover".
+					Changed variable "$unchecked_hover_image" from "textures/ui/TabTopBackRightMost" to "textures/ui/TabTopBackRightMostHover".
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 8 (+0, -0)
+					Changed variable "$checked_hover_image" from "textures/ui/TabTopFrontLeftMost" to "textures/ui/TabTopFrontLeftMostHover".
+					Changed variable "$unchecked_hover_image" from "textures/ui/TabTopBackLeftMost" to "textures/ui/TabTopBackLeftMostHover".
+		Changed field "$variables":
+			Total variable: 10 (+0, -0)
+			Changed variable "$checked_hover_image|default" from "textures/ui/TabTopFront" to "textures/ui/TabTopFrontHover".
+			Changed variable "$unchecked_hover_image" from "textures/ui/TabTopBack" to "textures/ui/TabTopBackHover".
+Changed namespace "debug_screen":
+	Changed element "access_button@common_buttons.light_content_button":
+		Added field "focus_enabled" of false.
+Changed namespace "invite":
+	Total element: 85 (+3, -0)
+	Moved element "add_friend_button@common_buttons.light_content_button" to "add_friend_button@common_buttons.light_content_button_control_content".
+	Changed element "add_friend_button@common_buttons.light_content_button_control_content":
+		Changed field "$variables":
+			Total variable: 8 (+3, -0)
+			Added variable "$button_content_hover" of "invite.invite_button_content_hover".
+			Added variable "$button_content_pressed" of "invite.invite_button_content_pressed".
+			Added variable "$button_content_locked" of "invite.invite_button_content_locked".
+	Moved element "add_member_button@common_buttons.light_content_button" to "add_member_button@common_buttons.light_content_button_control_content".
+	Changed element "add_member_button@common_buttons.light_content_button_control_content":
+		Changed field "$variables":
+			Total variable: 8 (+3, -0)
+			Added variable "$button_content_hover" of "invite.invite_button_content_hover".
+			Added variable "$button_content_pressed" of "invite.invite_button_content_pressed".
+			Added variable "$button_content_locked" of "invite.invite_button_content_locked".
+	Changed element "invite_button_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Changed control:
+				Changed element "button_label":
+					Unchanged field "type": "label"
+					Changed field "color" from "$light_button_default_text_color" to "$label_color".
+			Removed control:
+				element "gameplay_helper@$gamepad_helper":
+					field "$variables":
+						variable "$gamepad_helper_size":
+							item 0: "100%"
+							item 1: "100%"
+						variable "$description_panel_size":
+							item 0: "fill"
+							item 1: "100%"
+						variable "$gamepad_description_size":
+							item 0: "100%"
+							item 1: "default"
+						variable "$gamepad_description_max_size":
+							item 0: "100%"
+							item 1: "100%"
+						variable "$icon_description_bind": "$button_text"
+						variable "$gamepad_helper_icon_description_text_color": "$light_button_default_text_color"
+						variable "$gamepad_helper_icon_description_shadow": false
+						variable "$icon_description_bind_condition": "none"
+			Added control:
+				element "gameplay_helper@$gamepad_helper":
+					field "$variables":
+						variable "$gamepad_helper_size":
+							item 0: "100%"
+							item 1: "100%"
+						variable "$description_panel_size":
+							item 0: "fill"
+							item 1: "100%"
+						variable "$gamepad_description_size":
+							item 0: "100%"
+							item 1: "default"
+						variable "$gamepad_description_max_size":
+							item 0: "100%"
+							item 1: "100%"
+						variable "$icon_description_bind": "$button_text"
+						variable "$gamepad_helper_icon_description_text_color": "$label_color"
+						variable "$gamepad_helper_icon_description_shadow": false
+						variable "$icon_description_bind_condition": "none"
+		Added field "$variables" of variable "$label_color|default": "$light_button_default_text_color".
+	Added element "invite_button_content_hover@invite.invite_button_content" of field "$variables": variable "$label_color|default": "$light_button_hover_text_color".
+	Added element "invite_button_content_locked@invite.invite_button_content" of field "$variables": variable "$label_color|default": "$light_button_locked_text_color".
+	Added element "invite_button_content_pressed@invite.invite_button_content" of field "$variables": variable "$label_color|default": "$light_button_pressed_text_color".
+	Moved element "send_button@common_buttons.light_content_button" to "send_button@common_buttons.light_content_button_control_content".
+	Changed element "send_button@common_buttons.light_content_button_control_content":
+		Changed field "$variables":
+			Total variable: 8 (+3, -0)
+			Added variable "$button_content_hover" of "invite.invite_button_content_hover".
+			Added variable "$button_content_pressed" of "invite.invite_button_content_pressed".
+			Added variable "$button_content_locked" of "invite.invite_button_content_locked".
+Changed namespace "persona":
+	Changed element "emote_wheel_screen_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "top_padding":
+					Unchanged field "type": "panel"
+					Added field "controls":
+						control:
+							element "screen_header":
+								field "type": "label"
+								field "size": ["50%", "50%"]
+								field "color": "$generic_button_text_color"
+								field "text_alignment": "center"
+								field "text": "emotes.header_text"
+								field "shadow": true
+	Changed element "selection_wheel":
+		Unchanged field "type": "selection_wheel"
+		Changed field "$variables":
+			Total variable: 12 (+0, -0)
+			Changed variable "$button_tts_name|default" from "accessibility.button.tts.title" to "#emote_button_tts".
+			Changed variable "$selection_wheel_bindings|default":
+				Added item 0:
+					field "binding_name": "#emote_button_tts"
+					field "binding_condition": "always"
+		Changed field "property_bag":
+			Changed field "#hover_slice" from -1 to 0.
+		Added field "initial_button_slice" of 0.
+Changed namespace "play":
+	Changed element "tab_text_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "count_section":
+					Unchanged field "type": "panel"
+					Changed field "variables":
+						Total variable: 2 (+1, -1)
+						Removed variable:
+							field "requires": "(not $is_checked_state)"
+							field "$variables":
+								variable "$count_background_image": "textures/ui/numberBGBack"
+								variable "$count_text_color": "$text_color"
+						Added variable:
+							field "requires": "($is_hover_state or not $is_checked_state)"
+							field "$variables":
+								variable "$count_background_image": "textures/ui/numberBGBack"
+								variable "$count_text_color": "$text_color"
+Changed namespace "popup_dialog":
+	Changed element "form_fit_screen_with_title_and_close":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "panel_content":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "close_button_panel":
+								Unchanged field "type": "panel"
+								Added field "bindings":
+									binding:
+										field "binding_name": "#close_button_visible"
+										field "binding_name_override": "#visible"
+Changed namespace "profile":
+	Changed element "achievements_button@common_buttons.light_text_button":
+		Added field "bindings":
+			binding:
+				field "binding_name": "#enable_achievement_button"
+				field "binding_name_override": "#enabled"
+				field "binding_condition": "always"
+	Changed element "persona_appearance_preset_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "select_button_input":
+					Unchanged field "type": "input_panel"
+					Added field "bindings":
+						binding:
+							field "binding_name": "#enable_edit_appearance"
+							field "binding_name_override": "#enabled"
+							field "binding_condition": "always"
+	Changed element "persona_main_preset_panel":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "persona_preset@profile.persona_appearance_preset_panel":
+					Changed field "bindings":
+						Total binding: 1 (+0, -1)
+						Removed binding:
+							field "binding_name": "#enable_edit_appearance"
+							field "binding_name_override": "#enabled"
+							field "binding_condition": "always"
+Moved namespace "realms_whitelist" to "realms_allowlist".
+Changed namespace "realms_allowlist":
+	Total element: 107 (+6, -6)
+	Changed element "add_friends_and_invite_link_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "whitelist_stack_panel":
+					field "type": "stack_panel"
+					field "size": ["100%", "100%"]
+					field "orientation": "horizontal"
+					field "controls":
+						control: element "find_friends_button_panel@realms_whitelist.find_friends_button_panel": field "ignored": "(not $supports_add_friend)"
+						control:
+							element "spacing":
+								field "type": "panel"
+								field "size": [2, "100%"]
+						control: element "share_by_link_button_panel@realms_whitelist.share_by_link_button_panel": empty
+						control:
+							element "spacing2":
+								field "type": "panel"
+								field "size": [1, "100%"]
+						control:
+							element "options_panel":
+								field "type": "panel"
+								field "size": [32, 32]
+								field "controls":
+									control:
+										element "options_button@common_buttons.light_content_button":
+											field "anchor_to": "center"
+											field "anchor_from": "center"
+											field "size": [30, 30]
+											field "$variables":
+												variable "$button_content": "realms_whitelist.options_icon"
+												variable "$pressed_button_name": "button.member_list_options"
+								field "bindings":
+									binding:
+										field "binding_name": "#options_visible"
+										field "binding_name_override": "#visible"
+										field "binding_type": "global"
+			Added control:
+				element "allowlist_stack_panel":
+					field "type": "stack_panel"
+					field "size": ["100%", "100%"]
+					field "orientation": "horizontal"
+					field "controls":
+						control: element "find_friends_button_panel@realms_allowlist.find_friends_button_panel": field "ignored": "(not $supports_add_friend)"
+						control:
+							element "spacing":
+								field "type": "panel"
+								field "size": [2, "100%"]
+						control: element "share_by_link_button_panel@realms_allowlist.share_by_link_button_panel": empty
+						control:
+							element "spacing2":
+								field "type": "panel"
+								field "size": [1, "100%"]
+						control:
+							element "options_panel":
+								field "type": "panel"
+								field "size": [32, 32]
+								field "controls":
+									control:
+										element "options_button@common_buttons.light_content_button":
+											field "anchor_to": "center"
+											field "anchor_from": "center"
+											field "size": [30, 30]
+											field "$variables":
+												variable "$button_content": "realms_allowlist.options_icon"
+												variable "$pressed_button_name": "button.member_list_options"
+								field "bindings":
+									binding:
+										field "binding_name": "#options_visible"
+										field "binding_name_override": "#visible"
+										field "binding_type": "global"
+	Moved element "blocked_factory_linked_account@realms_whitelist.linked_account_blocked_panel_factory" to "blocked_factory_linked_account@realms_allowlist.linked_account_blocked_panel_factory".
+	Moved element "blocked_factory_xbl_profile@realms_whitelist.xbl_profile_blocked_panel_factory" to "blocked_factory_xbl_profile@realms_allowlist.xbl_profile_blocked_panel_factory".
+	Changed element "blocked_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "blocked_panel@realms_whitelist.blocked_panel": empty.
+			Added control element "blocked_panel@realms_allowlist.blocked_panel": empty.
+	Changed element "blocked_panel@realms_common.main_banner":
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "xbl_user_panel@realms_whitelist.xbl_user_panel": empty.
+			Added control element "xbl_user_panel@realms_allowlist.xbl_user_panel": empty.
+	Changed element "find_friends_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 2 (+0, -0)
+			Changed variable "$button_content" from "realms_whitelist.plus_icon" to "realms_allowlist.plus_icon".
+	Changed element "friends_containing_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "friends_panel@realms_whitelist.friends_panel": empty.
+			Added control element "friends_panel@realms_allowlist.friends_panel": empty.
+	Changed element "friends_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 23 (+22, -22)
+			Removed control element "add_friends_and_invite_link_panel@realms_whitelist.add_friends_and_invite_link_panel": empty.
+			Removed control element "player_filter_label@realms_whitelist.player_filter_label": empty.
+			Removed control element "player_filter_text_box@realms_whitelist.player_filter_text_box": empty.
+			Removed control element "spacing_gap_members_top@realms_whitelist.spacing_gap": empty.
+			Removed control element "members_label@realms_whitelist.members_label": empty.
+			Removed control:
+				element "members_stack@realms_whitelist.factory_stack":
+					field "collection_name": "members_collection"
+					field "factory":
+						field "name": "factory"
+						field "control_ids":
+							control id "small_button": "@realms_whitelist.member_factory_xbl_profile"
+							control id "large_button": "@realms_whitelist.member_factory_linked_account"
+					field "bindings":
+						binding:
+							field "binding_name": "#members_section_content"
+							field "binding_name_override": "#collection_length"
+			Removed control element "spacing_gap_members_bottom@realms_whitelist.spacing_gap": empty.
+			Removed control:
+				element "members_page_panel@realms_whitelist.page_panel":
+					field "$variables":
+						variable "$next_button_name": "next_page_button_members"
+						variable "$prev_button_name": "prev_page_button_members"
+						variable "$this_page_index_text": "#members_page_index_text"
+						variable "$is_visible_binding_name": "#members_buttons_visible"
+						variable "$is_prev_visible": "#members_prevButton_visible"
+						variable "$is_next_visible": "#members_nextButton_visible"
+			Removed control element "invited_friends_label@realms_whitelist.invited_friends_label": empty.
+			Removed control:
+				element "invited_stack@realms_whitelist.factory_stack":
+					field "collection_name": "invited_friends_collection"
+					field "factory":
+						field "name": "factory"
+						field "control_ids":
+							control id "small_button": "@realms_whitelist.invited_factory_xbl_profile"
+							control id "large_button": "@realms_whitelist.invited_factory_linked_account"
+					field "bindings":
+						binding:
+							field "binding_name": "#invited_section_content"
+							field "binding_name_override": "#collection_length"
+			Removed control element "spacing_gap_invited_friends@realms_whitelist.spacing_gap": empty.
+			Removed control:
+				element "invited_friends_page_panel@realms_whitelist.page_panel":
+					field "$variables":
+						variable "$next_button_name": "next_page_button_invited_friends"
+						variable "$prev_button_name": "prev_page_button_invited_friends"
+						variable "$this_page_index_text": "#invited_friends_page_index_text"
+						variable "$is_visible_binding_name": "#invited_friends_buttons_visible"
+						variable "$is_prev_visible": "#invited_friends_prevButton_visible"
+						variable "$is_next_visible": "#invited_friends_nextButton_visible"
+			Removed control element "uninvited_friends_label@realms_whitelist.uninvited_friends_label": empty.
+			Removed control:
+				element "uninvited_stack@realms_whitelist.factory_stack":
+					field "collection_name": "uninvited_friends_collection"
+					field "factory":
+						field "name": "factory"
+						field "control_ids":
+							control id "small_button": "@realms_whitelist.uninvited_factory_xbl_profile"
+							control id "large_button": "@realms_whitelist.uninvited_factory_linked_account"
+					field "bindings":
+						binding:
+							field "binding_name": "#uninvited_section_content"
+							field "binding_name_override": "#collection_length"
+			Removed control element "spacing_gap_uninvited_friends@realms_whitelist.spacing_gap": empty.
+			Removed control:
+				element "uninvited_friends_page_panel@realms_whitelist.page_panel":
+					field "$variables":
+						variable "$next_button_name": "next_page_button_uninvited_friends"
+						variable "$prev_button_name": "prev_page_button_uninvited_friends"
+						variable "$this_page_index_text": "#uninvited_friends_page_index_text"
+						variable "$is_visible_binding_name": "#uninvited_friends_buttons_visible"
+						variable "$is_prev_visible": "#uninvited_friends_prevButton_visible"
+						variable "$is_next_visible": "#uninvited_friends_nextButton_visible"
+			Removed control element "blocked_players_label@realms_whitelist.blocked_players_label": empty.
+			Removed control:
+				element "blocked_players_stack@realms_whitelist.factory_stack":
+					field "collection_name": "blocked_players_collection"
+					field "factory":
+						field "name": "factory"
+						field "control_ids":
+							control id "small_button": "@realms_whitelist.blocked_factory_xbl_profile"
+							control id "large_button": "@realms_whitelist.blocked_factory_linked_account"
+					field "bindings":
+						binding:
+							field "binding_name": "#blocked_section_content"
+							field "binding_name_override": "#collection_length"
+			Removed control element "spacing_gap_blocked_players@realms_whitelist.spacing_gap": empty.
+			Removed control:
+				element "blocked_players_page_panel@realms_whitelist.page_panel":
+					field "$variables":
+						variable "$next_button_name": "next_page_button_blocked_players"
+						variable "$prev_button_name": "prev_page_button_blocked_players"
+						variable "$this_page_index_text": "#blocked_players_page_index_text"
+						variable "$is_visible_binding_name": "#blocked_players_buttons_visible"
+						variable "$is_prev_visible": "#blocked_players_prevButton_visible"
+						variable "$is_next_visible": "#blocked_players_nextButton_visible"
+			Removed control element "no_invites_label@realms_whitelist.no_invites_label": empty.
+			Removed control element "loading_friends@realms_whitelist.loading_friends": empty.
+			Added control element "add_friends_and_invite_link_panel@realms_allowlist.add_friends_and_invite_link_panel": empty.
+			Added control element "player_filter_label@realms_allowlist.player_filter_label": empty.
+			Added control element "player_filter_text_box@realms_allowlist.player_filter_text_box": empty.
+			Added control element "spacing_gap_members_top@realms_allowlist.spacing_gap": empty.
+			Added control element "members_label@realms_allowlist.members_label": empty.
+			Added control:
+				element "members_stack@realms_allowlist.factory_stack":
+					field "collection_name": "members_collection"
+					field "factory":
+						field "name": "factory"
+						field "control_ids":
+							control id "small_button": "@realms_allowlist.member_factory_xbl_profile"
+							control id "large_button": "@realms_allowlist.member_factory_linked_account"
+					field "bindings":
+						binding:
+							field "binding_name": "#members_section_content"
+							field "binding_name_override": "#collection_length"
+			Added control element "spacing_gap_members_bottom@realms_allowlist.spacing_gap": empty.
+			Added control:
+				element "members_page_panel@realms_allowlist.page_panel":
+					field "$variables":
+						variable "$next_button_name": "next_page_button_members"
+						variable "$prev_button_name": "prev_page_button_members"
+						variable "$this_page_index_text": "#members_page_index_text"
+						variable "$is_visible_binding_name": "#members_buttons_visible"
+						variable "$is_prev_visible": "#members_prevButton_visible"
+						variable "$is_next_visible": "#members_nextButton_visible"
+			Added control element "invited_friends_label@realms_allowlist.invited_friends_label": empty.
+			Added control:
+				element "invited_stack@realms_allowlist.factory_stack":
+					field "collection_name": "invited_friends_collection"
+					field "factory":
+						field "name": "factory"
+						field "control_ids":
+							control id "small_button": "@realms_allowlist.invited_factory_xbl_profile"
+							control id "large_button": "@realms_allowlist.invited_factory_linked_account"
+					field "bindings":
+						binding:
+							field "binding_name": "#invited_section_content"
+							field "binding_name_override": "#collection_length"
+			Added control element "spacing_gap_invited_friends@realms_allowlist.spacing_gap": empty.
+			Added control:
+				element "invited_friends_page_panel@realms_allowlist.page_panel":
+					field "$variables":
+						variable "$next_button_name": "next_page_button_invited_friends"
+						variable "$prev_button_name": "prev_page_button_invited_friends"
+						variable "$this_page_index_text": "#invited_friends_page_index_text"
+						variable "$is_visible_binding_name": "#invited_friends_buttons_visible"
+						variable "$is_prev_visible": "#invited_friends_prevButton_visible"
+						variable "$is_next_visible": "#invited_friends_nextButton_visible"
+			Added control element "uninvited_friends_label@realms_allowlist.uninvited_friends_label": empty.
+			Added control:
+				element "uninvited_stack@realms_allowlist.factory_stack":
+					field "collection_name": "uninvited_friends_collection"
+					field "factory":
+						field "name": "factory"
+						field "control_ids":
+							control id "small_button": "@realms_allowlist.uninvited_factory_xbl_profile"
+							control id "large_button": "@realms_allowlist.uninvited_factory_linked_account"
+					field "bindings":
+						binding:
+							field "binding_name": "#uninvited_section_content"
+							field "binding_name_override": "#collection_length"
+			Added control element "spacing_gap_uninvited_friends@realms_allowlist.spacing_gap": empty.
+			Added control:
+				element "uninvited_friends_page_panel@realms_allowlist.page_panel":
+					field "$variables":
+						variable "$next_button_name": "next_page_button_uninvited_friends"
+						variable "$prev_button_name": "prev_page_button_uninvited_friends"
+						variable "$this_page_index_text": "#uninvited_friends_page_index_text"
+						variable "$is_visible_binding_name": "#uninvited_friends_buttons_visible"
+						variable "$is_prev_visible": "#uninvited_friends_prevButton_visible"
+						variable "$is_next_visible": "#uninvited_friends_nextButton_visible"
+			Added control element "blocked_players_label@realms_allowlist.blocked_players_label": empty.
+			Added control:
+				element "blocked_players_stack@realms_allowlist.factory_stack":
+					field "collection_name": "blocked_players_collection"
+					field "factory":
+						field "name": "factory"
+						field "control_ids":
+							control id "small_button": "@realms_allowlist.blocked_factory_xbl_profile"
+							control id "large_button": "@realms_allowlist.blocked_factory_linked_account"
+					field "bindings":
+						binding:
+							field "binding_name": "#blocked_section_content"
+							field "binding_name_override": "#collection_length"
+			Added control element "spacing_gap_blocked_players@realms_allowlist.spacing_gap": empty.
+			Added control:
+				element "blocked_players_page_panel@realms_allowlist.page_panel":
+					field "$variables":
+						variable "$next_button_name": "next_page_button_blocked_players"
+						variable "$prev_button_name": "prev_page_button_blocked_players"
+						variable "$this_page_index_text": "#blocked_players_page_index_text"
+						variable "$is_visible_binding_name": "#blocked_players_buttons_visible"
+						variable "$is_prev_visible": "#blocked_players_prevButton_visible"
+						variable "$is_next_visible": "#blocked_players_nextButton_visible"
+			Added control element "no_invites_label@realms_allowlist.no_invites_label": empty.
+			Added control element "loading_friends@realms_allowlist.loading_friends": empty.
+	Changed element "gamerpic_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "black_border@realms_whitelist.black_border": empty.
+			Removed control:
+				element "gamer_pic@realms_whitelist.gamer_pic":
+					field "layer": 1
+					field "size": ["100% - 2px", "100% - 2px"]
+			Added control element "black_border@realms_allowlist.black_border": empty.
+			Added control:
+				element "gamer_pic@realms_allowlist.gamer_pic":
+					field "layer": 1
+					field "size": ["100% - 2px", "100% - 2px"]
+	Moved element "gamertag_label@realms_whitelist.panel_text" to "gamertag_label@realms_allowlist.panel_text".
+	Changed element "gamertag_label_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "gamertag_label@realms_whitelist.gamertag_label": empty.
+			Removed control element "real_name_label@realms_whitelist.real_name_label": empty.
+			Added control element "gamertag_label@realms_allowlist.gamertag_label": empty.
+			Added control element "real_name_label@realms_allowlist.real_name_label": empty.
+	Added element "gapped_blocked_linked_account_panel@realms_allowlist.factory_gap_template" of field "$variables": variable "$templated_control": "realms_allowlist.linked_account_blocked_panel".
+	Removed element "gapped_blocked_linked_account_panel@realms_whitelist.factory_gap_template" of field "$variables": variable "$templated_control": "realms_whitelist.linked_account_blocked_panel".
+	Added element "gapped_blocked_xbl_profile_panel@realms_allowlist.factory_gap_template" of field "$variables": variable "$templated_control": "realms_allowlist.blocked_panel".
+	Removed element "gapped_blocked_xbl_profile_panel@realms_whitelist.factory_gap_template" of field "$variables": variable "$templated_control": "realms_whitelist.blocked_panel".
+	Added element "gapped_linked_account_panel@realms_allowlist.factory_gap_template" of field "$variables": variable "$templated_control": "realms_allowlist.linked_account_panel".
+	Removed element "gapped_linked_account_panel@realms_whitelist.factory_gap_template" of field "$variables": variable "$templated_control": "realms_whitelist.linked_account_panel".
+	Added element "gapped_xbl_profile_panel@realms_allowlist.factory_gap_template" of field "$variables": variable "$templated_control": "realms_allowlist.xbl_profile_panel".
+	Removed element "gapped_xbl_profile_panel@realms_whitelist.factory_gap_template" of field "$variables": variable "$templated_control": "realms_whitelist.xbl_profile_panel".
+	Changed element "invite_button@common_buttons.light_text_button":
+		Changed field "$variables":
+			Total variable: 1 (+0, -0)
+			Changed variable "$button_text" from "realmsSettingsScreen.whitelist_invite" to "realmsSettingsScreen.allowlist_invite".
+	Moved element "invited_factory_linked_account@realms_whitelist.linked_account_panel_factory" to "invited_factory_linked_account@realms_allowlist.linked_account_panel_factory".
+	Moved element "invited_factory_xbl_profile@realms_whitelist.xbl_profile_panel_factory" to "invited_factory_xbl_profile@realms_allowlist.xbl_profile_panel_factory".
+	Changed element "link_panel@realms_common.hollow_banner":
+		Changed field "controls":
+			Total control: 3 (+2, -2)
+			Changed control:
+				Changed element "copy_share_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 3 (+2, -2)
+						Removed control:
+							element "link_copy@realms_whitelist.copy_button":
+								field "ignored": "(not $supports_clipboard)"
+								field "bindings":
+									binding:
+										field "binding_name": "#copy_share_enabled"
+										field "binding_name_override": "#enabled"
+						Removed control:
+							element "link_share@realms_whitelist.share_button":
+								field "offset": [0, 6]
+								field "ignored": "(not $supports_share)"
+								field "$variables": variable "$button_content": "realms_whitelist.share_icon"
+						Added control:
+							element "link_copy@realms_allowlist.copy_button":
+								field "ignored": "(not $supports_clipboard)"
+								field "bindings":
+									binding:
+										field "binding_name": "#copy_share_enabled"
+										field "binding_name_override": "#enabled"
+						Added control:
+							element "link_share@realms_allowlist.share_button":
+								field "offset": [0, 6]
+								field "ignored": "(not $supports_share)"
+								field "$variables": variable "$button_content": "realms_allowlist.share_icon"
+			Removed control element "refresh_button@realms_whitelist.refresh_button": empty.
+			Removed control element "link_url_text@realms_whitelist.link_url_text": empty.
+			Added control element "refresh_button@realms_allowlist.refresh_button": empty.
+			Added control element "link_url_text@realms_allowlist.link_url_text": empty.
+	Changed element "linked_account_blocked_panel@realms_common.main_banner":
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control element "linked_account_positioning_panel@realms_whitelist.linked_user_stack_panel": field "$variables": variable "$ignore_status_icon": true.
+			Added control element "linked_account_positioning_panel@realms_allowlist.linked_user_stack_panel": field "$variables": variable "$ignore_status_icon": true.
+	Moved element "linked_account_blocked_panel_factory@realms_whitelist.gapped_blocked_linked_account_panel" to "linked_account_blocked_panel_factory@realms_allowlist.gapped_blocked_linked_account_panel".
+	Changed element "linked_account_panel@realms_common.main_banner":
+		Changed field "controls":
+			Total control: 3 (+2, -2)
+			Removed control element "linked_account_positioning_panel@realms_whitelist.linked_user_stack_panel": empty.
+			Removed control:
+				element "right_controls_panel@realms_whitelist.right_controls_panel":
+					field "offset": [-3, -12]
+					field "layer": 6
+			Added control element "linked_account_positioning_panel@realms_allowlist.linked_user_stack_panel": empty.
+			Added control:
+				element "right_controls_panel@realms_allowlist.right_controls_panel":
+					field "offset": [-3, -12]
+					field "layer": 6
+	Moved element "linked_account_panel_factory@realms_whitelist.gapped_linked_account_panel" to "linked_account_panel_factory@realms_allowlist.gapped_linked_account_panel".
+	Changed element "linked_profile_pictures_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 3 (+3, -3)
+			Removed control:
+				element "pp2@realms_whitelist.third_party_profile_pic_panel":
+					field "size": ["100%", 21]
+					field "layer": 1
+			Removed control element "account_link@realms_whitelist.account_link_icon": field "size": ["100%", "fill"].
+			Removed control:
+				element "pp1@realms_whitelist.gamerpic_panel":
+					field "size": ["100%", 21]
+					field "layer": 1
+			Added control:
+				element "pp2@realms_allowlist.third_party_profile_pic_panel":
+					field "size": ["100%", 21]
+					field "layer": 1
+			Added control element "account_link@realms_allowlist.account_link_icon": field "size": ["100%", "fill"].
+			Added control:
+				element "pp1@realms_allowlist.gamerpic_panel":
+					field "size": ["100%", 21]
+					field "layer": 1
+	Changed element "linked_user_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 7 (+5, -5)
+			Changed control:
+				Changed element "allow_offset_control":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "player_status_panel@realms_whitelist.player_status_panel":
+								field "size": [20, 20]
+								field "ignored": "$ignore_status_icon"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+						Added control:
+							element "player_status_panel@realms_allowlist.player_status_panel":
+								field "size": [20, 20]
+								field "ignored": "$ignore_status_icon"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+			Removed control element "spacing1@realms_whitelist.horizontal_indent": field "size": [5, "100%"].
+			Removed control element "profile_picture@realms_whitelist.linked_profile_pictures_panel": empty.
+			Removed control element "spacing2@realms_whitelist.horizontal_indent": field "size": [1, "100%"].
+			Removed control element "platform_names_label@realms_whitelist.platform_profile_names": field "size": ["fill", "100%"].
+			Removed control element "spacing3@realms_whitelist.horizontal_indent": field "size": [3, "100%"].
+			Added control element "spacing1@realms_allowlist.horizontal_indent": field "size": [5, "100%"].
+			Added control element "profile_picture@realms_allowlist.linked_profile_pictures_panel": empty.
+			Added control element "spacing2@realms_allowlist.horizontal_indent": field "size": [1, "100%"].
+			Added control element "platform_names_label@realms_allowlist.platform_profile_names": field "size": ["fill", "100%"].
+			Added control element "spacing3@realms_allowlist.horizontal_indent": field "size": [3, "100%"].
+	Moved element "loading_friends@realms_whitelist.panel_text" to "loading_friends@realms_allowlist.panel_text".
+	Changed element "lower_body_default_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "info_text@realms_whitelist.share_popup_text": field "$variables": variable "$text": "realmsInvitationScreen.shareInfoMessage".
+			Added control element "info_text@realms_allowlist.share_popup_text": field "$variables": variable "$text": "realmsInvitationScreen.shareInfoMessage".
+	Changed element "lower_body_refresh_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Changed control:
+				Changed element "button_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 2 (+2, -2)
+						Removed control:
+							element "cancel_button@realms_whitelist.cancel_button":
+								field "layer": 5
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "$variables": variable "$button_text": "gui.cancel"
+						Removed control element "new_link_button@realms_whitelist.new_link_button": empty.
+						Added control:
+							element "cancel_button@realms_allowlist.cancel_button":
+								field "layer": 5
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "$variables": variable "$button_text": "gui.cancel"
+						Added control element "new_link_button@realms_allowlist.new_link_button": empty.
+			Removed control:
+				element "info_text@realms_whitelist.share_popup_text":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "size": ["75%", "50% - 2px"]
+					field "offset": [0, 7]
+					field "$variables": variable "$text": "realmsInvitationScreen.refreshLinkInfoMessage"
+			Added control:
+				element "info_text@realms_allowlist.share_popup_text":
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "size": ["75%", "50% - 2px"]
+					field "offset": [0, 7]
+					field "$variables": variable "$text": "realmsInvitationScreen.refreshLinkInfoMessage"
+	Moved element "member_factory_linked_account@realms_whitelist.linked_account_panel_factory" to "member_factory_linked_account@realms_allowlist.linked_account_panel_factory".
+	Moved element "member_factory_xbl_profile@realms_whitelist.xbl_profile_panel_factory" to "member_factory_xbl_profile@realms_allowlist.xbl_profile_panel_factory".
+	Changed element "member_settings":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 4 (+3, -3)
+			Removed control element "minus_button@realms_whitelist.minus_button": empty.
+			Removed control element "member_permissions@realms_whitelist.permissions_dropdown": empty.
+			Removed control:
+				element "op_deop_button@realms_whitelist.op_deop_button":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #permission_collection_dropdown_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Added control element "minus_button@realms_allowlist.minus_button": empty.
+			Added control element "member_permissions@realms_allowlist.permissions_dropdown": empty.
+			Added control:
+				element "op_deop_button@realms_allowlist.op_deop_button":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #permission_collection_dropdown_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+	Changed element "minus_button@common_buttons.light_glyph_button":
+		Changed field "$variables":
+			Total variable: 1 (+0, -0)
+			Changed variable "$button_content" from "realms_whitelist.minus_icon" to "realms_allowlist.minus_icon".
+	Moved element "no_invites_label@realms_whitelist.panel_text" to "no_invites_label@realms_allowlist.panel_text".
+	Changed element "op_deop_button@common_toggles.light_image_toggle_collection":
+		Changed field "$variables":
+			Total variable: 8 (+0, -0)
+			Changed variable "$unchecked_image" from "realms_whitelist.deop_icon" to "realms_allowlist.deop_icon".
+			Changed variable "$checked_image" from "realms_whitelist.op_icon" to "realms_allowlist.op_icon".
+	Changed element "platform_profile_names":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 4 (+2, -2)
+			Removed control:
+				element "friend_grid_third_party_tag@realms_whitelist.third_party_profile_label":
+					field "size": ["100%", 12]
+					field "layer": 1
+			Removed control:
+				element "friend_grid_xbl_gamertag@realms_whitelist.gamertag_label_panel":
+					field "size": ["100%", 12]
+					field "layer": 1
+			Added control:
+				element "friend_grid_third_party_tag@realms_allowlist.third_party_profile_label":
+					field "size": ["100%", 12]
+					field "layer": 1
+			Added control:
+				element "friend_grid_xbl_gamertag@realms_allowlist.gamertag_label_panel":
+					field "size": ["100%", 12]
+					field "layer": 1
+	Changed element "player_status_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control:
+				element "player_online_icon@realms_whitelist.player_online_icon":
+					field "bindings":
+						binding:
+							field "binding_name": "#player_online"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Removed control:
+				element "player_offline_icon@realms_whitelist.player_offline_icon":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #player_online)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Added control:
+				element "player_online_icon@realms_allowlist.player_online_icon":
+					field "bindings":
+						binding:
+							field "binding_name": "#player_online"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Added control:
+				element "player_offline_icon@realms_allowlist.player_offline_icon":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #player_online)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+	Changed element "popup_dialog__options@popup_dialog.popup_dialog":
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "transparent_close_button@realms_whitelist.transparent_close_button": empty.
+			Removed control element "options_popup_dialog_button_panel@realms_whitelist.options_popup_dialog_button_panel": empty.
+			Added control element "transparent_close_button@realms_allowlist.transparent_close_button": empty.
+			Added control element "options_popup_dialog_button_panel@realms_allowlist.options_popup_dialog_button_panel": empty.
+	Changed element "popup_dialog__share_by_link@popup_dialog.modal_input_panel":
+		Changed field "controls":
+			Total control: 3 (+2, -2)
+			Removed control element "share_popup_background@realms_whitelist.share_popup_background": empty.
+			Removed control element "share_popup_content@realms_whitelist.share_popup_content": field "layer": 1.
+			Added control element "share_popup_background@realms_allowlist.share_popup_background": empty.
+			Added control element "share_popup_content@realms_allowlist.share_popup_content": field "layer": 1.
+	Moved element "real_name_label@realms_whitelist.panel_text" to "real_name_label@realms_allowlist.panel_text".
+	Added element "realms_allowlist_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "root_panel":
+					field "type": "input_panel"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls": control: element "realms_allowlist_content_panel@realms_allowlist.realms_allowlist_content_panel": field "layer": 1
+			control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids": control id "share_by_link": "@realms_allowlist.popup_dialog__share_by_link"
+			control:
+				element "popup_dialog_factory_options":
+					field "type": "factory"
+					field "control_ids": control id "options_modal": "@realms_allowlist.popup_dialog__options"
+	Moved element "realms_whitelist_content_panel@common_dialogs.main_panel_one_button" to "realms_allowlist_content_panel@common_dialogs.main_panel_one_button".
+	Changed element "realms_allowlist_content_panel@common_dialogs.main_panel_one_button":
+		Changed field "$variables":
+			Total variable: 3 (+0, -0)
+			Changed variable "$child_control" from "realms_whitelist.realms_whitelist_content_panel_children" to "realms_allowlist.realms_allowlist_content_panel_children".
+	Moved element "realms_whitelist_content_panel_children" to "realms_allowlist_content_panel_children".
+	Changed element "realms_allowlist_content_panel_children":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "realms_whitelist_panel_content@realms_whitelist.realms_whitelist_panel_content":
+					field "offset": [2, 0]
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100% - 4px"
+							item 1: "100%"
+			Added control:
+				element "realms_allowlist_panel_content@realms_allowlist.realms_allowlist_panel_content":
+					field "offset": [2, 0]
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100% - 4px"
+							item 1: "100%"
+	Moved element "realms_whitelist_panel_content@common.scrolling_panel" to "realms_allowlist_panel_content@common.scrolling_panel".
+	Changed element "realms_allowlist_panel_content@common.scrolling_panel":
+		Changed field "$variables":
+			Total variable: 4 (+0, -0)
+			Changed variable "$scrolling_content" from "realms_whitelist.friends_containing_panel" to "realms_allowlist.friends_containing_panel".
+	Added element "realms_allowlist_screen@common.base_screen" of field "$variables": variable "$screen_content": "realms_allowlist.realms_allowlist_content".
+	Removed element "realms_whitelist_content":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "root_panel":
+					field "type": "input_panel"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "controls": control: element "realms_whitelist_content_panel@realms_whitelist.realms_whitelist_content_panel": field "layer": 1
+			control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids": control id "share_by_link": "@realms_whitelist.popup_dialog__share_by_link"
+			control:
+				element "popup_dialog_factory_options":
+					field "type": "factory"
+					field "control_ids": control id "options_modal": "@realms_whitelist.popup_dialog__options"
+	Removed element "realms_whitelist_screen@common.base_screen" of field "$variables": variable "$screen_content": "realms_whitelist.realms_whitelist_content".
+	Changed element "refresh_button@common_buttons.transparent_content_button":
+		Changed field "$variables":
+			Total variable: 8 (+0, -0)
+			Changed variable "$button_content" from "realms_whitelist.refresh_icon" to "realms_allowlist.refresh_icon".
+	Changed element "right_controls_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "right_settings_panel@realms_whitelist.right_settings_panel": empty.
+			Removed control element "uninvited_friends_invite_button@realms_whitelist.invite_button": field "size": [62, 21].
+			Added control element "right_settings_panel@realms_allowlist.right_settings_panel": empty.
+			Added control element "uninvited_friends_invite_button@realms_allowlist.invite_button": field "size": [62, 21].
+	Changed element "right_settings_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "member_settings@realms_whitelist.member_settings": empty.
+			Removed control element "undo_button@realms_whitelist.undo_button": field "layer": 4.
+			Added control element "member_settings@realms_allowlist.member_settings": empty.
+			Added control element "undo_button@realms_allowlist.undo_button": field "layer": 4.
+	Changed element "share_by_link_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "share_by_link_button@realms_whitelist.share_by_link_button": empty.
+			Added control element "share_by_link_button@realms_allowlist.share_by_link_button": empty.
+	Changed element "share_popup_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+3, -3)
+			Removed control element "share_popup_dialog_header@realms_whitelist.share_popup_dialog_header": empty.
+			Removed control element "share_popup_dialog_upper_body@realms_whitelist.share_popup_dialog_upper_body": empty.
+			Removed control element "share_popup_dialog_lower_body@realms_whitelist.share_popup_dialog_lower_body": empty.
+			Added control element "share_popup_dialog_header@realms_allowlist.share_popup_dialog_header": empty.
+			Added control element "share_popup_dialog_upper_body@realms_allowlist.share_popup_dialog_upper_body": empty.
+			Added control element "share_popup_dialog_lower_body@realms_allowlist.share_popup_dialog_lower_body": empty.
+	Changed element "share_popup_dialog_header":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "share_popup_dialog_header_text@realms_whitelist.share_popup_dialog_header_text": empty.
+			Added control element "share_popup_dialog_header_text@realms_allowlist.share_popup_dialog_header_text": empty.
+	Changed element "share_popup_dialog_lower_body":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control:
+				element "default@realms_whitelist.lower_body_default_content":
+					field "bindings":
+						binding:
+							field "binding_name": "#default_message_visible"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "refresh@realms_whitelist.lower_body_refresh_content":
+					field "bindings":
+						binding:
+							field "binding_name": "#refresh_message_visible"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "default@realms_allowlist.lower_body_default_content":
+					field "bindings":
+						binding:
+							field "binding_name": "#default_message_visible"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "refresh@realms_allowlist.lower_body_refresh_content":
+					field "bindings":
+						binding:
+							field "binding_name": "#refresh_message_visible"
+							field "binding_name_override": "#visible"
+	Changed element "share_popup_dialog_upper_body":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "link_panel@realms_whitelist.link_panel": empty.
+			Added control element "link_panel@realms_allowlist.link_panel": empty.
+	Changed element "third_party_profile_label":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "profile_name_label@realms_whitelist.third_party_profile_name_label": empty.
+			Added control element "profile_name_label@realms_allowlist.third_party_profile_name_label": empty.
+	Moved element "third_party_profile_name_label@realms_whitelist.panel_text" to "third_party_profile_name_label@realms_allowlist.panel_text".
+	Changed element "third_party_profile_pic_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "black_border@realms_whitelist.black_border": empty.
+			Removed control:
+				element "third_party_profile_picture@realms_whitelist.third_party_profile_picture":
+					field "layer": 1
+					field "size": ["100% - 2px", "100% - 2px"]
+			Added control element "black_border@realms_allowlist.black_border": empty.
+			Added control:
+				element "third_party_profile_picture@realms_allowlist.third_party_profile_picture":
+					field "layer": 1
+					field "size": ["100% - 2px", "100% - 2px"]
+	Changed element "third_party_user_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 4 (+4, -4)
+			Removed control element "spacing1@realms_whitelist.horizontal_indent": field "size": [25, "100%"].
+			Removed control element "profile_picture@realms_whitelist.third_party_profile_pic_panel": field "size": [21, "100%"].
+			Removed control element "spacing2@realms_whitelist.horizontal_indent": field "size": [1, "100%"].
+			Removed control element "third_party_profile_label@realms_whitelist.third_party_profile_label": empty.
+			Added control element "spacing1@realms_allowlist.horizontal_indent": field "size": [25, "100%"].
+			Added control element "profile_picture@realms_allowlist.third_party_profile_pic_panel": field "size": [21, "100%"].
+			Added control element "spacing2@realms_allowlist.horizontal_indent": field "size": [1, "100%"].
+			Added control element "third_party_profile_label@realms_allowlist.third_party_profile_label": empty.
+	Changed element "unblock_button@common_buttons.light_content_button":
+		Changed field "$variables":
+			Total variable: 1 (+0, -0)
+			Changed variable "$button_content" from "realms_whitelist.unblock_label" to "realms_allowlist.unblock_label".
+	Moved element "uninvited_factory_linked_account@realms_whitelist.linked_account_panel_factory" to "uninvited_factory_linked_account@realms_allowlist.linked_account_panel_factory".
+	Moved element "uninvited_factory_xbl_profile@realms_whitelist.xbl_profile_panel_factory" to "uninvited_factory_xbl_profile@realms_allowlist.xbl_profile_panel_factory".
+	Moved element "xbl_profile_blocked_panel_factory@realms_whitelist.gapped_blocked_xbl_profile_panel" to "xbl_profile_blocked_panel_factory@realms_allowlist.gapped_blocked_xbl_profile_panel".
+	Changed element "xbl_profile_panel@realms_common.main_banner":
+		Changed field "controls":
+			Total control: 4 (+3, -3)
+			Removed control element "player_status_panel@realms_whitelist.player_status_panel": empty.
+			Removed control element "xbl_user_panel@realms_whitelist.xbl_user_panel": empty.
+			Removed control:
+				element "right_controls_panel@realms_whitelist.right_controls_panel":
+					field "offset": [-3, 0]
+					field "layer": 6
+			Added control element "player_status_panel@realms_allowlist.player_status_panel": empty.
+			Added control element "xbl_user_panel@realms_allowlist.xbl_user_panel": empty.
+			Added control:
+				element "right_controls_panel@realms_allowlist.right_controls_panel":
+					field "offset": [-3, 0]
+					field "layer": 6
+	Moved element "xbl_profile_panel_factory@realms_whitelist.gapped_xbl_profile_panel" to "xbl_profile_panel_factory@realms_allowlist.gapped_xbl_profile_panel".
+	Changed element "xbl_user_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 5 (+4, -4)
+			Removed control element "spacing1@realms_whitelist.horizontal_indent": field "size": [25, "100%"].
+			Removed control element "gamerpic_panel@realms_whitelist.gamerpic_panel": field "size": [21, "100%"].
+			Removed control element "spacing2@realms_whitelist.horizontal_indent": field "size": [1, "100%"].
+			Removed control element "gamertag_label_panel@realms_whitelist.gamertag_label_panel": empty.
+			Added control element "spacing1@realms_allowlist.horizontal_indent": field "size": [25, "100%"].
+			Added control element "gamerpic_panel@realms_allowlist.gamerpic_panel": field "size": [21, "100%"].
+			Added control element "spacing2@realms_allowlist.horizontal_indent": field "size": [1, "100%"].
+			Added control element "gamertag_label_panel@realms_allowlist.gamertag_label_panel": empty.
+Changed namespace "realms_create":
+	Changed element "scroll_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 9 (+0, -1)
+			Removed control:
+				element "realms_ios_terms_info@settings_common.option_info_label":
+					field "ignored": "(not $is_ios)"
+					field "layer": 3
+					field "size": ["100% - 4px", "100%c"]
+					field "$variables":
+						variable "$container_text_binding_name": "#realms_purchase_info"
+						variable "$used_fontsize": "normal"
+						variable "$used_fonttype": "smooth"
+						variable "$show_option_label": false
+						variable "$show_for_ios|default": false
+Changed namespace "realms_settings":
+	Changed element "popup_dialog__backups@popup_dialog.popup_dialog":
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "transparent_close_button@realms_whitelist.transparent_close_button": empty.
+			Added control element "transparent_close_button@realms_allowlist.transparent_close_button": empty.
+	Changed element "section_content_panels":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 5 (+1, -1)
+			Removed control:
+				element "players_section@realms_settings.generic_section_wrapper":
+					field "$variables":
+						variable "$section_button_name|default": "members_button_toggle"
+						variable "$section_content_name|default": "realms_whitelist.friends_containing_panel"
+						variable "$friend_panel_size":
+							item 0: "100%"
+							item 1: "100%c"
+			Added control:
+				element "players_section@realms_settings.generic_section_wrapper":
+					field "$variables":
+						variable "$section_button_name|default": "members_button_toggle"
+						variable "$section_content_name|default": "realms_allowlist.friends_containing_panel"
+						variable "$friend_panel_size":
+							item 0: "100%"
+							item 1: "100%c"
+	Changed element "test_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "realms_whitelist_content_panel@realms_whitelist.realms_whitelist_content_panel": field "layer": 1.
+			Removed control element "gamepad_helpers@realms_whitelist.gamepad_helpers": empty.
+			Added control element "realms_allowlist_content_panel@realms_allowlist.realms_allowlist_content_panel": field "layer": 1.
+			Added control element "gamepad_helpers@realms_allowlist.gamepad_helpers": empty.
+Changed namespace "settings_common":
+	Changed element "settings_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "popup_dialog_factory":
+					Unchanged field "type": "factory"
+					Changed field "control_ids":
+						Total control id: 5 (+0, -0)
+						Changed control id "share_by_link" from "@realms_whitelist.popup_dialog__share_by_link" to "@realms_allowlist.popup_dialog__share_by_link".
+						Changed control id "options_modal" from "@realms_whitelist.popup_dialog__options" to "@realms_allowlist.popup_dialog__options".
+Changed namespace "vrscheme":
+	Changed element "vr_scheme_classic_title@vrscheme.plain_text":
+		Changed field "color" from "$title_text_color" to "$body_text_color".

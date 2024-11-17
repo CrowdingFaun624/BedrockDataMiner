@@ -1,0 +1,172 @@
+Difference of "shaders_resource_packs" between "1.18.20.29" (beta of "1.18.30") and "1.18.30.20" (beta of "1.18.30").
+
+Changed resource pack "hb_blur.fragment":
+	Changed file "vanilla":
+		Total line: 46 (+16, -3)
+		        '''
+		        ...
+		 3  3   // Bedrock engine and heavily depends on Gameface's functionality, why
+		 4  4   // some numbers and values seem arbitrary or "magic".
+		 5  5   
+		 6  6   #include "uniformUIEffectsPixelConstants.h"
+		 7  7   #include "fragmentVersionCentroidUV.h"
+		    8 + #include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		    9 + 
+		   10 + varying vec4 ColorOut;
+		   11 + varying vec4 AdditionalOut;
+		   12 + // We need this here even if we do not use it as some drivers require
+		   13 + // the verying variables to match between the vertex and fragment shaders.
+		   14 + varying vec3 ScreenNormalPosition;
+		   15 + 
+		   16 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		   17 + 
+		   18 + void main() {
+		   19 + 	vec4 outColor = vec4(0.0, 0.0, 0.0, 0.0);
+		 8 20   
+		   21 + 	for (int i = 0; i < BLUR_STEPS; ++i) {
+		 9    - varying vec4 ColorOut;
+		10    - varying vec4 AdditionalOut;
+		   22 + 		vec4 coeffVec = COEFFICIENTS[i / 4];
+		   23 + 		float coeff = coeffVec[int(mod(float(i), 4.0))];
+		   24 + 		vec2 offset;
+		11    - // We need this here even if we do not use it as some drivers require
+		12    - // the verying variables to match between the vertex and fragment shaders.
+		13    - varying vec3 ScreenNormalPosition;
+		14    - 
+		   25 + 		vec4 pixelOffsetX = PIXEL_OFFSETS[(i*2) / 4];
+		   26 + 		vec4 pixelOffsetY = PIXEL_OFFSETS[(i*2 + 1) / 4];
+		   27 + 		offset.x = pixelOffsetX[int(mod(float(i*2), 4.0))];
+		   28 + 		offset.y = pixelOffsetY[int(mod(float(i*2 + 1), 4.0))];
+		15    - LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		16    - 
+		17    - void main() {
+		18    - 	vec4 outColor = vec4(0.0, 0.0, 0.0, 0.0);
+		19 29   
+		   30 + 		vec2 uvPointWithOffset = AdditionalOut.xy + offset;
+		   31 + 		vec2 uvPointWithNegativeOffset = AdditionalOut.xy - offset;
+		   32 + 		if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		   33 + 		{
+		   34 + 			// The lines for calculating the .y values differs from the original shader from Coherent since we need to handle
+		   35 + 			// the Y axis being inverted in OpenGL
+		   36 + 			uvPointWithOffset.x = clamp(AdditionalOut.x + offset.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   37 + 			uvPointWithOffset.y = clamp(AdditionalOut.y + offset.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		   38 + 			uvPointWithNegativeOffset.x = clamp(AdditionalOut.x - offset.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   39 + 			uvPointWithNegativeOffset.y = clamp(AdditionalOut.y - offset.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		   40 + 		}
+		20    - 	for (int i = 0; i < BLUR_STEPS; ++i) {
+		21    - 		vec4 coeffVec = COEFFICIENTS[i / 4];
+		22    - 		float coeff = coeffVec[int(mod(float(i), 4.0))];
+		23    - 		vec2 offset;
+		24    - 		vec4 pixelOffsetX = PIXEL_OFFSETS[(i*2) / 4];
+		25    - 		vec4 pixelOffsetY = PIXEL_OFFSETS[(i*2 + 1) / 4];
+		26    - 		offset.x = pixelOffsetX[int(mod(float(i*2), 4.0))];
+		27    - 		offset.y = pixelOffsetY[int(mod(float(i*2 + 1), 4.0))];
+		28 41   
+		   42 + 		outColor += ((texture2D(TEXTURE_0, uvPointWithOffset) + texture2D(TEXTURE_0, uvPointWithNegativeOffset)) * coeff);
+		29    - 		outColor += coeff * (texture2D(TEXTURE_0, AdditionalOut.xy + offset) + texture2D(TEXTURE_0, AdditionalOut.xy - offset));
+		30 43   	}
+		31 44   
+		32 45   	gl_FragColor = outColor * ColorOut.a;
+		33 46   }
+		        '''
+Changed resource pack "hb_standard_texture.fragment":
+	Changed file "vanilla":
+		Total line: 52 (+13, -1)
+		        '''
+		        ...
+		 5  5   
+		 6  6   #include "fragmentVersionSimple.h"
+		 7  7   
+		 8  8   #include "uniformUIEffectsPixelConstants.h"
+		 9  9   #include "uniformUIStandardPrimitivePixelConstants.h"
+		   10 + #include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		   11 + 
+		   12 + varying vec4 ColorOut;
+		   13 + varying vec4 AdditionalOut;
+		   14 + // We need this here even if we do not use it as some drivers require
+		   15 + // the verying variables to match between the vertex and fragment shaders.
+		   16 + varying vec3 ScreenNormalPosition;
+		   17 + 
+		   18 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		10 19   
+		   20 + void main() {
+		   21 + 	// snes-todo: Put this in separate shader when Gameface sets ST_StandardTextureWithColorMatrix on filters (other than drop-shadow)
+		   22 + 	// we get the correct shadertype, but not the correct shader mapping.
+		   23 + 	if (SHADER_TYPE == 7) {
+		   24 + 		vec4 baseColor = texture2D(TEXTURE_0, AdditionalOut.xy);
+		   25 + 		float nonZeroAlpha = max(baseColor.a, 0.00001);
+		   26 + 		baseColor = vec4(baseColor.rgb / nonZeroAlpha, nonZeroAlpha);
+		   27 + 		// TODO: Rename the members of the constant buffer so they are not weird for non-blurs
+		   28 + 		vec4 finalColor;
+		   29 + 		finalColor.r = dot(baseColor, vec4(COEFFICIENTS[0].x, COEFFICIENTS[0].y, COEFFICIENTS[0].z, COEFFICIENTS[0].w));
+		   30 + 		finalColor.g = dot(baseColor, vec4(COEFFICIENTS[1].x, COEFFICIENTS[1].y, COEFFICIENTS[1].z, COEFFICIENTS[1].w));
+		   31 + 		finalColor.b = dot(baseColor, vec4(COEFFICIENTS[2].x, COEFFICIENTS[2].y, COEFFICIENTS[2].z, COEFFICIENTS[2].w));
+		   32 + 		finalColor.a = dot(baseColor, vec4(PIXEL_OFFSETS[0].x, PIXEL_OFFSETS[0].y, PIXEL_OFFSETS[0].z, PIXEL_OFFSETS[0].w));
+		   33 + 		finalColor += vec4(PIXEL_OFFSETS[1].x, PIXEL_OFFSETS[1].y, PIXEL_OFFSETS[1].z, PIXEL_OFFSETS[1].w);
+		   34 + 		finalColor.rgb *= finalColor.a;
+		   35 + 		finalColor.rgba *= ColorOut.a;
+		   36 + 		gl_FragColor = finalColor;
+		   37 + 	} else {
+		   38 + 		vec2 uvPoint = AdditionalOut.xy;
+		11    - varying vec4 ColorOut;
+		12    - varying vec4 AdditionalOut;
+		13    - // We need this here even if we do not use it as some drivers require
+		14    - // the verying variables to match between the vertex and fragment shaders.
+		15    - varying vec3 ScreenNormalPosition;
+		16    - 
+		17    - LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		18    - 
+		19    - void main() {
+		20    - 	// snes-todo: Put this in separate shader when Gameface sets ST_StandardTextureWithColorMatrix on filters (other than drop-shadow)
+		21    - 	// we get the correct shadertype, but not the correct shader mapping.
+		22    - 	if (SHADER_TYPE == 7) {
+		23    - 		vec4 baseColor = texture2D(TEXTURE_0, AdditionalOut.xy);
+		24    - 		float nonZeroAlpha = max(baseColor.a, 0.00001);
+		25    - 		baseColor = vec4(baseColor.rgb / nonZeroAlpha, nonZeroAlpha);
+		26    - 		// TODO: Rename the members of the constant buffer so they are not weird for non-blurs
+		27    - 		vec4 finalColor;
+		   39 + 		if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		   40 + 		{
+		   41 + 			uvPoint.x = clamp(AdditionalOut.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   42 + 			// The following line differs from the original shader from Coherent since we need to handle
+		   43 + 			// the Y axis being inverted in OpenGL
+		   44 + 			uvPoint.y = clamp(AdditionalOut.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		   45 + 		}
+		   46 + 
+		   47 + 		vec4 outColor = texture2D(TEXTURE_0, uvPoint);
+		   48 + 		outColor.w = mix(1.0 - outColor.w, outColor.w, ColorOut.x);
+		   49 + 		float alpha = ColorOut.w * clamp(AdditionalOut.z, 0.0, 1.0);
+		28    - 		finalColor.r = dot(baseColor, vec4(COEFFICIENTS[0].x, COEFFICIENTS[0].y, COEFFICIENTS[0].z, COEFFICIENTS[0].w));
+		29    - 		finalColor.g = dot(baseColor, vec4(COEFFICIENTS[1].x, COEFFICIENTS[1].y, COEFFICIENTS[1].z, COEFFICIENTS[1].w));
+		30    - 		finalColor.b = dot(baseColor, vec4(COEFFICIENTS[2].x, COEFFICIENTS[2].y, COEFFICIENTS[2].z, COEFFICIENTS[2].w));
+		31    - 		finalColor.a = dot(baseColor, vec4(PIXEL_OFFSETS[0].x, PIXEL_OFFSETS[0].y, PIXEL_OFFSETS[0].z, PIXEL_OFFSETS[0].w));
+		32    - 		finalColor += vec4(PIXEL_OFFSETS[1].x, PIXEL_OFFSETS[1].y, PIXEL_OFFSETS[1].z, PIXEL_OFFSETS[1].w);
+		33    - 		finalColor.rgb *= finalColor.a;
+		34    - 		finalColor.rgba *= ColorOut.a;
+		35    - 		gl_FragColor = finalColor;
+		36    - 	} else {
+		37    - 		float alpha = ColorOut.a * clamp(AdditionalOut.z, 0.0, 1.0);
+		   50 + 		gl_FragColor = outColor * alpha;
+		38    - 		gl_FragColor = texture2D(TEXTURE_0, AdditionalOut.xy) * alpha;
+		39 51   	}
+		40 52   }
+		        '''
+Changed resource pack "uniformUIStandardPrimitiveAdditionalPixelConstants.h":
+	Changed file "vanilla":
+		Total line: 15 (+0, -0)
+		        '''
+		        ...
+		 3  3   
+		 4  4   #include "uniformMacro.h"
+		 5  5   
+		 6  6   #ifdef MCPE_PLATFORM_NX
+		 7  7   #extension GL_ARB_enhanced_layouts : enable
+		    8 + layout(binding = 5) uniform UIStandardPrimitiveAdditionalPixelConstants {
+		 8    - layout(binding = 3) uniform UIStandardPrimitiveAdditionalPixelConstants {
+		 9  9   #endif
+		10 10   // BEGIN_UNIFORM_BLOCK(UIStandardPrimitiveAdditionalPixelConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		11 11   UNIFORM vec4 PRIM_PROPS_0;
+		12 12   UNIFORM vec4 PRIM_PROPS_1;
+		13 13   END_UNIFORM_BLOCK
+		        ...
+		        '''

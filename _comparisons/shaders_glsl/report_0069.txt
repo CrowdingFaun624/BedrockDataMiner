@@ -1,0 +1,1786 @@
+Difference of "shaders_resource_packs" between "1.9.0.5" (beta of "1.9.0") and "1.10.0.3" (beta of "1.10.0").
+Unable to create data files for 1 file between: "1.9.0"
+
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 188 (+8, -0)
+		          '''
+		          ...
+		 68  68   	color = texture2D( TEXTURE_0, uv );
+		 69  69   #else
+		 70  70   	color = texture2D_AA(TEXTURE_0, uv);
+		 71  71   #endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		 72  72   
+		     73 + #ifdef MASKED_MULTITEXTURE
+		     74 + 	vec4 tex1 = texture2D( TEXTURE_1, uv );
+		     75 + 
+		     76 + 	// If tex1 has a non-black color and no alpha, use color; otherwise use tex1 
+		     77 + 	float maskedTexture = ceil( dot( tex1.rgb, vec3(1.0, 1.0, 1.0) ) * ( 1.0 - tex1.a ) );
+		     78 + 	color = mix(tex1, color, clamp(maskedTexture, 0.0, 1.0));
+		     79 + #endif // MASKED_MULTITEXTURE
+		     80 + 
+		 73  81   #if defined(ALPHA_TEST) && !defined(USE_MULTITEXTURE) && !defined(MULTIPLICATIVE_TINT)
+		 74  82   	if(NEEDS_DISCARD(color))
+		 75  83   		discard;
+		 76  84   #endif // ALPHA_TEST
+		 77  85   
+		          ...
+		          '''
+Added resource pack "hb_blur.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "uniformUIEffectsPixelConstants.h"
+		#include "fragmentVersionCentroidUV.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		
+		void main() {
+			vec4 outColor = vec4(0.0, 0.0, 0.0, 0.0);
+		
+			for (int i = 0; i < BLUR_STEPS; ++i) {
+				vec4 coeffVec = COEFFICIENTS[i / 4];
+				float coeff = coeffVec[int(mod(float(i), 4.0))];
+				vec2 offset;
+				vec4 pixelOffsetX = PIXEL_OFFSETS[(i*2) / 4];
+				vec4 pixelOffsetY = PIXEL_OFFSETS[(i*2 + 1) / 4];
+				offset.x = pixelOffsetX[int(mod(float(i*2), 4.0))];
+				offset.y = pixelOffsetY[int(mod(float(i*2 + 1), 4.0))];
+		
+				outColor += coeff * (texture2D(TEXTURE_0, AdditionalOut.xy + offset) + texture2D(TEXTURE_0, AdditionalOut.xy - offset));
+			}
+		
+			gl_FragColor = outColor * ColorOut.a;
+		}
+		'''
+Added resource pack "hb_hairline.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "uniformMacro.h"
+		#include "fragmentVersionCentroidUV.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			vec3 posPixels = vec3(ScreenNormalPosition.xy, 1.0);
+			float distance2line = abs(dot(AdditionalOut.xyz, posPixels));
+			float alpha = 1.0 - clamp(distance2line, 0.0, 1.0);
+		
+			gl_FragColor = ColorOut * alpha;
+		}
+		'''
+Added resource pack "hb_path.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		
+		varying vec2 ExtraParams;
+		
+		void main() {
+			gl_FragColor = PRIM_PROPS_0 * ExtraParams.y;
+		}
+		'''
+Added resource pack "hb_path.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "vertexVersionSimple.h"
+		#include "uniformUITransformsConstants.h"
+		
+		attribute vec4 HB_POSITION;
+		
+		varying vec2 ExtraParams;
+		
+		void main() {
+			vec4 outPos = vec4(HB_POSITION.xy, 0.0, 1.0) * TRANSFORM;
+		
+			// Translate to -1..1 with perspective correction
+			float w = outPos.w;
+			outPos.x = outPos.x * 2.0 - w;
+			outPos.y = (w - outPos.y) * 2.0 - w;
+		
+			ExtraParams = HB_POSITION.zw;
+		
+			gl_Position = outPos;
+		}
+		'''
+Added resource pack "hb_path_hairline.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIStandardPrimitivePixelConstants.h"
+		#include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		
+		varying vec2 ExtraParams;
+		
+		void main() {
+			if (SHADER_TYPE == 14) {
+				// Hairline quads
+		#if defined(NO_DERIVATIVES)
+				gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+		#else
+				vec2 px = dFdx(ExtraParams);
+				vec2 py = dFdy(ExtraParams);
+		
+				float fx = (2.0 * ExtraParams.x) * px.x - px.y;
+				float fy = (2.0 * ExtraParams.x) * py.x - py.y;
+		
+				float edgeAlpha = (ExtraParams.x * ExtraParams.x - ExtraParams.y);
+				float sd = sqrt((edgeAlpha * edgeAlpha) / (fx * fx + fy * fy));
+		
+				float alpha = 1.0 - sd;
+		
+				gl_FragColor = PRIM_PROPS_0 * PRIM_PROPS_1.x * alpha;
+		#endif
+			}
+			else {
+				// Hairline lines
+				gl_FragColor = PRIM_PROPS_0 * min(1.0, (1.0 - abs(ExtraParams.y)) * PRIM_PROPS_1.x);
+			}
+		}
+		'''
+Added resource pack "hb_renoir.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIRenoirShaderPSConstants.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		varying vec4 VaryingParam0;
+		varying vec4 VaryingParam1;
+		
+		LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1; // Mask texture
+		LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2; // Gradient texture
+		
+		void main() {
+			float tVal;
+		#if defined(GRADIENT_LINEAR)
+			tVal = VaryingParam0.x;
+		#elif defined(GRADIENT_RADIAL)
+			tVal = length(VaryingParam0.xy);
+		#endif
+		
+			vec4 colorTemp;
+		#if defined(GRADIENT_2PT)
+			colorTemp = mix(RENOIR_SHADER_PS_PROPS_0, RENOIR_SHADER_PS_PROPS_2, clamp(tVal, 0.0, 1.0));
+		#elif defined(GRADIENT_3PTSYMM)
+			float oneMinus2t = 1.0 - (2.0 * tVal);
+			colorTemp = clamp(oneMinus2t, 0.0, 1.0) * RENOIR_SHADER_PS_PROPS_0;
+			colorTemp += (1.0 - min(abs(oneMinus2t), 1.0)) * RENOIR_SHADER_PS_PROPS_1;
+			colorTemp += clamp(-oneMinus2t, 0.0, 1.0) * RENOIR_SHADER_PS_PROPS_2;
+		#elif defined(GRADIENT_FROMTEX)
+			vec2 coord = vec2(tVal, RENOIR_SHADER_PS_PROPS_3.x);
+			colorTemp = texture2D(TEXTURE_2, coord);
+		#elif defined(COLOR_FROMTEX)
+			colorTemp = texture2D(TEXTURE_0, AdditionalOut.xy);
+		#endif
+		
+		#if defined(HAS_MASK)
+			float mask = texture2D(TEXTURE_1, vec2(VaryingParam1.x, 1.0 - VaryingParam1.y)).r;
+			colorTemp *= mask;
+		#endif
+		
+			gl_FragColor = colorTemp;
+		}
+		
+		'''
+Added resource pack "hb_renoir.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "vertexVersionSimple.h"
+		
+		#include "uniformUITransformsConstants.h"
+		#include "uniformUIRenoirShaderVSConstants.h"
+		
+		attribute vec3 HB_POSITION;
+		attribute vec4 HB_COLOR;
+		attribute vec4 HB_ADDITIONAL;
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		varying vec4 VaryingParam0;
+		varying vec4 VaryingParam1;
+		
+		#define USE_ADDITIONAL_COORDS 2.0
+		
+		void main() {
+			vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+			ScreenNormalPosition = HB_POSITION.xyz;
+		
+			vec4 coords = vec4(HB_POSITION, 1.0);
+			if (HB_ADDITIONAL.z == USE_ADDITIONAL_COORDS) {
+				coords = vec4(HB_ADDITIONAL.xy, 0.0, 1.0);
+			}
+			VaryingParam0 = coords * COORD_TRANSFORM;
+		
+			VaryingParam1.x = HB_POSITION.x * RENOIR_SHADER_VS_PROPS_0.x + RENOIR_SHADER_VS_PROPS_0.z;
+			VaryingParam1.y = HB_POSITION.y * RENOIR_SHADER_VS_PROPS_0.y + RENOIR_SHADER_VS_PROPS_0.w;
+		
+			// Translate to -1..1 with perspective correction
+			float w = outPos.w;
+			outPos.x = outPos.x * 2.0 - w;
+			outPos.y = (w - outPos.y) * 2.0 - w;
+		
+			ColorOut = HB_COLOR;
+			AdditionalOut = HB_ADDITIONAL;
+		
+			gl_Position = outPos;
+		}
+		'''
+Added resource pack "hb_standard.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		void main() {
+			float alpha = min(1.0, AdditionalOut.z * AdditionalOut.w);
+		
+			gl_FragColor = ColorOut * alpha;
+		}
+		'''
+Added resource pack "hb_standard.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "vertexVersionSimple.h"
+		
+		#include "uniformUITransformsConstants.h"
+		
+		attribute vec3 HB_POSITION;
+		attribute vec4 HB_COLOR;
+		attribute vec4 HB_ADDITIONAL;
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+			ScreenNormalPosition = HB_POSITION.xyz;
+		
+			// Translate to -1..1 with perspective correction
+			float w = outPos.w;
+			outPos.x = outPos.x * 2.0 - w;
+			outPos.y = (w - outPos.y) * 2.0 - w;
+		
+			ColorOut = HB_COLOR;
+			AdditionalOut = HB_ADDITIONAL;
+		
+			gl_Position = outPos;
+		}
+		'''
+Added resource pack "hb_standard_circle.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIGlobalPixelConstants.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 posPixels = ScreenNormalPosition.xy;
+			float distance2edge = length(posPixels - AdditionalOut.xy) - AdditionalOut.z;
+			alpha = clamp(0.5 - distance2edge, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		}
+		'''
+Added resource pack "hb_standard_ellipse.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+		#if defined(NO_DERIVATIVES)
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+			vec2 pixel_step = vec2( 1.0 / VIEWPORT_SIZE.x, 1.0 / VIEWPORT_SIZE.y);
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / AdditionalOut.zw;
+			float test = dot(offset, offset) - 1.0;
+			vec2 newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw);
+			vec2 dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw);
+			vec2 dudy = newOffset - offset;
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+									2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		#else
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / AdditionalOut.zw;
+			float test = dot(offset, offset) - 1.0;
+			vec2 dudx = dFdx(offset);
+			vec2 dudy = dFdy(offset);
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+									2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		#endif
+		}
+		'''
+Added resource pack "hb_standard_stroke_circle.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 posPixels = ScreenNormalPosition.xy;
+			float de = length(posPixels - AdditionalOut.xy);
+			float distance2OuterEdge = de - (AdditionalOut.z + AdditionalOut.w / 2.0);
+			float distance2InnerEdge = de - (AdditionalOut.z - AdditionalOut.w / 2.0);
+			alpha = clamp(0.5 - distance2OuterEdge, 0.0, 1.0);
+			alpha *= 1.0 - clamp(0.5 - distance2InnerEdge, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		}
+		'''
+Added resource pack "hb_standard_stroke_ellipse.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+		#if defined(NO_DERIVATIVES)
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+			vec2 pixel_step = vec2( 1.0 / VIEWPORT_SIZE.x, 1.0 / VIEWPORT_SIZE.y);
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			float test = dot(offset, offset) - 1.0;
+			vec2 newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			vec2 dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			vec2 dudy = newOffset - offset;
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+								2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			test = dot(offset, offset) - 1.0;
+			newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			dudy = newOffset - offset;
+			gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+							2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			invlen = inversesqrt(grad_dot);
+		
+			alpha *= clamp(0.5 + test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		#else
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			float test = dot(offset, offset) - 1.0;
+			vec2 dudx = dFdx(offset);
+			vec2 dudy = dFdy(offset);
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+								2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			test = dot(offset, offset) - 1.0;
+			dudx = dFdx(offset);
+			dudy = dFdy(offset);
+			gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+							2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			invlen = inversesqrt(grad_dot);
+		
+			alpha *= clamp(0.5 + test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		#endif
+		}
+		'''
+Added resource pack "hb_standard_texture.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIEffectsPixelConstants.h"
+		#include "uniformUIStandardPrimitivePixelConstants.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		
+		void main() {
+			// snes-todo: Put this in separate shader when Gameface sets ST_StandardTextureWithColorMatrix on filters (other than drop-shadow)
+			// we get the correct shadertype, but not the correct shader mapping.
+			if (SHADER_TYPE == 7) {
+				vec4 baseColor = texture2D(TEXTURE_0, AdditionalOut.xy);
+				float nonZeroAlpha = max(baseColor.a, 0.00001);
+				baseColor = vec4(baseColor.rgb / nonZeroAlpha, nonZeroAlpha);
+				// TODO: Rename the members of the constant buffer so they are not weird for non-blurs
+				vec4 finalColor;
+				finalColor.r = dot(baseColor, vec4(COEFFICIENTS[0].x, COEFFICIENTS[0].y, COEFFICIENTS[0].z, COEFFICIENTS[0].w));
+				finalColor.g = dot(baseColor, vec4(COEFFICIENTS[1].x, COEFFICIENTS[1].y, COEFFICIENTS[1].z, COEFFICIENTS[1].w));
+				finalColor.b = dot(baseColor, vec4(COEFFICIENTS[2].x, COEFFICIENTS[2].y, COEFFICIENTS[2].z, COEFFICIENTS[2].w));
+				finalColor.a = dot(baseColor, vec4(PIXEL_OFFSETS[0].x, PIXEL_OFFSETS[0].y, PIXEL_OFFSETS[0].z, PIXEL_OFFSETS[0].w));
+				finalColor += vec4(PIXEL_OFFSETS[1].x, PIXEL_OFFSETS[1].y, PIXEL_OFFSETS[1].z, PIXEL_OFFSETS[1].w);
+				finalColor.rgb *= finalColor.a;
+				finalColor.rgba *= ColorOut.a;
+				gl_FragColor = finalColor;
+			} else {
+				float alpha = ColorOut.a * clamp(AdditionalOut.z, 0.0, 1.0);
+				gl_FragColor = texture2D(TEXTURE_0, AdditionalOut.xy) * alpha;
+			}
+		}
+		'''
+Added resource pack "hb_standard_texture_with_color_matrix.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIEffectsPixelConstants.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		
+		void main() {
+			vec4 baseColor = texture2D(TEXTURE_0, AdditionalOut.xy);
+			float nonZeroAlpha = max(baseColor.a, 0.00001);
+			baseColor = vec4(baseColor.rgb / nonZeroAlpha, nonZeroAlpha);
+			// TODO: Rename the members of the constant buffer so they are not weird for non-blurs
+			vec4 finalColor;
+			finalColor.r = dot(baseColor, vec4(COEFFICIENTS[0].x, COEFFICIENTS[0].y, COEFFICIENTS[0].z, COEFFICIENTS[0].w));
+			finalColor.g = dot(baseColor, vec4(COEFFICIENTS[1].x, COEFFICIENTS[1].y, COEFFICIENTS[1].z, COEFFICIENTS[1].w));
+			finalColor.b = dot(baseColor, vec4(COEFFICIENTS[2].x, COEFFICIENTS[2].y, COEFFICIENTS[2].z, COEFFICIENTS[2].w));
+			finalColor.a = dot(baseColor, vec4(PIXEL_OFFSETS[0].x, PIXEL_OFFSETS[0].y, PIXEL_OFFSETS[0].z, PIXEL_OFFSETS[0].w));
+			finalColor += vec4(PIXEL_OFFSETS[1].x, PIXEL_OFFSETS[1].y, PIXEL_OFFSETS[1].z, PIXEL_OFFSETS[1].w);
+			finalColor.rgb *= finalColor.a;
+			finalColor.rgba *= ColorOut.a;
+			gl_FragColor = finalColor;
+		}
+		'''
+Added resource pack "hb_stencil.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		varying vec4 outColor;
+		
+		void main() {
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+		'''
+Added resource pack "hb_stencil_circle.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 posPixels = ScreenNormalPosition.xy;
+			float distance2edge = length(posPixels - AdditionalOut.xy) - AdditionalOut.z;
+			alpha = clamp(0.5 - distance2edge, 0.0, 1.0);
+		
+			if (alpha < 0.00390625) {
+				discard;
+			}
+		
+			gl_FragColor = outColor;
+		}
+		'''
+Added resource pack "hb_stencil_path.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either
+		
+		#include "fragmentVersionSimple.h"
+		
+		varying vec2 ExtraParams;
+		
+		void main() {
+			if (ExtraParams.y < 0.00390625) {
+				discard;
+			}
+		
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+		'''
+Added resource pack "hb_stencil_texture.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 AdditionalOut;
+		
+		LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		
+		void main() {
+			float alpha = texture2D(TEXTURE_0, AdditionalOut.xy).a;
+		
+			if (alpha < 0.00390625) {
+				discard;
+			}
+		
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+		'''
+Added resource pack "hb_text.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		
+		float GetLuminance(vec3 color) {
+			return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		}
+		
+		void main() {
+			float dfValue = texture2D(TEXTURE_1, AdditionalOut.xy).r;
+			float lum = 1.45 - GetLuminance(ColorOut.xyz);
+			gl_FragColor = ColorOut * pow(dfValue, lum);
+		}
+		'''
+Added resource pack "hb_text.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "vertexVersionSimple.h"
+		
+		#include "uniformUITransformsConstants.h"
+		
+		attribute vec3 HB_POSITION;
+		attribute vec4 HB_COLOR;
+		attribute vec4 HB_ADDITIONAL;
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main(void)
+		{
+			vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+			ScreenNormalPosition = HB_POSITION.xyz;
+		
+			// Translate to -1..1 with perspective correction
+			float w = outPos.w;
+			outPos.x = outPos.x * 2.0 - w;
+			outPos.y = (w - outPos.y) * 2.0 - w;
+		
+			ColorOut = HB_COLOR;
+			AdditionalOut = HB_ADDITIONAL;
+		
+			gl_Position = outPos;
+		}
+		'''
+Added resource pack "hb_text_sdf.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		
+		// Keep in sync w/ SDFGenerator
+		#define DISTANCE_FIELD_MULTIPLIER 7.96875
+		#define DISTANCE_FIELD_MULTIPLIER_DIV2 3.984375
+		#define DISTANCE_FIELD_THRESHOLD 0.50196078431
+		
+		#define SHOW_DF 0
+		
+		float GetLuminance(vec3 color) {
+			return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		}
+		
+		void main() {
+			float dfValue = texture2D(TEXTURE_2, AdditionalOut.xy).r;
+		#if SHOW_DF
+			gl_FragColor = vec4(dfValue.xxx, 1);
+		#else
+			// Values should be in [-4, 4]
+			dfValue = (dfValue * DISTANCE_FIELD_MULTIPLIER) - DISTANCE_FIELD_MULTIPLIER_DIV2;
+			dfValue = smoothstep(-DISTANCE_FIELD_THRESHOLD / PRIM_PROPS_0.x, DISTANCE_FIELD_THRESHOLD / PRIM_PROPS_0.x, dfValue);
+		
+			float lum = 1.45 - GetLuminance(ColorOut.xyz);
+			gl_FragColor = ColorOut * pow(dfValue, lum);
+		#endif
+		}
+		'''
+Added resource pack "hb_text_stroke_sdf.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		
+		#include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		
+		#define SHOW_DF 0
+		
+		void main() {
+			float dfValue = texture2D(TEXTURE_0, AdditionalOut.xy).a;
+		#if SHOW_DF
+			gl_FragColor = vec4(dfValue.xxx, 1);
+		#else
+			float scale = sqrt(PRIM_PROPS_0.y * 0.5);
+		
+			float bias = 0.5 * scale - 0.9;
+			float outlineWidth = PRIM_PROPS_0.z / PRIM_PROPS_0.y * 0.5 * scale;
+			dfValue *= scale;
+		
+			vec4 c = mix(PRIM_PROPS_1, ColorOut, clamp(dfValue - (bias + outlineWidth), 0.0, 1.0));
+		
+			c *= clamp(dfValue - max(0.0, bias - outlineWidth), 0.0, 1.0);
+			gl_FragColor = c;
+		#endif
+		}
+		'''
+Added resource pack "hb_yuv_2_rgb.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionSimple.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		
+		void main() {
+			vec3 YCbCr;
+			YCbCr.x = texture2D(TEXTURE_0, AdditionalOut.xy).a;
+			YCbCr.y = texture2D(TEXTURE_1, AdditionalOut.xy).a;
+			YCbCr.z = texture2D(TEXTURE_2, AdditionalOut.xy).a;
+		
+			YCbCr -= vec3(0.0625, 0.5, 0.5);
+			mat3 yuv2rgb = mat3(vec3(1.164, 1.164, 1.164), vec3(0, -0.391, 2.018), vec3(1.596, -0.813, 0));
+			vec3 rgb = yuv2rgb * YCbCr;
+		
+			float alpha = ColorOut.a;
+			gl_FragColor = vec4(rgb * alpha, alpha);
+		}
+		'''
+Removed resource pack "hummingbird/blur.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		uniform sampler2D TEXTURE_0;
+		
+		uniform vec4 COEFFICIENTS[3];
+		uniform vec4 PIXEL_OFFSETS[6];
+		
+		void main() {
+			vec4 outColor = vec4(0.0, 0.0, 0.0, 0.0);
+		
+			for (int i = 0; i < BLUR_STEPS; ++i) {
+				vec4 coeffVec = COEFFICIENTS[i / 4];
+				float coeff = coeffVec[int(mod(float(i), 4.0))];
+				vec2 offset;
+				vec4 pixelOffsetX = PIXEL_OFFSETS[(i*2) / 4];
+				vec4 pixelOffsetY = PIXEL_OFFSETS[(i*2 + 1) / 4];
+				offset.x = pixelOffsetX[int(mod(float(i*2), 4.0))];
+				offset.y = pixelOffsetY[int(mod(float(i*2 + 1), 4.0))];
+		
+				outColor += coeff * (texture2D(TEXTURE_0, AdditionalOut.xy + offset) + texture2D(TEXTURE_0, AdditionalOut.xy - offset));
+			}
+		
+			gl_FragColor = outColor * ColorOut.a;
+		}
+		'''
+Removed resource pack "hummingbird/hairline.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			vec3 posPixels = vec3(ScreenNormalPosition.xy, 1.0);
+			float distance2line = abs(dot(AdditionalOut.xyz, posPixels));
+			float alpha = 1.0 - clamp(distance2line, 0.0, 1.0);
+		
+			gl_FragColor = ColorOut * alpha;
+		}
+		'''
+Removed resource pack "hummingbird/path.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec2 ExtraParams;
+		
+		uniform vec4 PRIM_PROPS_0;
+		
+		void main() {
+			gl_FragColor = PRIM_PROPS_0 * ExtraParams.y;
+		}
+		'''
+Removed resource pack "hummingbird/path.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "vertexVersionSimple.h"
+		
+		attribute vec4 HB_POSITION;
+		
+		uniform mat4 TRANSFORM;
+		
+		varying vec2 ExtraParams;
+		
+		void main() {
+			vec4 outPos = vec4(HB_POSITION.xy, 0.0, 1.0) * TRANSFORM;
+		
+			// Translate to -1..1 with perspective correction
+			float w = outPos.w;
+			outPos.x = outPos.x * 2.0 - w;
+			outPos.y = (w - outPos.y) * 2.0 - w;
+		
+			ExtraParams = HB_POSITION.zw;
+		
+			gl_Position = outPos;
+		}
+		'''
+Removed resource pack "hummingbird/path_hairline.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec2 ExtraParams;
+		
+		uniform vec4 PRIM_PROPS_0;
+		uniform vec4 PRIM_PROPS_1;
+		uniform int SHADER_TYPE;
+		
+		void main() {
+			if (SHADER_TYPE == 14) {
+				// Hairline quads
+		#if defined(NO_DERIVATIVES)
+				gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+		#else
+				vec2 px = dFdx(ExtraParams);
+				vec2 py = dFdy(ExtraParams);
+		
+				float fx = (2.0 * ExtraParams.x) * px.x - px.y;
+				float fy = (2.0 * ExtraParams.x) * py.x - py.y;
+		
+				float edgeAlpha = (ExtraParams.x * ExtraParams.x - ExtraParams.y);
+				float sd = sqrt((edgeAlpha * edgeAlpha) / (fx * fx + fy * fy));
+		
+				float alpha = 1.0 - sd;
+		
+				gl_FragColor = PRIM_PROPS_0 * PRIM_PROPS_1.x * alpha;
+		#endif
+			}
+			else {
+				// Hairline lines
+				gl_FragColor = PRIM_PROPS_0 * min(1.0, (1.0 - abs(ExtraParams.y)) * PRIM_PROPS_1.x);
+			}
+		}
+		'''
+Removed resource pack "hummingbird/renoir.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec4 VaryingParam0;
+		varying vec4 VaryingParam1;
+		
+		uniform sampler2D TEXTURE_0;
+		uniform sampler2D TEXTURE_1; // Mask texture
+		uniform sampler2D TEXTURE_2; // Gradient texture
+		
+		uniform vec4 RENOIR_SHADER_PS_PROPS_0; // GradientStartColor
+		uniform vec4 RENOIR_SHADER_PS_PROPS_1; // GradientMidColor
+		uniform vec4 RENOIR_SHADER_PS_PROPS_2; // GradientEndColor
+		uniform vec4 RENOIR_SHADER_PS_PROPS_3; // GradientYCoord
+		
+		void main() {
+			float tVal;
+		#if defined(GRADIENT_LINEAR)
+			tVal = VaryingParam0.x;
+		#elif defined(GRADIENT_RADIAL)
+			tVal = length(VaryingParam0.xy);
+		#endif
+		
+			vec4 colorTemp;
+		#if defined(GRADIENT_2PT)
+			colorTemp = mix(RENOIR_SHADER_PS_PROPS_0, RENOIR_SHADER_PS_PROPS_2, clamp(tVal, 0.0, 1.0));
+		#elif defined(GRADIENT_3PTSYMM)
+			float oneMinus2t = 1.0 - (2.0 * tVal);
+			colorTemp = clamp(oneMinus2t, 0.0, 1.0) * RENOIR_SHADER_PS_PROPS_0;
+			colorTemp += (1.0 - min(abs(oneMinus2t), 1.0)) * RENOIR_SHADER_PS_PROPS_1;
+			colorTemp += clamp(-oneMinus2t, 0.0, 1.0) * RENOIR_SHADER_PS_PROPS_2;
+		#elif defined(GRADIENT_FROMTEX)
+			vec2 coord = vec2(tVal, RENOIR_SHADER_PS_PROPS_3.x);
+			colorTemp = texture2D(TEXTURE_2, coord);
+		#elif defined(COLOR_FROMTEX)
+			colorTemp = texture2D(TEXTURE_0, AdditionalOut.xy);
+		#endif
+		
+		#if defined(HAS_MASK)
+			float mask = texture2D(TEXTURE_1, vec2(VaryingParam1.x, 1.0 - VaryingParam1.y)).r;
+			colorTemp *= mask;
+		#endif
+			gl_FragColor = colorTemp;
+		}
+		
+		'''
+Removed resource pack "hummingbird/renoir.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "vertexVersionSimple.h"
+		
+		attribute vec3 HB_POSITION;
+		attribute vec4 HB_COLOR;
+		attribute vec4 HB_ADDITIONAL;
+		
+		uniform mat4 TRANSFORM;
+		uniform mat4 COORD_TRANSFORM;
+		uniform vec4 RENOIR_SHADER_VS_PROPS_0;
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		varying vec4 VaryingParam0;
+		varying vec4 VaryingParam1;
+		
+		#define USE_ADDITIONAL_COORDS 2.0
+		
+		void main() {
+			vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+			ScreenNormalPosition = HB_POSITION.xyz;
+		
+			vec4 coords = vec4(HB_POSITION, 1.0);
+			if (HB_ADDITIONAL.z == USE_ADDITIONAL_COORDS) {
+				coords = vec4(HB_ADDITIONAL.xy, 0.0, 1.0);
+			}
+			VaryingParam0 = coords * COORD_TRANSFORM;
+		
+			VaryingParam1.x = HB_POSITION.x * RENOIR_SHADER_VS_PROPS_0.x + RENOIR_SHADER_VS_PROPS_0.z;
+			VaryingParam1.y = HB_POSITION.y * RENOIR_SHADER_VS_PROPS_0.y + RENOIR_SHADER_VS_PROPS_0.w;
+		
+			// Translate to -1..1 with perspective correction
+			float w = outPos.w;
+			outPos.x = outPos.x * 2.0 - w;
+			outPos.y = (w - outPos.y) * 2.0 - w;
+		
+			ColorOut = HB_COLOR;
+			AdditionalOut = HB_ADDITIONAL;
+		
+			gl_Position = outPos;
+		}
+		'''
+Removed resource pack "hummingbird/standard.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		void main() {
+			float alpha = min(1.0, AdditionalOut.z * AdditionalOut.w);
+		
+			gl_FragColor = ColorOut * alpha;
+		}
+		'''
+Removed resource pack "hummingbird/standard.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "vertexVersionSimple.h"
+		
+		attribute vec3 HB_POSITION;
+		attribute vec4 HB_COLOR;
+		attribute vec4 HB_ADDITIONAL;
+		
+		uniform mat4 TRANSFORM;
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+			ScreenNormalPosition = HB_POSITION.xyz;
+		
+			// Translate to -1..1 with perspective correction
+			float w = outPos.w;
+			outPos.x = outPos.x * 2.0 - w;
+			outPos.y = (w - outPos.y) * 2.0 - w;
+		
+			ColorOut = HB_COLOR;
+			AdditionalOut = HB_ADDITIONAL;
+		
+			gl_Position = outPos;
+		}
+		'''
+Removed resource pack "hummingbird/standard_circle.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		uniform vec2 VIEWPORT_SIZE;
+		
+		void main() {
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 posPixels = ScreenNormalPosition.xy;
+			float distance2edge = length(posPixels - AdditionalOut.xy) - AdditionalOut.z;
+			alpha = clamp(0.5 - distance2edge, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		}
+		'''
+Removed resource pack "hummingbird/standard_ellipse.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+		#if defined(NO_DERIVATIVES)
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+			vec2 pixel_step = vec2( 1.0 / VIEWPORT_SIZE.x, 1.0 / VIEWPORT_SIZE.y);
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / AdditionalOut.zw;
+			float test = dot(offset, offset) - 1.0;
+			vec2 newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw);
+			vec2 dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw);
+			vec2 dudy = newOffset - offset;
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+									2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		#else
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / AdditionalOut.zw;
+			float test = dot(offset, offset) - 1.0;
+			vec2 dudx = dFdx(offset);
+			vec2 dudy = dFdy(offset);
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+									2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		#endif
+		}
+		'''
+Removed resource pack "hummingbird/standard_stroke_circle.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 posPixels = ScreenNormalPosition.xy;
+			float de = length(posPixels - AdditionalOut.xy);
+			float distance2OuterEdge = de - (AdditionalOut.z + AdditionalOut.w / 2.0);
+			float distance2InnerEdge = de - (AdditionalOut.z - AdditionalOut.w / 2.0);
+			alpha = clamp(0.5 - distance2OuterEdge, 0.0, 1.0);
+			alpha *= 1.0 - clamp(0.5 - distance2InnerEdge, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		}
+		'''
+Removed resource pack "hummingbird/standard_stroke_ellipse.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		uniform vec4 PRIM_PROPS_0;
+		
+		void main() {
+		#if defined(NO_DERIVATIVES)
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+			vec2 pixel_step = vec2( 1.0 / VIEWPORT_SIZE.x, 1.0 / VIEWPORT_SIZE.y);
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			float test = dot(offset, offset) - 1.0;
+			vec2 newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			vec2 dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			vec2 dudy = newOffset - offset;
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+								2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			test = dot(offset, offset) - 1.0;
+			newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			dudy = newOffset - offset;
+			gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+							2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			invlen = inversesqrt(grad_dot);
+		
+			alpha *= clamp(0.5 + test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		#else
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			float test = dot(offset, offset) - 1.0;
+			vec2 dudx = dFdx(offset);
+			vec2 dudy = dFdy(offset);
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+								2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			test = dot(offset, offset) - 1.0;
+			dudx = dFdx(offset);
+			dudy = dFdy(offset);
+			gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+							2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			invlen = inversesqrt(grad_dot);
+		
+			alpha *= clamp(0.5 + test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		#endif
+		}
+		'''
+Removed resource pack "hummingbird/standard_texture.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		uniform sampler2D TEXTURE_0;
+		uniform int SHADER_TYPE;
+		
+		uniform vec4 COEFFICIENTS[3];
+		uniform vec4 PIXEL_OFFSETS[6];
+		
+		void main() {
+			// snes-todo: Put this in separate shader when Hummingbird sets ST_StandardTextureWithColorMatrix on filters (other than drop-shadow)
+			// we get the correct shadertype, but not the correct shader mapping.
+			if (SHADER_TYPE == 7) {
+				vec4 baseColor = texture2D(TEXTURE_0, AdditionalOut.xy);
+				float nonZeroAlpha = max(baseColor.a, 0.00001);
+				baseColor = vec4(baseColor.rgb / nonZeroAlpha, nonZeroAlpha);
+				// TODO: Rename the members of the constant buffer so they are not weird for non-blurs
+				vec4 finalColor;
+				finalColor.r = dot(baseColor, vec4(COEFFICIENTS[0].x, COEFFICIENTS[0].y, COEFFICIENTS[0].z, COEFFICIENTS[0].w));
+				finalColor.g = dot(baseColor, vec4(COEFFICIENTS[1].x, COEFFICIENTS[1].y, COEFFICIENTS[1].z, COEFFICIENTS[1].w));
+				finalColor.b = dot(baseColor, vec4(COEFFICIENTS[2].x, COEFFICIENTS[2].y, COEFFICIENTS[2].z, COEFFICIENTS[2].w));
+				finalColor.a = dot(baseColor, vec4(PIXEL_OFFSETS[0].x, PIXEL_OFFSETS[0].y, PIXEL_OFFSETS[0].z, PIXEL_OFFSETS[0].w));
+				finalColor += vec4(PIXEL_OFFSETS[1].x, PIXEL_OFFSETS[1].y, PIXEL_OFFSETS[1].z, PIXEL_OFFSETS[1].w);
+				finalColor.rgb *= finalColor.a;
+				finalColor.rgba *= ColorOut.a;
+				gl_FragColor = finalColor;
+			} else {
+				float alpha = ColorOut.a * clamp(AdditionalOut.z, 0.0, 1.0);
+				gl_FragColor = texture2D(TEXTURE_0, AdditionalOut.xy) * alpha;
+			}
+		}
+		'''
+Removed resource pack "hummingbird/standard_texture_with_color_matrix.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		uniform sampler2D TEXTURE_0;
+		
+		uniform vec4 COEFFICIENTS[3];
+		uniform vec4 PIXEL_OFFSETS[6];
+		
+		void main() {
+			vec4 baseColor = texture2D(TEXTURE_0, AdditionalOut.xy);
+			float nonZeroAlpha = max(baseColor.a, 0.00001);
+			baseColor = vec4(baseColor.rgb / nonZeroAlpha, nonZeroAlpha);
+			// TODO: Rename the members of the constant buffer so they are not weird for non-blurs
+			vec4 finalColor;
+			finalColor.r = dot(baseColor, vec4(COEFFICIENTS[0].x, COEFFICIENTS[0].y, COEFFICIENTS[0].z, COEFFICIENTS[0].w));
+			finalColor.g = dot(baseColor, vec4(COEFFICIENTS[1].x, COEFFICIENTS[1].y, COEFFICIENTS[1].z, COEFFICIENTS[1].w));
+			finalColor.b = dot(baseColor, vec4(COEFFICIENTS[2].x, COEFFICIENTS[2].y, COEFFICIENTS[2].z, COEFFICIENTS[2].w));
+			finalColor.a = dot(baseColor, vec4(PIXEL_OFFSETS[0].x, PIXEL_OFFSETS[0].y, PIXEL_OFFSETS[0].z, PIXEL_OFFSETS[0].w));
+			finalColor += vec4(PIXEL_OFFSETS[1].x, PIXEL_OFFSETS[1].y, PIXEL_OFFSETS[1].z, PIXEL_OFFSETS[1].w);
+			finalColor.rgb *= finalColor.a;
+			finalColor.rgba *= ColorOut.a;
+			gl_FragColor = finalColor;
+		}
+		'''
+Removed resource pack "hummingbird/stencil.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 outColor;
+		
+		void main() {
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+		'''
+Removed resource pack "hummingbird/stencil_circle.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main() {
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+		
+			vec2 posPixels = ScreenNormalPosition.xy;
+			float distance2edge = length(posPixels - AdditionalOut.xy) - AdditionalOut.z;
+			alpha = clamp(0.5 - distance2edge, 0.0, 1.0);
+		
+			if (alpha < 0.00390625) {
+				discard;
+			}
+		
+			gl_FragColor = outColor;
+		}
+		'''
+Removed resource pack "hummingbird/stencil_path.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec2 ExtraParams;
+		
+		void main() {
+			if (ExtraParams.y < 0.00390625) {
+				discard;
+			}
+		
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+		'''
+Removed resource pack "hummingbird/stencil_texture.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 AdditionalOut;
+		
+		uniform sampler2D TEXTURE_0;
+		
+		void main() {
+			float alpha = texture2D(TEXTURE_0, AdditionalOut.xy).a;
+		
+			if (alpha < 0.00390625) {
+				discard;
+			}
+		
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+		'''
+Removed resource pack "hummingbird/text.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		uniform sampler2D TEXTURE_1;
+		
+		float GetLuminance(vec3 color) {
+			return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		}
+		
+		void main() {
+			float dfValue = texture2D(TEXTURE_1, AdditionalOut.xy).r;
+			float lum = 1.45 - GetLuminance(ColorOut.xyz);
+			gl_FragColor = ColorOut * pow(dfValue, lum);
+		}
+		'''
+Removed resource pack "hummingbird/text.vertex":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "vertexVersionSimple.h"
+		
+		attribute vec3 HB_POSITION;
+		attribute vec4 HB_COLOR;
+		attribute vec4 HB_ADDITIONAL;
+		
+		uniform mat4 TRANSFORM;
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		void main(void)
+		{
+			vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+			ScreenNormalPosition = HB_POSITION.xyz;
+		
+			// Translate to -1..1 with perspective correction
+			float w = outPos.w;
+			outPos.x = outPos.x * 2.0 - w;
+			outPos.y = (w - outPos.y) * 2.0 - w;
+		
+			ColorOut = HB_COLOR;
+			AdditionalOut = HB_ADDITIONAL;
+		
+			gl_Position = outPos;
+		}
+		'''
+Removed resource pack "hummingbird/text_sdf.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		uniform sampler2D TEXTURE_2;
+		
+		// On Text:
+		// x - glyphFactor
+		uniform vec4 PRIM_PROPS_0;
+		
+		// Keep in sync w/ SDFGenerator
+		#define DISTANCE_FIELD_MULTIPLIER 7.96875
+		#define DISTANCE_FIELD_MULTIPLIER_DIV2 3.984375
+		#define DISTANCE_FIELD_THRESHOLD 0.50196078431
+		
+		#define SHOW_DF 0
+		
+		float GetLuminance(vec3 color) {
+			return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		}
+		
+		void main() {
+			float dfValue = texture2D(TEXTURE_2, AdditionalOut.xy).r;
+		#if SHOW_DF
+			gl_FragColor = vec4(dfValue.xxx, 1);
+		#else
+			// Values should be in [-4, 4]
+			dfValue = (dfValue * DISTANCE_FIELD_MULTIPLIER) - DISTANCE_FIELD_MULTIPLIER_DIV2;
+			dfValue = smoothstep(-DISTANCE_FIELD_THRESHOLD / PRIM_PROPS_0.x, DISTANCE_FIELD_THRESHOLD / PRIM_PROPS_0.x, dfValue);
+		
+			float lum = 1.45 - GetLuminance(ColorOut.xyz);
+			gl_FragColor = ColorOut * pow(dfValue, lum);
+		#endif
+		}
+		'''
+Removed resource pack "hummingbird/text_stroke_sdf.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		uniform sampler2D TEXTURE_0;
+		
+		// On Text:
+		// x - glyphFactor, y - glyph size, z - stroke width
+		uniform vec4 PRIM_PROPS_0;
+		// On Text:
+		// Stroke color
+		uniform vec4 PRIM_PROPS_1;
+		
+		#define SHOW_DF 0
+		
+		void main() {
+			float dfValue = texture2D(TEXTURE_0, AdditionalOut.xy).a;
+		#if SHOW_DF
+			gl_FragColor = vec4(dfValue.xxx, 1);
+		#else
+			float scale = sqrt(PRIM_PROPS_0.y * 0.5);
+		
+			float bias = 0.5 * scale - 0.9;
+			float outlineWidth = PRIM_PROPS_0.z / PRIM_PROPS_0.y * 0.5 * scale;
+			dfValue *= scale;
+		
+			vec4 c = mix(PRIM_PROPS_1, ColorOut, clamp(dfValue - (bias + outlineWidth), 0.0, 1.0));
+		
+			c *= clamp(dfValue - max(0.0, bias - outlineWidth), 0.0, 1.0);
+			gl_FragColor = c;
+		#endif
+		}
+		'''
+Removed resource pack "hummingbird/yuv_2_rgb.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		
+		uniform sampler2D TEXTURE_0;
+		uniform sampler2D TEXTURE_1;
+		uniform sampler2D TEXTURE_2;
+		
+		void main() {
+			vec3 YCbCr;
+			YCbCr.x = texture2D(TEXTURE_0, AdditionalOut.xy).a;
+			YCbCr.y = texture2D(TEXTURE_1, AdditionalOut.xy).a;
+			YCbCr.z = texture2D(TEXTURE_2, AdditionalOut.xy).a;
+		
+			YCbCr -= vec3(0.0625, 0.5, 0.5);
+			mat3 yuv2rgb = mat3(vec3(1.164, 1.164, 1.164), vec3(0, -0.391, 2.018), vec3(1.596, -0.813, 0));
+			vec3 rgb = yuv2rgb * YCbCr;
+		
+			float alpha = ColorOut.a;
+			gl_FragColor = vec4(rgb * alpha, alpha);
+		}
+		'''
+Changed resource pack "text.fragment":
+	Changed file "vanilla":
+		Total line: 61 (+0, -4)
+		        '''
+		        ...
+		37 37   #ifdef MSDF
+		38 38       vec4 resultColor = color;
+		39 39   
+		40 40       float sampleDistance = median(diffuse.r, diffuse.g, diffuse.b);
+		41 41   
+		42    -     float innerEdgeAlpha = smoothstep(max(0.0, GLYPH_CUTOFF - GLYPH_SMOOTH_RADIUS), min(1.0, GLYPH_CUTOFF + GLYPH_SMOOTH_RADIUS), sampleDistance);
+		43    -     // Apply fill cutoff
+		44    -     resultColor = mix(OUTLINE_COLOR, resultColor, innerEdgeAlpha);
+		45    - 
+		46 42       float outerEdgeAlpha = smoothstep(max(0.0, OUTLINE_CUTOFF - GLYPH_SMOOTH_RADIUS), min(1.0, OUTLINE_CUTOFF + GLYPH_SMOOTH_RADIUS), sampleDistance);
+		47 43       // Apply stroke (outline) cutoff
+		48 44       resultColor = vec4(resultColor.rgb, resultColor.a * outerEdgeAlpha);
+		49 45   
+		50 46       vec2 topLeft = floor(uv / GLYPH_UV_SIZE) * GLYPH_UV_SIZE;
+		        ...
+		        '''
+Changed resource pack "uniformTextConstants.h":
+	Changed file "vanilla":
+		Total line: 17 (+0, -2)
+		        '''
+		        ...
+		 6  6   #ifdef MCPE_PLATFORM_NX
+		 7  7   uniform TextConstants {
+		 8  8   #endif
+		 9  9   // BEGIN_UNIFORM_BLOCK(TextConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		10 10   UNIFORM float GLYPH_SMOOTH_RADIUS;
+		11    - UNIFORM float GLYPH_CUTOFF;
+		12 11   UNIFORM float OUTLINE_CUTOFF;
+		13    - UNIFORM vec4 OUTLINE_COLOR;
+		14 12   UNIFORM float SHADOW_SMOOTH_RADIUS;
+		15 13   UNIFORM vec4 SHADOW_COLOR;
+		16 14   UNIFORM vec2 SHADOW_OFFSET;
+		17 15   END_UNIFORM_BLOCK
+		18 16   
+		        ...
+		        '''
+Added resource pack "uniformUIEffectsPixelConstants.h":
+	file "vanilla":
+		'''
+		#ifndef _UNIFORM_UI_EFFECTS_PIXEL_CONSTANTS_H
+		#define _UNIFORM_UI_EFFECTS_PIXEL_CONSTANTS_H
+		
+		#include "uniformMacro.h"
+		
+		#ifdef MCPE_PLATFORM_NX
+		#extension GL_ARB_enhanced_layouts : enable
+		layout(binding = 3) uniform UIEffectsPixelConstants {
+		#endif
+		// BEGIN_UNIFORM_BLOCK(UIEffectsPixelConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		UNIFORM vec4 COEFFICIENTS[3];
+		UNIFORM vec4 PIXEL_OFFSETS[6];
+		END_UNIFORM_BLOCK
+		
+		#endif
+		'''
+Added resource pack "uniformUIGlobalPixelConstants.h":
+	file "vanilla":
+		'''
+		#ifndef _UNIFORM_UI_GLOBAL_PIXEL_CONSTANTS_H
+		#define _UNIFORM_UI_GLOBAL_PIXEL_CONSTANTS_H
+		
+		#include "uniformMacro.h"
+		
+		#ifdef MCPE_PLATFORM_NX
+		#extension GL_ARB_enhanced_layouts : enable
+		layout(binding = 4) uniform UIGlobalPixelConstants {
+		#endif
+		// BEGIN_UNIFORM_BLOCK(UIGlobalPixelConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		UNIFORM vec2 VIEWPORT_SIZE;
+		END_UNIFORM_BLOCK
+		
+		#endif
+		'''
+Added resource pack "uniformUIRenoirShaderPSConstants.h":
+	file "vanilla":
+		'''
+		#ifndef _UNIFORM_UI_RENOIR_SHADER_PS_CONSTANTS_H
+		#define _UNIFORM_UI_RENOIR_SHADER_PS_CONSTANTS_H
+		
+		#include "uniformMacro.h"
+		
+		#ifdef MCPE_PLATFORM_NX
+		#extension GL_ARB_enhanced_layouts : enable
+		layout(binding = 3) uniform UIRenoirShaderPSConstants {
+		#endif
+		// BEGIN_UNIFORM_BLOCK(UIRenoirShaderPSConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		UNIFORM vec4 RENOIR_SHADER_PS_PROPS_0; // GradientStartColor
+		UNIFORM vec4 RENOIR_SHADER_PS_PROPS_1; // GradientMidColor
+		UNIFORM vec4 RENOIR_SHADER_PS_PROPS_2; // GradientEndColor
+		UNIFORM vec4 RENOIR_SHADER_PS_PROPS_3; // GradientYCoord
+		END_UNIFORM_BLOCK
+		
+		#endif
+		'''
+Added resource pack "uniformUIRenoirShaderVSConstants.h":
+	file "vanilla":
+		'''
+		#ifndef _UNIFORM_UI_RENOIR_SHADER_VS_CONSTANTS_H
+		#define _UNIFORM_UI_RENOIR_SHADER_VS_CONSTANTS_H
+		
+		#include "uniformMacro.h"
+		
+		#ifdef MCPE_PLATFORM_NX
+		#extension GL_ARB_enhanced_layouts : enable
+		layout(binding = 4) uniform UIRenoirShaderVSConstants {
+		#endif
+		// BEGIN_UNIFORM_BLOCK(UIRenoirShaderVSConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		UNIFORM mat4 COORD_TRANSFORM;
+		UNIFORM vec4 RENOIR_SHADER_VS_PROPS_0;
+		END_UNIFORM_BLOCK
+		
+		#endif
+		'''
+Added resource pack "uniformUIStandardPrimitiveAdditionalPixelConstants.h":
+	file "vanilla":
+		'''
+		#ifndef _UNIFORM_UI_STANDARD_PRIMITIVE_ADDITIONAL_PIXEL_CONSTANTS_H
+		#define _UNIFORM_UI_STANDARD_PRIMITIVE_ADDITIONAL_PIXEL_CONSTANTS_H
+		
+		#include "uniformMacro.h"
+		
+		#ifdef MCPE_PLATFORM_NX
+		#extension GL_ARB_enhanced_layouts : enable
+		layout(binding = 3) uniform UIStandardPrimitiveAdditionalPixelConstants {
+		#endif
+		// BEGIN_UNIFORM_BLOCK(UIStandardPrimitiveAdditionalPixelConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		UNIFORM vec4 PRIM_PROPS_0;
+		UNIFORM vec4 PRIM_PROPS_1;
+		END_UNIFORM_BLOCK
+		
+		#endif
+		'''
+Added resource pack "uniformUIStandardPrimitivePixelConstants.h":
+	file "vanilla":
+		'''
+		#ifndef _UNIFORM_UI_STANDARD_PRIMITIVE_PIXEL_CONSTANTS_H
+		#define _UNIFORM_UI_STANDARD_PRIMITIVE_PIXEL_CONSTANTS_H
+		
+		#include "uniformMacro.h"
+		
+		#ifdef MCPE_PLATFORM_NX
+		#extension GL_ARB_enhanced_layouts : enable
+		layout(binding = 4) uniform UIStandardPrimitivePixelConstants {
+		#endif
+		// BEGIN_UNIFORM_BLOCK(UIStandardPrimitivePixelConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		UNIFORM int SHADER_TYPE;
+		END_UNIFORM_BLOCK
+		
+		#endif
+		'''
+Added resource pack "uniformUITransformsConstants.h":
+	file "vanilla":
+		'''
+		#ifndef _UNIFORM_UI_TRANSFORMS_CONSTANTS_H
+		#define _UNIFORM_UI_TRANSFORMS_CONSTANTS_H
+		
+		#include "uniformMacro.h"
+		
+		#ifdef MCPE_PLATFORM_NX
+		#extension GL_ARB_enhanced_layouts : enable
+		layout(binding = 3) uniform UITransformsConstants {
+		#endif
+		// BEGIN_UNIFORM_BLOCK(UITransformsConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		UNIFORM mat4 TRANSFORM;
+		END_UNIFORM_BLOCK
+		
+		#endif
+		'''

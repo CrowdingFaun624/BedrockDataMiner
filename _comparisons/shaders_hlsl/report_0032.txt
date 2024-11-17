@@ -1,0 +1,67 @@
+Difference of "shaders" between "1.9.0.3" (beta of "1.9.0") and "1.9.0.5" (beta of "1.9.0").
+
+Changed file "util.fxh":
+	Total line: 54 (+6, -12)
+	        '''
+	        ...
+	11 11   #define USE_ALPHA_TEST 0
+	12 12   #endif
+	13 13   
+	14 14   #if USE_TEXEL_AA
+	15 15   
+	16    - static const float TEXEL_AA_ALPHA_BIAS = 0.125f;
+	17    - static const float TEXEL_AA_EPSILON = 0.03125f;
+	18    - 
+	19    - static const float TEXEL_AA_LOD_MIN = -0.5f;
+	20    - static const float TEXEL_AA_LOD_MAX = 0.0f;
+	21    - 
+	22    - float4 texture2D_AA(in Texture2D source, in sampler bilinearSampler, in float2 originalUV) {
+	23    - 
+	   16 + static const float TEXEL_AA_LOD_CONSERVATIVE_ALPHA = -1.0f;
+	   17 + static const float TEXEL_AA_LOD_RELAXED_ALPHA = 2.0f;
+	24    - 	const float2 dUV_dX = ddx(originalUV) * TEXTURE_DIMENSIONS.xy;
+	25    - 	const float2 dUV_dY = ddy(originalUV) * TEXTURE_DIMENSIONS.xy;
+	26 18   
+	   19 + float4 texture2D_AA(in Texture2D source, in sampler bilinearSampler, in float2 originalUV) {
+	27    - 	const float2 delU = float2(dUV_dX.x, dUV_dY.x);
+	28    - 	const float2 delV = float2(dUV_dX.y, dUV_dY.y);
+	29 20   
+	   21 + 	const float2 dUV_dX = ddx(originalUV) * TEXTURE_DIMENSIONS.xy;
+	   22 + 	const float2 dUV_dY = ddy(originalUV) * TEXTURE_DIMENSIONS.xy;
+	30    - 	const float2 gradientMagnitudes = float2(length(delU), length(delV));
+	31 23   
+	   24 + 	const float2 delU = float2(dUV_dX.x, dUV_dY.x);
+	   25 + 	const float2 delV = float2(dUV_dX.y, dUV_dY.y);
+	   26 + 	const float2 adjustmentScalar = max(1.0f / float2(length(delU), length(delV)), 1.0f);
+	32    - 	const float2 fractionalTexel = frac(originalUV * TEXTURE_DIMENSIONS.xy);
+	33    - 	const float2 integralTexel = floor(originalUV * TEXTURE_DIMENSIONS.xy);
+	34 27   
+	   28 + 	const float2 fractionalTexel = frac(originalUV * TEXTURE_DIMENSIONS.xy);
+	   29 + 	const float2 adjustedFractionalTexel = clamp(fractionalTexel * adjustmentScalar, 0.0f, 0.5f) + clamp(fractionalTexel * adjustmentScalar - (adjustmentScalar - 0.5f), 0.0f, 0.5f);
+	35    - 	const float2 scalar = max(1.0f / max(gradientMagnitudes, TEXEL_AA_EPSILON), 1.0f);
+	36 30   
+	   31 + 	// const float lod = log2(sqrt(max(dot(dUV_dX, dUV_dX), dot(dUV_dY, dUV_dY))) * 2.0f);
+	   32 + 	const float lod = source.CalculateLevelOfDetailUnclamped(bilinearSampler, originalUV);
+	   33 + 	const float samplingMode = smoothstep(TEXEL_AA_LOD_RELAXED_ALPHA, TEXEL_AA_LOD_CONSERVATIVE_ALPHA, lod);
+	37    - 	const float2 adjustedFractionalTexel = clamp(fractionalTexel * scalar, 0.0f, 0.5f) + clamp(fractionalTexel * scalar - (scalar - 0.5f), 0.0f, 0.5f);
+	38    - 	const float2 adjustedUV = (adjustedFractionalTexel + integralTexel) / TEXTURE_DIMENSIONS.xy;
+	39 34   
+	40    - 	const float lod = source.CalculateLevelOfDetailUnclamped(bilinearSampler, originalUV);
+	   35 + 	const float2 adjustedUV = (adjustedFractionalTexel + floor(originalUV * TEXTURE_DIMENSIONS.xy)) / TEXTURE_DIMENSIONS.xy;
+	   36 + 	const float4 blendedSample = source.Sample(bilinearSampler, lerp(originalUV, adjustedUV, samplingMode));
+	41    - 	const float t = smoothstep(TEXEL_AA_LOD_MIN, TEXEL_AA_LOD_MAX, lod);
+	42    - 	const float4 sampledColor = source.Sample(bilinearSampler, lerp(adjustedUV, originalUV, t));
+	43 37   
+	44 38   	#if USE_ALPHA_TEST
+	   39 + 		return float4(blendedSample.rgb, lerp(blendedSample.a, smoothstep(1.0f/2.0f, 1.0f, blendedSample.a), samplingMode));
+	45    - 		return float4(sampledColor.rgb, lerp(floor(pow(sampledColor.a + TEXEL_AA_ALPHA_BIAS, 2.0f)), sampledColor.a, t));
+	46 40   	#else
+	   41 + 		return blendedSample;
+	47    - 		return sampledColor;
+	48 42   	#endif
+	49 43   }
+	50 44   
+	51 45   #endif // USE_TEXEL_AA
+	52 46   
+	        ...
+	        '''

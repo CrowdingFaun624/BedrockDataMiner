@@ -1,0 +1,154 @@
+Difference of "ui" between "1.1.5" and "1.1.7".
+
+Changed namespace "play":
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 14 (+1, -1)
+						Removed control:
+							element "friends_realms@play.realms_world_item_grid":
+								field "layer": 1
+								field "$variables":
+									variable "$grid_name": "#friend_realms_grid_dimension"
+									variable "$realms_worlds_collection_name": "friends_realms"
+									variable "$grid_item_layout": "play.realms_world_item"
+						Added control:
+							element "friends_realms@play.realms_world_item_grid":
+								field "layer": 1
+								field "bindings":
+									binding: field "binding_name": "#friend_realms_grid_dimension"
+									binding:
+										field "binding_name": "#friends_realms_grids_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$realms_worlds_collection_name": "friends_realms"
+									variable "$grid_item_layout": "play.realms_world_item"
+									variable "$grid_dimension": "#friend_realms_grid_dimension"
+	Changed element "realms_world_item_grid":
+		Unchanged field "type": "grid"
+		Changed field "grid_dimension_binding" from "$grid_name" to "$grid_dimension".
+		Removed field "bindings":
+			binding: field "binding_name": "$grid_name"
+			binding:
+				field "binding_name": "#realms_grids_visible"
+				field "binding_name_override": "#visible"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "personal_realms@play.realms_world_item_grid":
+					Changed field "$variables":
+						Moved variable "$grid_name" to "$grid_dimension".
+					Added field "bindings":
+						binding: field "binding_name": "#personal_realms_grid_dimension"
+						binding:
+							field "binding_name": "#personal_realms_grids_visible"
+							field "binding_name_override": "#visible"
+Changed namespace "realms_create":
+	Total element: 28 (+0, -4)
+	Changed element "content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "agree_to_tos": "@realms_create.popup_dialog__agree_to_tos"
+						control id "purchase_failed": "@realms_create.popup_dialog__purchase_failed"
+						control id "purchase_in_progress": "@realms_create.popup_dialog__purchase_in_progress"
+	Removed element "popup_dialog__agree_to_tos@realms_create.popup_dialog_base":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control:
+				element "popup_dialog_message@popup_dialog.popup_dialog_message":
+					field "offset": [0, 30]
+					field "bindings": binding: field "binding_name": "$message_text"
+			control: element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$message_text": "#tos_error_msg"
+			variable "$middle_button_text": "realmsCreateScreen.goBack"
+	Removed element "popup_dialog__purchase_failed@realms_create.popup_dialog_base":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": field "offset": [0, 30]
+			control: element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$message_text": "realmsCreateScreen.purchaseFailed"
+			variable "$middle_button_text": "gui.ok"
+	Removed element "popup_dialog__purchase_in_progress@popup_dialog.popup_dialog":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": field "size": ["90%", "100%"]
+		field "$variables": variable "$message_text": "realmsCreateScreen.waitingPurchase"
+	Removed element "popup_dialog_base@popup_dialog.popup_dialog" of field "$variables": variable "$middle_button_press": "button.close_dialog".
+Changed namespace "start":
+	Changed element "main_buttons_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_rows":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 4 (+1, -1)
+						Removed control:
+							element "stacked_row_2@start.stacked_row":
+								field "controls":
+									control:
+										element "stacked_columns":
+											field "type": "stack_panel"
+											field "size": ["100%", "100%"]
+											field "orientation": "horizontal"
+											field "controls":
+												control:
+													element "stacked_col_0":
+														field "type": "panel"
+														field "size": ["fill", "100%"]
+														field "controls": control: element "settings_button@start.settings_button": empty
+												control:
+													element "stacked_col_1":
+														field "type": "panel"
+														field "size": ["50%", "100%"]
+														field "ignored": "$store_ignored"
+														field "controls":
+															control: element "store_button@start.store_button": empty
+															control:
+																element "new_offers_icon@start.new_offers_icon":
+																	field "bindings":
+																		binding:
+																			field "binding_name": "#new_offers"
+																			field "binding_name_override": "#visible"
+						Added control:
+							element "stacked_row_2@start.stacked_row":
+								field "controls":
+									control:
+										element "stacked_columns":
+											field "type": "stack_panel"
+											field "size": ["100%", "100%"]
+											field "orientation": "horizontal"
+											field "controls":
+												control:
+													element "stacked_col_0":
+														field "type": "panel"
+														field "size": ["fill", "100%"]
+														field "controls": control: element "settings_button@start.settings_button": empty
+												control:
+													element "stacked_col_1":
+														field "type": "panel"
+														field "size": ["50%", "100%"]
+														field "ignored": "$store_ignored"
+														field "controls":
+															control: element "store_button@start.store_button": empty
+															control:
+																element "new_offers_icon@start.new_offers_icon":
+																	field "bindings":
+																		binding:
+																			field "binding_name": "#new_offers"
+																			field "binding_name_override": "#visible"
+														field "bindings":
+															binding:
+																field "binding_name": "#store_visible"
+																field "binding_name_override": "#visible"

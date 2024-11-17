@@ -1,23 +1,425 @@
-Difference of "entities" between "1.2.10" and "1.2.11".
+Difference of "entities" between "1.2.14.3" (beta of "1.4.0") and "1.2.20.1" (beta of "1.4.0").
 
-Changed entity "chest_minecart":
+Total entity: 88 (+1, -0)
+Added entity "dolphin.json":
+	behavior pack "core":
+		field "minecraft:entity":
+			field "format_version": "1.2.0"
+			field "component_groups":
+				component group "minecraft:dolphin_adult":
+					component "minecraft:bribeable":
+						field "bribeItems":
+							item: "fish"
+							item: "salmon"
+					component "minecraft:loot": field "table": "loot_tables/entities/dolphin.json"
+					component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "track_target": true
+				component group "minecraft:dolphin_angry":
+					component "minecraft:angry":
+						field "duration": 25
+						field "broadcastAnger": true
+						field "broadcastRange": 16
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+					component "minecraft:on_target_acquired": empty
+				component group "minecraft:dolphin_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feedItems":
+							item: "fish"
+							item: "salmon"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.65
+					component "minecraft:behavior.follow_parent":
+						field "priority": 4
+						field "speed_multiplier": 1.1
+					component "minecraft:behavior.panic":
+						field "priority": 1
+						field "speed_multiplier": 1.25
+				component group "minecraft:dolphin_dried":
+					component "minecraft:damage_over_time":
+						field "damagePerHurt": 1
+						field "timeBetweenHurt": 0
+				component group "minecraft:dolphin_on_land":
+					component "minecraft:environment_sensor":
+						trigger:
+							field "filters":
+								filter property "test": "in_water_or_rain"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "minecraft:stop_dryingout"
+					component "minecraft:navigation.generic":
+						field "is_amphibious": true
+						field "can_float": false
+						field "can_swim": false
+						field "can_walk": true
+						field "can_breach": false
+						field "can_jump": false
+					component "minecraft:timer":
+						field "looping": false
+						field "time": 20
+						field "time_down_event": field "event": "minecraft:dried_out"
+				component group "minecraft:dolphin_on_land_in_rain":
+					component "minecraft:environment_sensor":
+						trigger:
+							field "filters":
+								filter property "test": "in_water"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "minecraft:navigation_off_land"
+						trigger:
+							field "filters":
+								filter property "test": "in_water_or_rain"
+								filter property "operator": "!="
+								filter property "value": true
+							field "event": "minecraft:start_dryingout"
+					component "minecraft:navigation.generic":
+						field "is_amphibious": true
+						field "can_float": false
+						field "can_swim": false
+						field "can_walk": true
+						field "can_breach": false
+						field "can_jump": false
+				component group "minecraft:dolphin_swimming_navigation":
+					component "minecraft:environment_sensor":
+						trigger:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "on_ground"
+										filter property "operator": "=="
+										filter property "value": true
+									filter:
+										filter property "test": "in_water"
+										filter property "operator": "!="
+										filter property "value": true
+							field "event": "minecraft:navigation_on_land"
+					component "minecraft:navigation.generic":
+						field "is_amphibious": true
+						field "can_float": false
+						field "can_swim": true
+						field "can_walk": false
+						field "can_breach": true
+					component "minecraft:behavior.look_at_player":
+						field "priority": 8
+						field "look_distance": 6
+			field "components":
+				component "minecraft:attack": field "damage": 3
+				component "minecraft:breathable":
+					field "totalSupply": 240
+					field "suffocateTime": 0
+					field "breathesAir": true
+					field "breathesWater": false
+					field "generatesBubbles": false
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 1.0
+					field "height": 0.6
+				component "minecraft:flocking":
+					field "in_water": false
+					field "low_flock_limit": 4
+					field "high_flock_limit": 8
+					field "loner_chance": 0.1
+					field "goal_weight": 2.0
+					field "terrain_avoid_distance": 0.0
+					field "breach_influence": 0.0
+					field "influence_radius": 6.0
+					field "separation_weight": 0.65
+					field "separation_threshold": 2.0
+					field "cohesion_weight": 2.75
+					field "cohesion_threshold": 3.5
+					field "min_height": 4
+					field "max_height": 4
+					field "block_distance": 1.0
+					field "block_weight": 0.75
+				component "minecraft:follow_range":
+					field "value": 48
+					field "max": 48
+				component "minecraft:health":
+					field "value": 10
+					field "max": 10
+				component "minecraft:identifier": field "id": "minecraft:dolphin"
+				component "minecraft:jump.static": field "jump_power": 0.6
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.dolphin": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "is_amphibious": true
+					field "can_float": false
+					field "can_swim": true
+					field "can_walk": false
+					field "can_breach": true
+				component "minecraft:on_target_acquired":
+					field "event": "minecraft:become_angry"
+					field "target": "self"
+				component "minecraft:on_target_escape":
+					field "event": "minecraft:on_calm"
+					field "target": "self"
+				component "minecraft:physics": empty
+				component "minecraft:type_family": field "family": family: "dolphin"
+				component "minecraft:underwater_movement": field "value": 0.15
+				component "minecraft:behavior.avoid_mob_type":
+					field "priority": 2
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "guardian_elder"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "guardian"
+							field "max_dist": 8
+							field "walk_speed_multiplier": 1.0
+							field "sprint_speed_multiplier": 1.0
+					field "probability_per_strength": 0.14
+				component "minecraft:behavior.breathe_air": field "priority": 1
+				component "minecraft:behavior.follow_flock":
+					field "priority": 3
+					field "speed_multiplier": 0.12
+				component "minecraft:behavior.hurt_by_target": field "priority": 1
+				component "minecraft:behavior.move_to_water":
+					field "priority": 1
+					field "search_range": 15
+					field "search_height": 5
+				component "minecraft:behavior.random_breach":
+					field "priority": 6
+					field "interval": 50
+					field "xz_dist": 6
+					field "cooldown_time": 2.0
+				component "minecraft:behavior.random_look_around": field "priority": 7
+				component "minecraft:behavior.random_swim":
+					field "priority": 5
+					field "interval": 30
+					field "xz_dist": 20
+				component "minecraft:behavior.swim_with_mob":
+					field "priority": 4
+					field "search_range": 20
+					field "speed_multiplier": 0.5
+					field "stop_distance": 5.0
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "player"
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group: "minecraft:dolphin_adult"
+					field "remove": field "component_groups": component group: "minecraft:dolphin_baby"
+				event "minecraft:become_angry": field "add": field "component_groups": component group: "minecraft:dolphin_angry"
+				event "minecraft:dried_out": field "add": field "component_groups": component group: "minecraft:dolphin_dried"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "weight": 90
+							field "add":
+								field "component_groups":
+									component group: "minecraft:dolphin_adult"
+									component group: "minecraft:dolphin_swimming_navigation"
+						randomize item:
+							field "weight": 10
+							field "add":
+								field "component_groups":
+									component group: "minecraft:dolphin_baby"
+									component group: "minecraft:dolphin_swimming_navigation"
+				event "minecraft:navigation_off_land":
+					field "add": field "component_groups": component group: "minecraft:dolphin_swimming_navigation"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:dolphin_on_land_in_rain"
+							component group: "minecraft:dolphin_on_land"
+							component group: "minecraft:dolphin_dried"
+				event "minecraft:navigation_on_land":
+					field "add": field "component_groups": component group: "minecraft:dolphin_on_land"
+					field "remove": field "component_groups": component group: "minecraft:dolphin_swimming_navigation"
+				event "minecraft:on_calm": field "remove": field "component_groups": component group: "minecraft:dolphin_angry"
+				event "minecraft:start_dryingout":
+					field "add": field "component_groups": component group: "minecraft:dolphin_on_land"
+					field "remove": field "component_groups": component group: "minecraft:dolphin_on_land_in_rain"
+				event "minecraft:stop_dryingout":
+					field "add": field "component_groups": component group: "minecraft:dolphin_on_land_in_rain"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:dolphin_on_land"
+							component group: "minecraft:dolphin_dried"
+Changed entity "fish.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:collision_box":
-					Changed field "width" from 0.98 to 0.78.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:chest_minecart"
-Changed entity "hopper_minecart":
+				Total component: 20 (+3, -1)
+				Changed component "minecraft:flocking":
+					Changed field "cohesion_weight" from 2.2 to 2.75.
+					Changed field "cohesion_threshold" from 1.25 to 1.5.
+					Removed field "terrain_avoid_distance" of 0.5.
+					Removed field "rotation_speed" of 2.0.
+					Removed field "max_speed" of 0.1.
+					Removed field "max_flee_speed" of 0.14.
+					Removed field "acceleration" of 0.09.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:cod"
+				Changed component "minecraft:movement.sway":
+					Changed field "sway_amplitude" from 0.01 to 0.0.
+					Removed field "value" of 0.2.
+					Removed field "max_turn" of 12.0.
+				Added component "minecraft:navigation.generic":
+					field "is_amphibious": false
+					field "can_float": false
+					field "can_swim": true
+					field "can_walk": false
+					field "can_breach": false
+				Removed component "minecraft:navigation.swim" of field "can_sink": false.
+				Added component "minecraft:underwater_movement" of field "value": 0.15.
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "walk_speed_multiplier" from 1.2 to 1.5.
+							Changed field "sprint_speed_multiplier" from 1.4 to 2.0.
+					Changed field "priority" from 2 to 1.
+				Added component "minecraft:behavior.follow_flock":
+					field "priority": 2
+					field "speed_multiplier": 0.12
+				Changed component "minecraft:behavior.random_swim":
+					Changed field "speed_multiplier" from 0.25 to 1.0.
+					Added field "interval" of 0.
+				Changed component "minecraft:behavior.swim_wander":
+					Changed field "speed_multiplier" from 0.09 to 1.0.
+Changed entity "guardian.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:collision_box":
-					Changed field "width" from 0.98 to 0.78.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:hopper_minecart"
-Changed entity "tnt_minecart":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:guardian"
+				Changed component "minecraft:movement":
+					Changed field "value" from 0.5 to 0.12.
+Changed entity "player.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:collision_box":
-					Changed field "width" from 0.98 to 0.78.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:tnt_minecart"
+				Changed component "minecraft:breathable":
+					Changed field "totalSupply" from 20 to 15.
+					Added field "inhaleTime" of 3.75.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:player"
+Changed entity "pufferfish.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:pufferfish"
+				Changed component "minecraft:behavior.random_swim":
+					Added field "interval" of 0.
+Changed entity "salmon.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 18 (+3, -1)
+				Changed component "minecraft:flocking":
+					Removed field "terrain_avoid_distance" of 0.5.
+					Removed field "rotation_speed" of 2.0.
+					Removed field "max_speed" of 0.1.
+					Removed field "max_flee_speed" of 0.2.
+					Removed field "acceleration" of 0.014.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:salmon"
+				Changed component "minecraft:movement.sway":
+					Changed field "sway_amplitude" from 0.01 to 0.0.
+					Removed field "value" of 0.2.
+					Removed field "max_turn" of 12.0.
+				Added component "minecraft:navigation.generic":
+					field "is_amphibious": false
+					field "can_float": false
+					field "can_swim": true
+					field "can_walk": false
+					field "can_breach": false
+				Removed component "minecraft:navigation.swim" of field "can_sink": false.
+				Added component "minecraft:underwater_movement" of field "value": 0.12.
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "walk_speed_multiplier" from 0.014 to 1.5.
+							Changed field "sprint_speed_multiplier" from 0.2 to 2.0.
+					Changed field "priority" from 2 to 1.
+				Added component "minecraft:behavior.follow_flock":
+					field "priority": 2
+					field "speed_multiplier": 0.12
+				Changed component "minecraft:behavior.random_swim":
+					Changed field "speed_multiplier" from 0.012 to 1.0.
+					Changed field "priority" from 3 to 4.
+					Added field "interval" of 0.
+				Changed component "minecraft:behavior.river_follow":
+					Changed field "priority" from 1 to 3.
+					Changed field "follow_speed" from 0.09 to 0.14.
+					Removed field "centered_gap" of 1.0.
+				Changed component "minecraft:behavior.swim_idle":
+					Changed field "priority" from 3 to 4.
+Changed entity "thrown_trident.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:thrown_trident"
+				Changed component "minecraft:projectile":
+					Changed field "onHit":
+						Removed empty field "arrow_effect".
+Changed entity "tropicalfish.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 20 (+3, -1)
+				Changed component "minecraft:flocking":
+					Removed field "terrain_avoid_distance" of 0.5.
+					Removed field "rotation_speed" of 2.0.
+					Removed field "max_speed" of 0.08.
+					Removed field "max_flee_speed" of 0.2.
+					Removed field "acceleration" of 0.04.
+				Unchanged component "minecraft:identifier": field "id": "minecraft:tropicalfish"
+				Changed component "minecraft:movement.sway":
+					Changed field "sway_amplitude" from 0.01 to 0.0.
+					Removed field "value" of 0.2.
+					Removed field "max_turn" of 12.0.
+				Added component "minecraft:navigation.generic":
+					field "is_amphibious": false
+					field "can_float": false
+					field "can_swim": true
+					field "can_walk": false
+					field "can_breach": false
+				Removed component "minecraft:navigation.swim" of field "can_sink": false.
+				Added component "minecraft:underwater_movement" of field "value": 0.15.
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "walk_speed_multiplier" from 0.3 to 1.5.
+							Changed field "sprint_speed_multiplier" from 0.4 to 2.0.
+					Changed field "priority" from 2 to 1.
+				Added component "minecraft:behavior.follow_flock":
+					field "priority": 2
+					field "speed_multiplier": 0.05
+				Changed component "minecraft:behavior.random_swim":
+					Added field "interval" of 0.
+				Changed component "minecraft:behavior.swim_wander":
+					Changed field "speed_multiplier" from 0.09 to 1.0.
+Changed entity "zombie.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:zombie_adult":
+					Total component: 3 (+0, -1)
+					Removed empty component "minecraft:burns_in_daylight".
+			Changed field "components":
+				Total component: 24 (+1, -0)
+				Added empty component "minecraft:burns_in_daylight".
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie"
+Changed entity "zombie_villager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "adult":
+					Total component: 3 (+0, -1)
+					Removed empty component "minecraft:burns_in_daylight".
+			Changed field "components":
+				Total component: 23 (+1, -0)
+				Added empty component "minecraft:burns_in_daylight".
+				Unchanged component "minecraft:identifier": field "id": "minecraft:zombie_villager"

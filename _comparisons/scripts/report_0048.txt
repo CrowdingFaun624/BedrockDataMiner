@@ -1,0 +1,102 @@
+Difference of "scripts" between "1.19.10.21" (beta of "1.19.10") and "1.19.10.22" (beta of "1.19.10").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "FrogTests.js":
+		Total line: 129 (+22, -0)
+		          '''
+		          ...
+		103 103           .thenWait(() => {
+		104 104               test.assertBlockPresent(MinecraftBlockTypes.frogSpawn, spawnPos, true);
+		105 105           })
+		106 106           .thenSucceed();
+		107 107   }).maxTicks(TicksPerSecond * 90).tag(GameTest.Tags.suiteDefault);
+		    108 + 
+		    109 + GameTest.register("FrogTests", "frog_egg_flow_water", (test) => { //This test verifies that frogs only lay egg on water that has a flat surface, and not on the "flowing" part of water
+		    110 +     const startPosFrogOne = new BlockLocation(1, 2, 1);
+		    111 +     const startPosFrogTwo = new BlockLocation(2, 2, 1);
+		    112 +     const startPosPlayer = new BlockLocation(1, 3, 3);
+		    113 +     const flatWaterPos = new BlockLocation(5, 4, 4); //This position is where the water is flat
+		    114 + 
+		    115 +     let playerSim = test.spawnSimulatedPlayer(startPosPlayer, "playerSim_frog");
+		    116 +     let frogOne = test.spawn("minecraft:frog", startPosFrogOne);
+		    117 +     let frogTwo = test.spawn("minecraft:frog", startPosFrogTwo);
+		    118 +     const testEx = new GameTestExtensions(test);
+		    119 + 
+		    120 +     test
+		    121 +         .startSequence()
+		    122 +         .thenExecute(() => testEx.giveItem(playerSim, MinecraftItemTypes.slimeBall, 2, 0))
+		    123 +         .thenExecute(() => test.assert(playerSim.interactWithEntity(frogOne) == true, ""))
+		    124 +         .thenExecute(() => test.assert(playerSim.interactWithEntity(frogTwo) == true, ""))
+		    125 +         .thenWait(() => {
+		    126 +             test.assertBlockPresent(MinecraftBlockTypes.frogSpawn, flatWaterPos, true);
+		    127 +         })
+		    128 +         .thenSucceed();
+		    129 + }).maxTicks(TicksPerSecond * 90).tag(GameTest.Tags.suiteDefault);
+		          '''
+	Changed script "SculkTests.js":
+		Total line: 751 (+32, -6)
+		          '''
+		          ...
+		418 418   
+		419 419   })
+		420 420       .padding(TEST_PADDING)
+		421 421       .tag(GameTest.Tags.suiteDefault);
+		422 422   
+		    423 + // Tests that on mob death, only the closest catalyst gets a cursor.
+		    424 + GameTest.register("SculkTests", "multiple_catalysts_one_death", (test) => {
+		    425 +     const catalystPositions = [
+		    426 +         new BlockLocation(0, 2, 0),
+		    427 +         new BlockLocation(4, 2, 0),
+		    428 +         new BlockLocation(4, 2, 4),
+		    429 +         new BlockLocation(0, 2, 4)];
+		    430 + 
+		    431 +     catalystPositions.forEach(location => test.assert(test.getSculkSpreader(location) != undefined, "Failed to find sculk catalyst."));
+		    432 + 
+		    433 +     const closestCatalystPosition = catalystPositions[0];
+		    434 +     const mobSpawnLocation = closestCatalystPosition.offset(0, 2, 0);
+		    435 +     test.spawn("minecraft:creeper", mobSpawnLocation).kill();
+		    436 + 
+		    437 +     test.startSequence().thenExecuteAfter(2, () => {
+		    438 +         let numberOfCursors = 0;
+		    439 +         catalystPositions.forEach(position => numberOfCursors += test.getSculkSpreader(position).getNumberOfCursors());
+		    440 +         test.assert(numberOfCursors == 1, "Expected total number of cursors to be 1. Actual amount: " + numberOfCursors);
+		    441 +         const closestCatalystCursors = test.getSculkSpreader(closestCatalystPosition).getNumberOfCursors();
+		    442 +         test.assert(closestCatalystCursors == 1, "Expected the closest sculk catalyst to get the cursor.");
+		    443 +     }).thenSucceed();
+		    444 + })
+		    445 +     .padding(TEST_PADDING)
+		    446 +     .tag(GameTest.Tags.suiteDefault);
+		    447 + 
+		    448 + // Tests that on mob death, only the closest catalyst gets a cursor. In this case, a mob dies on top
+		    449 + // of each one of the four catalysts, resulting in four cursors being created, one per catalyst.
+		    450 + GameTest.register("SculkTests", "multiple_catalysts_multiple_deaths", (test) => {
+		423     - GameTest.register("SculkTests", "multiple_catalysts", (test) => {
+		424 451       const catalystPositions = [
+		425 452           new BlockLocation(0, 2, 0),
+		426 453           new BlockLocation(4, 2, 0),
+		427 454           new BlockLocation(4, 2, 4),
+		428 455           new BlockLocation(0, 2, 4)];
+		429     - 
+		430     -     catalystPositions.forEach(
+		431     -         location => test.assert(test.getSculkSpreader(location) != undefined, "Failed to find sculk catalyst."));
+		432 456   
+		    457 +     catalystPositions.forEach(location => {
+		    458 +         test.assert(test.getSculkSpreader(location) != undefined, "Failed to find sculk catalyst.");
+		    459 +         test.spawn("minecraft:creeper", location.offset(0, 2, 0)).kill();
+		433     -     const mobSpawnLocation = new BlockLocation(2, 4, 2);
+		    460 +     });
+		434     -     test.spawn("minecraft:creeper", mobSpawnLocation).kill();
+		435 461   
+		436 462       test.startSequence().thenExecuteAfter(2, () => {
+		    463 +         let numberOfCursors = 0;
+		437     -         var numberOfCursors = 0;
+		438 464           catalystPositions.forEach(position => numberOfCursors += test.getSculkSpreader(position).getNumberOfCursors());
+		    465 +         test.assert(numberOfCursors == 4, "Expected total number of cursors to be 4. Actual amount: " + numberOfCursors);
+		439     -         test.assert(numberOfCursors == 1, "Expected total number of cursors to be 1. Actual amount: " + numberOfCursors);
+		440 466       }).thenSucceed();
+		441 467   })
+		442 468       .padding(TEST_PADDING)
+		443 469       .tag(GameTest.Tags.suiteDefault);
+		444 470   
+		          ...
+		          '''

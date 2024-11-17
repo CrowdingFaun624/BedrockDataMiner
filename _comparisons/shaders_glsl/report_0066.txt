@@ -1,0 +1,502 @@
+Difference of "shaders_resource_packs" between "1.9.0.0" (beta of "1.9.0") and "1.9.0.2" (beta of "1.9.0").
+
+Changed resource pack "hummingbird/path.vertex":
+	Changed file "vanilla":
+		Total line: 23 (+0, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "vertexVersionSimple.h"
+		 5  5   
+		    6 + attribute vec4 HB_POSITION;
+		 6    - attribute vec4 POSITION;
+		 7  7   
+		 8  8   uniform mat4 TRANSFORM;
+		 9  9   
+		10 10   varying vec2 ExtraParams;
+		11 11   
+		12 12   void main() {
+		   13 + 	vec4 outPos = vec4(HB_POSITION.xy, 0.0, 1.0) * TRANSFORM;
+		13    - 	vec4 outPos = vec4(POSITION.xy, 0.0, 1.0) * TRANSFORM;
+		14 14   
+		15 15   	// Translate to -1..1 with perspective correction
+		16 16   	float w = outPos.w;
+		17 17   	outPos.x = outPos.x * 2.0 - w;
+		18 18   	outPos.y = (w - outPos.y) * 2.0 - w;
+		19 19   
+		   20 + 	ExtraParams = HB_POSITION.zw;
+		20    - 	ExtraParams = POSITION.zw;
+		21 21   
+		22 22   	gl_Position = outPos;
+		23 23   }
+		        '''
+Changed resource pack "hummingbird/path_hairline.fragment":
+	Changed file "vanilla":
+		Total line: 37 (+5, -0)
+		        '''
+		        ...
+		11 11   uniform int SHADER_TYPE;
+		12 12   
+		13 13   void main() {
+		14 14   	if (SHADER_TYPE == 14) {
+		15 15   		// Hairline quads
+		   16 + #if defined(NO_DERIVATIVES)
+		   17 + 		gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+		   18 + #else
+		16 19   		vec2 px = dFdx(ExtraParams);
+		17 20   		vec2 py = dFdy(ExtraParams);
+		18 21   
+		19 22   		float fx = (2.0 * ExtraParams.x) * px.x - px.y;
+		20 23   		float fy = (2.0 * ExtraParams.x) * py.x - py.y;
+		        ...
+		23 26   		float sd = sqrt((edgeAlpha * edgeAlpha) / (fx * fx + fy * fy));
+		24 27   
+		25 28   		float alpha = 1.0 - sd;
+		26 29   
+		27 30   		gl_FragColor = PRIM_PROPS_0 * PRIM_PROPS_1.x * alpha;
+		   31 + #endif
+		   32 + 	}
+		   33 + 	else {
+		28    - 	} else {
+		29 34   		// Hairline lines
+		30 35   		gl_FragColor = PRIM_PROPS_0 * min(1.0, (1.0 - abs(ExtraParams.y)) * PRIM_PROPS_1.x);
+		31 36   	}
+		32 37   }
+		        '''
+Removed resource pack "hummingbird/path_hairline_fallback.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec2 ExtraParams;
+		
+		uniform vec4 PRIM_PROPS_0;
+		uniform vec4 PRIM_PROPS_1;
+		uniform int SHADER_TYPE;
+		
+		void main() {
+			if(SHADER_TYPE == 14) {
+				// Hairline quads
+				// TODO: We need dFdx support
+				// so for now return ugly magenta color to indicate something is wrong
+				gl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);
+			} else {
+				// Hairline lines
+				gl_FragColor = PRIM_PROPS_0 * min(1.0, (1.0 - abs(ExtraParams.y)) * PRIM_PROPS_1.x);
+			}
+		}
+		'''
+Changed resource pack "hummingbird/renoir.vertex":
+	Changed file "vanilla":
+		Total line: 44 (+12, -6)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "vertexVersionSimple.h"
+		 5  5   
+		    6 + attribute vec3 HB_POSITION;
+		    7 + attribute vec4 HB_COLOR;
+		    8 + attribute vec4 HB_ADDITIONAL;
+		    9 + 
+		   10 + uniform mat4 TRANSFORM;
+		   11 + uniform mat4 COORD_TRANSFORM;
+		   12 + uniform vec4 RENOIR_SHADER_VS_PROPS_0;
+		   13 + 
+		   14 + varying vec4 ColorOut;
+		   15 + varying vec4 AdditionalOut;
+		   16 + varying vec3 ScreenNormalPosition;
+		   17 + varying vec4 VaryingParam0;
+		   18 + varying vec4 VaryingParam1;
+		 6    - attribute vec3 POSITION_3;
+		 7    - attribute vec4 COLOR_4;
+		 8    - attribute vec4 ADDITIONAL;
+		 9 19   
+		10    - uniform mat4 TRANSFORM;
+		11    - uniform mat4 COORD_TRANSFORM;
+		   20 + #define USE_ADDITIONAL_COORDS 2.0
+		12    - uniform vec4 RENOIR_SHADER_VS_PROPS_0;
+		13 21   
+		14    - varying vec4 ColorOut;
+		15    - varying vec4 AdditionalOut;
+		   22 + void main() {
+		   23 + 	vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+		   24 + 	ScreenNormalPosition = HB_POSITION.xyz;
+		16    - varying vec3 ScreenNormalPosition;
+		17    - varying vec4 VaryingParam0;
+		18    - varying vec4 VaryingParam1;
+		19 25   
+		   26 + 	vec4 coords = vec4(HB_POSITION, 1.0);
+		   27 + 	if (HB_ADDITIONAL.z == USE_ADDITIONAL_COORDS) {
+		20    - void main() {
+		   28 + 		coords = vec4(HB_ADDITIONAL.xy, 0.0, 1.0);
+		   29 + 	}
+		21    - 	vec4 outPos = vec4(POSITION_3, 1.0) * TRANSFORM;
+		22    - 	ScreenNormalPosition = POSITION_3.xyz;
+		23    - 
+		   30 + 	VaryingParam0 = coords * COORD_TRANSFORM;
+		24    - 	VaryingParam0 = vec4(POSITION_3, 1) * COORD_TRANSFORM;
+		25 31   
+		   32 + 	VaryingParam1.x = HB_POSITION.x * RENOIR_SHADER_VS_PROPS_0.x + RENOIR_SHADER_VS_PROPS_0.z;
+		   33 + 	VaryingParam1.y = HB_POSITION.y * RENOIR_SHADER_VS_PROPS_0.y + RENOIR_SHADER_VS_PROPS_0.w;
+		26    - 	VaryingParam1.x = POSITION_3.x * RENOIR_SHADER_VS_PROPS_0.x + RENOIR_SHADER_VS_PROPS_0.z;
+		27    - 	VaryingParam1.y = POSITION_3.y * RENOIR_SHADER_VS_PROPS_0.y + RENOIR_SHADER_VS_PROPS_0.w;
+		28 34   
+		29 35   	// Translate to -1..1 with perspective correction
+		30 36   	float w = outPos.w;
+		31 37   	outPos.x = outPos.x * 2.0 - w;
+		32 38   	outPos.y = (w - outPos.y) * 2.0 - w;
+		33 39   
+		   40 + 	ColorOut = HB_COLOR;
+		   41 + 	AdditionalOut = HB_ADDITIONAL;
+		34    - 	ColorOut = COLOR_4;
+		35    - 	AdditionalOut = ADDITIONAL;
+		36 42   
+		37 43   	gl_Position = outPos;
+		38 44   }
+		        '''
+Changed resource pack "hummingbird/standard.vertex":
+	Changed file "vanilla":
+		Total line: 29 (+0, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "vertexVersionSimple.h"
+		 5  5   
+		    6 + attribute vec3 HB_POSITION;
+		    7 + attribute vec4 HB_COLOR;
+		    8 + attribute vec4 HB_ADDITIONAL;
+		 6    - attribute vec3 POSITION_3;
+		 7    - attribute vec4 COLOR_4;
+		 8    - attribute vec4 ADDITIONAL;
+		 9  9   
+		10 10   uniform mat4 TRANSFORM;
+		11 11   
+		12 12   varying vec4 ColorOut;
+		13 13   varying vec4 AdditionalOut;
+		14 14   varying vec3 ScreenNormalPosition;
+		15 15   
+		16 16   void main() {
+		   17 + 	vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+		   18 + 	ScreenNormalPosition = HB_POSITION.xyz;
+		17    - 	vec4 outPos = vec4(POSITION_3, 1.0) * TRANSFORM;
+		18    - 	ScreenNormalPosition = POSITION_3.xyz;
+		19 19   
+		20 20   	// Translate to -1..1 with perspective correction
+		21 21   	float w = outPos.w;
+		22 22   	outPos.x = outPos.x * 2.0 - w;
+		23 23   	outPos.y = (w - outPos.y) * 2.0 - w;
+		24 24   
+		   25 + 	ColorOut = HB_COLOR;
+		   26 + 	AdditionalOut = HB_ADDITIONAL;
+		25    - 	ColorOut = COLOR_4;
+		26    - 	AdditionalOut = ADDITIONAL;
+		27 27   
+		28 28   	gl_Position = outPos;
+		29 29   }
+		        '''
+Changed resource pack "hummingbird/standard_ellipse.fragment":
+	Changed file "vanilla":
+		Total line: 48 (+24, -3)
+		        '''
+		    1 + // __multiversion__
+		    2 + // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		    3 + 
+		    4 + #include "fragmentVersionCentroidUV.h"
+		    5 + #include "uniformMacro.h"
+		    6 + 
+		    7 + varying vec4 ColorOut;
+		    8 + varying vec4 AdditionalOut;
+		    9 + varying vec3 ScreenNormalPosition;
+		   10 + 
+		   11 + void main() {
+		   12 + #if defined(NO_DERIVATIVES)
+		   13 + 	float alpha = 1.0;
+		   14 + 	vec4 outColor = ColorOut;
+		   15 + 	vec2 pixel_step = vec2( 1.0 / VIEWPORT_SIZE.x, 1.0 / VIEWPORT_SIZE.y);
+		   16 + 
+		   17 + 	vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / AdditionalOut.zw;
+		   18 + 	float test = dot(offset, offset) - 1.0;
+		   19 + 	vec2 newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw);
+		   20 + 	vec2 dudx = newOffset - offset;
+		   21 + 	newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw);
+		   22 + 	vec2 dudy = newOffset - offset;
+		   23 + 	vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+		   24 + 							2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+		   25 + 	float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+		   26 + 	float invlen = inversesqrt(grad_dot);
+		 1    - #extension GL_OES_standard_derivatives : enable
+		 2    - precision mediump float;
+		 3    - 
+		 4    - #include "fragmentVersionCentroidUV.h"
+		 5    - #include "uniformMacro.h"
+		 6 27   
+		 7    - varying vec4 ColorOut;
+		 8    - varying vec4 AdditionalOut;
+		   28 + 	alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		 9    - varying vec3 ScreenNormalPosition;
+		10 29   
+		   30 + 	gl_FragColor = outColor * alpha;
+		   31 + #else
+		11    - void main() {
+		12 32   	float alpha = 1.0;
+		13 33   	vec4 outColor = ColorOut;
+		14 34   
+		15 35   	vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / AdditionalOut.zw;
+		16 36   	float test = dot(offset, offset) - 1.0;
+		        ...
+		22 42   	float invlen = inversesqrt(grad_dot);
+		23 43   
+		24 44   	alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		25 45   
+		26 46   	gl_FragColor = outColor * alpha;
+		   47 + #endif
+		27 48   }
+		        '''
+Removed resource pack "hummingbird/standard_ellipse_fallback.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		uniform vec2 VIEWPORT_SIZE;
+		
+		void main() {
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+			vec2 pixel_step = vec2( 1.0 / VIEWPORT_SIZE.x, 1.0 / VIEWPORT_SIZE.y);
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / AdditionalOut.zw;
+			float test = dot(offset, offset) - 1.0;
+			vec2 newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw);
+			vec2 dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw);
+			vec2 dudy = newOffset - offset;
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+									2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		}
+		'''
+Changed resource pack "hummingbird/standard_stroke_ellipse.fragment":
+	Changed file "vanilla":
+		Total line: 74 (+34, -0)
+		        '''
+		        ...
+		 9  9   varying vec3 ScreenNormalPosition;
+		10 10   
+		11 11   uniform vec4 PRIM_PROPS_0;
+		12 12   
+		13 13   void main() {
+		   14 + #if defined(NO_DERIVATIVES)
+		   15 + 	float alpha = 1.0;
+		   16 + 	vec4 outColor = ColorOut;
+		   17 + 	vec2 pixel_step = vec2( 1.0 / VIEWPORT_SIZE.x, 1.0 / VIEWPORT_SIZE.y);
+		   18 + 
+		   19 + 	vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+		   20 + 	float test = dot(offset, offset) - 1.0;
+		   21 + 	vec2 newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+		   22 + 	vec2 dudx = newOffset - offset;
+		   23 + 	newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+		   24 + 	vec2 dudy = newOffset - offset;
+		   25 + 	vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+		   26 + 						2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+		   27 + 	float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+		   28 + 	float invlen = inversesqrt(grad_dot);
+		   29 + 
+		   30 + 	alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		   31 + 
+		   32 + 	offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+		   33 + 	test = dot(offset, offset) - 1.0;
+		   34 + 	newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+		   35 + 	dudx = newOffset - offset;
+		   36 + 	newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+		   37 + 	dudy = newOffset - offset;
+		   38 + 	gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+		   39 + 					2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+		   40 + 	grad_dot = max(dot(gradient, gradient), 1.0e-4);
+		   41 + 	invlen = inversesqrt(grad_dot);
+		   42 + 
+		   43 + 	alpha *= clamp(0.5 + test * invlen, 0.0, 1.0);
+		   44 + 
+		   45 + 	gl_FragColor = outColor * alpha;
+		   46 + #else
+		14 47   	float alpha = 1.0;
+		15 48   	vec4 outColor = ColorOut;
+		16 49   
+		17 50   	vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+		18 51   	float test = dot(offset, offset) - 1.0;
+		        ...
+		35 68   	invlen = inversesqrt(grad_dot);
+		36 69   
+		37 70   	alpha *= clamp(0.5 + test * invlen, 0.0, 1.0);
+		38 71   
+		39 72   	gl_FragColor = outColor * alpha;
+		   73 + #endif
+		40 74   }
+		        '''
+Removed resource pack "hummingbird/standard_stroke_ellipse_fallback.fragment":
+	file "vanilla":
+		'''
+		// __multiversion__
+		// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		
+		#include "fragmentVersionCentroidUV.h"
+		#include "uniformMacro.h"
+		
+		varying vec4 ColorOut;
+		varying vec4 AdditionalOut;
+		varying vec3 ScreenNormalPosition;
+		
+		uniform vec2 VIEWPORT_SIZE;
+		uniform vec4 PRIM_PROPS_0;
+		
+		void main() {
+			float alpha = 1.0;
+			vec4 outColor = ColorOut;
+			vec2 pixel_step = vec2( 1.0 / VIEWPORT_SIZE.x, 1.0 / VIEWPORT_SIZE.y);
+		
+			vec2 offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			float test = dot(offset, offset) - 1.0;
+			vec2 newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			vec2 dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw + PRIM_PROPS_0.x / 2.0);
+			vec2 dudy = newOffset - offset;
+			vec2 gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+								2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			float grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			float invlen = inversesqrt(grad_dot);
+		
+			alpha = clamp(0.5 - test * invlen, 0.0, 1.0);
+		
+			offset = (ScreenNormalPosition.xy - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			test = dot(offset, offset) - 1.0;
+			newOffset = (ScreenNormalPosition.xy + vec2(pixel_step.x, 0) - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			dudx = newOffset - offset;
+			newOffset = (ScreenNormalPosition.xy + vec2(0, pixel_step.y) - AdditionalOut.xy) / (AdditionalOut.zw - PRIM_PROPS_0.x / 2.0);
+			dudy = newOffset - offset;
+			gradient = vec2(2.0 * offset.x * dudx.x + 2.0 * offset.y * dudx.y,
+							2.0 * offset.x * dudy.x + 2.0 * offset.y * dudy.y);
+			grad_dot = max(dot(gradient, gradient), 1.0e-4);
+			invlen = inversesqrt(grad_dot);
+		
+			alpha *= clamp(0.5 + test * invlen, 0.0, 1.0);
+		
+			gl_FragColor = outColor * alpha;
+		}
+		'''
+Changed resource pack "hummingbird/text.fragment":
+	Changed file "vanilla":
+		Total line: 20 (+0, -0)
+		        '''
+		        ...
+		 5  5   #include "uniformMacro.h"
+		 6  6   
+		 7  7   varying vec4 ColorOut;
+		 8  8   varying vec4 AdditionalOut;
+		 9  9   
+		   10 + uniform sampler2D TEXTURE_1;
+		10    - uniform sampler2D TEXTURE_0;
+		11 11   
+		12 12   float GetLuminance(vec3 color) {
+		13 13   	return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		14 14   }
+		15 15   
+		16 16   void main() {
+		   17 + 	float dfValue = texture2D(TEXTURE_1, AdditionalOut.xy).r;
+		17    - 	float dfValue = texture2D(TEXTURE_0, AdditionalOut.xy).r;
+		18 18   	float lum = 1.45 - GetLuminance(ColorOut.xyz);
+		19 19   	gl_FragColor = ColorOut * pow(dfValue, lum);
+		20 20   }
+		        '''
+Changed resource pack "hummingbird/text.vertex":
+	Changed file "vanilla":
+		Total line: 30 (+0, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "vertexVersionSimple.h"
+		 5  5   
+		    6 + attribute vec3 HB_POSITION;
+		    7 + attribute vec4 HB_COLOR;
+		    8 + attribute vec4 HB_ADDITIONAL;
+		 6    - attribute vec3 POSITION_3;
+		 7    - attribute vec4 COLOR_4;
+		 8    - attribute vec4 ADDITIONAL;
+		 9  9   
+		10 10   uniform mat4 TRANSFORM;
+		11 11   
+		12 12   varying vec4 ColorOut;
+		13 13   varying vec4 AdditionalOut;
+		14 14   varying vec3 ScreenNormalPosition;
+		15 15   
+		16 16   void main(void)
+		17 17   {
+		   18 + 	vec4 outPos = vec4(HB_POSITION, 1.0) * TRANSFORM;
+		   19 + 	ScreenNormalPosition = HB_POSITION.xyz;
+		18    - 	vec4 outPos = vec4(POSITION_3, 1.0) * TRANSFORM;
+		19    - 	ScreenNormalPosition = POSITION_3.xyz;
+		20 20   
+		21 21   	// Translate to -1..1 with perspective correction
+		22 22   	float w = outPos.w;
+		23 23   	outPos.x = outPos.x * 2.0 - w;
+		24 24   	outPos.y = (w - outPos.y) * 2.0 - w;
+		25 25   
+		   26 + 	ColorOut = HB_COLOR;
+		   27 + 	AdditionalOut = HB_ADDITIONAL;
+		26    - 	ColorOut = COLOR_4;
+		27    - 	AdditionalOut = ADDITIONAL;
+		28 28   
+		29 29   	gl_Position = outPos;
+		30 30   }
+		        '''
+Changed resource pack "hummingbird/text_sdf.fragment":
+	Changed file "vanilla":
+		Total line: 39 (+0, -0)
+		        '''
+		        ...
+		 5  5   #include "uniformMacro.h"
+		 6  6   
+		 7  7   varying vec4 ColorOut;
+		 8  8   varying vec4 AdditionalOut;
+		 9  9   
+		   10 + uniform sampler2D TEXTURE_2;
+		10    - uniform sampler2D TEXTURE_0;
+		11 11   
+		12 12   // On Text:
+		13 13   // x - glyphFactor
+		14 14   uniform vec4 PRIM_PROPS_0;
+		15 15   
+		        ...
+		23 23   float GetLuminance(vec3 color) {
+		24 24   	return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		25 25   }
+		26 26   
+		27 27   void main() {
+		   28 + 	float dfValue = texture2D(TEXTURE_2, AdditionalOut.xy).r;
+		28    - 	float dfValue = texture2D(TEXTURE_0, AdditionalOut.xy).r;
+		29 29   #if SHOW_DF
+		30 30   	gl_FragColor = vec4(dfValue.xxx, 1);
+		31 31   #else
+		32 32   	// Values should be in [-4, 4]
+		33 33   	dfValue = (dfValue * DISTANCE_FIELD_MULTIPLIER) - DISTANCE_FIELD_MULTIPLIER_DIV2;
+		        ...
+		        '''

@@ -1,0 +1,148 @@
+Difference of "features_behavior_packs" between "1.19.73" and "1.19.80.20" (beta of "1.19.80").
+
+Changed feature "beehive_feature.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.13.0"
+		field "minecraft:single_block_feature":
+			field "description": field "identifier": "minecraft:beehive_feature"
+			field "enforce_placement_rules": true
+			field "enforce_survivability_rules": true
+			field "may_attach_to":
+				field "auto_rotate": false
+				field "min_sides_must_attach": 2
+				field "top":
+					block 0:
+						field "name": "minecraft:leaves"
+						field "states": field "old_leaf_type": "oak"
+					block 1:
+						field "name": "minecraft:leaves"
+						field "states": field "old_leaf_type": "birch"
+					block 2: field "name": "minecraft:mangrove_leaves"
+					block 3: field "name": "minecraft:cherry_leaves"
+				field "west":
+					block 0:
+						field "name": "minecraft:log"
+						field "states": field "old_log_type": "oak"
+					block 1:
+						field "name": "minecraft:log"
+						field "states": field "old_log_type": "birch"
+					block 2: field "name": "minecraft:mangrove_roots"
+					block 3: field "name": "minecraft:cherry_log"
+				field "north":
+					block 0:
+						field "name": "minecraft:log"
+						field "states": field "old_log_type": "oak"
+					block 1:
+						field "name": "minecraft:log"
+						field "states": field "old_log_type": "birch"
+					block 2: field "name": "minecraft:mangrove_roots"
+					block 3: field "name": "minecraft:cherry_log"
+				field "east":
+					block 0:
+						field "name": "minecraft:log"
+						field "states": field "old_log_type": "oak"
+					block 1:
+						field "name": "minecraft:log"
+						field "states": field "old_log_type": "birch"
+					block 2: field "name": "minecraft:mangrove_roots"
+					block 3: field "name": "minecraft:cherry_log"
+				field "south": "minecraft:air"
+			field "places_block":
+				field "name": "minecraft:bee_nest"
+				field "states": field "direction": 0
+Added feature "cherry_tree_feature.json":
+	behavior pack "experimental":
+		field "format_version": "1.13.0"
+		field "minecraft:tree_feature":
+			field "description": field "identifier": "minecraft:cherry_tree_feature"
+			field "base_block": block 0: "minecraft:dirt"
+			field "may_grow_on": block 0: field "tags": "query.any_tag('dirt')"
+			field "may_replace":
+				block 0: "minecraft:air"
+				block 1: "minecraft:leaves"
+				block 2: "minecraft:leaves2"
+				block 3: "minecraft:azalea_leaves"
+				block 4: "minecraft:azalea_leaves_flowered"
+				block 5: "minecraft:mangrove_leaves"
+				block 6: "minecraft:snow_layer"
+			field "may_grow_through": block 0: field "tags": "query.any_tag('dirt')"
+			field "cherry_trunk":
+				field "trunk_block": "minecraft:cherry_log"
+				field "trunk_height":
+					field "base": 7
+					field "intervals": interval: 1
+				field "branches":
+					field "tree_type_weights":
+						field "one_branch": 10
+						field "two_branches": 10
+						field "two_branches_and_trunk": 10
+					field "branch_horizontal_length":
+						field "range_min": 2
+						field "range_max": 4
+					field "branch_start_offset_from_top":
+						field "range_min": -4
+						field "range_max": -3
+					field "branch_end_offset_from_top":
+						field "range_min": -1
+						field "range_max": 0
+					field "branch_canopy":
+						field "cherry_canopy":
+							field "leaf_block": "minecraft:cherry_leaves"
+							field "height": 5
+							field "radius": 4
+							field "wide_bottom_layer_hole_chance": 25
+							field "corner_hole_chance": 50
+							field "hanging_leaves_chance": 16.6666
+							field "hanging_leaves_extension_chance": 33.3333
+			field "cherry_canopy":
+				field "leaf_block": "minecraft:cherry_leaves"
+				field "height": 5
+				field "radius": 4
+				field "wide_bottom_layer_hole_chance": 25
+				field "corner_hole_chance": 50
+				field "hanging_leaves_chance": 16.6666
+				field "hanging_leaves_extension_chance": 33.3333
+Added feature "cherry_tree_with_beehive_feature.json":
+	behavior pack "experimental":
+		field "format_version": "1.13.0"
+		field "minecraft:aggregate_feature":
+			field "description": field "identifier": "minecraft:cherry_tree_with_beehive_feature"
+			field "early_out": "first_failure"
+			field "features":
+				feature: "minecraft:cherry_tree_feature"
+				feature: "minecraft:beehive_search_feature"
+Added feature "pink_petals_scatter_feature.json":
+	behavior pack "experimental":
+		field "format_version": "1.13.0"
+		field "minecraft:scatter_feature":
+			field "description": field "identifier": "minecraft:pink_petals_scatter_feature"
+			field "coordinate_eval_order": "zxy"
+			field "iterations": 96
+			field "places_feature": "minecraft:pink_petals_feature"
+			field "x":
+				field "distribution": "triangle"
+				field "extent":
+					range item 0: -5
+					range item 1: 5
+			field "y":
+				field "distribution": "triangle"
+				field "extent":
+					range item 0: -2
+					range item 1: 2
+			field "z":
+				field "distribution": "triangle"
+				field "extent":
+					range item 0: -5
+					range item 1: 5
+Added feature "random_cherry_tree_feature.json":
+	behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:weighted_random_feature":
+			field "description": field "identifier": "minecraft:random_cherry_tree_feature"
+			field "features":
+				feature:
+					field "feature": "minecraft:cherry_tree_feature"
+					field "weight": 19
+				feature:
+					field "feature": "minecraft:cherry_tree_with_beehive_feature"
+					field "weight": 1

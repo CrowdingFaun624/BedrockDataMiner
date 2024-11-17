@@ -1,0 +1,49 @@
+Difference of "shaders_resource_packs" between "1.21.40.20" (beta of "1.21.40") and "1.21.40.21" (beta of "1.21.40").
+
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 93 (+2, -5)
+		        '''
+		        ...
+		49 49   #ifdef SEASONS_FAR
+		50 50   	diffuse.a = 1.0;
+		51 51   #endif
+		52 52   
+		53 53   #if USE_ALPHA_TEST
+		54    - 	// Alpha-tested geometry does not apply ambient occlusion
+		55 54   	#ifdef ALPHA_TO_COVERAGE
+		56 55   	#define ALPHA_THRESHOLD 0.05
+		57 56   	#else
+		58 57   	#define ALPHA_THRESHOLD 0.5
+		59 58   	#endif
+		        ...
+		62 61   #endif
+		63 62   	
+		64 63   vec4 inColor = color;
+		65 64   
+		66 65   #if defined(BLEND)
+		67    - 	// Transparent geometry does not apply ambient occlusion
+		68 66   	diffuse.a *= inColor.a;
+		69 67   #endif
+		70 68   
+		71 69   #if !defined(ALWAYS_LIT)
+		72 70   	diffuse *= texture2D( TEXTURE_1, uv1 );
+		73 71   #endif
+		74 72   
+		75 73   #ifndef SEASONS
+		76    - 	diffuse.rgb *= inColor.rgb;
+		77 74   	#if !USE_ALPHA_TEST && !defined(BLEND)
+		78    - 		// Opaque geometry stores the ambient occlusion value in the alpha channel
+		79    - 		diffuse.rgb *= inColor.aaa;
+		   75 + 		diffuse.a = inColor.a;
+		80    - 		diffuse.a = 1.0;
+		81 76   	#endif
+		   77 + 	
+		   78 + 	diffuse.rgb *= inColor.rgb;
+		82 79   #else
+		83 80   	vec2 uv = inColor.xy;
+		84 81   	diffuse.rgb *= mix(vec3(1.0,1.0,1.0), texture2D( TEXTURE_2, uv).rgb*2.0, inColor.b);
+		85 82   	diffuse.rgb *= inColor.aaa;
+		86 83   	diffuse.a = 1.0;
+		        ...
+		        '''

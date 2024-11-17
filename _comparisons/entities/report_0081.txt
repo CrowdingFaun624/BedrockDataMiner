@@ -1,33 +1,105 @@
-Difference of "entities" between "1.13.0.2" (beta of "1.13.0") and "1.13.0.4" (beta of "1.13.0").
-Unable to create data files for 1 file between: "1.13.0.3"
+Difference of "entities" between "1.13.0.13" (beta of "1.13.0") and "1.13.0.15" (beta of "1.13.0").
 
-Changed entity "creeper":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:target_nearby_sensor":
-					Added field "must_see" of true.
-					Added field "on_vision_lost_inside_range":
-						field "event": "minecraft:stop_exploding"
-						field "target": "self"
-				Changed component "minecraft:behavior.melee_attack":
-					Added field "reach_multiplier" of 0.0.
-Changed entity "fox":
+Changed entity "llama.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:fox_night":
-					Total component: 2 (+1, -1)
-					Removed component "minecraft:behavior.move_to_village":
-						field "cooldown_time": 10.0
-						field "goal_radius": 10.0
-						field "priority": 11
-						field "search_range": 32
-						field "speed_multiplier": 1.0
-					Added component "minecraft:behavior.stroll_towards_village":
-						field "cooldown_time": 10.0
-						field "goal_radius": 3.0
-						field "priority": 11
-						field "search_range": 32
-						field "speed_multiplier": 1.0
-						field "start_chance": 0.005
+				Total component group: 20 (+1, -0)
+				Added component group "minecraft:llama_defend_trader":
+					component "minecraft:angry":
+						field "duration": 10
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+					component "minecraft:behavior.ranged_attack":
+						field "priority": 2
+						field "attack_radius": 64
+						field "charge_shoot_trigger": 2
+						field "charge_charged_trigger": 1
+				Changed component group "minecraft:llama_wandering_trader":
+					Total component: 3 (+1, -0)
+					Added component "minecraft:on_friendly_anger":
+						field "event": "minecraft:defend_wandering_trader"
+						field "target": "self"
+			Changed field "events":
+				Total event: 12 (+1, -0)
+				Added event "minecraft:defend_wandering_trader" of field "add": field "component_groups": component group: "minecraft:llama_defend_trader".
+				Changed event "minecraft:on_calm":
+					Changed field "remove":
+						Changed field "component_groups":
+							Total component group: 3 (+1, -0)
+							Added component group "minecraft:llama_defend_trader".
+Changed entity "wandering_trader.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:scared":
+					Changed component "minecraft:angry":
+						Added field "broadcastAnger" of true.
+						Added field "broadcastRange" of 10.
+						Added field "broadcast_targets" of entity: "llama".
+						Added field "broadcast_filters":
+							filter property "test": "is_leashed_to"
+							filter property "subject": "other"
+							filter property "value": true
+			Changed field "components":
+				Changed component "minecraft:damage_sensor":
+					Changed field "triggers":
+						Changed trigger:
+							Unchanged field "cause": "magic"
+							Changed field "on_damage":
+								Removed field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "operator": "!="
+									filter property "value": "player"
+						Changed trigger:
+							Unchanged field "cause": "projectile"
+							Changed field "on_damage":
+								Removed field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "operator": "!="
+									filter property "value": "player"
+						Changed trigger:
+							Unchanged field "cause": "entity_attack"
+							Changed field "on_damage":
+								Removed field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "operator": "!="
+									filter property "value": "player"
+				Changed component "minecraft:behavior.drink_potion":
+					Changed field "potions":
+						Changed potion:
+							Unchanged field "id": 7
+							Changed field "filters":
+								Changed filter property "all_of":
+									Total filter: 3 (+1, -1)
+									Removed filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_avoiding_mobs"
+												filter property "subject": "self"
+												filter property "value": true
+											filter:
+												filter property "test": "has_component"
+												filter property "subject": "self"
+												filter property "value": "minecraft:angry"
+									Added filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_avoiding_mobs"
+												filter property "subject": "self"
+												filter property "value": true
+											filter:
+												filter property "all_of":
+													filter:
+														filter property "test": "has_component"
+														filter property "subject": "self"
+														filter property "value": "minecraft:angry"
+													filter:
+														filter property "test": "is_family"
+														filter property "subject": "target"
+														filter property "operator": "!="
+														filter property "value": "player"

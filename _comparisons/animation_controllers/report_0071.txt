@@ -1,13 +1,50 @@
-Difference of "animation_controllers" between "1.19.0.24" (beta of "1.19.0") and "1.19.0.26" (beta of "1.19.0").
+Difference of "animation_controllers" between "1.19.2" and "1.19.10.20" (beta of "1.19.10").
 
-Changed file "warden.animation_controllers":
+Changed file "player.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Total animation controller: 6 (+1, -0)
-			Added animation controller "controller.animation.warden.sonic_boom":
-				field "initial_state": "default"
-				field "states":
-					state "default": field "transitions": transition list: transition "sonic_attack": "query.is_sonic_boom"
-					state "sonic_attack":
-						field "animations": animation dict: "sonic_boom"
-						field "transitions": transition list: transition "default": "!query.is_sonic_boom"
+			Changed animation controller "controller.animation.player.first_person_map":
+				Changed field "states":
+					Changed state "default":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "one_hand": "query.get_equipped_item_name('off_hand') == 'map' || query.get_equipped_item_name('off_hand') == 'shield'".
+							Removed transition list transition "two_hand": "query.get_equipped_item_name('off_hand') != 'map' && query.get_equipped_item_name('off_hand') != 'shield'".
+							Added transition list transition "one_hand": "query.get_equipped_item_name('off_hand') == 'filled_map' || query.get_equipped_item_name('off_hand') == 'shield'".
+							Added transition list transition "two_hand": "query.get_equipped_item_name('off_hand') != 'filled_map' && query.get_equipped_item_name('off_hand') != 'shield'".
+					Changed state "one_hand":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "default": "query.get_equipped_item_name(0, 1) != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
+							Removed transition list transition "two_hand": "query.get_equipped_item_name('off_hand') != 'map' && query.get_equipped_item_name('off_hand') != 'shield'".
+							Added transition list transition "default": "query.get_equipped_item_name(0, 1) != 'filled_map' && query.get_equipped_item_name('off_hand') != 'filled_map'".
+							Added transition list transition "two_hand": "query.get_equipped_item_name('off_hand') != 'filled_map' && query.get_equipped_item_name('off_hand') != 'shield'".
+						Changed field "animations":
+							Total animation dict: 2 (+2, -2)
+							Removed animation dict animation "first_person_map_hold_main_hand": "query.get_equipped_item_name(0, 1) == 'map'".
+							Removed animation dict animation "first_person_map_hold_off_hand": "query.get_equipped_item_name('off_hand') == 'map' && (query.get_equipped_item_name == 'bow' ? !(variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0) : 1.0)".
+							Added animation dict animation "first_person_map_hold_main_hand": "query.get_equipped_item_name(0, 1) == 'filled_map'".
+							Added animation dict animation "first_person_map_hold_off_hand": "query.get_equipped_item_name('off_hand') == 'filled_map' && (query.get_equipped_item_name == 'bow' ? !(variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0) : 1.0)".
+					Changed state "two_hand":
+						Changed field "transitions":
+							Total transition list: 2 (+2, -2)
+							Removed transition list transition "default": "query.get_equipped_item_name(0, 1) != 'map' && query.get_equipped_item_name('off_hand') != 'map'".
+							Removed transition list transition "one_hand": "query.get_equipped_item_name('off_hand') == 'map' || query.get_equipped_item_name('off_hand') == 'shield'".
+							Added transition list transition "default": "query.get_equipped_item_name(0, 1) != 'filled_map' && query.get_equipped_item_name('off_hand') != 'filled_map'".
+							Added transition list transition "one_hand": "query.get_equipped_item_name('off_hand') == 'filled_map' || query.get_equipped_item_name('off_hand') == 'shield'".
+			Changed animation controller "controller.animation.player.root":
+				Changed field "states":
+					Changed state "first_person":
+						Changed field "animations":
+							Total animation dict: 9 (+3, -3)
+							Removed animation dict animation "first_person_attack_controller": "variable.attack_time > 0.0f && query.get_equipped_item_name != 'map'".
+							Removed animation dict animation "first_person_empty_hand": "query.get_equipped_item_name(0, 1) != 'map'".
+							Removed animation dict animation "first_person_map_controller": "(query.get_equipped_item_name(0, 1) == 'map' || query.get_equipped_item_name('off_hand') == 'map')".
+							Added animation dict animation "first_person_attack_controller": "variable.attack_time > 0.0f && query.get_equipped_item_name != 'filled_map'".
+							Added animation dict animation "first_person_empty_hand": "query.get_equipped_item_name(0, 1) != 'filled_map'".
+							Added animation dict animation "first_person_map_controller": "(query.get_equipped_item_name(0, 1) == 'filled_map' || query.get_equipped_item_name('off_hand') == 'filled_map')".
+					Changed state "third_person":
+						Changed field "animations":
+							Total animation dict: 24 (+1, -1)
+							Removed animation dict animation "use_item_progress": "( variable.use_item_interval_progress > 0.0 ) || ( variable.use_item_startup_progress > 0.0 ) && !variable.is_brandishing_spear && !variable.is_holding_spyglass && !query.is_item_name_any('slot.weapon.mainhand', 'minecraft:bow')".
+							Added animation dict animation "use_item_progress": "( variable.use_item_interval_progress > 0.0 ) || ( variable.use_item_startup_progress > 0.0 ) && !variable.is_brandishing_spear && !variable.is_holding_spyglass".

@@ -1,0 +1,191 @@
+Difference of "shaders_resource_packs" between "a0.10.5" and "a0.11.0_build1" (beta of "a0.11.0").
+
+Changed resource pack "color_texture.fragment":
+	Changed file "vanilla":
+		Total line: 23 (+0, -0)
+		        '''
+		        ...
+		 5  5   varying vec4 color;
+		 6  6   varying vec2 uv;
+		 7  7   
+		 8  8   void main()
+		 9  9   {
+		   10 + 	vec4 diffuse = texture2D( TEXTURE_0,  uv );
+		10    - 	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		11 11   
+		12 12   #ifdef ALPHA_TEST
+		13 13   	if(diffuse.a < 0.5)
+		14 14   	 	discard;
+		15 15   #endif
+		        ...
+		        '''
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 60 (+21, -10)
+		        '''
+		 1  1   #version 100
+		 2  2   uniform sampler2D TEXTURE_0;
+		    3 + uniform sampler2D TEXTURE_1;
+		    4 + 
+		    5 + varying vec4 light;
+		    6 + varying vec4 fogColor;
+		    7 + 
+		    8 + #ifndef COLOR_BASED
+		    9 + 	varying vec2 uv;
+		   10 + #endif
+		   11 + #ifdef USE_OVERLAY
+		   12 + 	varying vec4 overlayColor;
+		   13 + #endif
+		   14 + 
+		   15 + #ifdef USE_COLOR_MASK
+		   16 + 	varying vec4 changeColor;
+		   17 + #endif
+		 3 18   
+		 4    - varying vec4 light;
+		 5    - varying vec4 fogColor;
+		 6 19   
+		   20 + #ifdef USE_EMISSIVE
+		 7    - #ifndef COLOR_BASED
+		 8    - 	varying vec2 uv;
+		   21 + #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+		   22 + #else
+		   23 + #define NEEDS_DISCARD(C)	(C.a < 0.5)
+		 9    - #endif
+		10    - #ifdef USE_OVERLAY
+		11    - 	varying vec4 overlayColor;
+		12 24   #endif
+		13 25   
+		   26 + void main()
+		   27 + {
+		14    - #ifdef USE_EMISSIVE
+		15    - #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+		   28 + 	vec4 color = vec4(1.0);
+		   29 + #ifndef COLOR_BASED
+		   30 + 	color = texture2D( TEXTURE_0, uv );
+		16    - #else
+		17    - #define NEEDS_DISCARD(C)	(C.a < 0.5)
+		18    - #endif
+		19 31   
+		   32 + 	#ifdef ALPHA_TEST
+		   33 + 		if(NEEDS_DISCARD(color))
+		20    - void main()
+		21    - {
+		   34 + 		 	discard;
+		   35 + 	#endif
+		   36 + #endif
+		22    - 	vec4 color = vec4(1.0);
+		23    - #ifndef COLOR_BASED
+		24    - 	color = texture2D( TEXTURE_0, uv );
+		25 37   
+		   38 + #ifdef USE_COLOR_MASK
+		26    - 	#ifdef ALPHA_TEST
+		27    - 		if(NEEDS_DISCARD(color))
+		   39 + 	color.rgb = mix( color, color*changeColor, color.a).rgb;
+		   40 + 	color.a = 1.0;
+		28    - 		 	discard;
+		29    - 	#endif
+		30 41   #endif
+		31 42   
+		32 43   #ifdef USE_OVERLAY
+		33 44   	//use either the diffuse or the OVERLAY_COLOR
+		34 45   	color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+		        ...
+		        '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 81 (+15, -6)
+		        '''
+		 1  1   #version 100
+		 2  2   uniform MAT4 WORLDVIEWPROJ;
+		 3  3   uniform MAT4 WORLD;
+		 4  4   uniform vec3 TILE_LIGHT_COLOR;
+		 5  5   uniform vec4 OVERLAY_COLOR;
+		    6 + uniform vec4 CHANGE_COLOR;
+		    7 + uniform vec4 FOG_COLOR;
+		    8 + uniform vec2 FOG_CONTROL;
+		    9 + uniform float RENDER_DISTANCE;
+		   10 + 
+		   11 + attribute mediump vec4 POSITION;
+		   12 + attribute vec2 TEXCOORD_0;
+		   13 + attribute vec4 NORMAL;
+		 6    - uniform vec4 FOG_COLOR;
+		 7    - uniform vec2 FOG_CONTROL;
+		 8    - uniform float RENDER_DISTANCE;
+		 9 14   
+		   15 + #ifdef COLOR_BASED
+		10    - attribute mediump vec4 POSITION;
+		11    - attribute vec2 TEXCOORD_0;
+		   16 + 	attribute vec4 COLOR;
+		12    - attribute vec4 NORMAL;
+		   17 + #endif
+		13 18   
+		   19 + varying vec2 uv;
+		14    - #ifdef COLOR_BASED
+		   20 + varying vec4 light;
+		   21 + varying vec4 fogColor;
+		15    - 	attribute vec4 COLOR;
+		16    - #endif
+		17 22   
+		   23 + #ifdef USE_OVERLAY
+		18    - varying vec2 uv;
+		19    - varying vec4 light;
+		   24 + varying vec4 overlayColor;
+		20    - varying vec4 fogColor;
+		   25 + #endif
+		21 26   
+		   27 + #ifdef USE_COLOR_MASK
+		   28 + varying vec4 changeColor;
+		22    - #ifdef USE_OVERLAY
+		23    - varying vec4 overlayColor;
+		24 29   #endif
+		25 30   
+		26 31   const float AMBIENT = 0.45;
+		27 32   
+		28 33   const float XFAC = -0.1;
+		        ...
+		48 53   
+		49 54   void main()
+		50 55   {
+		51 56       POS4 pos = WORLDVIEWPROJ * POSITION;
+		52 57       gl_Position = pos;
+		   58 + 
+		   59 +     float L = lightIntensity();
+		53 60   
+		   61 + #ifdef USE_OVERLAY
+		   62 + 	L += OVERLAY_COLOR.a * 0.35;
+		   63 +     overlayColor = OVERLAY_COLOR;
+		   64 + #endif
+		54    -     float L = lightIntensity();
+		55 65   
+		   66 + #ifdef USE_COLOR_MASK
+		56    - #ifdef USE_OVERLAY
+		57    - 	L += OVERLAY_COLOR.a * 0.35;
+		   67 +     changeColor = CHANGE_COLOR;
+		58    -     overlayColor = OVERLAY_COLOR;
+		59 68   #endif
+		60 69   
+		61 70       light = vec4(vec3(L) * TILE_LIGHT_COLOR, 1.0);
+		62 71   
+		63 72   #ifdef COLOR_BASED
+		        ...
+		        '''
+Added resource pack "text.fragment":
+	file "vanilla":
+		'''
+		#version 100
+		uniform sampler2D TEXTURE_0;
+		uniform vec4 DARKEN;
+		
+		varying vec4 color;
+		varying vec2 uv;
+		
+		void main()
+		{
+			vec4 diffuse = texture2D( TEXTURE_0,  uv );
+		
+			if(diffuse.a < 0.5)
+			 	discard;
+		
+			gl_FragColor = diffuse * color * DARKEN;
+		}
+		'''

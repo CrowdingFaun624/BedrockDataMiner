@@ -1,116 +1,121 @@
-Difference of "entities" between "1.19.0.26" (beta of "1.19.0") and "1.19.0.28" (beta of "1.19.0").
+Difference of "entities" between "1.19.10.21" (beta of "1.19.10") and "1.19.10.22" (beta of "1.19.10").
 
-Changed entity "allay":
+Changed entity "pillager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:behavior.go_and_give_items_to_noteblock":
-					Added field "throw_sound" of "item_thrown".
-				Changed component "minecraft:behavior.go_and_give_items_to_owner":
-					Added field "throw_sound" of "item_thrown".
-Changed entity "llama":
+			Changed field "events":
+				Changed event "minecraft:promote_to_illager_captain":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:ranged_attack".
+				Changed event "minecraft:promote_to_patrol_captain":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:ranged_attack".
+				Changed event "minecraft:spawn_as_patrol_follower":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:ranged_attack".
+Changed entity "villager_v2.json":
 	Changed behavior pack "core":
+		Changed field "format_version" from "1.18.10" to "1.19.0".
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 21 (+1, -0)
-				Changed component group "minecraft:llama_adult":
-					Changed component "minecraft:breedable":
-						Removed field "love_filters":
-							filter property "operator": "!="
-							filter property "subject": "self"
-							filter property "test": "is_mark_variant"
-							filter property "value": 1
-				Added component group "minecraft:llama_persistence" of component "minecraft:persistent": empty.
-				Changed component group "minecraft:llama_wandering_trader":
-					Total component: 3 (+0, -1)
-					Changed component "minecraft:environment_sensor":
-						Changed field "triggers" from:
-							field "event": "minecraft:on_tame"
-							field "filters":
-								filter property "all_of":
-									filter:
-										filter property "subject": "self"
-										filter property "test": "is_leashed"
-										filter property "value": false
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "self"
-										filter property "test": "has_component"
-										filter property "value": "minecraft:is_tamed"
-						to:
-							trigger:
-								field "event": "minecraft:on_tame"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "subject": "self"
-											filter property "test": "is_leashed"
-											filter property "value": false
-										filter:
-											filter property "operator": "!="
-											filter property "subject": "self"
-											filter property "test": "has_component"
-											filter property "value": "minecraft:is_tamed"
-							trigger:
-								field "event": "minecraft:remove_persistence"
-								field "filters":
-									filter property "all_of":
-										filter:
-											filter property "subject": "self"
-											filter property "test": "is_leashed"
-											filter property "value": false
-										filter:
-											filter property "operator": "=="
-											filter property "subject": "self"
-											filter property "test": "has_component"
-											filter property "value": "minecraft:persistent"
-					Removed empty component "minecraft:persistent".
+				Changed component group "behavior_peasant":
+					Changed component "minecraft:shareables":
+						Changed field "items":
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot_seeds"
+								Added field "pickup_only" of true.
+							Changed item:
+								Unchanged field "item": "minecraft:wheat_seeds"
+								Added field "pickup_only" of true.
+				Changed component group "job_specific_goals":
+					Total component: 7 (+1, -0)
+					Added empty component "minecraft:behavior.work_composter".
+				Changed component group "work_schedule_farmer":
+					Total component: 4 (+2, -1)
+					Changed component "minecraft:shareables":
+						Changed field "items":
+							Total item: 8 (+1, -0)
+							Changed item:
+								Unchanged field "item": "minecraft:beetroot_seeds"
+								Added field "pickup_only" of true.
+							Changed item:
+								Unchanged field "item": "minecraft:wheat_seeds"
+								Added field "pickup_only" of true.
+							Added item:
+								field "item": "minecraft:bone_meal"
+								field "want_amount": 64
+								field "surplus_amount": 64
+								field "stored_in_inventory": true
+					Added component "minecraft:behavior.fertilize_farm_block" of field "priority": 8.
+					Changed component "minecraft:behavior.harvest_farm_block":
+						Changed field "priority" from 8 to 7.
+						Removed field "max_seconds_before_search" of 1.0.
+						Removed field "search_cooldown_max_seconds" of 8.0.
+						Removed field "seconds_until_new_task" of 0.5.
+						Removed field "speed_multiplier" of 0.5.
+					Removed component "minecraft:behavior.work":
+						field "priority": 7
+						field "active_time": 250
+						field "speed_multiplier": 0.5
+						field "goal_cooldown": 200
+						field "sound_delay_min": 100
+						field "sound_delay_max": 200
+						field "can_work_in_rain": false
+						field "work_in_rain_tolerance": 100
+						field "on_arrival":
+							field "event": "minecraft:resupply_trades"
+							field "target": "self"
+					Added component "minecraft:behavior.work_composter":
+						field "priority": 9
+						field "active_time": 250
+						field "speed_multiplier": 0.5
+						field "goal_cooldown": 200
+						field "can_work_in_rain": false
+						field "work_in_rain_tolerance": 100
+						field "on_arrival":
+							field "event": "minecraft:resupply_trades"
+							field "target": "self"
+			Changed field "components":
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Changed filter property "any_of":
+									Total filter: 5 (+0, -1)
+									Removed filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "zombie_pigman"
+				Changed component "minecraft:behavior.look_at_player":
+					Changed field "priority" from 8 to 9.
+				Changed component "minecraft:behavior.move_towards_dwelling_restriction":
+					Changed field "priority" from 10 to 11.
+				Changed component "minecraft:behavior.random_stroll":
+					Changed field "priority" from 10 to 11.
+				Changed component "minecraft:behavior.share_items":
+					Changed field "priority" from 9 to 10.
+Changed entity "vindicator.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
 			Changed field "events":
-				Total event: 16 (+1, -0)
-				Changed event "minecraft:from_wandering_trader":
-					Changed field "sequence":
-						Changed sequence item 0:
-							Changed field "add":
-								Changed field "component_groups":
-									Total component group: 3 (+1, -0)
-									Added component group "minecraft:llama_persistence".
-				Added event "minecraft:remove_persistence" of field "remove": field "component_groups": component group: "minecraft:llama_persistence".
-Changed entity "shulker":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 6 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.30"
-			Added behavior pack "vanilla_1.19.0".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 21 (+1, -1)
-				Changed component "minecraft:breathable":
-					Added field "breathes_lava" of false.
-					Added field "breathes_water" of false.
-				Added component "minecraft:fire_immune" of true.
-				Removed component "minecraft:hurt_on_condition":
-					field "damage_conditions":
-						damage condition:
-							field "cause": "lava"
-							field "damage_per_tick": 4
-							field "filters":
-								filter property "operator": "=="
-								filter property "subject": "self"
-								filter property "test": "in_lava"
-								filter property "value": true
-Changed entity "warden":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 36 (+2, -0)
-				Changed component "minecraft:anger_level":
-					Changed field "default_projectile_annoyingness" from 20 to 10.
-				Added component "minecraft:loot" of field "table": "loot_tables/entities/warden.json".
-				Added empty component "minecraft:vibration_damper".
-				Changed component "minecraft:behavior.sonic_boom":
-					Changed field "attack_damage" from 30 to 10.
-					Changed field "attack_cooldown" from 5 to 2.
+				Changed event "minecraft:promote_to_illager_captain":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:default_targeting".
+				Changed event "minecraft:promote_to_patrol_captain":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:default_targeting".
+				Changed event "minecraft:spawn_as_illager_captain":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:default_targeting".

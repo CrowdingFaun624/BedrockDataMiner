@@ -1,698 +1,928 @@
-Difference of "entities" between "1.20.50.21" (beta of "1.20.50") and "1.20.50.22" (beta of "1.20.50").
+Difference of "entities" between "1.20.60.22" (beta of "1.20.60") and "1.20.60.23" (beta of "1.20.60").
 
-Changed entity "axolotl":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 5 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.10"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.19.0"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 28 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "on_kill":
-						field "event": "killed_enemy_event"
-						field "target": "self"
-					field "priority": 4
-				Added component "minecraft:behavior.melee_box_attack":
-					field "on_kill":
-						field "event": "killed_enemy_event"
-						field "target": "self"
-					field "priority": 4
-Changed entity "bee":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 13 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.16.200"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Unchanged behavior pack: "vanilla_1.19.0"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.19.50"
-			Unchanged behavior pack: "vanilla_1.20.0"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "angry_bee":
-					Total component: 2 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "attack_once": true
-						field "on_attack":
-							field "event": "countdown_to_perish_event"
-							field "target": "self"
+Total entity: 119 (+1, -0)
+Added entity "armadillo.json":
+	behavior pack "experimental":
+		field "format_version": "1.20.60"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:armadillo"
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:is_rolled_up":
+						field "type": "bool"
+						field "client_sync": true
+						field "default": false
+					property "minecraft:is_threatened":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
+					property "minecraft:is_trying_to_relax":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
+			field "component_groups":
+				component group "minecraft:adult":
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "brush"
+								field "play_sounds": "mob.armadillo.brush"
+								field "vibration": "entity_interact"
+								field "interact_text": "action.interact.brush"
+								field "hurt_item": 16
+								field "swing": true
+								field "spawn_items": field "table": "loot_tables/entities/armadillo_brush.json"
+					component "minecraft:spawn_entity":
+						field "entities":
+							field "min_wait_time": 300
+							field "max_wait_time": 600
+							field "spawn_sound": "mob.armadillo.scute_drop"
+							field "spawn_item": "armadillo_scute"
+				component group "minecraft:adult_relaxed":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "breeds_with":
+							entity:
+								field "mate_type": "minecraft:armadillo"
+								field "baby_type": "minecraft:armadillo"
+								field "breed_event":
+									field "event": "minecraft:entity_born"
+									field "target": "baby"
+						field "breed_items": item: "spider_eye"
+					component "minecraft:behavior.breed":
 						field "priority": 2
-						field "speed_multiplier": 1.4
-					Added component "minecraft:behavior.melee_box_attack":
-						field "attack_once": true
-						field "on_attack":
-							field "event": "countdown_to_perish_event"
+						field "speed_multiplier": 1.0
+				component group "minecraft:baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "interact_filters":
+							filter property "test": "bool_property"
+							filter property "operator": "!="
+							filter property "domain": "minecraft:is_rolled_up"
+						field "feed_items": "spider_eye"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
-						field "priority": 2
-						field "speed_multiplier": 1.4
-			Changed field "events":
-				Total event: 20 (+1, -0)
-				Added event "minecraft:spawn_adult":
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.6
+				component group "minecraft:baby_relaxed":
+					component "minecraft:behavior.follow_parent":
+						field "priority": 5
+						field "speed_multiplier": 1.1
+				component group "minecraft:relaxed":
+					component "minecraft:ambient_sound_interval": empty
+					component "minecraft:behavior.look_at_player":
+						field "priority": 7
+						field "target_distance": 6.0
+						field "probability": 0.02
+						field "min_look_time": 40
+						field "max_look_time": 80
+					component "minecraft:behavior.random_look_around": field "priority": 8
+					component "minecraft:behavior.random_stroll":
+						field "priority": 6
+						field "speed_multiplier": 1.0
+					component "minecraft:behavior.tempt":
+						field "priority": 3
+						field "speed_multiplier": 1.25
+						field "can_tempt_vertically": true
+						field "items": item: "spider_eye"
+				component group "minecraft:rolled_up":
+					component "minecraft:damage_sensor":
+						field "triggers":
+							field "on_damage":
+								field "event": "minecraft:relax"
+								field "target": "self"
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "any_of":
+										filter: filter property "test": "in_water"
+										filter: filter property "test": "is_panicking"
+										filter: filter property "test": "is_leashed"
+										filter: filter property "test": "is_riding"
+								field "event": "minecraft:relax"
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "bool_property"
+											filter property "operator": "!="
+											filter property "domain": "minecraft:is_threatened"
+										filter:
+											filter property "test": "bool_property"
+											filter property "operator": "!="
+											filter property "domain": "minecraft:is_trying_to_relax"
+								field "event": "minecraft:start_trying_to_relax"
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "bool_property"
+											filter property "domain": "minecraft:is_threatened"
+										filter:
+											filter property "test": "bool_property"
+											filter property "domain": "minecraft:is_trying_to_relax"
+								field "event": "minecraft:stop_trying_to_relax"
+				component group "minecraft:rolled_up_trying_to_relax":
+					component "minecraft:timer":
+						field "looping": true
+						field "time": 3
+						field "randomInterval": false
+						field "time_down_event": field "event": "minecraft:relax"
+			field "components":
+				component "minecraft:balloonable": empty
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.7
+					field "height": 0.65
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:entity_sensor":
+					field "relative_range": false
+					field "subsensors":
+						subsensor:
+							field "event": "minecraft:no_threat_detected"
+							field "cooldown": 0.2
+							field "range": 7.0
+							field "minimum_count": 0
+							field "maximum_count": 0
+							field "event_filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+									filter:
+										filter property "any_of":
+											filter: filter property "test": "on_ground"
+											filter:
+												filter property "test": "bool_property"
+												filter property "domain": "minecraft:is_threatened"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "undead"
+											filter:
+												filter property "all_of":
+													filter:
+														filter property "test": "is_family"
+														filter property "subject": "other"
+														filter property "value": "player"
+													filter:
+														filter property "any_of":
+															filter:
+																filter property "test": "is_sprinting"
+																filter property "subject": "other"
+															filter:
+																filter property "test": "is_riding"
+																filter property "subject": "other"
+						subsensor:
+							field "event": "minecraft:threat_detected"
+							field "cooldown": 0.2
+							field "range": 7.0
+							field "minimum_count": 1
+							field "event_filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "in_water"
+										filter property "value": false
+									filter:
+										filter property "test": "is_panicking"
+										filter property "value": false
+									filter:
+										filter property "test": "is_leashed"
+										filter property "value": false
+									filter:
+										filter property "test": "is_riding"
+										filter property "value": false
+									filter:
+										filter property "any_of":
+											filter: filter property "test": "on_ground"
+											filter:
+												filter property "test": "bool_property"
+												filter property "domain": "minecraft:is_threatened"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "undead"
+											filter:
+												filter property "all_of":
+													filter:
+														filter property "test": "is_family"
+														filter property "subject": "other"
+														filter property "value": "player"
+													filter:
+														filter property "any_of":
+															filter:
+																filter property "test": "is_sprinting"
+																filter property "subject": "other"
+															filter:
+																filter property "test": "is_riding"
+																filter property "subject": "other"
+				component "minecraft:health": field "value": 12
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement": field "value": 0.14
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_damage_blocks": true
+					field "avoid_water": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "armadillo"
+						family: "mob"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 2.0
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:adult"
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:baby"
+									component group: "minecraft:baby_relaxed"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:adult_relaxed"
+							field "filters":
+								filter property "test": "bool_property"
+								filter property "operator": "!="
+								filter property "domain": "minecraft:is_rolled_up"
+				event "minecraft:entity_born": field "trigger": "minecraft:spawn_baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "trigger": "minecraft:spawn_adult"
+							field "weight": 95
+						randomize item:
+							field "trigger": "minecraft:spawn_baby"
+							field "weight": 5
+				event "minecraft:no_threat_detected": field "set_property": property "minecraft:is_threatened": false
+				event "minecraft:relax":
+					field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:relaxed"
+							field "remove":
+								field "component_groups":
+									component group: "minecraft:rolled_up"
+									component group: "minecraft:rolled_up_trying_to_relax"
+							field "set_property":
+								property "minecraft:is_rolled_up": false
+								property "minecraft:is_trying_to_relax": false
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:baby_relaxed"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_baby"
+						sequence item 2:
+							field "add": field "component_groups": component group: "minecraft:adult_relaxed"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:is_baby"
+				event "minecraft:roll_up":
+					field "add": field "component_groups": component group: "minecraft:rolled_up"
+					field "remove":
+						field "component_groups":
+							component group: "minecraft:relaxed"
+							component group: "minecraft:baby_relaxed"
+							component group: "minecraft:adult_relaxed"
+					field "set_property": property "minecraft:is_rolled_up": true
+				event "minecraft:spawn_adult":
 					field "add":
 						field "component_groups":
-							component group: "bee_adult"
-							component group: "shelter_detection"
-							component group: "track_attacker"
-							component group: "look_for_food"
-Changed entity "blaze":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 6 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Added behavior pack "vanilla_1.20.50".
+							component group: "minecraft:adult"
+							component group: "minecraft:adult_relaxed"
+							component group: "minecraft:relaxed"
+							component group: "minecraft:scanning"
+				event "minecraft:spawn_baby":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:baby"
+							component group: "minecraft:baby_relaxed"
+							component group: "minecraft:relaxed"
+							component group: "minecraft:scanning"
+				event "minecraft:start_trying_to_relax":
+					field "add": field "component_groups": component group: "minecraft:rolled_up_trying_to_relax"
+					field "set_property": property "minecraft:is_trying_to_relax": true
+				event "minecraft:stop_trying_to_relax":
+					field "remove": field "component_groups": component group: "minecraft:rolled_up_trying_to_relax"
+					field "set_property": property "minecraft:is_trying_to_relax": false
+				event "minecraft:threat_detected":
+					field "sequence":
+						sequence item 0: field "set_property": property "minecraft:is_threatened": true
+						sequence item 1:
+							field "trigger": "minecraft:roll_up"
+							field "filters":
+								filter property "test": "bool_property"
+								filter property "operator": "!="
+								filter property "domain": "minecraft:is_rolled_up"
+Changed entity "breeze.json":
+	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "melee_mode":
-					Total component: 2 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack" of field "priority": 3.
-					Added component "minecraft:behavior.melee_box_attack" of field "priority": 3.
-Changed entity "cave_spider":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 6 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:spider_angry":
-					Total component: 4 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 3
-						field "reach_multiplier": 1.4
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 3
-						field "track_target": true
-				Changed component group "minecraft:spider_hostile":
-					Total component: 4 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 3
-						field "random_stop_interval": 100
-						field "reach_multiplier": 0.8
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 3
-						field "random_stop_interval": 100
-						field "track_target": true
-Changed entity "dolphin":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "dolphin_adult":
-					Total component: 4 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 2
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 2
-						field "track_target": true
-Changed entity "drowned":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 14 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.16.220"
-			Unchanged behavior pack: "vanilla_1.17.10"
-			Unchanged behavior pack: "vanilla_1.17.20"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.19.40"
-			Unchanged behavior pack: "vanilla_1.20.10"
-			Unchanged behavior pack: "vanilla_1.20.20"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:melee_mode":
-					Total component: 2 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "can_spread_on_fire": true
-						field "priority": 3
-						field "require_complete_path": true
-						field "speed_multiplier": 1
-						field "track_target": false
-					Added component "minecraft:behavior.melee_box_attack":
-						field "can_spread_on_fire": true
-						field "priority": 3
-						field "require_complete_path": true
-						field "speed_multiplier": 1
-						field "track_target": false
-Changed entity "enderman":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.19.30"
-			Unchanged behavior pack: "vanilla_1.19.50"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:enderman_angry":
-					Total component: 3 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack" of field "priority": 2.
-					Added component "minecraft:behavior.melee_box_attack" of field "priority": 2.
-Changed entity "endermite":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 7 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.10"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:breeze"
+				Added description "properties":
+					property "minecraft:is_playing_idle_ground_sound":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
 			Changed field "components":
-				Total component: 23 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "priority": 3
-					field "track_target": true
-				Added component "minecraft:behavior.melee_box_attack":
-					field "priority": 3
-					field "track_target": true
-Changed entity "fox":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 8 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.10"
-			Unchanged behavior pack: "vanilla_1.20.40"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:defending_fox":
-					Total component: 3 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 1
-						field "reach_multiplier": 1.5
-						field "require_complete_path": true
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 1
-						field "require_complete_path": true
-						field "track_target": true
-				Changed component group "minecraft:docile_fox":
-					Total component: 2 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 10
-						field "reach_multiplier": 1.5
-						field "require_complete_path": true
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 10
-						field "require_complete_path": true
-						field "track_target": true
-Changed entity "hoglin":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Unchanged behavior pack: "vanilla_1.18.30"
-			Unchanged behavior pack: "vanilla_1.19.30"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:hoglin_adult":
-					Total component: 11 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "cooldown_time": 2
-						field "priority": 4
-						field "reach_multiplier": 2.15
-						field "speed_multiplier": 1
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "cooldown_time": 2
-						field "priority": 4
-						field "speed_multiplier": 1
-						field "track_target": true
-				Changed component group "minecraft:hoglin_baby":
-					Total component: 12 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "cooldown_time": 0.75
-						field "priority": 4
-						field "reach_multiplier": 1.0
-						field "speed_multiplier": 1
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "cooldown_time": 0.75
-						field "priority": 4
-						field "speed_multiplier": 1
-						field "track_target": true
-Changed entity "husk":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 11 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.20"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.19.60"
-			Unchanged behavior pack: "vanilla_1.20.10"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 31 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "can_spread_on_fire": true
-					field "priority": 3
-				Added component "minecraft:behavior.melee_box_attack":
-					field "can_spread_on_fire": true
-					field "priority": 3
-Changed entity "iron_golem":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.19.50"
-			Unchanged behavior pack: "vanilla_1.19.60"
-			Unchanged behavior pack: "vanilla_1.20.20"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 35 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "priority": 1
-					field "track_target": true
-				Added component "minecraft:behavior.melee_box_attack":
-					field "priority": 1
-					field "track_target": true
-Changed entity "panda":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.19.80"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:panda_adult":
-					Total component: 8 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "attack_once": true
+				Total component: 31 (+2, -0)
+				Added component "minecraft:environment_sensor":
+					field "triggers":
+						trigger:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "on_ground"
+										filter property "subject": "self"
+										filter property "value": true
+									filter:
+										filter property "test": "has_target"
+										filter property "subject": "self"
+										filter property "value": true
+									filter:
+										filter property "test": "bool_property"
+										filter property "operator": "=="
+										filter property "domain": "minecraft:is_playing_idle_ground_sound"
+							field "event": "minecraft:stop_playing_idle_ground_sound"
+						trigger:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "bool_property"
+										filter property "operator": "!="
+										filter property "domain": "minecraft:is_playing_idle_ground_sound"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "on_ground"
+												filter property "subject": "self"
+												filter property "value": false
+											filter:
+												filter property "test": "has_target"
+												filter property "subject": "self"
+												filter property "value": false
+							field "event": "minecraft:start_playing_idle_ground_sound"
+				Changed component "minecraft:behavior.jump_around_target":
+					Changed field "priority" from 4 to 5.
+				Changed component "minecraft:behavior.look_at_player":
+					Changed field "priority" from 6 to 7.
+				Added component "minecraft:behavior.move_away_from_target":
+					field "priority": 4
+					field "destination_position_range": [4.0, 8.0]
+					field "movement_speed": 1.0
+					field "destination_pos_spread_degrees": 90
+					field "filters":
+						filter property "all_of":
+							filter:
+								filter property "test": "on_ground"
+								filter property "value": true
+							filter:
+								filter property "test": "target_distance"
+								filter property "subject": "self"
+								filter property "value": 2.0
+								filter property "operator": ">="
+							filter:
+								filter property "test": "target_distance"
+								filter property "subject": "self"
+								filter property "value": 16.0
+								filter property "operator": "<="
+				Changed component "minecraft:behavior.random_look_around":
+					Changed field "priority" from 7 to 8.
+				Changed component "minecraft:behavior.random_stroll":
+					Changed field "priority" from 5 to 6.
+			Added field "events":
+				event "minecraft:start_playing_idle_ground_sound":
+					field "add": field "component_groups": component group: "minecraft:playing_idle_ground_sound"
+					field "set_property": property "minecraft:is_playing_idle_ground_sound": true
+				event "minecraft:stop_playing_idle_ground_sound":
+					field "remove": field "component_groups": component group: "minecraft:playing_idle_ground_sound"
+					field "set_property": property "minecraft:is_playing_idle_ground_sound": false
+Changed entity "wolf.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.20.60"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:wolf"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+				description "properties":
+					property "minecraft:has_armor":
+						field "type": "bool"
+						field "client_sync": true
+						field "default": false
+					property "minecraft:is_armorable":
+						field "type": "bool"
+						field "client_sync": false
+						field "default": false
+			field "component_groups":
+				component group "minecraft:wolf_adult":
+					component "minecraft:breedable":
+						field "require_tame": true
+						field "require_full_health": true
+						field "breeds_with":
+							field "mate_type": "minecraft:wolf"
+							field "baby_type": "minecraft:wolf"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+						field "breed_items":
+							item: "chicken"
+							item: "cooked_chicken"
+							item: "beef"
+							item: "cooked_beef"
+							item: "muttonRaw"
+							item: "muttonCooked"
+							item: "porkchop"
+							item: "cooked_porkchop"
+							item: "rabbit"
+							item: "cooked_rabbit"
+							item: "rotten_flesh"
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:loot": field "table": "loot_tables/entities/wolf.json"
+				component group "minecraft:wolf_angry":
+					component "minecraft:angry":
+						field "duration": 25
+						field "broadcast_anger": true
+						field "broadcast_range": 20
+						field "calm_event":
+							field "event": "minecraft:on_calm"
+							field "target": "self"
+					component "minecraft:on_target_acquired": empty
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family: "zombie"
+						field "seats": field "position": [0.0, 0.675, -0.1]
+				component group "minecraft:wolf_armorable":
+					component "minecraft:equippable":
+						field "slots":
+							slot:
+								field "slot": 0
+								field "accepted_items": item: "invalid_item"
+							slot:
+								field "slot": 1
+								field "item": "wolf_armor"
+								field "accepted_items": item: "wolf_armor"
+								field "on_equip": field "event": "minecraft:on_armor_equip"
+								field "on_unequip": field "event": "minecraft:on_armor_unequip"
+					component "minecraft:interact":
+						field "interactions":
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "self"
+												filter property "domain": "inventory"
+												filter property "operator": "not"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "is_owner"
+												filter property "subject": "other"
+												filter property "value": true
+											filter:
+												filter property "test": "is_sneak_held"
+												filter property "subject": "other"
+												filter property "value": false
+									field "target": "self"
+								field "equip_item_slot": 1
+								field "play_sounds": "armor.equip_wolf"
+								field "interact_text": "action.interact.equipwolfarmor"
+							interaction:
+								field "on_interact":
+									field "filters":
+										filter property "all_of":
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "self"
+												filter property "domain": "inventory"
+												filter property "value": "wolf_armor"
+											filter:
+												filter property "test": "has_equipment"
+												filter property "subject": "other"
+												filter property "domain": "hand"
+												filter property "value": "shears"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "player"
+											filter:
+												filter property "test": "is_owner"
+												filter property "subject": "other"
+												filter property "value": true
+											filter:
+												filter property "test": "is_sneak_held"
+												filter property "subject": "other"
+												filter property "value": false
+									field "target": "self"
+								field "cooldown": 2.5
+								field "use_item": false
+								field "hurt_item": 1
+								field "drop_item_slot": 1
+								field "play_sounds": "armor.unequip_wolf"
+								field "interact_text": "action.interact.removewolfarmor"
+								field "vibration": "shear"
+					component "minecraft:inventory": field "inventory_size": 2
+				component group "minecraft:wolf_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items":
+							item: "chicken"
+							item: "cooked_chicken"
+							item: "beef"
+							item: "cooked_beef"
+							item: "muttonRaw"
+							item: "muttonCooked"
+							item: "porkchop"
+							item: "cooked_porkchop"
+							item: "rabbit"
+							item: "cooked_rabbit"
+							item: "rotten_flesh"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+				component group "minecraft:wolf_tame":
+					component "minecraft:attack": field "damage": 4
+					component "minecraft:color": field "value": 14
+					component "minecraft:health":
+						field "value": 20
+						field "max": 20
+					component "minecraft:is_dyeable": field "interact_text": "action.interact.dye"
+					component "minecraft:is_tamed": empty
+					component "minecraft:sittable": empty
+					component "minecraft:behavior.breed":
 						field "priority": 2
-						field "reach_multiplier": 1.0
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "attack_once": true
-						field "priority": 2
-						field "track_target": true
-				Changed component group "minecraft:panda_aggressive":
-					Total component: 6 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 2
-						field "reach_multiplier": 1.0
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 2
-						field "track_target": true
-Changed entity "piglin":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 6 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "melee_unit":
-					Total component: 4 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 8
 						field "speed_multiplier": 1.0
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 8
+					component "minecraft:behavior.follow_owner":
+						field "priority": 6
 						field "speed_multiplier": 1.0
-						field "track_target": true
-Changed entity "piglin_brute":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 5 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "melee_unit":
-					Total component: 4 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 4
-						field "speed_multiplier": 1
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 4
-						field "speed_multiplier": 1
-						field "track_target": true
-Changed entity "pillager":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:melee_attack":
-					Total component: 3 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 4
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 4
-						field "track_target": true
-Changed entity "silverfish":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 7 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.10"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:silverfish_angry":
-					Total component: 3 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 4
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 4
-						field "track_target": true
-Changed entity "skeleton":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 10 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Unchanged behavior pack: "vanilla_1.20.20"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:melee_attack":
-					Total component: 3 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "priority": 4
-						field "speed_multiplier": 1.25
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 4
-						field "speed_multiplier": 1.25
-						field "track_target": true
-Changed entity "spider":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 7 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:spider_angry":
-					Total component: 3 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
+						field "start_distance": 10
+						field "stop_distance": 2
+					component "minecraft:behavior.nearest_attackable_target":
+						field "priority": 5
+						field "must_see": true
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "value": "skeleton"
+								field "max_dist": 16
+					component "minecraft:behavior.owner_hurt_by_target": field "priority": 1
+					component "minecraft:behavior.owner_hurt_target": field "priority": 2
+				component group "minecraft:wolf_wild":
+					component "minecraft:on_target_acquired":
+						field "event": "minecraft:become_angry"
+						field "target": "self"
+					component "minecraft:rideable":
+						field "seat_count": 1
+						field "family_types": family: "zombie"
+						field "seats": field "position": [0.0, 0.675, -0.1]
+					component "minecraft:tameable":
+						field "probability": 0.33
+						field "tame_items": "bone"
+						field "tame_event":
+							field "event": "minecraft:on_tame"
+							field "target": "self"
+					component "minecraft:behavior.avoid_mob_type":
 						field "priority": 3
-						field "reach_multiplier": 0.8
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 3
-						field "track_target": true
-Changed entity "stray":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 7 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:melee_attack":
-					Total component: 3 (+1, -1)
-					Removed component "minecraft:behavior.melee_attack":
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "test": "is_family"
+									filter property "subject": "other"
+									filter property "value": "llama"
+								field "max_dist": 24
+								field "walk_speed_multiplier": 1.5
+								field "sprint_speed_multiplier": 1.5
+						field "probability_per_strength": 0.14
+					component "minecraft:behavior.nearest_attackable_target":
 						field "priority": 4
-						field "speed_multiplier": 1.25
-						field "track_target": true
-					Added component "minecraft:behavior.melee_box_attack":
-						field "priority": 4
-						field "speed_multiplier": 1.25
-						field "track_target": true
-Changed entity "vindicator":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 32 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack" of field "priority": 3.
-				Added component "minecraft:behavior.melee_box_attack" of field "priority": 3.
-Changed entity "warden":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 4 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.19.0"
-			Unchanged behavior pack: "vanilla_1.19.10"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 36 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "melee_fov": 360
+						field "reselect_targets": true
+						field "must_see": true
+						field "entity_types":
+							entity type:
+								field "filters":
+									filter property "any_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "skeleton"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "sheep"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "rabbit"
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "fox"
+								field "max_dist": 16
+							entity type:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "baby_turtle"
+										filter:
+											filter property "test": "in_water"
+											filter property "subject": "other"
+											filter property "operator": "!="
+											filter property "value": true
+								field "max_dist": 16
+							entity type:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_family"
+											filter property "subject": "other"
+											filter property "value": "skeleton"
+										filter:
+											filter property "test": "is_underwater"
+											filter property "subject": "other"
+											filter property "operator": "!="
+											filter property "value": true
+								field "max_dist": 16
+			field "components":
+				component "minecraft:attack": field "damage": 3
+				component "minecraft:balloonable": field "mass": 0.8
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.6
+					field "height": 0.8
+				component "minecraft:conditional_bandwidth_optimization": empty
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:environment_sensor":
+					field "triggers":
+						trigger:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "bool_property"
+										filter property "operator": "!="
+										filter property "domain": "minecraft:is_armorable"
+									filter:
+										filter property "test": "has_component"
+										filter property "operator": "!="
+										filter property "value": "minecraft:is_baby"
+									filter:
+										filter property "test": "has_component"
+										filter property "value": "minecraft:is_tamed"
+							field "event": "minecraft:become_armorable"
+				component "minecraft:healable":
+					field "items":
+						item:
+							field "item": "porkchop"
+							field "heal_amount": 3
+						item:
+							field "item": "cooked_porkchop"
+							field "heal_amount": 8
+						item:
+							field "item": "fish"
+							field "heal_amount": 2
+						item:
+							field "item": "salmon"
+							field "heal_amount": 2
+						item:
+							field "item": "clownfish"
+							field "heal_amount": 1
+						item:
+							field "item": "pufferfish"
+							field "heal_amount": 1
+						item:
+							field "item": "cooked_fish"
+							field "heal_amount": 5
+						item:
+							field "item": "cooked_salmon"
+							field "heal_amount": 6
+						item:
+							field "item": "beef"
+							field "heal_amount": 3
+						item:
+							field "item": "cooked_beef"
+							field "heal_amount": 8
+						item:
+							field "item": "chicken"
+							field "heal_amount": 2
+						item:
+							field "item": "cooked_chicken"
+							field "heal_amount": 6
+						item:
+							field "item": "muttonRaw"
+							field "heal_amount": 2
+						item:
+							field "item": "muttonCooked"
+							field "heal_amount": 6
+						item:
+							field "item": "rotten_flesh"
+							field "heal_amount": 4
+						item:
+							field "item": "rabbit"
+							field "heal_amount": 3
+						item:
+							field "item": "cooked_rabbit"
+							field "heal_amount": 5
+						item:
+							field "item": "rabbit_stew"
+							field "heal_amount": 10
+				component "minecraft:health":
+					field "value": 8
+					field "max": 8
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+					field "on_leash":
+						field "event": "minecraft:on_leash"
+						field "target": "self"
+					field "on_unleash":
+						field "event": "minecraft:on_unleash"
+						field "target": "self"
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "wolf"
+						family: "mob"
+				component "minecraft:behavior.beg":
+					field "priority": 9
+					field "look_distance": 8
+					field "look_time": [2, 4]
+					field "items":
+						item: "bone"
+						item: "porkchop"
+						item: "cooked_porkchop"
+						item: "chicken"
+						item: "cooked_chicken"
+						item: "beef"
+						item: "cooked_beef"
+						item: "rotten_flesh"
+						item: "muttonraw"
+						item: "muttoncooked"
+						item: "rabbit"
+						item: "cooked_rabbit"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target": field "priority": 3
+				component "minecraft:behavior.leap_at_target":
 					field "priority": 4
-					field "speed_multiplier": 1.2
-				Added component "minecraft:behavior.melee_box_attack":
-					field "melee_fov": 360
-					field "priority": 4
-					field "speed_multiplier": 1.2
-Changed entity "wither_skeleton":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 7 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 31 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "priority": 4
+					field "target_dist": 0.4
+				component "minecraft:behavior.look_at_player":
+					field "priority": 6
+					field "target_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.melee_box_attack": field "priority": 5
+				component "minecraft:behavior.mount_pathing":
+					field "priority": 1
 					field "speed_multiplier": 1.25
+					field "target_dist": 0
 					field "track_target": true
-				Added component "minecraft:behavior.melee_box_attack":
-					field "priority": 4
-					field "speed_multiplier": 1.25
-					field "track_target": true
-Changed entity "wolf":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 10 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 29 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack" of field "priority": 5.
-				Added component "minecraft:behavior.melee_box_attack" of field "priority": 5.
-Changed entity "zoglin":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 8 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Unchanged behavior pack: "vanilla_1.18.30"
-			Unchanged behavior pack: "vanilla_1.19.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 24 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "priority": 4
-					field "reach_multiplier": 2.15
-					field "speed_multiplier": 1.4
-					field "track_target": true
-				Added component "minecraft:behavior.melee_box_attack":
-					field "priority": 4
-					field "speed_multiplier": 1.4
-					field "track_target": true
-Changed entity "zombie":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 10 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.20"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.20.10"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 30 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "can_spread_on_fire": true
-					field "priority": 3
-				Added component "minecraft:behavior.melee_box_attack":
-					field "can_spread_on_fire": true
-					field "priority": 3
-Changed entity "zombie_pigman":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 6 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 30 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "priority": 4
-					field "speed_multiplier": 1.5
-				Added component "minecraft:behavior.melee_box_attack":
-					field "priority": 4
-					field "speed_multiplier": 1.5
-Changed entity "zombie_villager":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 10 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.20"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.20.10"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 29 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "can_spread_on_fire": true
-					field "priority": 6
-				Added component "minecraft:behavior.melee_box_attack":
-					field "can_spread_on_fire": true
-					field "priority": 6
-Changed entity "zombie_villager_v2":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 12 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.20"
-			Unchanged behavior pack: "vanilla_1.19.20"
-			Unchanged behavior pack: "vanilla_1.20.10"
-			Unchanged behavior pack: "vanilla_1.20.20"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Unchanged behavior pack: "vanilla_1.20.40"
-			Added behavior pack "vanilla_1.20.50".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 29 (+1, -1)
-				Removed component "minecraft:behavior.melee_attack":
-					field "can_spread_on_fire": true
-					field "priority": 6
-				Added component "minecraft:behavior.melee_box_attack":
-					field "can_spread_on_fire": true
-					field "priority": 6
+				component "minecraft:behavior.random_stroll":
+					field "priority": 8
+					field "speed_multiplier": 1.0
+				component "minecraft:behavior.stay_while_sitting": field "priority": 3
+			field "events":
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group: "minecraft:wolf_adult"
+					field "remove": field "component_groups": component group: "minecraft:wolf_baby"
+				event "minecraft:ageable_set_baby":
+					field "add": field "component_groups": component group: "minecraft:wolf_baby"
+					field "remove": field "component_groups": component group: "minecraft:wolf_adult"
+				event "minecraft:become_angry":
+					field "add": field "component_groups": component group: "minecraft:wolf_angry"
+					field "remove": field "component_groups": component group: "minecraft:wolf_wild"
+				event "minecraft:become_armorable":
+					field "add": field "component_groups": component group: "minecraft:wolf_armorable"
+					field "set_property": property "minecraft:is_armorable": true
+				event "minecraft:entity_born": field "trigger": "minecraft:spawn_tame_baby"
+				event "minecraft:entity_spawned":
+					field "randomize":
+						randomize item:
+							field "trigger": "minecraft:spawn_wild_adult"
+							field "weight": 9
+						randomize item:
+							field "trigger": "minecraft:spawn_wild_baby"
+							field "weight": 1
+				event "minecraft:on_armor_equip": field "set_property": property "minecraft:has_armor": true
+				event "minecraft:on_armor_unequip": field "set_property": property "minecraft:has_armor": false
+				event "minecraft:on_calm":
+					field "add": field "component_groups": component group: "minecraft:wolf_wild"
+					field "remove": field "component_groups": component group: "minecraft:wolf_angry"
+				event "minecraft:on_tame":
+					field "add": field "component_groups": component group: "minecraft:wolf_tame"
+					field "remove": field "component_groups": component group: "minecraft:wolf_wild"
+				event "minecraft:spawn_tame_adult":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:wolf_adult"
+							component group: "minecraft:wolf_tame"
+				event "minecraft:spawn_tame_baby":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:wolf_baby"
+							component group: "minecraft:wolf_tame"
+				event "minecraft:spawn_wild_adult":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:wolf_adult"
+							component group: "minecraft:wolf_wild"
+				event "minecraft:spawn_wild_baby":
+					field "add":
+						field "component_groups":
+							component group: "minecraft:wolf_baby"
+							component group: "minecraft:wolf_wild"

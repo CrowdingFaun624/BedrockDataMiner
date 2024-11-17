@@ -1,0 +1,541 @@
+Difference of "ui" between "1.0.3" and "1.0.4.0" (beta of "1.0.4").
+
+Total namespace: 82 (+2, -0)
+Changed namespace "chat":
+	Changed element "messages_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "factory":
+			Removed field "max_size" of 100.
+			Added field "max_children_size" of 100.
+Changed namespace "general_section":
+	Changed element "gamertag_controls":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "sign_out":
+					Unchanged field "type": "panel"
+					Changed field "ignored" from "($win10_edition or not $is_pregame)" to "($build_platform_UWP or not $is_pregame)".
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "space":
+					Unchanged field "type": "panel"
+					Added field "ignored" of "(not $is_pregame)".
+			Changed control:
+				Changed element "@settings_common.action_button":
+					Added field "ignored" of "(not $is_pregame)".
+Changed namespace "hud":
+	Changed element "chat_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "factory":
+						Added field "max_children_size" of 50.
+Added namespace "trade":
+	element "arrow":
+		field "type": "panel"
+		field "layer": 2
+		field "size": [26, 26]
+		field "controls":
+			control: element "arrow_image@trade.arrow_image": empty
+			control: element "cross_out_icon@trade.cross_out_icon": field "layer": 2
+			control: element "recipe_button@trade.recipe_button": field "ignored": "$pocket_screen"
+		field "$variables": variable "$item_collection_name": "arrow_text"
+	element "arrow_image":
+		field "type": "image"
+		field "texture": "textures/gui/newgui/anvil-arrow"
+		field "layer": 1
+		field "size": [22, 15]
+		field "uv_size": [22, 15]
+		field "uv": [0, 0]
+		field "color": [0.5, 0.5, 0.5, 1.0]
+	element "button_image":
+		field "type": "image"
+		field "nineslice_size": 2
+		field "uv": [0, 0]
+		field "uv_size": [6, 6]
+	element "chevron_button_image@trade.button_image":
+		field "controls":
+			control:
+				element "chevron_image":
+					field "type": "image"
+					field "layer": 1
+					field "uv": [0, 0]
+					field "uv_size": [4, 7]
+					field "size": [4, 7]
+					field "offset": "$chevron_offset"
+					field "texture": "$chevron_image_name"
+		field "$variables":
+			variable "$chevron_offset|default":
+				item 0: 0
+				item 1: 0
+	element "cross_out_icon":
+		field "type": "image"
+		field "texture": "textures/gui/newgui/anvil-crossout"
+		field "layer": 1
+		field "size": [15, 15]
+		field "uv": [0, 0]
+		field "uv_size": [15, 15]
+		field "bindings":
+			binding:
+				field "binding_name": "#cross_out_icon"
+				field "binding_name_override": "#visible"
+	element "cycle_panel":
+		field "type": "panel"
+		field "size": ["80%", "30%"]
+		field "offset": [17, 17]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control: element "left@trade.cycle_recipe_left_button": field "size": [10, 15]
+			control: element "right@trade.cycle_recipe_right_button": field "size": [10, 15]
+	element "cycle_recipe_button@common.button":
+		field "locked_control": "locked"
+		field "controls":
+			control: element "default@trade.chevron_button_image": field "texture": "$default_texture"
+			control: element "hover@trade.chevron_button_image": field "texture": "$hover_texture"
+			control:
+				element "pressed@trade.chevron_button_image":
+					field "texture": "$pressed_texture"
+					field "$variables":
+						variable "$chevron_offset":
+							item 0: 0
+							item 1: 1
+			control:
+				element "locked@trade.chevron_button_image":
+					field "texture": "$locked_texture"
+					field "uv_size": [4, 4]
+					field "nineslice_size": 1
+		field "bindings":
+			binding:
+				field "binding_type": "global"
+				field "binding_condition": "visible"
+				field "binding_name": "$cycle_binding_name"
+				field "binding_name_override": "#enabled"
+		field "$variables":
+			variable "$default_texture|default": "textures/gui/newgui/ButtonWithBorder"
+			variable "$hover_texture|default": "textures/gui/newgui/ButtonWithBorderHover"
+			variable "$pressed_texture|default": "textures/gui/newgui/ButtonWithBorderPressed"
+			variable "$locked_texture|default": "textures/gui/newgui/buttons/borderless/dark"
+	element "cycle_recipe_left_button@trade.cycle_recipe_button":
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "$variables":
+			variable "$cycle_binding_name": "#left_button_enabled"
+			variable "$chevron_image_name": "textures/gui/newgui/chevron_left"
+			variable "$pressed_button_name": "button.cycle_recipe_left"
+	element "cycle_recipe_right_button@trade.cycle_recipe_button":
+		field "anchor_from": "right_middle"
+		field "anchor_to": "right_middle"
+		field "$variables":
+			variable "$cycle_binding_name": "#right_button_enabled"
+			variable "$chevron_image_name": "textures/gui/newgui/chevron_right"
+			variable "$pressed_button_name": "button.cycle_recipe_right"
+	element "highlight_slot_panel":
+		field "type": "panel"
+		field "layer": 3
+		field "controls":
+			control:
+				element "hover_text@common.hover_text":
+					field "bindings":
+						binding:
+							field "binding_name": "#hover_text"
+							field "binding_condition": "visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$item_collection_name"
+	element "merchant_purchase_panel":
+		field "type": "panel"
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "size": ["80%", "100%"]
+		field "offset": [0, 12]
+		field "controls": control: element "purchase_grid@trade.purchase_grid": empty
+	element "purchase_grid":
+		field "type": "grid"
+		field "size": ["84%", "90%"]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "grid_dimensions": [4, 1]
+		field "controls":
+			control:
+				element "grid_slot1@trade.purchase_grid_item":
+					field "grid_position": [0, 0]
+					field "$variables":
+						variable "$top_item": "trade.recipe_item_panel"
+						variable "$bottom_item": "trade.trade_item_slot"
+						variable "$recipe_collection": "trade_item_A"
+						variable "$trade_ingredient_collection": "trade_ingredient1_items"
+			control:
+				element "grid_slot2@trade.purchase_grid_item":
+					field "grid_position": [1, 0]
+					field "bindings":
+						binding:
+							field "binding_name": "#show_second_trade_slot"
+							field "binding_name_override": "#visible"
+							field "binding_type": "global"
+					field "$variables":
+						variable "$top_item": "trade.recipe_item_panel"
+						variable "$bottom_item": "trade.trade_item_slot"
+						variable "$recipe_collection": "trade_item_B"
+						variable "$trade_ingredient_collection": "trade_ingredient2_items"
+			control:
+				element "arrow@trade.purchase_grid_item":
+					field "grid_position": [2, 0]
+					field "$variables":
+						variable "$top_item": "trade.arrow"
+						variable "$bottom_item": "trade.arrow"
+			control:
+				element "result_item_slot@trade.purchase_grid_item":
+					field "grid_position": [3, 0]
+					field "$variables":
+						variable "$cell_image_size":
+							item 0: 26
+							item 1: 26
+						variable "$top_item": "trade.recipe_item_panel"
+						variable "$bottom_item": "trade.trade_item_slot"
+						variable "$recipe_collection": "sell_item"
+						variable "$trade_ingredient_collection": "trade_result_item"
+	element "purchase_grid_item":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "controls":
+			control: element "top_item@$top_item": empty
+			control:
+				element "padding":
+					field "type": "panel"
+					field "size": "$padding"
+			control: element "bottom_item@$bottom_item": empty
+		field "$variables":
+			variable "$padding|default":
+				item 0: 0
+				item 1: 8
+	element "recipe_button":
+		field "type": "button"
+		field "default_focus_precedence": 1
+		field "hover_control": "hover"
+		field "layer": 1
+		field "button_mappings":
+			button mapping:
+				field "to_button_id": "button.container_slot_hovered"
+				field "mapping_type": "pressed"
+		field "controls": control: element "hover@trade.highlight_slot_panel": empty
+	element "recipe_item_panel":
+		field "type": "panel"
+		field "size": [26, 26]
+		field "controls":
+			control:
+				element "item_renderer@common.item_renderer":
+					field "size": [18, 18]
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "#item_id_aux"
+							field "binding_condition": "visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$item_collection_name"
+					field "controls":
+						control:
+							element "stack_count_label@common.stack_count_label":
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_name": "#item_stack_count"
+										field "binding_name_override": "#inventory_stack_count"
+										field "binding_condition": "visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$item_collection_name"
+			control: element "recipe_button@recipe_button": field "ignored": "$pocket_screen"
+		field "$variables":
+			variable "$item_collection_name": "$recipe_collection"
+			variable "$stack_count_required|default": true
+	element "top_half_panel":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "50%"]
+		field "layer": 1
+		field "controls":
+			control:
+				element "villager_name_label@common.section_heading_label":
+					field "text": "$villager_name"
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "offset": [0, 5]
+			control: element "cycle_panel@trade.cycle_panel": empty
+			control: element "merchant_purchase_panel@trade.merchant_purchase_panel": empty
+	element "trade_item_slot":
+		field "type": "panel"
+		field "size": [26, 26]
+		field "controls":
+			control:
+				element "container_item@common.container_item":
+					field "anchor_to": "center"
+					field "anchor_from": "center"
+		field "$variables": variable "$item_collection_name": "$trade_ingredient_collection"
+	element "trade_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "gamepad_helpers@common.container_gamepad_helpers": empty
+			control: element "screen_background@common.screen_background": empty
+			control:
+				element "root_panel@common.root_panel":
+					field "layer": 1
+					field "controls":
+						control: element "@common.common_panel": empty
+						control:
+							element "trade_inventory":
+								field "type": "panel"
+								field "controls":
+									control: element "top_half_panel@trade.top_half_panel": empty
+									control: element "inventory_panel_bottom_half_with_label@common.inventory_panel_bottom_half_with_label": empty
+									control: element "hotbar_grid_template@common.hotbar_grid_template": empty
+									control: element "inventory_selected_icon_button@common.inventory_selected_icon_button": empty
+	element "trade_screen@common.inventory_screen_common":
+		field "close_on_player_hurt": "$close_on_player_hurt"
+		field "variables":
+			variable:
+				field "requires": "$desktop_screen"
+				field "$variables": variable "$visible_screen": "trade.trade_panel"
+			variable:
+				field "requires": "$pocket_screen"
+				field "$variables":
+					variable "$visible_screen": "trade_pocket.trade_panel"
+					variable "$close_on_player_hurt": true
+		field "controls": control: element "screen@$visible_screen": empty
+		field "$variables": variable "$close_on_player_hurt|default": false
+Added namespace "trade_pocket":
+	element "background_image@common.sprite_sheet_base":
+		field "size": ["100%", "100%"]
+		field "nineslice_size": 4.0
+		field "uv": [0, 0]
+		field "uv_size": [16, 16]
+		field "layer": 1
+	element "half_screen":
+		field "type": "panel"
+		field "size": ["50%", "100%-31px"]
+		field "offset": [0, 27]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+	element "header":
+		field "type": "panel"
+		field "layer": 2
+		field "size": ["100%", 28]
+		field "anchor_from": "top_middle"
+		field "anchor_to": "top_middle"
+		field "controls":
+			control:
+				element "header_background":
+					field "type": "image"
+					field "nineslice_size": [3, 3, 3, 6]
+					field "texture": "textures/gui/newgui/TopBar"
+					field "uv": [0, 0]
+					field "uv_size": [5, 8]
+			control: element "close_button@common.legacy_pocket_close_button": empty
+			control:
+				element "villager_name_label":
+					field "type": "label"
+					field "text": "$villager_name"
+					field "layer": 1
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+	element "image_atlas":
+		field "type": "image"
+		field "texture": "textures/gui/gui"
+		field "layer": 1
+	element "inventory_grid":
+		field "type": "grid"
+		field "grid_rescaling_type": "horizontal"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "size": ["100%", "default"]
+		field "maximum_grid_items": "$container_size"
+		field "collection_name": "$pane_collection"
+		field "grid_item_template": "common.pocket_ui_container_item"
+		field "bindings":
+			binding:
+				field "binding_name": "#collection_total_items"
+				field "binding_name_override": "#maximum_grid_items"
+				field "binding_type": "collection"
+				field "binding_condition": "visible"
+				field "binding_collection_name": "$pane_collection"
+		field "$variables": variable "$item_collection_name": "$pane_collection"
+	element "inventory_half_screen@trade_pocket.half_screen":
+		field "size": ["50%", "100%-35px"]
+		field "max_size": ["100%-200px", "100%-35px"]
+		field "offset": [9, 31]
+		field "controls": control: element "inventory_panel@trade_pocket.inventory_panel": empty
+	element "inventory_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls":
+			control:
+				element "scrolling_panel@common.scrolling_panel":
+					field "layer": 1
+					field "size": ["100%-2px", "100%-2px"]
+					field "anchor_to": "top_left"
+					field "anchor_from": "top_left"
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100%"
+							item 1: "100%-2px"
+						variable "$scrolling_content": "trade_pocket.inventory_grid"
+						variable "$scroll_box_mouse_image_control": "common-classic.button_state_default"
+						variable "$scroll_size|default":
+							item 0: "8px"
+							item 1: "100%"
+	element "merchant_half_screen@trade_pocket.half_screen":
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "size": ["50%", "100%-35px"]
+		field "min_size": [200, "100%-35px"]
+		field "controls": control: element "merchant_panel@trade_pocket.merchant_panel": empty
+	element "merchant_panel":
+		field "type": "panel"
+		field "size": [170, 80]
+		field "controls": control: element "merchant_purchase_panel@trade_pocket.merchant_purchase_panel": empty
+	element "merchant_purchase_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "left@trade.cycle_recipe_left_button":
+					field "size": [20, 30]
+					field "$variables":
+						variable "$default_texture": "textures/gui/newgui/classic-button"
+						variable "$hover_texture": "textures/gui/newgui/classic-button-hover"
+						variable "$pressed_texture": "textures/gui/newgui/classic-button-pressed"
+			control: element "purchase_grid@trade_pocket.purchase_grid": empty
+			control:
+				element "right@trade.cycle_recipe_right_button":
+					field "size": [20, 30]
+					field "$variables":
+						variable "$default_texture": "textures/gui/newgui/classic-button"
+						variable "$hover_texture": "textures/gui/newgui/classic-button-hover"
+						variable "$pressed_texture": "textures/gui/newgui/classic-button-pressed"
+	element "purchase_grid":
+		field "type": "grid"
+		field "size": [120, 60]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "grid_dimensions": [4, 1]
+		field "controls":
+			control:
+				element "grid_slot1@trade.purchase_grid_item":
+					field "grid_position": [0, 0]
+					field "$variables":
+						variable "$top_item": "trade.recipe_item_panel"
+						variable "$bottom_item": "trade_pocket.trade_item_slot"
+						variable "$recipe_collection": "trade_item_A"
+						variable "$trade_ingredient_collection": "trade_ingredient1_items"
+			control:
+				element "grid_slot2@trade.purchase_grid_item":
+					field "grid_position": [1, 0]
+					field "bindings":
+						binding:
+							field "binding_name": "#show_second_trade_slot"
+							field "binding_name_override": "#visible"
+							field "binding_type": "global"
+					field "$variables":
+						variable "$top_item": "trade.recipe_item_panel"
+						variable "$bottom_item": "trade_pocket.trade_item_slot"
+						variable "$recipe_collection": "trade_item_B"
+						variable "$trade_ingredient_collection": "trade_ingredient2_items"
+			control:
+				element "arrow@trade.purchase_grid_item":
+					field "grid_position": [2, 0]
+					field "$variables":
+						variable "$top_item": "trade.arrow"
+						variable "$bottom_item": "trade.arrow"
+			control:
+				element "result_item_slot@trade.purchase_grid_item":
+					field "grid_position": [3, 0]
+					field "$variables":
+						variable "$cell_image_size":
+							item 0: 26
+							item 1: 26
+						variable "$top_item": "trade_pocket.result_item_panel"
+						variable "$bottom_item": "trade_pocket.trade_item_slot"
+						variable "$recipe_collection": "sell_item"
+						variable "$trade_ingredient_collection": "trade_result_item"
+	element "recipe_item_panel":
+		field "type": "panel"
+		field "size": [26, 26]
+		field "controls":
+			control:
+				element "item_renderer@common.item_renderer":
+					field "size": [18, 18]
+					field "layer": 1
+					field "bindings":
+						binding:
+							field "binding_name": "#item_id_aux"
+							field "binding_condition": "visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$item_collection_name"
+					field "controls":
+						control:
+							element "stack_count_label@common.stack_count_label":
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_name": "#item_stack_count"
+										field "binding_name_override": "#inventory_stack_count"
+										field "binding_condition": "visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$item_collection_name"
+		field "$variables": variable "$item_collection_name": "$recipe_collection"
+	element "result_item_panel":
+		field "type": "panel"
+		field "size": [26, 26]
+		field "controls":
+			control:
+				element "output_item_name":
+					field "type": "label"
+					field "anchor_from": "top_middle"
+					field "anchor_to": "bottom_middle"
+					field "text": "#text"
+					field "bindings":
+						binding:
+							field "binding_name": "#sell_item_name"
+							field "binding_name_override": "#text"
+							field "binding_type": "global"
+							field "binding_condition": "visible"
+			control: element "recipe_item_panel@trade.recipe_item_panel": empty
+		field "$variables": variable "$item_collection_name": "$recipe_collection"
+	element "trade_item_slot":
+		field "type": "panel"
+		field "size": [26, 26]
+		field "controls":
+			control:
+				element "container_item@common.pocket_ui_container_item":
+					field "anchor_to": "center"
+					field "anchor_from": "center"
+		field "$variables": variable "$item_collection_name": "$trade_ingredient_collection"
+	element "trade_panel@common.inventory_screen_common":
+		field "size": ["100%", "100%"]
+		field "controls":
+			control: element "gamepad_helpers@common.container_gamepad_helpers": field "layer": 1
+			control: element "@common.inventory_selected_icon_button": empty
+			control: element "bg@background_image": field "layer": 1
+			control: element "header@trade_pocket.header": field "layer": 1
+			control:
+				element "inventory@trade_pocket.inventory_half_screen":
+					field "layer": 1
+					field "$variables":
+						variable "$container_size": 36
+						variable "$pane_collection": "combined_hotbar_and_inventory_items"
+			control: element "merchant_half_screen@trade_pocket.merchant_half_screen": field "layer": 8
+			control: element "hold_icon@common.inventory_take_progress_icon_button": empty
+			control: element "flying_item_renderer@common.flying_item_renderer": empty
+			control:
+				element "selected_item_details_factory":
+					field "type": "factory"
+					field "control_name": "@pocket_containers.selected_item_details"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"

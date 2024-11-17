@@ -1,0 +1,127 @@
+Difference of "shaders" between "1.2.5.0" (beta of "1.2.5") and "1.2.5.12" (beta of "1.2.5").
+
+Changed file "banner.vertex.hlsl":
+	Total line: 124 (+30, -21)
+	          '''
+	          ...
+	 25  25   #ifndef DISABLE_TINTING
+	 26  26   	float4 color : COLOR;
+	 27  27   #endif
+	 28  28   	float4 texCoords : TEXCOORD_0_FB_MSAA;
+	 29  29   	
+	     30 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	     31 + 	uint instanceID : SV_InstanceID;
+	     32 + #endif
+	     33 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	     34 + 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	     35 + #endif
+	     36 + };
+	     37 + 
+	     38 + static const float AMBIENT = 0.45;
+	     39 + 
+	     40 + static const float XFAC = -0.1;
+	     41 + static const float ZFAC = 0.1;
+	     42 + 
+	     43 + 
+	     44 + float4 TransformRGBA8_SNORM(const float4 RGBA8_SNORM) {
+	     45 + #ifdef R8G8B8A8_SNORM_UNSUPPORTED
+	     46 + 	return RGBA8_SNORM * float(2.0).xxxx - float(1.0).xxxx;
+	     47 + #else
+	     48 + 	return RGBA8_SNORM;
+	 30     - #ifdef INSTANCEDSTEREO
+	 31     - 	uint instanceID : SV_InstanceID;
+	 32  49   #endif
+	     50 + }
+	     51 + 
+	 33     - };
+	 34  52   
+	     53 + float lightIntensity(const float4 position, const float4 normal) {
+	     54 + #ifdef FANCY
+	 35     - static const float AMBIENT = 0.45;
+	 36  55   
+	     56 + #if !defined(INSTANCEDSTEREO)
+	     57 + 	float3 N = normalize(mul(WORLD, normal)).xyz;
+	     58 + #else
+	     59 + 	float3 N = normalize(mul(WORLD_STEREO, normal)).xyz;
+	     60 + #endif
+	 37     - static const float XFAC = -0.1;
+	 38     - static const float ZFAC = 0.1;
+	 39  61   
+	     62 + 	N.y *= TILE_LIGHT_COLOR.a;
+	 40  63   
+	 41     - float4 TransformRGBA8_SNORM(const float4 RGBA8_SNORM) {
+	 42     - #ifdef R8G8B8A8_SNORM_UNSUPPORTED
+	 43     - 	return RGBA8_SNORM * float(2.0).xxxx - float(1.0).xxxx;
+	     64 + 	//take care of double sided polygons on materials without culling
+	     65 + #ifdef FLIP_BACKFACES
+	     66 + #if !defined(INSTANCEDSTEREO)
+	     67 + 	float3 viewDir = normalize((mul(WORLD, position)).xyz);
+	 44     - #else
+	 45     - 	return RGBA8_SNORM;
+	 46     - #endif
+	 47     - }
+	 48     - 
+	     68 + #else
+	     69 + 	float3 viewDir = normalize((mul(WORLD_STEREO, position)).xyz);
+	     70 + #endif
+	 49     - 
+	 50     - float lightIntensity(const float4 position, const float4 normal) {
+	 51     - #ifdef FANCY
+	 52     - 
+	     71 + 	if (dot(N, viewDir) > 0.0) {
+	     72 + 		N *= -1.0;
+	 53     - #if !defined(INSTANCEDSTEREO)
+	 54     - 	float3 N = normalize(mul(WORLD, normal)).xyz;
+	 55     - #else
+	     73 + 	}
+	 56     - 	float3 N = normalize(mul(WORLD_STEREO, normal)).xyz;
+	 57  74   #endif
+	 58     - 
+	 59     - 	N.y *= TILE_LIGHT_COLOR.a;
+	 60  75   
+	 61     - 	//take care of double sided polygons on materials without culling
+	 62     - #ifdef FLIP_BACKFACES
+	     76 + 	float yLight = (1.0 + N.y) * 0.5;
+	     77 + 	return yLight * (1.0 - AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+	 63     - #if !defined(INSTANCEDSTEREO)
+	 64     - 	float3 viewDir = normalize((mul(WORLD, position)).xyz);
+	 65  78   #else
+	 66     - 	float3 viewDir = normalize((mul(WORLD_STEREO, position)).xyz);
+	 67     - #endif
+	 68     - 	if (dot(N, viewDir) > 0.0) {
+	     79 + 	return 1.0;
+	 69     - 		N *= -1.0;
+	 70     - 	}
+	 71  80   #endif
+	     81 + }
+	 72  82   
+	     83 + void main(in VS_Input VSInput, out PS_Input PSInput) {
+	     84 + #ifdef INSTANCEDSTEREO
+	     85 + 	int i = VSInput.instanceID;
+	     86 + 	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	     87 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	     88 + 	PSInput.instanceID = i;
+	     89 + #endif 
+	 73     - 	float yLight = (1.0 + N.y) * 0.5;
+	 74     - 	return yLight * (1.0 - AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+	 75     - #else
+	 76     - 	return 1.0;
+	 77     - #endif
+	 78     - }
+	 79     - 
+	 80     - void main(in VS_Input VSInput, out PS_Input PSInput) {
+	     90 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	 81     - #ifdef INSTANCEDSTEREO
+	 82     - 	int i = VSInput.instanceID;
+	 83     - 	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	     91 + 	PSInput.renTarget_id = i;
+	 84     - 	PSInput.instanceID = i;
+	     92 + #endif
+	     93 +     
+	 85  94   #else
+	 86  95   	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	 87  96   #endif
+	 88  97   
+	 89  98   #ifdef ENABLE_LIGHT
+	          ...
+	          '''

@@ -1,0 +1,194 @@
+Difference of "shaders_resource_packs" between "1.2.2" and "1.2.3.3" (beta of "1.2.3").
+
+Changed resource pack "banner.fragment":
+	Changed file "vanilla":
+		Total line: 46 (+2, -17)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4    - #if __VERSION__ >= 300
+		 5    - 
+		 6    - #ifdef MSAA_FRAMEBUFFER_ENABLED
+		 7    - #define _centroid centroid
+		 8    - #else
+		 9    - #define _centroid
+		10    - #endif
+		11    - 
+		12    - // version 300 code
+		    4 + #include "shaders/fragmentVersionCentroid.h"
+		13    - _centroid in vec4 uv;
+		14  5   
+		15    - #define varying in
+		16    - #define texture2D texture
+		17    - out vec4 FragColor;
+		    6 + uniform sampler2D TEXTURE_0;
+		18    - #define gl_FragColor FragColor
+		19  7   
+		    8 + #if __VERSION__ >= 300
+		    9 + _centroid varying vec4 uv;
+		20 10   #else
+		21    - 
+		22    - // version 100 code
+		23 11   varying vec4 uv;
+		24    - 
+		25 12   #endif
+		26    - 
+		27    - uniform sampler2D TEXTURE_0;
+		28 13   
+		29 14   #ifdef ENABLE_FOG
+		30 15   varying vec4 fogColor;
+		31 16   #endif
+		32 17   
+		        ...
+		        '''
+Changed resource pack "banner.vertex":
+	Changed file "vanilla":
+		Total line: 87 (+9, -17)
+		          '''
+		  1   1   // __multiversion__
+		  2   2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		  3   3   
+		  4     - #if __VERSION__ >= 300
+		  5     - #define attribute in
+		  6     - #define varying out
+		  7     - 
+		  8     - #ifdef MSAA_FRAMEBUFFER_ENABLED
+		  9     - #define _centroid centroid
+		 10     - #else
+		 11     - #define _centroid
+		 12     - #endif
+		 13     - 
+		 14     - _centroid out vec4 uv;
+		 15     - 
+		      4 + #include "shaders/vertexVersionCentroid.h"
+		 16     - #else
+		 17   5   
+		      6 + #include "shaders/uniformWorldConstants.h"
+		      7 + #include "shaders/uniformEntityConstants.h"
+		      8 + #include "shaders/uniformPerFrameConstants.h"
+		      9 + #include "shaders/uniformBannerConstants.h"
+		 18     - varying vec4 uv;
+		 19  10   
+		     11 + attribute mediump vec4 POSITION;
+		     12 + attribute vec2 TEXCOORD_0;
+		     13 + attribute vec4 NORMAL;
+		     14 + attribute vec4 COLOR;
+		 20     - #endif
+		 21  15   
+		     16 + #if __VERSION__ >= 300
+		     17 + _centroid varying vec4 uv;
+		 22     - #include "shaders/uniformWorldConstants.h"
+		     18 + #else
+		     19 + varying vec4 uv;
+		     20 + #endif
+		 23     - #include "shaders/uniformEntityConstants.h"
+		 24     - #include "shaders/uniformPerFrameConstants.h"
+		 25     - #include "shaders/uniformBannerConstants.h"
+		 26  21   
+		 27     - attribute mediump vec4 POSITION;
+		 28     - attribute vec2 TEXCOORD_0;
+		     22 + #ifdef ENABLE_FOG
+		     23 + varying vec4 fogColor;
+		 29     - attribute vec4 NORMAL;
+		 30     - attribute vec4 COLOR;
+		     24 + #endif
+		 31  25   
+		 32  26   #ifdef ENABLE_LIGHT
+		     27 + varying vec4 light;
+		 33     - 	varying vec4 light;
+		 34  28   #endif
+		 35     - 	
+		 36     - 	varying vec4 color;
+		 37  29   	
+		     30 + #ifndef DISABLE_TINTING
+		     31 + varying vec4 color;
+		 38     - #ifdef ENABLE_FOG
+		 39     - 	varying vec4 fogColor;
+		 40  32   #endif
+		 41  33   
+		 42  34   const float AMBIENT = 0.45;
+		 43  35   
+		 44  36   const float XFAC = -0.1;
+		          ...
+		          '''
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 129 (+4, -14)
+		          '''
+		  1   1   // __multiversion__
+		  2   2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		  3   3   
+		  4     - #include "shaders/fragmentVersionCentroid.h"
+		  5     - 
+		  6     - #if __VERSION__ >= 300
+		  7     - 	#ifndef NO_TEXTURE
+		  8     - 		_centroid in vec2 uv;
+		  9     - 	#endif
+		 10     - #else
+		 11     - 	#ifndef NO_TEXTURE
+		 12     - 		#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+		 13     - 			varying highp vec2 uv;
+		 14     - 		#else
+		 15     - 			varying vec2 uv;
+		 16     - 		#endif
+		 17     - 	#endif
+		      4 + #include "shaders/fragmentVersionCentroidUV.h"
+		 18     - #endif
+		 19   5   
+		 20   6   #include "shaders/uniformShaderConstants.h"
+		 21   7   #include "shaders/util.h"
+		 22   8   
+		 23   9   uniform sampler2D TEXTURE_0;
+		          ...
+		 52  38   vec4 glintBlend(vec4 dest, vec4 source) {
+		 53  39   	// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		 54  40   	return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+		 55  41   }
+		 56  42   
+		     43 + #ifdef USE_EMISSIVE
+		     44 + #ifdef USE_ONLY_EMISSIVE
+		 57     - #ifdef USE_EMISSIVE
+		     45 + #define NEEDS_DISCARD(C) (C.a == 0.0 || C.a == 1.0 )
+		     46 + #else
+		 58  47   #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+		     48 + #endif
+		 59  49   #else
+		 60  50   #ifndef USE_COLOR_MASK
+		 61  51   #define NEEDS_DISCARD(C)	(C.a < 0.5)
+		 62  52   #else
+		 63  53   #define NEEDS_DISCARD(C)	(C.a == 0.0)
+		          ...
+		          '''
+Changed resource pack "hologram_texture_stereo.fragment":
+	Changed file "vanilla":
+		Total line: 11 (+0, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		    4 + #include "shaders/fragmentVersionCentroidUV.h"
+		 4    - #include "shaders/fragmentVersionSimple.h"
+		 5  5   
+		 6  6   //This file is purely here to let the code compile. It is used only for HoloWall, which currently runs only on DX11 compatible devices
+		 7  7   
+		 8  8   void main()
+		 9  9   {
+		        ...
+		        '''
+Changed resource pack "levelstage_copy_vr.fragment":
+	Changed file "vanilla":
+		Total line: 11 (+0, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		    4 + #include "shaders/fragmentVersionCentroidUV.h"
+		 4    - #include "shaders/fragmentVersionSimple.h"
+		 5  5   
+		 6  6   // This shader isn't actually used in OGL, we have to have an OGL shader since a material refers to the DX version
+		 7  7   // and thus this also needs to exist on the OGL side.
+		 8  8   void main()
+		 9  9   {
+		        ...
+		        '''

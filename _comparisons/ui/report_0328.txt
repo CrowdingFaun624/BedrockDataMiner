@@ -1,0 +1,306 @@
+Difference of "ui" between "1.20.20.22" (beta of "1.20.30") and "1.20.20.23" (beta of "1.20.30").
+
+Changed namespace "play":
+	Total element: 277 (+5, -1)
+	Changed element "add_friend_and_invite_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "join_by_code_button@play.join_by_code_button":
+					Added field "ignored" of "$is_editor_mode_enabled".
+	Changed element "editor_play_screen_panel@play.play_screen_panel":
+		Changed field "$variables":
+			Total variable: 2 (+0, -0)
+			Changed variable "$navigation_tab" from "play.editor_tab_navigation_panel_layout" to "play.default_tab_navigation_panel_layout".
+	Changed element "editor_server_content_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 1 (+0, -2)
+			Removed control element "lan_servers_panel@play.lan_servers_scroll_content": empty.
+			Removed control:
+				element "servers_divider@common.horizontal_divider":
+					field "bindings":
+						binding:
+							field "binding_name": "#lan_grid_visible"
+							field "binding_name_override": "#visible"
+	Changed element "editor_tab_content_panel_layout@play.common_tab_content_panel_type":
+		Changed field "controls":
+			Total control: 3 (+1, -0)
+			Added control element "friends_tab_content@play.friends_tab_content_panel": empty.
+	Removed element "editor_tab_navigation_panel_layout@play.common_tab_navigation_panel_layout":
+		field "controls":
+			control: element "world_navigation_tab@play.world_navigation_tab": field "size": ["33%", "100%"]
+			control: element "server_navigation_tab@play.server_navigation_tab": field "size": ["33%", "100%"]
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "joinable_realms_panel":
+								Unchanged field "type": "stack_panel"
+								Added field "ignored" of "$is_editor_mode_enabled".
+	Added element "header_button_panel_opt_in":
+		field "type": "panel"
+		field "layer": 1
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control:
+				element "buttons":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100% - 1px", "100%"]
+					field "controls":
+						control:
+							element "primary_panel":
+								field "type": "panel"
+								field "size": ["fill", "100%"]
+								field "controls":
+									control:
+										element "primary@$primary_header_button":
+											field "size": ["100% - 1px", "100%"]
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "layer": 1
+						control:
+							element "secondary@$secondary_header_button":
+								field "visible": "$secondary_visible"
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "layer": 1
+						control:
+							element "ternary@$ternary_header_button":
+								field "visible": "$ternary_visible"
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "layer": 1
+					field "$variables":
+						variable "$secondary_visible|default": true
+						variable "$ternary_visible|default": true
+	Added element "new_ui_switch_button_options_panel":
+		field "type": "stack_panel"
+		field "ignored": "$education_edition"
+		field "orientation": "vertical"
+		field "size": ["50% - 10px", "100%c + 4px"]
+		field "bindings":
+			binding:
+				field "binding_name": "#show_new_play_screen_opt_in"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "unlock_template_options_button@settings_common.action_button":
+					field "size": ["100% - 1px", 30]
+					field "$variables":
+						variable "$button_text": "options.newUiPlayScreen.initiate"
+						variable "$pressed_button_name": "button.switch_to_new_ui"
+	Changed element "realms_feed_button@common_buttons.dark_glyph_button":
+		Changed field "bindings":
+			Total binding: 5 (+1, -0)
+			Added binding:
+				field "binding_name": "#realms_feed_button_tts_header"
+				field "binding_collection_name": "$realms_worlds_collection_name"
+				field "binding_type": "collection"
+		Changed field "$variables":
+			Total variable: 3 (+0, -0)
+			Changed variable "$button_tts_header" from "accessibility.play.realmFeed" to "#realms_feed_button_tts_header".
+	Changed element "realms_world_item":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 4 (+1, -1)
+			Removed control:
+				element "feed_panel":
+					field "type": "panel"
+					field "size": ["100%c - 1px", "100% + 1px"]
+					field "controls": control: element "realms_feed_button@play.realms_feed_button": field "layer": 1
+			Added control:
+				element "feed_panel_with_unread_count":
+					field "type": "panel"
+					field "size": ["100%y", "100%"]
+					field "controls":
+						control:
+							element "feed_panel":
+								field "type": "panel"
+								field "size": ["100%c - 1px", "100% + 1px"]
+								field "controls": control: element "realms_feed_button@play.realms_feed_button": field "layer": 1
+						control: element "unread_story_count@play.unread_story_count_panel": field "offset": [0, 1.5]
+	Changed element "server_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 6 (+1, -1)
+						Removed control:
+							element "servers_panel":
+								field "type": "stack_panel"
+								field "orientation": "vertical"
+								field "size": ["100%", "100%c"]
+								field "controls":
+									control:
+										element "more_servers_panel":
+											field "type": "stack_panel"
+											field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
+											field "size": ["100%", "100%c"]
+											field "bindings":
+												binding:
+													field "binding_name": "#is_network_available_and_multiplayer_visible"
+													field "binding_name_override": "#visible"
+											field "controls":
+												control: element "more_servers_divider@common.horizontal_divider": empty
+												control:
+													element "padding_0":
+														field "type": "panel"
+														field "size": ["100%", 2]
+												control:
+													element "more_servers_label@common.minecraftTenLabel":
+														field "size": ["default", "default"]
+														field "text": "thirdPartyWorld.Additional"
+														field "color": "$dark_button_default_text_color"
+														field "bindings":
+															binding:
+																field "binding_name": "#is_additional_server_label_visible"
+																field "binding_name_override": "#visible"
+												control: element "add_server_button@play.add_server_toggle_button": empty
+												control:
+													element "padding_1":
+														field "type": "panel"
+														field "size": ["100%", 2]
+												control: element "more_servers_grid@play.more_servers_grid": empty
+												control:
+													element "padding_3":
+														field "type": "panel"
+														field "size": ["100%", 4]
+														field "bindings":
+															binding:
+																field "binding_name": "#servers_grid_visible"
+																field "binding_name_override": "#visible"
+											field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
+									control:
+										element "featured_servers_panel":
+											field "type": "stack_panel"
+											field "size": ["100%", "100%c"]
+											field "ignored": "$ignore_3rd_party_servers"
+											field "controls":
+												control:
+													element "loading_featured_panel@play.label_background":
+														field "size": ["100%", 40]
+														field "controls":
+															control: element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
+															control: element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+														field "bindings":
+															binding:
+																field "binding_name": "#loading_servers_progress_visible"
+																field "binding_name_override": "#visible"
+												control:
+													element "padding_1":
+														field "type": "panel"
+														field "size": ["100%", 2]
+												control:
+													element "featured_servers_label@common.minecraftTenLabel":
+														field "size": ["default", "default"]
+														field "text": "thirdPartyWorld.Featured"
+														field "color": "$dark_button_default_text_color"
+												control:
+													element "padding_2":
+														field "type": "panel"
+														field "size": ["100%", 2]
+												control: element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
+												control:
+													element "padding_3":
+														field "type": "panel"
+														field "size": ["100%", 2]
+											field "bindings":
+												binding:
+													field "binding_name": "#featured_servers_visible_and_available"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
+												variable "$focus_id": "featured_servers_panel"
+								field "$variables": variable "$focus_id": "left_panel"
+						Added control element "server_content@$server_scroll_panel_content": empty.
+	Changed element "servers_content_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 4 (+1, -0)
+			Added control element "add_server_button@play.add_server_toggle_button": empty.
+	Changed element "tab_text_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "count_section":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "count_background_image":
+								Unchanged field "type": "image"
+								Changed field "controls":
+									Changed control:
+										Changed element "count@common_button_text":
+											Changed field "offset":
+												Changed item 0 from 1 to 0.
+												Changed item 1 from 1 to 0.5.
+	Added element "unread_story_count_panel":
+		field "type": "panel"
+		field "anchor_from": "top_right"
+		field "anchor_to": "right_middle"
+		field "size": ["100%c", "100%c"]
+		field "controls":
+			control:
+				element "text@play.unread_story_count_text":
+					field "layer": 9
+					field "controls":
+						control:
+							element "background@play.unread_story_count_text_background":
+								field "layer": -1
+								field "size": ["100%+4px", "100%"]
+								field "offset": [-0.5, 0]
+		field "bindings":
+			binding:
+				field "binding_type": "collection"
+				field "binding_name": "#realms_unread_story_count_visible"
+				field "binding_name_override": "#visible"
+				field "binding_collection_name": "$realms_worlds_collection_name"
+	Added element "unread_story_count_text":
+		field "type": "label"
+		field "color": "$tab_secondary_unchecked_text_color"
+		field "shadow": false
+		field "text": "#realms_unread_story_count"
+		field "bindings":
+			binding:
+				field "binding_type": "collection"
+				field "binding_name": "#realms_unread_story_count"
+				field "binding_collection_name": "$realms_worlds_collection_name"
+	Added element "unread_story_count_text_background":
+		field "type": "image"
+		field "texture": "textures/ui/invite_number_background"
+	Changed element "worlds_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "header_button":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 2 (+1, -1)
+						Removed control:
+							element "buttons@play.header_button_panel":
+								field "layer": 1
+								field "size": ["100%", 30]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "$variables":
+									variable "$primary_header_button": "create_new_world_button"
+									variable "$secondary_header_button": "import_world_button"
+									variable "$secondary_visible": "$world_archive_support"
+						Added control:
+							element "buttons@play.header_button_panel_opt_in":
+								field "layer": 1
+								field "size": ["100%", 30]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "$variables":
+									variable "$primary_header_button": "create_new_world_button"
+									variable "$secondary_header_button": "new_ui_switch_button_options_panel"
+									variable "$ternary_header_button": "import_world_button"
+									variable "$ternary_visible": "$world_archive_support"

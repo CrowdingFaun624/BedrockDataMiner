@@ -1,176 +1,144 @@
-Difference of "entities" between "1.18.20.25" (beta of "1.18.30") and "1.18.20.27" (beta of "1.18.30").
+Difference of "entities" between "1.18.30.30" (beta of "1.18.30") and "1.18.30.32" (beta of "1.18.30").
 
-Changed entity "bee":
+Total entity: 113 (+1, -0)
+Changed entity "hoglin.json":
 	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 8 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.16.200"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Added behavior pack "vanilla_1.18.20".
-		Changed field "format_version" from "1.18.10" to "1.18.20".
 		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "return_to_home":
-					Changed component "minecraft:behavior.go_home":
-						Changed field "on_failed" from:
-							field "event": "find_hive_event"
+			Changed field "components":
+				Changed component "minecraft:knockback_resistance":
+					Changed field "value" from 0.5 to 0.6.
+Changed entity "ravager.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:knockback_resistance":
+					Changed field "value" from 0.5 to 0.75.
+Added entity "warden.json":
+	behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:warden"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "component_groups":
+				component group "emerging":
+					component "minecraft:behavior.emerge":
+						field "duration": 7.0
+						field "on_done":
+							field "event": "minecraft:emerged"
 							field "target": "self"
-						to:
-							event:
-								field "event": "find_hive_event"
-								field "target": "self"
-			Changed field "components":
-				Changed component "minecraft:block_sensor":
-					Added field "sources":
-						filter:
-							filter property "subject": "other"
-							filter property "test": "has_silk_touch"
-							filter property "value": false
-Changed entity "hoglin":
+			field "components":
+				component "minecraft:ambient_sound_interval":
+					field "value": 2.0
+					field "range": 4.0
+					field "event_name": "ambient"
+					field "event_names":
+						event 0:
+							field "event_name": "angry"
+							field "condition": "query.anger_level(this) >= 80"
+						event 1:
+							field "event_name": "agitated"
+							field "condition": "query.anger_level(this) >= 40"
+				component "minecraft:anger_level":
+					field "max_anger": 150
+					field "angry_threshold": 80
+					field "remove_targets_below_angry_threshold": true
+					field "angry_boost": 20
+					field "anger_decrement_interval": 1.0
+					field "default_annoyingness": 35
+					field "default_projectile_annoyingness": 20
+					field "on_increase_sounds":
+						sound:
+							field "sound": "angry"
+							field "condition": "query.anger_level(this) >= 80"
+						sound:
+							field "sound": "agitated"
+							field "condition": "query.anger_level(this) >= 40"
+						sound:
+							field "sound": "listening"
+							field "condition": "query.anger_level(this) >= 0"
+				component "minecraft:attack": field "damage": 30
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+				component "minecraft:can_climb": empty
+				component "minecraft:collision_box":
+					field "width": 0.9
+					field "height": 2.9
+				component "minecraft:experience_reward":
+					field "on_bred": "Math.Random(1,7)"
+					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+				component "minecraft:fire_immune": empty
+				component "minecraft:follow_range": 30
+				component "minecraft:health":
+					field "value": 500
+					field "max": 500
+				component "minecraft:heartbeat": field "interval": "2.0 - math.clamp(query.anger_level / 80 * 1.5, 0, 1.5)"
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:knockback_resistance": field "value": 1.0
+				component "minecraft:mob_effect":
+					field "effect_range": 20
+					field "effect_time": 13
+					field "mob_effect": "darkness"
+					field "entity_filter":
+						filter property "test": "is_family"
+						filter property "subject": "other"
+						filter property "value": "player"
+				component "minecraft:movement": field "value": 0.3
+				component "minecraft:movement.basic": empty
+				component "minecraft:movement_sound_distance_offset": field "value": 0.55
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk":
+					field "can_path_over_water": true
+					field "avoid_water": true
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:suspect_tracking": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "warden"
+						family: "monster"
+						family: "mob"
+				component "minecraft:vibration_listener": empty
+				component "minecraft:behavior.dig":
+					field "priority": 1
+					field "duration": 5.5
+					field "idle_time": 60.0
+					field "vibration_is_disturbance": true
+					field "suspicion_is_disturbance": true
+					field "digs_in_daylight": true
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.investigate_suspicious_location":
+					field "priority": 4
+					field "speed_multiplier": 0.7
+				component "minecraft:behavior.melee_attack":
+					field "priority": 3
+					field "speed_multiplier": 1.2
+					field "melee_fov": 360
+				component "minecraft:behavior.random_look_around": field "priority": 11
+				component "minecraft:behavior.random_stroll":
+					field "priority": 9
+					field "speed_multiplier": 0.5
+				component "minecraft:behavior.roar":
+					field "priority": 2
+					field "duration": 4.2
+				component "minecraft:behavior.sniff":
+					field "priority": 5
+					field "duration": 4.16
+					field "sniffing_radius": 30.0
+					field "suspicion_radius": 6.0
+					field "cooldown_range": [5.0, 10.0]
+			field "events":
+				event "minecraft:emerged": field "remove": field "component_groups": component group: "emerging"
+				event "minecraft:entity_spawned": empty
+				event "minecraft:spawn_emerging": field "add": field "component_groups": component group: "emerging"
+Changed entity "zoglin.json":
 	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 5 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Added behavior pack "vanilla_1.18.20".
-		Changed field "format_version" from "1.18.10" to "1.18.20".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:hoglin_baby":
-					Total component: 11 (+0, -1)
-					Removed component "minecraft:behavior.melee_attack":
-						field "cooldown_time": 0.75
-						field "priority": 4
-						field "reach_multiplier": 1.0
-						field "speed_multiplier": 1
-						field "track_target": true
-Changed entity "magma_cube":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.20"
-			Unchanged behavior pack: "vanilla_1.18.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Added behavior pack "vanilla_1.18.20".
-		Changed field "format_version" from "1.16.0" to "1.18.20".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:slime_small":
-					Changed component "minecraft:attack":
-						Changed field "damage" from 2 to 3.
-Changed entity "ocelot":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 8 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.14"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Added behavior pack "vanilla_1.18.20".
-		Changed field "format_version" from "1.18.10" to "1.18.20".
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:attack_damage":
-					Changed field "value" from 4 to 3.
-Changed entity "piglin_brute":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 4 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Added behavior pack "vanilla_1.18.20".
-		Changed field "format_version" from "1.16.0" to "1.18.20".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "go_back_to_spawn":
-					Changed component "minecraft:behavior.go_home":
-						Changed field "on_failed" from:
-							field "event": "go_back_to_spawn_failed"
-							field "target": "self"
-						to:
-							event:
-								field "event": "go_back_to_spawn_failed"
-								field "target": "self"
-Changed entity "skeleton":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 7 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.17.10"
-			Added behavior pack "vanilla_1.18.20".
-		Changed field "format_version" from "1.16.0" to "1.18.20".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:melee_attack":
-					Changed component "minecraft:attack":
-						Changed field "damage" from 3 to 2.
-Changed entity "spider":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 6 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Added behavior pack "vanilla_1.18.20".
-		Changed field "format_version" from "1.16.0" to "1.18.20".
+		Changed field "format_version" from "1.18.20" to "1.18.30".
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:attack":
-					Changed field "damage" from 3 to 2.
-Changed entity "turtle":
-	Changed behavior pack "core":
-		Changed field "format_version" from "1.16.0" to "1.18.20".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:pregnant":
-					Changed component "minecraft:behavior.go_home":
-						Changed field "on_home" from:
-							field "event": "minecraft:go_lay_egg"
-							field "target": "self"
-						to:
-							event:
-								field "event": "minecraft:go_lay_egg"
-								field "target": "self"
-Changed entity "wolf":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Changed component "minecraft:attack":
-					Changed field "damage" from 3 to 4.
-Changed entity "zoglin":
-	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 5 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Added behavior pack "vanilla_1.18.20".
-		Changed field "format_version" from "1.18.10" to "1.18.20".
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "zoglin_baby":
-					Changed component "minecraft:attack":
-						Changed field "damage" from 1 to 0.5.
+				Changed component "minecraft:knockback_resistance":
+					Changed field "value" from 0.5 to 0.6.

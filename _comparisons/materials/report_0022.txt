@@ -1,6 +1,6 @@
 Difference of "materials" between "a0.15.10" and "a0.16.0_build1" (beta of "a0.16.0").
 
-Changed material "entity":
+Changed material "entity.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Total material: 53 (+19, -0)
@@ -134,36 +134,36 @@ Changed material "entity":
 						field "samplerIndex": 0
 						field "textureWrap": "Repeat"
 			Added material "beacon_beam_transparent:entity":
-				field "alphaDst": "Zero"
-				field "alphaSrc": "One"
-				field "blendDst": "OneMinusSrcAlpha"
-				field "blendSrc": "SourceAlpha"
-				field "fragmentShader": "shaders/current_color.fragment"
 				field "states":
 					statement: "Blending"
 					statement: "DisableCulling"
 					statement: "DisableDepthWrite"
 				field "vertexShader": "shaders/color_uv.vertex"
 				field "vrGeometryShader": "shaders/color_uv.geometry"
+				field "fragmentShader": "shaders/current_color.fragment"
+				field "blendSrc": "SourceAlpha"
+				field "blendDst": "OneMinusSrcAlpha"
+				field "alphaSrc": "One"
+				field "alphaDst": "Zero"
 			Changed material "entity:entity_static":
-				Added field "msaaSupport" of "Both".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Normal"
 					vertex field: field "field": "UV0"
-			Changed material "entity_alphablend:entity_nocull":
 				Added field "msaaSupport" of "Both".
+			Changed material "entity_alphablend:entity_nocull":
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "Normal"
 					vertex field: field "field": "UV0"
-			Changed material "entity_alphatest:entity_nocull":
 				Added field "msaaSupport" of "Both".
+			Changed material "entity_alphatest:entity_nocull":
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Normal"
 					vertex field: field "field": "UV0"
+				Added field "msaaSupport" of "Both".
 			Changed material "entity_alphatest_change_color_glint:entity_change_color":
 				Added field "textures":
 					texture:
@@ -200,8 +200,8 @@ Changed material "entity":
 						field "textureLocation": "InUserPackage"
 						field "textureName": "textures/misc/enchanted_item_glint"
 			Changed material "entity_flat_color":
-				Added field "msaaSupport" of "Both".
 				Added field "vrGeometryShader" of "shaders/position.geometry".
+				Added field "msaaSupport" of "Both".
 			Changed material "entity_flat_color_line:entity_flat_color":
 				Added field "primitiveMode" of "Line".
 				Added field "vertexFields":
@@ -232,27 +232,32 @@ Changed material "entity":
 					vertex field: field "field": "UV0"
 					vertex field: field "field": "Color"
 			Changed material "entity_static":
-				Added field "msaaSupport" of "MSAA".
+				Added field "vrGeometryShader" of "shaders/entity.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Normal"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/entity.geometry".
+				Added field "msaaSupport" of "MSAA".
 			Added material "guardian_phantom:entity" of field "states": statement: "Blending".
 			Changed material "item_in_hand:entity":
-				Added field "msaaSupport" of "Both".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Normal"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
+				Added field "msaaSupport" of "Both".
 			Added material "item_in_hand_entity_alphatest:entity_alphatest":
-				field "msaaSupport": "Both"
 				field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Normal"
 					vertex field: field "field": "UV0"
+				field "msaaSupport": "Both"
 			Changed material "item_in_hand_glint:item_in_hand":
+				Added field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "Normal"
+					vertex field: field "field": "Color"
+					vertex field: field "field": "UV0"
 				Added field "msaaSupport" of "MSAA".
 				Added field "textures":
 					texture:
@@ -263,31 +268,26 @@ Changed material "entity":
 						field "textureIndex": 1
 						field "textureLocation": "InUserPackage"
 						field "textureName": "textures/misc/enchanted_item_glint"
-				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
 			Added material "map_marker":
 				field "defines": definition: "ALPHA_TEST"
-				field "fragmentShader": "shaders/color_texture.fragment"
 				field "vertexShader": "shaders/color_uv.vertex"
 				field "vrGeometryShader": "shaders/color_uv.geometry"
+				field "fragmentShader": "shaders/color_texture.fragment"
 			Changed material "moving_block":
 				Added field "vrGeometryShader" of "shaders/renderchunk.geometry".
 			Changed material "opaque_block:entity_static":
 				Added field "msaaSupport" of "Both".
-Changed material "fancy":
+Changed material "fancy.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "clouds":
-				Added field "msaaSupport" of "MSAA".
+				Added field "vrGeometryShader" of "shaders/cloud.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/cloud.geometry".
-Changed material "hologram":
+				Added field "msaaSupport" of "MSAA".
+Changed material "hologram.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Total material: 25 (+7, -0)
@@ -308,16 +308,16 @@ Changed material "hologram":
 						field "textureFilter": "Point"
 				Added field "vrGeometryShader" of "shaders/uv.geometry".
 			Added material "hololens_UICursor_ingame_mainpart":
-				field "blendDst": "OneMinusSrcAlpha"
-				field "blendSrc": "SourceAlpha"
-				field "depthFunc": "LessEqual"
-				field "fragmentShader": "shaders/current_color.fragment"
-				field "polygonOffsetLevel": 2
 				field "states":
 					statement: "PolygonOffset"
 					statement: "Blending"
+				field "blendSrc": "SourceAlpha"
+				field "blendDst": "OneMinusSrcAlpha"
+				field "depthFunc": "LessEqual"
+				field "polygonOffsetLevel": 2
 				field "vertexShader": "shaders/position.vertex"
 				field "vrGeometryShader": "shaders/position.geometry"
+				field "fragmentShader": "shaders/current_color.fragment"
 			Moved material "hololens_UICursor_ingame" to "hololens_UICursor_ingame_pseudoshadow".
 			Changed material "hololens_UICursor_ingame_pseudoshadow":
 				Changed field "polygonOffsetLevel" from 5.2 to 1.
@@ -333,22 +333,22 @@ Changed material "hologram":
 			Changed material "holoroom_tableSurface":
 				Added field "vrGeometryShader" of "shaders/holoroom_tableSurface.geometry".
 			Added material "holoroom_terrain_endcap":
-				field "defines": empty
-				field "fragmentShader": "shaders/holoroom_terrain_endcap.fragment"
-				field "vertexShader": "shaders/holoroom_terrain_endcap.vertex"
 				field "vrGeometryShader": "shaders/holoroom_terrain_endcap.geometry"
+				field "vertexShader": "shaders/holoroom_terrain_endcap.vertex"
+				field "fragmentShader": "shaders/holoroom_terrain_endcap.fragment"
+				field "defines": empty
 			Added material "holoscreen_level_quad":
-				field "depthFunc": "Always"
-				field "fragmentShader": "shaders/texture.fragment"
+				field "states":
+					statement: "DisableCulling"
+					statement: "DisableDepthWrite"
 				field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
-				field "states":
-					statement: "DisableCulling"
-					statement: "DisableDepthWrite"
+				field "depthFunc": "Always"
 				field "vertexShader": "shaders/uv.vertex"
 				field "vrGeometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture.fragment"
 			Changed material "holoscreen_monoscopic_quad":
 				Changed field "fragmentShader" from "shaders/texture.fragment" to "shaders/texture_ccolor.fragment".
 				Added field "vrGeometryShader" of "shaders/uv.geometry".
@@ -358,14 +358,14 @@ Changed material "hologram":
 				Added field "vrGeometryShader" of "shaders/position.geometry".
 			Added material "holoscreen_stereoscopic_quad":
 				field "defines": definition: "USE_STEREO_TEXTURE_ARRAY"
-				field "depthFunc": "LessEqual"
-				field "fragmentShader": "shaders/hologram_texture_stereo.fragment"
 				field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
+				field "depthFunc": "LessEqual"
 				field "vertexShader": "shaders/uv.vertex"
 				field "vrGeometryShader": "shaders/hologram_uv_stereo.geometry"
+				field "fragmentShader": "shaders/hologram_texture_stereo.fragment"
 			Changed material "living_room":
 				Added field "defines" of definition: "TEXEL_AA".
 				Added field "samplerStates":
@@ -390,30 +390,30 @@ Changed material "hologram":
 				field "defines":
 					definition: "USE_STEREO_TEXTURE_ARRAY"
 					definition: "STEREO_LEFT_EYE_ONLY"
-				field "depthFunc": "Always"
-				field "fragmentShader": "shaders/texture.fragment"
+				field "states":
+					statement: "DisableCulling"
+					statement: "DisableDepthWrite"
 				field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
+				field "depthFunc": "Always"
+				field "vertexShader": "shaders/uv.vertex"
+				field "vrGeometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture.fragment"
+			Added material "rift_texture_copy_noalpha":
 				field "states":
 					statement: "DisableCulling"
 					statement: "DisableDepthWrite"
-				field "vertexShader": "shaders/uv.vertex"
-				field "vrGeometryShader": "shaders/uv.geometry"
-			Added material "rift_texture_copy_noalpha":
-				field "depthFunc": "Always"
-				field "fragmentShader": "shaders/levelstage_copy_vr.fragment"
 				field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Point"
-				field "states":
-					statement: "DisableCulling"
-					statement: "DisableDepthWrite"
+				field "depthFunc": "Always"
 				field "vertexShader": "shaders/uv.vertex"
 				field "vrGeometryShader": "shaders/uv.geometry"
-Changed material "particles":
+				field "fragmentShader": "shaders/levelstage_copy_vr.fragment"
+Changed material "particles.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Total material: 4 (+4, -2)
@@ -421,23 +421,23 @@ Changed material "particles":
 				field "defines":
 					definition: "ALPHA_TEST"
 					definition: "ENABLE_FOG"
-				field "fragmentShader": "shaders/color_texture.fragment"
 				field "states": statement: "DisableAlphaWrite"
 				field "vertexShader": "shaders/color_uv.vertex"
+				field "fragmentShader": "shaders/color_texture.fragment"
 			Added material "particles_alpha:particles_base":
 				field "defines":
 					definition: "ALPHA_TEST"
 					definition: "ENABLE_FOG"
 				field "states": statement: "DisableAlphaWrite"
 			Added material "particles_base":
+				field "vertexShader": "shaders/color_uv.vertex"
+				field "vrGeometryShader": "shaders/color_uv.geometry"
 				field "fragmentShader": "shaders/color_texture.fragment"
-				field "msaaSupport": "MSAA"
 				field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
-				field "vertexShader": "shaders/color_uv.vertex"
-				field "vrGeometryShader": "shaders/color_uv.geometry"
+				field "msaaSupport": "MSAA"
 			Added material "particles_blend:particles_base":
 				field "defines": definition: "ENABLE_FOG"
 				field "states":
@@ -446,75 +446,81 @@ Changed material "particles":
 					statement: "DisableDepthWrite"
 			Removed material "particles_opaque":
 				field "defines": definition: "ENABLE_FOG"
-				field "fragmentShader": "shaders/color_texture.fragment"
 				field "states": statement: "DisableAlphaWrite"
 				field "vertexShader": "shaders/color_uv.vertex"
+				field "fragmentShader": "shaders/color_texture.fragment"
 			Added material "particles_opaque:particles_base":
 				field "defines": definition: "ENABLE_FOG"
 				field "states": statement: "DisableAlphaWrite"
-Changed material "sad":
+Changed material "sad.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "clouds":
-				Added field "msaaSupport" of "MSAA".
+				Added field "vrGeometryShader" of "shaders/cloud.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/cloud.geometry".
-Changed material "shadows":
+				Added field "msaaSupport" of "MSAA".
+Changed material "shadows.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "shadow_back":
-				Added field "msaaSupport" of "MSAA".
-				Added field "vertexFields" of vertex field: field "field": "Position".
 				Added field "vrGeometryShader" of "shaders/position.geometry".
+				Added field "vertexFields" of vertex field: field "field": "Position".
+				Added field "msaaSupport" of "MSAA".
 			Changed material "shadow_front":
-				Added field "msaaSupport" of "MSAA".
-				Added field "vertexFields" of vertex field: field "field": "Position".
 				Added field "vrGeometryShader" of "shaders/position.geometry".
-			Changed material "shadow_overlay":
-				Added field "blendDst" of "Zero".
-				Added field "blendSrc" of "DestColor".
+				Added field "vertexFields" of vertex field: field "field": "Position".
 				Added field "msaaSupport" of "MSAA".
+			Changed material "shadow_overlay":
+				Added field "vrGeometryShader" of "shaders/color.geometry".
+				Added field "blendSrc" of "DestColor".
+				Added field "blendDst" of "Zero".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
-				Added field "vrGeometryShader" of "shaders/color.geometry".
+				Added field "msaaSupport" of "MSAA".
 			Changed material "water_hole":
 				Added field "vrGeometryShader" of "shaders/position.geometry".
-Changed material "sky":
+Changed material "sky.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "skyplane":
-				Added field "msaaSupport" of "MSAA".
-				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
 				Added field "vrGeometryShader" of "shaders/sky.geometry".
-			Changed material "stars":
-				Added field "msaaSupport" of "MSAA".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
-				Added field "vrGeometryShader" of "shaders/color.geometry".
-			Changed material "sun_moon":
 				Added field "msaaSupport" of "MSAA".
+			Changed material "stars":
+				Added field "vrGeometryShader" of "shaders/color.geometry".
+				Added field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "Color"
+				Added field "msaaSupport" of "MSAA".
+			Changed material "sun_moon":
+				Added field "vrGeometryShader" of "shaders/uv.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/uv.geometry".
-Changed material "terrain":
+				Added field "msaaSupport" of "MSAA".
+Changed material "terrain.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "terrain_inside_block":
-				Added field "msaaSupport" of "MSAA".
-				Added field "vertexFields" of vertex field: field "field": "Position".
 				Added field "vrGeometryShader" of "shaders/position.geometry".
+				Added field "vertexFields" of vertex field: field "field": "Position".
+				Added field "msaaSupport" of "MSAA".
 			Changed material "terrain_opaque":
 				Changed field "defines":
 					Total definition: 4 (+1, -0)
 					Added definition "USE_CUTAWAY".
+				Added field "vrGeometryShader" of "shaders/renderchunk.geometry".
+				Added field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "UV1"
+					vertex field: field "field": "Color"
+					vertex field: field "field": "UV0"
 				Added field "msaaSupport" of "MSAA".
 				Added field "textures":
 					texture:
@@ -529,13 +535,7 @@ Changed material "terrain":
 						field "textureIndex": 2
 						field "textureLocation": "Dynamic"
 						field "textureName": "SeasonFoliage"
-				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV1"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/renderchunk.geometry".
-Changed material "ui":
+Changed material "ui.material":
 	Total resource pack: 2 (+1, -0)
 	Changed resource pack "core":
 		Changed field "materials":
@@ -544,12 +544,12 @@ Changed material "ui":
 				Changed field "states":
 					Total statement: 2 (+0, -1)
 					Removed statement "EnableStencilTest".
-				Added field "isAnimatedTexture" of 1.
+				Added field "vrGeometryShader" of "shaders/uv_blend.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "UV1"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/uv_blend.geometry".
+				Added field "isAnimatedTexture" of 1.
 			Changed material "ui_base":
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
@@ -559,20 +559,24 @@ Changed material "ui":
 			Changed material "ui_cubemap:ui_base":
 				Added field "vrGeometryShader" of "shaders/uv.geometry".
 			Changed material "ui_fill_color:ui_base":
-				Added field "vertexFields" of vertex field: field "field": "Position".
 				Added field "vrGeometryShader" of "shaders/position.geometry".
+				Added field "vertexFields" of vertex field: field "field": "Position".
 			Changed material "ui_fill_gradient:ui_base":
 				Added field "states" of statement: "DisableDepthWrite".
+				Added field "vrGeometryShader" of "shaders/color.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
-				Added field "vrGeometryShader" of "shaders/color.geometry".
 			Changed material "ui_fill_stencil:ui_base":
-				Added field "vertexFields" of vertex field: field "field": "Position".
 				Added field "vrGeometryShader" of "shaders/position.geometry".
+				Added field "vertexFields" of vertex field: field "field": "Position".
 			Changed material "ui_grayscale:ui_base":
 				Added field "vrGeometryShader" of "shaders/uv.geometry".
 			Changed material "ui_inventory_item_glint:ui_item_glint":
+				Added field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "Color"
+					vertex field: field "field": "UV0"
 				Added field "textures":
 					texture:
 						field "textureIndex": 0
@@ -582,24 +586,20 @@ Changed material "ui":
 						field "textureIndex": 1
 						field "textureLocation": "InUserPackage"
 						field "textureName": "textures/misc/enchanted_item_glint"
-				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
 			Changed material "ui_invert_overlay:ui_base":
 				Added field "vrGeometryShader" of "shaders/position.geometry".
 			Changed material "ui_item:ui_base":
+				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
 			Changed material "ui_item_glint:ui_base":
+				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
 			Changed material "ui_item_glint_stencil:ui_item":
 				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
 			Changed material "ui_text:ui_texture_and_color":
@@ -614,52 +614,51 @@ Changed material "ui":
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
 			Changed material "ui_texture_and_color:ui_base":
+				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
 			Changed material "ui_textured:ui_base":
 				Added field "vrGeometryShader" of "shaders/uv.geometry".
 			Changed material "ui_textured_and_glcolor:ui_base":
 				Added field "states" of statement: "DisableDepthWrite".
+				Added field "vrGeometryShader" of "shaders/uv.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/uv.geometry".
 			Added material "ui_textured_and_glcolor_sprite:ui_textured_and_glcolor":
 				field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "UV0"
 	Added resource pack "extra":
-		field "defined_in": resource pack: "vanilla_vr"
 		field "materials":
 			material "animated_texture_blit":
-				field "backFace":
-					field "stencilDepthFailOp": "Keep"
-					field "stencilFailOp": "Keep"
-					field "stencilFunc": "Equal"
-					field "stencilPassOp": "Keep"
-				field "fragmentShader": "shaders/texture_blend.fragment"
-				field "frontFace":
-					field "stencilDepthFailOp": "Keep"
-					field "stencilFailOp": "Keep"
-					field "stencilFunc": "Equal"
-					field "stencilPassOp": "Keep"
-				field "geometryShader": "shaders/uv_blend.geometry"
 				field "states":
 					statement: "EnableStencilTest"
 					statement: "DisableDepthTest"
 					statement: "DisableCulling"
+				field "frontFace":
+					field "stencilFunc": "Equal"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Keep"
+				field "backFace":
+					field "stencilFunc": "Equal"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Keep"
 				field "stencilReadMask": 240
 				field "stencilWriteMask": 240
 				field "vertexShader": "shaders/uv_blend.vertex"
+				field "geometryShader": "shaders/uv_blend.geometry"
+				field "fragmentShader": "shaders/texture_blend.fragment"
 			material "stitch_mip0":
-				field "fragmentShader": "shaders/stitch_blit.fragment"
 				field "states":
 					statement: "DisableDepthTest"
 					statement: "DisableCulling"
 				field "vertexShader": "shaders/stitch_blit.vertex"
+				field "fragmentShader": "shaders/stitch_blit.fragment"
 			material "stitch_mip1:stitch_mip0": field "defines": definition: "BLUR_RADIUS 2"
 			material "stitch_mip2:stitch_mip0": field "defines": definition: "BLUR_RADIUS 4"
 			material "stitch_mip3:stitch_mip0": field "defines": definition: "BLUR_RADIUS 8"
@@ -671,123 +670,123 @@ Changed material "ui":
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
 			material "ui_base":
-				field "backFace":
-					field "stencilDepthFailOp": "Keep"
-					field "stencilFailOp": "Keep"
-					field "stencilFunc": "Equal"
-					field "stencilPassOp": "Keep"
-				field "frontFace":
-					field "stencilDepthFailOp": "Keep"
-					field "stencilFailOp": "Keep"
-					field "stencilFunc": "Equal"
-					field "stencilPassOp": "Keep"
 				field "states":
 					statement: "EnableStencilTest"
 					statement: "DisableDepthTest"
 					statement: "Blending"
+				field "frontFace":
+					field "stencilFunc": "Equal"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Keep"
+				field "backFace":
+					field "stencilFunc": "Equal"
+					field "stencilFailOp": "Keep"
+					field "stencilDepthFailOp": "Keep"
+					field "stencilPassOp": "Keep"
 				field "stencilReadMask": 240
 				field "stencilWriteMask": 240
 			material "ui_crosshair:ui_invert_overlay":
-				field "fragmentShader": "shaders/texture.fragment"
-				field "geometryShader": "shaders/uv.geometry"
 				field "vertexShader": "shaders/uv.vertex"
-			material "ui_cubemap:ui_base":
-				field "fragmentShader": "shaders/texture.fragment"
 				field "geometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture.fragment"
+			material "ui_cubemap:ui_base":
+				field "vertexShader": "shaders/uv.vertex"
+				field "geometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture.fragment"
 				field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
-				field "vertexShader": "shaders/uv.vertex"
 			material "ui_fill_color:ui_base":
-				field "fragmentShader": "shaders/current_color.fragment"
-				field "geometryShader": "shaders/position.geometry"
 				field "vertexShader": "shaders/position.vertex"
+				field "geometryShader": "shaders/position.geometry"
+				field "fragmentShader": "shaders/current_color.fragment"
 			material "ui_fill_gradient:ui_base":
-				field "fragmentShader": "shaders/color.fragment"
-				field "geometryShader": "shaders/color.geometry"
 				field "states": statement: "DisableDepthWrite"
 				field "vertexShader": "shaders/color.vertex"
+				field "geometryShader": "shaders/color.geometry"
+				field "fragmentShader": "shaders/color.fragment"
 			material "ui_fill_stencil:ui_base":
-				field "backFace":
-					field "stencilDepthFailOp": "Replace"
-					field "stencilFailOp": "Replace"
-					field "stencilFunc": "Always"
-					field "stencilPassOp": "Replace"
-				field "fragmentShader": "shaders/current_color.fragment"
-				field "frontFace":
-					field "stencilDepthFailOp": "Replace"
-					field "stencilFailOp": "Replace"
-					field "stencilFunc": "Always"
-					field "stencilPassOp": "Replace"
+				field "vertexShader": "shaders/position.vertex"
 				field "geometryShader": "shaders/position.geometry"
+				field "fragmentShader": "shaders/current_color.fragment"
 				field "states":
 					statement: "StencilWrite"
 					statement: "EnableStencilTest"
 					statement: "DisableColorWrite"
 					statement: "DisableDepthWrite"
+				field "frontFace":
+					field "stencilFunc": "Always"
+					field "stencilFailOp": "Replace"
+					field "stencilDepthFailOp": "Replace"
+					field "stencilPassOp": "Replace"
+				field "backFace":
+					field "stencilFunc": "Always"
+					field "stencilFailOp": "Replace"
+					field "stencilDepthFailOp": "Replace"
+					field "stencilPassOp": "Replace"
 				field "stencilRefOverride": 0
-				field "vertexShader": "shaders/position.vertex"
 			material "ui_grayscale:ui_base":
-				field "alphaDst": "DestColor"
-				field "fragmentShader": "shaders/color_grayscale.fragment"
 				field "vertexShader": "shaders/uv.vertex"
+				field "fragmentShader": "shaders/color_grayscale.fragment"
+				field "alphaDst": "DestColor"
 			material "ui_inventory_item_glint:ui_item_glint":
-				field "backFace": field "stencilFunc": "Equal"
-				field "blendDst": "One"
 				field "blendSrc": "SourceColor"
-				field "defines": definition: "INVENTORY"
-				field "frontFace": field "stencilFunc": "Equal"
+				field "blendDst": "One"
 				field "states": statement: "EnableStencilTest"
-				field "stencilReadMask": 255
+				field "frontFace": field "stencilFunc": "Equal"
+				field "backFace": field "stencilFunc": "Equal"
 				field "stencilRef": 1
+				field "stencilReadMask": 255
 				field "stencilWriteMask": 255
+				field "defines": definition: "INVENTORY"
 			material "ui_invert_overlay:ui_base":
-				field "blendDst": "OneMinusSrcColor"
 				field "blendSrc": "OneMinusDestColor"
-				field "fragmentShader": "shaders/flat_white.fragment"
-				field "geometryShader": "shaders/position.geometry"
+				field "blendDst": "OneMinusSrcColor"
 				field "vertexShader": "shaders/position.vertex"
+				field "geometryShader": "shaders/position.geometry"
+				field "fragmentShader": "shaders/flat_white.fragment"
 			material "ui_item:ui_base":
+				field "vertexShader": "shaders/color_uv.vertex"
+				field "geometryShader": "shaders/color_uv.geometry"
+				field "fragmentShader": "shaders/color_texture.fragment"
 				field "defines":
 					definition: "ALPHA_TEST"
 					definition: "ENABLE_VERTEX_TINT_MASK"
-				field "fragmentShader": "shaders/color_texture.fragment"
-				field "geometryShader": "shaders/color_uv.geometry"
-				field "vertexShader": "shaders/color_uv.vertex"
 			material "ui_item_glint:ui_base":
+				field "vertexShader": "shaders/color_uv.vertex"
+				field "geometryShader": "shaders/color_uv.geometry"
+				field "fragmentShader": "shaders/color_texture.fragment"
 				field "defines":
 					definition: "GLINT"
 					definition: "ENABLE_VERTEX_TINT_MASK"
-				field "fragmentShader": "shaders/color_texture.fragment"
-				field "geometryShader": "shaders/color_uv.geometry"
 				field "samplerStates":
 					sampler state:
 						field "samplerIndex": 1
-						field "textureFilter": "Bilinear"
 						field "textureWrap": "Repeat"
+						field "textureFilter": "Bilinear"
 				field "stencilReadMask": 240
 				field "stencilWriteMask": 255
-				field "vertexShader": "shaders/color_uv.vertex"
 			material "ui_item_glint_stencil:ui_item":
-				field "backFace":
-					field "stencilFunc": "Equal"
-					field "stencilPassOp": "Replace"
-				field "defines":
-					definition: "ALPHA_TEST"
-					definition: "ENABLE_VERTEX_TINT_MASK"
-				field "fragmentShader": "shaders/color_texture.fragment"
-				field "frontFace":
-					field "stencilFunc": "Equal"
-					field "stencilPassOp": "Replace"
+				field "vertexShader": "shaders/color_uv.vertex"
 				field "geometryShader": "shaders/color_uv.geometry"
+				field "fragmentShader": "shaders/color_texture.fragment"
 				field "states":
 					statement: "StencilWrite"
 					statement: "EnableStencilTest"
-				field "stencilReadMask": 240
+				field "frontFace":
+					field "stencilFunc": "Equal"
+					field "stencilPassOp": "Replace"
+				field "backFace":
+					field "stencilFunc": "Equal"
+					field "stencilPassOp": "Replace"
 				field "stencilRef": 1
+				field "stencilReadMask": 240
 				field "stencilWriteMask": 15
-				field "vertexShader": "shaders/color_uv.vertex"
+				field "defines":
+					definition: "ALPHA_TEST"
+					definition: "ENABLE_VERTEX_TINT_MASK"
 			material "ui_item_unglint_stencil:ui_item_glint_stencil":
 				field "states":
 					statement: "StencilWrite"
@@ -803,9 +802,9 @@ Changed material "ui":
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
 			material "ui_texture_and_color:ui_base":
-				field "fragmentShader": "shaders/color_texture.fragment"
-				field "geometryShader": "shaders/color_uv.geometry"
 				field "vertexShader": "shaders/color_uv.vertex"
+				field "geometryShader": "shaders/color_uv.geometry"
+				field "fragmentShader": "shaders/color_texture.fragment"
 			material "ui_texture_and_color_blur:ui_texture_and_color":
 				field "samplerStates":
 					sampler state:
@@ -813,55 +812,60 @@ Changed material "ui":
 						field "textureFilter": "Bilinear"
 			material "ui_texture_and_color_tint:ui_texture_and_color": field "defines": definition: "ENABLE_VERTEX_TINT_MASK"
 			material "ui_textured:ui_base":
-				field "fragmentShader": "shaders/texture.fragment"
-				field "geometryShader": "shaders/uv.geometry"
 				field "vertexShader": "shaders/uv.vertex"
-			material "ui_textured_and_glcolor:ui_base":
-				field "alphaDst": "DestColor"
-				field "fragmentShader": "shaders/texture_ccolor.fragment"
 				field "geometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture.fragment"
+			material "ui_textured_and_glcolor:ui_base":
 				field "states": statement: "DisableDepthWrite"
 				field "vertexShader": "shaders/uv.vertex"
-Changed material "ui3D":
+				field "geometryShader": "shaders/uv.geometry"
+				field "fragmentShader": "shaders/texture_ccolor.fragment"
+				field "alphaDst": "DestColor"
+Changed material "ui3D.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Total material: 22 (+2, -0)
 			Changed material "block_overlay":
 				Changed field "polygonOffsetLevel" from 5 to 0.5.
-				Added field "msaaSupport" of "MSAA".
+				Added field "vrGeometryShader" of "shaders/uv.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "UV1"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/uv.geometry".
+				Added field "msaaSupport" of "MSAA".
 			Changed material "cracks_overlay:block_overlay":
 				Removed field "defines" of definition: "ALPHA_TEST".
 			Changed material "cracks_overlay_tile_entity:cracks_overlay":
 				Added field "vrGeometryShader" of "shaders/uv.geometry".
 			Changed material "debug":
-				Added field "msaaSupport" of "MSAA".
+				Added field "vrGeometryShader" of "shaders/color.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
-				Added field "vrGeometryShader" of "shaders/color.geometry".
-			Changed material "fullscreen_cube_overlay":
 				Added field "msaaSupport" of "MSAA".
+			Changed material "fullscreen_cube_overlay":
+				Added field "vrGeometryShader" of "shaders/uv.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/uv.geometry".
-			Changed material "lightning":
 				Added field "msaaSupport" of "MSAA".
+			Changed material "lightning":
+				Added field "vrGeometryShader" of "shaders/color.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
-				Added field "vrGeometryShader" of "shaders/color.geometry".
-			Changed material "name_tag":
 				Added field "msaaSupport" of "MSAA".
-				Added field "vertexFields" of vertex field: field "field": "Position".
+			Changed material "name_tag":
 				Added field "vrGeometryShader" of "shaders/position.geometry".
+				Added field "vertexFields" of vertex field: field "field": "Position".
+				Added field "msaaSupport" of "MSAA".
 			Changed material "rain":
 				Added field "defines" of definition: "COMFORT_MODE".
+				Added field "vrGeometryShader" of "shaders/rain_snow.geometry".
+				Added field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "Color"
+					vertex field: field "field": "UV0"
 				Added field "msaaSupport" of "MSAA".
 				Added field "textures":
 					texture:
@@ -872,36 +876,36 @@ Changed material "ui3D":
 						field "textureIndex": 1
 						field "textureLocation": "InAppPackage"
 						field "textureName": "DYNAMIC_WEATHER"
-				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/rain_snow.geometry".
 			Added empty material "selection_overlay_item:selection_overlay".
 			Added material "selection_overlay_level:selection_overlay":
-				field "msaaSupport": "MSAA"
 				field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Normal"
 					vertex field: field "field": "UV0"
+				field "msaaSupport": "MSAA"
 			Changed material "selection_overlay_opaque:selection_overlay":
-				Added field "msaaSupport" of "MSAA".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "UV1"
 					vertex field: field "field": "UV0"
+				Added field "msaaSupport" of "MSAA".
 			Changed material "sign_text":
 				Changed field "defines":
 					Total definition: 2 (+1, -0)
 					Added definition "USE_LIGHTING".
-				Added field "msaaSupport" of "MSAA".
+				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
 				Added field "vertexFields":
 					vertex field: field "field": "Position"
 					vertex field: field "field": "Color"
 					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
+				Added field "msaaSupport" of "MSAA".
 			Changed material "snow":
 				Added field "defines" of definition: "COMFORT_MODE".
+				Added field "vrGeometryShader" of "shaders/rain_snow.geometry".
+				Added field "vertexFields":
+					vertex field: field "field": "Position"
+					vertex field: field "field": "Color"
+					vertex field: field "field": "UV0"
 				Added field "msaaSupport" of "MSAA".
 				Added field "textures":
 					texture:
@@ -912,11 +916,6 @@ Changed material "ui3D":
 						field "textureIndex": 1
 						field "textureLocation": "InAppPackage"
 						field "textureName": "DYNAMIC_WEATHER"
-				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
-				Added field "vrGeometryShader" of "shaders/rain_snow.geometry".
 			Changed material "weather":
 				Added field "vrGeometryShader" of "shaders/weather.geometry".
 			Changed material "white_mat":

@@ -1,31 +1,21 @@
-Difference of "animation_controllers" between "1.18.20.25" (beta of "1.18.30") and "1.18.20.27" (beta of "1.18.30").
+Difference of "animation_controllers" between "1.18.30.20" (beta of "1.18.30") and "1.18.30.22" (beta of "1.18.30").
 
-Changed file "shield.animation_controllers":
-	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 5 (+1, -0)
-			Added resource pack "vanilla_1.18.20".
-		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.shield.wield":
-				Changed field "states":
-					Total state: 3 (+1, -0)
-					Added state "blocking":
-						field "animations":
-							animation dict: animation "wield_main_hand_first_person": "!variable.is_blocking_main_hand && c.item_slot == 'main_hand'"
-							animation dict: animation "wield_main_hand_first_person_block": "variable.is_blocking_main_hand && c.item_slot == 'main_hand'"
-							animation dict: animation "wield_off_hand_first_person_block": "variable.is_blocking_off_hand && c.item_slot == 'off_hand'"
-						field "transitions":
-							transition list: transition "default": "!query.blocking"
-							transition list: transition "third_person": "!c.is_first_person"
-					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 2 (+1, -0)
-							Added transition list transition "blocking": "query.blocking".
-						Changed field "animations":
-							Total animation dict: 2 (+2, -4)
-							Removed animation dict animation "wield_main_hand_first_person": "!variable.is_blocking_main_hand && c.item_slot == 'main_hand'".
-							Removed animation dict animation "wield_off_hand_first_person": "!variable.is_blocking_off_hand && c.item_slot == 'off_hand'".
-							Removed animation dict animation "wield_main_hand_first_person_block": "variable.is_blocking_main_hand && c.item_slot == 'main_hand'".
-							Removed animation dict animation "wield_off_hand_first_person_block": "variable.is_blocking_off_hand && c.item_slot == 'off_hand'".
-							Added animation dict animation "wield_main_hand_first_person": "c.item_slot == 'main_hand'".
-							Added animation dict animation "wield_off_hand_first_person": "c.item_slot != 'main_hand'".
+Total file: 59 (+1, -0)
+Added file "allay.animation_controllers.json":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "animation_controllers":
+			animation controller "controller.animation.allay.general":
+				field "initial_state": "idling"
+				field "states":
+					state "flying":
+						field "animations": animation dict: "fly"
+						field "transitions": transition list: transition "idling": "query.modified_move_speed < 0.2"
+						field "blend_transition": 0.2
+					state "idling":
+						field "animations": animation dict: "idle"
+						field "transitions": transition list: transition "flying": "query.modified_move_speed > 0.2"
+						field "blend_transition": 0.2
+			animation controller "controller.animation.allay.holding":
+				field "initial_state": "holding"
+				field "states": state "holding": field "animations": animation dict: animation "hold_item": "variable.is_holding_left || variable.is_holding_right"

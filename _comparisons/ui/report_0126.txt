@@ -1,0 +1,298 @@
+Difference of "ui" between "1.12.0.4" (beta of "1.12.0") and "1.12.0.6" (beta of "1.12.0").
+
+Changed namespace "cartography":
+	Changed element "main_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 5 (+0, -1)
+			Removed control element "output_description_label@cartography.output_description_label": empty.
+	Changed element "output_description_label":
+		Unchanged field "type": "label"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from 20 to 10.
+		Removed field "offset" of [0, -8].
+	Changed element "top_half_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 9 (+1, -0)
+			Added control element "output_description_label@cartography.output_description_label": empty.
+Changed namespace "crafting":
+	Changed element "recipe_inventory_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "game_tip@game_tip.game_tip_panel":
+					Changed field "offset":
+						Unchanged item 0: 0
+						Changed item 1 from "95px" to "80%".
+Changed namespace "crafting_pocket":
+	Changed element "recipe_inventory_screen_content_pocket":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "game_tip@game_tip.game_tip_panel":
+					Changed field "offset":
+						Unchanged item 0: 0
+						Changed item 1 from "-80px" to "10%".
+Changed namespace "game_tip":
+	Changed element "game_tip_item_background":
+		Unchanged field "type": "image"
+		Changed field "$variables":
+			Total variable: 2 (+1, -0)
+			Added variable "$tip_anchor_from|default" of "center".
+		Added field "anchor_from" of "$tip_anchor_from".
+		Added field "anchor_to" of "$tip_anchor_from".
+	Changed element "game_tip_item_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "label_panel":
+					Unchanged field "type": "stack_panel"
+					Removed field "anchor_from" of "center".
+					Removed field "anchor_to" of "center".
+	Changed element "game_tip_label":
+		Unchanged field "type": "label"
+		Changed field "size" from "$tip_min_size" to ["default", "default"].
+		Added field "min_size" of "$tip_min_size".
+	Changed element "inventory_game_tip_panel":
+		Unchanged field "type": "panel"
+		Changed field "$variables":
+			Total variable: 9 (+2, -0)
+			Added variable "$up_enabled|default" of false.
+			Added variable "$is_recipe_book_tip|default" of false.
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "horizontal_panel@game_tip.inventory_tip_horizontal_panel": field "ignored": "$ignore_tip".
+			Added control element "horizontal_panel@game_tip.inventory_tip_horizontal_panel": field "ignored": "$ignore_tip".
+		Changed field "variables":
+			Total variable: 6 (+2, -3)
+			Changed variable:
+				Changed field "$variables":
+					Changed variable "$offset_value":
+						Changed item 1 from -30 to -24.
+					Changed variable "$chevron_offset":
+						Changed item 1 from 16 to 12.
+			Changed variable:
+				Changed field "$variables":
+					Changed variable "$offset_value":
+						Changed item 1 from -31 to -38.
+					Changed variable "$chevron_offset":
+						Changed item 1 from 11 to 17.
+			Removed variable:
+				field "requires": "($up_enabled and $is_multiline)"
+				field "$variables":
+					variable "$offset_value":
+						item 0: 0
+						item 1: -40
+					variable "$chevron_offset":
+						item 0: 0
+						item 1: 25
+			Removed variable:
+				field "requires": "(($is_close or $is_recipe) and (not $up_enabled))"
+				field "$variables":
+					variable "$chevron_offset":
+						item 0: 0
+						item 1: -13
+			Removed variable:
+				field "requires": "($up_enabled and $pocket_screen and $is_multiline)"
+				field "$variables":
+					variable "$offset_value":
+						item 0: 0
+						item 1: -35
+					variable "$chevron_offset":
+						item 0: 0
+						item 1: 20
+			Added variable:
+				field "requires": "(not $up_enabled and ($is_recipe or $is_close))"
+				field "$variables":
+					variable "$chevron_offset":
+						item 0: 0
+						item 1: -13
+			Added variable:
+				field "requires": "(($is_recipe_book_tip) and $pocket_screen)"
+				field "$variables":
+					variable "$offset_value":
+						item 0: 0
+						item 1: 50
+	Changed element "inventory_tip_horizontal_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "layer": 13
+		field "controls":
+			control:
+				element "recipe_left_enabled":
+					field "type": "panel"
+					field "variables":
+						variable:
+							field "requires": "(($is_recipe and $game_pad) and $pocket_screen)"
+							field "$variables":
+								variable "$recipe_left_padding_size":
+									item 0: 132
+									item 1: 0
+					field "size": "$recipe_left_padding_size"
+					field "bindings":
+						binding:
+							field "binding_name": "#recipe_left_enabled"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$recipe_left_padding_size":
+							item 0: 140
+							item 1: 0
+			control:
+				element "left_enabled":
+					field "type": "panel"
+					field "variables":
+						variable:
+							field "requires": "$is_recipe_book_tip"
+							field "$variables":
+								variable "$left_padding_size":
+									item 0: 108
+									item 1: 0
+						variable:
+							field "requires": "($is_recipe_book_tip and $pocket_screen)"
+							field "$variables":
+								variable "$left_padding_size":
+									item 0: 111
+									item 1: 0
+					field "size": "$left_padding_size"
+					field "bindings":
+						binding:
+							field "binding_name": "#left_enabled"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$left_padding_size":
+							item 0: 100
+							item 1: 0
+			control:
+				element "inventory_tip@game_tip.game_tip_item_background":
+					field "variables":
+						variable:
+							field "requires": "$is_recipe_book_tip"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 111
+									item 1: "default"
+								variable "$tip_min_size":
+									item 0: 111
+									item 1: "default"
+						variable:
+							field "requires": "($is_recipe_book_tip and $pocket_screen)"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 125
+									item 1: "default"
+								variable "$tip_min_size":
+									item 0: 125
+									item 1: "default"
+						variable:
+							field "requires": "$is_close"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 155
+									item 1: "default"
+						variable:
+							field "requires": "($is_close and $pocket_screen)"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 120
+									item 1: "default"
+								variable "$tip_min_size":
+									item 0: 120
+									item 1: "default"
+					field "$variables": variable "$fill_alpha": 1.0
+			control:
+				element "right_enabled":
+					field "size": [100, 0]
+					field "type": "panel"
+					field "bindings":
+						binding:
+							field "binding_name": "#right_enabled"
+							field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$is_recipe_book_tip|default": false
+			variable "$animation": empty
+		field "type": "panel"
+		field "layer": 13
+		field "controls":
+			control:
+				element "inventory_tip@game_tip.game_tip_item_background":
+					field "variables":
+						variable:
+							field "requires": "($left_enabled)"
+							field "$variables":
+								variable "$offset":
+									item 0: 50
+									item 1: 0
+						variable:
+							field "requires": "($right_enabled)"
+							field "$variables":
+								variable "$offset":
+									item 0: -50
+									item 1: 0
+						variable:
+							field "requires": "($is_recipe and $pocket_screen)"
+							field "$variables":
+								variable "$offset":
+									item 0: 55
+									item 1: 0
+						variable:
+							field "requires": "($is_recipe_book_tip)"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 106
+									item 1: "default"
+								variable "$tip_min_size":
+									item 0: 106
+									item 1: "default"
+								variable "$offset":
+									item 0: 54
+									item 1: 0
+						variable:
+							field "requires": "($is_recipe_book_tip and $pocket_screen)"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 76
+									item 1: "default"
+								variable "$tip_min_size":
+									item 0: 76
+									item 1: "default"
+								variable "$offset":
+									item 0: 50
+									item 1: 0
+						variable:
+							field "requires": "$is_close"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 155
+									item 1: "default"
+						variable:
+							field "requires": "(($is_close or $is_recipe) and $pocket_screen)"
+							field "$variables":
+								variable "$tip_max_size":
+									item 0: 110
+									item 1: "default"
+								variable "$tip_min_size":
+									item 0: 110
+									item 1: "default"
+					field "offset": "$offset"
+					field "$variables":
+						variable "$fill_alpha": 1.0
+						variable "$left_enabled|default": false
+						variable "$right_enabled|default": false
+						variable "$is_close|default": false
+						variable "$is_recipe|default": false
+						variable "$tip_min_size":
+							item 0: 110
+							item 1: "default"
+						variable "$offset|default":
+							item 0: 0
+							item 1: 0
+		field "$variables":
+			variable "$is_recipe_book_tip|default": false
+			variable "$animation": empty
+Changed namespace "loom":
+	Changed element "result_slot_button@common.no_coalesce_container_slot_button":
+		Removed field "sound_name" of "ui.loom.take_result".
+		Removed field "sound_volume" of 1.0.
+		Removed field "sound_pitch" of 1.0.

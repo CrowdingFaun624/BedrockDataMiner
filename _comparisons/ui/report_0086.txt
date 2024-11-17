@@ -1,0 +1,1904 @@
+Difference of "ui" between "1.4.4" and "1.5.0.0" (beta of "1.5.0").
+
+Changed namespace "achievement":
+	Changed element "focus_border":
+		Unchanged field "type": "image"
+		Changed field "texture" from "textures/ui/focus_border_white" to "textures/ui/square_image_border_white".
+Changed namespace "chem_common_pocket":
+	Total element: 13 (+4, -0)
+	Added element "container_gamepad_helpers@common.gamepad_helpers":
+		field "controls":
+			control:
+				element "buffer_panel_left":
+					field "type": "panel"
+					field "size": [10, 0]
+			control:
+				element "left_buttons":
+					field "type": "stack_panel"
+					field "size": "$a_b_stack_panel_size"
+					field "orientation": "$a_b_stack_panel_orientation"
+					field "anchor_from": "left_middle"
+					field "anchor_to": "left_middle"
+					field "controls":
+						control: element "gamepad_helper_a@chem_common_pocket.gamepad_helper_down": field "size": [10, 26]
+						control:
+							element "buffer_panel2":
+								field "type": "panel"
+								field "size": [9, 0]
+						control: element "slash@chem_common_pocket.gamepad_slash_image": field "size": [8, 26]
+						control:
+							element "x_wrapper":
+								field "type": "panel"
+								field "size": ["100%c", "100%c"]
+								field "controls": control: element "gamepad_helper_x@chem_common_pocket.gamepad_helper_left": field "offset": [-7, 0]
+			control:
+				element "fill_panel":
+					field "type": "panel"
+					field "size": ["fill", 0]
+			control:
+				element "right_buttons":
+					field "type": "stack_panel"
+					field "size": "$x_y_stack_panel_size"
+					field "orientation": "$x_y_stack_panel_orientation"
+					field "anchor_from": "right_middle"
+					field "anchor_to": "right_middle"
+					field "controls":
+						control:
+							element "spacing_one":
+								field "type": "panel"
+								field "size": [5, 0]
+						control: element "gamepad_helper_b@common.gamepad_helper_b": empty
+						control:
+							element "spacing_two":
+								field "type": "panel"
+								field "size": [2, 0]
+						control: element "gamepad_helper_y@common.gamepad_helper_y": empty
+			control:
+				element "buffer_panel_right":
+					field "type": "panel"
+					field "size": [10, 0]
+		field "$variables":
+			variable "$a_b_stack_panel_orientation|default": "horizontal"
+			variable "$x_y_stack_panel_orientation|default": "horizontal"
+			variable "$a_b_stack_panel_size|default":
+				item 0: "100%c"
+				item 1: "100%"
+			variable "$x_y_stack_panel_size|default":
+				item 0: "100%c"
+				item 1: "100%"
+	Added element "gamepad_helper_down@common.gamepad_helper_a" of field "$variables": variable "$icon_description_bind": "#button_x_description_override".
+	Added element "gamepad_helper_left@common.gamepad_helper_x" of field "$variables": variable "$icon_description_bind": "#button_a_description".
+	Added element "gamepad_slash_image":
+		field "type": "image"
+		field "texture": "textures/ui/button_slash"
+		field "size": [7, 26]
+		field "layer": 5
+		field "bindings":
+			binding:
+				field "binding_name": "#gamepad_helper_visible"
+				field "binding_name_override": "#visible"
+				field "binding_condition": "always"
+	Changed element "screen_contents@common.root_panel":
+		Changed field "controls":
+			Total control: 10 (+1, -1)
+			Removed control element "container_gamepad_helpers@common.container_gamepad_helpers": empty.
+			Added control element "container_gamepad_helpers@chem_common_pocket.container_gamepad_helpers": empty.
+Changed namespace "common":
+	Total element: 225 (+1, -0)
+	Added element "square_image_border_white":
+		field "type": "image"
+		field "layer": 2
+		field "texture": "textures/ui/square_image_border_white"
+Changed namespace "common_store":
+	Total element: 93 (+3, -0)
+	Changed element "featured_item_header":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "featured_item_creator":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "name_label@common_store.label":
+								Changed field "bindings":
+									Total binding: 2 (+1, -0)
+									Added binding:
+										field "binding_name": "(not #is_offer_collection_query)"
+										field "binding_name_override": "#visible"
+	Changed element "featured_item_screenshot":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+2, -2)
+			Removed control:
+				element "focus_border_white_0@common.focus_border_white":
+					field "layer": 2
+					field "color": "$light_border_default_color"
+			Removed control:
+				element "focus_border_white_1@common.focus_border_white":
+					field "layer": 3
+					field "color": "$border_color"
+					field "visible": "$border_visible"
+			Added control:
+				element "focus_border_white_0@common.square_image_border_white":
+					field "layer": 2
+					field "color": "$light_border_default_color"
+			Added control:
+				element "focus_border_white_1@common.square_image_border_white":
+					field "layer": 3
+					field "color": "$border_color"
+					field "visible": "$border_visible"
+	Added element "featured_item_title_header@common_store.label":
+		field "size": ["100%", "default"]
+		field "text": "#featured_title"
+		field "color": "$coin_color"
+		field "font_type": "smooth"
+		field "bindings":
+			binding: field "binding_name": "#featured_title"
+			binding: field "binding_name": "#featured_title_offset"
+	Changed element "featured_key_art":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control:
+				element "focus_border@common.focus_border_white":
+					field "color": "$border_color"
+					field "layer": 9
+			Added control:
+				element "focus_border@common.square_image_border_white":
+					field "color": "$border_color"
+					field "layer": 9
+	Changed element "hero_offer_grid":
+		Unchanged field "type": "stack_panel"
+		Changed field "$variables":
+			Total variable: 9 (+1, -0)
+			Added variable "$is_hero_offer" of true.
+	Changed element "offer_description_details":
+		Unchanged field "type": "stack_panel"
+		Changed field "size":
+			Unchanged item 0: "100% - 4px"
+			Changed item 1 from "100%c" to 34.5.
+		Changed field "controls":
+			Total control: 2 (+2, -5)
+			Removed control:
+				element "title":
+					field "type": "label"
+					field "size": ["100%", 10]
+					field "text": "#hero_offer_title"
+					field "color": "$body_text_color"
+					field "font_type": "smooth"
+					field "layer": 1
+					field "bindings": binding: field "binding_name": "#hero_offer_title"
+			Removed control:
+				element "created_by":
+					field "type": "label"
+					field "size": ["100%", 10]
+					field "text": "#hero_offer_author"
+					field "color": "$body_text_color"
+					field "font_type": "smooth"
+					field "ignored": "$is_small_hero_grid"
+					field "layer": 1
+					field "bindings": binding: field "binding_name": "#hero_offer_author"
+			Removed control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": ["100%", 1.5]
+			Removed control:
+				element "ratings_and_coins":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 11]
+					field "layer": 2
+					field "controls":
+						control: element "ratings@common_store.ratings_description": empty
+						control:
+							element "price_panel":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "controls":
+									control:
+										element "price@common_store.price_panel":
+											field "anchor_from": "bottom_right"
+											field "anchor_to": "bottom_right"
+			Removed control:
+				element "padding_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			Added control:
+				element "hero_offer_collection_details_panel":
+					field "type": "panel"
+					field "size": ["100%", "100%"]
+					field "bindings":
+						binding:
+							field "binding_name": "#is_hero_offer_collection_query"
+							field "binding_name_override": "#visible"
+					field "controls": control: element "title@common_store.offer_details_title": field "text_alignment": "center"
+			Added control:
+				element "hero_durable_offer_details_panel":
+					field "type": "stack_panel"
+					field "size": ["100%", "100%c"]
+					field "bindings":
+						binding:
+							field "binding_name": "(not #is_hero_offer_collection_query)"
+							field "binding_name_override": "#visible"
+					field "controls":
+						control: element "title@common_store.offer_details_title": empty
+						control:
+							element "created_by":
+								field "type": "label"
+								field "size": ["100%", 10]
+								field "text": "#hero_offer_author"
+								field "color": "$body_text_color"
+								field "font_type": "smooth"
+								field "ignored": "$is_small_hero_grid"
+								field "layer": 1
+								field "bindings": binding: field "binding_name": "#hero_offer_author"
+						control:
+							element "padding_0":
+								field "type": "panel"
+								field "size": ["100%", 1.5]
+						control:
+							element "ratings_and_coins":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%", 11]
+								field "layer": 2
+								field "controls":
+									control: element "ratings@common_store.ratings_description": empty
+									control:
+										element "price_panel":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "controls":
+												control:
+													element "price@common_store.price_panel":
+														field "anchor_from": "bottom_right"
+														field "anchor_to": "bottom_right"
+						control:
+							element "padding_1":
+								field "type": "panel"
+								field "size": ["100%", 2]
+	Added element "offer_details_title":
+		field "type": "label"
+		field "size": ["100%", 10]
+		field "text": "#hero_offer_title"
+		field "color": "$body_text_color"
+		field "font_type": "smooth"
+		field "layer": 1
+		field "bindings": binding: field "binding_name": "#hero_offer_title"
+	Changed element "search_object":
+		Unchanged field "type": "panel"
+		Removed field "bindings":
+			binding:
+				field "binding_name": "(not #page_loading_visible)"
+				field "binding_name_override": "#visible"
+	Changed element "store_offer_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@$offer_background_asset":
+					Changed field "controls":
+						Total control: 6 (+2, -2)
+						Changed control:
+							Changed element "offer_button@common.button":
+								Changed field "controls":
+									Changed control:
+										Changed element "pressed":
+											Unchanged field "type": "panel"
+											Changed field "controls":
+												Total control: 2 (+1, -1)
+												Changed control:
+													Changed element "key_art_size_panel":
+														Unchanged field "type": "panel"
+														Changed field "controls":
+															Total control: 1 (+1, -1)
+															Removed control:
+																element "key_art_frame@common.focus_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+															Added control:
+																element "key_art_frame@common.square_image_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+												Removed control element "frame_border@common.focus_border_white": field "ignored": "$no_description_border".
+												Added control element "frame_border@common.square_image_border_white": field "ignored": "$no_description_border".
+									Changed control:
+										Changed element "hover":
+											Unchanged field "type": "panel"
+											Changed field "controls":
+												Total control: 2 (+1, -1)
+												Changed control:
+													Changed element "key_art_size_panel":
+														Unchanged field "type": "panel"
+														Changed field "controls":
+															Total control: 1 (+1, -1)
+															Removed control:
+																element "key_art_frame@common.focus_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+															Added control:
+																element "key_art_frame@common.square_image_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+												Removed control element "frame_border@common.focus_border_white": field "ignored": "$no_description_border".
+												Added control element "frame_border@common.square_image_border_white": field "ignored": "$no_description_border".
+						Changed control:
+							Changed element "key_art@common_store.store_offer_key_art":
+								Changed field "controls":
+									Total control: 1 (+1, -1)
+									Removed control:
+										element "key_art_frame@common.focus_border_white":
+											field "size": ["100% + 2px", "100% + 2px"]
+											field "color": [0, 0, 0]
+											field "layer": 3
+									Added control:
+										element "key_art_frame@common.square_image_border_white":
+											field "size": ["100% + 2px", "100% + 2px"]
+											field "color": [0, 0, 0]
+											field "layer": 3
+						Removed control:
+							element "title_label_panel":
+								field "type": "stack_panel"
+								field "size": ["100% - 6px", "100%c"]
+								field "offset": [3, -14]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "controls":
+									control:
+										element "title":
+											field "type": "label"
+											field "size": ["100%", 10]
+											field "text": "#title_label"
+											field "color": "$body_text_color"
+											field "font_type": "smooth"
+											field "layer": 1
+											field "bindings":
+												binding:
+													field "binding_type": "collection_details"
+													field "binding_collection_name": "$category_collection"
+													field "binding_collection_prefix": "$category_prefix"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "$offers_collection_name"
+													field "binding_name": "#title_label"
+									control:
+										element "author":
+											field "type": "label"
+											field "ignored": "$ignore_author"
+											field "size": ["100%", 10]
+											field "text": "#creator_label"
+											field "color": "$body_text_color"
+											field "font_type": "smooth"
+											field "layer": 2
+											field "bindings":
+												binding:
+													field "binding_type": "collection_details"
+													field "binding_collection_name": "$category_collection"
+													field "binding_collection_prefix": "$category_prefix"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "$offers_collection_name"
+													field "binding_name": "#creator_label"
+								field "bindings":
+									binding:
+										field "binding_type": "collection_details"
+										field "binding_collection_name": "$category_collection"
+										field "binding_collection_prefix": "$category_prefix"
+									binding:
+										field "binding_type": "collection"
+										field "binding_name": "(not #progress_visible)"
+										field "binding_collection_name": "$offers_collection_name"
+										field "binding_name_override": "#visible"
+						Removed control:
+							element "offer_prompt_panel":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "size": ["100%", 13]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "controls":
+									control:
+										element "padding_2":
+											field "type": "panel"
+											field "size": [2, "100%"]
+									control:
+										element "ratings":
+											field "type": "panel"
+											field "size": ["100%c", "100%"]
+											field "bindings":
+												binding:
+													field "binding_type": "collection_details"
+													field "binding_collection_name": "$category_collection"
+													field "binding_collection_prefix": "$category_prefix"
+												binding:
+													field "binding_type": "collection"
+													field "binding_name": "(not #progress_visible)"
+													field "binding_collection_name": "$offers_collection_name"
+													field "binding_name_override": "#visible"
+											field "controls": control: element "rating_text_panel@common_store.rating_text_panel": empty
+									control:
+										element "padding_4":
+											field "type": "panel"
+											field "size": ["fill", "100%"]
+									control:
+										element "offer_prompt_panel":
+											field "type": "panel"
+											field "size": ["100%c", 11]
+											field "controls":
+												control:
+													element "offer_status_text":
+														field "type": "label"
+														field "color": "$coin_color"
+														field "size": ["default", 10]
+														field "offset": [0, -0.5]
+														field "text": "#offer_prompt_text"
+														field "font_type": "smooth"
+														field "layer": 4
+														field "bindings":
+															binding:
+																field "binding_type": "collection_details"
+																field "binding_collection_name": "$category_collection"
+																field "binding_collection_prefix": "$category_prefix"
+															binding:
+																field "binding_type": "collection"
+																field "binding_name": "#offer_prompt_text"
+																field "binding_collection_name": "$offers_collection_name"
+									control:
+										element "padding_3":
+											field "type": "panel"
+											field "size": [1, "100%"]
+									control:
+										element "coin_panel":
+											field "type": "panel"
+											field "size": ["100%c", "100%c"]
+											field "controls":
+												control:
+													element "offer_coin_icon@common_store.coin_icon":
+														field "layer": 5
+														field "bindings":
+															binding:
+																field "binding_type": "collection"
+																field "binding_collection_name": "$offers_collection_name"
+																field "binding_name": "#offer_coin_visible"
+																field "binding_name_override": "#visible"
+															binding:
+																field "binding_type": "collection_details"
+																field "binding_collection_name": "$category_collection"
+																field "binding_collection_prefix": "$category_prefix"
+									control:
+										element "padding_6":
+											field "type": "panel"
+											field "size": [2, "100%"]
+								field "bindings":
+									binding:
+										field "binding_type": "collection_details"
+										field "binding_collection_name": "$category_collection"
+										field "binding_collection_prefix": "$category_prefix"
+									binding:
+										field "binding_type": "collection"
+										field "binding_name": "(not #progress_visible)"
+										field "binding_collection_name": "$offers_collection_name"
+										field "binding_name_override": "#visible"
+						Added control:
+							element "offer_collection_info_panel":
+								field "type": "panel"
+								field "size": ["100%", "100%"]
+								field "bindings":
+									binding:
+										field "binding_type": "collection_details"
+										field "binding_collection_name": "$category_collection"
+										field "binding_collection_prefix": "$category_prefix"
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "$offers_collection_name"
+										field "binding_name": "#is_offer_collection_query"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "title@common_store.store_offer_item_title":
+											field "anchor_from": "bottom_middle"
+											field "anchor_to": "bottom_middle"
+											field "text_alignment": "center"
+											field "variables":
+												variable:
+													field "requires": "$is_hero_offer"
+													field "$variables":
+														variable "$offer_title_offset":
+															item 0: 0
+															item 1: -7
+											field "offset": "$offer_title_offset"
+											field "$variables":
+												variable "$offer_title_offset":
+													item 0: 0
+													item 1: -14
+						Added control:
+							element "durable_offer_info_panel":
+								field "type": "panel"
+								field "size": ["100%", "100%"]
+								field "bindings":
+									binding:
+										field "binding_type": "collection_details"
+										field "binding_collection_name": "$category_collection"
+										field "binding_collection_prefix": "$category_prefix"
+									binding:
+										field "binding_type": "collection"
+										field "binding_collection_name": "$offers_collection_name"
+										field "binding_name": "(not #is_offer_collection_query)"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "title_label_panel":
+											field "type": "stack_panel"
+											field "size": ["100% - 6px", "100%c"]
+											field "offset": [3, -14]
+											field "anchor_from": "bottom_left"
+											field "anchor_to": "bottom_left"
+											field "controls":
+												control: element "title@common_store.store_offer_item_title": empty
+												control:
+													element "author":
+														field "type": "label"
+														field "ignored": "$ignore_author"
+														field "size": ["100%", 10]
+														field "text": "#creator_label"
+														field "color": "$body_text_color"
+														field "font_type": "smooth"
+														field "layer": 2
+														field "bindings":
+															binding:
+																field "binding_type": "collection_details"
+																field "binding_collection_name": "$category_collection"
+																field "binding_collection_prefix": "$category_prefix"
+															binding:
+																field "binding_type": "collection"
+																field "binding_collection_name": "$offers_collection_name"
+																field "binding_name": "#creator_label"
+											field "bindings":
+												binding:
+													field "binding_type": "collection_details"
+													field "binding_collection_name": "$category_collection"
+													field "binding_collection_prefix": "$category_prefix"
+												binding:
+													field "binding_type": "collection"
+													field "binding_name": "(not #progress_visible)"
+													field "binding_collection_name": "$offers_collection_name"
+													field "binding_name_override": "#visible"
+									control:
+										element "offer_prompt_panel":
+											field "type": "stack_panel"
+											field "orientation": "horizontal"
+											field "size": ["100%", 13]
+											field "anchor_from": "bottom_left"
+											field "anchor_to": "bottom_left"
+											field "controls":
+												control:
+													element "padding_2":
+														field "type": "panel"
+														field "size": [2, "100%"]
+												control:
+													element "ratings":
+														field "type": "panel"
+														field "size": ["100%c", "100%"]
+														field "bindings":
+															binding:
+																field "binding_type": "collection_details"
+																field "binding_collection_name": "$category_collection"
+																field "binding_collection_prefix": "$category_prefix"
+															binding:
+																field "binding_type": "collection"
+																field "binding_name": "(not #progress_visible)"
+																field "binding_collection_name": "$offers_collection_name"
+																field "binding_name_override": "#visible"
+														field "controls": control: element "rating_text_panel@common_store.rating_text_panel": empty
+												control:
+													element "padding_4":
+														field "type": "panel"
+														field "size": ["fill", "100%"]
+												control:
+													element "offer_prompt_panel":
+														field "type": "panel"
+														field "size": ["100%c", 11]
+														field "controls":
+															control:
+																element "offer_status_text":
+																	field "type": "label"
+																	field "color": "$coin_color"
+																	field "size": ["default", 10]
+																	field "offset": [0, -0.5]
+																	field "text": "#offer_prompt_text"
+																	field "font_type": "smooth"
+																	field "layer": 4
+																	field "bindings":
+																		binding:
+																			field "binding_type": "collection_details"
+																			field "binding_collection_name": "$category_collection"
+																			field "binding_collection_prefix": "$category_prefix"
+																		binding:
+																			field "binding_type": "collection"
+																			field "binding_name": "#offer_prompt_text"
+																			field "binding_collection_name": "$offers_collection_name"
+												control:
+													element "padding_3":
+														field "type": "panel"
+														field "size": [1, "100%"]
+												control:
+													element "coin_panel":
+														field "type": "panel"
+														field "size": ["100%c", "100%c"]
+														field "controls":
+															control:
+																element "offer_coin_icon@common_store.coin_icon":
+																	field "layer": 5
+																	field "bindings":
+																		binding:
+																			field "binding_type": "collection"
+																			field "binding_collection_name": "$offers_collection_name"
+																			field "binding_name": "#offer_coin_visible"
+																			field "binding_name_override": "#visible"
+																		binding:
+																			field "binding_type": "collection_details"
+																			field "binding_collection_name": "$category_collection"
+																			field "binding_collection_prefix": "$category_prefix"
+												control:
+													element "padding_6":
+														field "type": "panel"
+														field "size": [2, "100%"]
+		Changed field "$variables":
+			Total variable: 8 (+1, -0)
+			Added variable "$is_hero_offer|default" of false.
+	Added element "store_offer_item_title":
+		field "type": "label"
+		field "size": ["100%", 10]
+		field "text": "#title_label"
+		field "color": "$body_text_color"
+		field "font_type": "smooth"
+		field "layer": 1
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "$category_collection"
+				field "binding_collection_prefix": "$category_prefix"
+			binding:
+				field "binding_type": "collection"
+				field "binding_collection_name": "$offers_collection_name"
+				field "binding_name": "#title_label"
+	Changed element "suggested_content_offers_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@common_store.banner_fill":
+					Changed field "controls":
+						Changed control:
+							Changed element "key_art@common_store.store_offer_key_art":
+								Changed field "controls":
+									Total control: 1 (+1, -1)
+									Removed control:
+										element "key_art_frame@common.focus_border_white":
+											field "size": ["100% + 2px", "100% + 2px"]
+											field "color": [0, 0, 0]
+											field "layer": 2
+									Added control:
+										element "key_art_frame@common.square_image_border_white":
+											field "size": ["100% + 2px", "100% + 2px"]
+											field "color": [0, 0, 0]
+											field "layer": 2
+						Changed control:
+							Changed element "offer_button@common.button":
+								Changed field "controls":
+									Total control: 2 (+2, -2)
+									Removed control:
+										element "hover@common.focus_border_white":
+											field "controls":
+												control:
+													element "key_art_size_panel":
+														field "type": "panel"
+														field "size": ["100% - 2px", "56.25%x"]
+														field "offset": [0, 1]
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "layer": 1
+														field "controls":
+															control:
+																element "key_art_frame@common.focus_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+									Removed control:
+										element "pressed@common.focus_border_white":
+											field "controls":
+												control:
+													element "key_art_size_panel":
+														field "type": "panel"
+														field "size": ["100% - 2px", "56.25%x"]
+														field "offset": [0, 1]
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "layer": 1
+														field "controls":
+															control:
+																element "key_art_frame@common.focus_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+									Added control:
+										element "hover@common.square_image_border_white":
+											field "controls":
+												control:
+													element "key_art_size_panel":
+														field "type": "panel"
+														field "size": ["100% - 2px", "56.25%x"]
+														field "offset": [0, 1]
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "layer": 1
+														field "controls":
+															control:
+																element "key_art_frame@common.square_image_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+									Added control:
+										element "pressed@common.square_image_border_white":
+											field "controls":
+												control:
+													element "key_art_size_panel":
+														field "type": "panel"
+														field "size": ["100% - 2px", "56.25%x"]
+														field "offset": [0, 1]
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "layer": 1
+														field "controls":
+															control:
+																element "key_art_frame@common.square_image_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+	Changed element "xbl_player_status_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 4 (+1, -1)
+			Removed control:
+				element "border@common.focus_border_white":
+					field "size": ["100%c + 2px", "100%"]
+					field "color": [0, 0, 0]
+					field "controls":
+						control:
+							element "player_pic":
+								field "type": "image"
+								field "size": ["100%y", "100% - 2px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#gamer_pic_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#gamer_pic_file_source"
+										field "binding_name_override": "#texture_file_system"
+			Added control:
+				element "border@common.square_image_border_white":
+					field "size": ["100%c + 2px", "100%"]
+					field "color": [0, 0, 0]
+					field "controls":
+						control:
+							element "player_pic":
+								field "type": "image"
+								field "size": ["100%y", "100% - 2px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#gamer_pic_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#gamer_pic_file_source"
+										field "binding_name_override": "#texture_file_system"
+Changed namespace "convert_purchases_to_xbl":
+	Changed element "image_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "image":
+					Unchanged field "type": "image"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "border@common.focus_border_white":
+								field "size": ["100% + 2px", "100% + 2px"]
+								field "layer": 2
+								field "color": [0, 0, 0]
+						Added control:
+							element "border@common.square_image_border_white":
+								field "size": ["100% + 2px", "100% + 2px"]
+								field "layer": 2
+								field "color": [0, 0, 0]
+Changed namespace "elemconstruct":
+	Changed element "particle_count@common.text_edit_box":
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$focus_override_up" of "FOCUS_OVERRIDE_STOP".
+	Changed element "particle_slider_minus@common.empty_panel":
+		Changed field "controls":
+			Changed control:
+				Changed element "button@common_buttons.light_text_button":
+					Changed field "$variables":
+						Total variable: 4 (+2, -0)
+						Added variable "$focus_override_down_binding_type" of "none".
+						Added variable "$focus_override_down" of "FOCUS_OVERRIDE_STOP".
+Changed namespace "enchanting":
+	Total element: 26 (+0, -1)
+	Changed element "dust_panel":
+		Unchanged field "type": "grid"
+		Changed field "controls":
+			Total control: 3 (+3, -3)
+			Removed control:
+				element "a@dust_template":
+					field "grid_position": [0, 0]
+					field "$variables":
+						variable "$texture_selectable": "textures/ui/dust_selectable_1"
+						variable "$texture_unselectable": "textures/ui/dust_unselectable_1"
+			Removed control:
+				element "b@dust_template":
+					field "grid_position": [0, 1]
+					field "$variables":
+						variable "$texture_selectable": "textures/ui/dust_selectable_2"
+						variable "$texture_unselectable": "textures/ui/dust_unselectable_2"
+			Removed control:
+				element "c@dust_template":
+					field "grid_position": [0, 2]
+					field "$variables":
+						variable "$texture_selectable": "textures/ui/dust_selectable_3"
+						variable "$texture_unselectable": "textures/ui/dust_unselectable_3"
+			Added control:
+				element "a@enchanting.dust_template":
+					field "grid_position": [0, 0]
+					field "$variables":
+						variable "$texture_selectable": "textures/ui/dust_selectable_1"
+						variable "$texture_unselectable": "textures/ui/dust_unselectable_1"
+			Added control:
+				element "b@enchanting.dust_template":
+					field "grid_position": [0, 1]
+					field "$variables":
+						variable "$texture_selectable": "textures/ui/dust_selectable_2"
+						variable "$texture_unselectable": "textures/ui/dust_unselectable_2"
+			Added control:
+				element "c@enchanting.dust_template":
+					field "grid_position": [0, 2]
+					field "$variables":
+						variable "$texture_selectable": "textures/ui/dust_selectable_3"
+						variable "$texture_unselectable": "textures/ui/dust_unselectable_3"
+	Changed element "dust_template":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -2)
+			Removed control element "dust_image_selectable@dust_image_selectable": empty.
+			Removed control element "dust_image_unselectable@dust_image_unselectable": empty.
+			Added control element "dust_image_selectable@enchanting.dust_image_selectable": empty.
+			Added control element "dust_image_unselectable@enchanting.dust_image_unselectable": empty.
+	Changed element "enchant_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 3 (+3, -3)
+			Removed control element "dark_background@dark_background": empty.
+			Removed control element "unselectable_button@unselectable_button": empty.
+			Removed control element "selectable_button@selectable_button": empty.
+			Added control element "dark_background@enchanting.dark_background": empty.
+			Added control element "unselectable_button@enchanting.unselectable_button": empty.
+			Added control element "selectable_button@enchanting.selectable_button": empty.
+	Removed element "enchanting_grid_item":
+		field "type": "panel"
+		field "size": [18, 18]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+	Changed element "enchanting_panel_top_half":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 5 (+1, -1)
+			Changed control:
+				Changed element "grid_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 3 (+1, -1)
+						Removed control:
+							element "dust_panel@dust_panel":
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "layer": 4
+						Added control:
+							element "dust_panel@enchanting.dust_panel":
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "layer": 4
+			Changed control:
+				Changed element "enchanting_book_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "enchanting_book":
+								Unchanged field "type": "custom"
+								Changed field "layer" from 15 to 13.
+			Removed control element "enchanting_label@enchanting_label": empty.
+			Added control element "enchanting_label@enchanting.enchanting_label": empty.
+	Changed element "selectable_button@enchanting.base_button":
+		Changed field "controls":
+			Total control: 5 (+5, -5)
+			Removed control element "default@active_background": empty.
+			Removed control element "hover@active_background_with_hover_text": empty.
+			Removed control element "pressed@dark_background": empty.
+			Removed control element "rune_text@fail_runes": empty.
+			Removed control element "enchant_cost@success_cost": empty.
+			Added control element "default@enchanting.active_background": empty.
+			Added control element "hover@enchanting.active_background_with_hover_text": empty.
+			Added control element "pressed@enchanting.dark_background": empty.
+			Added control element "rune_text@enchanting.fail_runes": empty.
+			Added control element "enchant_cost@enchanting.success_cost": empty.
+	Changed element "unselectable_button@enchanting.base_button":
+		Changed field "controls":
+			Total control: 5 (+5, -5)
+			Removed control element "default@dark_background": empty.
+			Removed control element "hover@dark_background_with_hover_text": empty.
+			Removed control element "pressed@dark_background": empty.
+			Removed control element "rune_text@fail_runes": empty.
+			Removed control element "enchant_cost@fail_cost": empty.
+			Added control element "default@enchanting.dark_background": empty.
+			Added control element "hover@enchanting.dark_background_with_hover_text": empty.
+			Added control element "pressed@enchanting.dark_background": empty.
+			Added control element "rune_text@enchanting.fail_runes": empty.
+			Added control element "enchant_cost@enchanting.fail_cost": empty.
+Changed namespace "enchanting_pocket":
+	Total element: 27 (+0, -5)
+	Removed empty element "active_background@enchanting.active_background".
+	Removed empty element "active_background_hover@enchanting_pocket.active_background".
+	Removed empty element "dark_background@enchanting.dark_background".
+	Removed empty element "dark_background_hover@enchanting_pocket.dark_background".
+	Changed element "enchant_selection_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "grid":
+					Unchanged field "type": "grid"
+					Changed field "controls":
+						Total control: 3 (+3, -3)
+						Removed control:
+							element "button1@enchant_button_panel":
+								field "grid_position": [0, 0]
+								field "$variables":
+									variable "$texture_selectable": "textures/ui/dust_selectable_1"
+									variable "$texture_unselectable": "textures/ui/dust_unselectable_1"
+						Removed control:
+							element "button2@enchant_button_panel":
+								field "grid_position": [0, 1]
+								field "$variables":
+									variable "$texture_selectable": "textures/ui/dust_selectable_2"
+									variable "$texture_unselectable": "textures/ui/dust_unselectable_2"
+						Removed control:
+							element "button3@enchant_button_panel":
+								field "grid_position": [0, 2]
+								field "$variables":
+									variable "$texture_selectable": "textures/ui/dust_selectable_3"
+									variable "$texture_unselectable": "textures/ui/dust_unselectable_3"
+						Added control:
+							element "button1@enchanting_pocket.enchant_button_panel":
+								field "grid_position": [0, 0]
+								field "$variables":
+									variable "$texture_selectable": "textures/ui/dust_selectable_1"
+									variable "$texture_unselectable": "textures/ui/dust_unselectable_1"
+						Added control:
+							element "button2@enchanting_pocket.enchant_button_panel":
+								field "grid_position": [0, 1]
+								field "$variables":
+									variable "$texture_selectable": "textures/ui/dust_selectable_2"
+									variable "$texture_unselectable": "textures/ui/dust_unselectable_2"
+						Added control:
+							element "button3@enchanting_pocket.enchant_button_panel":
+								field "grid_position": [0, 2]
+								field "$variables":
+									variable "$texture_selectable": "textures/ui/dust_selectable_3"
+									variable "$texture_unselectable": "textures/ui/dust_unselectable_3"
+	Removed element "enchanting_image" of field "type": "image".
+	Moved element "lapis_image@enchanting_pocket.enchanting_image" to "lapis_image@enchanting.enchanting_image".
+	Changed element "selectable_button@enchanting.selectable_button":
+		Changed field "controls":
+			Total control: 4 (+3, -3)
+			Removed control element "default@enchanting_pocket.active_background": empty.
+			Removed control element "hover@enchanting_pocket.active_background_hover": empty.
+			Removed control element "pressed@enchanting_pocket.dark_background": empty.
+			Added control element "default@enchanting.active_background": empty.
+			Added control element "hover@enchanting.active_background_with_hover_text": empty.
+			Added control element "pressed@enchanting.dark_background": empty.
+	Changed element "unselectable_button@enchanting.unselectable_button":
+		Changed field "controls":
+			Total control: 4 (+3, -3)
+			Removed control element "default@enchanting_pocket.dark_background": empty.
+			Removed control element "hover@enchanting_pocket.dark_background_hover": empty.
+			Removed control element "pressed@enchanting_pocket.dark_background": empty.
+			Added control element "default@enchanting.dark_background": empty.
+			Added control element "hover@enchanting.dark_background_with_hover_text": empty.
+			Added control element "pressed@enchanting.dark_background": empty.
+Changed namespace "general_section":
+	Changed element "gamertag_controls":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 4 (+2, -0)
+			Added control:
+				element "gamertag_label":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", 12]
+					field "controls":
+						control:
+							element "panel_descriptor":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "offset": [0, 2]
+								field "controls":
+									control:
+										element "label_descriptor":
+											field "type": "label"
+											field "color": "$main_header_text_color"
+											field "layer": 1
+											field "text": "options.gamertag"
+											field "locked_alpha": 0.5
+						control:
+							element "spacer":
+								field "type": "panel"
+								field "size": [5, 0]
+						control:
+							element "gamerpic":
+								field "type": "image"
+								field "size": [12, 12]
+								field "layer": 1
+								field "bindings":
+									binding:
+										field "binding_name": "#gamerpic_texture_path"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#gamerpic_texture_location_type"
+										field "binding_name_override": "#texture_file_system"
+						control:
+							element "spacer_2":
+								field "type": "panel"
+								field "size": [5, 0]
+						control:
+							element "panel_gamertag":
+								field "type": "panel"
+								field "size": ["100%c", "100%"]
+								field "offset": [0, 2]
+								field "controls":
+									control:
+										element "gamertag_label":
+											field "type": "label"
+											field "color": "$main_header_text_color"
+											field "layer": 1
+											field "text": "#gamertag_label"
+											field "locked_alpha": 0.5
+											field "bindings": binding: field "binding_name": "#gamertag_label"
+			Added control:
+				element "spacer":
+					field "type": "panel"
+					field "size": [0, 1]
+		Added field "offset" of [0, 1].
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 19 (+2, -2)
+			Changed control:
+				Changed element "build_info_label_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 4 (+0, -2)
+						Removed control:
+							element "device_id_label":
+								field "type": "label"
+								field "size": ["100%", "default"]
+								field "color": "$body_text_color"
+								field "offset": [2, 0]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "text": "#device_id"
+								field "bindings": binding: field "binding_name": "#device_id"
+						Removed control:
+							element "commerce_id_label":
+								field "type": "label"
+								field "color": "$body_text_color"
+								field "offset": [2, 0]
+								field "size": ["100%", "default"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "text": "#commerce_id"
+								field "bindings": binding: field "binding_name": "#commerce_id"
+			Removed control:
+				element "option_custom_control_0@settings_common.option_custom_control":
+					field "bindings":
+						binding:
+							field "binding_name": "#can_change_name"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.name"
+						variable "$control_name": "general_section.name_controls"
+			Removed control:
+				element "option_custom_control_1@settings_common.option_custom_control":
+					field "bindings":
+						binding:
+							field "binding_name": "#logged_in"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "#gamertag_label"
+						variable "$control_name": "general_section.gamertag_controls"
+						variable "$label_bindings": item 0: field "binding_name": "#gamertag_label"
+			Added control:
+				element "name_controls@settings_common.option_custom_control":
+					field "bindings":
+						binding:
+							field "binding_name": "#can_change_name"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$option_label": "options.name"
+						variable "$control_name": "general_section.name_controls"
+			Added control:
+				element "gamertag_controls@settings_common.option_custom_control":
+					field "bindings":
+						binding:
+							field "binding_name": "#logged_in"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$show_option_label": false
+						variable "$control_name": "general_section.gamertag_controls"
+Changed namespace "how_to_play":
+	Total element: 117 (+2, -0)
+	Added element "conduits_button@how_to_play_common.section_toggle_button" of field "$variables": variable "$section_topic": "conduits".
+	Added element "conduits_section@how_to_play_common.main_sections":
+		field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "conduits_button_toggle"
+				field "source_property_name": "#toggle_state"
+				field "target_property_name": "#visible"
+		field "controls":
+			control: element "paragraph_1@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.conduits.text.1"
+			control: element "padding_1@how_to_play_common.padding": empty
+			control: element "paragraph_2@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.conduits.text.2"
+			control: element "padding_2@how_to_play_common.padding": empty
+			control: element "header_1@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.conduits.header.1"
+			control: element "paragraph_3@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.conduits.text.3"
+			control: element "padding_3@how_to_play_common.padding": empty
+			control: element "paragraph_4@how_to_play_common.paragraph": field "$variables": variable "$text": "howtoplay.conduits.text.4"
+	Changed element "controls_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 49 (+6, -0)
+			Added control element "padding_swim@how_to_play_common.padding": empty.
+			Added control element "paragraph_9_keyboard@how_to_play_common.paragraph_keyboard": field "$variables": variable "$text": "howtoplay.controls.text.swim.keyboard".
+			Added control element "paragraph_9_gamepad@how_to_play_common.paragraph_gamepad": field "$variables": variable "$text": "howtoplay.controls.text.swim.gamepad".
+			Added control element "paragraph_9_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.controls.text.swim.touch".
+			Added control element "paragraph_9_rift_controller@how_to_play_common.paragraph_rift_controller": field "$variables": variable "$text": "howtoplay.controls.text.swim.rift_controller".
+			Added control element "paragraph_9_windowsmr_controller@how_to_play_common.paragraph_windowsmr_controller": field "$variables": variable "$text": "howtoplay.controls.text.swim.windowsmr_controller".
+	Changed element "section_content_panels":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "general_tips_sections":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 59 (+1, -0)
+						Added control element "conduits_section@how_to_play.conduits_section": empty.
+	Changed element "selector_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "how_to_play_selector_pane":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 69 (+31, -30)
+						Changed control:
+							Changed element "realms_button@how_to_play.realms_button":
+								Changed field "$variables":
+									Total variable: 1 (+0, -0)
+									Changed variable "$toggle_group_forced_index" from 52 to 53.
+						Changed control:
+							Changed element "resource_and_behavior_packs_button@how_to_play.resource_and_behavior_packs_button":
+								Changed field "$variables":
+									Total variable: 1 (+0, -0)
+									Changed variable "$toggle_group_forced_index" from 55 to 56.
+						Changed control:
+							Changed element "the_store_button@how_to_play.the_store_button":
+								Changed field "$variables":
+									Total variable: 1 (+0, -0)
+									Changed variable "$toggle_group_forced_index" from 54 to 55.
+						Changed control:
+							Changed element "servers_button@how_to_play.servers_button":
+								Changed field "$variables":
+									Total variable: 1 (+0, -0)
+									Changed variable "$toggle_group_forced_index" from 53 to 54.
+						Changed control:
+							Changed element "multiplayer_button@how_to_play.multiplayer_button":
+								Changed field "$variables":
+									Total variable: 1 (+0, -0)
+									Changed variable "$toggle_group_forced_index" from 51 to 52.
+						Removed control element "beds_button@how_to_play.beds_button": field "$variables": variable "$toggle_group_forced_index": 21.
+						Removed control element "blocks_button@how_to_play.blocks_button": field "$variables": variable "$toggle_group_forced_index": 22.
+						Removed control element "chests_button@how_to_play.chests_button": field "$variables": variable "$toggle_group_forced_index": 23.
+						Removed control element "dyes_button@how_to_play.dyes_button": field "$variables": variable "$toggle_group_forced_index": 24.
+						Removed control element "ender_chest_button@how_to_play.ender_chest_button": field "$variables": variable "$toggle_group_forced_index": 25.
+						Removed control element "farming_button@how_to_play.farming_button": field "$variables": variable "$toggle_group_forced_index": 26.
+						Removed control element "fishing_button@how_to_play.fishing_button": field "$variables": variable "$toggle_group_forced_index": 27.
+						Removed control element "mounts_button@how_to_play.mounts_button": field "$variables": variable "$toggle_group_forced_index": 28.
+						Removed control element "nether_portals_button@how_to_play.nether_portals_button": field "$variables": variable "$toggle_group_forced_index": 29.
+						Removed control element "pets_button@how_to_play.pets_button": field "$variables": variable "$toggle_group_forced_index": 30.
+						Removed control element "ranching_button@how_to_play.ranching_button": field "$variables": variable "$toggle_group_forced_index": 31.
+						Removed control element "transportation_button@how_to_play.transportation_button": field "$variables": variable "$toggle_group_forced_index": 32.
+						Removed control element "trading_button@how_to_play.trading_button": field "$variables": variable "$toggle_group_forced_index": 33.
+						Removed control element "game_settings_button@how_to_play.game_settings_button": field "$variables": variable "$toggle_group_forced_index": 34.
+						Removed control element "difficulty_button@how_to_play.difficulty_button": field "$variables": variable "$toggle_group_forced_index": 35.
+						Removed control element "adventure_mode_button@how_to_play.adventure_mode_button": field "$variables": variable "$toggle_group_forced_index": 36.
+						Removed control element "creative_mode_button@how_to_play.creative_mode_button": field "$variables": variable "$toggle_group_forced_index": 37.
+						Removed control element "commands_button@how_to_play.commands_button": field "$variables": variable "$toggle_group_forced_index": 38.
+						Removed control element "host_and_player_options_button@how_to_play.host_and_player_options_button": field "$variables": variable "$toggle_group_forced_index": 39.
+						Removed control element "command_blocks_button@how_to_play.command_blocks_button": field "$variables": variable "$toggle_group_forced_index": 40.
+						Removed control element "redstone_button@how_to_play.redstone_button": field "$variables": variable "$toggle_group_forced_index": 41.
+						Removed control element "hoppers_button@how_to_play.hoppers_button": field "$variables": variable "$toggle_group_forced_index": 42.
+						Removed control element "droppers_button@how_to_play.droppers_button": field "$variables": variable "$toggle_group_forced_index": 43.
+						Removed control element "dispensers_button@how_to_play.dispensers_button": field "$variables": variable "$toggle_group_forced_index": 44.
+						Removed control element "jukebox_button@how_to_play.jukebox_button": field "$variables": variable "$toggle_group_forced_index": 45.
+						Removed control element "eye_of_ender_button@how_to_play.eye_of_ender_button": field "$variables": variable "$toggle_group_forced_index": 46.
+						Removed control element "the_end_button@how_to_play.the_end_button": field "$variables": variable "$toggle_group_forced_index": 47.
+						Removed control element "end_cities_button@how_to_play.end_cities_button": field "$variables": variable "$toggle_group_forced_index": 48.
+						Removed control element "elytra_button@how_to_play.elytra_button": field "$variables": variable "$toggle_group_forced_index": 49.
+						Removed control element "shulker_boxes_button@how_to_play.shulker_boxes_button": field "$variables": variable "$toggle_group_forced_index": 50.
+						Added control element "conduits_button@how_to_play.conduits_button": field "$variables": variable "$toggle_group_forced_index": 21.
+						Added control element "beds_button@how_to_play.beds_button": field "$variables": variable "$toggle_group_forced_index": 22.
+						Added control element "blocks_button@how_to_play.blocks_button": field "$variables": variable "$toggle_group_forced_index": 23.
+						Added control element "chests_button@how_to_play.chests_button": field "$variables": variable "$toggle_group_forced_index": 24.
+						Added control element "dyes_button@how_to_play.dyes_button": field "$variables": variable "$toggle_group_forced_index": 25.
+						Added control element "ender_chest_button@how_to_play.ender_chest_button": field "$variables": variable "$toggle_group_forced_index": 26.
+						Added control element "farming_button@how_to_play.farming_button": field "$variables": variable "$toggle_group_forced_index": 27.
+						Added control element "fishing_button@how_to_play.fishing_button": field "$variables": variable "$toggle_group_forced_index": 28.
+						Added control element "mounts_button@how_to_play.mounts_button": field "$variables": variable "$toggle_group_forced_index": 29.
+						Added control element "nether_portals_button@how_to_play.nether_portals_button": field "$variables": variable "$toggle_group_forced_index": 30.
+						Added control element "pets_button@how_to_play.pets_button": field "$variables": variable "$toggle_group_forced_index": 31.
+						Added control element "ranching_button@how_to_play.ranching_button": field "$variables": variable "$toggle_group_forced_index": 32.
+						Added control element "transportation_button@how_to_play.transportation_button": field "$variables": variable "$toggle_group_forced_index": 33.
+						Added control element "trading_button@how_to_play.trading_button": field "$variables": variable "$toggle_group_forced_index": 34.
+						Added control element "game_settings_button@how_to_play.game_settings_button": field "$variables": variable "$toggle_group_forced_index": 35.
+						Added control element "difficulty_button@how_to_play.difficulty_button": field "$variables": variable "$toggle_group_forced_index": 36.
+						Added control element "adventure_mode_button@how_to_play.adventure_mode_button": field "$variables": variable "$toggle_group_forced_index": 37.
+						Added control element "creative_mode_button@how_to_play.creative_mode_button": field "$variables": variable "$toggle_group_forced_index": 38.
+						Added control element "commands_button@how_to_play.commands_button": field "$variables": variable "$toggle_group_forced_index": 39.
+						Added control element "host_and_player_options_button@how_to_play.host_and_player_options_button": field "$variables": variable "$toggle_group_forced_index": 40.
+						Added control element "command_blocks_button@how_to_play.command_blocks_button": field "$variables": variable "$toggle_group_forced_index": 41.
+						Added control element "redstone_button@how_to_play.redstone_button": field "$variables": variable "$toggle_group_forced_index": 42.
+						Added control element "hoppers_button@how_to_play.hoppers_button": field "$variables": variable "$toggle_group_forced_index": 43.
+						Added control element "droppers_button@how_to_play.droppers_button": field "$variables": variable "$toggle_group_forced_index": 44.
+						Added control element "dispensers_button@how_to_play.dispensers_button": field "$variables": variable "$toggle_group_forced_index": 45.
+						Added control element "jukebox_button@how_to_play.jukebox_button": field "$variables": variable "$toggle_group_forced_index": 46.
+						Added control element "eye_of_ender_button@how_to_play.eye_of_ender_button": field "$variables": variable "$toggle_group_forced_index": 47.
+						Added control element "the_end_button@how_to_play.the_end_button": field "$variables": variable "$toggle_group_forced_index": 48.
+						Added control element "end_cities_button@how_to_play.end_cities_button": field "$variables": variable "$toggle_group_forced_index": 49.
+						Added control element "elytra_button@how_to_play.elytra_button": field "$variables": variable "$toggle_group_forced_index": 50.
+						Added control element "shulker_boxes_button@how_to_play.shulker_boxes_button": field "$variables": variable "$toggle_group_forced_index": 51.
+	Changed element "weapons_section@how_to_play_common.main_sections":
+		Changed field "controls":
+			Total control: 18 (+4, -0)
+			Added control element "padding_5@how_to_play_common.padding": empty.
+			Added control element "header_4@how_to_play_common.header": field "$variables": variable "$text": "howtoplay.weapons.header.trident".
+			Added control element "paragraph_6_not_touch@how_to_play_common.paragraph_not_touch": field "$variables": variable "$text": "howtoplay.weapons.text.trident.notTouch".
+			Added control element "paragraph_6_touch@how_to_play_common.paragraph_touch": field "$variables": variable "$text": "howtoplay.weapons.text.trident.touch".
+Changed namespace "mashup_home":
+	Changed element "screenshots_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@banner_empty":
+					Changed field "controls":
+						Changed control:
+							Changed element "screenshot_button@common.button":
+								Changed field "controls":
+									Total control: 2 (+2, -2)
+									Removed control element "hover@common.focus_border_white": empty.
+									Removed control element "pressed@common.focus_border_white": empty.
+									Added control element "hover@common.square_image_border_white": empty.
+									Added control element "pressed@common.square_image_border_white": empty.
+Changed namespace "pause":
+	Changed element "player_gamertag":
+		Unchanged field "type": "label"
+		Changed field "size":
+			Unchanged item 0: "default"
+			Changed item 1 from 8 to 10.
+	Changed element "players_label":
+		Unchanged field "type": "label"
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from 8 to 10.
+	Changed element "transparent_background":
+		Unchanged field "type": "image"
+		Changed field "texture" from "textures/ui/control" to "textures/ui/menubackground".
+Changed namespace "permissions":
+	Changed element "player_gamer_pic":
+		Unchanged field "type": "image"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "player_panel_black_border@common.focus_border_white":
+					field "size": ["100% + 2px", "100% + 2px"]
+					field "color": [0, 0, 0]
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+			Added control:
+				element "player_panel_black_border@common.square_image_border_white":
+					field "size": ["100% + 2px", "100% + 2px"]
+					field "color": [0, 0, 0]
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+Changed namespace "play":
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "friends_grid@play.label_content_template":
+								Changed field "$variables":
+									Total variable: 7 (+1, -0)
+									Added variable "$header_icon_visible" of true.
+Changed namespace "purchase_common":
+	Changed element "offer_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@purchase_common.banner_fill":
+					Changed field "controls":
+						Changed control:
+							Changed element "offer_button":
+								Unchanged field "type": "button"
+								Changed field "controls":
+									Total control: 2 (+2, -2)
+									Removed control element "hover@common.focus_border_white": empty.
+									Removed control element "pressed@common.focus_border_white": empty.
+									Added control element "hover@common.square_image_border_white": empty.
+									Added control element "pressed@common.square_image_border_white": empty.
+Changed namespace "realms_whitelist":
+	Total element: 81 (+0, -7)
+	Changed element "blocked_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "blocked_panel@blocked_panel": empty.
+			Added control element "blocked_panel@realms_whitelist.blocked_panel": empty.
+	Changed element "blocked_panel@realms_common.main_banner":
+		Changed field "controls":
+			Total control: 2 (+1, -1)
+			Removed control element "blocked_stack_panel@blocked_stack_panel": empty.
+			Added control element "gamer_stack_panel@realms_whitelist.gamer_stack_panel": empty.
+	Removed element "blocked_stack_panel":
+		field "type": "stack_panel"
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100% - 6px"]
+		field "controls":
+			control: element "ab@horizontal_indent": field "size": [3, 0]
+			control: element "gamerpic_panel@gamerpic_panel": field "layer": 3
+			control: element "cc@horizontal_indent": field "size": [1, 0]
+			control: element "gamertag_label_panel@realms_whitelist.gamertag_label_panel": field "layer": 4
+	Changed element "friends_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 21 (+1, -0)
+			Added control element "spacing_gap_members_top@realms_whitelist.spacing_gap": empty.
+	Changed element "gamer_panel@realms_common.main_banner":
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control:
+				element "gamer_stack_panel@realms_whitelist.gamer_stack_panel":
+					field "bindings":
+						binding:
+							field "binding_type": "view"
+							field "source_control_name": "gamertag_image"
+							field "resolve_sibling_scope": true
+							field "source_property_name": "(not (#texture = ''))"
+							field "target_property_name": "#visible"
+			Added control element "gamer_stack_panel@realms_whitelist.gamer_stack_panel": empty.
+	Changed element "gamer_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 6 (+6, -6)
+			Removed control element "ab@realms_whitelist.horizontal_indent": field "size": [3, 0].
+			Removed control element "left_button_panel@realms_whitelist.left_button_panel": empty.
+			Removed control:
+				element "bb@realms_whitelist.horizontal_indent":
+					field "visible": "($collection_binding_name = $uninvited_collection_name)"
+					field "bindings":
+						binding:
+							field "binding_name": "#player_not_removed"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Removed control element "gamerpic_panel@gamerpic_panel": field "layer": 3.
+			Removed control:
+				element "cc@realms_whitelist.horizontal_indent":
+					field "size": [1, 0]
+					field "visible": "($collection_binding_name = $uninvited_collection_name)"
+					field "bindings":
+						binding:
+							field "binding_name": "#player_not_removed"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Removed control element "gamertag_label_panel@realms_whitelist.gamertag_label_panel": field "layer": 4.
+			Added control element "spacing1@realms_whitelist.horizontal_indent": field "size": [3, 0].
+			Added control element "player_status_panel@realms_whitelist.player_status_panel": empty.
+			Added control element "spacing2@realms_whitelist.horizontal_indent": empty.
+			Added control element "gamerpic_panel@realms_whitelist.gamerpic_panel": empty.
+			Added control element "spacing3@realms_whitelist.horizontal_indent": field "size": [1, 0].
+			Added control element "gamertag_label_panel@realms_whitelist.gamertag_label_panel": empty.
+		Added field "layer" of 6.
+		Added field "bindings":
+			binding:
+				field "binding_type": "view"
+				field "source_control_name": "gamertag_image"
+				field "resolve_sibling_scope": true
+				field "source_property_name": "(not (#texture = ''))"
+				field "target_property_name": "#visible"
+	Changed element "gamerpic_panel":
+		Unchanged field "type": "panel"
+		Removed field "visible" of "($collection_binding_name = $uninvited_collection_name)".
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#player_not_removed"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_binding_name"
+	Removed element "left_button_panel":
+		field "type": "panel"
+		field "size": [21, 21]
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "ignored": "($collection_binding_name = $uninvited_collection_name)"
+		field "controls":
+			control: element "left_options_button_panel@realms_whitelist.left_options_button_panel": field "layer": 1
+			control:
+				element "pending_invites_left_icon@realms_whitelist.pending_invites_left_icon":
+					field "offset": [0, 2]
+					field "layer": 3
+		field "bindings":
+			binding:
+				field "binding_name": "#player_not_removed"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_binding_name"
+	Removed element "left_options_button_panel":
+		field "type": "panel"
+		field "size": [21, 21]
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "controls":
+			control: element "invite_button@realms_whitelist.invite_button": empty
+			control: element "member_settings_toggle@realms_whitelist.member_settings_toggle": empty
+	Removed element "member_settings_toggle@common_toggles.light_image_toggle_collection":
+		field "size": [21, 21]
+		field "layer": 1
+		field "ignored": "($collection_binding_name = $uninvited_collection_name)"
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "$variables":
+			variable "$button_content": "realms_whitelist.more_icon"
+			variable "$toggle_state_binding_name": "#member_settings"
+			variable "$toggle_name": "#member_settings"
+			variable "$toggle_binding_type": "collection"
+			variable "$toggle_grid_collection_name": "$collection_binding_name"
+			variable "$toggle_enabled_binding_name": "#members_list_enabled"
+			variable "$toggle_enabled_binding_type": "global"
+	Removed element "pending_invites_icon":
+		field "type": "image"
+		field "texture": "textures/ui/invite_base"
+		field "size": [16, 16]
+	Removed element "pending_invites_left_icon@realms_whitelist.pending_invites_icon":
+		field "ignored": "($collection_binding_name = $invited_collection_name or $collection_binding_name = $member_collection_name)"
+		field "bindings":
+			binding:
+				field "binding_name": "#pending_invite_left"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_binding_name"
+	Removed element "pending_invites_right_icon@realms_whitelist.pending_invites_icon":
+		field "ignored": "($collection_binding_name = $uninvited_collection_name)"
+		field "bindings":
+			binding:
+				field "binding_name": "#pending_invite_right"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_binding_name"
+	Changed element "player_offline_icon":
+		Unchanged field "type": "image"
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#player_offline"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_binding_name"
+	Changed element "player_online_icon":
+		Unchanged field "type": "image"
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#player_online"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_binding_name"
+	Changed element "player_status_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+2, -3)
+			Removed control element "player_online_icon@realms_whitelist.player_online_icon": field "layer": 1.
+			Removed control element "player_offline_icon@realms_whitelist.player_offline_icon": field "layer": 2.
+			Removed control:
+				element "pending_invites_right_icon@realms_whitelist.pending_invites_right_icon":
+					field "offset": [0, 2]
+					field "layer": 3
+			Added control:
+				element "player_online_icon@realms_whitelist.player_online_icon":
+					field "bindings":
+						binding:
+							field "binding_name": "#player_online"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Added control:
+				element "player_offline_icon@realms_whitelist.player_offline_icon":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #player_online)"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+		Removed field "ignored" of "($collection_binding_name = $uninvited_collection_name)".
+		Removed field "bindings":
+			binding:
+				field "binding_name": "#player_status_visible"
+				field "binding_name_override": "#visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "$collection_binding_name"
+	Changed element "right_controls_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 2 (+1, -2)
+			Removed control element "player_status_panel@realms_whitelist.player_status_panel": empty.
+			Removed control element "uninvited_friends_invite_button@invite_button": field "size": [62, 21].
+			Added control element "uninvited_friends_invite_button@realms_whitelist.invite_button": field "size": [62, 21].
+Changed namespace "resource_packs":
+	Changed element "selected_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "top_panel":
+					Unchanged field "type": "panel"
+					Added field "bindings":
+						binding:
+							field "binding_name": "#force_pack_download_enabled_level"
+							field "binding_name_override": "#visible"
+Changed namespace "skin_picker":
+	Changed element "pack_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "header":
+					Unchanged field "type": "stack_panel"
+					Changed field "size":
+						Unchanged item 0: "100%"
+						Changed item 1 from "10%" to 10.
+	Changed element "standard_header@skin_picker.label":
+		Changed field "size":
+			Unchanged item 0: "100%"
+			Changed item 1 from "10%" to 10.
+Changed namespace "start":
+	Changed element "online_buttons_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "stacked_column":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "nx_signin_btn@start.column_frame":
+								Changed field "size":
+									Changed item 0 from 120 to 130.
+									Unchanged item 1: 32
+Changed namespace "storage_management":
+	Changed element "search_behavior_controls@storage_management.resource_sub_item":
+		Changed field "$variables":
+			Total variable: 3 (+0, -0)
+			Changed variable "$panel_prefix" from "search" to "behavior".
+	Changed element "search_cached_controls@storage_management.resource_sub_item":
+		Changed field "$variables":
+			Total variable: 4 (+0, -0)
+			Changed variable "$panel_prefix" from "search" to "cache".
+	Changed element "search_resource_controls@storage_management.resource_sub_item":
+		Changed field "$variables":
+			Total variable: 3 (+0, -0)
+			Changed variable "$panel_prefix" from "search" to "resource".
+	Changed element "search_skin_controls@storage_management.resource_sub_item":
+		Changed field "$variables":
+			Total variable: 4 (+0, -0)
+			Changed variable "$panel_prefix" from "search" to "skin".
+	Changed element "search_world_controls@storage_management.resource_sub_item":
+		Changed field "$variables":
+			Total variable: 4 (+0, -0)
+			Changed variable "$panel_prefix" from "search" to "world".
+	Changed element "search_world_template_controls@storage_management.resource_sub_item":
+		Changed field "$variables":
+			Total variable: 4 (+0, -0)
+			Changed variable "$panel_prefix" from "search" to "world_template".
+Changed namespace "store_item_list":
+	Changed element "store_offer_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@common_store.banner_fill":
+					Changed field "controls":
+						Changed control:
+							Changed element "offer_button@common.button":
+								Changed field "controls":
+									Total control: 3 (+2, -2)
+									Removed control:
+										element "hover@common.focus_border_white":
+											field "controls":
+												control:
+													element "key_art_size_panel":
+														field "type": "panel"
+														field "size": ["100% - 2px", "56.25%x"]
+														field "offset": [0, 1]
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "layer": 1
+														field "controls":
+															control:
+																element "key_art_frame@common.focus_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+									Removed control:
+										element "pressed@common.focus_border_white":
+											field "controls":
+												control:
+													element "key_art_size_panel":
+														field "type": "panel"
+														field "size": ["100% - 2px", "56.25%x"]
+														field "offset": [0, 1]
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "layer": 1
+														field "controls":
+															control:
+																element "key_art_frame@common.focus_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+									Added control:
+										element "hover@common.square_image_border_white":
+											field "controls":
+												control:
+													element "key_art_size_panel":
+														field "type": "panel"
+														field "size": ["100% - 2px", "56.25%x"]
+														field "offset": [0, 1]
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "layer": 1
+														field "controls":
+															control:
+																element "key_art_frame@common.square_image_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+									Added control:
+										element "pressed@common.square_image_border_white":
+											field "controls":
+												control:
+													element "key_art_size_panel":
+														field "type": "panel"
+														field "size": ["100% - 2px", "56.25%x"]
+														field "offset": [0, 1]
+														field "anchor_from": "top_middle"
+														field "anchor_to": "top_middle"
+														field "layer": 1
+														field "controls":
+															control:
+																element "key_art_frame@common.square_image_border_white":
+																	field "size": ["100% + 2px", "100% + 2px"]
+																	field "layer": 2
+						Changed control:
+							Changed element "key_art@store_item_list.store_offer_key_art":
+								Changed field "controls":
+									Total control: 1 (+1, -1)
+									Removed control:
+										element "key_art_frame@common.focus_border_white":
+											field "size": ["100% + 2px", "100% + 2px"]
+											field "color": [0, 0, 0]
+											field "layer": 2
+									Added control:
+										element "key_art_frame@common.square_image_border_white":
+											field "size": ["100% + 2px", "100% + 2px"]
+											field "color": [0, 0, 0]
+											field "layer": 2
+Changed namespace "store_search":
+	Changed element "main_panel":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "seach_object@common_store.search_object":
+					Added field "layer" of 6.
+	Changed element "search_offer_content":
+		Unchanged field "type": "panel"
+		Added field "bindings":
+			binding:
+				field "binding_name": "(not #trending_page_loading_visible)"
+				field "binding_name_override": "#visible"
+Changed namespace "world_panorama":
+	Changed element "panorama_input_panel":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "image_border@common.focus_border_white":
+					field "color": [0, 0, 0]
+					field "layer": 4
+					field "controls":
+						control:
+							element "key_art":
+								field "type": "custom"
+								field "renderer": "panorama_renderer"
+								field "rotation": "gesture_x"
+								field "size": ["100% - 2px", "100% - 2px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#panorama_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#panorama_texture_file_system"
+										field "binding_name_override": "#texture_file_system"
+									binding:
+										field "binding_name": "#panorama_view"
+										field "binding_type": "global"
+									binding:
+										field "binding_name": "#panorama_view"
+										field "binding_type": "global"
+									binding:
+										field "binding_type": "view"
+										field "source_control_name": "screenshot"
+										field "source_property_name": "#gesture_mouse_delta_x"
+										field "target_property_name": "#gesture_mouse_delta_x"
+						control:
+							element "progress_loading@common_store.progress_loading":
+								field "layer": 2
+								field "$variables":
+									variable "$source_control_name": "key_art"
+									variable "$source_property_name": "(#texture = '')"
+			Added control:
+				element "image_border@common.square_image_border_white":
+					field "color": [0, 0, 0]
+					field "layer": 4
+					field "controls":
+						control:
+							element "key_art":
+								field "type": "custom"
+								field "renderer": "panorama_renderer"
+								field "rotation": "gesture_x"
+								field "size": ["100% - 2px", "100% - 2px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#panorama_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#panorama_texture_file_system"
+										field "binding_name_override": "#texture_file_system"
+									binding:
+										field "binding_name": "#panorama_view"
+										field "binding_type": "global"
+									binding:
+										field "binding_name": "#panorama_view"
+										field "binding_type": "global"
+									binding:
+										field "binding_type": "view"
+										field "source_control_name": "screenshot"
+										field "source_property_name": "#gesture_mouse_delta_x"
+										field "target_property_name": "#gesture_mouse_delta_x"
+						control:
+							element "progress_loading@common_store.progress_loading":
+								field "layer": 2
+								field "$variables":
+									variable "$source_control_name": "key_art"
+									variable "$source_property_name": "(#texture = '')"
+Changed namespace "xbl_console_signin_succeeded":
+	Changed element "profile_pic":
+		Unchanged field "type": "image"
+		Added field "layer" of 2.
+Changed namespace "xbl_first_launch":
+	Total element: 10 (+1, -0)
+	Added element "horizontal_break":
+		field "type": "image"
+		field "texture": "textures/ui/horizontalbreak"
+	Changed element "main_panel":
+		Unchanged field "type": "input_panel"
+		Changed field "controls":
+			Total control: 1 (+1, -3)
+			Removed control:
+				element "common_panel@common.common_panel":
+					field "$variables":
+						variable "$dialog_background": "dialog_background_hollow_3"
+						variable "$show_divider": true
+						variable "$divider_offset":
+							item 0: "100%-98px"
+							item 1: "22px"
+			Removed control:
+				element "title_label":
+					field "type": "label"
+					field "offset": [0, 8]
+					field "text": "xblLogin.LoginMessageTitle"
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "layer": 2
+					field "color": "$title_text_color"
+			Removed control:
+				element "myimage@title_image_panel":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": ["100%-16px", "100%-31px"]
+					field "offset": [8, 23]
+			Added control:
+				element "dialog@common_dialogs.main_panel_no_buttons":
+					field "$variables":
+						variable "$text_name": "xblLogin.LoginMessageTitle"
+						variable "$child_control": "xbl_first_launch.title_image_panel"
+						variable "$show_divider": true
+						variable "$divider_offset":
+							item 0: "100% - 100.83px"
+							item 1: "22px"
+	Changed element "title_image_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+2, -1)
+			Changed control:
+				Changed element "title_image":
+					Unchanged field "type": "image"
+					Changed field "size":
+						Changed item 0 from 82 to 87.83.
+						Changed item 1 from 75 to 80.33.
+					Changed field "offset":
+						Changed item 0 from -2 to 2.
+						Changed item 1 from 1 to -2.
+			Changed control:
+				Changed element "message_label":
+					Unchanged field "type": "label"
+					Changed field "size":
+						Changed item 0 from "100%-93px" to "100%-96.73px".
+						Changed item 1 from "100% - 3px" to "100%".
+					Changed field "anchor_to" from "top_middle" to "top_left".
+					Changed field "anchor_from" from "top_middle" to "top_left".
+					Removed field "offset" of [-45, 1].
+					Added field "font_type" of "smooth".
+			Removed control:
+				element "a@xbl_signin_button":
+					field "size": [82, 35]
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "offset": [-2, -2]
+			Added control:
+				element "sign_in_button@xbl_signin_button":
+					field "size": [89.83, 33]
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "offset": [3, 3]
+					field "layer": 4
+			Added control:
+				element "horizontal_break@xbl_first_launch.horizontal_break":
+					field "size": [89.83, 37]
+					field "offset": [3, 3]
+					field "anchor_from": "bottom_right"
+					field "anchor_to": "bottom_right"
+					field "layer": 3
+		Added field "size" of ["100% - 4px", "100% - 4px"].
+Changed namespace "xbl_profile_card":
+	Changed element "player_gamer_pic":
+		Unchanged field "type": "image"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control:
+				element "player_panel_black_border@common.focus_border_white":
+					field "size": ["100% + 2px", "100% + 2px"]
+					field "color": [0, 0, 0]
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+			Added control:
+				element "player_panel_black_border@common.square_image_border_white":
+					field "size": ["100% + 2px", "100% + 2px"]
+					field "color": [0, 0, 0]
+					field "anchor_from": "center"
+					field "anchor_to": "center"

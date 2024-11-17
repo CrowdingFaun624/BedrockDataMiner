@@ -1,0 +1,469 @@
+Difference of "shaders" between "1.6.2" and "1.7.0.2" (beta of "1.7.0").
+
+Changed file "ShaderConstants.fxh":
+	Total line: 272 (+35, -21)
+	          '''
+	          ...
+	150 150   }
+	151 151   
+	152 152   #else
+	153 153   
+	154 154   cbuffer WorldConstantsStereographic {
+	    155 +     float4x4 WORLDVIEWPROJ_STEREO[2];
+	    156 +     float4x4 WORLD_STEREO;
+	    157 +     float4x4 WORLDVIEW_STEREO[2];
+	    158 +     float4x4 PROJ_STEREO[2];
+	    159 + }
+	    160 + 
+	    161 + #endif
+	    162 + 
+	    163 + cbuffer AnimationConstants {
+	    164 + 	float4x4 BONES[8];
+	    165 + }
+	    166 + 
+	    167 + cbuffer ShaderConstants : register(b3)
+	    168 + {
+	    169 +     float4 CURRENT_COLOR;
+	    170 +     float4 DARKEN;
+	    171 +     float3 TEXTURE_DIMENSIONS;
+	    172 +     float1 HUD_OPACITY;
+	    173 +     float4x4 UV_TRANSFORM;
+	    174 +     int MSAA_SAMPLECOUNT;
+	    175 + }
+	    176 + 
+	    177 + cbuffer WeatherConstants
+	    178 + {
+	    179 +     float4 POSITION_OFFSET;
+	    180 +     float4 VELOCITY;
+	    181 +     float4 ALPHA;
+	    182 +     float4 VIEW_POSITION;
+	    183 +     float4 SIZE_SCALE;
+	    184 +     float4 FORWARD;
+	    185 +     float4 UV_INFO;
+	    186 +     float4 PARTICLE_BOX;
+	155     - 	float4x4 WORLDVIEWPROJ_STEREO[2];
+	156     - 	float4x4 WORLD_STEREO;
+	157     - 	float4x4 WORLDVIEW_STEREO[2];
+	158     - 	float4x4 PROJ_STEREO[2];
+	159     - }
+	160     - 
+	161     - #endif
+	162     - 
+	163     - cbuffer AnimationConstants {
+	164     - 	float4x4 BONES[8];
+	165 187   }
+	166 188   
+	    189 + cbuffer FlipbookTextureConstants
+	167     - cbuffer ShaderConstants : register(b3)
+	168 190   {
+	    191 +     float1 V_OFFSET;
+	169     -     float4 CURRENT_COLOR;
+	    192 +     float1 V_BLEND_OFFSET;
+	170     -     float4 DARKEN;
+	    193 + }
+	    194 + 
+	    195 + cbuffer EffectsConstants
+	    196 + {
+	    197 +     float2 EFFECT_UV_OFFSET;
+	    198 + 
+	171     -     float3 TEXTURE_DIMENSIONS;
+	172     -     float1 HUD_OPACITY;
+	173     -     float4x4 UV_TRANSFORM;
+	174     - 	int MSAA_SAMPLECOUNT;
+	175     - }
+	176 199   
+	177     - cbuffer WeatherConstants
+	178     - {
+	179     -     float4 POSITION_OFFSET;
+	180     -     float4 VELOCITY;
+	    200 + }
+	    201 + 
+	    202 + cbuffer BannerConstants
+	    203 + {
+	    204 +     float4 BANNER_COLORS[7];
+	    205 +     float4 BANNER_UV_OFFSETS[7];
+	181     -     float4 ALPHA;
+	182     -     float4 VIEW_POSITION;
+	183     -     float4 SIZE_SCALE;
+	184     -     float4 FORWARD;
+	185     -     float4 UV_INFO;
+	186     -     float4 PARTICLE_BOX;
+	187 206   }
+	188 207   
+	    208 + cbuffer TextConstants
+	189     - cbuffer FlipbookTextureConstants
+	190 209   {
+	    210 +     float1 GLYPH_SMOOTH_RADIUS;
+	    211 +     float1 GLYPH_CUTOFF;
+	    212 +     float1 OUTLINE_CUTOFF;
+	    213 +     float4 OUTLINE_COLOR;
+	191     -     float1 V_OFFSET;
+	192     -     float1 V_BLEND_OFFSET;
+	193     - }
+	194     - 
+	    214 +     float1 SHADOW_SMOOTH_RADIUS;
+	    215 +     float4 SHADOW_COLOR;
+	    216 +     float2 SHADOW_OFFSET;
+	195     - cbuffer EffectsConstants
+	196     - {
+	197     -     float2 EFFECT_UV_OFFSET;
+	198     - 
+	199     - 
+	200 217   }
+	201     - 
+	    218 + cbuffer DebugConstants
+	202     - cbuffer BannerConstants
+	203 219   {
+	204     -     float4 BANNER_COLORS[7];
+	    220 +     float TEXTURE_ARRAY_INDEX_0;
+	    221 + };
+	205     -     float4 BANNER_UV_OFFSETS[7];
+	206     - }
+	207 222   
+	    223 + cbuffer InterFrameConstants
+	208     - cbuffer TextConstants
+	209 224   {
+	    225 +     // in secs. This is reset every 2 mins. so the range is [0, 120)
+	210     -     float1 GLYPH_SMOOTH_RADIUS;
+	211     -     float1 GLYPH_CUTOFF;
+	    226 +     // make sure your shader handles the case when it transitions from 120 to 0
+	    227 +     float TOTAL_REAL_WORLD_TIME;
+	    228 +     float4x4 CUBE_MAP_ROTATION;
+	212     -     float1 OUTLINE_CUTOFF;
+	213     -     float4 OUTLINE_COLOR;
+	214     -     float1 SHADOW_SMOOTH_RADIUS;
+	    229 + };
+	    230 + 
+	    231 + cbuffer PostProcessConstants {
+	    232 +     int GaussianBlurSize;
+	    233 +     float DepthOfFieldNearEndDepth;
+	    234 +     float DepthOfFieldFarStartDepth;
+	    235 +     float DepthOfFieldFarEndDepth;
+	215     -     float4 SHADOW_COLOR;
+	216     -     float2 SHADOW_OFFSET;
+	217     - }
+	218     - cbuffer DebugConstants
+	219     - {
+	220     -     float TEXTURE_ARRAY_INDEX_0;
+	221 236   };
+	222 237   
+	    238 + cbuffer UITransformsConstants
+	223     - cbuffer InterFrameConstants
+	224 239   {
+	225     - 	// in secs. This is reset every 2 mins. so the range is [0, 120)
+	226     - 	// make sure your shader handles the case when it transitions from 120 to 0
+	227     -     float TOTAL_REAL_WORLD_TIME;
+	    240 +     float4x4 TRANSFORM;
+	228     -     float4x4 CUBE_MAP_ROTATION;
+	229 241   };
+	230 242   
+	231     - cbuffer PostProcessConstants {
+	232     - 	int GaussianBlurSize;
+	    243 + cbuffer UIStandardPrimitivePixelConstants
+	    244 + {
+	    245 +     int SHADER_TYPE;
+	233     - 	float DepthOfFieldNearEndDepth;
+	234     - 	float DepthOfFieldFarStartDepth;
+	235     - 	float DepthOfFieldFarEndDepth;
+	236 246   };
+	237 247   
+	    248 + cbuffer UIStandardPrimitiveAdditionalPixelConstants
+	238     - cbuffer UITransformsConstants
+	239 249   {
+	    250 +     float4 PRIM_PROPS_0;
+	    251 +     float4 PRIM_PROPS_1;
+	240     -     float4x4 TRANSFORM;
+	241 252   };
+	242 253   
+	    254 + cbuffer UIEffectsPixelConstants
+	243     - cbuffer UIStandardPrimitivePixelConstants
+	244 255   {
+	    256 +     float4 COEFFICIENTS[3];
+	    257 +     float4 PIXEL_OFFSETS[6];
+	245     -     int SHADER_TYPE;
+	246 258   };
+	247 259   
+	    260 + cbuffer UIRenoirShaderVSConstants
+	248     - cbuffer UIStandardPrimitiveAdditionalPixelConstants
+	249 261   {
+	    262 +     float4 RENOIR_SHADER_VS_PROPS_0;
+	    263 +     float4x4 COORD_TRANSFORM;
+	250     -     float4 PRIM_PROPS_0;
+	251     -     float4 PRIM_PROPS_1;
+	252 264   };
+	253 265   
+	    266 + cbuffer UIRenoirShaderPSConstants
+	254     - cbuffer UIEffectsPixelConstants
+	255 267   {
+	    268 +     float4 RENOIR_SHADER_PS_PROPS_0;
+	    269 +     float4 RENOIR_SHADER_PS_PROPS_1;
+	    270 +     float4 RENOIR_SHADER_PS_PROPS_2;
+	    271 +     float4 RENOIR_SHADER_PS_PROPS_3;
+	256     -     float4 COEFFICIENTS[3];
+	257     -     float4 PIXEL_OFFSETS[6];
+	258 272   };
+	          '''
+Added file "hummingbird/CohRenoirShaderPS.hlsl":
+	'''
+	/*
+	This file is part of Renoir, a modern graphics library.
+	
+	Copyright (c) 2012-2016 Coherent Labs AD and/or its licensors. All
+	rights reserved in all media.
+	
+	The coded instructions, statements, computer programs, and/or related
+	material (collectively the "Data") in these files contain confidential
+	and unpublished information proprietary Coherent Labs and/or its
+	licensors, which is protected by United States of America federal
+	copyright law and by international treaties.
+	
+	This software or source code is supplied under the terms of a license
+	agreement and nondisclosure agreement with Coherent Labs AD and may
+	not be copied, disclosed, or exploited except in accordance with the
+	terms of that agreement. The Data may not be disclosed or distributed to
+	third parties, in whole or in part, without the prior written consent of
+	Coherent Labs AD.
+	
+	COHERENT LABS MAKES NO REPRESENTATION ABOUT THE SUITABILITY OF THIS
+	SOURCE CODE FOR ANY PURPOSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT
+	HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+	MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE
+	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER, ITS AFFILIATES,
+	PARENT COMPANIES, LICENSORS, SUPPLIERS, OR CONTRIBUTORS BE LIABLE FOR
+	ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+	OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+	ANY WAY OUT OF THE USE OR PERFORMANCE OF THIS SOFTWARE OR SOURCE CODE,
+	EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	*/
+	
+	#include "../ShaderConstants.fxh"
+	
+	struct PS_Input {
+		float4 Position : SV_Position;
+		float4 Color : TEXCOORD0;
+		float4 Additional: TEXCOORD1;
+		float3 ScreenNormalPosition : TEXCOORD2;
+		float4 VaryingParam0 : TEXCOORD3;
+		float4 VaryingParam1 : TEXCOORD4;
+	};
+	
+	struct PS_Output {
+		float4 color : SV_Target;
+	};
+	
+	#define PS_INPUT_ADDITIONAL_INTERP_MODIFIER centroid
+	#define SAMPLE2D(tex, uv) tex.Sample(TextureSampler0, uv)
+	#define txMask TEXTURE_1
+	#define txGradient TEXTURE_2
+	
+	static const int PSTF_ColorFromTexture = 0x1;
+	static const int PSTF_GradientLinear = 0x2;
+	static const int PSTF_GradientRadial = 0x4;
+	static const int PSTF_Gradient2Point = 0x8;
+	static const int PSTF_Gradient3PointSymmetrical = 0x10;
+	static const int PSTF_GradientFromTexture = 0x20;
+	static const int PSTF_HasMask = 0x40;
+	
+	#define IS_SET(value, flag) value & flag
+	
+	void main(in PS_Input input, out PS_Output PSOutput) {
+		float tVal = 0.f;
+	
+		if (IS_SET(SHADER_TYPE, PSTF_GradientLinear)) {
+			tVal = input.VaryingParam0.x;
+		}
+		else if (IS_SET(SHADER_TYPE, PSTF_GradientRadial)) {
+			tVal = length(input.VaryingParam0.xy);
+		}
+	
+		float4 colorTemp;
+		if (IS_SET(SHADER_TYPE, PSTF_Gradient2Point)) {
+			colorTemp = lerp(RENOIR_SHADER_PS_PROPS_0, RENOIR_SHADER_PS_PROPS_2, saturate(tVal));
+		}
+		else if (IS_SET(SHADER_TYPE, PSTF_Gradient3PointSymmetrical)) {
+			float oneMinus2t = 1.0 - (2.0 * tVal);
+			colorTemp = clamp(oneMinus2t, 0.0, 1.0) * RENOIR_SHADER_PS_PROPS_0;
+			colorTemp += (1.0 - min(abs(oneMinus2t), 1.0)) * RENOIR_SHADER_PS_PROPS_1;
+			colorTemp += clamp(-oneMinus2t, 0.0, 1.0) * RENOIR_SHADER_PS_PROPS_2;
+		}
+		else if (IS_SET(SHADER_TYPE, PSTF_GradientFromTexture)) {
+			float2 coord = float2(tVal, RENOIR_SHADER_PS_PROPS_3.x);
+			colorTemp = SAMPLE2D(txGradient, coord);
+		}
+		else if (IS_SET(SHADER_TYPE, PSTF_ColorFromTexture)) {
+			colorTemp = SAMPLE2D(TEXTURE_0, input.Additional.xy);
+		}
+	
+		// Warning X4000 for usage of potentially uninitialized variable can be
+		// safely ignored, as there are no ShaderTypes that don't enter any of the
+		// branches above.
+		if (IS_SET(SHADER_TYPE, PSTF_HasMask)) {
+			float mask = SAMPLE2D(txMask, input.VaryingParam1.xy).r;
+			colorTemp *= mask;
+		}
+	
+		PSOutput.color = colorTemp;
+	}
+	
+	#undef IS_SET
+	'''
+Added file "hummingbird/CohRenoirShaderVS.hlsl":
+	'''
+	/*
+	This file is part of Renoir, a modern graphics library.
+	
+	Copyright (c) 2012-2016 Coherent Labs AD and/or its licensors. All
+	rights reserved in all media.
+	
+	The coded instructions, statements, computer programs, and/or related
+	material (collectively the "Data") in these files contain confidential
+	and unpublished information proprietary Coherent Labs and/or its
+	licensors, which is protected by United States of America federal
+	copyright law and by international treaties.
+	
+	This software or source code is supplied under the terms of a license
+	agreement and nondisclosure agreement with Coherent Labs AD and may
+	not be copied, disclosed, or exploited except in accordance with the
+	terms of that agreement. The Data may not be disclosed or distributed to
+	third parties, in whole or in part, without the prior written consent of
+	Coherent Labs AD.
+	
+	COHERENT LABS MAKES NO REPRESENTATION ABOUT THE SUITABILITY OF THIS
+	SOURCE CODE FOR ANY PURPOSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT
+	HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+	MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE
+	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER, ITS AFFILIATES,
+	PARENT COMPANIES, LICENSORS, SUPPLIERS, OR CONTRIBUTORS BE LIABLE FOR
+	ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+	OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+	ANY WAY OUT OF THE USE OR PERFORMANCE OF THIS SOFTWARE OR SOURCE CODE,
+	EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	*/
+	
+	#include "../ShaderConstants.fxh"
+	
+	struct VS_Input {
+		float3 Position : POSITION_3;
+		float4 Color : COLOR_4;
+		float4 Additional : ADDITIONAL;
+	};
+	
+	struct PS_Input {
+		float4 Position : SV_Position;
+		float4 Color : TEXCOORD0;
+		float4 Additional: TEXCOORD1;
+		float3 ScreenNormalPosition : TEXCOORD2;
+		float4 VaryingParam0 : TEXCOORD3;
+		float4 VaryingParam1 : TEXCOORD4;
+	};
+	
+	float4 CoherentMul(float4 vec, float4x4 mat) {
+		return mul(vec, mat);
+	}
+	
+	float4 CoherentPosition(float3 pos) {
+		return float4(pos, 1);
+	}
+	
+	void main(in VS_Input VSInput, out PS_Input PSInput) {
+		PSInput.Position = CoherentMul(CoherentPosition(VSInput.Position), TRANSFORM);
+		PSInput.ScreenNormalPosition = VSInput.Position;
+	
+		PSInput.VaryingParam0 = CoherentMul(float4(VSInput.Position, 1), COORD_TRANSFORM);
+		PSInput.VaryingParam1.x = VSInput.Position.x * RENOIR_SHADER_VS_PROPS_0.x + RENOIR_SHADER_VS_PROPS_0.z;
+		PSInput.VaryingParam1.y = VSInput.Position.y * RENOIR_SHADER_VS_PROPS_0.y + RENOIR_SHADER_VS_PROPS_0.w;
+	
+		// Translate to -1..1 with perspective correction
+		float w = PSInput.Position.w;
+		PSInput.Position.x = PSInput.Position.x * 2 - w;
+		PSInput.Position.y = (w - PSInput.Position.y) * 2 - w;
+	
+		PSInput.Color = VSInput.Color;
+		PSInput.Additional = VSInput.Additional;
+	}
+	'''
+Changed file "uv_selection_overlay.vertex.hlsl":
+	Total line: 54 (+19, -8)
+	        '''
+	 1  1   #include "ShaderConstants.fxh"
+	 2  2   
+	 3  3   struct VS_Input
+	 4  4   {
+	 5  5       float3 position : POSITION;
+	    6 + #ifdef USE_SKINNING
+	    7 + 	uint boneId : BONEID_0;
+	    8 + #endif
+	    9 + 	float2 uv : TEXCOORD_0;
+	   10 + #ifdef INSTANCEDSTEREO
+	   11 + 	uint instanceID : SV_InstanceID;
+	   12 + #endif
+	   13 + };
+	   14 + 
+	   15 + 
+	   16 + struct PS_Input
+	   17 + {
+	   18 +     float4 position : SV_Position;
+	 6 19       float2 uv : TEXCOORD_0;
+	   20 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	   21 + 	uint instanceID : SV_InstanceID;
+	   22 + #endif
+	   23 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	   24 + 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	 7    - #ifdef INSTANCEDSTEREO
+	 8    - 	uint instanceID : SV_InstanceID;
+	 9 25   #endif
+	10 26   };
+	11    - 
+	12 27   
+	   28 + ROOT_SIGNATURE
+	   29 + void main(in VS_Input VSInput, out PS_Input PSInput)
+	13    - struct PS_Input
+	14 30   {
+	15    -     float4 position : SV_Position;
+	16    -     float2 uv : TEXCOORD_0;
+	17    - #ifdef GEOMETRY_INSTANCEDSTEREO
+	18    - 	uint instanceID : SV_InstanceID;
+	   31 +     PSInput.uv = VSInput.uv;
+	   32 + #ifdef INSTANCEDSTEREO
+	19    - #endif
+	20    - #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21    - 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	   33 + 	int i = VSInput.instanceID;
+	   34 + #ifdef USE_SKINNING
+	   35 + 	float4 pos = mul(WORLDVIEW_STEREO[i], mul(BONES[VSInput.boneId], float4(VSInput.position, 1)));
+	   36 + #else
+	   37 + 	float4 pos = mul(WORLDVIEW_STEREO[i], float4(VSInput.position, 1));
+	   38 + #endif
+	   39 + 	PSInput.position = mul(PROJ_STEREO[i], pos);
+	   40 + #else
+	   41 + #ifdef USE_SKINNING
+	   42 + 	float4 pos = mul(WORLDVIEW, mul(BONES[VSInput.boneId], float4(VSInput.position, 1)));
+	22    - #endif
+	23    - };
+	24    - 
+	25    - ROOT_SIGNATURE
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27    - {
+	28    -     PSInput.uv = VSInput.uv;
+	29    - #ifdef INSTANCEDSTEREO
+	30    - 	int i = VSInput.instanceID;
+	31    - 	float4 pos = mul(WORLDVIEW_STEREO[i], float4(VSInput.position, 1));
+	32    - 	PSInput.position = mul(PROJ_STEREO[i], pos);
+	33 43   #else
+	34 44   	float4 pos = mul(WORLDVIEW, float4(VSInput.position, 1));
+	   45 + #endif
+	35 46   	PSInput.position = mul(PROJ, pos);
+	36 47   #endif
+	37 48   #ifdef GEOMETRY_INSTANCEDSTEREO
+	38 49   	PSInput.instanceID = VSInput.instanceID;
+	39 50   #endif 
+	        ...
+	        '''

@@ -1,28 +1,770 @@
-Difference of "entities" between "1.18.0.21" (beta of "1.18.0") and "1.18.0.22" (beta of "1.18.0").
+Difference of "entities" between "1.18.10.22" (beta of "1.18.10") and "1.18.10.24" (beta of "1.18.10").
 
-Changed entity "llama":
+Total entity: 110 (+2, -0)
+Changed entity "axolotl.json":
 	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 6 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.16.220"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Added behavior pack "vanilla_1.18.0".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 29 (+1, -0)
+				Added component "minecraft:balloonable" of field "mass": 0.5.
+	Added behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:axolotl"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "component_groups":
+				component group "attack_cooldown":
+					component "minecraft:attack_cooldown":
+						field "attack_cooldown_time": 120.0
+						field "attack_cooldown_complete_event":
+							field "event": "attack_cooldown_complete_event"
+							field "target": "self"
+				component group "axolotl_adult":
+					component "minecraft:breedable":
+						field "require_tame": false
+						field "breed_items": "tropical_fish_bucket"
+						field "transform_to_item": "water_bucket:0"
+						field "breeds_with":
+							field "mate_type": "minecraft:axolotl"
+							field "baby_type": "minecraft:axolotl"
+							field "breed_event":
+								field "event": "minecraft:entity_born"
+								field "target": "baby"
+						field "mutation_factor": field "variant": 0.00083
+					component "minecraft:experience_reward":
+						field "on_bred": "Math.Random(1,7)"
+						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
+					component "minecraft:behavior.breed":
+						field "priority": 1
+						field "speed_multiplier": 1.0
+				component group "axolotl_baby":
+					component "minecraft:ageable":
+						field "duration": 1200
+						field "feed_items": "tropical_fish_bucket"
+						field "transform_to_item": "water_bucket:0"
+						field "grow_up":
+							field "event": "minecraft:ageable_grow_up"
+							field "target": "self"
+					component "minecraft:is_baby": empty
+					component "minecraft:scale": field "value": 0.5
+					component "minecraft:behavior.follow_parent":
+						field "priority": 5
+						field "speed_multiplier": 1.1
+				component group "axolotl_blue": component "minecraft:variant": field "value": 4
+				component group "axolotl_cyan": component "minecraft:variant": field "value": 1
+				component group "axolotl_dried":
+					component "minecraft:damage_over_time":
+						field "damage_per_hurt": 1
+						field "time_between_hurt": 0
+				component group "axolotl_gold": component "minecraft:variant": field "value": 2
+				component group "axolotl_in_water":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "test": "in_water"
+									filter property "operator": "!="
+									filter property "value": true
+								field "event": "start_drying_out"
+				component group "axolotl_lucy": component "minecraft:variant": field "value": 0
+				component group "axolotl_on_land":
+					component "minecraft:drying_out_timer":
+						field "total_time": 300
+						field "water_bottle_refill_time": 90
+						field "dried_out_event": field "event": "dried_out"
+						field "stopped_drying_out_event": field "event": "stop_drying_out"
+						field "recover_after_dried_out_event": field "event": "recover_after_dried_out"
+				component group "axolotl_on_land_in_rain":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "test": "in_water_or_rain"
+									filter property "operator": "!="
+									filter property "value": true
+								field "event": "start_drying_out"
+							trigger:
+								field "filters":
+									filter property "test": "in_water"
+									filter property "operator": "=="
+									filter property "value": true
+								field "event": "enter_water"
+				component group "axolotl_wild": component "minecraft:variant": field "value": 3
+			field "components":
+				component "minecraft:attack": field "damage": 2
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+					field "breathes_water": true
+					field "breathes_air": true
+					field "generates_bubbles": false
+				component "minecraft:collision_box":
+					field "width": 0.75
+					field "height": 0.42
+				component "minecraft:combat_regeneration": empty
+				component "minecraft:damage_sensor":
+					field "triggers":
+						field "cause": "lightning"
+						field "deals_damage": true
+						field "damage_multiplier": 2000.0
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health": field "value": 14
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": empty
+				component "minecraft:leashable":
+					field "soft_distance": 4.0
+					field "hard_distance": 6.0
+					field "max_distance": 10.0
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.amphibious": field "max_turn": 15.0
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "is_amphibious": true
+					field "can_path_over_water": true
+					field "can_swim": true
+					field "can_walk": true
+					field "can_sink": false
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable":
+					field "is_pushable": true
+					field "is_pushable_by_piston": true
+				component "minecraft:type_family":
+					field "family":
+						family: "axolotl"
+						family: "mob"
+				component "minecraft:underwater_movement": field "value": 0.2
+				component "minecraft:behavior.look_at_player":
+					field "priority": 10
+					field "target_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.melee_attack":
+					field "priority": 4
+					field "on_kill":
+						field "event": "killed_enemy_event"
+						field "target": "self"
+				component "minecraft:behavior.move_to_water":
+					field "priority": 6
+					field "search_range": 16
+					field "search_height": 5
+					field "search_count": 1
+					field "goal_radius": 0.1
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 3
+					field "must_see": true
+					field "reselect_targets": true
+					field "within_radius": 20.0
+					field "must_see_forget_duration": 17.0
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "value": true
+									filter:
+										filter property "test": "has_component"
+										filter property "subject": "self"
+										filter property "operator": "!="
+										filter property "value": "minecraft:attack_cooldown"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "squid"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "fish"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "tadpole"
+							field "max_dist": 8
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "in_water"
+										filter property "subject": "other"
+										filter property "value": true
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "drowned"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "guardian"
+											filter:
+												filter property "test": "is_family"
+												filter property "subject": "other"
+												filter property "value": "guardian_elder"
+							field "max_dist": 8
+				component "minecraft:behavior.play_dead":
+					field "priority": 0
+					field "duration": 10
+					field "force_below_health": 8
+					field "random_start_chance": 0.33
+					field "random_damage_range": [0, 2]
+					field "damage_sources":
+						damage source: "contact"
+						damage source: "entity_attack"
+						damage source: "entity_explosion"
+						damage source: "magic"
+						damage source: "projectile"
+						damage source: "thorns"
+						damage source: "wither"
+					field "apply_regeneration": true
+					field "filters":
+						filter property "test": "in_water"
+						filter property "operator": "=="
+						filter property "value": true
+				component "minecraft:behavior.random_stroll":
+					field "priority": 9
+					field "interval": 100
+				component "minecraft:behavior.random_swim":
+					field "priority": 8
+					field "interval": 0
+					field "xz_dist": 30
+					field "y_dist": 15
+				component "minecraft:behavior.swim_idle":
+					field "priority": 7
+					field "idle_time": 5.0
+					field "success_rate": 0.05
+				component "minecraft:behavior.tempt":
+					field "priority": 2
+					field "speed_multiplier": 1.1
+					field "can_tempt_vertically": true
+					field "items": item: "tropical_fish_bucket"
+			field "events":
+				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
+				event "dried_out": field "add": field "component_groups": component group: "axolotl_dried"
+				event "enter_water":
+					field "add": field "component_groups": component group: "axolotl_in_water"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land"
+							component group: "axolotl_on_land_in_rain"
+							component group: "axolotl_dried"
+				event "killed_enemy_event": field "add": field "component_groups": component group: "attack_cooldown"
+				event "minecraft:ageable_grow_up":
+					field "add": field "component_groups": component group: "axolotl_adult"
+					field "remove": field "component_groups": component group: "axolotl_baby"
+				event "minecraft:entity_born":
+					field "sequence":
+						sequence item 0:
+							field "add":
+								field "component_groups":
+									component group: "axolotl_baby"
+									component group: "axolotl_in_water"
+							field "remove": field "component_groups": component group: "axolotl_adult"
+						sequence item 1:
+							field "add": field "component_groups": component group: "axolotl_blue"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:variant"
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0:
+							field "add":
+								field "component_groups":
+									component group: "axolotl_adult"
+									component group: "axolotl_in_water"
+						sequence item 1:
+							field "randomize":
+								randomize item:
+									field "weight": 25
+									field "add": field "component_groups": component group: "axolotl_cyan"
+								randomize item:
+									field "weight": 25
+									field "add": field "component_groups": component group: "axolotl_gold"
+								randomize item:
+									field "weight": 25
+									field "add": field "component_groups": component group: "axolotl_lucy"
+								randomize item:
+									field "weight": 25
+									field "add": field "component_groups": component group: "axolotl_wild"
+				event "recover_after_dried_out": field "remove": field "component_groups": component group: "axolotl_dried"
+				event "start_drying_out":
+					field "add": field "component_groups": component group: "axolotl_on_land"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land_in_rain"
+							component group: "axolotl_in_water"
+				event "stop_drying_out":
+					field "add": field "component_groups": component group: "axolotl_on_land_in_rain"
+					field "remove":
+						field "component_groups":
+							component group: "axolotl_on_land"
+							component group: "axolotl_dried"
+Changed entity "bee.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 27 (+1, -0)
+				Added component "minecraft:balloonable" of field "mass": 0.5.
+Changed entity "boat.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 13 (+1, -0)
+				Added empty component "minecraft:balloonable".
+Changed entity "cat.json":
+	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:llama_tamed":
-					Changed component "minecraft:rideable":
-						Changed field "seats":
-							Changed field "position":
-								Unchanged vector item 0: 0.0
-								Changed vector item 1 from 1.1 to 1.17.
-								Changed vector item 2 from -0.2 to -0.3.
-				Changed component group "minecraft:llama_wild":
-					Changed component "minecraft:rideable":
-						Changed field "seats":
-							Changed field "position":
-								Unchanged vector item 0: 0.0
-								Changed vector item 1 from 1.25 to 1.17.
-								Unchanged vector item 2: -0.3
+				Changed component group "minecraft:cat_tame":
+					Total component: 13 (+1, -0)
+					Added component "minecraft:balloonable" of field "mass": 0.6.
+Changed entity "dolphin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 31 (+1, -0)
+				Added empty component "minecraft:balloonable".
+Added entity "frog.json":
+	behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:frog"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "component_groups":
+				component group "frog_snowy": component "minecraft:variant": field "value": 1
+				component group "frog_swamp": component "minecraft:variant": field "value": 0
+				component group "frog_tropical": component "minecraft:variant": field "value": 2
+				component group "pregnant":
+					component "minecraft:behavior.lay_egg":
+						field "priority": 2
+						field "speed_multiplier": 1.0
+						field "search_range": 10
+						field "search_height": 3
+						field "goal_radius": 1.7
+						field "target_blocks": block: "minecraft:water"
+						field "target_materials_above_block": block: "Air"
+						field "allow_laying_from_below": true
+						field "use_default_animation": false
+						field "lay_seconds": 2
+						field "egg_type": "minecraft:frog_egg"
+						field "lay_egg_sound": "lay_egg"
+						field "on_lay":
+							field "event": "laid_egg"
+							field "target": "self"
+					component "minecraft:behavior.move_to_water":
+						field "priority": 3
+						field "search_range": 20
+						field "search_height": 5
+						field "goal_radius": 1.5
+			field "components":
+				component "minecraft:breathable":
+					field "total_supply": 15
+					field "suffocate_time": 0
+					field "breathes_water": true
+					field "breathes_air": true
+					field "generates_bubbles": false
+				component "minecraft:breedable":
+					field "require_tame": false
+					field "causes_pregnancy": true
+					field "breeds_with":
+						field "mate_type": "minecraft:frog"
+						field "baby_type": "minecraft:tadpole"
+						field "breed_event": field "event": "become_pregnant"
+					field "breed_items": item: "seagrass"
+				component "minecraft:collision_box":
+					field "width": 0.5
+					field "height": 0.55
+				component "minecraft:damage_sensor":
+					field "triggers":
+						trigger:
+							field "cause": "fall"
+							field "deals_damage": true
+							field "damage_modifier": -10
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health": field "value": 10
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:jump.static": field "jump_power": 0.6
+				component "minecraft:leashable": empty
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.amphibious": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "is_amphibious": true
+					field "can_path_over_water": true
+					field "can_swim": true
+					field "can_walk": true
+					field "can_sink": false
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "frog"
+						family: "mob"
+				component "minecraft:underwater_movement": field "value": 0.15
+				component "minecraft:behavior.breed": field "priority": 4
+				component "minecraft:behavior.croak":
+					field "priority": 9
+					field "interval": [10, 20]
+					field "duration": 4.5
+					field "filters":
+						filter property "all_of":
+							filter:
+								filter property "test": "in_water"
+								filter property "value": false
+							filter:
+								filter property "test": "in_lava"
+								filter property "value": false
+				component "minecraft:behavior.eat_mob":
+					field "priority": 7
+					field "run_speed": 2.0
+					field "eat_animation_time": 0.3
+					field "pull_in_force": 0.75
+					field "reach_mob_distance": 1.75
+					field "item_drop": "slime_ball"
+				component "minecraft:behavior.jump_to_block":
+					field "priority": 10
+					field "search_width": 8
+					field "search_height": 3
+					field "minimum_path_length": 2
+					field "minimum_distance": 1
+					field "scale_factor": 0.6
+					field "max_velocity": 1
+					field "cooldown_range": [10, 15]
+					field "preferred_blocks":
+						block: "minecraft:waterlily"
+						block: "minecraft:big_dripleaf"
+					field "preferred_blocks_chance": 0.5
+					field "forbidden_blocks": block: "minecraft:water"
+				component "minecraft:behavior.look_at_player":
+					field "priority": 12
+					field "target_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.move_to_land":
+					field "priority": 6
+					field "search_range": 30
+					field "search_height": 8
+					field "search_count": 80
+					field "goal_radius": 2
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 8
+					field "within_radius": 16
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "slime"
+									filter:
+										filter property "test": "is_variant"
+										filter property "subject": "other"
+										filter property "operator": "=="
+										filter property "value": 1
+							field "max_dist": 16
+					field "must_see": true
+				component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+				component "minecraft:behavior.random_stroll": field "priority": 11
+				component "minecraft:behavior.tempt":
+					field "priority": 5
+					field "speed_multiplier": 1.25
+					field "items": item: "seagrass"
+			field "events":
+				event "become_pregnant": field "add": field "component_groups": component group: "pregnant"
+				event "laid_egg": field "remove": field "component_groups": component group: "pregnant"
+				event "minecraft:entity_spawned":
+					field "sequence":
+						sequence item 0: field "add": field "component_groups": component group: "frog_swamp"
+						sequence item 1:
+							field "add": field "component_groups": component group: "frog_tropical"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "desert"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "jungle"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "savanna"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mesa"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "nether"
+						sequence item 2:
+							field "add": field "component_groups": component group: "frog_snowy"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mountain"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mountains"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "ice"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "cold"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "frozen"
+				event "minecraft:entity_transformed":
+					field "sequence":
+						sequence item 0: field "add": field "component_groups": component group: "frog_swamp"
+						sequence item 1:
+							field "add": field "component_groups": component group: "frog_tropical"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "desert"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "jungle"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "savanna"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mesa"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "nether"
+						sequence item 2:
+							field "add": field "component_groups": component group: "frog_snowy"
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mountain"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mountains"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "ice"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "cold"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "frozen"
+Changed entity "glow_squid.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Added field "mass" of 0.5.
+Changed entity "goat.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 27 (+1, -0)
+				Added empty component "minecraft:balloonable".
+Changed entity "hoglin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 23 (+1, -0)
+				Added empty component "minecraft:balloonable".
+Changed entity "iron_golem.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Removed field "mass" of 2.0.
+Changed entity "ocelot.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.16.0" to "1.18.10".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 6 (+1, -0)
+				Added component group "minecraft:wild_child_ocelot_spawn":
+					component "minecraft:spawn_entity":
+						field "entities":
+							field "filters":
+								filter:
+									filter property "test": "random_chance"
+									filter property "value": 7
+							field "min_wait_time": 0
+							field "max_wait_time": 0
+							field "num_to_spawn": 2
+							field "single_use": true
+							field "spawn_entity": "minecraft:ocelot"
+							field "spawn_event": "minecraft:entity_born"
+							field "spawn_method": "born"
+							field "spawn_sound": ""
+			Changed field "components":
+				Total component: 28 (+1, -0)
+				Added component "minecraft:balloonable" of field "mass": 0.7.
+			Changed field "events":
+				Changed event "minecraft:entity_spawned":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "randomize":
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Total component group: 3 (+1, -0)
+											Added component group "minecraft:wild_child_ocelot_spawn".
+Changed entity "panda.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Removed field "mass" of 1.5.
+Changed entity "parrot.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 22 (+1, -0)
+				Added empty component "minecraft:balloonable".
+Changed entity "pig.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:balloonable":
+					Changed field "mass" from 0.75 to 0.9.
+Changed entity "player.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:add_bad_omen":
+					Changed component "minecraft:spell_effects":
+						Changed field "add_effects":
+							Changed effect:
+								Unchanged field "effect": "bad_omen"
+								Added field "visible" of false.
+Changed entity "polar_bear.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 26 (+1, -0)
+				Added empty component "minecraft:balloonable".
+Changed entity "squid.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 25 (+1, -0)
+				Added component "minecraft:balloonable" of field "mass": 0.5.
+Changed entity "strider.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 25 (+1, -0)
+				Added empty component "minecraft:balloonable".
+Added entity "tadpole.json":
+	behavior pack "experimental":
+		field "format_version": "1.16.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:tadpole"
+				description "is_experimental": false
+				description "is_spawnable": true
+				description "is_summonable": true
+			field "component_groups": component group "grow_up": component "minecraft:transformation": field "into": "minecraft:frog"
+			field "components":
+				component "minecraft:ageable":
+					field "duration": 1200
+					field "feed_items": item: "seagrass"
+					field "grow_up":
+						field "event": "ageable_grow_up"
+						field "target": "self"
+				component "minecraft:breathable":
+					field "total_supply": 8
+					field "suffocate_time": 0
+					field "breathes_water": true
+					field "breathes_air": false
+					field "generates_bubbles": false
+				component "minecraft:collision_box":
+					field "width": 0.4
+					field "height": 0.3
+				component "minecraft:despawn": field "despawn_from_distance": empty
+				component "minecraft:health": field "value": 4
+				component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+				component "minecraft:is_baby": empty
+				component "minecraft:is_hidden_when_invisible": empty
+				component "minecraft:movement": field "value": 0.1
+				component "minecraft:movement.sway": field "sway_amplitude": 0.0
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.generic":
+					field "can_path_over_water": true
+					field "can_swim": true
+					field "can_walk": false
+					field "can_sink": false
+					field "avoid_damage_blocks": true
+				component "minecraft:physics": empty
+				component "minecraft:pushable": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "tadpole"
+						family: "mob"
+				component "minecraft:underwater_movement": field "value": 0.1
+				component "minecraft:behavior.look_at_player":
+					field "priority": 2
+					field "target_distance": 6.0
+					field "probability": 0.02
+				component "minecraft:behavior.random_swim":
+					field "priority": 1
+					field "interval": 100
+			field "events": event "ageable_grow_up": field "sequence": sequence item 0: field "add": field "component_groups": component group: "grow_up"
+Changed entity "wolf.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:wolf_tame":
+					Total component: 13 (+1, -0)
+					Added component "minecraft:balloonable" of field "mass": 0.8.
+Changed entity "zoglin.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 24 (+1, -0)
+				Added empty component "minecraft:balloonable".

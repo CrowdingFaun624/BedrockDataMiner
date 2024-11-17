@@ -1,36 +1,135 @@
-Difference of "entities" between "1.8.0.8" (beta of "1.8.0") and "1.8.0.10" (beta of "1.8.0").
+Difference of "entities" between "1.8.1" and "1.9.0.0" (beta of "1.9.0").
 
-Changed entity "agent":
+Total entity: 93 (+1, -0)
+Changed entity "dolphin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 10 (+1, -0)
-				Added empty component "minecraft:tick_world".
-Changed entity "panda":
+				Total component: 22 (+0, -1)
+				Removed component "minecraft:behavior.breathe_air" of field "priority": 1.
+Changed entity "panda.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:panda_aggressive":
-					Changed component "minecraft:attack":
-						Changed field "damage" from 2.0 to 6.0.
 			Changed field "components":
-				Total component: 28 (+2, -0)
-				Added component "minecraft:giveable":
-					field "items":
-						item: "bamboo"
-						item: "cake"
-					field "on_give":
-						field "event": "minecraft:on_calm"
-						field "target": "self"
-				Added component "minecraft:inventory":
-					field "inventory_size": 1
-					field "private": true
-				Changed component "minecraft:behavior.snacking":
-					Changed field "priority" from 3 to 1.
-Changed entity "polar_bear":
+				Changed component "minecraft:giveable":
+					Added field "cooldown" of 3.0.
+Added entity "pillager.json":
+	behavior pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:entity":
+			field "description":
+				description "identifier": "minecraft:pillager"
+				description "minecraft:is_experimental": field "value": true
+				description "minecraft:is_summonable": field "value": true
+				description "minecraft:spawn_egg": field "value": true
+			field "component_groups":
+				component group "minecraft:melee_attack":
+					component "minecraft:attack": field "damage": 3
+					component "minecraft:environment_sensor":
+						field "on_environment":
+							field "filters":
+								filter property "test": "in_water"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": false
+							field "event": "minecraft:ranged_mode"
+					component "minecraft:behavior.melee_attack":
+						field "priority": 4
+						field "target_dist": 1.2
+						field "speed_multiplier": 1
+						field "track_target": true
+				component group "minecraft:ranged_attack":
+					component "minecraft:environment_sensor":
+						field "on_environment":
+							field "filters":
+								filter property "test": "is_underwater"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "minecraft:melee_mode"
+					component "minecraft:shooter":
+						field "type": "Arrow"
+						field "def": "minecraft:arrow"
+					component "minecraft:behavior.ranged_attack":
+						field "charge_charged_trigger": 1.25
+						field "charge_shoot_trigger": 1.5
+						field "attack_interval_min": 0
+						field "attack_interval_max": 0
+						field "attack_radius": 6
+			field "components":
+				component "minecraft:breathable":
+					field "totalSupply": 15
+					field "suffocateTime": 0
+				component "minecraft:collision_box":
+					field "width": 0.6
+					field "height": 1.95
+				component "minecraft:equipment": field "table": "loot_tables/entities/pillager_gear.json"
+				component "minecraft:health":
+					field "value": 24
+					field "max": 24
+				component "minecraft:jump.static": empty
+				component "minecraft:loot": field "table": "loot_tables/entities/pillager.json"
+				component "minecraft:movement": field "value": 0.35
+				component "minecraft:movement.basic": empty
+				component "minecraft:nameable": empty
+				component "minecraft:navigation.walk": field "can_path_over_water": true
+				component "minecraft:physics": empty
+				component "minecraft:type_family":
+					field "family":
+						family: "pillager"
+						family: "monster"
+						family: "illager"
+				component "minecraft:behavior.float": field "priority": 0
+				component "minecraft:behavior.hurt_by_target":
+					field "priority": 1
+					field "entity_types":
+						field "filters":
+							filter property "test": "is_family"
+							filter property "subject": "other"
+							filter property "operator": "!="
+							filter property "value": "illager"
+				component "minecraft:behavior.look_at_player":
+					field "priority": 6
+					field "look_distance": 8
+				component "minecraft:behavior.nearest_attackable_target":
+					field "priority": 2
+					field "within_radius": 16.0
+					field "reselect_targets": true
+					field "entity_types":
+						entity type:
+							field "filters":
+								filter property "any_of":
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "player"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "villager"
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "irongolem"
+							field "max_dist": 16
+					field "must_see": true
+				component "minecraft:behavior.random_look_around": field "priority": 6
+				component "minecraft:behavior.random_stroll":
+					field "priority": 5
+					field "speed_multiplier": 1
+			field "events":
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:melee_mode":
+					field "add": field "component_groups": component group: "minecraft:melee_attack"
+					field "remove": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:ranged_mode":
+					field "add": field "component_groups": component group: "minecraft:ranged_attack"
+					field "remove": field "component_groups": component group: "minecraft:melee_attack"
+Changed entity "salmon.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:adult_hostile":
-					Changed component "minecraft:behavior.stomp_attack":
-						Added field "require_complete_path" of true.
+			Changed field "components":
+				Total component: 13 (+0, -1)
+				Removed component "minecraft:behavior.follow_flock":
+					field "priority": 2
+					field "speed_multiplier": 0.12

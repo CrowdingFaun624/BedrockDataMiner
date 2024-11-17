@@ -1,0 +1,562 @@
+Difference of "commands" between "1.0.8" and "1.0.9".
+
+Changed file "client-only.json":
+	Changed command "geteduclientinfo":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "output":
+							Changed field "parameters":
+								Removed parameter:
+									field "name": "playersessionuuid"
+									field "type": "string"
+	Removed command "help":
+		field "versions":
+			version:
+				field "description": "commands.help.description"
+				field "permission": "any"
+				field "aliases": alias: "?"
+				field "overloads":
+					overload "byName":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "command"
+									field "type": "stringenum"
+									field "enum_type": "commandName"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "body"
+									field "type": "string"
+					overload "byPage":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "page"
+									field "type": "int"
+									field "optional": true
+						field "output":
+							field "format_strings":
+								format string:
+									field "format": "commands.help.header"
+									field "color": "dark_green"
+								format string: field "format": "{2}"
+								format string:
+									field "format": "commands.help.footer"
+									field "color": "dark_green"
+							field "parameters":
+								parameter:
+									field "name": "page"
+									field "type": "int"
+								parameter:
+									field "name": "pageCount"
+									field "type": "int"
+								parameter:
+									field "name": "body"
+									field "type": "string"
+			version:
+				field "description": "commands.help.description"
+				field "permission": "any"
+				field "aliases": alias: "?"
+				field "overloads":
+					overload "byName":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "command"
+									field "type": "stringenum"
+									field "enum_type": "commandName"
+						field "output":
+							field "format_strings":
+								format string: field "format": "{0}"
+								format string: field "format": "{1}"
+								format string: field "format": "commands.generic.usage.noparam"
+								format string: field "format": "{2}"
+							field "parameters":
+								parameter:
+									field "name": "command"
+									field "type": "string"
+								parameter:
+									field "name": "description"
+									field "type": "string"
+								parameter:
+									field "name": "usage"
+									field "type": "string"
+					overload "byPage":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "page"
+									field "type": "int"
+									field "optional": true
+						field "output":
+							field "format_strings":
+								format string:
+									field "format": "commands.help.header"
+									field "color": "dark_green"
+								format string: field "format": "{2}"
+								format string:
+									field "format": "commands.help.footer"
+									field "color": "dark_green"
+							field "parameters":
+								parameter:
+									field "name": "page"
+									field "type": "int"
+								parameter:
+									field "name": "pageCount"
+									field "type": "int"
+								parameter:
+									field "name": "body"
+									field "type": "string"
+	Removed command "getlocalplayername":
+		field "versions":
+			version:
+				field "description": "commands.getlocalplayername.description"
+				field "permission": "any"
+				field "is_hidden": true
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "localplayername"
+									field "type": "string"
+	Removed command "enableencryption":
+		field "versions":
+			version:
+				field "description": "commands.enableencryption.description"
+				field "permission": "any"
+				field "is_hidden": true
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "publicKey"
+									field "type": "rawtext"
+								parameter:
+									field "name": "salt"
+									field "type": "rawtext"
+						field "output":
+							field "format_strings": empty
+							field "parameters":
+								parameter:
+									field "name": "publicKey"
+									field "type": "rawtext"
+	Removed command "position":
+		field "versions":
+			version:
+				field "requires_edu": true
+				field "description": "commands.position.description"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": empty
+							field "parameters": empty
+	Removed command "code":
+		field "versions":
+			version:
+				field "requires_edu": true
+				field "description": "commands.code.description"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "commands.code.success"
+							field "parameters": empty
+	Removed command "classroommode":
+		field "versions":
+			version:
+				field "requires_edu": true
+				field "description": "commands.classroommode.description"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "commands.classroommode.success"
+							field "parameters": empty
+Changed file "education.json":
+	Changed command "ability":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "input":
+							Changed field "parameters":
+								Changed parameter:
+									Removed field "enum_type" of "abilityTypes".
+									Added field "enum_values":
+										enum value: "worldbuilder"
+										enum value: "mayfly"
+					Removed overload "getter":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+								parameter:
+									field "name": "ability"
+									field "type": "stringenum"
+									field "enum_type": "abilityTypes"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "displayString"
+									field "type": "string"
+								parameter:
+									field "name": "details"
+									field "type": "string"
+	Removed command "worldbuilder":
+		field "versions":
+			version:
+				field "requires_edu": true
+				field "description": "commands.worldbuilder.description"
+				field "permission": "gamemasters"
+				field "aliases": alias: "wb"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "commands.worldbuilder.success"
+							field "parameters":
+								parameter:
+									field "name": "newValueString"
+									field "type": "string"
+Changed file "standard.json":
+	Changed command "gamerule":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "setint":
+						Changed field "output":
+							Added empty field "format_strings".
+	Changed command "gamemode":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "byName":
+						Changed field "input":
+							Changed field "parameters":
+								Changed parameter:
+									Changed field "enum_values":
+										Removed enum value "adventure".
+										Removed enum value "a".
+	Changed command "transferserver":
+		Changed field "versions":
+			Changed version:
+				Removed field "allows_indirect_exec" of false.
+	Changed command "title":
+		Changed field "versions":
+			Changed version:
+				Removed field "requiresTellPerms" of true.
+	Changed command "say":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "output":
+							Added empty field "format_strings".
+	Changed command "time query":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "output":
+							Changed field "parameters":
+								Removed parameter:
+									field "name": "body"
+									field "type": "string"
+								Added parameter:
+									field "name": "time"
+									field "type": "int"
+							Changed field "format_strings":
+								Removed format string field "format": "{0}".
+								Added format string field "format": "commands.time.query".
+	Changed command "stopsound":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "output":
+							Changed field "parameters":
+								Removed parameter:
+									field "name": "sound"
+									field "type": "string"
+								Removed parameter:
+									field "name": "player"
+									field "type": "result_list"
+								Removed parameter:
+									field "name": "one_sound"
+									field "type": "bool"
+								Removed parameter:
+									field "name": "all_sounds"
+									field "type": "bool"
+								Added parameter:
+									field "name": "body"
+									field "type": "string"
+							Changed field "format_strings":
+								Removed format string:
+									field "format": "commands.stopsound.success"
+									field "params_to_use":
+										parameter: "sound"
+										parameter: "player"
+									field "should_show": field "is_true": parameter: "one_sound"
+								Removed format string:
+									field "format": "commands.stopsound.success.all"
+									field "params_to_use": parameter: "player"
+									field "should_show": field "is_true": parameter: "all_sounds"
+								Added format string field "format": "{0}".
+	Changed command "replaceitem":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "entity":
+						Changed field "input":
+							Changed field "parameters":
+								Removed parameter:
+									field "name": "components"
+									field "type": "components"
+									field "optional": true
+					Changed overload "block":
+						Changed field "input":
+							Changed field "parameters":
+								Removed parameter:
+									field "name": "components"
+									field "type": "components"
+									field "optional": true
+	Changed command "playsound":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "output":
+							Changed field "parameters":
+								Changed parameter:
+									Changed field "type" from "result_list" to "string".
+	Changed command "give":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "byName":
+						Changed field "input":
+							Changed field "parameters":
+								Removed parameter:
+									field "name": "components"
+									field "type": "components"
+									field "optional": true
+	Changed command "tell":
+		Changed field "versions":
+			Changed version:
+				Added field "requiresChatPerms" of true.
+				Removed field "requiresTellPerms" of true.
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "input":
+							Changed field "parameters":
+								Changed parameter:
+									Removed field "target_data" of field "allow_dead_players": true.
+	Changed command "fill":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "byName":
+						Changed field "input":
+							Changed field "parameters":
+								Changed parameter:
+									Changed field "enum_values":
+										Added enum value "replace".
+								Added parameter:
+									field "name": "replaceTileName"
+									field "type": "stringenum"
+									field "enum_type": "blockType"
+									field "optional": true
+								Added parameter:
+									field "name": "replaceDataValue"
+									field "type": "int"
+									field "optional": true
+					Removed overload "replace":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "from"
+									field "type": "blockpos"
+								parameter:
+									field "name": "to"
+									field "type": "blockpos"
+								parameter:
+									field "name": "tileName"
+									field "type": "stringenum"
+									field "enum_type": "blockType"
+								parameter:
+									field "name": "tileData"
+									field "type": "int"
+								parameter:
+									field "name": "oldBlockHandling"
+									field "type": "stringenum"
+									field "enum_values": enum value: "replace"
+								parameter:
+									field "name": "replaceTileName"
+									field "type": "stringenum"
+									field "enum_type": "blockType"
+								parameter:
+									field "name": "replaceDataValue"
+									field "type": "int"
+						field "output":
+							field "format_strings": format string: field "format": "commands.fill.success"
+							field "parameters":
+								parameter:
+									field "name": "fillCount"
+									field "type": "int"
+								parameter:
+									field "name": "blockName"
+									field "type": "string"
+	Removed command "daylock":
+		field "versions":
+			version:
+				field "description": "commands.daylock.description"
+				field "permission": "internal"
+				field "aliases": alias: "alwaysday"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "lock"
+									field "type": "bool"
+									field "optional": true
+	Removed command "setmaxplayers":
+		field "versions":
+			version:
+				field "description": "commands.setmaxplayers.description"
+				field "permission": "host"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "maxPlayers"
+									field "type": "int"
+						field "output":
+							field "format_strings":
+								format string: field "format": "commands.setmaxplayers.success"
+								format string:
+									field "format": "{1}"
+									field "should_show": field "not_empty": parameter: "boundNote"
+							field "parameters":
+								parameter:
+									field "name": "count"
+									field "type": "int"
+								parameter:
+									field "name": "boundNote"
+									field "type": "string"
+	Added command "help":
+		field "versions":
+			version:
+				field "description": "commands.help.description"
+				field "permission": "any"
+				field "aliases": alias: "?"
+				field "overloads":
+					overload "byName":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "command"
+									field "type": "stringenum"
+									field "enum_type": "commandName"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "body"
+									field "type": "string"
+					overload "byPage":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "page"
+									field "type": "int"
+									field "optional": true
+						field "output":
+							field "format_strings":
+								format string:
+									field "format": "commands.help.header"
+									field "color": "dark_green"
+								format string: field "format": "{2}"
+								format string:
+									field "format": "commands.help.footer"
+									field "color": "dark_green"
+							field "parameters":
+								parameter:
+									field "name": "page"
+									field "type": "int"
+								parameter:
+									field "name": "pageCount"
+									field "type": "int"
+								parameter:
+									field "name": "body"
+									field "type": "string"
+			version:
+				field "description": "commands.help.description"
+				field "permission": "any"
+				field "aliases": alias: "?"
+				field "overloads":
+					overload "byName":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "command"
+									field "type": "stringenum"
+									field "enum_type": "commandName"
+						field "output":
+							field "format_strings":
+								format string: field "format": "{0}"
+								format string: field "format": "{1}"
+								format string: field "format": "commands.generic.usage.noparam"
+								format string: field "format": "{2}"
+							field "parameters":
+								parameter:
+									field "name": "command"
+									field "type": "string"
+								parameter:
+									field "name": "description"
+									field "type": "string"
+								parameter:
+									field "name": "usage"
+									field "type": "string"
+					overload "byPage":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "page"
+									field "type": "int"
+									field "optional": true
+						field "output":
+							field "format_strings":
+								format string:
+									field "format": "commands.help.header"
+									field "color": "dark_green"
+								format string: field "format": "{2}"
+								format string:
+									field "format": "commands.help.footer"
+									field "color": "dark_green"
+							field "parameters":
+								parameter:
+									field "name": "page"
+									field "type": "int"
+								parameter:
+									field "name": "pageCount"
+									field "type": "int"
+								parameter:
+									field "name": "body"
+									field "type": "string"

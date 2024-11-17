@@ -1,0 +1,1326 @@
+Difference of "scripts" between "1.18.0.20" (beta of "1.18.0") and "1.18.0.21" (beta of "1.18.0").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "BigMobTests.js":
+		Total line: 90 (+5, -5)
+		        '''
+		        ...
+		 6  6   const BIGMOB_REQUIRE = false;
+		 7  7   
+		 8  8   const MOBTOTEST = ["zoglin", "ravager", "iron_golem", "spider", "horse"];
+		 9  9   
+		10 10   function _descending(test, wallSide, entityType) {
+		   11 +   const zOffset = wallSide == "RIGHT" ? -0.25 : 0.25;
+		11    -   const zOffset = wallSide == "RIGHT" ? -0.55 : 0.55;
+		12 12     const spawnType = "minecraft:" + entityType;
+		   13 +   const mob = test.spawnWithoutBehaviorsAtLocation(spawnType, new Location(0.5, 6, 1.5 + zOffset));
+		13    -   const mob = test.spawnWithoutBehaviorsAtLocation(spawnType, new Location(0.75, 6, 1.65 + zOffset));
+		14 14     const targetPos = new BlockLocation(7, 2, 1);
+		15 15     test.walkTo(mob, targetPos, 1);
+		16 16     test.succeedWhenEntityPresent(spawnType, targetPos, true);
+		17 17   }
+		18 18   
+		19 19   function createDescendingTest(wallSide, entityType) {
+		20 20     const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
+		21 21     const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_descend_" + entityType;
+		22 22   
+		23 23     // Iron golems and Ravagers every so often get stucks when they are spawned
+		   24 +   if (entityType == "horse") {
+		24    -   if (entityType == "horse" || entityType == "iron_golem" || entityType == "ravager") {
+		25 25       GameTest.register("BigMobTests", testName, (test) => {
+		26 26         _descending(test, wallSide, entityType);
+		27 27       })
+		28 28         .structureName(structureName)
+		29 29         .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		        ...
+		46 46   
+		47 47   function _ascending(test, wallSide, entityType) {
+		48 48     const spawnType = "minecraft:" + entityType;
+		49 49     const targetPos = new BlockLocation(0, 6, 1);
+		50 50     const targetLocPos = new Location(0.5, 6, 1.5);
+		   51 +   const zOffset = wallSide == "RIGHT" ? -0.25 : 0.25;
+		   52 +   const mob = test.spawnWithoutBehaviorsAtLocation(spawnType, new Location(7, 2, 1.5 + zOffset));
+		51    -   const zOffset = wallSide == "RIGHT" ? 0.0 : 0.20;
+		52    -   const mob = test.spawnWithoutBehaviorsAtLocation(spawnType, new Location(7.75, 2, 2.0 + zOffset));
+		53 53     test.walkToLocation(mob, targetLocPos, 1);
+		54 54     test.succeedWhenEntityPresent(spawnType, targetPos, true);
+		55 55   }
+		56 56   
+		57 57   function createAscendingTest(wallSide, entityType) {
+		        ...
+		        '''
+	Changed script "BlockTests.js":
+		Total line: 379 (+173, -74)
+		          '''
+		  1   1   import * as GameTest from "mojang-gametest";
+		      2 + import {
+		      3 +   BlockLocation,
+		      4 +   MinecraftBlockTypes,
+		      5 +   MinecraftItemTypes,
+		      6 +   BlockProperties,
+		      7 +   Direction,
+		      8 +   Commands,
+		      9 +   World,
+		     10 +   Location,
+		     11 + } from "mojang-minecraft";
+		     12 + import GameTestExtensions from "./GameTestExtensions.js";
+		     13 + 
+		     14 + const TicksPerSecond = 20;
+		     15 + const FiveSecondsInTicks = 5 * TicksPerSecond;
+		     16 + 
+		     17 + const FALLING_SAND_TEMPLATE_NAME = "BlockTests:falling_sand_template";
+		     18 + const FALLING_SAND_STARTUP_TICKS = 1;
+		     19 + const FALLING_SAND_TIMEOUT_TICKS = 20;
+		     20 + 
+		     21 + const BLOCKS_THAT_POP_SAND = [
+		     22 +   [MinecraftBlockTypes.woodenSlab, MinecraftBlockTypes.air], //replace missing oakSlab() with woodenSlab()
+		     23 +   [MinecraftBlockTypes.chest, MinecraftBlockTypes.stone],
+		     24 +   [MinecraftBlockTypes.rail, MinecraftBlockTypes.stone],
+		     25 +   [MinecraftBlockTypes.stoneButton, MinecraftBlockTypes.stone],
+		     26 +   [MinecraftBlockTypes.woodenPressurePlate, MinecraftBlockTypes.stone], //replace missing OakPressurePlate() with woodenPressurePlate()
+		     27 +   [MinecraftBlockTypes.torch, MinecraftBlockTypes.stone],
+		     28 +   [MinecraftBlockTypes.soulSand, MinecraftBlockTypes.air],
+		     29 + ];
+		     30 + 
+		     31 + const BLOCKS_REPLACED_BY_SAND = [
+		     32 +   MinecraftBlockTypes.water,
+		     33 +   MinecraftBlockTypes.air,
+		     34 +   MinecraftBlockTypes.tallgrass, //replace grass() with tallgrass(). It needs grass, not grass block, MinecraftBlockTypes.grass is actually grass block.
+		     35 + ];
+		     36 + 
+		     37 + const BLOCKS_THAT_SUPPORT_SAND = [
+		     38 +   MinecraftBlockTypes.stone,
+		     39 +   MinecraftBlockTypes.fence, //replace missing oakFence() with fence()
+		     40 +   MinecraftBlockTypes.oakStairs,
+		     41 +   MinecraftBlockTypes.scaffolding,
+		     42 + ];
+		     43 + 
+		     44 + function testThatFallingSandPopsIntoItem(test) {
+		     45 +   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		     46 +   const targetPos = new BlockLocation(1, 2, 1);
+		     47 + 
+		     48 +   test.succeedWhen(() => {
+		     49 +     test.assertEntityPresentInArea("minecraft:item", true);
+		     50 +     test.assertEntityPresent("minecraft:falling_block", targetPos, false);
+		     51 +   });
+		     52 + }
+		     53 + 
+		     54 + function testThatFallingSandReplaces(test) {
+		     55 +   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		     56 +   test.succeedWhenBlockPresent(MinecraftBlockTypes.sand, new BlockLocation(1, 2, 1), true);
+		     57 + }
+		     58 + 
+		     59 + function testThatFallingSandLandsOnTop(test) {
+		     60 +   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		     61 +   test.succeedWhenBlockPresent(MinecraftBlockTypes.sand, new BlockLocation(1, 3, 1), true);
+		     62 + }
+		     63 + 
+		     64 + ///
+		     65 + // Concrete Tests
+		     66 + ///
+		     67 + for (let i = 0; i < BLOCKS_THAT_POP_SAND.length; i++) {
+		     68 +   const topBlock = BLOCKS_THAT_POP_SAND[i][0];
+		     69 +   const bottomBlock = BLOCKS_THAT_POP_SAND[i][1];
+		     70 +   const testName = "blocktests.falling_sand_pops_on_" + topBlock.id;
+		     71 +   let tag = null;
+		     72 + 
+		     73 +   GameTest.register("BlockTests", testName, (test) => {
+		     74 +     if (topBlock.id == "minecraft:stone_button") {
+		     75 +       const buttonPermutation = MinecraftBlockTypes.stoneButton.createDefaultBlockPermutation();
+		     76 +       buttonPermutation.getProperty(BlockProperties.facingDirection).value = Direction.north;
+		     77 +       test.setBlockPermutation(buttonPermutation, new BlockLocation(1, 2, 1));
+		     78 +     } else {
+		     79 +       test.setBlockType(topBlock, new BlockLocation(1, 2, 1));
+		     80 +     }
+		     81 +     test.setBlockType(bottomBlock, new BlockLocation(1, 1, 1));
+		     82 +     testThatFallingSandPopsIntoItem(test);
+		     83 +   })
+		     84 +     .batch("day")
+		     85 +     .structureName(FALLING_SAND_TEMPLATE_NAME)
+		     86 +     .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		     87 +     .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		     88 +     .required(true)
+		     89 +     .tag(GameTest.Tags.suiteDefault);
+		     90 + }
+		     91 + 
+		     92 + for (const block of BLOCKS_REPLACED_BY_SAND) {
+		     93 +   const testName = "blocktests.falling_sand_replaces_" + block.id;
+		     94 + 
+		     95 +   GameTest.register("BlockTests", testName, (test) => {
+		     96 +     //SetBlock will fail if set a block to what it already is. Skip to call setblock() for test falling_sand_replaces_air because it's just air block in initial structure.
+		     97 +     if (block.id != "minecraft:air") {
+		     98 +       test.setBlockType(block, new BlockLocation(1, 2, 1));
+		     99 +     }
+		    100 +     testThatFallingSandReplaces(test);
+		    101 +   })
+		    102 +     .batch("day")
+		    103 +     .structureName(FALLING_SAND_TEMPLATE_NAME)
+		    104 +     .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		    105 +     .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		    106 +     .required(true)
+		    107 +     .tag(GameTest.Tags.suiteDefault);
+		    108 + }
+		  2     - import { BlockLocation, MinecraftBlockTypes, MinecraftItemTypes, BlockProperties, Direction } from "mojang-minecraft";
+		  3     - import GameTestExtensions from "./GameTestExtensions.js";
+		  4     - 
+		  5     - const TicksPerSecond = 20;
+		  6     - const FiveSecondsInTicks = 5 * TicksPerSecond;
+		  7 109   
+		    110 + for (const block of BLOCKS_THAT_SUPPORT_SAND) {
+		    111 +   const testName = "blocktests.falling_sand_lands_on_" + block.id;
+		  8     - const FALLING_SAND_TEMPLATE_NAME = "BlockTests:falling_sand_template";
+		  9     - const FALLING_SAND_STARTUP_TICKS = 1;
+		    112 +   let tag = null;
+		 10     - const FALLING_SAND_TIMEOUT_TICKS = 20;
+		 11 113   
+		    114 +   GameTest.register("BlockTests", testName, (test) => {
+		    115 +     test.setBlockType(block, new BlockLocation(1, 2, 1));
+		    116 +     testThatFallingSandLandsOnTop(test);
+		 12     - const BLOCKS_THAT_POP_SAND = [
+		    117 +   })
+		    118 +     .batch("day")
+		    119 +     .structureName(FALLING_SAND_TEMPLATE_NAME)
+		    120 +     .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		    121 +     .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		    122 +     .required(true)
+		    123 +     .tag(GameTest.Tags.suiteDefault);
+		    124 + }
+		 13     -   [MinecraftBlockTypes.woodenSlab, MinecraftBlockTypes.air], //replace missing oakSlab() with woodenSlab()
+		 14     -   [MinecraftBlockTypes.chest, MinecraftBlockTypes.stone],
+		 15     -   [MinecraftBlockTypes.rail, MinecraftBlockTypes.stone],
+		 16     -   [MinecraftBlockTypes.stoneButton, MinecraftBlockTypes.stone],
+		 17     -   [MinecraftBlockTypes.woodenPressurePlate, MinecraftBlockTypes.stone], //replace missing OakPressurePlate() with woodenPressurePlate()
+		 18     -   [MinecraftBlockTypes.torch, MinecraftBlockTypes.stone],
+		 19     -   [MinecraftBlockTypes.soulSand, MinecraftBlockTypes.air],
+		 20     - ];
+		 21 125   
+		 22     - const BLOCKS_REPLACED_BY_SAND = [
+		 23     -   MinecraftBlockTypes.water,
+		 24     -   MinecraftBlockTypes.air,
+		    126 + GameTest.register("BlockTests", "concrete_solidifies_in_shallow_water", (test) => {
+		    127 +   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 3, 1));
+		 25     -   MinecraftBlockTypes.tallgrass, //replace grass() with tallgrass(). It needs grass, not grass block, MinecraftBlockTypes.grass is actually grass block.
+		 26     - ];
+		 27 128   
+		    129 +   test.succeedWhen(() => {
+		    130 +     test.assertBlockPresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1), true);
+		 28     - const BLOCKS_THAT_SUPPORT_SAND = [
+		 29     -   MinecraftBlockTypes.stone,
+		    131 +   });
+		    132 + })
+		    133 +   .maxTicks(FiveSecondsInTicks)
+		    134 +   .tag(GameTest.Tags.suiteDefault);
+		 30     -   MinecraftBlockTypes.fence, //replace missing oakFence() with fence()
+		 31     -   MinecraftBlockTypes.oakStairs,
+		 32     -   MinecraftBlockTypes.scaffolding,
+		 33     - ];
+		 34 135   
+		    136 + GameTest.register("BlockTests", "concrete_solidifies_in_deep_water", (test) => {
+		 35     - function testThatFallingSandPopsIntoItem(test) {
+		 36     -   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		    137 +   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 4, 1));
+		 37     -   const targetPos = new BlockLocation(1, 2, 1);
+		 38 138   
+		 39 139     test.succeedWhen(() => {
+		    140 +     test.assertBlockPresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1), true);
+		 40     -     test.assertEntityPresentInArea("minecraft:item", true);
+		 41     -     test.assertEntityPresent("minecraft:falling_block", targetPos, false);
+		 42 141     });
+		 43     - }
+		 44     - 
+		 45     - function testThatFallingSandReplaces(test) {
+		    142 + })
+		    143 +   .maxTicks(FiveSecondsInTicks)
+		    144 +   .tag(GameTest.Tags.suiteDefault);
+		 46     -   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		 47     -   test.succeedWhenBlockPresent(MinecraftBlockTypes.sand, new BlockLocation(1, 2, 1), true);
+		 48     - }
+		 49 145   
+		    146 + GameTest.register("BlockTests", "concrete_solidifies_next_to_water", (test) => {
+		 50     - function testThatFallingSandLandsOnTop(test) {
+		 51     -   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		 52     -   test.succeedWhenBlockPresent(MinecraftBlockTypes.sand, new BlockLocation(1, 3, 1), true);
+		    147 +   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 3, 1));
+		 53     - }
+		 54 148   
+		    149 +   test.succeedWhen(() => {
+		    150 +     test.assertBlockPresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1), true);
+		 55     - ///
+		    151 +   });
+		    152 + })
+		    153 +   .maxTicks(FiveSecondsInTicks)
+		    154 +   .tag(GameTest.Tags.suiteDefault);
+		    155 + 
+		    156 + GameTest.register("BlockTests", "sand_fall_boats", (test) => {
+		    157 +   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		 56     - // Concrete Tests
+		 57     - ///
+		 58     - for (let i = 0; i < BLOCKS_THAT_POP_SAND.length; i++) {
+		 59     -   const topBlock = BLOCKS_THAT_POP_SAND[i][0];
+		 60     -   const bottomBlock = BLOCKS_THAT_POP_SAND[i][1];
+		 61     -   const testName = "blocktests.falling_sand_pops_on_" + topBlock.id;
+		 62     -   let tag = null;
+		 63 158   
+		    159 +   test.succeedWhen(() => {
+		 64     -   GameTest.register("BlockTests", testName, (test) => {
+		 65     -     if (topBlock.id == "minecraft:stone_button") {
+		 66     -       const buttonPermutation = MinecraftBlockTypes.stoneButton.createDefaultBlockPermutation();
+		    160 +     test.assertBlockPresent(MinecraftBlockTypes.sand, new BlockLocation(1, 2, 1), true);
+		    161 +   });
+		    162 + })
+		    163 +   .maxTicks(FiveSecondsInTicks)
+		    164 +   .tag(GameTest.Tags.suiteDefault);
+		    165 + 
+		    166 + GameTest.register("BlockTests", "sand_fall_shulker", (test) => {
+		    167 +   const EntitySpawnType = "minecraft:shulker";
+		    168 +   const spawnPos = new BlockLocation(1, 2, 1);
+		    169 + 
+		    170 +   test.spawn(EntitySpawnType, spawnPos);
+		    171 +   testThatFallingSandPopsIntoItem(test);
+		    172 + })
+		    173 +   .maxTicks(FiveSecondsInTicks)
+		    174 +   .tag(GameTest.Tags.suiteDefault);
+		 67     -       buttonPermutation.getProperty(BlockProperties.facingDirection).value = Direction.north;
+		 68     -       test.setBlockPermutation(buttonPermutation, new BlockLocation(1, 2, 1));
+		 69     -     } else {
+		 70     -       test.setBlockType(topBlock, new BlockLocation(1, 2, 1));
+		 71     -     }
+		 72     -     test.setBlockType(bottomBlock, new BlockLocation(1, 1, 1));
+		 73     -     testThatFallingSandPopsIntoItem(test);
+		 74     -   })
+		 75     -     .batch("day")
+		 76     -     .structureName(FALLING_SAND_TEMPLATE_NAME)
+		 77     -     .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		 78     -     .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		 79     -     .required(true)
+		 80     -     .tag(GameTest.Tags.suiteDefault);
+		 81     - }
+		 82 175   
+		    176 + ///
+		    177 + // Turtle Egg Tests
+		 83     - for (const block of BLOCKS_REPLACED_BY_SAND) {
+		    178 + ///
+		 84     -   const testName = "blocktests.falling_sand_replaces_" + block.id;
+		 85 179   
+		    180 + GameTest.register("BlockTests", "turtle_eggs_survive_xp", (test) => {
+		 86     -   GameTest.register("BlockTests", testName, (test) => {
+		 87     -     //SetBlock will fail if set a block to what it already is. Skip to call setblock() for test falling_sand_replaces_air because it's just air block in initial structure.
+		 88     -     if (block.id != "minecraft:air") {
+		    181 +   const xpOrb = "minecraft:xp_orb";
+		    182 +   const spawnPos = new BlockLocation(1, 3, 1);
+		    183 + 
+		    184 +   for (let i = 0; i < 8; i++) {
+		    185 +     test.spawn(xpOrb, spawnPos);
+		    186 +   }
+		    187 + 
+		    188 +   // Fail if the turtle egg dies
+		    189 +   test.failIf(() => {
+		    190 +     test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1), true);
+		    191 +   });
+		 89     -       test.setBlockType(block, new BlockLocation(1, 2, 1));
+		 90     -     }
+		 91     -     testThatFallingSandReplaces(test);
+		 92     -   })
+		 93     -     .batch("day")
+		 94     -     .structureName(FALLING_SAND_TEMPLATE_NAME)
+		 95     -     .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		 96     -     .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		 97     -     .required(true)
+		 98     -     .tag(GameTest.Tags.suiteDefault);
+		 99     - }
+		100 192   
+		    193 +   // Succeed after 4 seconds
+		    194 +   test.startSequence().thenIdle(80).thenSucceed();
+		    195 + })
+		101     - for (const block of BLOCKS_THAT_SUPPORT_SAND) {
+		    196 +   .maxTicks(FiveSecondsInTicks)
+		    197 +   .tag(GameTest.Tags.suiteDefault);
+		102     -   const testName = "blocktests.falling_sand_lands_on_" + block.id;
+		103     -   let tag = null;
+		104 198   
+		105     -   GameTest.register("BlockTests", testName, (test) => {
+		106     -     test.setBlockType(block, new BlockLocation(1, 2, 1));
+		107     -     testThatFallingSandLandsOnTop(test);
+		108     -   })
+		    199 + GameTest.register("BlockTests", "turtle_eggs_survive_item", (test) => {
+		    200 +   test.pressButton(new BlockLocation(2, 4, 0));
+		    201 + 
+		    202 +   // Fail if the turtle egg dies
+		    203 +   test.failIf(() => {
+		    204 +     test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1), true);
+		    205 +   });
+		109     -     .batch("day")
+		110     -     .structureName(FALLING_SAND_TEMPLATE_NAME)
+		111     -     .maxTicks(FALLING_SAND_TIMEOUT_TICKS)
+		112     -     .setupTicks(FALLING_SAND_STARTUP_TICKS)
+		113     -     .required(true)
+		114     -     .tag(GameTest.Tags.suiteDefault);
+		115     - }
+		116 206   
+		    207 +   // Succeed after 4 seconds
+		    208 +   test.startSequence().thenIdle(80).thenSucceed();
+		    209 + })
+		    210 +   .maxTicks(FiveSecondsInTicks)
+		    211 +   .tag(GameTest.Tags.suiteDefault);
+		117     - GameTest.register("BlockTests", "concrete_solidifies_in_shallow_water", (test) => {
+		118     -   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 3, 1));
+		119 212   
+		    213 + GameTest.register("BlockTests", "turtle_eggs_squished_by_mob", (test) => {
+		    214 +   const zombieEntityType = "minecraft:husk";
+		    215 +   const zombiePosition = new BlockLocation(1, 5, 1);
+		120     -   test.succeedWhen(() => {
+		    216 +   test.spawn(zombieEntityType, zombiePosition);
+		    217 +   test.succeedWhenBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1), true);
+		121     -     test.assertBlockPresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1), true);
+		122     -   });
+		123 218   })
+		    219 +   .required(false)
+		    220 +   .maxTicks(TicksPerSecond * 20)
+		124     -   .maxTicks(FiveSecondsInTicks)
+		125 221     .tag(GameTest.Tags.suiteDefault);
+		    222 + 
+		    223 + GameTest.register("BlockTests", "explosion_drop_location", (test) => {
+		    224 +   test.pressButton(new BlockLocation(4, 3, 4));
+		126 225   
+		    226 +   test.succeedWhen(() => {
+		    227 +     const redSandstonePos = new BlockLocation(6, 2, 4);
+		127     - GameTest.register("BlockTests", "concrete_solidifies_in_deep_water", (test) => {
+		    228 +     const sandstonePos = new BlockLocation(2, 2, 4);
+		128     -   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 4, 1));
+		129 229   
+		    230 +     test.assertBlockPresent(MinecraftBlockTypes.redSandstone, redSandstonePos, false);
+		    231 +     test.assertBlockPresent(MinecraftBlockTypes.sandstone, sandstonePos, false);
+		    232 +     test.assertItemEntityPresent(MinecraftItemTypes.redSandstone, redSandstonePos, 2.0, true);
+		130     -   test.succeedWhen(() => {
+		    233 +     test.assertItemEntityPresent(MinecraftItemTypes.sandstone, sandstonePos, 2.0, true);
+		131     -     test.assertBlockPresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1), true);
+		132 234     });
+		133 235   })
+		    236 +   .maxTicks(TicksPerSecond * 10)
+		134     -   .maxTicks(FiveSecondsInTicks)
+		135     -   .tag(GameTest.Tags.suiteDefault);
+		    237 +   .tag("suite:java_parity")
+		    238 +   .tag(GameTest.Tags.suiteDisabled) //redSandstone and sandstone items should be present.
+		    239 +   .maxAttempts(3);
+		136     - 
+		137     - GameTest.register("BlockTests", "concrete_solidifies_next_to_water", (test) => {
+		138     -   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 3, 1));
+		139 240   
+		    241 + GameTest.register("BlockTests", "concrete_pops_off_waterlogged_chest", (test) => {
+		    242 +   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 4, 1));
+		140 243     test.succeedWhen(() => {
+		    244 +     const chestPos = new BlockLocation(1, 2, 1);
+		    245 +     test.assertBlockPresent(MinecraftBlockTypes.chest, chestPos, true);
+		    246 +     test.assertItemEntityPresent(MinecraftItemTypes.concretePowder, chestPos, 2, true);
+		    247 +     test.assertEntityPresentInArea("falling_block", false);
+		141     -     test.assertBlockPresent(MinecraftBlockTypes.concrete, new BlockLocation(1, 2, 1), true);
+		142 248     });
+		143 249   })
+		    250 +   .maxTicks(TicksPerSecond * 5)
+		144     -   .maxTicks(FiveSecondsInTicks)
+		145 251     .tag(GameTest.Tags.suiteDefault);
+		146     - 
+		147     - GameTest.register("BlockTests", "sand_fall_boats", (test) => {
+		148     -   test.setBlockType(MinecraftBlockTypes.sand, new BlockLocation(1, 4, 1));
+		149 252   
+		    253 + GameTest.register("BlockTests", "waterlogged_slab", (test) => {
+		    254 +   const slabPos = new BlockLocation(1, 1, 1);
+		    255 +   test.assertIsWaterlogged(slabPos, false);
+		150 256     test.succeedWhen(() => {
+		    257 +     test.assertIsWaterlogged(slabPos, true);
+		151     -     test.assertBlockPresent(MinecraftBlockTypes.sand, new BlockLocation(1, 2, 1), true);
+		152 258     });
+		153 259   })
+		154     -   .maxTicks(FiveSecondsInTicks)
+		155     -   .tag(GameTest.Tags.suiteDefault);
+		156     - 
+		    260 +   .tag("suite:java_parity")
+		    261 +   .tag(GameTest.Tags.suiteDisabled) // Slab should be waterlogged
+		    262 +   .maxTicks(TicksPerSecond * 2);
+		157     - GameTest.register("BlockTests", "sand_fall_shulker", (test) => {
+		158     -   const EntitySpawnType = "minecraft:shulker";
+		159     -   const spawnPos = new BlockLocation(1, 2, 1);
+		160 263   
+		    264 + GameTest.register("BlockTests", "dispenser_light_candles", (test) => {
+		161     -   test.spawn(EntitySpawnType, spawnPos);
+		162     -   testThatFallingSandPopsIntoItem(test);
+		    265 +   const testEx = new GameTestExtensions(test);
+		    266 +   test.pressButton(new BlockLocation(1, 3, 0));
+		    267 +   test.pressButton(new BlockLocation(1, 3, 2));
+		163     - })
+		164     -   .maxTicks(FiveSecondsInTicks)
+		165     -   .tag(GameTest.Tags.suiteDefault);
+		166 268   
+		    269 +   test.succeedWhen(() => {
+		    270 +     testEx.assertBlockProperty("lit", 1, new BlockLocation(0, 2, 0));
+		    271 +     testEx.assertBlockProperty("lit", 1, new BlockLocation(0, 2, 2));
+		167     - ///
+		    272 +   });
+		    273 + }).tag(GameTest.Tags.suiteDefault);
+		168     - // Turtle Egg Tests
+		169     - ///
+		170 274   
+		    275 + GameTest.register("BlockTests", "put_out_candles", (test) => {
+		    276 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		171     - GameTest.register("BlockTests", "turtle_eggs_survive_xp", (test) => {
+		    277 +   const testEx = new GameTestExtensions(test);
+		    278 +   const candlePos = new BlockLocation(0, 2, 0);
+		172     -   const xpOrb = "minecraft:xp_orb";
+		173     -   const spawnPos = new BlockLocation(1, 3, 1);
+		174 279   
+		    280 +   test
+		    281 +     .startSequence()
+		    282 +     .thenExecuteAfter(5, () => {
+		175     -   for (let i = 0; i < 8; i++) {
+		    283 +       player.interactWithBlock(candlePos);
+		    284 +     })
+		    285 +     .thenWait(() => {
+		    286 +       testEx.assertBlockProperty("lit", 0, candlePos);
+		    287 +     })
+		    288 +     .thenSucceed();
+		    289 + }).tag(GameTest.Tags.suiteDefault);
+		176     -     test.spawn(xpOrb, spawnPos);
+		177     -   }
+		178     - 
+		179     -   // Fail if the turtle egg dies
+		180     -   test.failIf(() => {
+		181     -     test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1), true);
+		182     -   });
+		183 290   
+		    291 + ///
+		184     -   // Succeed after 4 seconds
+		185     -   test.startSequence().thenIdle(80).thenSucceed();
+		    292 + // Big Dripleaf Tests
+		    293 + ///
+		    294 + const platformStructure = "ComponentTests:platform";
+		186     - })
+		187     -   .maxTicks(FiveSecondsInTicks)
+		188     -   .tag(GameTest.Tags.suiteDefault);
+		189 295   
+		    296 + GameTest.register("BlockTests", "dripleaf_player_fall", (test) => {
+		    297 +   test.setBlockType(MinecraftBlockTypes.bigDripleaf, new BlockLocation(1, 2, 1));
+		    298 +   let playerSim = test.spawnSimulatedPlayer(new BlockLocation(1, 4, 1));
+		    299 +   test
+		    300 +     .startSequence()
+		    301 +     .thenExecuteAfter(40, () => test.assertEntityPresent("player", new BlockLocation(1, 2, 1), true))
+		    302 +     .thenSucceed();
+		    303 + })
+		    304 +   .structureName(platformStructure)
+		    305 +   .tag(GameTest.Tags.suiteDefault);
+		190     - GameTest.register("BlockTests", "turtle_eggs_survive_item", (test) => {
+		191     -   test.pressButton(new BlockLocation(2, 4, 0));
+		192     - 
+		193     -   // Fail if the turtle egg dies
+		194     -   test.failIf(() => {
+		195     -     test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1), true);
+		196     -   });
+		197 306   
+		    307 + GameTest.register("BlockTests", "dripleaf_walk_across", (test) => {
+		    308 +   test.setBlockType(MinecraftBlockTypes.bigDripleaf, new BlockLocation(1, 2, 0));
+		198     -   // Succeed after 4 seconds
+		199     -   test.startSequence().thenIdle(80).thenSucceed();
+		    309 +   test.setBlockType(MinecraftBlockTypes.bigDripleaf, new BlockLocation(1, 2, 1));
+		    310 +   test.setBlockType(MinecraftBlockTypes.smoothStone, new BlockLocation(1, 2, 2));
+		    311 +   let playerSim = test.spawnSimulatedPlayer(new BlockLocation(1, 4, 0));
+		    312 +   test
+		    313 +     .startSequence()
+		    314 +     .thenExecuteAfter(10, () => test.assertEntityPresent("player", new BlockLocation(1, 3, 2), false))
+		    315 +     .thenExecute(() => playerSim.moveToLocation(new Location(1, 3, 2.5)))
+		    316 +     .thenExecuteAfter(40, () => test.assertEntityPresent("player", new BlockLocation(1, 3, 2)))
+		    317 +     .thenSucceed();
+		200     - })
+		201     -   .maxTicks(FiveSecondsInTicks)
+		202     -   .tag(GameTest.Tags.suiteDefault);
+		203     - 
+		204     - GameTest.register("BlockTests", "turtle_eggs_squished_by_mob", (test) => {
+		205     -   const zombieEntityType = "minecraft:husk";
+		206     -   const zombiePosition = new BlockLocation(1, 5, 1);
+		207     -   test.spawn(zombieEntityType, zombiePosition);
+		208     -   test.succeedWhenBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1), true);
+		209 318   })
+		    319 +   .structureName(platformStructure)
+		210     -   .required(false)
+		211     -   .maxTicks(TicksPerSecond * 20)
+		212 320     .tag(GameTest.Tags.suiteDefault);
+		213     - 
+		214     - GameTest.register("BlockTests", "explosion_drop_location", (test) => {
+		215     -   test.pressButton(new BlockLocation(4, 3, 4));
+		216 321   
+		    322 + ///
+		    323 + // Powder snow tests
+		217     -   test.succeedWhen(() => {
+		218     -     const redSandstonePos = new BlockLocation(6, 2, 4);
+		    324 + ///
+		219     -     const sandstonePos = new BlockLocation(2, 2, 4);
+		220 325   
+		221     -     test.assertBlockPresent(MinecraftBlockTypes.redSandstone, redSandstonePos, false);
+		222     -     test.assertBlockPresent(MinecraftBlockTypes.sandstone, sandstonePos, false);
+		223     -     test.assertItemEntityPresent(MinecraftItemTypes.redSandstone, redSandstonePos, 2.0, true);
+		224     -     test.assertItemEntityPresent(MinecraftItemTypes.sandstone, sandstonePos, 2.0, true);
+		    326 + GameTest.register("BlockTests", "powder_snow_player_sink_and_freeze", (test) => {
+		    327 +   test.setBlockType(MinecraftBlockTypes.powderSnow, new BlockLocation(1, 2, 1));
+		    328 +   let playerSim = test.spawnSimulatedPlayer(new BlockLocation(1, 3, 1));
+		    329 +   let healthComp = playerSim.getComponent("health");
+		    330 +   test
+		    331 +     .startSequence()
+		    332 +     .thenExecuteAfter(180, () => test.assert(healthComp.current < healthComp.value, "no damage"))
+		    333 +     .thenExecute( () => test.assertEntityInstancePresent(playerSim, new BlockLocation(1, 2, 1)))
+		    334 +     .thenSucceed();
+		    335 + })
+		    336 +   .maxTicks(200)
+		    337 +   .structureName(platformStructure)
+		    338 +   .tag(GameTest.Tags.suiteDefault);
+		    339 + 
+		    340 + GameTest.register("BlockTests", "powder_snow_leather_boots_walk", (test) => {
+		    341 +   test.setBlockType(MinecraftBlockTypes.powderSnow, new BlockLocation(1, 2, 0));
+		    342 +   test.setBlockType(MinecraftBlockTypes.powderSnow, new BlockLocation(1, 2, 1));
+		    343 +   test.setBlockType(MinecraftBlockTypes.powderSnow, new BlockLocation(1, 2, 2));
+		225     -   });
+		226     - })
+		227     -   .maxTicks(TicksPerSecond * 10)
+		228     -   .tag("suite:java_parity")
+		229     -   .tag(GameTest.Tags.suiteDisabled) //redSandstone and sandstone items should be present.
+		230     -   .maxAttempts(3);
+		231     - 
+		232     - GameTest.register("BlockTests", "concrete_pops_off_waterlogged_chest", (test) => {
+		233     -   test.setBlockType(MinecraftBlockTypes.concretepowder, new BlockLocation(1, 4, 1));
+		234     -   test.succeedWhen(() => {
+		235     -     const chestPos = new BlockLocation(1, 2, 1);
+		236     -     test.assertBlockPresent(MinecraftBlockTypes.chest, chestPos, true);
+		237     -     test.assertItemEntityPresent(MinecraftItemTypes.concretePowder, chestPos, 2, true);
+		238     -     test.assertEntityPresentInArea("falling_block", false);
+		239     -   });
+		240     - })
+		241     -   .maxTicks(TicksPerSecond * 5)
+		242     -   .tag(GameTest.Tags.suiteDefault);
+		243     - 
+		    344 +   let playerSim = test.spawnSimulatedPlayer(new BlockLocation(1, 5, 0), "playerSim_snow");
+		    345 +   test
+		    346 +     .startSequence()
+		    347 +     .thenExecuteAfter(5, () =>
+		    348 +       Commands.run(
+		    349 +         "/replaceitem entity playerSim_snow slot.armor.feet 0 leather_boots",
+		    350 +         World.getDimension("overworld") //this command equips leather boots on the player
+		    351 +       )
+		    352 +     )
+		    353 +     .thenExecuteAfter(10, () => playerSim.moveToLocation(new Location(1, 3, 2.5)))
+		    354 +     .thenExecuteAfter(40, () => test.assertEntityPresent("player", new BlockLocation(1, 4, 2)))
+		    355 +     .thenSucceed();
+		    356 + })
+		    357 +   .structureName(platformStructure)
+		    358 +   .tag(GameTest.Tags.suiteDefault);
+		244     - GameTest.register("BlockTests", "waterlogged_slab", (test) => {
+		245     -   const slabPos = new BlockLocation(1, 1, 1);
+		246     -   test.assertIsWaterlogged(slabPos, false);
+		247     -   test.succeedWhen(() => {
+		248     -     test.assertIsWaterlogged(slabPos, true);
+		249     -   });
+		250     - })
+		251     -   .tag("suite:java_parity")
+		252     -   .tag(GameTest.Tags.suiteDisabled) // Slab should be waterlogged
+		253     -   .maxTicks(TicksPerSecond * 2);
+		254     - 
+		255     - GameTest.register("BlockTests", "dispenser_light_candles", (test) => {
+		256     -   const testEx = new GameTestExtensions(test);
+		257     -   test.pressButton(new BlockLocation(1, 3, 0));
+		258     -   test.pressButton(new BlockLocation(1, 3, 2));
+		259 359   
+		    360 + ///
+		260     -   test.succeedWhen(() => {
+		261     -     testEx.assertBlockProperty("lit", 1, new BlockLocation(0, 2, 0));
+		262     -     testEx.assertBlockProperty("lit", 1, new BlockLocation(0, 2, 2));
+		    361 + // Candle cake tests
+		    362 + ///
+		263     -   });
+		264     - }).tag(GameTest.Tags.suiteDefault);
+		265 363   
+		    364 + GameTest.register("BlockTests", "player_light_birthday_cake_candle", (test) => {
+		    365 +   let playerSim = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0), "playerSim_cake");
+		266     - GameTest.register("BlockTests", "put_out_candles", (test) => {
+		    366 +   test.setBlockType(MinecraftBlockTypes.cake, new BlockLocation(1, 2, 1));
+		267     -   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		268 367     const testEx = new GameTestExtensions(test);
+		269     -   const candlePos = new BlockLocation(0, 2, 0);
+		270 368   
+		271 369     test
+		272 370       .startSequence()
+		    371 +     .thenExecuteAfter(20, () => testEx.giveItem(playerSim, MinecraftItemTypes.candle, 1, 0))
+		273     -     .thenExecuteAfter(5, () => {
+		274     -       player.interactWithBlock(candlePos);
+		    372 +     .thenExecute(() => test.assert(playerSim.interactWithBlock(new BlockLocation(1, 2, 1), Direction.up), ""))
+		    373 +     .thenExecute(() => testEx.giveItem(playerSim, MinecraftItemTypes.flintAndSteel, 1, 0))
+		    374 +     .thenExecute(() => test.assert(playerSim.interactWithBlock(new BlockLocation(1, 2, 1), Direction.up), ""))
+		    375 +     .thenExecute(() => testEx.assertBlockProperty("lit", 1, new BlockLocation(1, 2, 1)))
+		275     -     })
+		276     -     .thenWait(() => {
+		277     -       testEx.assertBlockProperty("lit", 0, candlePos);
+		278     -     })
+		279 376       .thenSucceed();
+		    377 + })
+		    378 +   .structureName(platformStructure)
+		    379 +   .tag(GameTest.Tags.suiteDefault);
+		280     - }).tag(GameTest.Tags.suiteDefault);
+		          '''
+	Changed script "GameTestExtensions.js":
+		Total line: 40 (+15, -7)
+		        '''
+		    1 + import {ItemStack} from "mojang-minecraft";
+		    2 + export default class GameTestExtensions {
+		    3 +   constructor(test) {
+		    4 +     this.test = test;
+		    5 +   }
+		    6 + 
+		    7 +   addEntityInBoat(entityType, blockLoc) {
+		    8 +     const boat = this.test.spawn("boat", blockLoc);
+		    9 +     this.test.assert(boat !== undefined, "Failed to spawn boat");
+		   10 +     const rider = this.test.spawn(entityType, blockLoc);
+		   11 +     this.test.assert(rider !== undefined, "Failed to spawn rider");
+		   12 +     const boatRideableComp = boat.getComponent("rideable");
+		   13 +     this.test.assert(boatRideableComp !== undefined, "Boat missing rideable component");
+		   14 +     this.test.assert(boatRideableComp.addRider(rider), "Failed to add rider");
+		   15 +     return rider;
+		 1    - export default class GameTestExtensions {
+		 2    -   constructor(test) {
+		 3    -     this.test = test;
+		 4 16     }
+		 5 17   
+		   18 +   makeAboutToDrown(entity) {
+		 6    -   addEntityInBoat(entityType, blockLoc) {
+		 7    -     const boat = this.test.spawn("boat", blockLoc);
+		   19 +     this.test.assert(entity !== undefined, "Expected entity");
+		   20 +     const healthComp = entity.getComponent("health");
+		   21 +     this.test.assert(healthComp !== undefined, "Entity missing health component");
+		   22 +     const breathableComp = entity.getComponent("breathable");
+		   23 +     this.test.assert(breathableComp !== undefined, "Entity missing breathable component");
+		   24 +     healthComp.setCurrent(1);
+		   25 +     breathableComp.setAirSupply(0);
+		 8    -     this.test.assert(boat !== undefined, "Failed to spawn boat");
+		 9    -     const rider = this.test.spawn(entityType, blockLoc);
+		10    -     this.test.assert(rider !== undefined, "Failed to spawn rider");
+		11    -     const boatRideableComp = boat.getComponent("rideable");
+		12    -     this.test.assert(boatRideableComp !== undefined, "Boat missing rideable component");
+		13    -     this.test.assert(boatRideableComp.addRider(rider), "Failed to add rider");
+		14    -     return rider;
+		15 26     }
+		16 27   
+		17    -   makeAboutToDrown(entity) {
+		18    -     this.test.assert(entity !== undefined, "Expected entity");
+		19    -     const healthComp = entity.getComponent("health");
+		20    -     this.test.assert(healthComp !== undefined, "Entity missing health component");
+		   28 +   assertBlockProperty(propertyName, value, blockLocation) {
+		   29 +     this.test.assertBlockState(blockLocation, (block) => {
+		   30 +       return block.permutation.getProperty(propertyName).value == value;
+		   31 +     });
+		21    -     const breathableComp = entity.getComponent("breathable");
+		22    -     this.test.assert(breathableComp !== undefined, "Entity missing breathable component");
+		23    -     healthComp.setCurrent(1);
+		24    -     breathableComp.setAirSupply(0);
+		25 32     }
+		26 33   
+		   34 + giveItem(player, itemType, amount, slot) {
+		   35 +   const inventoryContainer = player.getComponent("inventory").container;
+		27    -   assertBlockProperty(propertyName, value, blockLocation) {
+		   36 +   inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
+		   37 +   player.selectSlot(slot ?? 0);
+		   38 + }
+		   39 + 
+		28    -     this.test.assertBlockState(blockLocation, (block) => {
+		29    -       return block.permutation.getProperty(propertyName).value == value;
+		30    -     });
+		31    -   }
+		32 40   }
+		        '''
+	Changed script "MobTests.js":
+		Total line: 252 (+102, -33)
+		          '''
+		  1   1   import * as GameTest from "mojang-gametest";
+		  2   2   import GameTestExtensions from "./GameTestExtensions.js";
+		  3   3   
+		      4 + import { BlockLocation, MinecraftEffectTypes, MinecraftBlockTypes, Commands, World, MinecraftItemTypes} from "mojang-minecraft";
+		      5 + 
+		      6 + const TicksPerSecond = 20;
+		      7 + 
+		      8 + GameTest.register("MobTests", "zombie_burn", (test) => {
+		      9 +   const zombieEntityType = "minecraft:zombie";
+		     10 +   const zombiePosition = new BlockLocation(1, 2, 1);
+		     11 + 
+		     12 +   test.succeedWhenEntityPresent(zombieEntityType, zombiePosition, false);
+		     13 + })
+		     14 +   .maxTicks(TicksPerSecond * 30)
+		     15 +   .tag(GameTest.Tags.suiteDefault)
+		     16 +   .batch("day");
+		     17 + 
+		     18 + GameTest.register("MobTests", "effect_durations_longer_first", (test) => {
+		     19 +   const testEx = new GameTestExtensions(test);
+		     20 +   const villagerId = "minecraft:villager_v2";
+		     21 +   const villagerPos = new BlockLocation(1, 2, 1);
+		     22 +   const buttonPos = new BlockLocation(1, 4, 0);
+		     23 +   const strongPotion = new BlockLocation(0, 4, 0);
+		     24 +   const weakPotion = new BlockLocation(2, 4, 0);
+		     25 +   const strongPotionDuration = TicksPerSecond * 16;
+		     26 + 
+		     27 +   test.spawn(villagerId, villagerPos);
+		     28 + 
+		     29 +   test
+		     30 +     .startSequence()
+		     31 +     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, weakPotion))
+		     32 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     33 +     .thenWait(() => testEx.assertBlockProperty("button_pressed_bit", 0, buttonPos))
+		     34 +     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, strongPotion))
+		     35 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     36 +     .thenIdle(strongPotionDuration)
+		     37 +     .thenWait(() => {
+		     38 +       test.assertEntityState(
+		     39 +         villagerPos,
+		     40 +         villagerId,
+		     41 +         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).amplifier == 0
+		     42 +       ); // Strength level I
+		     43 +       test.assertEntityState(
+		     44 +         villagerPos,
+		     45 +         villagerId,
+		     46 +         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).duration > TicksPerSecond * 10
+		     47 +       );
+		     48 +     })
+		     49 +     .thenSucceed();
+		     50 + })
+		     51 +   .structureName("MobTests:effect_durations")
+		     52 +   .maxTicks(400)
+		     53 +   .tag("suite:java_parity")
+		     54 +   .tag(GameTest.Tags.suiteDisabled); // Weak potion duration is 33 seconds, strong is 16. After the strong potion expires the weak potion effect should have time remaining
+		     55 + 
+		     56 + GameTest.register("MobTests", "drowning_test", (test) => {
+		     57 +   const villagerEntitySpawnType = "minecraft:villager_v2";
+		     58 +   const pigSpawnType = "minecraft:pig";
+		     59 + 
+		     60 +   test.spawn(villagerEntitySpawnType, new BlockLocation(3, 2, 2));
+		     61 +   test.spawn(pigSpawnType, new BlockLocation(3, 2, 4));
+		     62 +   test.succeedWhen(() => {
+		     63 +     test.assertEntityPresentInArea(pigSpawnType, false);
+		     64 +     test.assertEntityPresentInArea(villagerEntitySpawnType, false);
+		     65 +   });
+		     66 + })
+		     67 +   .maxTicks(TicksPerSecond * 45)
+		     68 +   .tag(GameTest.Tags.suiteDefault);
+		     69 + 
+		     70 + GameTest.register("MobTests", "golem_vs_pillager", (test) => {
+		     71 +   const ironGolem = "minecraft:iron_golem";
+		     72 +   const pillager = "minecraft:pillager";
+		     73 +   const ironGolemPos = new BlockLocation(3, 2, 3);
+		     74 +   const pillagerPos = new BlockLocation(3, 2, 4);
+		     75 + 
+		     76 +   test.spawn(ironGolem, ironGolemPos);
+		     77 +   test.spawn(pillager, pillagerPos);
+		     78 + 
+		     79 +   test.succeedWhen(() => {
+		     80 +     test.assertEntityPresent(pillager, ironGolemPos, false);
+		     81 +     test.assertEntityPresent(ironGolem, pillagerPos, true);
+		     82 +   });
+		     83 + }).tag(GameTest.Tags.suiteDefault);
+		  4     - import { BlockLocation, MinecraftEffectTypes, MinecraftBlockTypes } from "mojang-minecraft";
+		  5  84   
+		     85 + GameTest.register("MobTests", "effect_durations_stronger_first", (test) => {
+		     86 +   const testEx = new GameTestExtensions(test);
+		     87 +   const villagerId = "minecraft:villager_v2";
+		     88 +   const villagerPos = new BlockLocation(1, 2, 1);
+		     89 +   const buttonPos = new BlockLocation(1, 4, 0);
+		     90 +   const strongPotion = new BlockLocation(0, 4, 0);
+		     91 +   const weakPotion = new BlockLocation(2, 4, 0);
+		     92 +   const strongPotionDuration = TicksPerSecond * 16;
+		  6     - const TicksPerSecond = 20;
+		  7     - 
+		  8     - GameTest.register("MobTests", "zombie_burn", (test) => {
+		  9     -   const zombieEntityType = "minecraft:zombie";
+		 10     -   const zombiePosition = new BlockLocation(1, 2, 1);
+		 11  93   
+		 12     -   test.succeedWhenEntityPresent(zombieEntityType, zombiePosition, false);
+		 13     - })
+		 14     -   .maxTicks(TicksPerSecond * 30)
+		 15     -   .tag(GameTest.Tags.suiteDefault)
+		     94 +   test.spawn(villagerId, villagerPos);
+		 16     -   .batch("day");
+		 17  95   
+		     96 +   test
+		 18     - GameTest.register("MobTests", "effect_durations_longer_first", (test) => {
+		 19     -   const testEx = new GameTestExtensions(test);
+		     97 +     .startSequence()
+		     98 +     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, strongPotion))
+		     99 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		    100 +     .thenWait(() => testEx.assertBlockProperty("button_pressed_bit", 0, buttonPos))
+		    101 +     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, weakPotion))
+		    102 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		    103 +     .thenIdle(strongPotionDuration)
+		    104 +     .thenWait(() => {
+		    105 +       test.assertEntityState(
+		    106 +         villagerPos,
+		    107 +         villagerId,
+		    108 +         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).amplifier == 0
+		    109 +       ); // Strength level I
+		    110 +       test.assertEntityState(
+		    111 +         villagerPos,
+		    112 +         villagerId,
+		    113 +         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).duration > TicksPerSecond * 10
+		    114 +       );
+		    115 +     })
+		    116 +     .thenSucceed();
+		    117 + })
+		    118 +   .structureName("MobTests:effect_durations")
+		    119 +   .maxTicks(400)
+		    120 +   .tag("suite:java_parity")
+		    121 +   .tag(GameTest.Tags.suiteDisabled); // Weak potion duration is 33 seconds, strong is 16. After the strong potion expires the weak potion effect should have time remaining
+		    122 + 
+		    123 + GameTest.register("MobTests", "silverfish_no_suffocate", (test) => {
+		    124 +   const silverfishPos = new BlockLocation(1, 2, 1);
+		    125 +   const silverfish = "minecraft:silverfish";
+		    126 + 
+		    127 +   test
+		    128 +     .startSequence()
+		    129 +     .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		    130 +     .thenIdle(40)
+		    131 +     .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		    132 +     .thenSucceed();
+		    133 +   test
+		    134 +     .startSequence()
+		    135 +     .thenWait(() => test.assertEntityPresent(silverfish, silverfishPos, false))
+		    136 +     .thenFail("Silverfish died");
+		    137 + })
+		    138 +   .maxTicks(TicksPerSecond * 30)
+		    139 +   .required(false)
+		    140 +   .tag(GameTest.Tags.suiteDefault);
+		    141 + 
+		    142 + GameTest.register("MobTests", "small_mobs_keep_head_above_water", (test) => {
+		    143 +   const testEx = new GameTestExtensions(test);
+		    144 +   const swimmerPos = new BlockLocation(1, 3, 1); //When the silverfish is produced at (1, 2, 1), the silverfish is stuck in the glass below and dies, so the y-axis goes up one frame
+		    145 +   const swimmer = test.spawn("minecraft:silverfish", swimmerPos);
+		 20     -   const villagerId = "minecraft:villager_v2";
+		 21     -   const villagerPos = new BlockLocation(1, 2, 1);
+		 22     -   const buttonPos = new BlockLocation(1, 4, 0);
+		 23     -   const strongPotion = new BlockLocation(0, 4, 0);
+		 24     -   const weakPotion = new BlockLocation(2, 4, 0);
+		 25     -   const strongPotionDuration = TicksPerSecond * 16;
+		 26     - 
+		 27     -   test.spawn(villagerId, villagerPos);
+		 28     - 
+		 29     -   test
+		 30     -     .startSequence()
+		 31     -     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, weakPotion))
+		 32     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 33     -     .thenWait(() => testEx.assertBlockProperty("button_pressed_bit", 0, buttonPos))
+		 34     -     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, strongPotion))
+		 35     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 36     -     .thenIdle(strongPotionDuration)
+		 37     -     .thenWait(() => {
+		 38     -       test.assertEntityState(
+		 39     -         villagerPos,
+		 40     -         villagerId,
+		 41     -         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).amplifier == 0
+		 42     -       ); // Strength level I
+		 43     -       test.assertEntityState(
+		 44     -         villagerPos,
+		 45     -         villagerId,
+		 46     -         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).duration > TicksPerSecond * 10
+		 47     -       );
+		 48     -     })
+		 49     -     .thenSucceed();
+		 50     - })
+		 51     -   .structureName("MobTests:effect_durations")
+		 52     -   .maxTicks(400)
+		 53     -   .tag("suite:java_parity")
+		 54     -   .tag(GameTest.Tags.suiteDisabled); // Weak potion duration is 33 seconds, strong is 16. After the strong potion expires the weak potion effect should have time remaining
+		 55     - 
+		 56     - GameTest.register("MobTests", "drowning_test", (test) => {
+		 57     -   const villagerEntitySpawnType = "minecraft:villager_v2";
+		 58     -   const pigSpawnType = "minecraft:pig";
+		 59     - 
+		 60     -   test.spawn(villagerEntitySpawnType, new BlockLocation(3, 2, 2));
+		 61     -   test.spawn(pigSpawnType, new BlockLocation(3, 2, 4));
+		 62     -   test.succeedWhen(() => {
+		 63     -     test.assertEntityPresentInArea(pigSpawnType, false);
+		 64     -     test.assertEntityPresentInArea(villagerEntitySpawnType, false);
+		 65     -   });
+		 66     - })
+		 67     -   .maxTicks(TicksPerSecond * 45)
+		 68     -   .tag(GameTest.Tags.suiteDefault);
+		 69 146   
+		 70     - GameTest.register("MobTests", "golem_vs_pillager", (test) => {
+		 71     -   const ironGolem = "minecraft:iron_golem";
+		 72     -   const pillager = "minecraft:pillager";
+		    147 +   const drownerPos = new BlockLocation(5, 2, 1);
+		    148 +   const drowner = test.spawn("minecraft:silverfish", drownerPos);
+		 73     -   const ironGolemPos = new BlockLocation(3, 2, 3);
+		 74     -   const pillagerPos = new BlockLocation(3, 2, 4);
+		 75 149   
+		    150 +   testEx.makeAboutToDrown(swimmer);
+		    151 +   testEx.makeAboutToDrown(drowner);
+		 76     -   test.spawn(ironGolem, ironGolemPos);
+		 77     -   test.spawn(pillager, pillagerPos);
+		 78 152   
+		    153 +   test
+		    154 +     .startSequence()
+		    155 +     .thenWaitAfter(40, () => {
+		    156 +       test.assertEntityPresent("minecraft:silverfish", swimmerPos, true);
+		    157 +       test.assertEntityPresent("minecraft:silverfish", drownerPos, false);
+		    158 +     })
+		    159 +     .thenSucceed();
+		 79     -   test.succeedWhen(() => {
+		 80     -     test.assertEntityPresent(pillager, ironGolemPos, false);
+		 81     -     test.assertEntityPresent(ironGolem, pillagerPos, true);
+		 82     -   });
+		 83 160   }).tag(GameTest.Tags.suiteDefault);
+		 84 161   
+		    162 + GameTest.register("MobTests", "small_mobs_breathe_in_boats", (test) => {
+		 85     - GameTest.register("MobTests", "effect_durations_stronger_first", (test) => {
+		 86 163     const testEx = new GameTestExtensions(test);
+		 87     -   const villagerId = "minecraft:villager_v2";
+		 88     -   const villagerPos = new BlockLocation(1, 2, 1);
+		 89     -   const buttonPos = new BlockLocation(1, 4, 0);
+		    164 +   const catPos = new BlockLocation(2, 3, 2);
+		    165 +   const cat = testEx.addEntityInBoat("minecraft:cat", catPos);
+		    166 +   testEx.makeAboutToDrown(cat);
+		 90     -   const strongPotion = new BlockLocation(0, 4, 0);
+		 91     -   const weakPotion = new BlockLocation(2, 4, 0);
+		 92     -   const strongPotionDuration = TicksPerSecond * 16;
+		 93 167   
+		    168 +   const silverfishPos = new BlockLocation(4, 3, 2);
+		    169 +   const silverfish = testEx.addEntityInBoat("minecraft:silverfish", silverfishPos);
+		    170 +   testEx.makeAboutToDrown(silverfish);
+		 94     -   test.spawn(villagerId, villagerPos);
+		 95 171   
+		 96     -   test
+		 97     -     .startSequence()
+		 98     -     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, strongPotion))
+		 99     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		    172 +   const underWaterPos = new BlockLocation(6, 2, 2);
+		    173 +   const silverfish2 = testEx.addEntityInBoat("minecraft:silverfish", underWaterPos);
+		    174 +   testEx.makeAboutToDrown(silverfish2);
+		    175 + 
+		    176 +   test
+		    177 +     .startSequence()
+		    178 +     .thenIdle(40)
+		    179 +     .thenExecute(() => test.assertEntityPresent("minecraft:cat", catPos, true))
+		    180 +     .thenExecute(() => test.assertEntityPresent("minecraft:silverfish", silverfishPos, true))
+		    181 +     .thenExecute(() => test.assertEntityPresent("minecraft:silverfish", underWaterPos, false))
+		    182 +     .thenSucceed();
+		    183 + }).tag(GameTest.Tags.suiteDefault);
+		    184 + 
+		    185 + ///
+		    186 + // Axolotl Tests
+		    187 + ///
+		    188 + const platformStructure = "ComponentTests:platform";
+		    189 + 
+		    190 + GameTest.register("MobTests", "axolotl_bucket_capture", (test) =>{
+		    191 +   let playerSim = test.spawnSimulatedPlayer(new BlockLocation(1,5,0), "playerSim_axolotl")
+		    192 +   let target = test.spawn("minecraft:axolotl", new BlockLocation(1, 5, 2));
+		    193 +   const testEx = new GameTestExtensions(test);
+		100     -     .thenWait(() => testEx.assertBlockProperty("button_pressed_bit", 0, buttonPos))
+		101     -     .thenExecute(() => test.setBlockType(MinecraftBlockTypes.air, weakPotion))
+		102     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		103     -     .thenIdle(strongPotionDuration)
+		104     -     .thenWait(() => {
+		105     -       test.assertEntityState(
+		106     -         villagerPos,
+		107     -         villagerId,
+		108     -         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).amplifier == 0
+		109     -       ); // Strength level I
+		110     -       test.assertEntityState(
+		111     -         villagerPos,
+		112     -         villagerId,
+		113     -         (entity) => entity.getEffect(MinecraftEffectTypes.regeneration).duration > TicksPerSecond * 10
+		114     -       );
+		115     -     })
+		116     -     .thenSucceed();
+		117     - })
+		118     -   .structureName("MobTests:effect_durations")
+		119     -   .maxTicks(400)
+		120     -   .tag("suite:java_parity")
+		121     -   .tag(GameTest.Tags.suiteDisabled); // Weak potion duration is 33 seconds, strong is 16. After the strong potion expires the weak potion effect should have time remaining
+		122 194   
+		    195 +   test.startSequence()
+		123     - GameTest.register("MobTests", "silverfish_no_suffocate", (test) => {
+		124     -   const silverfishPos = new BlockLocation(1, 2, 1);
+		125     -   const silverfish = "minecraft:silverfish";
+		126 196   
+		    197 +   .thenExecuteAfter(20, () => testEx.giveItem(playerSim, MinecraftItemTypes.waterBucket, 1, 0))
+		127     -   test
+		128     -     .startSequence()
+		129     -     .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		    198 +   .thenExecute(() => test.assert(playerSim.interactWithEntity(target) == true, ""))
+		    199 +   .thenExecute(() => test.assert(playerSim.getComponent("inventory").container.getItem(0).id === "minecraft:axolotl_bucket", ""))
+		    200 +   .thenSucceed();
+		    201 + }).structureName(platformStructure)
+		    202 + .tag(GameTest.Tags.suiteDefault);
+		    203 + 
+		    204 + 
+		    205 + GameTest.register("MobTests", "axolotl_attacks_squid", (test) =>{
+		    206 +   let axlSpawn = new BlockLocation(2, 3, 2);
+		    207 +   let squidSpawn = new BlockLocation(2, 4, 2);
+		    208 +   test.spawn("minecraft:axolotl", axlSpawn);
+		    209 +   let prey = test.spawn("minecraft:squid", squidSpawn);
+		    210 +   let preyHealth = prey.getComponent("health").current;
+		    211 +   test.startSequence()
+		    212 +   .thenIdle(20)
+		    213 +   .thenWait( () => test.assert(prey.getComponent("health").current < preyHealth, ""))
+		    214 +   .thenSucceed();
+		    215 + }).maxTicks(140).structureName("ComponentTests:aquarium")
+		    216 + .tag(GameTest.Tags.suiteDefault);
+		130     -     .thenIdle(40)
+		131     -     .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		132     -     .thenSucceed();
+		133     -   test
+		134     -     .startSequence()
+		135     -     .thenWait(() => test.assertEntityPresent(silverfish, silverfishPos, false))
+		136     -     .thenFail("Silverfish died");
+		137     - })
+		138     -   .maxTicks(TicksPerSecond * 30)
+		139     -   .required(false)
+		140     -   .tag(GameTest.Tags.suiteDefault);
+		141     - 
+		142     - GameTest.register("MobTests", "small_mobs_keep_head_above_water", (test) => {
+		143     -   const testEx = new GameTestExtensions(test);
+		144     -   const swimmerPos = new BlockLocation(1, 3, 1); //When the silverfish is produced at (1, 2, 1), the silverfish is stuck in the glass below and dies, so the y-axis goes up one frame
+		145     -   const swimmer = test.spawn("minecraft:silverfish", swimmerPos);
+		146     - 
+		147     -   const drownerPos = new BlockLocation(5, 2, 1);
+		148     -   const drowner = test.spawn("minecraft:silverfish", drownerPos);
+		149 217   
+		150     -   testEx.makeAboutToDrown(swimmer);
+		151     -   testEx.makeAboutToDrown(drowner);
+		152 218   
+		153     -   test
+		154     -     .startSequence()
+		155     -     .thenWaitAfter(40, () => {
+		    219 + GameTest.register("MobTests", "axolotl_lure_no_attack", (test) =>{
+		    220 +   const playerSim = test.spawnSimulatedPlayer(new BlockLocation(1,5,0), "playerSim_axolotl_lure");
+		    221 +   let prey = test.spawn("minecraft:squid", new BlockLocation(1, 1, 1));
+		    222 +   let prey_health = prey.getComponent("health").current;
+		    223 +   const testEx = new GameTestExtensions(test);
+		156     -       test.assertEntityPresent("minecraft:silverfish", swimmerPos, true);
+		157     -       test.assertEntityPresent("minecraft:silverfish", drownerPos, false);
+		158     -     })
+		159     -     .thenSucceed();
+		160     - }).tag(GameTest.Tags.suiteDefault);
+		161 224   
+		    225 +   test.startSequence()
+		    226 +   .thenExecuteAfter(20, () => testEx.giveItem(playerSim, MinecraftItemTypes.tropicalFishBucket, 1, 0))
+		    227 +   .thenExecute(() => test.spawn("minecraft:axolotl", new BlockLocation(1, 5, 2)))
+		    228 +   .thenIdle(60)
+		    229 +   .thenExecute( () => test.assert(prey.getComponent("health").current == prey_health, ""))
+		    230 +   .thenSucceed();
+		    231 + }).structureName("MobTests:axolotl_lure")
+		    232 + .tag(GameTest.Tags.suiteDefault);
+		162     - GameTest.register("MobTests", "small_mobs_breathe_in_boats", (test) => {
+		163     -   const testEx = new GameTestExtensions(test);
+		164     -   const catPos = new BlockLocation(2, 3, 2);
+		165     -   const cat = testEx.addEntityInBoat("minecraft:cat", catPos);
+		166     -   testEx.makeAboutToDrown(cat);
+		167 233   
+		    234 + ///
+		    235 + // Goat Tests
+		168     -   const silverfishPos = new BlockLocation(4, 3, 2);
+		169     -   const silverfish = testEx.addEntityInBoat("minecraft:silverfish", silverfishPos);
+		    236 + ///
+		170     -   testEx.makeAboutToDrown(silverfish);
+		171 237   
+		    238 + GameTest.register("MobTests", "goat_wheat_breeding", (test) =>{
+		    239 +   let playerSim = test.spawnSimulatedPlayer(new BlockLocation(1,2,0), "playerSim_goat");
+		    240 +   let goat_1 = test.spawn("minecraft:goat<minecraft:ageable_grow_up>", new BlockLocation(2, 2, 1));
+		    241 +   let goat_2 = test.spawn("minecraft:goat<minecraft:ageable_grow_up>", new BlockLocation(0, 2, 1));
+		    242 +   const testEx = new GameTestExtensions(test);
+		    243 +   test.startSequence()
+		    244 +   .thenExecuteAfter(10, () => testEx.giveItem(playerSim, MinecraftItemTypes.wheat, 3, 0) )
+		    245 +   .thenExecute( () => playerSim.interactWithEntity(goat_1))
+		    246 +   .thenExecute( () => playerSim.interactWithEntity(goat_2))
+		    247 +   .thenExecuteAfter(60, () => goat_1.kill())
+		    248 +   .thenExecute( () => goat_2.kill())
+		    249 +   .thenWait( () => test.assertEntityPresentInArea("minecraft:goat", true)) //does not count red, dying goats as a goat entity. Only counts the newborn baby
+		    250 +   .thenSucceed();
+		    251 + }).maxTicks(120).structureName(platformStructure)
+		    252 + .tag(GameTest.Tags.suiteDefault);
+		172     -   const underWaterPos = new BlockLocation(6, 2, 2);
+		173     -   const silverfish2 = testEx.addEntityInBoat("minecraft:silverfish", underWaterPos);
+		174     -   testEx.makeAboutToDrown(silverfish2);
+		175     - 
+		176     -   test
+		177     -     .startSequence()
+		178     -     .thenIdle(40)
+		179     -     .thenExecute(() => test.assertEntityPresent("minecraft:cat", catPos, true))
+		180     -     .thenExecute(() => test.assertEntityPresent("minecraft:silverfish", silverfishPos, true))
+		181     -     .thenExecute(() => test.assertEntityPresent("minecraft:silverfish", underWaterPos, false))
+		182     -     .thenSucceed();
+		183     - }).tag(GameTest.Tags.suiteDefault);
+		          '''
+	Changed script "SimulatedPlayerTests.js":
+		Total line: 977 (+24, -17)
+		          '''
+		  1   1   import * as GameTest from "mojang-gametest";
+		  2     - import {
+		  3     -   BlockLocation,
+		  4     -   Commands,
+		  5     -   Direction,
+		  6     -   ItemStack,
+		      2 + import GameTestExtensions from "./GameTestExtensions.js";
+		      3 + import {
+		      4 +   BlockLocation,
+		      5 +   Commands,
+		      6 +   Direction,
+		      7 +   ItemStack,
+		      8 +   Location,
+		      9 +   MinecraftBlockTypes,
+		     10 +   MinecraftItemTypes,
+		     11 +   World,
+		     12 + } from "mojang-minecraft";
+		  7     -   Location,
+		  8     -   MinecraftBlockTypes,
+		  9     -   MinecraftItemTypes,
+		 10     -   World,
+		 11     - } from "mojang-minecraft";
+		 12     - 
+		 13     - function giveItem(player, itemType, amount, slot) {
+		 14     -   const inventoryContainer = player.getComponent("inventory").container;
+		 15     -   inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
+		 16     -   player.selectSlot(slot ?? 0);
+		 17     - }
+		 18  13   
+		 19  14   function isNear(n1, n2) {
+		 20  15     return Math.abs(n1 - n2) < 0.01;
+		 21  16   }
+		 22  17   
+		          ...
+		164 159     test.spawn("blaze", new BlockLocation(1, 2, 3));
+		165 160     let useCount = 0;
+		166 161     const slot = 0;
+		167 162     const snowballCount = 10;
+		168 163     const inventoryContainer = player.getComponent("inventory").container;
+		    164 +   const testEx = new GameTestExtensions(test);
+		169 165   
+		    166 +   testEx.giveItem(player, MinecraftItemTypes.snowball, snowballCount, slot);
+		170     -   giveItem(player, MinecraftItemTypes.snowball, snowballCount, slot);
+		171 167   
+		172 168     test
+		173 169       .startSequence()
+		174 170       .thenIdle(5)
+		175 171       .thenWait(() => {
+		          ...
+		234 230     const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		235 231     const fenceLoc = new BlockLocation(1, 2, 0);
+		236 232     const chestLoc = new BlockLocation(2, 2, 0);
+		237 233     const ironOreLoc = new BlockLocation(0, 2, 1);
+		238 234     const planksLoc = new BlockLocation(1, 2, 1);
+		    235 +   const testEx = new GameTestExtensions(test);
+		239     - 
+		240 236     const blockLocs = [fenceLoc, chestLoc, ironOreLoc, planksLoc];
+		    237 +   
+		241 238     const blockTypes = [
+		242 239       MinecraftBlockTypes.fence,
+		243 240       MinecraftBlockTypes.chest,
+		244 241       MinecraftBlockTypes.ironOre,
+		245 242       MinecraftBlockTypes.planks,
+		246 243     ];
+		247 244   
+		    245 +   testEx.giveItem(player, MinecraftItemTypes.ironPickaxe);
+		248     -   giveItem(player, MinecraftItemTypes.ironPickaxe);
+		249 246   
+		250 247     for (let i = 0; i < blockLocs.length; i++) {
+		251 248       test.assertBlockPresent(blockTypes[i], blockLocs[i]);
+		252 249     }
+		253 250   
+		          ...
+		269 266     .tag(GameTest.Tags.suiteDefault);
+		270 267   
+		271 268   GameTest.register("SimulatedPlayerTests", "stop_destroying_block", (test) => {
+		272 269     const ironOreLoc = new BlockLocation(1, 2, 1);
+		273 270     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		    271 +   const testEx = new GameTestExtensions(test);
+		    272 + 
+		274 273     test.setBlockType(MinecraftBlockTypes.ironOre, ironOreLoc);
+		    274 +   testEx.giveItem(player, MinecraftItemTypes.ironPickaxe);
+		275     -   giveItem(player, MinecraftItemTypes.ironPickaxe);
+		276 275   
+		277 276     test
+		278 277       .startSequence()
+		279 278       .thenExecuteAfter(5, () => {
+		280 279         player.destroyBlock(ironOreLoc);
+		          ...
+		291 290     .tag(GameTest.Tags.suiteDefault);
+		292 291   
+		293 292   GameTest.register("SimulatedPlayerTests", "use_item_while_destroying_block", (test) => {
+		294 293     const ironOreLoc = new BlockLocation(1, 2, 1);
+		295 294     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		    295 +   const testEx = new GameTestExtensions(test);
+		    296 + 
+		296 297     test.setBlockType(MinecraftBlockTypes.ironOre, ironOreLoc);
+		    298 +   testEx.giveItem(player, MinecraftItemTypes.ironPickaxe);
+		    299 +   testEx.giveItem(player, MinecraftItemTypes.potion);
+		297     -   giveItem(player, MinecraftItemTypes.ironPickaxe);
+		298     -   giveItem(player, MinecraftItemTypes.potion);
+		299 300   
+		300 301     test
+		301 302       .startSequence()
+		302 303       .thenExecuteAfter(5, () => {
+		303 304         player.destroyBlock(ironOreLoc);
+		          ...
+		625 626   }).tag(GameTest.Tags.suiteDefault);
+		626 627   
+		627 628   GameTest.register("SimulatedPlayerTests", "shoot_bow", (test) => {
+		628 629     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		629 630     const lampLoc = new BlockLocation(2, 3, 7);
+		    631 +   const testEx = new GameTestExtensions(test);
+		    632 + 
+		630 633   
+		631 634     test
+		632 635       .startSequence()
+		633 636       .thenExecuteAfter(5, () => {
+		    637 +       testEx.giveItem(player, MinecraftItemTypes.bow);
+		    638 +       testEx.giveItem(player, MinecraftItemTypes.arrow, 64);
+		634     -       giveItem(player, MinecraftItemTypes.bow);
+		635     -       giveItem(player, MinecraftItemTypes.arrow, 64);
+		636 639       })
+		637 640       .thenExecuteAfter(5, () => {
+		638 641         player.useItemInSlot(0);
+		639 642       })
+		640 643       .thenExecuteAfter(50, () => {
+		          ...
+		649 652     .tag(GameTest.Tags.suiteDefault);
+		650 653   
+		651 654   GameTest.register("SimulatedPlayerTests", "shoot_crossbow", (test) => {
+		652 655     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		653 656     const lampLoc = new BlockLocation(2, 3, 7);
+		    657 +   const testEx = new GameTestExtensions(test);
+		    658 + 
+		654 659   
+		655 660     test
+		656 661       .startSequence()
+		657 662       .thenExecuteAfter(5, () => {
+		    663 +       testEx.giveItem(player, MinecraftItemTypes.crossbow);
+		    664 +       testEx.giveItem(player, MinecraftItemTypes.arrow, 64);
+		658     -       giveItem(player, MinecraftItemTypes.crossbow);
+		659     -       giveItem(player, MinecraftItemTypes.arrow, 64);
+		660 665       })
+		661 666       .thenExecuteAfter(5, () => {
+		662 667         player.useItemInSlot(0);
+		663 668       })
+		664 669       .thenExecuteAfter(50, () => {
+		          ...
+		816 821     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		817 822     const wallLoc = new BlockLocation(1, 3, 2);
+		818 823     const slabLoc = new BlockLocation(1, 3, 1);
+		819 824     const woodenSlabSlot = 1;
+		820 825     const inventoryContainer = player.getComponent("inventory").container;
+		    826 +   const testEx = new GameTestExtensions(test);
+		    827 + 
+		821 828   
+		822 829     test
+		823 830       .startSequence()
+		824 831       .thenExecuteAfter(5, () => {
+		    832 +       testEx.giveItem(player, MinecraftItemTypes.crimsonSlab, 2, 0);
+		    833 +       testEx.giveItem(player, MinecraftItemTypes.woodenSlab, 2, woodenSlabSlot);
+		825     -       giveItem(player, MinecraftItemTypes.crimsonSlab, 2, 0);
+		826     -       giveItem(player, MinecraftItemTypes.woodenSlab, 2, woodenSlabSlot);
+		    834 +       testEx.giveItem(player, MinecraftItemTypes.warpedSlab, 2, 2);
+		827     -       giveItem(player, MinecraftItemTypes.warpedSlab, 2, 2);
+		828 835         test.assert(inventoryContainer.getItem(woodenSlabSlot).amount === 2, "Player should have 2 wooden slabs");
+		829 836       })
+		830 837       .thenExecuteAfter(10, () => {
+		831 838         player.useItemInSlotOnBlock(woodenSlabSlot, wallLoc, Direction.north, 0.5, 0.75); // place upper slab
+		832 839         test.assert(inventoryContainer.getItem(woodenSlabSlot).amount === 1, "Player should have 1 wooden slab");
+		          ...
+		          '''

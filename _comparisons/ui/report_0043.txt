@@ -1,0 +1,621 @@
+Difference of "ui" between "1.0.5" and "1.0.6.0" (beta of "1.0.6").
+
+Total namespace: 86 (+1, -1)
+Changed namespace "common":
+	Changed element "base_screen":
+		Unchanged field "type": "screen"
+		Changed field "controls":
+			Changed control:
+				Changed element "variable_control":
+					Unchanged field "type": "panel"
+					Changed field "variables":
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 27 (+1, -0)
+								Added variable "$store_world_screen_size":
+									item 0: 267
+									item 1: 239
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 27 (+1, -0)
+								Added variable "$store_world_screen_size":
+									item 0: 267
+									item 1: 239
+						Changed variable:
+							Changed field "$variables":
+								Total variable: 27 (+1, -0)
+								Added variable "$store_world_screen_size":
+									item 0: 327
+									item 1: 239
+Changed namespace "general_section":
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "build_id_label_panel":
+					Unchanged field "type": "panel"
+					Removed field "visible" of false.
+Changed namespace "mashup":
+	Total element: 18 (+0, -1)
+	Changed element "dialog_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "no_connection": "@resource_pack_purchase.popup_dialog__no_connection"
+						control id "purchase_failed": "@resource_pack_purchase.popup_dialog__purchase_failed"
+						control id "purchase_in_progress": "@skin_pack_purchase.popup_dialog__purchase_in_progress"
+						control id "missing_content": "@mashup.popup_dialog__missing_local_content"
+	Changed element "dialog_content_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "screen_content":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 5 (+1, -1)
+						Removed control:
+							element "content_action_button@common_buttons.light_content_button":
+								field "size": ["100%", 28]
+								field "$variables":
+									variable "$button_content": "mashup.button_content"
+									variable "$pressed_button_name": "button.prompt_for_action"
+						Added control:
+							element "interaction_panel":
+								field "type": "panel"
+								field "size": ["100%", 28]
+								field "controls":
+									control:
+										element "content_action_button@common_buttons.light_content_button":
+											field "bindings":
+												binding:
+													field "binding_name": "#polymorphic_button_visible"
+													field "binding_name_override": "#visible"
+											field "$variables":
+												variable "$button_content": "mashup.button_content"
+												variable "$pressed_button_name": "button.prompt_for_action"
+									control: element "progress_bar@resource_pack_purchase.download_progress": empty
+	Removed element "popup_dialog__missing_local_content@popup_dialog.popup_dialog":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": empty
+			control: element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$middle_button_press": "button.close_dialog"
+			variable "$middle_button_text": "skins.buy.closeButton"
+			variable "$message_text": "store.mashup.missingContent"
+	Changed element "tab_content_stack_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+1, -1)
+			Removed control:
+				element "map_pack_content@mashup.content_section_wrapper":
+					field "$variables":
+						variable "$content_button_name|default": "map_pack_tab"
+						variable "$content_section_name|default": "mashup_panorama.map_pack_tab_content"
+						variable "$visibility_toggle": "#world_tab_visible"
+			Added control:
+				element "map_pack_content@mashup.content_section_wrapper":
+					field "$variables":
+						variable "$content_button_name|default": "map_pack_tab"
+						variable "$content_section_name|default": "world_panorama.map_pack_tab_content"
+						variable "$visibility_toggle": "#world_tab_visible"
+Removed namespace "mashup_panorama":
+	element "chevron_image":
+		field "type": "image"
+		field "layer": 2
+		field "uv": [0, 0]
+		field "uv_size": [4, 7]
+		field "size": [4, 7]
+		field "texture": "$chevron_image_name"
+	element "map_pack_tab_content":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control: element "pan_left@mashup_panorama.pan_left_button": empty
+			control: element "screenshot@panorama_input_panel": empty
+			control: element "pan_right@mashup_panorama.pan_right_button": empty
+	element "pan_button@common_buttons.light_glyph_button":
+		field "size": [20, "100%"]
+		field "layer": 3
+		field "$variables": variable "$button_content": "mashup_panorama.chevron_image"
+	element "pan_left_button@mashup_panorama.pan_button":
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.pan_left"
+				field "mapping_type": "pressed"
+				field "button_up_right_of_first_refusal": true
+		field "$variables":
+			variable "$chevron_image_name": "textures/gui/newgui/chevron_left"
+			variable "$pressed_button_name": "button.pan_left"
+	element "pan_right_button@mashup_panorama.pan_button":
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.pan_right"
+				field "mapping_type": "pressed"
+				field "button_up_right_of_first_refusal": true
+		field "$variables":
+			variable "$chevron_image_name": "textures/gui/newgui/chevron_right"
+			variable "$pressed_button_name": "button.pan_right"
+	element "panorama_input_panel":
+		field "type": "input_panel"
+		field "size": ["100% - 38px", "100%"]
+		field "layer": 2
+		field "gesture_tracking_button": "button.scroll_map"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.scroll_map"
+				field "mapping_type": "pressed"
+				field "button_up_right_of_first_refusal": true
+		field "controls":
+			control:
+				element "image_border@common.focus_border_white":
+					field "color": [0, 0, 0]
+					field "controls":
+						control:
+							element "key_art":
+								field "type": "custom"
+								field "renderer": "panorama_renderer"
+								field "rotation": "gesture_x"
+								field "size": ["100% - 2px", "100% - 2px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#panorama_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#panorama_texture_file_system"
+										field "binding_name_override": "#texture_file_system"
+									binding:
+										field "binding_name": "#panorama_view"
+										field "binding_type": "global"
+									binding:
+										field "binding_name": "#panorama_view"
+										field "binding_type": "global"
+									binding:
+										field "binding_type": "view"
+										field "source_control_name": "screenshot"
+										field "source_property_name": "#gesture_mouse_delta_x"
+										field "target_property_name": "#gesture_mouse_delta_x"
+Changed namespace "patch_notes":
+	Changed element "button_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "button_label2@patch_notes.button_label_panel": field "$variables": variable "$button_text": "skins.picker.unlock.button".
+			Added control element "button_label2@patch_notes.button_label_panel": field "$variables": variable "$button_text": "#store_button_offer_text".
+	Changed element "button_label_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "text_label":
+					Unchanged field "type": "label"
+					Changed field "size":
+						Changed item 0 from "default" to "100%-4px".
+						Unchanged item 1: "default"
+					Added field "bindings" of binding: field "binding_name": "$button_text".
+Changed namespace "play":
+	Total element: 137 (+2, -0)
+	Added element "local_world_lock_panel":
+		field "type": "input_panel"
+		field "size": ["100%c", "100%c"]
+		field "controls": control: element "lock@play.world_lock": field "offset": [0, 1]
+		field "bindings":
+			binding:
+				field "binding_name": "#world_lock_visible"
+				field "binding_type": "collection"
+				field "binding_name_override": "#visible"
+				field "binding_collection_name": "local_worlds"
+	Changed element "local_world_text_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "text_indent":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "top_side":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Total control: 3 (+1, -0)
+									Added control element "lock@local_world_lock_panel": empty.
+	Added element "world_lock":
+		field "type": "image"
+		field "layer": 6
+		field "anchor_from": "bottom_right"
+		field "anchor_to": "bottom_right"
+		field "uv": [0, 0]
+		field "uv_size": [8, 8]
+		field "size": [8, 8]
+		field "texture": "textures/gui/newgui/lock"
+Changed namespace "progress":
+	Changed element "popup_dialog_base@popup_dialog.popup_dialog":
+		Changed field "$variables":
+			Total variable: 4 (+0, -0)
+			Changed variable "$right_button_text" from "skins.buy.closeButton" to "gui.close".
+			Changed variable "$left_button_text" from "skins.buy.closeButton" to "gui.close".
+Changed namespace "resource_pack_purchase":
+	Total element: 15 (+1, -6)
+	Changed element "content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "no_connection": "@resource_pack_purchase.popup_dialog__no_connection"
+						control id "purchase_failed": "@resource_pack_purchase.popup_dialog__purchase_failed"
+						control id "purchase_in_progress": "@skin_pack_purchase.popup_dialog__purchase_in_progress"
+	Changed element "content_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "interaction_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 2 (+1, -1)
+						Removed control:
+							element "download_progress@banner_fill":
+								field "bindings":
+									binding:
+										field "binding_name": "#download_info_visible"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "stacker":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "size": ["100%", "100%"]
+											field "controls":
+												control:
+													element "sizer_text":
+														field "type": "panel"
+														field "size": ["100%", "50%"]
+														field "controls":
+															control:
+																element "text@download_progress_text":
+																	field "size": ["70%", "100%"]
+																	field "layer": 2
+												control:
+													element "sizer_bar":
+														field "type": "panel"
+														field "size": ["100%", "50%"]
+														field "bindings":
+															binding:
+																field "binding_name": "#download_progress_bar_visible"
+																field "binding_name_override": "#visible"
+														field "controls":
+															control:
+																element "bar@download_progress_bar":
+																	field "size": ["70%", 5]
+																	field "layer": 2
+						Added control element "progress_bar@resource_pack_purchase.download_progress": empty.
+	Added element "download_progress@resource_pack_purchase.banner_fill":
+		field "bindings":
+			binding:
+				field "binding_name": "#download_info_visible"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "stacker":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%", "100%"]
+					field "controls":
+						control:
+							element "sizer_text":
+								field "type": "panel"
+								field "size": ["100%", "50%"]
+								field "controls":
+									control:
+										element "download_progress_text":
+											field "type": "label"
+											field "layer": "($baseLayer + 1)"
+											field "size": ["70%", "100%"]
+											field "offset": [0, "50%"]
+											field "color": "white"
+											field "text": "#text"
+											field "bindings":
+												binding:
+													field "binding_name": "#download_info_text"
+													field "binding_name_override": "#text"
+						control:
+							element "sizer_bar":
+								field "type": "panel"
+								field "size": ["100%", "50%"]
+								field "bindings":
+									binding:
+										field "binding_name": "#download_progress_bar_visible"
+										field "binding_name_override": "#visible"
+								field "controls":
+									control:
+										element "download_progress_bar@file_upload.progress_bar_icon":
+											field "size": ["70%", 5]
+											field "layer": "($baseLayer + 1)"
+											field "anchor_from": "center"
+											field "anchor_to": "center"
+											field "$variables":
+												variable "$progress_bindings":
+													item 0:
+														field "binding_name": "#download_progress_bar_percentage"
+														field "binding_name_override": "#clip_ratio"
+		field "$variables": variable "$baseLayer|default": 2
+	Removed element "download_progress_bar@file_upload.progress_bar_icon":
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "$variables":
+			variable "$progress_bindings":
+				item 0:
+					field "binding_name": "#download_progress_bar_percentage"
+					field "binding_name_override": "#clip_ratio"
+	Removed element "download_progress_text":
+		field "type": "label"
+		field "offset": [0, "50%"]
+		field "color": "white"
+		field "text": "#text"
+		field "bindings":
+			binding:
+				field "binding_name": "#download_info_text"
+				field "binding_name_override": "#text"
+	Removed element "popup_dialog__no_connection@resource_pack_purchase.popup_dialog_base" of field "$variables": variable "$message_text": "skins.buy.noConnection".
+	Removed element "popup_dialog__purchase_failed@resource_pack_purchase.popup_dialog_base" of field "$variables": variable "$message_text": "skins.buy.purchaseFailed".
+	Removed element "popup_dialog__purchase_in_progress@resource_pack_purchase.popup_dialog_base":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": field "size": ["90%", "100%"]
+		field "$variables": variable "$message_text": "skins.buy.waitingForPurchase"
+	Removed element "popup_dialog_base@popup_dialog.popup_dialog":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": empty
+			control: element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$middle_button_press": "button.close_dialog"
+			variable "$middle_button_text": "skins.buy.closeButton"
+Changed namespace "skin_pack_purchase":
+	Total element: 35 (+0, -4)
+	Removed element "popup_dialog__no_connection@skin_pack_purchase.popup_dialog_base" of field "$variables": variable "$message_text": "skins.buy.noConnection".
+	Removed element "popup_dialog__purchase_failed@skin_pack_purchase.popup_dialog_base" of field "$variables": variable "$message_text": "skins.buy.purchaseFailed".
+	Removed element "popup_dialog__purchase_in_progress@skin_pack_purchase.popup_dialog_base":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": field "size": ["90%", "100%"]
+		field "$variables": variable "$message_text": "skins.buy.waitingForPurchase"
+	Removed element "popup_dialog_base@popup_dialog.popup_dialog":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": empty
+			control: element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$middle_button_press": "button.close_dialog"
+			variable "$middle_button_text": "skins.buy.closeButton"
+	Changed element "skin_pack_purchase_dialog_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "no_connection": "@skin_pack_purchase.popup_dialog__no_connection"
+						control id "purchase_failed": "@skin_pack_purchase.popup_dialog__purchase_failed"
+						control id "purchase_in_progress": "@skin_pack_purchase.popup_dialog__purchase_in_progress"
+	Changed element "skin_pack_purchase_upsell_dialog_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "no_connection": "@skin_pack_purchase.popup_dialog__no_connection"
+						control id "purchase_failed": "@skin_pack_purchase.popup_dialog__purchase_failed"
+						control id "purchase_in_progress": "@skin_pack_purchase.popup_dialog__purchase_in_progress"
+Changed namespace "store":
+	Total element: 22 (+0, -3)
+	Removed element "popup_dialog__no_store_connection@popup_dialog.popup_dialog":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": empty
+			control: element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$middle_button_press": "button.close_dialog"
+			variable "$message_text": "skins.buy.noConnection"
+			variable "$middle_button_text": "gui.ok"
+	Removed element "popup_dialog__restore_failed@popup_dialog.popup_dialog":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": empty
+			control: element "popup_dialog_middle_button@popup_dialog.popup_dialog_middle_button": empty
+		field "$variables":
+			variable "$middle_button_press": "button.close_dialog"
+			variable "$message_text": "store.restore.failed"
+			variable "$middle_button_text": "gui.ok"
+	Removed element "popup_dialog__restore_popup@popup_dialog.popup_dialog":
+		field "controls":
+			control: element "popup_dialog_bg@popup_dialog.popup_dialog_bg": empty
+			control: element "popup_dialog_message@popup_dialog.popup_dialog_message": empty
+		field "$variables":
+			variable "$middle_button_press": "button.close_dialog"
+			variable "$message_text": "store.restore.description"
+	Changed element "store_screen_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+0, -1)
+			Removed control:
+				element "popup_dialog_factory":
+					field "type": "factory"
+					field "control_ids":
+						control id "no_store_connection": "@store.popup_dialog__no_store_connection"
+						control id "restore_popup": "@store.popup_dialog__restore_popup"
+						control id "restore_failed": "@store.popup_dialog__restore_failed"
+Added namespace "world_panorama":
+	element "chevron_image":
+		field "type": "image"
+		field "layer": 2
+		field "uv": [0, 0]
+		field "uv_size": [4, 7]
+		field "size": [4, 7]
+		field "texture": "$chevron_image_name"
+	element "dialog@common_dialogs.main_panel_no_buttons":
+		field "size": "$store_world_screen_size"
+		field "$variables":
+			variable "$dialog_background": "dialog_background_hollow_3"
+			variable "$show_close_button": true
+			variable "$text_name": "#world_title"
+			variable "$title_text_binding_type": "global"
+			variable "$child_control": "world_panorama.dialog_content"
+	element "dialog_content":
+		field "type": "panel"
+		field "controls": control: element "dialog_content_stack_panel@dialog_content_stack_panel": empty
+	element "dialog_content_stack_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100% - 4px", "100%"]
+		field "controls":
+			control:
+				element "padding_0":
+					field "type": "panel"
+					field "size": [0, 2]
+			control: element "panorama@world_panorama.map_pack_tab_content": field "size": ["100%", "100% - 34px"]
+			control:
+				element "padding1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control:
+				element "interaction_panel":
+					field "type": "panel"
+					field "size": ["100%", 28]
+					field "controls":
+						control:
+							element "purchase_button@common_buttons.light_text_button":
+								field "bindings":
+									binding:
+										field "binding_name": "#purchase_button_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$pressed_button_name": "button.purchase"
+									variable "$button_text_binding_type": "global"
+									variable "$button_text": "#purchase_button_text"
+						control: element "progress_bar@resource_pack_purchase.download_progress": empty
+			control:
+				element "padding2":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	element "map_pack_tab_content":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "controls":
+			control: element "pan_left@world_panorama.pan_left_button": empty
+			control: element "screenshot@panorama_input_panel": empty
+			control: element "pan_right@world_panorama.pan_right_button": empty
+	element "pan_button@common_buttons.light_glyph_button":
+		field "size": [20, "100%"]
+		field "layer": 3
+		field "$variables": variable "$button_content": "world_panorama.chevron_image"
+	element "pan_left_button@world_panorama.pan_button":
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.pan_left"
+				field "mapping_type": "pressed"
+				field "button_up_right_of_first_refusal": true
+		field "$variables":
+			variable "$chevron_image_name": "textures/gui/newgui/chevron_left"
+			variable "$pressed_button_name": "button.pan_left"
+	element "pan_right_button@world_panorama.pan_button":
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.pan_right"
+				field "mapping_type": "pressed"
+				field "button_up_right_of_first_refusal": true
+		field "$variables":
+			variable "$chevron_image_name": "textures/gui/newgui/chevron_right"
+			variable "$pressed_button_name": "button.pan_right"
+	element "panorama_input_panel":
+		field "type": "input_panel"
+		field "size": ["100% - 38px", "100%"]
+		field "layer": 2
+		field "gesture_tracking_button": "button.scroll_map"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.scroll_map"
+				field "mapping_type": "pressed"
+				field "button_up_right_of_first_refusal": true
+		field "controls":
+			control:
+				element "image_border@common.focus_border_white":
+					field "color": [0, 0, 0]
+					field "controls":
+						control:
+							element "key_art":
+								field "type": "custom"
+								field "renderer": "panorama_renderer"
+								field "rotation": "gesture_x"
+								field "size": ["100% - 2px", "100% - 2px"]
+								field "bindings":
+									binding:
+										field "binding_name": "#panorama_texture"
+										field "binding_name_override": "#texture"
+									binding:
+										field "binding_name": "#panorama_texture_file_system"
+										field "binding_name_override": "#texture_file_system"
+									binding:
+										field "binding_name": "#panorama_view"
+										field "binding_type": "global"
+									binding:
+										field "binding_name": "#panorama_view"
+										field "binding_type": "global"
+									binding:
+										field "binding_type": "view"
+										field "source_control_name": "screenshot"
+										field "source_property_name": "#gesture_mouse_delta_x"
+										field "target_property_name": "#gesture_mouse_delta_x"
+	element "world_panorama_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_up"
+				field "to_button_id": "button.menu_up"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_down"
+				field "to_button_id": "button.menu_down"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_left"
+				field "to_button_id": "button.menu_left"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_right"
+				field "to_button_id": "button.menu_right"
+				field "mapping_type": "global"
+				field "scope": "view"
+		field "$variables":
+			variable "$default_text_color":
+				item 0: 0.3
+				item 1: 0.3
+				item 2: 0.3
+			variable "$screen_content": "world_panorama.dialog"

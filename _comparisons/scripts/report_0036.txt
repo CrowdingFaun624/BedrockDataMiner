@@ -1,0 +1,45 @@
+Difference of "scripts" between "1.18.20.27" (beta of "1.18.30") and "1.18.20.29" (beta of "1.18.30").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "PathFindingTests.js":
+		Total line: 428 (+26, -0)
+		          '''
+		          ...
+		283 283   })
+		284 284       .padding(TEST_PADDING) // Space out villager tests to stop them from confusing each other
+		285 285       .batch("night")
+		286 286       .maxTicks(TEST_MAX_TICKS)
+		287 287   
+		    288 + GameTest.register("PathFindingTests", "doorway_with_stairs", (test) => {
+		    289 +     const villagerEntitySpawnType = "minecraft:villager_v2<minecraft:spawn_farmer>";
+		    290 + 
+		    291 +     test.spawn(villagerEntitySpawnType, new BlockLocation(2, 2, 8));
+		    292 + 
+		    293 +     test.succeedWhen(() => {
+		    294 +         test.assertEntityPresent(villagerEntitySpawnType, new BlockLocation(2, 2, 2), true);
+		    295 +     });
+		    296 + })
+		    297 +     .padding(TEST_PADDING) // Space out villager tests to stop them from confusing each other
+		    298 +     .batch("night")
+		    299 +     .maxTicks(TEST_MAX_TICKS)
+		    300 + 
+		    301 + GameTest.register("PathFindingTests", "doorway_with_slabs", (test) => {
+		    302 +     const villagerEntitySpawnType = "minecraft:villager_v2<minecraft:spawn_farmer>";
+		    303 + 
+		    304 +     test.spawn(villagerEntitySpawnType, new BlockLocation(2, 2, 8));
+		    305 + 
+		    306 +     test.succeedWhen(() => {
+		    307 +         test.assertEntityPresent(villagerEntitySpawnType, new BlockLocation(2, 2, 2), true);
+		    308 +     });
+		    309 + })
+		    310 +     .padding(TEST_PADDING) // Space out villager tests to stop them from confusing each other
+		    311 +     .batch("night")
+		    312 +     .maxTicks(TEST_MAX_TICKS)
+		    313 + 
+		288 314   GameTest.register("PathFindingTests", "big_obstacle_course", (test) => {
+		289 315     const bedPos = new BlockLocation(4, 3, 6);
+		290 316     const spawnPos = new BlockLocation(5, 3, 4);
+		291 317     const villagerEntitySpawnType = "minecraft:villager_v2<minecraft:spawn_farmer>";
+		292 318   
+		          ...
+		          '''

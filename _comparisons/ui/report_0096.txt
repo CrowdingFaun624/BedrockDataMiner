@@ -1,0 +1,532 @@
+Difference of "ui" between "1.6.0.6" (beta of "1.6.0") and "1.6.0.8" (beta of "1.6.0").
+
+Changed namespace "common":
+	Changed element "text_edit_box":
+		Unchanged field "type": "edit_box"
+		Changed field "button_mappings":
+			Changed button mapping:
+				Removed field "button_up_right_of_first_refusal" of "$text_edit_box_button_up_right_of_first_refusal".
+		Changed field "$variables":
+			Total variable: 37 (+0, -1)
+			Removed variable "$text_edit_box_button_up_right_of_first_refusal|default" of false.
+Changed namespace "mashup":
+	Total element: 59 (+1, -0)
+	Added element "coin_image@common_store.coin_icon":
+		field "bindings":
+			binding:
+				field "binding_name": "#coin_visible"
+				field "binding_name_override": "#visible"
+	Changed element "coin_purchase_label":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "coin_purchase_label_text":
+					Unchanged field "type": "label"
+					Changed field "color" from "$light_button_default_text_color" to "$text_color".
+			Changed control:
+				Changed element "coin_image_offset_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control element "coin@common_store.coin_icon": field "offset": [-3, -1].
+						Added control element "coin@mashup.coin_image": field "offset": [-3, -1].
+	Changed element "interaction_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 5 (+1, -1)
+			Removed control:
+				element "content_action_button@common_buttons.light_content_button":
+					field "bindings":
+						binding:
+							field "binding_name": "#action_button_visible"
+							field "binding_name_override": "#visible"
+						binding:
+							field "binding_name": "#item_meets_requirements"
+							field "binding_name_override": "#enabled"
+					field "variables":
+						variable:
+							field "requires": "$is_mashup"
+							field "$variables": variable "$button_content": "mashup.mashup_button_content"
+						variable:
+							field "requires": "(not $is_mashup)"
+							field "$variables": variable "$button_content": "mashup.non_mashup_button_content"
+					field "$variables":
+						variable "$button_focus_precedence|default": 9
+						variable "$pressed_button_name": "$button_action"
+						variable "$focus_id": "$interact_button_id"
+			Added control:
+				element "content_action_button@common_buttons.light_content_button":
+					field "bindings":
+						binding:
+							field "binding_name": "$action_button_enabled_binding"
+							field "binding_name_override": "#enabled"
+						binding:
+							field "binding_name": "#action_button_visible"
+							field "binding_name_override": "#visible"
+					field "variables":
+						variable:
+							field "requires": "$is_mashup"
+							field "$variables": variable "$button_content": "mashup.mashup_button_content"
+						variable:
+							field "requires": "(not $is_mashup)"
+							field "$variables": variable "$button_content": "mashup.non_mashup_button_content"
+					field "$variables":
+						variable "$button_focus_precedence|default": 9
+						variable "$pressed_button_name": "$button_action"
+						variable "$focus_id": "$interact_button_id"
+						variable "$action_button_enabled_binding|default": "#item_meets_requirements"
+	Changed element "large_button_coin_purchase_label":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "coin_image_offset_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control element "coin@common_store.coin_icon": field "offset": [-2, -0.25].
+						Added control element "coin@mashup.coin_image": field "offset": [-2, -0.25].
+			Changed control:
+				Changed element "coin_purchase_label_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "coin_purchase_label_text":
+								Unchanged field "type": "label"
+								Changed field "color" from "$light_button_default_text_color" to "$text_color".
+	Changed element "smooth_coin_purchase_label":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "coin_purchase_label_text":
+					Unchanged field "type": "label"
+					Changed field "color" from "$light_button_default_text_color" to "$text_color".
+			Changed control:
+				Changed element "coin_image_offset_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control element "coin@common_store.coin_icon": field "offset": [-2, -0.25].
+						Added control element "coin@mashup.coin_image": field "offset": [-2, -0.25].
+	Changed element "summary_box_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "interact_filling_button@common_buttons.light_text_form_fitting_button":
+					Changed field "bindings":
+						Total binding: 2 (+1, -0)
+						Added binding:
+							field "binding_name": "#action_button_enabled"
+							field "binding_name_override": "#enabled"
+	Changed element "summary_text_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "read_more_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "read_more_button_text":
+								Unchanged field "type": "label"
+								Changed field "layer" from 1 to 2.
+			Changed control:
+				Changed element "description_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "read_more_button@mashup.read_more_button":
+								Changed field "layer" from 6 to 8.
+	Changed element "world_view_content":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "interact_panel":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
+							element "world_interact@mashup.interaction_button_panel":
+								field "$variables":
+									variable "$button_text_bind_name": "#world_view_button_text"
+									variable "$button_action": "button.createWorld"
+						Added control:
+							element "world_interact@mashup.interaction_button_panel":
+								field "$variables":
+									variable "$button_text_bind_name": "#world_view_button_text"
+									variable "$button_action": "button.createWorld"
+									variable "$action_button_enabled_binding": "#action_button_enabled"
+Changed namespace "play":
+	Changed element "friends_scroll_panel@play.common_scroll_pane":
+		Changed field "controls":
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 12 (+4, -7)
+						Removed control:
+							element "no_friends_grid@play.label_content_template":
+								field "variables":
+									variable:
+										field "requires": "$nx_os"
+										field "$variables": variable "$label_content_label": "networkWorld.joinable_nintendo_friends_label"
+								field "bindings":
+									binding:
+										field "binding_name": "#no_friends_grid_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_friends_label"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "networkWorld.no_joinable_friends_label"
+						Removed control:
+							element "no_nex_grid@play.label_content_template":
+								field "bindings":
+									binding:
+										field "binding_name": "#no_nex_multiplayer_grid_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "#no_nex_grid_label"
+									variable "$label_content_label_binding_type": "global"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#no_nex_info_label"
+									variable "$information_panel_label_text_binding_type": "global"
+						Removed control:
+							element "friends_grid_cross_platform@play.label_content_template":
+								field "ignored": "(not $nx_os)"
+								field "bindings":
+									binding:
+										field "binding_name": "#cross_platform_friends_grid_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_cross_platform_friends_label"
+									variable "$label_content_content": "play.network_world_item_grid"
+									variable "$network_world_grid_item_template": "play.network_world_item"
+									variable "$network_world_icon": "play.cross_platform_friends_server_icon"
+									variable "$hide_network_icon": "$hide_xbox_live_icon"
+									variable "$network_world_item_grid_dimension_binding": "#cross_platform_friends_network_world_item_grid_dimension"
+									variable "$collection_name": "cross_platform_friends_network_worlds"
+									variable "$header_icon_visible": true
+						Removed control:
+							element "cross_platform_no_friends_grid@play.label_content_template":
+								field "ignored": "(not $nx_os)"
+								field "bindings":
+									binding:
+										field "binding_name": "#cross_platform_no_friends_grid_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_cross_platform_friends_label"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "networkWorld.no_joinable_friends_label"
+						Removed control:
+							element "no_cross_platform_multiplayer_grid@play.label_content_template":
+								field "ignored": "(not $nx_os)"
+								field "bindings":
+									binding:
+										field "binding_name": "#no_cross_platform_multiplayer_grid_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_cross_platform_friends_label"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "networkWorld.no_xbl_label"
+						Removed control:
+							element "disconnected_from_xbl@play.label_content_template":
+								field "ignored": "($nx_os or $education_edition)"
+								field "bindings":
+									binding:
+										field "binding_name": "#disconnected_from_xbl_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_friends_label"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text|default": "networkWorld.connect_to_xbl"
+						Removed control:
+							element "disconnected_from_network@play.label_content_template":
+								field "bindings":
+									binding:
+										field "binding_name": "#disconnected_from_network_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_friends_label"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#disconnected_from_network_label"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+						Added control:
+							element "no_friends_grid_message@play.label_content_template":
+								field "variables":
+									variable:
+										field "requires": "$nx_os"
+										field "$variables": variable "$label_content_label": "networkWorld.joinable_nintendo_friends_label"
+								field "bindings":
+									binding: field "binding_name": "#no_friends_grid_message_text"
+									binding:
+										field "binding_name": "#no_friends_grid_message_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_friends_label"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#no_friends_grid_message_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+						Added control:
+							element "cross_platform_friends_grid@play.label_content_template":
+								field "ignored": "(not $nx_os)"
+								field "bindings":
+									binding:
+										field "binding_name": "#cross_platform_friends_grid_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_cross_platform_friends_label"
+									variable "$label_content_content": "play.network_world_item_grid"
+									variable "$network_world_grid_item_template": "play.network_world_item"
+									variable "$network_world_icon": "play.cross_platform_friends_server_icon"
+									variable "$hide_network_icon": "$hide_xbox_live_icon"
+									variable "$network_world_item_grid_dimension_binding": "#cross_platform_friends_network_world_item_grid_dimension"
+									variable "$collection_name": "cross_platform_friends_network_worlds"
+									variable "$header_icon_visible": true
+						Added control:
+							element "no_cross_platform_friends_grid_message@play.label_content_template":
+								field "ignored": "(not $nx_os)"
+								field "bindings":
+									binding: field "binding_name": "#no_cross_platform_friends_grid_message_text"
+									binding:
+										field "binding_name": "#no_cross_platform_friends_grid_message_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_cross_platform_friends_label"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#no_cross_platform_friends_grid_message_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+						Added control:
+							element "general_no_multiplayer_grid_message@play.label_content_template":
+								field "bindings":
+									binding: field "binding_name": "#general_no_multiplayer_grid_message_text"
+									binding:
+										field "binding_name": "#general_no_multiplayer_grid_message_visible"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$label_content_label": "networkWorld.joinable_friends_label"
+									variable "$label_content_content": "play.information_panel"
+									variable "$information_panel_label_text": "#general_no_multiplayer_grid_message_text"
+									variable "$information_panel_label_text_binding_type": "global"
+									variable "$information_panel_label_text_binding_condition": "always_when_visible"
+Changed namespace "structure_editor":
+	Total element: 32 (+4, -0)
+	Added element "load_button@common_buttons.light_text_button":
+		field "bindings":
+			binding:
+				field "binding_name": "#load_enabled"
+				field "binding_name_override": "#enabled"
+				field "binding_condition": "visible"
+			binding:
+				field "binding_name": "#load_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$pressed_button_name": "button.structure_load"
+			variable "$button_text": "structure_block.load"
+	Added element "load_mode_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "bindings":
+			binding:
+				field "binding_name": "#load_mode_panel_visible"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "offset_panel@structure_editor.grid_axis_selection_panel":
+					field "size": ["100%", "100%c"]
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "$variables":
+						variable "$axis_selection_panel_label": "structure_block.offset"
+						variable "$grid_axis_collection_name": "load_offset_grid"
+						variable "$grid_axis_edit_box_name": "#load_offset_edit_box"
+			control:
+				element "offset_0":
+					field "type": "panel"
+					field "size": ["100%", "100%c + 4px"]
+			control: element "load@structure_editor.load_button": field "size": ["100%", 30]
+			control:
+				element "offset_1":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			control: element "reset@structure_editor.reset_button": field "size": ["100%", 30]
+			control:
+				element "offset_2":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	Changed element "mode_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Changed variable "$radio_buttons":
+				Added item 1:
+					field "structure_export_mode@settings_common.radio_with_label":
+						field "ignored": "(not $save_support)"
+						field "$toggle_state_binding_name": "#structure_save_mode"
+						field "$radio_label_text": "structure_block.mode.save"
+				Added item 2:
+					field "structure_export_mode@settings_common.radio_with_label":
+						field "ignored": "(not $load_support)"
+						field "$toggle_state_binding_name": "#structure_load_mode"
+						field "$radio_label_text": "structure_block.mode.load"
+	Added element "save_button@common_buttons.light_text_button":
+		field "bindings":
+			binding:
+				field "binding_name": "#save_enabled"
+				field "binding_name_override": "#enabled"
+				field "binding_condition": "visible"
+			binding:
+				field "binding_name": "#save_visible"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$pressed_button_name": "button.structure_save"
+			variable "$button_text": "structure_block.save"
+	Added element "save_mode_panel":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "bindings":
+			binding:
+				field "binding_name": "#save_mode_panel_visible"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control:
+				element "size_offset_panel":
+					field "type": "stack_panel"
+					field "orientation": "horizontal"
+					field "size": ["100%", "50%c"]
+					field "controls":
+						control:
+							element "size_panel@structure_editor.grid_axis_selection_panel":
+								field "size": ["50%", "100%c"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "$variables":
+									variable "$axis_selection_panel_label": "structure_block.size"
+									variable "$grid_axis_collection_name": "save_size_grid"
+									variable "$grid_axis_edit_box_name": "#save_size_edit_box"
+						control:
+							element "offset_panel@structure_editor.grid_axis_selection_panel":
+								field "size": ["50%", "100%c"]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "$variables":
+									variable "$axis_selection_panel_label": "structure_block.offset"
+									variable "$grid_axis_collection_name": "save_offset_grid"
+									variable "$grid_axis_edit_box_name": "#save_offset_edit_box"
+			control:
+				element "offset_0":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			control: element "include_entities@structure_editor.include_entities_panel": empty
+			control:
+				element "offset_1":
+					field "type": "panel"
+					field "size": ["100%", 2]
+			control: element "include_player@structure_editor.include_player_panel": empty
+			control:
+				element "offset_2":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			control: element "remove_blocks@structure_editor.remove_blocks_panel": empty
+			control:
+				element "offset_3":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			control: element "save@structure_editor.save_button": field "size": ["100%", 30]
+			control:
+				element "offset_4":
+					field "type": "panel"
+					field "size": ["100%", 4]
+			control: element "reset@structure_editor.reset_button": field "size": ["100%", 30]
+			control:
+				element "offset_5":
+					field "type": "panel"
+					field "size": ["100%", 2]
+	Changed element "scroll_panel_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "content_stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 7 (+2, -0)
+						Added control element "save_mode_panel@structure_editor.save_mode_panel": field "ignored": "(not $save_support)".
+						Added control element "load_mode_panel@structure_editor.load_mode_panel": field "ignored": "(not $load_support)".
+Changed namespace "world_section":
+	Total element: 22 (+2, -0)
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 46 (+2, -1)
+			Removed control:
+				element "level_seed_selector@settings_common.option_text_edit_with_button":
+					field "ignored": "$education_edition"
+					field "variables":
+						variable:
+							field "requires": "$is_android_trial"
+							field "$variables":
+								variable "$text_edit_box_selected_to_button_id": "button.redirect_to_upsell"
+								variable "$text_edit_box_button_up_right_of_first_refusal": true
+					field "$variables":
+						variable "$option_label": "createWorldScreen.levelSeed"
+						variable "$option_binding_name": "#world_seed"
+						variable "$option_enabled_binding_name": "#world_seed_enabled"
+						variable "$text_box_name": "world_seed_text_box"
+						variable "$pressed_button_name": "choose_ugc_level_seed"
+			Added control:
+				element "level_seed_selector@settings_common.option_text_edit_with_button":
+					field "ignored": "($education_edition or $is_android_trial)"
+					field "$variables":
+						variable "$option_label": "createWorldScreen.levelSeed"
+						variable "$option_binding_name": "#world_seed"
+						variable "$option_enabled_binding_name": "#world_seed_enabled"
+						variable "$text_box_name": "world_seed_text_box"
+						variable "$pressed_button_name": "choose_ugc_level_seed"
+			Added control:
+				element "level_seed_selector_trial@world_section.option_text_edit_mock_with_button":
+					field "ignored": "($education_edition or not $is_android_trial)"
+					field "$variables":
+						variable "$option_label": "createWorldScreen.levelSeed"
+						variable "$option_binding_name": "#world_seed"
+						variable "$option_enabled_binding_name": "#world_seed_enabled"
+						variable "$pressed_button_name": "button.redirect_to_upsell"
+	Changed element "multiplayer_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 7 (+2, -0)
+			Added control:
+				element "platform_multiplayer_warning_label@world_section.cross_platform_warning_label":
+					field "ignored": "(not $nx_os)"
+					field "text": "#platform_multiplayer_warning_text"
+					field "bindings":
+						binding: field "binding_name": "#platform_multiplayer_warning_text"
+						binding:
+							field "binding_name": "#platform_multiplayer_warning_label_visible"
+							field "binding_name_override": "#visible"
+			Added control:
+				element "xbl_multiplayer_warning_label@world_section.cross_platform_warning_label":
+					field "ignored": "(not $is_xboxlive_enabled)"
+					field "text": "#xbl_multiplayer_warning_text"
+					field "bindings":
+						binding: field "binding_name": "#xbl_multiplayer_warning_text"
+						binding:
+							field "binding_name": "#xbl_multiplayer_warning_label_visible"
+							field "binding_name_override": "#visible"
+	Added element "option_text_edit_mock_control_with_button":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%", "30px"]
+		field "controls":
+			control:
+				element "trial_text_box_button@common_buttons.transparent_content_button":
+					field "size": ["85%", "100%"]
+					field "$variables":
+						variable "$default_button_texture": "textures/ui/edit_box_indent"
+						variable "$hover_button_texture": "textures/ui/edit_box_indent_hover"
+						variable "$pressed_button_texture": "textures/ui/edit_box_indent"
+						variable "$locked_button_texture": "textures/ui/edit_box_indent"
+			control:
+				element "seed_arrow_button@common_buttons.light_glyph_button":
+					field "size": ["fill", "100%"]
+					field "$variables": variable "$button_content": "settings_common.arrow_image"
+	Added element "option_text_edit_mock_with_button@settings_common.option_generic" of field "$variables": variable "$control_name": "world_section.option_text_edit_mock_control_with_button".

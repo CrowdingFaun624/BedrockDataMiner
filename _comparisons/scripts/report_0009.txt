@@ -1,0 +1,273 @@
+Difference of "scripts" between "1.17.0.54" (beta of "1.17.0") and "1.17.0.56" (beta of "1.17.0").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "MobTests.js":
+		Total line: 159 (+56, -14)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import GameTestExtensions from "./GameTestExtensions.js";
+		      3 + import { BlockLocation, BlockStates,Effects , Blocks } from "Minecraft";
+		      4 + 
+		      5 + const TicksPerSecond = 20;
+		      6 + 
+		      7 + GameTest.register("MobTests", "zombie_burn", (test) => {
+		      8 +   const zombieEntityType = "minecraft:zombie";
+		      9 +   const zombiePosition = new BlockLocation(1, 2, 1);
+		     10 + 
+		     11 +   test.succeedWhenEntityNotPresent(zombieEntityType, zombiePosition);
+		     12 + })
+		     13 +   .maxTicks(TicksPerSecond * 30)
+		     14 +   .tag(GameTest.Tags.suiteDefault)
+		     15 +   .batch("day");
+		     16 + 
+		     17 + GameTest.register("MobTests", "effect_durations_longer_first", (test) => {
+		     18 +   const villagerId = "minecraft:villager_v2";
+		     19 +   const villagerPos = new BlockLocation(1, 2, 1);
+		     20 +   const buttonPos = new BlockLocation(1, 4, 0);
+		     21 +   const strongPotion = new BlockLocation(0, 4, 0);
+		     22 +   const weakPotion = new BlockLocation(2, 4, 0);
+		     23 + 
+		     24 +   test.spawn(villagerId, villagerPos);
+		     25 + 
+		     26 +   test
+		     27 +     .startSequence()
+		     28 +     .thenExecute(() => test.setBlock(Blocks.air(), weakPotion))
+		     29 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     30 +     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		     31 +     .thenExecute(() => test.setBlock(Blocks.air(), strongPotion))
+		     32 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     33 +     .thenIdle(41)
+		     34 +     .thenWait(() => {
+		     35 +       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getAmplifier() == 0); // Strength level I
+		     36 +       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getDuration() > 120); // At least 6 seconds remaining
+		     37 +     })
+		     38 +     .thenSucceed();
+		     39 + })
+		     40 +   .structureName("MobTests:effect_durations")
+		     41 +   .tag("suite:java_parity")
+		     42 +   .tag(GameTest.Tags.suiteDisabled); // Potions don't explode when shot from dispensers
+		     43 +   
+		     44 + GameTest.register("MobTests", "drowning_test", (test) => {
+		     45 + 	const villagerEntitySpawnType = "minecraft:villager_v2";
+		     46 + 	const pigSpawnType = "minecraft:pig";
+		  2     - import { BlockLocation, BlockStates,Effects , Blocks } from "Minecraft";
+		  3     - 
+		  4     - const TicksPerSecond = 20;
+		  5  47   
+		     48 + 	test.spawn(villagerEntitySpawnType, new BlockLocation(3, 2, 2));
+		     49 + 	test.spawn(pigSpawnType, new BlockLocation(3, 2, 4));
+		  6     - GameTest.register("MobTests", "zombie_burn", (test) => {
+		     50 + 	test.succeedWhen(() => {
+		     51 + 		test.assertEntityNotPresentInArea(pigSpawnType);
+		  7     -   const zombieEntityType = "minecraft:zombie";
+		  8     -   const zombiePosition = new BlockLocation(1, 2, 1);
+		  9     - 
+		     52 + 		test.assertEntityNotPresentInArea(villagerEntitySpawnType);
+		     53 + 	});
+		     54 + })  
+		     55 + 	.maxTicks(TicksPerSecond * 45)
+		     56 + 	.tag(GameTest.Tags.suiteDefault);
+		 10     -   test.succeedWhenEntityNotPresent(zombieEntityType, zombiePosition);
+		 11     - })
+		 12     -   .maxTicks(TicksPerSecond * 30)
+		 13     -   .tag(GameTest.Tags.suiteDefault)
+		 14     -   .batch("day");
+		 15  57   
+		     58 + GameTest.register("MobTests", "golem_vs_pillager", (test) => {
+		     59 +     const ironGolem = "minecraft:iron_golem";
+		 16     - GameTest.register("MobTests", "effect_durations_longer_first", (test) => {
+		 17     -   const villagerId = "minecraft:villager_v2";
+		     60 +     const pillager = "minecraft:pillager";
+		     61 +     const ironGolemPos = new BlockLocation(3, 2, 3);
+		     62 +     const pillagerPos = new BlockLocation(3, 2, 4);
+		     63 + 
+		 18     -   const villagerPos = new BlockLocation(1, 2, 1);
+		 19     -   const buttonPos = new BlockLocation(1, 4, 0);
+		 20     -   const strongPotion = new BlockLocation(0, 4, 0);
+		 21     -   const weakPotion = new BlockLocation(2, 4, 0);
+		 22  64   
+		     65 + 	test.spawn(ironGolem, ironGolemPos);
+		     66 + 	test.spawn(pillager, pillagerPos);
+		 23     -   test.spawn(villagerId, villagerPos);
+		 24  67   
+		     68 + 	test.succeedWhen(() => {
+		 25     -   test
+		 26     -     .startSequence()
+		     69 + 		test.assertEntityNotPresent(pillager, ironGolemPos);
+		     70 + 		test.assertEntityPresent(ironGolem, pillagerPos);
+		     71 + 	});
+		     72 + })
+		     73 + 	.tag(GameTest.Tags.suiteDefault);
+		     74 + 
+		     75 + GameTest.register("MobTests", "effect_durations_stronger_first", (test) => {
+		     76 +     const villagerId = "minecraft:villager_v2";
+		     77 +     const villagerPos = new BlockLocation(1, 2, 1);
+		     78 +     const buttonPos = new BlockLocation(1, 4, 0);
+		     79 +     const strongPotion = new BlockLocation(0, 4, 0);
+		     80 +     const weakPotion = new BlockLocation(2, 4, 0);
+		     81 + 
+		     82 +     test.spawn(villagerId, villagerPos);
+		     83 + 
+		     84 +     test
+		     85 +     .startSequence()
+		     86 +     .thenExecute(() => test.setBlock(Blocks.air(), strongPotion))
+		     87 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     88 +     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		     89 +     .thenExecute(() => test.setBlock(Blocks.air(), weakPotion))
+		     90 +     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		     91 +     .thenIdle(41)
+		     92 +     .thenWait(() => {
+		     93 +       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getAmplifier() == 0); // Strength level I
+		     94 +       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getDuration() > 120); // At least 6 seconds remaining
+		     95 +     })
+		     96 +     .thenSucceed();
+		     97 + })
+		     98 +     .structureName("MobTests:effect_durations")
+		     99 +     .tag("suite:java_parity")
+		    100 +     .tag(GameTest.Tags.suiteDisabled); // Potions don't explode when shot from dispensers
+		    101 +   
+		    102 + GameTest.register("MobTests", "silverfish_no_suffocate", (test) => {
+		    103 +     const silverfishPos = new BlockLocation(1, 2, 1);
+		    104 +     const silverfish = "minecraft:silverfish";
+		    105 + 	
+		    106 +     test.startSequence()
+		    107 +         .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		    108 +         .thenIdle(40)
+		    109 +         .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		    110 +         .thenSucceed();
+		    111 +     test.startSequence()
+		    112 +         .thenWait(() => test.assertEntityNotPresent(silverfish, silverfishPos))
+		    113 +         .thenFail("Silverfish died");
+		 27     -     .thenExecute(() => test.setBlock(Blocks.air(), weakPotion))
+		 28     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 29     -     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		 30     -     .thenExecute(() => test.setBlock(Blocks.air(), strongPotion))
+		 31     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 32     -     .thenIdle(41)
+		 33     -     .thenWait(() => {
+		 34     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getAmplifier() == 0); // Strength level I
+		 35     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getDuration() > 120); // At least 6 seconds remaining
+		 36     -     })
+		 37     -     .thenSucceed();
+		 38     - })
+		 39     -   .structureName("MobTests:effect_durations")
+		 40     -   .tag("suite:java_parity")
+		 41     -   .tag(GameTest.Tags.suiteDisabled); // Potions don't explode when shot from dispensers
+		 42     -   
+		 43     - GameTest.register("MobTests", "drowning_test", (test) => {
+		 44     - 	const villagerEntitySpawnType = "minecraft:villager_v2";
+		 45     - 	const pigSpawnType = "minecraft:pig";
+		 46     - 
+		 47     - 	test.spawn(villagerEntitySpawnType, new BlockLocation(3, 2, 2));
+		 48     - 	test.spawn(pigSpawnType, new BlockLocation(3, 2, 4));
+		 49     - 	test.succeedWhen(() => {
+		 50     - 		test.assertEntityNotPresentInArea(pigSpawnType);
+		 51     - 		test.assertEntityNotPresentInArea(villagerEntitySpawnType);
+		 52     - 	});
+		 53     - })  
+		 54     - 	.maxTicks(TicksPerSecond * 45)
+		 55     - 	.tag(GameTest.Tags.suiteDefault);
+		 56     - 
+		 57     - 
+		 58     - GameTest.register("MobTests", "golem_vs_pillager", (test) => {
+		 59     -     const ironGolem = "minecraft:iron_golem";
+		 60     -     const pillager = "minecraft:pillager";
+		 61     -     const ironGolemPos = new BlockLocation(3, 2, 3);
+		 62     -     const pillagerPos = new BlockLocation(3, 2, 4);
+		 63     - 
+		 64     - 
+		 65     - 	test.spawn(ironGolem, ironGolemPos);
+		 66     - 	test.spawn(pillager, pillagerPos);
+		 67     - 
+		 68     - 	test.succeedWhen(() => {
+		 69     - 		test.assertEntityNotPresent(pillager, ironGolemPos);
+		 70     - 		test.assertEntityPresent(ironGolem, pillagerPos);
+		 71     - 	});
+		 72 114   })
+		    115 +    .maxTicks(TicksPerSecond * 30)
+		    116 +    .required(false)
+		 73 117   	.tag(GameTest.Tags.suiteDefault);
+		 74 118   
+		    119 + GameTest.register("MobTests", "small_mobs_keep_head_above_water", (test) => { 
+		    120 + 	const testEx = new GameTestExtensions(test);
+		    121 + 	const swimmerPos = new BlockLocation(1, 3, 1);//When the silverfish is produced at (1, 2, 1), the silverfish is stuck in the glass below and dies, so the y-axis goes up one frame
+		 75     - GameTest.register("MobTests", "effect_durations_stronger_first", (test) => {
+		    122 + 	const swimmer = test.spawn("minecraft:silverfish", swimmerPos);
+		    123 + 	
+		    124 + 	const drownerPos = new BlockLocation(5, 2, 1);
+		    125 + 	const drowner = test.spawn("minecraft:silverfish", drownerPos);
+		    126 + 	
+		    127 + 	testEx.makeAboutToDrown(swimmer);
+		    128 + 	testEx.makeAboutToDrown(drowner);
+		    129 + 	
+		    130 + 	test.startSequence()
+		    131 + 		.thenIdle(40)
+		    132 + 		.thenExecute(() => test.assertEntityPresent("minecraft:silverfish", swimmerPos))
+		    133 + 		.thenExecute(() => test.assertEntityNotPresent("minecraft:silverfish", drownerPos))
+		    134 + 		.thenSucceed();
+		    135 + })
+		    136 + 	.tag(GameTest.Tags.suiteDefault);
+		    137 + 
+		    138 + GameTest.register("MobTests", "small_mobs_breathe_in_boats", (test) => { 
+		    139 + 	const testEx = new GameTestExtensions(test);
+		    140 + 	const catPos = new BlockLocation(2, 3, 2);
+		    141 + 	const cat = testEx.addEntityInBoat("minecraft:cat", catPos);
+		    142 + 	testEx.makeAboutToDrown(cat);
+		    143 + 	
+		    144 + 	const silverfishPos = new BlockLocation(4, 3, 2);
+		    145 + 	const silverfish = testEx.addEntityInBoat("minecraft:silverfish", silverfishPos);
+		    146 + 	testEx.makeAboutToDrown(silverfish);
+		    147 + 	
+		    148 + 	const underWaterPos = new BlockLocation(6, 2, 2);
+		    149 + 	const silverfish2 = testEx.addEntityInBoat("minecraft:silverfish", underWaterPos);
+		    150 + 	testEx.makeAboutToDrown(silverfish2);
+		 76     -     const villagerId = "minecraft:villager_v2";
+		 77     -     const villagerPos = new BlockLocation(1, 2, 1);
+		 78     -     const buttonPos = new BlockLocation(1, 4, 0);
+		 79     -     const strongPotion = new BlockLocation(0, 4, 0);
+		 80     -     const weakPotion = new BlockLocation(2, 4, 0);
+		 81     - 
+		 82     -     test.spawn(villagerId, villagerPos);
+		 83     - 
+		 84     -     test
+		 85     -     .startSequence()
+		 86     -     .thenExecute(() => test.setBlock(Blocks.air(), strongPotion))
+		 87     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 88     -     .thenWait(() => test.assertBlockState("button_pressed_bit", 0, buttonPos))
+		 89     -     .thenExecute(() => test.setBlock(Blocks.air(), weakPotion))
+		 90     -     .thenExecuteAfter(4, () => test.pressButton(buttonPos))
+		 91     -     .thenIdle(41)
+		 92     -     .thenWait(() => {
+		 93     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getAmplifier() == 0); // Strength level I
+		 94     -       test.assertEntityData(villagerPos, villagerId, (entity) => entity.getEffect(Effects.regeneration).getDuration() > 120); // At least 6 seconds remaining
+		 95     -     })
+		 96     -     .thenSucceed();
+		 97     - })
+		 98     -     .structureName("MobTests:effect_durations")
+		 99     -     .tag("suite:java_parity")
+		100     -     .tag(GameTest.Tags.suiteDisabled); // Potions don't explode when shot from dispensers
+		101     -   
+		102     - GameTest.register("MobTests", "silverfish_no_suffocate", (test) => {
+		103     -     const silverfishPos = new BlockLocation(1, 2, 1);
+		104     -     const silverfish = "minecraft:silverfish";
+		105 151   	
+		    152 + 	test.startSequence()
+		106     -     test.startSequence()
+		107     -         .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		108     -         .thenIdle(40)
+		    153 + 		.thenIdle(40)
+		    154 + 		.thenExecute(() => test.assertEntityPresent("minecraft:cat", catPos))
+		    155 + 		.thenExecute(() => test.assertEntityPresent("minecraft:silverfish", silverfishPos))
+		    156 + 		.thenExecute(() => test.assertEntityNotPresent("minecraft:silverfish", underWaterPos))
+		    157 + 		.thenSucceed();
+		109     -         .thenExecute(() => test.assertEntityHasComponent(silverfish, "minecraft:health", silverfishPos, true))
+		110     -         .thenSucceed();
+		111     -     test.startSequence()
+		112     -         .thenWait(() => test.assertEntityNotPresent(silverfish, silverfishPos))
+		113     -         .thenFail("Silverfish died");
+		114 158   })
+		    159 + 	.tag(GameTest.Tags.suiteDefault);
+		115     -    .maxTicks(TicksPerSecond * 30)
+		116     -    .required(false)
+		117     -    .tag(GameTest.Tags.suiteDefault);
+		          '''

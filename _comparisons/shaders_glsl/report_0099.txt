@@ -1,0 +1,71 @@
+Difference of "shaders_resource_packs" between "1.19.83" and "1.20.0.20" (beta of "1.20.0").
+
+Changed resource pack "hb_blur.fragment":
+	Changed file "vanilla":
+		Total line: 45 (+1, -0)
+		        '''
+		        ...
+		25 25   		vec4 pixelOffsetX = PIXEL_OFFSETS[(i*2) / 4];
+		26 26   		vec4 pixelOffsetY = PIXEL_OFFSETS[(i*2 + 1) / 4];
+		27 27   		offset.x = pixelOffsetX[int(mod(float(i*2), 4.0))];
+		28 28   		offset.y = pixelOffsetY[int(mod(float(i*2 + 1), 4.0))];
+		29 29   
+		   30 + 		vec2 uvPointWithOffset = vec2(AdditionalOut.x + offset.x, AdditionalOut.y - offset.y);
+		   31 + 		vec2 uvPointWithNegativeOffset = vec2(AdditionalOut.x - offset.x, AdditionalOut.y + offset.y);
+		30    - 		vec2 uvPointWithOffset = AdditionalOut.xy + offset;
+		31    - 		vec2 uvPointWithNegativeOffset = AdditionalOut.xy - offset;
+		   32 + 
+		32 33   		if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		33 34   		{
+		34 35   			uvPointWithOffset.x = clamp(AdditionalOut.x + offset.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   36 + 			uvPointWithOffset.y = clamp(AdditionalOut.y - offset.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		35    - 			uvPointWithOffset.y = clamp(AdditionalOut.y + offset.y, PRIM_PROPS_1.y, PRIM_PROPS_1.y + PRIM_PROPS_1.w);
+		36 37   			uvPointWithNegativeOffset.x = clamp(AdditionalOut.x - offset.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   38 + 			uvPointWithNegativeOffset.y = clamp(AdditionalOut.y + offset.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		37    - 			uvPointWithNegativeOffset.y = clamp(AdditionalOut.y - offset.y, PRIM_PROPS_1.y, PRIM_PROPS_1.y + PRIM_PROPS_1.w);
+		38 39   		}
+		39 40   
+		40 41   		outColor += ((texture2D(TEXTURE_0, uvPointWithOffset) + texture2D(TEXTURE_0, uvPointWithNegativeOffset)) * coeff);
+		41 42   	}
+		42 43   
+		        ...
+		        '''
+Changed resource pack "hb_standard.vertex":
+	Changed file "vanilla":
+		Total line: 38 (+7, -0)
+		        '''
+		        ...
+		25 25   	outPos.y = (w - outPos.y) * 2.0 - w;
+		26 26   
+		27 27   	ColorOut = HB_COLOR;
+		28 28   	AdditionalOut = HB_ADDITIONAL;
+		29 29   
+		   30 + #if defined(INVERT_ADDITIONAL_OUT_Y)
+		   31 + 	AdditionalOut.y = 1 - AdditionalOut.y;
+		   32 + #endif
+		   33 + #if defined(INVERT_ADDITIONAL_OUT_W)
+		   34 + 	AdditionalOut.w = 1 - AdditionalOut.w;
+		   35 + #endif
+		   36 + 
+		30 37   	gl_Position = outPos;
+		31 38   }
+		        '''
+Changed resource pack "hb_standard_texture.fragment":
+	Changed file "vanilla":
+		Total line: 30 (+0, -0)
+		        '''
+		        ...
+		18 18   void main() {
+		19 19   	vec2 uvPoint = AdditionalOut.xy;
+		20 20   	if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		21 21   	{
+		22 22   		uvPoint.x = clamp(AdditionalOut.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   23 + 		uvPoint.y = clamp(AdditionalOut.y, 1 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1 - PRIM_PROPS_1.y);
+		23    - 		uvPoint.y = clamp(AdditionalOut.y, PRIM_PROPS_1.y, PRIM_PROPS_1.y + PRIM_PROPS_1.w);
+		24 24   	}
+		25 25   
+		26 26   	vec4 outColor = texture2D(TEXTURE_0, uvPoint);
+		27 27   	outColor.w = mix(1.0 - outColor.w, outColor.w, ColorOut.x);
+		28 28   	float alpha = ColorOut.w * clamp(AdditionalOut.z, 0.0, 1.0);
+		        ...
+		        '''

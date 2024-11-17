@@ -1,0 +1,606 @@
+Difference of "scripts" between "1.16.230.52" (beta of "1.17.0") and "1.16.230.54" (beta of "1.17.0").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 11 (+1, -0)
+	Changed script "APITests.js":
+		Total line: 296 (+149, -30)
+		          '''
+		          ...
+		 10  10       if (++counter < 48) {
+		 11  11         colorComponent.setColor((color + 1) % 16);
+		 12  12         throw "Disco sheep!";
+		 13  13       } else {
+		 14  14         colorComponent.setColor(10);
+		     15 +       if (colorComponent.value !== 10) {
+		     16 +         throw "Unexpected color value"
+		     17 +       }
+		     18 +     }
+		     19 +   });
+		     20 + })
+		     21 +   .maxTicks(50)
+		     22 +   .tag(GameTest.Tags.suiteDefault);
+		     23 + 
+		     24 + GameTest.register("APITests", "get_component_on_dead_entity", (test) => {
+		     25 +   const horse = test.spawn("minecraft:horse", new BlockLocation(1, 2, 1));
+		     26 +   horse.kill();
+		     27 +   test.runAfterDelay(40, () => {
+		     28 +     try {
+		     29 +       // This should throw since the entity is dead
+		     30 +       horse.getComponent("minecraft:tamemount").setTamed();
+		     31 +       test.fail();
+		     32 +     } catch (e) {
+		     33 +       test.succeed();
+		     34 +     }
+		     35 +   });
+		     36 + }).tag(GameTest.Tags.suiteDefault);
+		     37 + 
+		     38 + GameTest.register("APITests", "is_saddled_component", (test) => {
+		     39 +   const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     40 +   // TODO: Give saddle to pig
+		     41 +   test.succeedWhen(() => {
+		     42 +     const isSaddled = pig.getComponent("minecraft:is_saddled") !== undefined;
+		     43 +     if (!isSaddled) {
+		     44 +       throw "Not saddled";
+		     45 +     }
+		     46 +   });
+		     47 + }).tag(GameTest.Tags.suiteDisabled); // No API to give saddle to pig
+		     48 + 
+		     49 + GameTest.register("APITests", "get_components", (test) => {
+		     50 +   const horse = test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     51 +   test.print("---Start Components---");
+		     52 +   for (const component of horse.getComponents()) {
+		     53 +     test.print(component.getName());
+		     54 +   }
+		     55 +   test.print("---End Components---");
+		     56 +   test.succeed();
+		     57 + });
+		     58 + 
+		     59 + GameTest.register("APITests", "leashable_component", (test) => {
+		     60 +   const pig1 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     61 +   const pig2 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 1));
+		     62 +   const leashable = pig1.getComponent("minecraft:leashable");
+		     63 +   if (leashable) {
+		     64 +     test.print("softDistance: " + leashable.softDistance);
+		     65 +     leashable.leash(pig2);
+		     66 +     test.runAtTickTime(20, () => {
+		     67 +       leashable.unleash();
+		     68 +     });
+		     69 +     test.succeedWhen(() => {
+		     70 +       test.assertEntityPresentInArea("minecraft:item"); // Make sure the lead dropped
+		     71 +     });
+		     72 +   } else {
+		     73 +     test.fail();
+		     74 +   }
+		     75 + }).tag(GameTest.Tags.suiteDefault);
+		     76 + 
+		     77 + GameTest.register("APITests", "health_component", (test) => {
+		     78 +   const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
+		     79 +   const sheepPos = new BlockLocation(4, 2, 2);
+		     80 +   const sheep = test.spawn(sheepId, sheepPos);
+		     81 +   test.assertEntityInstancePresent(sheep);
+		     82 +   test.pullLever(new BlockLocation(2, 3, 2));
+		     83 +   const healthComponent = sheep.getComponent("minecraft:health");
+		     84 +   if (healthComponent) {
+		     85 +     test.succeedWhen(() => {
+		     86 +       let currentHealth = healthComponent.current;
+		     87 +       if (currentHealth !== 0) {
+		     88 +         throw "Unexpected health";
+		     89 +       }
+		     90 +     });
+		     91 +   } else {
+		     92 +     test.fail();
+		     93 +   }
+		     94 + })
+		     95 +   .maxTicks(200)
+		     96 +   .tag(GameTest.Tags.suiteDefault);
+		     97 + 
+		     98 + GameTest.register("APITests", "on_entity_created", (test) => {
+		     99 +   World.addEventListener("onEntityCreated", (entity) => {
+		    100 +     if (entity) {
+		    101 +       test.succeed();
+		    102 +     } else {
+		    103 +       test.fail("Expected entity");
+		    104 +     }
+		    105 +   });
+		    106 +   test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		    107 + }).tag(GameTest.Tags.suiteDisabled); // This test will succeed multiple times, need to unregister the listener
+		    108 + 
+		    109 + GameTest.register("APITests", "assert_is_waterlogged", (test) => {
+		    110 +   const waterChestLoc = new BlockLocation(5, 2, 1);
+		    111 +   const waterLoc = new BlockLocation(4, 2, 1);
+		    112 +   const chestLoc = new BlockLocation(2, 2, 1);
+		    113 +   const airLoc = new BlockLocation(1, 2, 1);
+		    114 + 
+		    115 +   test.assertIsWaterlogged(waterChestLoc, true);
+		    116 +   test.assertIsWaterlogged(waterLoc, false);
+		    117 +   test.assertIsWaterlogged(chestLoc, false);
+		    118 +   test.assertIsWaterlogged(airLoc, false);
+		    119 +   test.succeed();
+		    120 + }).tag(GameTest.Tags.suiteDefault);
+		    121 + 
+		    122 + GameTest.register("APITests", "assert_redstone_power", (test) => {
+		    123 +   const redstoneBlockLoc = new BlockLocation(3, 2, 1);
+		    124 +   const redstoneTorchLoc = new BlockLocation(2, 2, 1);
+		    125 +   const poweredLampLoc = new BlockLocation(1, 2, 1);
+		    126 +   const unpoweredLampLoc = new BlockLocation(0, 2, 1);
+		    127 +   const airLoc = new BlockLocation(3, 2, 0);
+		    128 +   const redstoneWireLoc = new BlockLocation(0, 1, 0);
+		    129 + 
+		    130 +   test.succeedWhen(() => {
+		    131 +     test.assertRedstonePower(redstoneBlockLoc, 15);
+		    132 +     test.assertRedstonePower(redstoneTorchLoc, 15);
+		    133 +     test.assertRedstonePower(poweredLampLoc, 15);
+		    134 +     test.assertRedstonePower(unpoweredLampLoc, 0);
+		    135 +     test.assertRedstonePower(airLoc, -1);
+		    136 +     test.assertRedstonePower(redstoneWireLoc, 13); // 3 length wire
+		    137 +   });
+		    138 + })
+		    139 +   .maxTicks(20)
+		    140 +   .tag(GameTest.Tags.suiteDefault);
+		    141 + 
+		    142 + GameTest.register("APITests", "spawn_item", (test) => {
+		    143 +   const featherItem = new ItemStack(Items.feather, 1, 0);
+		    144 +   test.spawnItem(featherItem, new Location(1.5, 3.5, 1.5));
+		    145 +   test.succeedWhen(() => {
+		    146 +     test.assertEntityPresent("minecraft:item", new BlockLocation(1, 2, 1));
+		 15     -       if (colorComponent.value === 10) {
+		 16     -         test.succeed();
+		 17     -       }
+		 18     -     }
+		 19 147     });
+		    148 + }).tag(GameTest.Tags.suiteDefault);
+		 20     - })
+		 21     -   .maxTicks(50)
+		 22     -   .tag(GameTest.Tags.suiteDefault);
+		 23 149   
+		    150 + GameTest.register("APITests", "assert_entity_data", (test) => {
+		    151 +   const pigId = "minecraft:pig<minecraft:ageable_grow_up>";
+		    152 +   const pigLoc = new BlockLocation(1, 2, 1);
+		 24     - GameTest.register("APITests", "get_component_on_dead_entity", (test) => {
+		    153 +   test.spawn(pigId, pigLoc);
+		    154 +   test.succeedWhen(() => {
+		    155 +     test.assertEntityData(pigLoc, pigId, (entity) => entity.getName !== undefined);
+		    156 +   });
+		    157 + }).tag(GameTest.Tags.suiteDefault);
+		    158 + 
+		    159 + GameTest.register("APITests", "add_effect", (test) => {
+		    160 +   const villagerId = "minecraft:villager_v2<minecraft:ageable_grow_up>";
+		    161 +   const villagerLoc = new BlockLocation(1, 2, 1);
+		    162 +   const villager = test.spawn(villagerId, villagerLoc);
+		    163 +   const duration = 20;
+		    164 +   villager.addEffect(Effects.poison, duration, 1);
+		 25     -   const horse = test.spawn("minecraft:horse", new BlockLocation(1, 2, 1));
+		 26     -   horse.kill();
+		 27     -   test.runAfterDelay(40, () => {
+		 28     -     try {
+		 29     -       // This should throw since the entity is dead
+		 30     -       horse.getComponent("minecraft:tamemount").setTamed();
+		 31     -       test.fail();
+		 32     -     } catch (e) {
+		 33     -       test.succeed();
+		 34     -     }
+		 35     -   });
+		 36     - }).tag(GameTest.Tags.suiteDefault);
+		 37 165   
+		 38     - GameTest.register("APITests", "is_saddled_component", (test) => {
+		 39     -   const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		 40     -   // TODO: Give saddle to pig
+		 41     -   test.succeedWhen(() => {
+		    166 +   test.assertEntityData(
+		    167 +     villagerLoc,
+		    168 +     villagerId,
+		    169 +     (entity) => entity.getEffect(Effects.poison).getDuration() == duration
+		    170 +   );
+		    171 +   test.assertEntityData(villagerLoc, villagerId, (entity) => entity.getEffect(Effects.poison).getAmplifier() == 1);
+		 42     -     const isSaddled = pig.getComponent("minecraft:is_saddled") !== undefined;
+		 43     -     if (!isSaddled) {
+		 44     -       throw "Not saddled";
+		 45     -     }
+		 46     -   });
+		 47     - }).tag(GameTest.Tags.suiteDisabled); // No API to give saddle to pig
+		 48 172   
+		    173 +   test.runAfterDelay(duration, () => {
+		    174 +     test.assertEntityData(villagerLoc, villagerId, (entity) => entity.getEffect(Effects.poison) === undefined);
+		 49     - GameTest.register("APITests", "get_components", (test) => {
+		    175 +     test.succeed();
+		    176 +   });
+		    177 + }).tag(GameTest.Tags.suiteDefault);
+		    178 + 
+		    179 + GameTest.register("APITests", "assert_entity_present", (test) => {
+		    180 +   const villagerId = "minecraft:villager_v2";
+		    181 +   const villagerLoc = new BlockLocation(1, 2, 3);
+		    182 +   const emeraldItem = new ItemStack(Items.emerald, 1, 0);
+		    183 +   const emeraldItemLoc = new BlockLocation(3, 2, 3);
+		    184 +   const minecartId = "minecraft:minecart";
+		    185 +   const minecartLoc = new BlockLocation(3, 2, 1);
+		    186 +   const armorStandId = "minecraft:armor_stand";
+		    187 +   const armorStandLoc = new BlockLocation(1, 2, 1);
+		    188 + 
+		    189 +   test.spawn(villagerId, villagerLoc);
+		    190 +   test.spawnItem(emeraldItem, new Location(3.5, 4.5, 3.5));
+		    191 + 
+		    192 +   test.succeedWhen(() => {
+		    193 +     test.assertEntityPresent(villagerId, villagerLoc);
+		    194 +     test.assertItemEntityPresent(Items.emerald, emeraldItemLoc, 0);
+		    195 +     test.assertEntityPresent(armorStandId, armorStandLoc);
+		    196 + 
+		    197 +     // Check all blocks surrounding the minecart
+		    198 +     for (let x = -1; x <= 1; x++) {
+		    199 +       for (let z = -1; z <= 1; z++) {
+		    200 +         let offsetLoc = new BlockLocation(minecartLoc.x + x, minecartLoc.y, minecartLoc.z + z);
+		 50     -   const horse = test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		 51     -   test.print("---Start Components---");
+		 52     -   for (const component of horse.getComponents()) {
+		 53     -     test.print(component.getName());
+		 54     -   }
+		 55     -   test.print("---End Components---");
+		 56     -   test.succeed();
+		 57     - });
+		 58     - 
+		 59     - GameTest.register("APITests", "leashable_component", (test) => {
+		 60     -   const pig1 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		 61     -   const pig2 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 1));
+		 62     -   const leashable = pig1.getComponent("minecraft:leashable");
+		 63     -   if (leashable) {
+		 64     -     test.print("softDistance: " + leashable.softDistance);
+		 65     -     leashable.leash(pig2);
+		 66     -     test.runAtTickTime(20, () => {
+		 67     -       leashable.unleash();
+		 68     -     });
+		 69     -     test.succeedWhen(() => {
+		 70     -       test.assertEntityPresentInArea("minecraft:item"); // Make sure the lead dropped
+		 71     -     });
+		 72     -   } else {
+		 73     -     test.fail();
+		 74     -   }
+		 75     - }).tag(GameTest.Tags.suiteDefault);
+		 76     - 
+		    201 +         if (x == 0 && z == 0) {
+		    202 +           test.assertEntityPresent(minecartId, offsetLoc);
+		    203 +         } else {
+		    204 +           test.assertEntityNotPresent(minecartId, offsetLoc);
+		    205 +         }
+		    206 +       }
+		    207 +     }
+		    208 +   });
+		    209 + }).tag(GameTest.Tags.suiteDefault);
+		    210 + 
+		    211 + GameTest.register("APITests", "assert_entity_not_present", (test) => {
+		    212 +   const armorStandId = "minecraft:armor_stand";
+		    213 +   const pigId = "minecraft:pig";
+		    214 +   const armorStandLoc = new BlockLocation(1, 2, 1);
+		    215 +   const airLoc = new BlockLocation(0, 2, 1);
+		    216 + 
+		    217 +   try {
+		    218 +     test.assertEntityNotPresentInArea(armorStandId);
+		    219 +     test.fail(); // this assert should throw
+		    220 +   } catch (e) {}
+		 77     - GameTest.register("APITests", "health_component", (test) => {
+		 78     -   const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
+		 79     -   const sheepPos = new BlockLocation(4, 2, 2);
+		 80     -   const sheep = test.spawn(sheepId, sheepPos);
+		 81     -   test.assertEntityInstancePresent(sheep);
+		 82     -   test.pullLever(new BlockLocation(2, 3, 2));
+		 83     -   const healthComponent = sheep.getComponent("minecraft:health");
+		 84     -   if (healthComponent) {
+		 85     -     test.succeedWhen(() => {
+		 86     -       let currentHealth = healthComponent.current;
+		 87     -       if (currentHealth !== 0) {
+		 88     -         throw "Unexpected health";
+		 89     -       }
+		 90     -     });
+		 91     -   } else {
+		 92     -     test.fail();
+		 93     -   }
+		 94     - })
+		 95     -   .maxTicks(200)
+		 96     -   .tag(GameTest.Tags.suiteDefault);
+		 97 221   
+		 98     - GameTest.register("APITests", "on_entity_created", (test) => {
+		 99     -   World.addEventListener("onEntityCreated", (entity) => {
+		100     -     if (entity) {
+		    222 +   try {
+		    223 +     test.assertEntityNotPresent(armorStandId, armorStandLoc);
+		    224 +     test.fail(); // this assert should throw
+		    225 +   } catch (e) {}
+		    226 + 
+		    227 +   test.assertEntityNotPresent(armorStandId, airLoc);
+		    228 +   test.assertEntityNotPresentInArea(pigId);
+		101     -       test.succeed();
+		102     -     } else {
+		103     -       test.fail("Expected entity");
+		104     -     }
+		105     -   });
+		106     -   test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		107     - }).tag(GameTest.Tags.suiteDisabled); // This test will succeed multiple times, need to unregister the listener
+		108 229   
+		    230 +   test.succeed();
+		109     - GameTest.register("APITests", "assert_is_waterlogged", (test) => {
+		110     -   const waterChestLoc = new BlockLocation(5, 2, 1);
+		    231 + })
+		    232 +   .structureName("APITests:armor_stand")
+		    233 +   .tag(GameTest.Tags.suiteDefault);
+		111     -   const waterLoc = new BlockLocation(4, 2, 1);
+		112     -   const chestLoc = new BlockLocation(2, 2, 1);
+		113     -   const airLoc = new BlockLocation(1, 2, 1);
+		114 234   
+		    235 + GameTest.register("APITests", "assert_item_entity_count_is", (test) => {
+		115     -   test.assertIsWaterlogged(waterChestLoc, true);
+		116     -   test.assertIsWaterlogged(waterLoc, false);
+		    236 +   let oneItemLoc = new BlockLocation(3, 2, 1);
+		    237 +   let fiveItemsLoc = new BlockLocation(1, 2, 1);
+		    238 +   let noItemsLoc = new BlockLocation(2, 2, 1);
+		    239 +   let diamondPickaxeLoc = new BlockLocation(2, 2, 4);
+		117     -   test.assertIsWaterlogged(chestLoc, false);
+		118     -   test.assertIsWaterlogged(airLoc, false);
+		119     -   test.succeed();
+		120     - }).tag(GameTest.Tags.suiteDefault);
+		121 240   
+		    241 +   const oneEmerald = new ItemStack(Items.emerald, 1, 0);
+		122     - GameTest.register("APITests", "assert_redstone_power", (test) => {
+		123     -   const redstoneBlockLoc = new BlockLocation(3, 2, 1);
+		    242 +   const onePickaxe = new ItemStack(Items.diamondPickaxe, 1, 0);
+		    243 +   const fiveEmeralds = new ItemStack(Items.emerald, 5, 0);
+		    244 + 
+		    245 +   test.spawnItem(oneEmerald, new Location(3.5, 3, 1.5));
+		    246 +   test.spawnItem(fiveEmeralds, new Location(1.5, 3, 1.5));
+		124     -   const redstoneTorchLoc = new BlockLocation(2, 2, 1);
+		125     -   const poweredLampLoc = new BlockLocation(1, 2, 1);
+		126     -   const unpoweredLampLoc = new BlockLocation(0, 2, 1);
+		127     -   const airLoc = new BlockLocation(3, 2, 0);
+		128     -   const redstoneWireLoc = new BlockLocation(0, 1, 0);
+		129 247   
+		130     -   test.succeedWhen(() => {
+		131     -     test.assertRedstonePower(redstoneBlockLoc, 15);
+		132     -     test.assertRedstonePower(redstoneTorchLoc, 15);
+		    248 +   // spawn 9 pickaxes in a 3x3 grid
+		    249 +   for (let x = 1.5; x <= 3.5; x++) {
+		    250 +     for (let z = 3.5; z <= 5.5; z++) {
+		    251 +       test.spawnItem(onePickaxe, new Location(x, 3, z));
+		    252 +     }
+		    253 +   }
+		    254 + 
+		    255 +   test.assertItemEntityCountIs(Items.emerald, noItemsLoc, 0, 0);
+		133     -     test.assertRedstonePower(poweredLampLoc, 15);
+		134     -     test.assertRedstonePower(unpoweredLampLoc, 0);
+		135     -     test.assertRedstonePower(airLoc, -1);
+		136     -     test.assertRedstonePower(redstoneWireLoc, 13); // 3 length wire
+		137     -   });
+		138     - })
+		139     -   .maxTicks(20)
+		140     -   .tag(GameTest.Tags.suiteDefault);
+		141 256   
+		    257 +   test.succeedWhen(() => {
+		    258 +     test.assertItemEntityCountIs(Items.feather, oneItemLoc, 0, 0);
+		    259 +     test.assertItemEntityCountIs(Items.emerald, oneItemLoc, 0, 1);
+		    260 +     test.assertItemEntityCountIs(Items.feather, fiveItemsLoc, 0, 0);
+		    261 +     test.assertItemEntityCountIs(Items.emerald, fiveItemsLoc, 0, 5);
+		    262 +     test.assertItemEntityCountIs(Items.emerald, fiveItemsLoc, 0, 5);
+		    263 +     test.assertItemEntityCountIs(Items.diamondPickaxe, diamondPickaxeLoc, 1, 9);
+		    264 +     test.assertItemEntityCountIs(Items.diamondPickaxe, diamondPickaxeLoc, 0, 1);
+		142     - GameTest.register("APITests", "spawn_item", (test) => {
+		143     -   const featherItem = new ItemStack(Items.feather, 1, 0);
+		144     -   test.spawnItem(featherItem, new Location(1.5, 3.5, 1.5));
+		145     -   test.succeedWhen(() => {
+		146     -     test.assertEntityPresent("minecraft:item", new BlockLocation(1, 2, 1));
+		147 265     });
+		148 266   }).tag(GameTest.Tags.suiteDefault);
+		    267 + 
+		    268 + GameTest.register("APITests", "assert_entity_touching", (test) => {
+		    269 +   const armorStandId = "minecraft:armor_stand";
+		149 270   
+		    271 +   test.assertEntityTouching(armorStandId, new Location(1.5, 2.5, 1.5));
+		150     - GameTest.register("APITests", "assert_entity_data", (test) => {
+		151     -   const pigId = "minecraft:pig<minecraft:ageable_grow_up>";
+		152     -   const pigLoc = new BlockLocation(1, 2, 1);
+		    272 +   test.assertEntityTouching(armorStandId, new Location(1.5, 3.5, 1.5));
+		    273 +   test.assertEntityNotTouching(armorStandId, new Location(1.0, 2.5, 1.5));
+		    274 +   test.assertEntityNotTouching(armorStandId, new Location(2.0, 2.5, 1.5));
+		    275 +   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 1.0));
+		    276 +   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 2.0));
+		153     -   test.spawn(pigId, pigLoc);
+		154     -   test.succeedWhen(() => {
+		155     -     test.assertEntityData(pigLoc, pigId, (entity) => entity.getName !== undefined);
+		156     -   });
+		157     - }).tag(GameTest.Tags.suiteDefault);
+		158 277   
+		    278 +   test.succeed();
+		159     - GameTest.register("APITests", "add_effect", (test) => {
+		160     -   const villagerId = "minecraft:villager_v2<minecraft:ageable_grow_up>";
+		161     -   const villagerLoc = new BlockLocation(1, 2, 1);
+		    279 + })
+		    280 +   .structureName("APITests:armor_stand")
+		    281 +   .tag(GameTest.Tags.suiteDefault);
+		162     -   const villager = test.spawn(villagerId, villagerLoc);
+		163     -   const duration = 20;
+		164     -   villager.addEffect(Effects.poison, duration, 1);
+		165 282   
+		    283 + GameTest.register("APITests", "pulse_redstone", (test) => {
+		166     -   test.assertEntityData(
+		167     -     villagerLoc,
+		    284 +   const pulseLoc = new BlockLocation(1, 2, 2);
+		    285 +   const lampLoc = new BlockLocation(1, 2, 1);
+		    286 +   test.assertRedstonePower(lampLoc, 0);
+		    287 +   test.pulseRedstone(pulseLoc, 2);
+		168     -     villagerId,
+		169     -     (entity) => entity.getEffect(Effects.poison).getDuration() == duration
+		170     -   );
+		171     -   test.assertEntityData(villagerLoc, villagerId, (entity) => entity.getEffect(Effects.poison).getAmplifier() == 1);
+		172 288   
+		    289 +   test
+		    290 +     .startSequence()
+		    291 +     .thenIdle(2)
+		    292 +     .thenExecute(() => test.assertRedstonePower(lampLoc, 15))
+		    293 +     .thenIdle(1)
+		    294 +     .thenExecute(() => test.assertRedstonePower(lampLoc, 0))
+		    295 +     .thenSucceed();
+		173     -   test.runAfterDelay(duration, () => {
+		174     -     test.assertEntityData(villagerLoc, villagerId, (entity) => entity.getEffect(Effects.poison) === undefined);
+		175     -     test.succeed();
+		176     -   });
+		177 296   }).tag(GameTest.Tags.suiteDefault);
+		          '''
+	Changed script "BlockTests.js":
+		Total line: 127 (+3, -4)
+		          '''
+		          ...
+		 95  95       const redSandstonePos = new BlockLocation(6, 2, 4);
+		 96  96       const sandstonePos = new BlockLocation(2, 2, 4);
+		 97  97   
+		 98  98       test.assertBlockNotPresent(Blocks.redSandstone(), redSandstonePos);
+		 99  99       test.assertBlockNotPresent(Blocks.sandstone(), sandstonePos);
+		    100 +     test.assertItemEntityPresent(Items.redSandstone, redSandstonePos, 2.0);
+		    101 +     test.assertItemEntityPresent(Items.sandstone, sandstonePos, 2.0);
+		100     -     test.assertItemEntityPresent(new ItemStack(Items.redSandstone, 1, 0), redSandstonePos, 2.0);
+		101     -     test.assertItemEntityPresent(new ItemStack(Items.sandstone, 1, 0), sandstonePos, 2.0);
+		102 102     });
+		103 103   })
+		104 104     .maxTicks(TicksPerSecond * 10)
+		105 105     .tag(GameTest.Tags.suiteDisabled)
+		106 106     .maxAttempts(3);
+		107 107   
+		108 108   GameTest.register("BlockTests", "concrete_pops_off_waterlogged_chest", (test) => {
+		109     -   const concretePowderItem = new ItemStack(Items.concretePowder, 1, 0);
+		110 109     test.setBlock(Blocks.concretepowder(), new BlockLocation(1, 4, 1));
+		111 110     test.succeedWhen(() => {
+		112 111       const chestPos = new BlockLocation(1, 2, 1);
+		113 112       test.assertBlockPresent(Blocks.chest(), chestPos);
+		    113 +     test.assertItemEntityPresent(Items.concretePowder, chestPos, 2);
+		114     -     test.assertItemEntityPresent(concretePowderItem, chestPos, 2);
+		115 114       test.assertEntityNotPresent("falling_block");
+		116 115     });
+		117 116   }).maxTicks(TicksPerSecond * 5);
+		118 117   
+		119 118   GameTest.register("BlockTests", "waterlogged_slab", (test) => {
+		          ...
+		          '''
+	Changed script "DispenserTests.js":
+		Total line: 246 (+4, -4)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		      2 + import { BlockLocation, Blocks, Items, ItemStack } from "Minecraft";
+		  2     - import { BlockLocation, Blocks } from "Minecraft";
+		  3   3   
+		  4   4   const dispenserDelay = 5; // Number of ticks to wait for the dispenser to use or dispense an item
+		  5   5   const armorSlotTorso = 1;
+		  6   6   const pinkCarpet = 6;
+		  7   7   const tameMountComponentName = "minecraft:tamemount";
+		          ...
+		176 176   
+		177 177   GameTest.register("DispenserTests", "dispenser_water", (test) => {
+		178 178     const waterPos = new BlockLocation(1, 2, 1);
+		179 179     const dispenserPos = new BlockLocation(0, 2, 1);
+		180 180     test.assertBlockNotPresent(Blocks.water(), waterPos);
+		    181 +   test.assertContainerContains(new ItemStack(Items.waterBucket, 1, 0), dispenserPos);
+		181     -   test.assertContainerContains("minecraft:water_bucket", dispenserPos);
+		182 182   
+		183 183     test.pressButton(new BlockLocation(0, 2, 0));
+		184 184   
+		185 185     test.succeedOnTickWhen(dispenserDelay, () => {
+		    186 +     test.assertContainerContains(new ItemStack(Items.bucket, 1, 0), dispenserPos);
+		186     -     test.assertContainerContains("minecraft:bucket", dispenserPos);
+		187 187       test.assertBlockPresent(Blocks.water(), waterPos);
+		188 188     });
+		189 189   })
+		190 190     .maxTicks(threeSecondsInTicks)
+		191 191     .tag(GameTest.Tags.suiteDefault);
+		          ...
+		203 203   
+		204 204   GameTest.register("DispenserTests", "dispenser_charge_respawn_anchor", (test) => {
+		205 205     test.pressButton(new BlockLocation(0, 2, 0));
+		206 206     const respawnAnchorPos = new BlockLocation(1, 2, 1);
+		207 207     const dispenserPos = new BlockLocation(0, 2, 1);
+		    208 +   test.assertContainerContains(new ItemStack(Items.glowstone, 1, 0), dispenserPos);
+		208     -   test.assertContainerContains("minecraft:glowstone", dispenserPos);
+		209 209   
+		210 210       test.assertBlockState("respawn_anchor_charge", 0, respawnAnchorPos);
+		211 211       test.succeedWhen(() => {
+		212 212         test.assertBlockState("respawn_anchor_charge", 1, respawnAnchorPos);
+		213 213         test.assertContainerEmpty(dispenserPos);
+		          ...
+		          '''
+	Added script "DuplicationTests.js":
+		'''
+		import * as GameTest from "GameTest";
+		import { BlockLocation, Items } from "Minecraft";
+		
+		function poweredRailTest(test, pulseTicks) {
+		  test.pulseRedstone(new BlockLocation(1, 2, 3), pulseTicks);
+		
+		  test
+		    .startSequence()
+		    .thenIdle(3)
+		    .thenExecute(() => test.assertItemEntityCountIs(Items.goldenRail, new BlockLocation(1, 2, 1), 1.0, 1)) // powered rail
+		    .thenSucceed();
+		}
+		
+		GameTest.register("DuplicationTests", "powered_rail_twist_bedrock", (test) => {
+		  poweredRailTest(test, 2);
+		})
+		  .structureName("DuplicationTests:powered_rail_twist")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("DuplicationTests", "powered_rail_twist", (test) => {
+		  poweredRailTest(test, 1);
+		})
+		  .tag("suite:java_parity")
+		  .tag(GameTest.Tags.suiteDisabled); // Single pulse redstone sometimes doesn't activate the piston
+		
+		GameTest.register("DuplicationTests", "powered_rail_straight_bedrock", (test) => {
+		  poweredRailTest(test, 2);
+		})
+		  .structureName("DuplicationTests:powered_rail_straight")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("DuplicationTests", "powered_rail_straight", (test) => {
+		  poweredRailTest(test, 1);
+		})
+		  .tag("suite:java_parity")
+		  .tag(GameTest.Tags.suiteDisabled); // Single pulse redstone sometimes doesn't activate the piston
+		
+		GameTest.register("DuplicationTests", "detector_rail", (test) => {
+		  test.spawn("minecraft:minecart", new BlockLocation(1, 3, 2));
+		
+		  test
+		    .startSequence()
+		    .thenIdle(3)
+		    .thenExecute(() => test.assertItemEntityCountIs(Items.detectorRail, new BlockLocation(1, 2, 1), 1.0, 1))
+		    .thenSucceed();
+		}).tag(GameTest.Tags.suiteDefault);
+		
+		function railClassicTest(test, pulseTicks) {
+		  test.pulseRedstone(new BlockLocation(1, 5, 5), pulseTicks);
+		
+		  test
+		    .startSequence()
+		    .thenIdle(3)
+		    .thenExecute(() => test.assertItemEntityCountIs(Items.rail, new BlockLocation(1, 4, 2), 1.0, 0))
+		    .thenSucceed();
+		}
+		
+		GameTest.register("DuplicationTests", "rail_classic_bedrock", (test) => {
+		  railClassicTest(test, 2);
+		})
+		  .structureName("DuplicationTests:rail_classic")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("DuplicationTests", "rail_classic", (test) => {
+		  railClassicTest(test, 1);
+		})
+		  .tag("suite:java_parity")
+		  .tag(GameTest.Tags.suiteDisabled); // Single pulse redstone sometimes doesn't activate the piston
+		'''
+	Changed script "Main.js":
+		Total line: 10 (+1, -0)
+		        '''
+		 1  1   import "scripts/APITests.js";
+		 2  2   import "scripts/BlockTests.js";
+		 3  3   import "scripts/DebugTests.js";
+		 4  4   import "scripts/DispenserTests.js";
+		 5  5   import "scripts/DoorTests.js";
+		    6 + import "scripts/DuplicationTests.js";
+		 6  7   import "scripts/EntityTests.js";
+		 7  8   import "scripts/MinecartTests.js";
+		 8  9   import "scripts/MobTests.js";
+		 9 10   import "scripts/PathFindingTests.js";
+		        '''

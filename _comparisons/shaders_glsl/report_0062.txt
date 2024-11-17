@@ -1,0 +1,51 @@
+Difference of "shaders_resource_packs" between "1.6.2" and "1.7.0.2" (beta of "1.7.0").
+
+Changed resource pack "uv_selection_overlay.vertex":
+	Changed file "vanilla":
+		Total line: 37 (+19, -0)
+		        '''
+		        ...
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/vertexVersionCentroidUV.h"
+		 5  5   
+		 6  6   #include "shaders/uniformWorldConstants.h"
+		    7 + #ifdef USE_SKINNING
+		    8 + #include "shaders/uniformAnimationConstants.h"
+		    9 + #endif
+		   10 + 
+		   11 + attribute POS4 POSITION;
+		   12 + attribute vec2 TEXCOORD_0;
+		   13 + #if defined(USE_SKINNING)
+		   14 + #ifdef MCPE_PLATFORM_NX
+		   15 + attribute uint BONEID_0;
+		   16 + #else
+		   17 + attribute float BONEID_0;
+		   18 + #endif
+		   19 + #endif
+		   20 + 
+		 7 21   
+		   22 + void main()
+		   23 + {
+		   24 + #ifdef USE_SKINNING
+		   25 + #if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+		   26 +     POS4 pos = WORLDVIEW * BONES[int(BONEID_0)] * POSITION;
+		   27 + #else
+		   28 +     POS4 pos = WORLDVIEW * BONE * POSITION;
+		   29 + #endif
+		   30 + #else
+		   31 +     POS4 pos = WORLDVIEW * POSITION;
+		 8    - attribute POS4 POSITION;
+		 9    - attribute vec2 TEXCOORD_0;
+		10    - 
+		11    - 
+		12    - void main()
+		13    - {
+		14    - 	POS4 pos = WORLDVIEW * POSITION;
+		   32 + #endif
+		   33 + 
+		15 34       gl_Position = PROJ * pos;
+		16 35   
+		17 36       uv = TEXCOORD_0;
+		18 37   }
+		        '''

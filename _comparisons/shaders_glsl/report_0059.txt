@@ -1,0 +1,182 @@
+Difference of "shaders_resource_packs" between "1.6.0.1" (beta of "1.6.0") and "1.6.0.6" (beta of "1.6.0").
+Unable to create data files for 1 file between: "1.6.0.5"
+
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 205 (+66, -6)
+		          '''
+		          ...
+		 53  53   const float ZFAC = 0.1;
+		 54  54   
+		 55  55   float lightIntensity() {
+		 56  56   #ifdef FANCY
+		 57  57   #ifdef USE_SKINNING
+		     58 + #ifdef NO_DYNAMIC_ARRAY_ACCESS
+		     59 + 	vec3 N;
+		     60 + 	if ( BONEID_0 == 0.0 )
+		     61 + 		N = normalize( BONES[0] * NORMAL ).xyz;
+		     62 + 	else if ( BONEID_0 == 1.0 )
+		     63 + 		N = normalize( BONES[1] * NORMAL ).xyz;
+		     64 + 	else if ( BONEID_0 == 2.0 )
+		     65 + 		N = normalize( BONES[2] * NORMAL ).xyz;
+		     66 + 	else if ( BONEID_0 == 3.0 )
+		     67 + 		N = normalize( BONES[3] * NORMAL ).xyz;
+		     68 + 	else if ( BONEID_0 == 4.0 )
+		     69 + 		N = normalize( BONES[4] * NORMAL ).xyz;
+		     70 + 	else if ( BONEID_0 == 5.0 )
+		     71 + 		N = normalize( BONES[5] * NORMAL ).xyz;
+		     72 + 	else if ( BONEID_0 == 6.0 )
+		     73 + 		N = normalize( BONES[6] * NORMAL ).xyz;
+		     74 + 	else if ( BONEID_0 == 7.0 )
+		     75 + 		N = normalize( BONES[7] * NORMAL ).xyz;
+		     76 + #else
+		     77 +     vec3 N = normalize( BONES[int(BONEID_0)] * NORMAL ).xyz;
+		     78 + #endif
+		     79 + #else
+		     80 +     vec3 N = normalize( WORLD * NORMAL ).xyz;
+		     81 + #endif
+		     82 + 
+		     83 +     N.y *= TILE_LIGHT_COLOR.w; //TILE_LIGHT_COLOR.w contains the direction of the light
+		     84 + 
+		     85 +     //take care of double sided polygons on materials without culling
+		     86 + #ifdef FLIP_BACKFACES
+		     87 + #ifdef USE_SKINNING
+		     88 + #ifdef NO_DYNAMIC_ARRAY_ACCESS
+		     89 + 	vec3 viewDir;
+		     90 + 	if ( BONEID_0 == 0.0 )
+		     91 + 		viewDir = normalize((BONES[0] * POSITION).xyz);
+		     92 + 	else if ( BONEID_0 == 1.0 )
+		     93 + 		viewDir = normalize((BONES[1] * POSITION).xyz);
+		     94 + 	else if ( BONEID_0 == 2.0 )
+		     95 + 		viewDir = normalize((BONES[2] * POSITION).xyz);
+		     96 + 	else if ( BONEID_0 == 3.0 )
+		     97 + 		viewDir = normalize((BONES[3] * POSITION).xyz);
+		     98 + 	else if ( BONEID_0 == 4.0 )
+		     99 + 		viewDir = normalize((BONES[4] * POSITION).xyz);
+		    100 + 	else if ( BONEID_0 == 5.0 )
+		    101 + 		viewDir = normalize((BONES[5] * POSITION).xyz);
+		    102 + 	else if ( BONEID_0 == 6.0 )
+		    103 + 		viewDir = normalize((BONES[6] * POSITION).xyz);
+		    104 + 	else if ( BONEID_0 == 7.0 )
+		    105 + 		viewDir = normalize((BONES[7] * POSITION).xyz);
+		    106 + #else
+		    107 +     vec3 viewDir = normalize((BONES[int(BONEID_0)] * POSITION).xyz);
+		    108 + #endif
+		    109 + #else
+		    110 +     vec3 viewDir = normalize((WORLD * POSITION).xyz);
+		    111 + #endif
+		    112 +     if( dot(N, viewDir) > 0.0 )
+		    113 +         N *= -1.0;
+		    114 + #endif
+		    115 + 
+		    116 +     float yLight = (1.0+N.y) * 0.5;
+		    117 +     return yLight * (1.0-AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+		 58     -     vec3 N = normalize( BONES[int(BONEID_0)] * NORMAL ).xyz;
+		 59 118   #else
+		    119 +     return 1.0;
+		 60     -     vec3 N = normalize( WORLD * NORMAL ).xyz;
+		 61 120   #endif
+		    121 + }
+		 62     - 
+		 63     -     N.y *= TILE_LIGHT_COLOR.w; //TILE_LIGHT_COLOR.w contains the direction of the light
+		 64 122   
+		    123 + #ifdef GLINT
+		    124 + vec2 calculateLayerUV(float offset, float rotation) {
+		    125 + 	vec2 uv = TEXCOORD_0;
+		    126 + 	uv -= 0.5;
+		    127 + 	float rsin = sin(rotation);
+		    128 + 	float rcos = cos(rotation);
+		    129 + 	uv = mat2(rcos, -rsin, rsin, rcos) * uv;
+		    130 + 	uv.x += offset;
+		    131 + 	uv += 0.5;
+		    132 + 
+		    133 + 	return uv * GLINT_UV_SCALE;
+		    134 + }
+		 65     -     //take care of double sided polygons on materials without culling
+		 66     - #ifdef FLIP_BACKFACES
+		 67     - #ifdef USE_SKINNING
+		 68     -     vec3 viewDir = normalize((BONES[int(BONEID_0)] * POSITION).xyz);
+		 69     - #else
+		 70     -     vec3 viewDir = normalize((WORLD * POSITION).xyz);
+		 71     - #endif
+		 72     -     if( dot(N, viewDir) > 0.0 )
+		 73     -         N *= -1.0;
+		 74 135   #endif
+		 75 136   
+		    137 + void main()
+		 76     -     float yLight = (1.0+N.y) * 0.5;
+		 77     -     return yLight * (1.0-AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+		 78     - #else
+		    138 + {
+		    139 + #ifdef USE_SKINNING
+		    140 + #ifdef NO_DYNAMIC_ARRAY_ACCESS
+		    141 + 	POS4 pos;
+		    142 + 	if ( BONEID_0 == 0.0 )
+		    143 + 		pos = WORLDVIEWPROJ * BONES[0] * POSITION;
+		    144 + 	else if ( BONEID_0 == 1.0 )
+		    145 + 		pos = WORLDVIEWPROJ * BONES[1] * POSITION;
+		    146 + 	else if ( BONEID_0 == 2.0 )
+		    147 + 		pos = WORLDVIEWPROJ * BONES[2] * POSITION;
+		    148 + 	else if ( BONEID_0 == 3.0 )
+		    149 + 		pos = WORLDVIEWPROJ * BONES[3] * POSITION;
+		    150 + 	else if ( BONEID_0 == 4.0 )
+		    151 + 		pos = WORLDVIEWPROJ * BONES[4] * POSITION;
+		    152 + 	else if ( BONEID_0 == 5.0 )
+		    153 + 		pos = WORLDVIEWPROJ * BONES[5] * POSITION;
+		    154 + 	else if ( BONEID_0 == 6.0 )
+		    155 + 		pos = WORLDVIEWPROJ * BONES[6] * POSITION;
+		    156 + 	else if ( BONEID_0 == 7.0 )
+		    157 + 		pos = WORLDVIEWPROJ * BONES[7] * POSITION;
+		    158 + #else
+		 79     -     return 1.0;
+		 80     - #endif
+		 81     - }
+		 82     - 
+		 83     - #ifdef GLINT
+		 84     - vec2 calculateLayerUV(float offset, float rotation) {
+		 85     - 	vec2 uv = TEXCOORD_0;
+		 86     - 	uv -= 0.5;
+		 87     - 	float rsin = sin(rotation);
+		 88     - 	float rcos = cos(rotation);
+		 89     - 	uv = mat2(rcos, -rsin, rsin, rcos) * uv;
+		 90     - 	uv.x += offset;
+		 91     - 	uv += 0.5;
+		 92     - 
+		 93     - 	return uv * GLINT_UV_SCALE;
+		 94     - }
+		 95     - #endif
+		 96     - 
+		 97     - void main()
+		 98     - {
+		 99     - #ifdef USE_SKINNING
+		100 159       POS4 pos = WORLDVIEWPROJ * BONES[int(BONEID_0)] * POSITION;
+		    160 + #endif
+		101 161   #else
+		102 162       POS4 pos = WORLDVIEWPROJ * POSITION;
+		103 163   #endif
+		104 164       gl_Position = pos;
+		105 165   
+		          ...
+		          '''
+Changed resource pack "uniformEntityConstants.h":
+	Changed file "vanilla":
+		Total line: 21 (+0, -0)
+		        '''
+		        ...
+		 2  2   #define _UNIFORM_ENTITY_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		 6  6   #ifdef MCPE_PLATFORM_NX
+		    7 + uniform ActorConstants {
+		 7    - uniform EntityConstants {
+		 8  8   #endif
+		    9 + // BEGIN_UNIFORM_BLOCK(ActorConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		 9    - // BEGIN_UNIFORM_BLOCK(EntityConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		10 10   UNIFORM vec4 OVERLAY_COLOR;
+		11 11   UNIFORM vec4 TILE_LIGHT_COLOR;
+		12 12   UNIFORM vec4 CHANGE_COLOR;
+		13 13   UNIFORM vec4 GLINT_COLOR;
+		14 14   UNIFORM vec4 UV_ANIM;
+		        ...
+		        '''

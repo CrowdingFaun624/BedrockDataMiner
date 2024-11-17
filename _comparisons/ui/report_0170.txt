@@ -1,0 +1,65 @@
+Difference of "ui" between "1.16.0.63" (beta of "1.16.0") and "1.16.0.64" (beta of "1.16.0").
+
+Total namespace: 208 (+0, -1)
+Removed namespace "invalid_account":
+	element "content_panel":
+		field "type": "panel"
+		field "controls":
+			control:
+				element "main_panel@common_dialogs.main_panel_two_buttons":
+					field "size": [250, 200]
+					field "$variables":
+						variable "$text_name": "store.invalidAccount.title"
+						variable "$child_control": "invalid_account.message"
+						variable "$top_button_panel": "invalid_account.get_help_button"
+						variable "$bottom_button_panel": "invalid_account.go_back_button"
+	element "get_help_button@common_buttons.hyperlink_button":
+		field "property_bag": field "#hyperlink": "https://aka.ms/MCWin10Purchases"
+		field "$variables": variable "$button_text": "store.invalidAccount.getHelp"
+	element "go_back_button@common_buttons.light_text_button":
+		field "$variables":
+			variable "$pressed_button_name": "button.go_back"
+			variable "$button_text": "gui.goBack"
+	element "invalid_account_for_purchase_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+		field "force_render_below": true
+		field "$variables":
+			variable "$screen_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+				item 2: "@common.screen_entrance_animation_push_fade"
+				item 3: "@common.screen_entrance_animation_pop_fade"
+			variable "$background_animations":
+				item 0: "@common.screen_exit_animation_push_fade"
+				item 1: "@common.screen_exit_animation_pop_fade"
+				item 2: "@common.screen_entrance_animation_push_fade"
+				item 3: "@common.screen_entrance_animation_pop_fade"
+			variable "$screen_background_control": "coin_purchase.background"
+			variable "$screen_content": "invalid_account.content_panel"
+	element "message":
+		field "type": "label"
+		field "size": ["100% - 4px", "100%"]
+		field "text": "store.invalidAccount.description"
+		field "color": "$body_text_color"
+Changed namespace "realms_create":
+	Changed element "scroll_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 10 (+1, -0)
+			Changed control:
+				Changed element "toc@stack_item":
+					Removed field "ignored" of "$hide_terms_and_conditions".
+			Added control:
+				element "realms_terms_info@settings_common.option_info_label":
+					field "layer": 3
+					field "size": ["100% - 4px", "100%c"]
+					field "$variables":
+						variable "$container_text_binding_name": "#realms_terms_info"
+						variable "$used_fontsize": "normal"
+						variable "$used_fonttype": "smooth"
+						variable "$show_option_label": false
+						variable "$show_for_ios|default": false

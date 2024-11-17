@@ -1,34 +1,51 @@
-Difference of "entities" between "1.21.21" and "1.21.30.21" (beta of "1.21.30").
+Difference of "entities" between "1.21.40.20" (beta of "1.21.40") and "1.21.40.21" (beta of "1.21.40").
 
-Changed entity "snow_golem":
+Changed entity "enderman.json":
 	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 9 (+1, -0)
-			Unchanged behavior pack: "vanilla"
-			Unchanged behavior pack: "vanilla_1.15"
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.19.0"
-			Unchanged behavior pack: "vanilla_1.19.60"
-			Unchanged behavior pack: "vanilla_1.20.30"
-			Added behavior pack "vanilla_1.21.30".
+		Changed field "format_version" from "1.16.0" to "1.21.40".
 		Changed field "minecraft:entity":
+			Changed field "description":
+				Unchanged description "identifier": "minecraft:enderman"
+				Removed description "is_experimental" of false.
 			Changed field "components":
+				Total component: 30 (+1, -1)
 				Changed component "minecraft:hurt_on_condition":
 					Changed field "damage_conditions":
 						Changed damage condition:
 							Changed field "filters":
-								Removed filter property "operator" of ">".
-								Removed filter property "test" of "is_temperature_value".
-								Removed filter property "value" of 1.0.
-								Added filter property "all_of":
-									filter:
-										filter property "operator": ">"
-										filter property "test": "is_temperature_value"
-										filter property "value": 1.0
-									filter:
-										filter property "operator": "!="
-										filter property "subject": "self"
-										filter property "test": "has_component"
-										filter property "value": "minecraft:effect.fire_resistance"
+								Unchanged filter property "test": "in_lava"
+								Unchanged filter property "subject": "self"
+								Removed filter property "operator" of "==".
+								Removed filter property "value" of true.
+						Changed damage condition:
+							Changed field "filters":
+								Unchanged filter property "test": "in_contact_with_water"
+								Removed filter property "operator" of "==".
+								Removed filter property "value" of true.
+				Added component "minecraft:looked_at":
+					field "search_radius": 64.0
+					field "set_target": "once_and_stop_scanning"
+					field "find_players_only": true
+					field "looked_at_cooldown": 5.0
+					field "filters":
+						filter property "test": "has_equipment"
+						filter property "domain": "head"
+						filter property "subject": "other"
+						filter property "operator": "not"
+						filter property "value": "carved_pumpkin"
+				Removed component "minecraft:lookat":
+					field "search_radius": 64.0
+					field "set_target": true
+					field "look_cooldown": 5.0
+					field "filters":
+						filter property "all_of":
+							filter:
+								filter property "subject": "other"
+								filter property "test": "is_family"
+								filter property "value": "player"
+							filter:
+								filter property "test": "has_equipment"
+								filter property "domain": "head"
+								filter property "subject": "other"
+								filter property "operator": "not"
+								filter property "value": "carved_pumpkin"

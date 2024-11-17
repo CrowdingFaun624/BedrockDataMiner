@@ -1,0 +1,161 @@
+Difference of "shaders_resource_packs" between "1.20.20.23" (beta of "1.20.30") and "1.20.30.20" (beta of "1.20.30").
+
+Changed resource pack "hb_batched.fragment":
+	Changed file "vanilla":
+		Total line: 93 (+8, -0)
+		        '''
+		        ...
+		 4  4   // some numbers and values seem arbitrary or "magic".
+		 5  5   
+		 6  6   #if __VERSION__ >= 300
+		 7  7   	#include "fragmentVersionSimple.h"
+		 8  8   	#include "uniformMacro.h"
+		    9 + 	#include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		 9 10   
+		10 11   	LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		11 12   	LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		12 13   	LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		13 14   
+		        ...
+		28 29   	}
+		29 30   
+		30 31   	void ShadeGeometry(inout vec4 color, inout float alpha) {
+		31 32   		int ShaderType = int(ShaderTypeOut);
+		32 33   
+		   34 + 		if (ShaderType == 0) {
+		   35 + 			// Rect/stroke rect
+		   36 + 			alpha = min(1.0, AdditionalOut.x * AdditionalOut.y);
+		   37 + 		} else if (ShaderType == 3) {
+		   38 + 			// Image
+		   39 + 			vec2 uvPos = vec2(AdditionalOut.x, 1.0 - AdditionalOut.y);
+		33    - 		if (ShaderType == 0) {
+		34    - 			// Rect/stroke rect
+		35    - 			alpha = min(1.0, AdditionalOut.x * AdditionalOut.y);
+		   40 + 			if (PRIM_PROPS_1.z != -1.0 || PRIM_PROPS_1.w != -1.0)
+		   41 + 			{
+		   42 + 				uvPos.x = clamp(AdditionalOut.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   43 + 				uvPos.y = clamp(AdditionalOut.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		36    - 		} else if (ShaderType == 3) {
+		37    - 			// Image
+		38    - 			vec2 uvPos = vec2(AdditionalOut.x, 1.0 - AdditionalOut.y);
+		   44 + 			}
+		   45 + 			color = texture2D(TEXTURE_0, uvPos);
+		39    - 			color = texture2D(TEXTURE_0, uvPos.xy);
+		   46 + 			color.a = mix(1.0 - color.a, color.a, ColorOut.r);
+		   47 + 			color.a = mix(GetLuminance(color.rgb), color.a, ColorOut.b);
+		40 48   			alpha = ColorOut.a * clamp(AdditionalOut.z, 0.0, 1.0);
+		41 49   		} else if (ShaderType == 17) {
+		42 50   			// Raster text
+		43 51   			vec2 uvPos = vec2(AdditionalOut.x, AdditionalOut.y);
+		44 52   		#if defined(NO_TEXTURE_SIZE)
+		        ...
+		        '''
+Changed resource pack "hb_standard_texture.fragment":
+	Changed file "vanilla":
+		Total line: 35 (+5, -0)
+		        '''
+		        ...
+		13 13   // the verying variables to match between the vertex and fragment shaders.
+		14 14   varying vec3 ScreenNormalPosition;
+		15 15   
+		16 16   LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		17 17   
+		   18 + float GetLuminance(vec3 color) {
+		   19 + 	return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		   20 + }
+		   21 + 
+		18 22   void main() {
+		19 23   	vec2 uvPoint = AdditionalOut.xy;
+		20 24   	if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		21 25   	{
+		22 26   		uvPoint.x = clamp(AdditionalOut.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		23 27   		uvPoint.y = clamp(AdditionalOut.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		24 28   	}
+		25 29   
+		26 30   	vec4 outColor = texture2D(TEXTURE_0, uvPoint);
+		   31 + 	outColor.a = mix(1.0 - outColor.a, outColor.a, ColorOut.r);
+		   32 + 	outColor.a = mix(GetLuminance(outColor.rgb), outColor.a, ColorOut.b);
+		27    - 	outColor.w = mix(1.0 - outColor.w, outColor.w, ColorOut.x);
+		28 33   	float alpha = ColorOut.w * clamp(AdditionalOut.z, 0.0, 1.0);
+		29 34   	gl_FragColor = outColor * alpha;
+		30 35   }
+		        '''
+Changed resource pack "hb_standard_texture_with_color_matrix.fragment":
+	Changed file "vanilla":
+		Total line: 46 (+18, -4)
+		        '''
+		        ...
+		 2  2   // This shader is from the Gameface library modified to work in the
+		 3  3   // Bedrock engine and heavily depends on Gameface's functionality, why
+		 4  4   // some numbers and values seem arbitrary or "magic".
+		 5  5   
+		 6  6   #include "fragmentVersionSimple.h"
+		    7 + #include "uniformUIEffectsPixelConstants.h"
+		    8 + #include "uniformUIStandardPrimitiveAdditionalPixelConstants.h"
+		    9 + 
+		   10 + varying vec4 ColorOut;
+		   11 + varying vec4 AdditionalOut;
+		   12 + // We need this here even if we do not use it as some drivers require
+		   13 + // the verying variables to match between the vertex and fragment shaders.
+		   14 + varying vec3 ScreenNormalPosition;
+		   15 + 
+		   16 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 7 17   
+		   18 + float GetLuminance(vec3 color) {
+		   19 + 	return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		   20 + }
+		 8    - #include "uniformUIEffectsPixelConstants.h"
+		 9 21   
+		   22 + void main() {
+		10    - varying vec4 ColorOut;
+		   23 + 	vec2 uvCoords = AdditionalOut.xy;
+		11    - varying vec4 AdditionalOut;
+		   24 + 	if (PRIM_PROPS_1.z != -1.0 || PRIM_PROPS_1.w != -1.0)
+		   25 + 	{
+		   26 + 		uvCoords.x = clamp(uvCoords.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   27 + 		uvCoords.y = clamp(uvCoords.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		   28 + 	}
+		   29 + 	vec4 baseColor = texture2D(TEXTURE_0, uvCoords);
+		12    - // We need this here even if we do not use it as some drivers require
+		13    - // the verying variables to match between the vertex and fragment shaders.
+		14    - varying vec3 ScreenNormalPosition;
+		15    - 
+		16    - LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		17 30   
+		18    - void main() {
+		19    - 	vec4 baseColor = texture2D(TEXTURE_0, AdditionalOut.xy);
+		20 31   	float nonZeroAlpha = max(baseColor.a, 0.00001);
+		21 32   	baseColor = vec4(baseColor.rgb / nonZeroAlpha, nonZeroAlpha);
+		22 33   	// TODO: Rename the members of the constant buffer so they are not weird for non-blurs
+		23 34   	vec4 finalColor;
+		24 35   	finalColor.r = dot(baseColor, vec4(COEFFICIENTS[0].x, COEFFICIENTS[0].y, COEFFICIENTS[0].z, COEFFICIENTS[0].w));
+		25 36   	finalColor.g = dot(baseColor, vec4(COEFFICIENTS[1].x, COEFFICIENTS[1].y, COEFFICIENTS[1].z, COEFFICIENTS[1].w));
+		26 37   	finalColor.b = dot(baseColor, vec4(COEFFICIENTS[2].x, COEFFICIENTS[2].y, COEFFICIENTS[2].z, COEFFICIENTS[2].w));
+		27 38   	finalColor.a = dot(baseColor, vec4(PIXEL_OFFSETS[0].x, PIXEL_OFFSETS[0].y, PIXEL_OFFSETS[0].z, PIXEL_OFFSETS[0].w));
+		   39 + 
+		28 40   	finalColor += vec4(PIXEL_OFFSETS[1].x, PIXEL_OFFSETS[1].y, PIXEL_OFFSETS[1].z, PIXEL_OFFSETS[1].w);
+		   41 + 	finalColor.a = mix(GetLuminance(finalColor.rgb), finalColor.a, ColorOut.b);
+		   42 + 
+		29 43   	finalColor.rgb *= finalColor.a;
+		30 44   	finalColor.rgba *= ColorOut.a;
+		31 45   	gl_FragColor = finalColor;
+		32 46   }
+		        '''
+Changed resource pack "uniformEntityConstants.h":
+	Changed file "vanilla":
+		Total line: 22 (+1, -0)
+		        '''
+		        ...
+		 7  7   uniform ActorConstants {
+		 8  8   #endif
+		 9  9   // BEGIN_UNIFORM_BLOCK(ActorConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		10 10   UNIFORM vec4 OVERLAY_COLOR;
+		11 11   UNIFORM vec4 TILE_LIGHT_COLOR;
+		   12 + UNIFORM vec2 TILE_LIGHT_INTENSITY;
+		12 13   UNIFORM vec4 CHANGE_COLOR;
+		13 14   UNIFORM vec4 GLINT_COLOR;
+		14 15   UNIFORM vec4 UV_ANIM;
+		15 16   UNIFORM vec2 UV_OFFSET;
+		16 17   UNIFORM vec2 UV_ROTATION;
+		        ...
+		        '''

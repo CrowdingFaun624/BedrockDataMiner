@@ -1,32 +1,57 @@
-Difference of "gui_routes" between "1.20.41" and "1.20.50.20" (beta of "1.20.50").
+Difference of "gui_routes" between "1.20.40.20" (beta of "1.20.40") and "1.20.40.21" (beta of "1.20.40").
 
 Changed field "routes":
 	Changed route "/hbui/index.html":
 		Unchanged field "fileName": "/hbui/index.html"
 		Changed field "supportedRoutes":
-			Total supported route: 30 (+3, -0)
-			Added supported route "/realms-new-story":
-				field "knownEntries": empty
-				field "modes": empty
+			Total supported route: 27 (+2, -0)
+			Moved supported route "/play/:tab" to "/play/:tab/:id?/:type?".
+			Changed supported route "/play/:tab/:id?/:type?":
+				Changed field "route" from "/play/:tab" to "/play/:tab/:id?/:type?".
+				Changed field "regexp" from "^\/play\/([^\/]+?)(?:\/)?$" to "^\/play\/([^\/]+?)(?:\/([^\/]+?))?(?:\/([^\/]+?))?(?:\/)?$".
+				Changed field "params":
+					Total parameter: 3 (+2, -0)
+					Added parameter "id":
+						field "name": "id"
+						field "prefix": "/"
+						field "delimiter": "/"
+						field "optional": true
+						field "repeat": false
+						field "pattern": "[^\/]+?"
+					Added parameter "type":
+						field "name": "type"
+						field "prefix": "/"
+						field "delimiter": "/"
+						field "optional": true
+						field "repeat": false
+						field "pattern": "[^\/]+?"
+			Changed supported route "/realms-choose-slot/:id":
+				Unchanged field "route": "/realms-choose-slot/:id"
+				Changed field "knownEntries":
+					Total entry: 1 (+1, -0)
+					Added entry field "id": "12345".
+			Added supported route "/realms-create-preview-with-only-one-subscription":
+				field "route": "/realms-create-preview-with-only-one-subscription"
+				field "modes": mode: "modal"
+				field "regexp": "^\/realms-create-preview-with-only-one-subscription(?:\/)?$"
 				field "params": empty
-				field "regexp": "^\/realms-new-story(?:\/)?$"
-				field "route": "/realms-new-story"
-			Added supported route "/realms-new-story/image-select":
 				field "knownEntries": empty
+			Added supported route "/realms-stories-settings/:realmId?":
+				field "route": "/realms-stories-settings/:realmId?"
 				field "modes": empty
-				field "params": empty
-				field "regexp": "^\/realms-new-story\/image-select(?:\/)?$"
-				field "route": "/realms-new-story/image-select"
-			Added supported route "/realms-story-opt-in/:realmId?":
-				field "knownEntries": empty
-				field "modes": empty
+				field "regexp": "^\/realms-stories-settings(?:\/([^\/]+?))?(?:\/)?$"
 				field "params":
 					parameter "realmId":
-						field "delimiter": "/"
 						field "name": "realmId"
-						field "optional": true
-						field "pattern": "[^\/]+?"
 						field "prefix": "/"
+						field "delimiter": "/"
+						field "optional": true
 						field "repeat": false
-				field "regexp": "^\/realms-story-opt-in(?:\/([^\/]+?))?(?:\/)?$"
-				field "route": "/realms-story-opt-in/:realmId?"
+						field "pattern": "[^\/]+?"
+				field "knownEntries": empty
+			Changed supported route "/realms-stories/:tab/:realmId?":
+				Unchanged field "route": "/realms-stories/:tab/:realmId?"
+				Changed field "knownEntries":
+					Total entry: 3 (+1, -1)
+					Removed entry field "tab": "home".
+					Added entry field "tab": "feed".

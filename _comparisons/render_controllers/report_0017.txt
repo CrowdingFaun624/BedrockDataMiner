@@ -1,6 +1,6 @@
 Difference of "render_controllers" between "1.13.0.1" (beta of "1.13.0") and "1.13.0.2" (beta of "1.13.0").
 
-Changed file "player.render_controllers":
+Changed file "player.render_controllers.json":
 	Changed resource pack "core":
 		Changed field "render_controllers":
 			Changed render controller "controller.render.player":
@@ -8,21 +8,21 @@ Changed file "player.render_controllers":
 					Changed part visibility dict:
 						Total part visibility: 1 (+0, -0)
 						Changed part visibility "leftArm" from "variable.is_third_person || (query.get_equipped_item_name == 'map' && query.get_equipped_item_name(1) != 'shield') || (query.get_equipped_item_name(1) == 'map' && !query.main_hand_item_is_charged) || (!query.main_hand_item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))" to "variable.is_third_person || (query.get_equipped_item_name == 'map' && query.get_equipped_item_name('off_hand') != 'shield') || (query.get_equipped_item_name('off_hand') == 'map' && !query.item_is_charged) || (!query.item_is_charged && (variable.item_use_normalized > 0 && variable.item_use_normalized < 1.0))".
-Changed file "wither_boss_armor.render_controllers":
+Changed file "wither_boss_armor.render_controllers.json":
 	Changed resource pack "core":
 		Changed field "render_controllers":
 			Total render controller: 2 (+1, -0)
 			Added render controller "controller.render.wither_boss_armor_blue":
 				field "geometry": "Geometry.armor"
-				field "ignore_lighting": true
 				field "materials": material dict: material "*": "Material.armor"
-				field "part_visibility": part visibility dict: part visibility "*": "query.is_shield_powered"
 				field "textures": texture: "Texture.armor_blue"
+				field "part_visibility": part visibility dict: part visibility "*": "query.is_shield_powered"
 				field "uv_anim":
 					field "offset":
 						expression: "(query.is_shield_powered) ? (Math.floor(query.life_time * 20.0) + query.frame_alpha) * 0.01 : 0.0"
 						expression: "(query.is_shield_powered) ? (Math.floor(query.life_time * 20.0) + query.frame_alpha) * 0.01 : 0.0"
 					field "scale": [1.0, 1.0]
+				field "ignore_lighting": true
 			Moved render controller "controller.render.wither_boss_armor" to "controller.render.wither_boss_armor_white".
 			Changed render controller "controller.render.wither_boss_armor_white":
 				Changed field "textures":

@@ -1,153 +1,108 @@
-Difference of "entities" between "1.18.30.30" (beta of "1.18.30") and "1.18.30.32" (beta of "1.18.30").
+Difference of "entities" between "1.19.0.26" (beta of "1.19.0") and "1.19.0.28" (beta of "1.19.0").
 
-Total entity: 113 (+1, -0)
-Changed entity "hoglin":
+Changed entity "allay.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:knockback_resistance":
-					Changed field "value" from 0.5 to 0.6.
-Changed entity "ravager":
+				Changed component "minecraft:behavior.go_and_give_items_to_noteblock":
+					Added field "throw_sound" of "item_thrown".
+				Changed component "minecraft:behavior.go_and_give_items_to_owner":
+					Added field "throw_sound" of "item_thrown".
+Changed entity "llama.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 21 (+1, -0)
+				Changed component group "minecraft:llama_adult":
+					Changed component "minecraft:breedable":
+						Removed field "love_filters":
+							filter property "test": "is_mark_variant"
+							filter property "subject": "self"
+							filter property "operator": "!="
+							filter property "value": 1
+				Added component group "minecraft:llama_persistence" of component "minecraft:persistent": empty.
+				Changed component group "minecraft:llama_wandering_trader":
+					Total component: 3 (+0, -1)
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers" from:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "is_leashed"
+										filter property "subject": "self"
+										filter property "value": false
+									filter:
+										filter property "test": "has_component"
+										filter property "subject": "self"
+										filter property "operator": "!="
+										filter property "value": "minecraft:is_tamed"
+							field "event": "minecraft:on_tame"
+						to:
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_leashed"
+											filter property "subject": "self"
+											filter property "value": false
+										filter:
+											filter property "test": "has_component"
+											filter property "subject": "self"
+											filter property "operator": "!="
+											filter property "value": "minecraft:is_tamed"
+								field "event": "minecraft:on_tame"
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_leashed"
+											filter property "subject": "self"
+											filter property "value": false
+										filter:
+											filter property "test": "has_component"
+											filter property "subject": "self"
+											filter property "operator": "=="
+											filter property "value": "minecraft:persistent"
+								field "event": "minecraft:remove_persistence"
+					Removed empty component "minecraft:persistent".
+			Changed field "events":
+				Total event: 16 (+1, -0)
+				Changed event "minecraft:from_wandering_trader":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Total component group: 3 (+1, -0)
+									Added component group "minecraft:llama_persistence".
+				Added event "minecraft:remove_persistence" of field "remove": field "component_groups": component group: "minecraft:llama_persistence".
+Changed entity "shulker.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:knockback_resistance":
-					Changed field "value" from 0.5 to 0.75.
-Added entity "warden":
-	behavior pack "experimental":
-		field "defined_in": behavior pack: "experimental_wild_update"
-		field "format_version": "1.16.0"
-		field "minecraft:entity":
-			field "description":
-				description "identifier": "minecraft:warden"
-				description "is_experimental": false
-				description "is_spawnable": true
-				description "is_summonable": true
-			field "component_groups":
-				component group "emerging":
-					component "minecraft:behavior.emerge":
-						field "duration": 7.0
-						field "on_done":
-							field "event": "minecraft:emerged"
-							field "target": "self"
-			field "components":
-				component "minecraft:ambient_sound_interval":
-					field "event_name": "ambient"
-					field "event_names":
-						event 0:
-							field "condition": "query.anger_level(this) >= 80"
-							field "event_name": "angry"
-						event 1:
-							field "condition": "query.anger_level(this) >= 40"
-							field "event_name": "agitated"
-					field "range": 4.0
-					field "value": 2.0
-				component "minecraft:anger_level":
-					field "anger_decrement_interval": 1.0
-					field "angry_boost": 20
-					field "angry_threshold": 80
-					field "default_annoyingness": 35
-					field "default_projectile_annoyingness": 20
-					field "max_anger": 150
-					field "on_increase_sounds":
-						sound:
-							field "condition": "query.anger_level(this) >= 80"
-							field "sound": "angry"
-						sound:
-							field "condition": "query.anger_level(this) >= 40"
-							field "sound": "agitated"
-						sound:
-							field "condition": "query.anger_level(this) >= 0"
-							field "sound": "listening"
-					field "remove_targets_below_angry_threshold": true
-				component "minecraft:attack": field "damage": 30
-				component "minecraft:breathable":
-					field "suffocate_time": 0
-					field "total_supply": 15
-				component "minecraft:can_climb": empty
-				component "minecraft:collision_box":
-					field "height": 2.9
-					field "width": 0.9
-				component "minecraft:experience_reward":
-					field "on_bred": "Math.Random(1,7)"
-					field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
-				component "minecraft:fire_immune": empty
-				component "minecraft:follow_range": 30
-				component "minecraft:health":
-					field "max": 500
-					field "value": 500
-				component "minecraft:heartbeat": field "interval": "2.0 - math.clamp(query.anger_level / 80 * 1.5, 0, 1.5)"
-				component "minecraft:is_hidden_when_invisible": empty
-				component "minecraft:jump.static": empty
-				component "minecraft:knockback_resistance": field "value": 1.0
-				component "minecraft:mob_effect":
-					field "effect_range": 20
-					field "effect_time": 13
-					field "entity_filter":
-						filter property "subject": "other"
-						filter property "test": "is_family"
-						filter property "value": "player"
-					field "mob_effect": "darkness"
-				component "minecraft:movement": field "value": 0.3
-				component "minecraft:movement.basic": empty
-				component "minecraft:movement_sound_distance_offset": field "value": 0.55
-				component "minecraft:nameable": empty
-				component "minecraft:navigation.walk":
-					field "avoid_damage_blocks": true
-					field "avoid_water": true
-					field "can_path_over_water": true
-				component "minecraft:physics": empty
-				component "minecraft:suspect_tracking": empty
-				component "minecraft:type_family":
-					field "family":
-						family: "warden"
-						family: "monster"
-						family: "mob"
-				component "minecraft:vibration_listener": empty
-				component "minecraft:behavior.dig":
-					field "digs_in_daylight": true
-					field "duration": 5.5
-					field "idle_time": 60.0
-					field "priority": 1
-					field "suspicion_is_disturbance": true
-					field "vibration_is_disturbance": true
-				component "minecraft:behavior.float": field "priority": 0
-				component "minecraft:behavior.investigate_suspicious_location":
-					field "priority": 4
-					field "speed_multiplier": 0.7
-				component "minecraft:behavior.melee_attack":
-					field "melee_fov": 360
-					field "priority": 3
-					field "speed_multiplier": 1.2
-				component "minecraft:behavior.random_look_around": field "priority": 11
-				component "minecraft:behavior.random_stroll":
-					field "priority": 9
-					field "speed_multiplier": 0.5
-				component "minecraft:behavior.roar":
-					field "duration": 4.2
-					field "priority": 2
-				component "minecraft:behavior.sniff":
-					field "cooldown_range": [5.0, 10.0]
-					field "duration": 4.16
-					field "priority": 5
-					field "sniffing_radius": 30.0
-					field "suspicion_radius": 6.0
-			field "events":
-				event "minecraft:emerged": field "remove": field "component_groups": component group: "emerging"
-				event "minecraft:entity_spawned": empty
-				event "minecraft:spawn_emerging": field "add": field "component_groups": component group: "emerging"
-Changed entity "zoglin":
+				Total component: 21 (+1, -1)
+				Changed component "minecraft:breathable":
+					Added field "breathes_lava" of false.
+					Added field "breathes_water" of false.
+				Added component "minecraft:fire_immune" of true.
+				Removed component "minecraft:hurt_on_condition":
+					field "damage_conditions":
+						damage condition:
+							field "filters":
+								filter property "test": "in_lava"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "cause": "lava"
+							field "damage_per_tick": 4
+Changed entity "warden.json":
 	Changed behavior pack "core":
-		Changed field "defined_in":
-			Total behavior pack: 6 (+1, -0)
-			Unchanged behavior pack: "vanilla_1.16"
-			Unchanged behavior pack: "vanilla_1.16.100"
-			Unchanged behavior pack: "vanilla_1.17.0"
-			Unchanged behavior pack: "vanilla_1.18.10"
-			Unchanged behavior pack: "vanilla_1.18.20"
-			Added behavior pack "vanilla_1.18.30".
-		Changed field "format_version" from "1.18.20" to "1.18.30".
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Changed component "minecraft:knockback_resistance":
-					Changed field "value" from 0.5 to 0.6.
+				Total component: 36 (+2, -0)
+				Changed component "minecraft:anger_level":
+					Changed field "default_projectile_annoyingness" from 20 to 10.
+				Added component "minecraft:loot" of field "table": "loot_tables/entities/warden.json".
+				Added empty component "minecraft:vibration_damper".
+				Changed component "minecraft:behavior.sonic_boom":
+					Changed field "attack_damage" from 30 to 10.
+					Changed field "attack_cooldown" from 5 to 2.

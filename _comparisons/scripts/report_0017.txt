@@ -1,0 +1,29 @@
+Difference of "scripts" between "1.17.30.21" (beta of "1.17.30") and "1.17.30.22" (beta of "1.17.30").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "DripstoneTests.js":
+		Total line: 183 (+10, -0)
+		          '''
+		          ...
+		 86  86     test.assertEntityPresent("minecraft:item", landingPos, false);
+		 87  87   
+		 88  88     test.pressButton(new BlockLocation(0, 3, 0));
+		 89  89     test.succeedWhenEntityPresent("minecraft:item", landingPos, true);
+		 90  90   
+		     91 + }).tag("suite:java_parity")
+		     92 +   .tag(GameTest.Tags.suiteDisabled); //Test failed occasionally due to bug 587521: Collision box of pointed dripstone becomes larger and offsets when falling.
+		     93 + 
+		     94 + GameTest.register("DripstoneTests", "stalactite_fall_bedrock", (test) => {
+		     95 +   const landingPos = new BlockLocation(1, 2, 1);
+		     96 +   test.assertEntityPresent("minecraft:item", landingPos, false);
+		     97 + 
+		     98 +   test.pressButton(new BlockLocation(0, 3, 0));
+		     99 +   test.succeedWhenEntityPresent("minecraft:item", landingPos, true);
+		    100 + 
+		 91 101   }).tag(GameTest.Tags.suiteDefault);
+		 92 102   
+		 93 103   GameTest.register("DripstoneTests", "stalactite_hurt", (test) => {
+		 94 104     const poorInnocentVictimPos = new BlockLocation(1, 2, 1);
+		 95 105     const poorInnocentVictim = test.spawnWithoutBehaviors("minecraft:pig", poorInnocentVictimPos);
+		          ...
+		          '''

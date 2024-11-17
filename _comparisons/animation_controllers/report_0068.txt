@@ -1,36 +1,20 @@
-Difference of "animation_controllers" between "1.18.30.30" (beta of "1.18.30") and "1.18.30.32" (beta of "1.18.30").
+Difference of "animation_controllers" between "1.18.32" and "1.19.0.20" (beta of "1.19.0").
+Unable to create data files for 1 file between: "1.18.33"
 
-Total file: 60 (+1, -0)
-Added file "warden.animation_controllers":
-	resource pack "experimental":
-		field "defined_in": resource pack: "experimental_wild_update"
-		field "format_version": "1.10.0"
-		field "animation_controllers":
-			animation controller "controller.animation.warden.melee_attacking":
-				field "initial_state": "default"
-				field "states":
-					state "attack":
-						field "animations": animation dict: "melee_attack"
-						field "transitions": transition list: transition "default": "variable.attack_time <= 0.0"
-					state "default": field "transitions": transition list: transition "attack": "variable.attack_time > 0.0"
-			animation controller "controller.animation.warden.roar":
-				field "initial_state": "default"
-				field "states":
-					state "default": field "transitions": transition list: transition "roar": "query.is_roaring"
-					state "roar":
-						field "animations": animation dict: "roar"
-						field "transitions": transition list: transition "default": "!query.is_roaring"
-			animation controller "controller.animation.warden.shiver":
-				field "initial_state": "default"
-				field "states":
-					state "default": field "transitions": transition list: transition "shiver": "variable.tendril_animation > 0"
-					state "shiver":
-						field "animations": animation dict: "shiver"
-						field "transitions": transition list: transition "default": "variable.tendril_animation <= 0"
-			animation controller "controller.animation.warden.sniff":
-				field "initial_state": "default"
-				field "states":
-					state "default": field "transitions": transition list: transition "sniff": "query.is_sniffing"
-					state "sniff":
-						field "animations": animation dict: "sniff"
-						field "transitions": transition list: transition "default": "!query.is_sniffing"
+Changed file "allay.animation_controllers.json":
+	Moved resource pack "experimental" to "core".
+Changed file "frog.animation_controllers.json":
+	Moved resource pack "experimental" to "core".
+	Changed resource pack "core":
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.frog.croaking":
+				Changed field "states":
+					Changed state "croaking":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "default": "!query.is_croaking".
+							Added transition list transition "default": "!query.is_croaking || query.is_eating_mob".
+Changed file "tadpole.animation_controllers.json":
+	Moved resource pack "experimental" to "core".
+Changed file "warden.animation_controllers.json":
+	Moved resource pack "experimental" to "core".

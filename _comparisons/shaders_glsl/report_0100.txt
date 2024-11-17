@@ -1,0 +1,88 @@
+Difference of "shaders_resource_packs" between "1.20.1" and "1.20.10.20" (beta of "1.20.10").
+
+Changed resource pack "hb_batched.fragment":
+	Changed file "vanilla":
+		Total line: 85 (+11, -0)
+		        '''
+		        ...
+		33 33   		if (ShaderType == 0) {
+		34 34   			// Rect/stroke rect
+		35 35   			alpha = min(1.0, AdditionalOut.x * AdditionalOut.y);
+		36 36   		} else if (ShaderType == 3) {
+		37 37   			// Image
+		   38 + 			vec2 uvPos = vec2(AdditionalOut.x, 1 - AdditionalOut.y);
+		   39 + 			color = texture2D(TEXTURE_0, uvPos.xy);
+		   40 + 			alpha = ColorOut.a * clamp(AdditionalOut.z, 0.0, 1.0);
+		   41 + 		} else if (ShaderType == 17) {
+		   42 + 			// Raster text
+		   43 + 			vec2 uvPos = vec2(AdditionalOut.x, AdditionalOut.y);
+		   44 + 		#if defined(NO_TEXTURE_SIZE)
+		   45 + 			// Fallback rendering for raster fonts, still looks decent
+		   46 + 			float dfValue = texture2D(TEXTURE_1, uvPos).r;
+		   47 + 		#else
+		   48 + 			// Enhanced rendering for raster fonts, looks perfectly crisp
+		   49 + 			// even when Gameface assigns bilinear samplers
+		   50 + 			vec2 texSize = vec2(textureSize(TEXTURE_1, 0));
+		   51 + 			ivec2 texCoords = ivec2(uvPos.x * texSize.x, uvPos.y * texSize.y);
+		   52 + 			float dfValue = texelFetch(TEXTURE_1, texCoords, 0).r;
+		38    - 			color = texture2D(TEXTURE_0, AdditionalOut.xy);
+		39    - 			alpha = ColorOut.a * clamp(AdditionalOut.z, 0.0, 1.0);
+		40    - 		} else if (ShaderType == 17) {
+		41    - 			// Raster text
+		42    - 			float dfValue = texture2D(TEXTURE_1, AdditionalOut.xy).r;
+		   53 + 		#endif
+		   54 + 			float lum = 1.45 - GetLuminance(ColorOut.xyz);
+		   55 + 			color = ColorOut * pow(abs(dfValue), lum);
+		43    - 			float lum = GetLuminance(ColorOut.xyz);
+		44    - 			color = ColorOut * pow(dfValue, 1.45 - lum);
+		45 56   		} else if (ShaderType == 18) {
+		46 57   			// SDF Text
+		47 58   			float dfValue = texture2D(TEXTURE_2, AdditionalOut.xy).r;
+		48 59   
+		49 60   			#if SHOW_DF
+		        ...
+		        '''
+Changed resource pack "hb_text.fragment":
+	Changed file "vanilla":
+		Total line: 37 (+0, -6)
+		        '''
+		        ...
+		19 19   float GetLuminance(vec3 color) {
+		20 20   	return 0.2126 * color.r + 0.7152 * color.g + 0.0722 * color.b;
+		21 21   }
+		22 22   
+		23 23   void main() {
+		   24 + 	vec2 uvPos = vec2(AdditionalOut.x, AdditionalOut.y);
+		24    - 	vec2 uvPos = vec2(AdditionalOut.x, 1 - AdditionalOut.y);
+		25    - 	float dfValue = texture2D(TEXTURE_1, uvPos).r;
+		26    - 
+		27    - 	if (BITMAP >= 0.5) {
+		   25 + #if defined(NO_TEXTURE_SIZE)
+		   26 + 	// Fallback rendering for raster fonts, still looks decent
+		   27 + 	float dfValue = texture2D(TEXTURE_1, uvPos).r;
+		   28 + #else
+		   29 + 	// Enhanced rendering for raster fonts, looks perfectly crisp
+		   30 + 	// even when Gameface assigns bilinear samplers
+		   31 + 	vec2 texSize = vec2(textureSize(TEXTURE_1, 0));
+		   32 + 	ivec2 texCoords = ivec2(uvPos.x * texSize.x, uvPos.y * texSize.y);
+		   33 + 	float dfValue = texelFetch(TEXTURE_1, texCoords, 0).r;
+		   34 + #endif
+		   35 + 	float lum = 1.45 - GetLuminance(ColorOut.xyz);
+		28    - 		vec4 fragColor = vec4(dfValue);
+		29    - 
+		30    - 		const float center = 0.4;
+		31    - 		const float radius = 0.1;
+		32    - 		fragColor = smoothstep(center - radius, center + radius, fragColor);
+		33    - 	
+		34    - 		fragColor = ColorOut * fragColor;
+		35    - 
+		36    - 		gl_FragColor = fragColor;
+		37    - 	} else {
+		38    - 		float lum = 1.45 - GetLuminance(ColorOut.xyz);
+		39    - 		vec4 fragColor = ColorOut * pow(abs(dfValue), lum);
+		40    - 
+		   36 + 	gl_FragColor = ColorOut * pow(abs(dfValue), lum);
+		41    - 		gl_FragColor = fragColor;
+		42    - 	}
+		43 37   }
+		        '''

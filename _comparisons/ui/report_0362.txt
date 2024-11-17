@@ -1,0 +1,1410 @@
+Difference of "ui" between "1.21.30.23" (beta of "1.21.30") and "1.21.30.24" (beta of "1.21.30").
+
+Total namespace: 227 (+0, -1)
+Changed namespace "csb_banner":
+	Changed element "animated_promo_banner_csb_button@common.button":
+		Added field "bindings":
+			binding:
+				field "binding_type": "$store_factory_collection_details"
+				field "binding_collection_name": "$store_factory_collection_name"
+				field "binding_collection_prefix": "$store_factory_collection_prefix"
+			binding:
+				field "binding_name": "#promo_page_is_ready"
+				field "binding_name_override": "#enabled"
+Removed namespace "feed":
+	element "add_screenshot_button@common_buttons.transparent_content_button":
+		field "size": [80, 25]
+		field "ignored": "($is_holographic)"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.add_screenshot"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.add_screenshot"
+				field "mapping_type": "focused"
+		field "$variables":
+			variable "$pressed_button_name": "button.add_screenshot"
+			variable "$button_content": "feed.add_screenshot_label"
+			variable "$default_button_texture": "textures/ui/imagetaggedcorner"
+			variable "$hover_button_texture": "textures/ui/imagetaggedcornergreenhover"
+			variable "$pressed_button_texture": "textures/ui/imagetaggedcornergreenpressed"
+			variable "$default_button_alpha": 0.6
+	element "add_screenshot_label@feed_common.smooth_label":
+		field "text": "feed.addScreenshot"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "text_alignment": "center"
+		field "size": ["100%", 15]
+		field "offset": [0, 2]
+	element "anim_faded_background@feed_common.anim_faded_background": empty
+	element "camera_image":
+		field "size": ["15%", "15%"]
+		field "ignored": "($is_holographic)"
+		field "offset": [0, 30]
+		field "anchor_to": "top_middle"
+		field "anchor_from": "top_middle"
+		field "type": "image"
+		field "texture": "textures/ui/camera-yo"
+		field "color": "$7_color_format"
+	element "comment_button@feed_common.feed_button":
+		field "size": [80, 25]
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.feed_comment"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.feed_comment"
+				field "mapping_type": "focused"
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "$collection_binding_name"
+			binding:
+				field "binding_name": "#feed_comment_enabled"
+				field "binding_name_override": "#enabled"
+				field "binding_collection_name": "$collection_binding_name"
+				field "binding_type": "collection"
+		field "$variables":
+			variable "$pressed_button_name": "button.menu_start_realms_world"
+			variable "$button_content": "feed.feed_comment_content_panel"
+	element "comment_button_loading":
+		field "size": [70, 25]
+		field "type": "image"
+		field "texture": "textures/ui/Black"
+		field "alpha": 0.5
+	element "comment_image":
+		field "type": "image"
+		field "layer": 0
+		field "texture": "textures/ui/comment"
+		field "size": ["30%", "100%"]
+	element "content":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "100%"]
+		field "offset": [5, 0]
+		field "controls":
+			control:
+				element "top_bar_gradient@feed_common.top_bar_gradient":
+					field "size": ["100%", "8%"]
+					field "anchor_from": "top_middle"
+					field "anchor_to": "top_middle"
+					field "offset": [-5, 0]
+					field "layer": 9
+			control: element "gamepad_helpers@feed_common.gamepad_helpers": empty
+			control: element "new_post_button@feed.new_post_button": empty
+			control: element "new_post_gamepad_option@feed.new_post_gamepad_option": empty
+			control:
+				element "return_button@feed_common.return_button":
+					field "button_mappings":
+						button mapping:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "$close_button_to_button_id"
+							field "mapping_type": "pressed"
+						button mapping:
+							field "from_button_id": "button.menu_ok"
+							field "to_button_id": "$close_button_to_button_id"
+							field "mapping_type": "focused"
+					field "$variables": variable "$close_button_to_button_id|default": "button.close_feed"
+			control:
+				element "world_name_label_instance@feed_common.title_label":
+					field "layer": 10
+					field "text": "#feed_world_name"
+					field "bindings": binding: field "binding_name": "#feed_world_name"
+			control: element "feed_item_scrolling_panel_instance@feed.feed_item_scrolling_panel": empty
+			control:
+				element "popup_dialog_factory_new_post":
+					field "type": "factory"
+					field "control_ids": control id "new_post": "@feed.popup_dialog__new_post"
+			control:
+				element "popup_dialog_factory_options":
+					field "type": "factory"
+					field "control_ids": control id "options": "@feed.popup_dialog__options"
+	element "factory_scrolling_content_stack":
+		field "type": "stack_panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "orientation": "vertical"
+		field "size": "$feed_panel_size"
+		field "offset": [0, 0]
+		field "controls":
+			control: element "top_spacing_gap@feed_common.spacing_gap": field "size": ["100%", 40]
+			control: element "feed_loading_grid_item@feed.feed_loading_grid_item": empty
+			control: element "factory_feed_content@feed.feed_stack_panel_factory_content": empty
+			control: element "spacing_gap2@feed.spacing_gap": empty
+			control:
+				element "pagination_panel@feed.pagination_panel":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #is_using_gamepad)"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$is_visible_binding_name": "#feed_buttons_visible"
+						variable "$this_page_index_text": "#feed_page_index_text"
+						variable "$is_prev_visible": "#feed_prevButton_visible"
+						variable "$is_next_visible": "#feed_nextButton_visible"
+			control:
+				element "pagination_panel_gamepad@feed_common.pagination_panel_gamepad":
+					field "bindings":
+						binding:
+							field "binding_name": "(#is_using_gamepad)"
+							field "binding_name_override": "#visible"
+					field "$variables":
+						variable "$is_visible_binding_name": "#feed_buttons_visible"
+						variable "$this_page_index_text": "#feed_page_index_text"
+	element "feed_buttons_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "anchor_from": "bottom_right"
+		field "anchor_to": "bottom_right"
+		field "offset": [0, 0]
+		field "size": ["30%", "30%"]
+		field "controls":
+			control:
+				element "like_button@feed_common.like_button":
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "$collection_binding_name"
+					field "$variables":
+						variable "$button_mapping_id": "button.feed_like"
+						variable "$is_like_visible": "#feed_likeIcon_visible"
+			control: element "comment_button_instance@feed.comment_button": empty
+			control:
+				element "options_button@feed_common.options_button":
+					field "bindings":
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "$collection_binding_name"
+					field "$variables": variable "$button_mapping_id": "button.feed_options"
+			control:
+				element "spacing_gap":
+					field "type": "panel"
+					field "size": [189, "100%"]
+	element "feed_buttons_panel_loading":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "anchor_from": "bottom_right"
+		field "anchor_to": "bottom_right"
+		field "offset": [-10, 0]
+		field "size": ["30%", "30%"]
+		field "controls":
+			control: element "like_button_loading@feed.like_button_loading": empty
+			control:
+				element "spacing_gap1":
+					field "type": "panel"
+					field "size": [2, "100%"]
+			control: element "comment_button_loading@feed.comment_button_loading": empty
+			control:
+				element "spacing_gap2":
+					field "type": "panel"
+					field "size": [2, "100%"]
+			control: element "options_button_loading@feed.options_button_loading": empty
+	element "feed_comment_content_panel":
+		field "type": "stack_panel"
+		field "size": ["100%", "50%"]
+		field "orientation": "horizontal"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "controls":
+			control: element "comment_image_instance@feed.comment_image": field "size": ["25%", "100%"]
+			control:
+				element "comment_label@feed_common.smooth_label":
+					field "text": "feed.comments"
+					field "size": ["fill", 15]
+					field "text_alignment": "left"
+	element "feed_image":
+		field "type": "image"
+		field "layer": 0
+		field "texture": "#feed_texture"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "size": ["177.78%y", "90%"]
+		field "texture_file_system": "#feed_texture_source"
+		field "bindings":
+			binding:
+				field "binding_name": "#feed_texture"
+				field "binding_type": "collection"
+				field "binding_name_override": "#texture"
+				field "binding_collection_name": "feed_collection"
+			binding:
+				field "binding_name": "#feed_texture_source"
+				field "binding_name_override": "#texture_file_system"
+				field "binding_type": "collection"
+				field "binding_collection_name": "feed_collection"
+	element "feed_image_button@common_buttons.transparent_content_button":
+		field "layer": 0
+		field "size": ["100%", "100%"]
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "tts_inherit_siblings": true
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.feed_image"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.feed_image"
+				field "mapping_type": "focused"
+		field "bindings":
+			binding:
+				field "binding_type": "collection_details"
+				field "binding_collection_name": "feed_collection"
+			binding:
+				field "binding_name": "#feed_comment_enabled"
+				field "binding_name_override": "#enabled"
+				field "binding_collection_name": "feed_collection"
+				field "binding_type": "collection"
+		field "$variables":
+			variable "$button_content": "feed.feed_image_content_panel"
+			variable "$default_content_alpha": 1
+			variable "$hover_content_alpha": 0.6
+			variable "$pressed_alpha": 0.3
+			variable "$default_button_alpha": 0
+			variable "$default_hover_alpha": 0
+			variable "$default_pressed_alpha": 0
+			variable "$border_visible": true
+			variable "$default_state_border_visible": false
+			variable "$hover_state_border_visible": true
+			variable "$pressed_state_border_visible": true
+			variable "$locked_state_border_visible": false
+			variable "$border_default_alpha": 0
+	element "feed_image_content_panel":
+		field "type": "panel"
+		field "size": ["100%", "100%"]
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "offset": [0, 0]
+		field "controls": control: element "feed_image@feed.feed_image": field "controls": control: element "textpost_content@feed.textpost_content": empty
+	element "feed_image_loading":
+		field "type": "image"
+		field "layer": 0
+		field "texture": "textures/ui/Black"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", "100%"]
+		field "alpha": 0.5
+	element "feed_item_scrolling_panel":
+		field "type": "panel"
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "layer": 0
+		field "controls":
+			control:
+				element "feed_item_scrolling_panel_content_instance@feed.feed_item_scrolling_panel_content":
+					field "$variables":
+						variable "$scrolling_pane_size":
+							item 0: "100% - 4px"
+							item 1: "100%"
+	element "feed_item_scrolling_panel_content@common.scrolling_panel":
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "$variables":
+			variable "$show_background": false
+			variable "$scroll_size":
+				item 0: 5
+				item 1: "100% - 4px"
+			variable "$scrolling_content": "feed.factory_scrolling_content_stack"
+			variable "$feed_panel_size":
+				item 0: "100%"
+				item 1: "100%c"
+	element "feed_linked_account":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", 190]
+		field "controls":
+			control: element "image_panel_instance@feed.image_panel": field "size": ["60%", "80%"]
+			control:
+				element "spacing_gap_00":
+					field "type": "panel"
+					field "size": [10, "100%"]
+			control:
+				element "player_and_comment_and_buttons":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "size": ["100%", 190]
+					field "controls":
+						control:
+							element "spacing_gap_01":
+								field "type": "panel"
+								field "size": ["100%", "10%"]
+						control:
+							element "player_and_time":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": ["100%", "30%"]
+								field "controls":
+									control:
+										element "gamer_pic_panel":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": [20, "100%"]
+											field "controls":
+												control: element "player_platform_pic@feed.player_platform_pic_panel": field "layer": 0
+												control: element "account_link_icon@feed_common.account_link_icon": empty
+												control: element "player_pic_panel_instance@feed.player_pic_panel": field "layer": 0
+									control:
+										element "spacing_gap_03":
+											field "type": "panel"
+											field "size": [5, "100%"]
+									control:
+										element "tag_and_date":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": [100, "100%"]
+											field "controls":
+												control:
+													element "feed_platformtag_instance@feed_common.item_label":
+														field "size": [100, 10]
+														field "font_size": "normal"
+														field "text": "#platform_tag"
+														field "bindings":
+															binding:
+																field "binding_name": "#platform_tag"
+																field "binding_type": "collection"
+																field "binding_collection_name": "feed_collection"
+												control:
+													element "spacing_gap_04":
+														field "type": "panel"
+														field "size": ["100%", 15]
+												control:
+													element "feed_gamertag_instance@feed_common.item_label":
+														field "size": [100, 10]
+														field "font_size": "normal"
+														field "text": "#gamertag"
+														field "bindings":
+															binding:
+																field "binding_name": "#gamertag"
+																field "binding_type": "collection"
+																field "binding_collection_name": "feed_collection"
+												control:
+													element "feed_timesince_instance@feed_common.item_label":
+														field "size": [100, 10]
+														field "font_size": "normal"
+														field "alpha": 0.5
+														field "text": "#time_since_feed_post"
+														field "bindings":
+															binding:
+																field "binding_name": "#time_since_feed_post"
+																field "binding_type": "collection"
+																field "binding_collection_name": "feed_collection"
+									control:
+										element "spacing_gap_02":
+											field "type": "panel"
+											field "size": [2, "100%"]
+									control: element "platform_icon@feed_common.platform_icon_panel": empty
+						control:
+							element "feed_text_instance@feed_common.item_label":
+								field "size": [100, 30]
+								field "font_size": "normal"
+								field "text": "#content"
+								field "bindings":
+									binding:
+										field "binding_name": "#content"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+									binding:
+										field "binding_name": "#feed_text_visible"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+						control:
+							element "like_comment_label_instance@feed_common.item_label":
+								field "size": [150, 10]
+								field "font_size": "normal"
+								field "alpha": 0.5
+								field "text": "#likes_and_comments"
+								field "bindings":
+									binding:
+										field "binding_name": "#likes_and_comments"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+						control:
+							element "spacing_gap_05":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control: element "feed_buttons_panel@feed.feed_buttons_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "$visible_binding_name"
+				field "binding_name_override": "#visible"
+		field "$variables": variable "$visible_binding_name|default": "(not #loading_bars_animation_visible)"
+	element "feed_loading_grid_item":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", 190]
+		field "controls":
+			control:
+				element "containing_panel":
+					field "type": "panel"
+					field "size": ["65%", "90%"]
+					field "controls": control: element "loading_image_panel@feed.loading_image_panel": field "size": ["178%y", "100%"]
+			control:
+				element "spacing_gap0":
+					field "type": "panel"
+					field "size": [5, "100%"]
+			control:
+				element "player_and_comment_and_buttons_load":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": ["100%", 190]
+					field "controls":
+						control:
+							element "spacing_gap1":
+								field "type": "panel"
+								field "size": ["100%", "10%"]
+						control:
+							element "player_and_time":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": ["100%", "20%"]
+								field "controls":
+									control: element "player_pic_panel_loading@feed.player_pic_panel_loading": field "layer": 0
+									control:
+										element "spacing_gap_01":
+											field "type": "panel"
+											field "size": [5, "100%"]
+									control:
+										element "tag_and_date_loading":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": ["100%", "100%"]
+											field "controls":
+												control:
+													element "feed_gamertag_loading":
+														field "size": [70, 8]
+														field "type": "image"
+														field "texture": "textures/ui/Black"
+														field "anchor_from": "center"
+														field "anchor_to": "center"
+														field "alpha": 0.5
+												control:
+													element "feed_timesince_loading":
+														field "size": [70, 8]
+														field "type": "image"
+														field "texture": "textures/ui/Black"
+														field "anchor_from": "center"
+														field "anchor_to": "center"
+														field "alpha": 0.5
+						control:
+							element "feed_text_instance@feed_common.item_label":
+								field "size": [100, 30]
+								field "font_size": "normal"
+								field "text": "#content"
+								field "bindings":
+									binding:
+										field "binding_name": "#content"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+									binding:
+										field "binding_name": "#feed_text_visible"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+						control:
+							element "like_comment_label_loading":
+								field "size": [100, 10]
+								field "type": "image"
+								field "layer": 0
+								field "texture": "textures/ui/Black"
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "alpha": 0.5
+						control:
+							element "spacing_gap":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control: element "feed_buttons_panel_loading@feed.feed_buttons_panel_loading": empty
+		field "bindings":
+			binding:
+				field "binding_name": "$visible_binding_name"
+				field "binding_name_override": "#visible"
+		field "$variables": variable "$visible_binding_name|default": "#loading_bars_animation_visible"
+	element "feed_screen@common.base_screen":
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.menu_exit"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.newpost"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_tab_right"
+				field "to_button_id": "button.feed_next_button"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_tab_left"
+				field "to_button_id": "button.feed_prev_button"
+				field "mapping_type": "global"
+			button mapping:
+				field "from_button_id": "button.menu_up"
+				field "to_button_id": "button.menu_up"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_down"
+				field "to_button_id": "button.menu_down"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_left"
+				field "to_button_id": "button.menu_left"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_right"
+				field "to_button_id": "button.menu_right"
+				field "mapping_type": "global"
+				field "scope": "view"
+		field "$variables":
+			variable "$default_text_color":
+				item 0: 0.3
+				item 1: 0.3
+				item 2: 0.3
+			variable "$screen_content": "feed.feed_screen_content"
+	element "feed_screen_content@common.common_panel":
+		field "type": "panel"
+		field "controls":
+			control: element "transparent_background@feed_common.transparent_background": empty
+			control:
+				element "container":
+					field "type": "panel"
+					field "size": ["100%", "100%"]
+					field "layer": 1
+					field "controls": control: element "content@feed.content": empty
+	element "feed_stack_panel_factory_content":
+		field "type": "stack_panel"
+		field "orientation": "vertical"
+		field "size": ["100%", "100%c"]
+		field "anchor_to": "top_left"
+		field "anchor_from": "top_left"
+		field "factory":
+			field "name": "factory"
+			field "control_ids":
+				control id "xbox_live": "@feed.feed_xbox_live_account"
+				control id "linked": "@feed.feed_linked_account"
+			field "factory_variables":
+				variable: "$feed_factory_collection_details"
+				variable: "$feed_factory_binding_type"
+				variable: "$feed_factory_collection_prefix"
+				variable: "$collection_binding_name"
+		field "collection_name": "feed_collection"
+		field "bindings":
+			binding:
+				field "binding_name": "#feed_page_collection_length"
+				field "binding_name_override": "#collection_length"
+		field "$variables":
+			variable "$feed_factory_collection_details|default": "collection_details"
+			variable "$feed_factory_binding_type|default": "collection"
+			variable "$feed_factory_collection_prefix|default": "factory"
+			variable "$collection_binding_name": "feed_collection"
+	element "feed_xbox_live_account":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "size": ["100%", 190]
+		field "controls":
+			control: element "image_panel_instance@feed.image_panel": field "size": ["60%", "80%"]
+			control:
+				element "spacing_gap_00":
+					field "type": "panel"
+					field "size": [10, "100%"]
+			control:
+				element "player_and_comment_and_buttons":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "anchor_from": "center"
+					field "anchor_to": "center"
+					field "size": ["100%", 190]
+					field "controls":
+						control:
+							element "spacing_gap_01":
+								field "type": "panel"
+								field "size": ["100%", "10%"]
+						control:
+							element "player_and_time":
+								field "type": "stack_panel"
+								field "orientation": "horizontal"
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+								field "size": ["100%", "20%"]
+								field "controls":
+									control:
+										element "gamer_pic_panel":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": [20, "100%"]
+											field "controls": control: element "player_pic_panel_instance@feed.player_gamerpic_panel": field "layer": 0
+									control:
+										element "spacing_gap_03":
+											field "type": "panel"
+											field "size": [5, "100%"]
+									control:
+										element "tag_and_date":
+											field "type": "stack_panel"
+											field "orientation": "vertical"
+											field "anchor_from": "top_left"
+											field "anchor_to": "top_left"
+											field "size": ["100%", "100%"]
+											field "controls":
+												control:
+													element "feed_gamertag_instance@feed_common.item_label":
+														field "size": [100, 10]
+														field "font_size": "normal"
+														field "text": "#gamertag"
+														field "bindings":
+															binding:
+																field "binding_name": "#gamertag"
+																field "binding_type": "collection"
+																field "binding_collection_name": "feed_collection"
+												control:
+													element "feed_timesince_instance@feed_common.item_label":
+														field "size": [100, 10]
+														field "font_size": "normal"
+														field "alpha": 0.5
+														field "text": "#time_since_feed_post"
+														field "bindings":
+															binding:
+																field "binding_name": "#time_since_feed_post"
+																field "binding_type": "collection"
+																field "binding_collection_name": "feed_collection"
+						control:
+							element "feed_text_instance@feed_common.item_label":
+								field "size": [100, 30]
+								field "font_size": "normal"
+								field "text": "#content"
+								field "bindings":
+									binding:
+										field "binding_name": "#content"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+									binding:
+										field "binding_name": "#feed_text_visible"
+										field "binding_name_override": "#visible"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+						control:
+							element "like_comment_label_instance@feed_common.item_label":
+								field "size": [150, 10]
+								field "font_size": "normal"
+								field "alpha": 0.5
+								field "text": "#likes_and_comments"
+								field "bindings":
+									binding:
+										field "binding_name": "#likes_and_comments"
+										field "binding_type": "collection"
+										field "binding_collection_name": "feed_collection"
+						control:
+							element "spacing_gap_05":
+								field "type": "panel"
+								field "size": ["100%", 2]
+						control: element "feed_buttons_panel@feed.feed_buttons_panel": empty
+		field "bindings":
+			binding:
+				field "binding_name": "$visible_binding_name"
+				field "binding_name_override": "#visible"
+		field "$variables": variable "$visible_binding_name|default": "(not #loading_bars_animation_visible)"
+	element "go_to_manage_feed_button@common_buttons.transparent_content_button":
+		field "layer": 10
+		field "size": [40, 25]
+		field "offset": [-20, 40]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "$variables":
+			variable "$pressed_button_name": "button.manage_feed"
+			variable "$button_content": "feed.go_to_manage_feed_label"
+			variable "$default_content_alpha": 1
+			variable "$hover_content_alpha": 0.6
+			variable "$pressed_alpha": 0.3
+			variable "$default_button_alpha": 0
+			variable "$default_hover_alpha": 0
+			variable "$default_pressed_alpha": 0
+	element "go_to_manage_feed_label":
+		field "type": "label"
+		field "size": ["default", "default"]
+		field "layer": 2
+		field "color": "$f_color_format"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "text": "feed.manage"
+		field "alpha": "$content_alpha"
+	element "image_panel":
+		field "type": "panel"
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "offset": [0, 0]
+		field "controls":
+			control: element "feed_image_button@feed.feed_image_button": empty
+			control:
+				element "unviewed_post_badge_text@feed_common.unviewed_post_badge":
+					field "offset": [-0.75, 1]
+					field "layer": 11
+					field "$variables": variable "$is_unviewed_post": "#unviewed_post_badge_visible"
+			control: element "progress_loading_bars@feed_common.progress_loading_bars": empty
+	element "like_button_loading":
+		field "size": [40, 25]
+		field "type": "image"
+		field "texture": "textures/ui/Black"
+		field "alpha": 0.5
+	element "loading_image_panel":
+		field "type": "panel"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "offset": [0, 0]
+		field "controls":
+			control:
+				element "progress_loading_bars@feed_common.progress_loading_bars":
+					field "bindings":
+						binding:
+							field "binding_name": "#progress_visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "feed_collection"
+							field "binding_name_override": "#visible"
+			control: element "feed_image_loading@feed.feed_image_loading": empty
+			control: element "no_feed_item_content@feed_common.no_feed_item_content": field "text": "feed.no_feed_item_content"
+	element "new_post_button@common_buttons.transparent_content_button":
+		field "layer": 10
+		field "size": [70, 25]
+		field "offset": [-20, 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "bindings":
+			binding:
+				field "binding_name": "(not #gamepad_helper_visible)"
+				field "binding_name_override": "#visible"
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_select"
+				field "to_button_id": "button.newpost"
+				field "mapping_type": "pressed"
+			button mapping:
+				field "from_button_id": "button.menu_ok"
+				field "to_button_id": "button.newpost"
+				field "mapping_type": "focused"
+		field "$variables":
+			variable "$button_content": "feed.new_post_label"
+			variable "$hover_button_texture": "textures/ui/imagetaggedcornergreenhover"
+			variable "$pressed_button_texture": "textures/ui/imagetaggedcornergreenpressed"
+			variable "$default_content_alpha": 1
+			variable "$default_button_alpha": 0
+	element "new_post_gamepad_option":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "layer": 10
+		field "size": ["100%c", 20]
+		field "offset": [-15, 0]
+		field "anchor_from": "top_right"
+		field "anchor_to": "top_right"
+		field "bindings":
+			binding:
+				field "binding_name": "(#gamepad_helper_visible)"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control: element "gamepad_helper_y@common.gamepad_helper_y": field "$variables": variable "$hide_description|default": true
+			control:
+				element "new_post_stack_panel":
+					field "type": "stack_panel"
+					field "orientation": "vertical"
+					field "size": ["100%c", "100%c"]
+					field "controls":
+						control:
+							element "padding_panel":
+								field "type": "panel"
+								field "size": [0, 8]
+						control:
+							element "new_post_text":
+								field "type": "label"
+								field "color": "$f_color_format"
+								field "text": "feed.newPost"
+								field "text_alignment": "left"
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "size": ["default", 50]
+	element "new_post_label":
+		field "type": "label"
+		field "color": "$f_color_format"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "text": "feed.newPost"
+		field "text_alignment": "center"
+		field "alpha": "$content_alpha"
+		field "size": ["100%", 15]
+		field "offset": [0, 2]
+		field "layer": 2
+	element "new_post_popup_dialog_add_screenshot":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "bindings":
+			binding:
+				field "binding_name": "$is_add_screenshot_visible"
+				field "binding_name_override": "#visible"
+		field "controls":
+			control: element "white_banner@feed_common.white_banner": empty
+			control: element "camera_image@feed.camera_image": field "layer": 5
+			control: element "add_screenshot_button@feed.add_screenshot_button": empty
+		field "$variables": variable "$is_add_screenshot_visible|default": "#visible"
+	element "new_post_popup_dialog_header":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "controls":
+			control: element "new_post_popup_dialog_header_text@feed_common.new_post_header_text": empty
+			control:
+				element "close_button@common.close_button_grey_bg":
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "offset": [-1, 1]
+					field "button_mappings":
+						button mapping:
+							field "from_button_id": "button.menu_select"
+							field "to_button_id": "button.feed_new_post_close"
+							field "mapping_type": "pressed"
+						button mapping:
+							field "from_button_id": "button.menu_ok"
+							field "to_button_id": "button.feed_new_post_close"
+							field "mapping_type": "focused"
+					field "bindings":
+						binding:
+							field "binding_name": "(not #is_using_gamepad)"
+							field "binding_name_override": "#visible"
+	element "new_post_popup_dialog_share_post":
+		field "type": "panel"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "layer": 10
+		field "controls":
+			control: element "white_banner@feed_common.white_banner": empty
+			control:
+				element "share_text_box@feed_common.share_text_box":
+					field "bindings": binding: field "binding_name": "#share_text_box"
+					field "$variables":
+						variable "$text_box_name": "share_text_box"
+						variable "$text_edit_box_content_binding_name": "#share_box_text"
+			control:
+				element "share_button@feed_common.share_button":
+					field "offset": [-2, 4]
+					field "anchor_from": "top_right"
+					field "anchor_to": "top_right"
+					field "$variables": variable "$pressed_button_name": "button.share_feed_item"
+	element "options_button_loading":
+		field "size": [25, 25]
+		field "type": "image"
+		field "texture": "textures/ui/Black"
+		field "alpha": 0.5
+	element "options_popup_dialog_button_panel":
+		field "type": "stack_panel"
+		field "size": ["30%", "15%"]
+		field "orientation": "vertical"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "layer": 10
+		field "controls":
+			control:
+				element "close_button_panel":
+					field "type": "panel"
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "size": [140, "100%c"]
+					field "controls":
+						control:
+							element "close_button_options@feed_common.options_close_button_high_contrast":
+								field "anchor_from": "bottom_right"
+								field "anchor_to": "bottom_right"
+								field "button_mappings":
+									button mapping:
+										field "from_button_id": "button.menu_select"
+										field "to_button_id": "button.feed_options_close"
+										field "mapping_type": "pressed"
+									button mapping:
+										field "from_button_id": "button.menu_ok"
+										field "to_button_id": "button.feed_options_close"
+										field "mapping_type": "focused"
+								field "bindings":
+									binding:
+										field "binding_name": "(not #is_using_gamepad)"
+										field "binding_name_override": "#visible"
+			control:
+				element "report_to_club_button@feed_common.report_to_club_button":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "bindings":
+						binding:
+							field "binding_name": "#report_to_club_button_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "global"
+					field "$variables": variable "$pressed_button_name": "button.feed_report_club"
+			control:
+				element "report_to_xbox_button@feed_common.report_to_xbox_button":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "bindings":
+						binding:
+							field "binding_name": "#report_to_enforcement_button_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "global"
+					field "$variables": variable "$pressed_button_name": "button.feed_report_xbox"
+			control:
+				element "delete_button@feed_common.delete_button":
+					field "anchor_from": "top_left"
+					field "anchor_to": "top_left"
+					field "bindings":
+						binding:
+							field "binding_name": "#delete_button_visible"
+							field "binding_name_override": "#visible"
+							field "binding_type": "global"
+					field "$variables": variable "$pressed_button_name": "button.delete_feed_item"
+	element "pagination_panel@feed_common.pagination_panel":
+		field "bindings":
+			binding:
+				field "binding_name": "$is_visible_binding_name"
+				field "binding_name_override": "#visible"
+				field "binding_type": "global"
+		field "$variables":
+			variable "$next_button_name": "button.feed_next_button"
+			variable "$prev_button_name": "button.feed_prev_button"
+	element "player_gamer_pic":
+		field "type": "image"
+		field "texture": "$texture_path"
+		field "size": [18, 18]
+		field "texture_file_system": "$texture_source"
+		field "bindings":
+			binding:
+				field "binding_name": "$texture_path"
+				field "binding_name_override": "#texture"
+				field "binding_type": "collection"
+				field "binding_collection_name": "feed_collection"
+			binding:
+				field "binding_name": "$texture_source"
+				field "binding_name_override": "#texture_file_system"
+				field "binding_type": "collection"
+				field "binding_collection_name": "feed_collection"
+			binding:
+				field "binding_name": "$is_picture_visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "feed_collection"
+				field "binding_name_override": "#visible"
+		field "$variables":
+			variable "$texture_path|default": "#gamerpic_texture"
+			variable "$texture_source|default": "#gamerpic_texture_source"
+			variable "$is_picture_visible|default": "#gamerpic_visible"
+	element "player_gamer_pic_loading":
+		field "type": "image"
+		field "texture": "textures/ui/Black"
+		field "size": [18, 18]
+		field "alpha": 0.5
+	element "player_gamerpic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls": control: element "player_gamer_pic_instance@feed.player_gamer_pic": field "layer": 0
+	element "player_pic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls":
+			control: element "player_gamer_pic_instance@feed.player_gamer_pic": field "layer": 0
+			control: element "bevel_bg@feed_common.player_pic_bevel": field "layer": 1
+	element "player_pic_panel_loading":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls": control: element "player_gamer_pic_loading@feed.player_gamer_pic_loading": empty
+	element "player_platform_pic@feed.player_gamer_pic":
+		field "$variables":
+			variable "$texture_path": "#platform_profile_pic_texture"
+			variable "$texture_source": "#platform_profile_pic_texture_source"
+			variable "$is_picture_visible": "#platform_pic_visible"
+	element "player_platform_pic_panel":
+		field "type": "panel"
+		field "size": [20, 20]
+		field "anchor_to": "center"
+		field "anchor_from": "center"
+		field "controls":
+			control: element "player_gamer_pic_instance@feed.player_platform_pic": field "layer": 0
+			control: element "bevel_bg@feed_common.player_pic_bevel": field "layer": 1
+	element "popup_dialog__new_post@popup_dialog.popup_dialog":
+		field "size": [300, 225]
+		field "layer": 90
+		field "button_mappings":
+			button mapping:
+				field "from_button_id": "button.menu_up"
+				field "to_button_id": "button.menu_up"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_down"
+				field "to_button_id": "button.menu_down"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_left"
+				field "to_button_id": "button.menu_left"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_right"
+				field "to_button_id": "button.menu_right"
+				field "mapping_type": "global"
+				field "scope": "view"
+			button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "button.feed_new_post_close"
+				field "mapping_type": "global"
+		field "controls":
+			control: element "popup_dialog_bg@feed_common.popup_dialog_bg": empty
+			control:
+				element "new_post_popup_dialog_header@feed.new_post_popup_dialog_header":
+					field "size": ["100%", "10%"]
+					field "layer": 1
+			control:
+				element "new_post_popup_dialog_share_post@feed.new_post_popup_dialog_share_post":
+					field "size": ["100%", "15%"]
+					field "offset": [0, "10%"]
+					field "layer": 1
+			control:
+				element "new_post_popup_dialog_add_screenshot@feed.new_post_popup_dialog_add_screenshot":
+					field "size": ["100%", "75%-1px"]
+					field "offset": [0, "25%+1px"]
+					field "layer": 2
+			control:
+				element "screenshot_image@feed.screenshot_image":
+					field "size": ["100%", "75%"]
+					field "offset": [0, "25%"]
+					field "layer": 2
+		field "$variables":
+			variable "$is_screenshot_visible": "#feed_screenshot_visible"
+			variable "$is_add_screenshot_visible": "#feed_add_screenshot_visible"
+	element "popup_dialog__options@popup_dialog.popup_dialog":
+		field "size": ["100%", "100%"]
+		field "controls":
+			control: element "faded_background_image@feed_common.faded_background_image": empty
+			control: element "gamepad_helpers@feed_common.gamepad_helpers": empty
+			control: element "options_popup_dialog_button_panel@feed.options_popup_dialog_button_panel": empty
+	element "screenshot_image":
+		field "type": "image"
+		field "size": ["100%", "100%"]
+		field "texture": "#feed_screenshot_texture"
+		field "texture_file_system": "#feed_screenshot_texture_source"
+		field "color": "$7_color_format"
+		field "anchor_from": "top_left"
+		field "anchor_to": "top_left"
+		field "bindings":
+			binding:
+				field "binding_name": "$is_screenshot_visible"
+				field "binding_name_override": "#visible"
+			binding:
+				field "binding_name": "#feed_screenshot_texture"
+				field "binding_name_override": "#texture"
+			binding:
+				field "binding_name": "#feed_screenshot_texture_source"
+				field "binding_name_override": "#texture_file_system"
+		field "$variables": variable "$is_screenshot_visible|default": "#visible"
+	element "spacing_gap":
+		field "type": "panel"
+		field "size": ["100%", 20]
+	element "textpost_content":
+		field "type": "label"
+		field "color": "$f_color_format"
+		field "text": "#textpost_content"
+		field "anchor_from": "center"
+		field "anchor_to": "center"
+		field "size": ["80%", "default"]
+		field "text_alignment": "center"
+		field "layer": 1
+		field "font_type": "smooth"
+		field "bindings":
+			binding:
+				field "binding_name": "#textpost_content"
+				field "binding_type": "collection"
+				field "binding_collection_name": "feed_collection"
+			binding:
+				field "binding_name": "#textpost_visible"
+				field "binding_type": "collection"
+				field "binding_collection_name": "feed_collection"
+				field "binding_name_override": "#visible"
+Changed namespace "general_section":
+	Changed element "dev_sunsetting_tier_dropdown_content@settings_common.option_radio_dropdown_group":
+		Changed field "$variables":
+			Changed variable "$radio_buttons":
+				Changed item 5:
+					Removed field "sunsetting_not_pending@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#sunsetting_not_pending"
+						field "$radio_label_text": "options.dev_sunsetting_tier.not_pending"
+					Added field "sunsetting_tier6@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#sunsetting_tier6"
+						field "$radio_label_text": "options.dev_sunsetting_tier.six"
+				Added item 6:
+					field "sunsetting_not_pending@settings_common.radio_with_label":
+						field "$toggle_state_binding_name": "#sunsetting_not_pending"
+						field "$radio_label_text": "options.dev_sunsetting_tier.not_pending"
+	Changed element "realms_debug_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 14 (+0, -1)
+			Removed control:
+				element "realms_stories_toggle@settings_common.option_toggle":
+					field "$variables":
+						variable "$option_label": "options.dev_realms_stories"
+						variable "$option_binding_name": "#dev_realms_stories"
+						variable "$toggle_name": "dev_realms_stories"
+Changed namespace "manage_feed":
+	Changed element "feed_buttons_panel_loading":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 5 (+3, -3)
+			Removed control element "like_button_loading@feed.like_button_loading": empty.
+			Removed control element "comment_button_loading@feed.comment_button_loading": empty.
+			Removed control element "options_button_loading@feed.options_button_loading": empty.
+			Added control element "like_button_loading@feed.like_button_loading": empty.
+			Added control element "comment_button_loading@feed.comment_button_loading": empty.
+			Added control element "options_button_loading@feed.options_button_loading": empty.
+	Changed element "player_pic_panel_loading":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -1)
+			Removed control element "player_gamer_pic_loading@feed.player_gamer_pic_loading": empty.
+			Added control element "player_gamer_pic_loading@feed.player_gamer_pic_loading": empty.
+Changed namespace "pause":
+	Changed element "menu_background@pause.transparent_background":
+		Changed field "controls":
+			Changed control:
+				Changed element "button_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 11 (+1, -1)
+						Removed control:
+							element "realms_stories@pause.vertical_padding":
+								field "bindings":
+									binding:
+										field "binding_name": "#in_realm_with_stories"
+										field "binding_name_override": "#visible"
+										field "binding_type": "global"
+						Added control:
+							element "realms_stories@pause.vertical_padding":
+								field "bindings":
+									binding:
+										field "binding_name": "#is_realm_level"
+										field "binding_name_override": "#visible"
+										field "binding_type": "global"
+	Changed element "realms_stories_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#in_realm_with_stories" to "#is_realm_level".
+Changed namespace "play":
+	Total element: 295 (+0, -1)
+	Removed element "feed_icon":
+		field "type": "image"
+		field "texture": "textures/ui/feedIcon"
+		field "size": [22, 16]
+		field "visible": "(not $is_realms_stories_enabled)"
+	Changed element "realms_feed_button_content":
+		Unchanged field "type": "image"
+		Changed field "controls":
+			Total control: 2 (+2, -3)
+			Removed control:
+				element "default_icon@play.realms_stories_icon":
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_name": "($is_realms_stories_enabled and not #realms_unread_story_count_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "$realms_worlds_collection_name"
+			Removed control:
+				element "unread_icon_active@play.realms_stories_icon_animated":
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_name": "($is_realms_stories_enabled and #realms_unread_story_count_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "$realms_worlds_collection_name"
+			Removed control element "old_feed_icon@play.feed_icon": empty.
+			Added control:
+				element "default_icon@play.realms_stories_icon":
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_name": "(not #realms_unread_story_count_visible)"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "$realms_worlds_collection_name"
+			Added control:
+				element "unread_icon_active@play.realms_stories_icon_animated":
+					field "bindings":
+						binding:
+							field "binding_type": "collection"
+							field "binding_name": "#realms_unread_story_count_visible"
+							field "binding_name_override": "#visible"
+							field "binding_collection_name": "$realms_worlds_collection_name"
+	Changed element "realms_world_edit_button@common_buttons.dark_glyph_button":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Added variable "$button_content" of "play.realms_slots_edit_icon".
+		Removed field "variables":
+			variable:
+				field "requires": "$is_realms_stories_enabled"
+				field "$variables": variable "$button_content": "play.realms_slots_edit_icon"
+			variable:
+				field "requires": "(not $is_realms_stories_enabled)"
+				field "$variables": variable "$button_content": "play.edit_icon"
+Changed namespace "progress":
+	Total element: 90 (+0, -1)
+	Removed element "realms_loading_progress_screen@progress.progress_screen":
+		field "$variables":
+			variable "$screen_content": "progress.progress_screen_content"
+			variable "$screen_bg_content": "common.portal_background"
+	Moved element "realms_stories_enabled_loading_progress_screen@progress.progress_screen" to "realms_stories_loading_progress_screen@progress.progress_screen".
+Changed namespace "realmsPlus_faq":
+	Changed element "faq_content_section@realmsPlus.section_base":
+		Changed field "controls":
+			Total control: 25 (+1, -1)
+			Changed control:
+				Changed element "faq_question_5@realmsPlus_faq.image_left_faq_question_body_flip":
+					Removed field "bindings":
+						binding:
+							field "binding_name": "#realms_stories_enabled"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "faq_question_5_divider@realmsPlus_faq.faq_section_divider":
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_stories_enabled"
+							field "binding_name_override": "#visible"
+			Added control element "faq_question_5_divider@realmsPlus_faq.faq_section_divider": empty.
+	Changed element "image_left_faq_question_body_flip":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -2)
+			Removed control:
+				element "faq_question_left@realmsPlus_faq.image_left_faq_question_body":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #flip_faq_question_body)"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "faq_question_left_flip@realmsPlus_faq.image_right_faq_question_body":
+					field "bindings":
+						binding:
+							field "binding_name": "#flip_faq_question_body"
+							field "binding_name_override": "#visible"
+			Added control element "faq_question_left@realmsPlus_faq.image_left_faq_question_body": empty.
+	Changed element "image_right_faq_question_body_flip":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 1 (+1, -2)
+			Removed control:
+				element "faq_question_right@realmsPlus_faq.image_right_faq_question_body":
+					field "bindings":
+						binding:
+							field "binding_name": "(not #flip_faq_question_body)"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "faq_question_right_flip@realmsPlus_faq.image_left_faq_question_body":
+					field "bindings":
+						binding:
+							field "binding_name": "#flip_faq_question_body"
+							field "binding_name_override": "#visible"
+			Added control element "faq_question_right@realmsPlus_faq.image_right_faq_question_body": empty.
+Changed namespace "realmsPlus_landing":
+	Changed element "info_section_text_recently_added@realmsPlus_landing.info_section_text":
+		Changed field "controls":
+			Total control: 6 (+1, -1)
+			Changed control:
+				Changed element "info_text_bullet_2@realmsPlus_landing.info_text_bullet":
+					Removed field "bindings":
+						binding:
+							field "binding_name": "#realms_stories_enabled"
+							field "binding_name_override": "#visible"
+			Removed control:
+				element "vertical_small_spacer_2@realmsPlus_landing.vertical_small_spacer":
+					field "bindings":
+						binding:
+							field "binding_name": "#realms_stories_enabled"
+							field "binding_name_override": "#visible"
+			Added control element "vertical_small_spacer_2@realmsPlus_landing.vertical_small_spacer": empty.
+Changed namespace "realms_settings":
+	Changed element "backup_grid_item_name_and_time_since":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 3 (+1, -1)
+			Removed control:
+				element "time_since_text@realms_settings.label_text":
+					field "text": "#time_since_text"
+					field "size": ["100% - 8px", 10]
+					field "color": "$text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#time_since_text"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+			Added control:
+				element "date_text@realms_settings.label_text":
+					field "text": "#date_text"
+					field "size": ["100% - 8px", 10]
+					field "color": "$text_color"
+					field "bindings":
+						binding:
+							field "binding_name": "#date_text"
+							field "binding_type": "collection"
+							field "binding_collection_name": "$collection_binding_name"
+Changed namespace "realms_slots":
+	Changed element "realms_feed_button@common_buttons.light_glyph_button":
+		Changed field "$variables":
+			Total variable: 3 (+1, -0)
+			Added variable "$button_content" of "realms_slots.realms_stories_icon_glyph".
+		Removed field "variables":
+			variable:
+				field "requires": "$is_realms_stories_enabled"
+				field "$variables": variable "$button_content": "realms_slots.realms_stories_icon_glyph"
+			variable:
+				field "requires": "(not $is_realms_stories_enabled)"
+				field "$variables": variable "$button_content": "play.feed_icon"
+Changed namespace "toast_screen":
+	Changed element "text_stack_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "subtitle":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "subtext_offset@common.empty_panel":
+								Changed field "controls":
+									Changed control:
+										Changed element "subtext@toast_screen.toast_label":
+											Changed field "offset":
+												Unchanged item 0: 0
+												Changed item 1 from -2 to 0.

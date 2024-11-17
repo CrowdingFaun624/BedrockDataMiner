@@ -1,94 +1,47 @@
-Difference of "animation_controllers" between "1.19.50.20" (beta of "1.19.50") and "1.19.50.24" (beta of "1.19.50").
-Unable to create data files for 3 files between: "1.19.50.21", "1.19.50.22", "1.19.50.23"
+Difference of "animation_controllers" between "1.19.60.24" (beta of "1.19.60") and "1.19.60.25" (beta of "1.19.60").
 
-Total file: 61 (+1, -0)
-Changed file "bee.animation_controllers":
+Changed file "evoker.animation_controllers.json":
 	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 2 (+1, -0)
-			Added resource pack "vanilla_1.19.50".
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.bee.drip":
+			Changed animation controller "controller.animation.evoker.general":
 				Changed field "states":
+					Changed state "casting":
+						Changed field "animations":
+							Total animation dict: 3 (+1, -0)
+							Added animation dict "controller_riding".
+					Changed state "celebrating":
+						Changed field "animations":
+							Total animation dict: 2 (+1, -0)
+							Added animation dict "controller_riding".
 					Changed state "default":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "dripping": "query.is_powered".
-							Added transition list transition "dripping": "query.property('minecraft:has_nectar')".
-					Changed state "dripping":
-						Changed field "transitions":
-							Total transition list: 1 (+1, -1)
-							Removed transition list transition "default": "!query.is_powered".
-							Added transition list transition "default": "!query.property('minecraft:has_nectar')".
-Added file "camel.animation_controllers":
-	resource pack "experimental":
-		field "defined_in": resource pack: "experimental_next_major_update"
-		field "format_version": "1.10.0"
-		field "animation_controllers":
-			animation controller "controller.animation.camel.general":
-				field "initial_state": "default"
-				field "states":
-					state "dashing":
-						field "animations": animation dict: "dashing"
-						field "blend_transition": 0.5
-						field "transitions":
-							transition list: transition "idling": "(query.is_on_ground || query.is_in_water) && !variable.moving"
-							transition list: transition "moving": "(query.is_on_ground || query.is_in_water) && variable.moving"
-					state "default":
-						field "blend_transition": 0.0
-						field "transitions":
-							transition list: transition "idling": "!query.is_sitting"
-							transition list: transition "sitting": "query.is_sitting"
-					state "idling":
-						field "blend_transition": 0.5
-						field "transitions":
-							transition list: transition "moving": "variable.moving"
-							transition list: transition "sit_down": "query.is_sitting"
-							transition list: transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water"
-					state "moving":
-						field "animations": animation dict: animation "moving": "math.min(1.0, math.lerp(0.2, 1.5, query.modified_move_speed))"
-						field "blend_transition": 0.2
-						field "transitions":
-							transition list: transition "idling": "!variable.moving"
-							transition list: transition "sit_down": "query.is_sitting"
-							transition list: transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water"
-					state "sit_down":
-						field "animations": animation dict: "sit_down"
-						field "blend_transition": 0.5
-						field "transitions": transition list: transition "stand_up": "!query.is_sitting"
-					state "sitting":
-						field "animations": animation dict: "sitting"
-						field "blend_transition": 0.5
-						field "transitions": transition list: transition "stand_up": "!query.is_sitting"
-					state "stand_up":
-						field "animations": animation dict: "stand_up"
-						field "blend_transition": 0.5
-						field "transitions":
-							transition list: transition "sit_down": "query.is_sitting"
-							transition list: transition "moving": "variable.moving"
-			animation controller "controller.animation.camel.idle":
-				field "initial_state": "idling"
-				field "states": state "idling": field "animations": animation dict: "idle"
-			animation controller "controller.animation.camel.look_at_player":
-				field "initial_state": "looking_at_player"
-				field "states": state "looking_at_player": field "animations": animation dict: "look_at_player"
-Changed file "vex.animation_controllers":
+						Changed field "animations":
+							Total animation dict: 3 (+1, -0)
+							Added animation dict "controller_riding".
+			Changed animation controller "controller.animation.evoker.general.v1.0":
+				Changed field "states":
+					Changed state "casting":
+						Changed field "animations":
+							Total animation dict: 3 (+1, -0)
+							Added animation dict "controller_riding".
+					Changed state "default":
+						Changed field "animations":
+							Total animation dict: 3 (+1, -0)
+							Added animation dict "controller_riding".
+Changed file "humanoid.animation_controllers.json":
 	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 2 (+1, -0)
-			Added resource pack "vanilla_1.19.50".
 		Changed field "animation_controllers":
-			Total animation controller: 2 (+2, -1)
-			Added animation controller "controller.animation.vex.charge":
+			Total animation controller: 16 (+1, -1)
+			Removed animation controller "controller.animation.humanoid.holding_spyglass":
 				field "initial_state": "default"
 				field "states":
-					state "charging":
-						field "animations": animation dict: "vex_charge"
-						field "transitions": transition list: transition "default": "!query.is_charging"
-					state "default": field "transitions": transition list: transition "charging": "query.is_charging"
-			Added animation controller "controller.animation.vex.idle":
+					state "default": field "transitions": transition list: transition "holding_spyglass": "variable.is_holding_spyglass"
+					state "holding_spyglass":
+						field "animations": animation dict: "holding_spyglass"
+						field "transitions": transition list: transition "default": "!variable.is_holding_spyglass"
+			Added animation controller "controller.animation.humanoid.riding_legs_only":
 				field "initial_state": "default"
-				field "states": state "default": field "animations": animation dict: "vex_idle"
-			Removed animation controller "controller.animation.vex.move":
-				field "initial_state": "default"
-				field "states": state "default": field "animations": animation dict: "vex_move"
+				field "states":
+					state "default": field "transitions": transition list: transition "riding": "query.is_riding"
+					state "riding":
+						field "animations": animation dict: "riding.legs"
+						field "transitions": transition list: transition "default": "!query.is_riding"

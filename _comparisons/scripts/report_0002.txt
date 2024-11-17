@@ -1,0 +1,56 @@
+Difference of "scripts" between "1.16.220.51" (beta of "1.16.220") and "1.16.220.52" (beta of "1.16.220").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 9 (+1, -0)
+	Added script "APITests.js":
+		'''
+		import * as GameTest from "GameTest";
+		import { BlockLocation, World } from "Minecraft";
+		
+		GameTest.register("APITests", "on_entity_created", (test) => {
+		  World.attachEvent("onEntityCreated", (entity) => {
+		    test.succeed();
+		  });
+		  test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		});
+		'''
+	Changed script "DoorTests.js":
+		Total line: 24 (+1, -1)
+		        '''
+		        ...
+		16 16       test.assertEntityPresent(villagerEntityType, new BlockLocation(5, 2, 1));
+		17 17       test.assertEntityPresent(villagerEntityType, new BlockLocation(1, 2, 2));
+		18 18       test.assertEntityPresent(villagerEntityType, new BlockLocation(1, 2, 1));
+		19 19     });
+		20 20   })
+		   21 +   .tag(GameTest.Tags.suiteBroken) // Villagers can get stuck on the door or on sleeping villagers
+		21    -   .tag(GameTest.Tags.suiteDefault)
+		22 22     .padding(50) // Space out villager tests to stop them from confusing each other
+		23 23     .batch("night") // This should be a constant at some point
+		24 24     .maxTicks(600);
+		        '''
+	Changed script "Main.js":
+		Total line: 8 (+1, -0)
+		      '''
+		  1 + import "scripts/APITests.js";
+		1 2   import "scripts/BlockTests.js";
+		2 3   import "scripts/DebugTests.js";
+		3 4   import "scripts/DispenserTests.js";
+		4 5   import "scripts/DoorTests.js";
+		5 6   import "scripts/MinecartTests.js";
+		      ...
+		      '''
+	Changed script "PathFindingTests.js":
+		Total line: 337 (+1, -1)
+		          '''
+		          ...
+		330 330   addVerticalTest(53, "1", "0", "none", "1.5");
+		331 331   addVerticalTest(54, "1", "0", "none", "2"); // flaky
+		332 332   addVerticalTest(55, "1", "0", "none", "2.5"); // flaky
+		333 333   addVerticalTest(56, "1", "0", "none", "none");
+		334 334   addVerticalTest(57, "1", "0.5", "none", "1.5");
+		    335 + addVerticalTest(58, "1", "0.5", "none", "2", GameTest.Tags.suiteBroken); // Villager constantly attempts to jump into 1 block gap
+		335     - addVerticalTest(58, "1", "0.5", "none", "2");
+		336 336   addVerticalTest(59, "1", "0.5", "none", "2.5");
+		337 337   addVerticalTest(60, "1", "0.5", "none", "none");
+		          '''

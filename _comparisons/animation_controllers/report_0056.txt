@@ -1,17 +1,17 @@
-Difference of "animation_controllers" between "1.17.20.23" (beta of "1.17.30") and "1.17.30.20" (beta of "1.17.30").
+Difference of "animation_controllers" between "1.17.40.21" (beta of "1.17.40") and "1.17.40.23" (beta of "1.17.40").
 
-Changed file "skeleton.animation_controllers":
+Changed file "persona.animation_controllers.json":
 	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 2 (+1, -0)
-			Added resource pack "vanilla_1.17.30".
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.skeleton.attack":
+			Changed animation controller "controller.animation.persona.blink":
 				Changed field "states":
-					Total state: 2 (+1, -0)
-					Added state "attack":
-						field "animations": animation dict: "skeleton_attack"
-						field "transitions": transition list: transition "default": "!query.has_target || query.facing_target_to_range_attack"
+					Changed state "blink":
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "open": "variable.is_blinking = 1; variable.last_blink_time = query.life_time; return query.all_animations_finished && (query.life_time > variable.return_from_blink);".
+							Added transition list transition "open": "variable.is_blinking = 1; variable.last_blink_time = query.life_time; return query.all_animations_finished && (query.life_time > (variable.return_from_blink ?? 0.2));".
 					Changed state "default":
-						Removed field "animations" of animation dict: "skeleton_attack".
-						Added field "transitions" of transition list: transition "attack": "query.has_target && !query.facing_target_to_range_attack".
+						Changed field "transitions":
+							Total transition list: 1 (+1, -1)
+							Removed transition list transition "open": "variable.is_blinking = 0; variable.last_blink_time = query.life_time; return variable.last_blink_time != 0;".
+							Added transition list transition "open": "variable.is_blinking = 0; variable.return_from_blink = query.life_time + math.random(0, 0.2); variable.last_blink_time = query.life_time; return variable.last_blink_time != 0;".

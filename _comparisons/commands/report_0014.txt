@@ -1,0 +1,44 @@
+Difference of "commands" between "1.1.0.1" (beta of "1.1.0") and "1.1.0.3" (beta of "1.1.0").
+
+Changed file "client-only.json":
+	Added command "getlocalplayername":
+		field "versions":
+			version:
+				field "description": "commands.getlocalplayername.description"
+				field "permission": "any"
+				field "is_hidden": true
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "localplayername"
+									field "type": "string"
+Changed file "standard.json":
+	Added command "setmaxplayers":
+		field "versions":
+			version:
+				field "description": "commands.setmaxplayers.description"
+				field "permission": "host"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "maxPlayers"
+									field "type": "int"
+						field "output":
+							field "format_strings":
+								format string: field "format": "commands.setmaxplayers.success"
+								format string:
+									field "format": "{1}"
+									field "should_show": field "not_empty": parameter: "boundNote"
+							field "parameters":
+								parameter:
+									field "name": "count"
+									field "type": "int"
+								parameter:
+									field "name": "boundNote"
+									field "type": "string"

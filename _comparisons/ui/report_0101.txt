@@ -1,0 +1,199 @@
+Difference of "ui" between "1.7.0.3" (beta of "1.7.0") and "1.7.0.5" (beta of "1.7.0").
+
+Changed namespace "chat":
+	Changed element "text_edit_box@common.text_edit_box":
+		Changed field "button_mappings":
+			Total button mapping: 19 (+1, -0)
+			Changed button mapping:
+				Changed field "mapping_type" from "global" to "focused".
+				Changed field "handle_select" from false to true.
+			Changed button mapping:
+				Changed field "mapping_type" from "global" to "focused".
+				Changed field "handle_select" from false to true.
+			Added button mapping:
+				field "from_button_id": "button.menu_cancel"
+				field "to_button_id": "$text_edit_box_deselected_to_button_id"
+				field "handle_select": false
+				field "handle_deselect": true
+				field "mapping_type": "global"
+Changed namespace "common_store":
+	Changed element "home_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "ignored" from "$ignore_3rd_party_servers" to "$is_on_3p_server".
+Changed namespace "general_section":
+	Changed element "profile_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Total control: 20 (+1, -0)
+			Added control:
+				element "clear_msa_token":
+					field "ignored": "(not $nx_os and not $is_pregame)"
+					field "type": "panel"
+					field "size": ["100%", 32]
+					field "controls":
+						control:
+							element "clear_msa_token_button@settings_common.action_button":
+								field "anchor_from": "top_right"
+								field "anchor_to": "top_right"
+								field "offset": [0, 2]
+								field "bindings":
+									binding:
+										field "binding_name": "#not_logged_in"
+										field "binding_name_override": "#visible"
+								field "$variables":
+									variable "$pressed_button_name": "button.clear_msa_token_button"
+									variable "$button_text": "xbox.dev_wrongSandboxSigninFailed.button.clearXbl"
+Changed namespace "store_item_list":
+	Total element: 8 (+1, -0)
+	Changed element "store_offer_grid_item":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "frame@common_store.store_description_background":
+					Changed field "controls":
+						Total control: 5 (+1, -1)
+						Removed control:
+							element "title_label_panel":
+								field "type": "stack_panel"
+								field "size": ["100% - 6px", 20]
+								field "offset": [3, -14]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "controls":
+									control:
+										element "title":
+											field "type": "label"
+											field "size": ["100%", 10]
+											field "text": "#title_label"
+											field "color": "$body_text_color"
+											field "font_type": "smooth"
+											field "layer": 1
+											field "bindings":
+												binding:
+													field "binding_type": "$store_factory_collection_details"
+													field "binding_collection_name": "$store_factory_collection_name"
+													field "binding_collection_prefix": "$store_factory_collection_prefix"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "$offer_collection_name"
+													field "binding_name": "#title_label"
+									control:
+										element "author":
+											field "type": "label"
+											field "size": ["100%", 10]
+											field "text": "#creator_label"
+											field "color": "$store_author_text_color"
+											field "font_type": "smooth"
+											field "layer": 1
+											field "bindings":
+												binding:
+													field "binding_type": "$store_factory_collection_details"
+													field "binding_collection_name": "$store_factory_collection_name"
+													field "binding_collection_prefix": "$store_factory_collection_prefix"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "$offer_collection_name"
+													field "binding_name": "#creator_label"
+								field "bindings":
+									binding:
+										field "binding_type": "$store_factory_collection_details"
+										field "binding_collection_name": "$store_factory_collection_name"
+										field "binding_collection_prefix": "$store_factory_collection_prefix"
+									binding:
+										field "binding_type": "collection_details"
+										field "binding_collection_name": "$offer_collection_name"
+									binding:
+										field "binding_type": "collection"
+										field "binding_name": "(not #progress_visible)"
+										field "binding_collection_name": "$offer_collection_name"
+										field "binding_name_override": "#visible"
+						Added control:
+							element "title_label_panel":
+								field "type": "panel"
+								field "size": ["100% - 6px", 20]
+								field "offset": [3, -14]
+								field "anchor_from": "bottom_left"
+								field "anchor_to": "bottom_left"
+								field "controls":
+									control:
+										element "durable_offer_title_label":
+											field "type": "stack_panel"
+											field "size": ["100%", "100%"]
+											field "bindings":
+												binding:
+													field "binding_type": "$store_factory_collection_details"
+													field "binding_collection_name": "$store_factory_collection_name"
+													field "binding_collection_prefix": "$store_factory_collection_prefix"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "$offer_collection_name"
+													field "binding_name": "#durable_title_visible"
+													field "binding_name_override": "#visible"
+											field "controls":
+												control: element "title@store_item_list.store_offer_title": empty
+												control:
+													element "author":
+														field "type": "label"
+														field "size": ["100%", 10]
+														field "text": "#creator_label"
+														field "color": "$store_author_text_color"
+														field "font_type": "smooth"
+														field "layer": 1
+														field "bindings":
+															binding:
+																field "binding_type": "$store_factory_collection_details"
+																field "binding_collection_name": "$store_factory_collection_name"
+																field "binding_collection_prefix": "$store_factory_collection_prefix"
+															binding:
+																field "binding_type": "collection"
+																field "binding_collection_name": "$offer_collection_name"
+																field "binding_name": "#creator_label"
+									control:
+										element "offer_collection_title@store_item_list.store_offer_title":
+											field "size": ["100%", "100%"]
+											field "offset": [0, 10]
+											field "text_alignment": "center"
+											field "font_scale_factor": 1.3
+											field "bindings":
+												binding:
+													field "binding_type": "$store_factory_collection_details"
+													field "binding_collection_name": "$store_factory_collection_name"
+													field "binding_collection_prefix": "$store_factory_collection_prefix"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "$offer_collection_name"
+													field "binding_name": "(not #durable_title_visible)"
+													field "binding_name_override": "#visible"
+												binding:
+													field "binding_type": "collection"
+													field "binding_collection_name": "$offer_collection_name"
+													field "binding_name": "#title_label"
+								field "bindings":
+									binding:
+										field "binding_type": "$store_factory_collection_details"
+										field "binding_collection_name": "$store_factory_collection_name"
+										field "binding_collection_prefix": "$store_factory_collection_prefix"
+									binding:
+										field "binding_type": "collection_details"
+										field "binding_collection_name": "$offer_collection_name"
+									binding:
+										field "binding_type": "collection"
+										field "binding_name": "(not #progress_visible)"
+										field "binding_collection_name": "$offer_collection_name"
+										field "binding_name_override": "#visible"
+	Added element "store_offer_title":
+		field "type": "label"
+		field "size": ["100%", 10]
+		field "text": "#title_label"
+		field "color": "$body_text_color"
+		field "font_type": "smooth"
+		field "layer": 1
+		field "bindings":
+			binding:
+				field "binding_type": "$store_factory_collection_details"
+				field "binding_collection_name": "$store_factory_collection_name"
+				field "binding_collection_prefix": "$store_factory_collection_prefix"
+			binding:
+				field "binding_type": "collection"
+				field "binding_collection_name": "$offer_collection_name"
+				field "binding_name": "#title_label"

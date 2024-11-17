@@ -1,0 +1,106 @@
+Difference of "ui" between "1.10.0.3" (beta of "1.10.0") and "1.10.0.4" (beta of "1.10.0").
+
+Changed namespace "chat":
+	Total element: 31 (+4, -0)
+	Changed element "chat_header":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "top_bar@common_store.store_top_bar":
+					Changed field "controls":
+						Changed control:
+							Changed element "title_stack_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Total control: 7 (+2, -1)
+									Removed control element "chat_settings_button@chat_settings.chat_settings_button_panel": empty.
+									Added control element "mute_section@chat.mute_panel": field "ignored": "(not $is_publish)".
+									Added control element "chat_settings_button@chat_settings.chat_settings_button_panel": field "ignored": "$is_publish".
+	Added element "hide_toggle@settings_common.option_toggle":
+		field "$variables":
+			variable "$option_binding_name": "#hide_chat"
+			variable "$option_enabled_binding_name": "#hide_chat_enabled"
+			variable "$toggle_name": "hide_chat"
+	Added element "mute_interaction":
+		field "type": "panel"
+		field "size": ["100%c", "100%"]
+		field "anchor_from": "left_middle"
+		field "anchor_to": "left_middle"
+		field "controls":
+			control:
+				element "yes_or_no_panel":
+					field "type": "panel"
+					field "size": [24, "100%"]
+					field "controls":
+						control:
+							element "yes_or_no_label":
+								field "type": "label"
+								field "size": [20, 8]
+								field "offset": [-20, -2]
+								field "text": "#text"
+								field "color": "$title_text_color"
+								field "layer": 2
+								field "bindings":
+									binding:
+										field "binding_name": "#text_chat_hidden"
+										field "binding_name_override": "#text"
+			control:
+				element "toggle_panel":
+					field "type": "panel"
+					field "size": ["100%c", "100%c"]
+					field "anchor_from": "bottom_left"
+					field "anchor_to": "bottom_left"
+					field "controls":
+						control:
+							element "hide_toggle@chat.hide_toggle":
+								field "size": [32, "100%c"]
+								field "offset": [20, 1]
+								field "bindings":
+									binding:
+										field "binding_name": "(not #gamepad_helper_visible)"
+										field "binding_name_override": "#visible"
+			control:
+				element "gamepad_y_button":
+					field "type": "panel"
+					field "size": [24, 17]
+					field "offset": [6, -1]
+					field "controls": control: element "icon@common.gamepad_helper_y": field "$variables": variable "$icon_description_bind_type": "none"
+					field "bindings":
+						binding:
+							field "binding_name": "#gamepad_helper_visible"
+							field "binding_name_override": "#visible"
+	Added element "mute_panel":
+		field "type": "stack_panel"
+		field "orientation": "horizontal"
+		field "size": ["100%c", "100%"]
+		field "controls":
+			control: element "mute@chat.mute_text": empty
+			control:
+				element "padding3":
+					field "type": "panel"
+					field "size": [16, "100%"]
+			control: element "mute_interact@chat.mute_interaction": empty
+	Added element "mute_text":
+		field "type": "panel"
+		field "size": ["100%c", "100%"]
+		field "controls":
+			control:
+				element "title_panel":
+					field "type": "label"
+					field "size": ["default", 10]
+					field "text": "chat.mute"
+					field "offset": [2, -1]
+					field "color": "$title_text_color"
+					field "layer": 2
+	Changed element "text_edit_box@common.text_edit_box":
+		Changed field "button_mappings":
+			Total button mapping: 19 (+1, -0)
+			Changed button mapping:
+				Added field "ignored" of "$is_publish".
+			Added button mapping:
+				field "from_button_id": "button.controller_secondary_select"
+				field "to_button_id": "button.mute_chat"
+				field "handle_select": false
+				field "handle_deselect": false
+				field "mapping_type": "global"
+				field "ignored": "(not $is_publish)"

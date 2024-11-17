@@ -1,0 +1,107 @@
+Difference of "shaders" between "1.6.0.6" (beta of "1.6.0") and "1.6.0.8" (beta of "1.6.0").
+
+Changed file "barrier.vertex.hlsl":
+	Total line: 60 (+1, -0)
+	        '''
+	        ...
+	18 18   	lpfloat4 color : COLOR;
+	19 19       snorm float2 uv : TEXCOORD_0_FB_MSAA;
+	20 20       snorm float2 light_uv : TEXCOORD_1_FB_MSAA;
+	21 21   };
+	22 22   
+	   23 + ROOT_SIGNATURE
+	23 24   void main(in VS_Input VSInput, out PS_Input PSInput) {
+	24 25   	float3 inputPos = VSInput.position.xyz * CHUNK_ORIGIN_AND_SCALE.w + CHUNK_ORIGIN_AND_SCALE.xyz;
+	25 26   	float3 center = inputPos + float3(0.5f, 0.5f, 0.5f);
+	26 27   
+	27 28   	// the view position needs to be in sortof-steve space
+	        ...
+	        '''
+Changed file "passthru.fragment.hlsl":
+	Total line: 18 (+1, -0)
+	        '''
+	        ...
+	 9  9   struct PS_Output
+	10 10   {
+	11 11       float4 color : SV_Target;
+	12 12   };
+	13 13   
+	   14 + ROOT_SIGNATURE
+	14 15   void main(in PS_Input PSInput, out PS_Output PSOutput)
+	15 16   {
+	16 17       PSOutput.color = TEXTURE_0.Sample(TextureSampler0, PSInput.uv);
+	17 18   }
+	        '''
+Changed file "uv_scale.vertex.hlsl":
+	Total line: 57 (+15, -0)
+	        '''
+	 1  1   #include "ShaderConstants.fxh"
+	 2  2   
+	 3  3   struct VS_Input
+	 4  4   {
+	 5  5       float3 position : POSITION;
+	    6 + #ifdef USE_SKINNING
+	    7 + #ifdef USE_INT_INDEXING
+	    8 + 	uint boneId : BONEID_0;
+	    9 + #else
+	   10 + 	float boneId : BONEID_0;
+	   11 + #endif
+	   12 + #endif
+	 6 13       float2 uv : TEXCOORD_0;
+	 7 14   #ifdef INSTANCEDSTEREO
+	 8 15   	uint instanceID : SV_InstanceID;
+	 9 16   #endif
+	10 17   };
+	        ...
+	12 19   
+	13 20   struct PS_Input
+	14 21   {
+	15 22       float4 position : SV_Position;
+	16 23       float2 uv : TEXCOORD_0;
+	   24 + #ifdef GEOMETRY_INSTANCEDSTEREO
+	   25 + 	uint instanceID : SV_InstanceID;
+	   26 + #endif
+	   27 + #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	   28 + 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	17    - #ifdef GEOMETRY_INSTANCEDSTEREO
+	18    - 	uint instanceID : SV_InstanceID;
+	19 29   #endif
+	   30 + };
+	   31 + 
+	   32 + ROOT_SIGNATURE
+	   33 + void main(in VS_Input VSInput, out PS_Input PSInput)
+	   34 + {
+	   35 +     PSInput.uv = VSInput.uv * GLINT_UV_SCALE.xy;
+	20    - #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	21    - 	uint renTarget_id : SV_RenderTargetArrayIndex;
+	22    - #endif
+	23    - };
+	24 36   
+	   37 + #ifdef INSTANCEDSTEREO
+	   38 + 	int i = VSInput.instanceID;
+	   39 + #ifdef USE_SKINNING
+	   40 + 	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], mul(BONES[int(VSInput.boneId)], float4( VSInput.position, 1 )));
+	   41 + #else
+	   42 + 	PSInput.position = mul(WORLDVIEWPROJ_STEREO[i], float4(VSInput.position, 1));
+	   43 + #endif
+	   44 + #else
+	   45 + #ifdef USE_SKINNING
+	   46 + 	PSInput.position = mul(WORLDVIEWPROJ, mul(BONES[int(VSInput.boneId)], float4(VSInput.position, 1)));
+	25    - ROOT_SIGNATURE
+	26    - void main(in VS_Input VSInput, out PS_Input PSInput)
+	27    - {
+	28    -     PSInput.uv = VSInput.uv * GLINT_UV_SCALE.xy;
+	29    - 
+	30    - #ifdef INSTANCEDSTEREO
+	31    - 	int i = VSInput.instanceID;
+	32    - 	PSInput.position = mul( WORLDVIEWPROJ_STEREO[i], float4( VSInput.position, 1 ) );
+	33 47   #else
+	34 48   	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
+	   49 + #endif
+	35 50   #endif
+	36 51   #ifdef GEOMETRY_INSTANCEDSTEREO
+	37 52   	PSInput.instanceID = VSInput.instanceID;
+	38 53   #endif 
+	39 54   #ifdef VERTEXSHADER_INSTANCEDSTEREO
+	        ...
+	        '''

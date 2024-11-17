@@ -1,0 +1,310 @@
+Difference of "shaders_resource_packs" between "1.0.3.0" (beta of "1.0.3") and "1.0.3".
+
+Changed resource pack "end_portal.fragment":
+	Changed file "vanilla":
+		Total line: 86 (+10, -43)
+		          '''
+		          ...
+		 17  17   	#endif
+		 18  18   
+		 19  19   	#ifndef BYPASS_PIXEL_SHADER
+		 20  20   		#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+		 21  21   			_centroid in highp vec2 colorLookupUV;
+		 22     - 		#else
+		 23     - 			_centroid in vec2 colorLookupUV;
+		 24     - 		#endif
+		 25     - 	#endif
+		 26     - 
+		 27     - 	#define varying in
+		 28     - 	#define texture2D texture
+		 29     - 	out vec4 FragColor;
+		 30     - 	#define gl_FragColor FragColor
+		 31     - #else
+		 32     - 
+		 33     - 	// version 100 code
+		 34     - 
+		 35     - 	#ifndef BYPASS_PIXEL_SHADER
+		 36     - 		varying vec2 colorLookupUV;
+		 37     - 	#endif
+		 38     - #endif
+		 39     - 
+		 40     - 
+		 41     - #ifndef BYPASS_PIXEL_SHADER
+		 42     - 	varying lowp vec4 encodedPlane;
+		 43     - 	varying POS3 eyePositionInWorld;
+		 44     - 	varying POS3 surfacePositionInWorld;
+		 45     - 
+		 46     - 	#ifdef FOG
+		 47     - 		varying vec4 fogColor;
+		 48     - 	#endif
+		 49     - #endif
+		 50     - 
+		     22 + 			_centroid in highp vec2 parallaxUV;
+		     23 + 		#else
+		     24 + 			_centroid in vec2 colorLookupUV;
+		     25 + 			_centroid in highp vec2 parallaxUV;
+		     26 + 		#endif
+		     27 + 	#endif
+		 51     - uniform sampler2D TEXTURE_0;
+		 52     - uniform sampler2D TEXTURE_1;
+		 53     - 
+		 54     - uniform highp float TIME;
+		 55     - 
+		 56     - const float MAX_LAYER_DEPTH = 32.0;
+		 57  28   
+		     29 + 	#define varying in
+		     30 + 	#define texture2D texture
+		 58     - void main()
+		 59     - {
+		     31 + 	out vec4 FragColor;
+		     32 + 	#define gl_FragColor FragColor
+		     33 + #else
+		 60     - 	#ifdef BYPASS_PIXEL_SHADER
+		 61     - 		gl_FragColor = vec4(0, 0, 0, 0);
+		 62     - 	#else
+		 63  34   
+		 64     - 	///// Decode Input Values
+		 65     - 	// Decode parallax plane data
+		 66     - 	lowp vec3 planeNormal = (encodedPlane.xyz - vec3(0.5,0.5,0.5)) * 2.0;
+		     35 + 	// version 100 code
+		 67     - 	mediump float planeDistance = encodedPlane.w * MAX_LAYER_DEPTH;
+		 68  36   
+		     37 + 	#ifndef BYPASS_PIXEL_SHADER
+		     38 + 		varying vec2 colorLookupUV;
+		     39 + 		varying highp vec2 parallaxUV;
+		     40 + 	#endif
+		     41 + #endif
+		 69     - 	// Calculate view direction from the surface position and the eye position
+		 70     - 	POS3 viewDirection = surfacePositionInWorld - eyePositionInWorld;
+		 71  42   
+		 72     - 	///// Ray-cast for parallax-offset UV
+		 73     - 	// Perform ray-plane intersection to find the position on the parallax plane
+		 74     - 	mediump float t = (dot(viewDirection - (planeDistance * planeNormal), planeNormal)) / dot(viewDirection, planeNormal);
+		 75     - 	POS3 parallaxSurfacePosition = eyePositionInWorld + (t * viewDirection);
+		 76  43   
+		     44 + #ifndef BYPASS_PIXEL_SHADER
+		     45 + 	varying lowp vec4 encodedPlane;
+		     46 + 	#ifdef FOG
+		     47 + 		varying vec4 fogColor;
+		     48 + 	#endif
+		     49 + #endif
+		 77     - 	///// Ridiculous UV-remapping
+		 78     - 	lowp vec3 absNormal = floor(abs(planeNormal) + vec3(0.5,0.5,0.5));
+		 79     - 	// Since all normals are orthonormal on <x,y,z>, mask out the correct uv result
+		 80     - 	highp vec2 raycastUV = parallaxSurfacePosition.yz * absNormal[0] + parallaxSurfacePosition.xz * absNormal[1] + parallaxSurfacePosition.xy * absNormal[2];
+		 81  50   
+		     51 + uniform sampler2D TEXTURE_0;
+		 82     - 	// Scale the UVs to Minecraft pixel size
+		     52 + uniform sampler2D TEXTURE_1;
+		 83     - 	raycastUV = fract(raycastUV / 16.0);
+		 84  53   
+		     54 + const float MAX_LAYER_DEPTH = 32.0;
+		 85     - 	///// Color Lookup
+		 86     - 	lowp vec4 colorSample = texture2D(TEXTURE_1, colorLookupUV);
+		 87  55   
+		 88     - 	///// UV Scrolling
+		 89     - 	// Scroll direction based on a value unique to the layer (derived from color)
+		     56 + void main()
+		     57 + {
+		     58 + 	#ifdef BYPASS_PIXEL_SHADER
+		     59 + 		gl_FragColor = vec4(0, 0, 0, 0);
+		     60 + 	#else
+		 90     - 	mediump vec2 scrollDirection = normalize(vec2(colorSample.g - colorSample.b, colorSample.r - (colorSample.g - colorSample.b)));
+		 91     - 	highp vec2 resultUV = mat2(vec2(scrollDirection.x, scrollDirection.y), vec2(-scrollDirection.y, scrollDirection.x)) * raycastUV;
+		 92     - 	// Offset rotation based on a value unique to the layer (still derived from color)
+		 93     - 	resultUV += fract(scrollDirection * dot(colorSample, colorSample) * 128.0);
+		 94     - 	resultUV.y += fract(TIME / 256.0);
+		 95  61   
+		     62 + 	///// Color Assembly
+		 96     - 	///// Color assembly
+		     63 + 	vec4 colorSample = texture2D(TEXTURE_1, colorLookupUV);
+		     64 + 	vec4 textureSample = texture2D(TEXTURE_0, parallaxUV);
+		     65 + 	float brightness = 1.0 - (encodedPlane.w);
+		     66 + 	vec3 result = textureSample.rgb * colorSample.rgb * brightness;
+		 97     - 	lowp vec4 textureSample = texture2D(TEXTURE_0, resultUV);
+		 98     - 	lowp float brightness = 1.0 - (encodedPlane.w);
+		 99     - 	lowp vec3 result = textureSample.rgb * colorSample.rgb * brightness;
+		100  67   
+		101  68   	#ifdef FOG
+		     69 + 		if(encodedPlane.w * MAX_LAYER_DEPTH > MAX_LAYER_DEPTH - 1.0) {
+		102     - 		if(planeDistance > MAX_LAYER_DEPTH - 1.0) {
+		103  70   			gl_FragColor = vec4(mix(vec3(0,0,0), fogColor.rgb, fogColor.a), 0);
+		104  71   		}
+		105  72   		else {
+		106  73   			gl_FragColor = vec4(result * (1.0 - fogColor.a), 1);
+		107  74   		}
+		108  75   	#else
+		109  76   		// Look for hard-coded value to clear the portal first
+		     77 + 		if(encodedPlane.w * MAX_LAYER_DEPTH > MAX_LAYER_DEPTH - 1.0) {
+		110     - 		if(planeDistance > MAX_LAYER_DEPTH - 1.0) {
+		111  78   			gl_FragColor = vec4(0, 0, 0, 0);
+		112  79   		}
+		113  80   		else {
+		114  81   			gl_FragColor = vec4(result, 1);
+		115  82   		}
+		          ...
+		          '''
+Changed resource pack "end_portal.vertex":
+	Changed file "vanilla":
+		Total line: 131 (+56, -22)
+		          '''
+		          ...
+		  5   5   // attribute to in
+		  6   6   // varying to out when in vertex shaders or in when in fragment shaders
+		  7   7   // defining an out vec4 FragColor and replacing uses of gl_FragColor with FragColor
+		  8   8   // texture2D to texture
+		  9   9   
+		     10 + precision highp float;
+		     11 + 
+		     12 + #if __VERSION__ >= 300
+		     13 + 	#define attribute in
+		     14 + 	#define varying out
+		     15 + 
+		     16 + 	#ifdef MSAA_FRAMEBUFFER_ENABLED
+		     17 + 		#define _centroid centroid
+		     18 + 	#else
+		     19 + 		#define _centroid
+		     20 + 	#endif
+		     21 + 
+		     22 + 	#ifndef BYPASS_PIXEL_SHADER
+		     23 + 		_centroid out vec2 colorLookupUV;
+		     24 + 		_centroid out vec2 parallaxUV;
+		     25 + 	#endif
+		     26 + #else
+		     27 + 	#ifndef BYPASS_PIXEL_SHADER
+		     28 + 		varying vec2 colorLookupUV;
+		     29 + 		varying vec2 parallaxUV;
+		     30 + 	#endif
+		     31 + #endif
+		     32 + 
+		     33 + #ifndef BYPASS_PIXEL_SHADER
+		     34 + 	varying lowp vec4 encodedPlane;
+		     35 + 	#ifdef FOG
+		     36 + 		varying vec4 fogColor;
+		     37 + 	#endif
+		     38 + #endif
+		     39 + 
+		     40 + uniform MAT4 WORLD;
+		     41 + uniform MAT4 WORLDVIEW;
+		     42 + uniform MAT4 PROJ;
+		     43 + 
+		     44 + uniform vec4 FOG_COLOR;
+		     45 + uniform vec2 FOG_CONTROL;
+		     46 + uniform float RENDER_DISTANCE;
+		     47 + uniform vec4 CURRENT_COLOR;		//current color r contains the offset to apply to the fog for the "fade in"
+		     48 + uniform POS4 CHUNK_ORIGIN_AND_SCALE;
+		     49 + uniform float FAR_CHUNKS_DISTANCE;
+		     50 + 
+		     51 + uniform POS3 VIEW_POS;
+		     52 + uniform highp float TIME;
+		     53 + 
+		     54 + #ifndef BYPASS_PIXEL_SHADER
+		     55 + 	attribute POS4 POSITION;
+		     56 + 	attribute vec4 COLOR;
+		     57 + 	attribute vec2 TEXCOORD_0;
+		     58 + 	attribute vec2 TEXCOORD_1;
+		     59 + #endif
+		     60 + 
+		     61 + const float MAX_LAYER_DEPTH = 32.0;
+		 10     - #if __VERSION__ >= 300
+		 11     - 	#define attribute in
+		 12     - 	#define varying out
+		 13  62   
+		     63 + void main() {
+		 14     - 	#ifdef MSAA_FRAMEBUFFER_ENABLED
+		     64 + 	///// Vertex Transformation
+		     65 + 	POS4 worldPos = vec4((POSITION.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz, 1);
+		     66 + 	POS4 pos = PROJ * (WORLDVIEW * worldPos);
+		     67 + 	gl_Position = pos;
+		 15     - 		#define _centroid centroid
+		 16     - 	#else
+		 17     - 		#define _centroid
+		 18     - 	#endif
+		 19  68   
+		 20     - 	#ifndef BYPASS_PIXEL_SHADER
+		 21     - 		_centroid out vec2 colorLookupUV;
+		 22     - 	#endif
+		 23     - #else
+		 24  69   	#ifndef BYPASS_PIXEL_SHADER
+		     70 + 		///// End Portal Data
+		 25     - 		varying vec2 colorLookupUV;
+		     71 + 		colorLookupUV = TEXCOORD_0;
+		     72 + 		encodedPlane = COLOR; // Color value is used to encode the starfield plane
+		 26     - 	#endif
+		 27     - #endif
+		 28  73   
+		 29     - #ifndef BYPASS_PIXEL_SHADER
+		 30     - 	varying lowp vec4 encodedPlane;
+		     74 + 		vec3 planeNormal = (encodedPlane.xyz - vec3(0.5,0.5,0.5)) * 2.0;
+		     75 + 		float planeDistance = encodedPlane.w * MAX_LAYER_DEPTH;
+		 31     - 	varying POS3 eyePositionInWorld;
+		 32     - 	varying POS3 surfacePositionInWorld;
+		 33  76   
+		 34     - 	#ifdef FOG
+		 35     - 		varying vec4 fogColor;
+		     77 + 		// Calculate view direction from the surface position and the eye position
+		     78 + 		POS3 viewRay = worldPos.xyz;
+		 36     - 	#endif
+		 37     - #endif
+		 38  79   
+		     80 + 		///// Ray-cast for parallax-offset UV
+		     81 + 		// Perform ray-plane intersection to find the position on the parallax plane
+		 39     - uniform MAT4 WORLD;
+		     82 + 		float t = (dot(viewRay - (planeDistance * planeNormal), planeNormal)) / dot(viewRay, planeNormal);
+		     83 + 		POS3 parallaxPositionInWorld = (t * viewRay) + VIEW_POS;
+		 40     - uniform MAT4 WORLDVIEW;
+		 41     - uniform MAT4 PROJ;
+		 42  84   
+		     85 + 		///// Ridiculous UV-remapping
+		     86 + 		// Create a mask with a 1 wherever the normal would have a non-zero value
+		     87 + 		// All normals are orthonormal on <x,y,z>, so there should be two 0's and a 1
+		     88 + 		vec3 normalMask = floor(abs(planeNormal) + vec3(0.5,0.5,0.5));
+		     89 + 		// Mask out the correct uv result
+		     90 + 		vec2 raycastUV = parallaxPositionInWorld.yz * normalMask[0] + parallaxPositionInWorld.xz * normalMask[1] + parallaxPositionInWorld.xy * normalMask[2];
+		     91 + 
+		     92 + 		// Scale the UVs to Minecraft pixel size
+		     93 + 		raycastUV = raycastUV / 16.0; // TODO: Use TEXTURE_DIMENSIONS
+		 43     - uniform vec4 FOG_COLOR;
+		 44     - uniform vec2 FOG_CONTROL;
+		 45     - uniform float RENDER_DISTANCE;
+		 46     - uniform vec4 CURRENT_COLOR;		//current color r contains the offset to apply to the fog for the "fade in"
+		 47     - uniform POS4 CHUNK_ORIGIN_AND_SCALE;
+		 48     - uniform POS3 VIEW_POS;
+		 49     - uniform float FAR_CHUNKS_DISTANCE;
+		 50  94   
+		 51     - #ifndef BYPASS_PIXEL_SHADER
+		 52     - 	attribute POS4 POSITION;
+		 53     - 	attribute vec4 COLOR;
+		     95 + 		const float rotor = 3.1415926535897 * (5.0 / 7.0);
+		     96 + 		float rotS = sin(planeDistance * rotor);
+		     97 + 		float rotC = cos(planeDistance * rotor);
+		 54     - 	attribute vec2 TEXCOORD_0;
+		 55     - 	attribute vec2 TEXCOORD_1;
+		 56     - #endif
+		 57  98   
+		     99 + 		parallaxUV = mat2(vec2(rotC, rotS), vec2(-rotS, rotC)) * raycastUV;
+		 58     - const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+		 59 100   
+		 60     - void main() {
+		 61     - 	///// Vertex Transformation
+		 62     - 	POS4 worldPos = vec4((POSITION.xyz * CHUNK_ORIGIN_AND_SCALE.w) + CHUNK_ORIGIN_AND_SCALE.xyz, 1);
+		    101 + 		parallaxUV += vec2(rotC, rotS) * planeDistance;
+		    102 + 		parallaxUV.y += TIME / 256.0;
+		 63     - 	POS4 pos = PROJ * (WORLDVIEW * worldPos);
+		 64     - 	gl_Position = pos;
+		 65 103   
+		 66     - 	#ifndef BYPASS_PIXEL_SHADER
+		 67     - 		///// End Portal Data
+		 68     - 		colorLookupUV = TEXCOORD_0;
+		 69     - 		encodedPlane = COLOR; // See BlockTessellator::tessellateEndPortalInWorld(...)
+		    104 + 		const float modVal = 64.0;
+		    105 + 		parallaxUV = vec2(mod(parallaxUV.x, modVal), mod(parallaxUV.y, modVal));
+		 70     - 		eyePositionInWorld = VIEW_POS;
+		 71     - 		surfacePositionInWorld = worldPos.xyz + VIEW_POS;
+		 72 106   
+		 73 107   		///// Fog
+		 74 108   		#ifdef FOG
+		 75 109   			#ifdef FANCY
+		 76 110   				vec3 relPos = -worldPos.xyz;
+		          ...
+		          '''

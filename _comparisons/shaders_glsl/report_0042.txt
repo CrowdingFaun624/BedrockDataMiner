@@ -1,0 +1,38 @@
+Difference of "shaders_resource_packs" between "1.1.0.8" (beta of "1.1.0") and "1.1.0.9" (beta of "1.1.0").
+
+Changed resource pack "text.fragment":
+	Changed file "vanilla":
+		Total line: 97 (+5, -0)
+		        '''
+		        ...
+		45 45   uniform float SHADOW_SMOOTH_RADIUS;
+		46 46   uniform vec4 OUTLINE_COLOR;
+		47 47   uniform vec4 SHADOW_COLOR;
+		48 48   uniform vec2 SHADOW_OFFSET;
+		49 49   
+		   50 + const float GLYPH_UV_SIZE = 1.0 / 16.0;
+		   51 + 
+		50 52   void main()
+		51 53   {
+		52 54   	vec4 diffuse = texture2D( TEXTURE_0,  uv );
+		53 55   
+		54 56   #ifdef SMOOTH
+		        ...
+		74 76       resultColor = mix(OUTLINE_COLOR, resultColor, innerEdgeAlpha);
+		75 77   
+		76 78       float outerEdgeAlpha = smoothstep(max(0.0, OUTLINE_CUTOFF - GLYPH_SMOOTH_RADIUS), min(1.0, OUTLINE_CUTOFF + GLYPH_SMOOTH_RADIUS), sampleDistance);
+		77 79       // Apply stroke (outline) cutoff
+		78 80       resultColor = vec4(resultColor.rgb, resultColor.a * outerEdgeAlpha);
+		   81 + 
+		   82 +     vec2 topLeft = floor(uv);
+		   83 +     vec2 bottomRight = floor(uv + vec2(GLYPH_UV_SIZE, GLYPH_UV_SIZE));
+		79 84   
+		   85 +     vec4 shadowSample = texture2D(TEXTURE_0, clamp(uv - SHADOW_OFFSET, topLeft, bottomRight));
+		80    -     vec4 shadowSample = texture2D(TEXTURE_0, uv - SHADOW_OFFSET);
+		81 86       float shadowDistance = shadowSample.a;
+		82 87       float shadowAlpha = smoothstep(max(0.0, OUTLINE_CUTOFF - SHADOW_SMOOTH_RADIUS), min(1.0, OUTLINE_CUTOFF + SHADOW_SMOOTH_RADIUS), shadowDistance);
+		83 88       // Apply shadow past the stroke
+		84 89       resultColor = mix(vec4(SHADOW_COLOR.rgb, SHADOW_COLOR.a * shadowAlpha), resultColor, outerEdgeAlpha);
+		85 90   
+		        ...
+		        '''

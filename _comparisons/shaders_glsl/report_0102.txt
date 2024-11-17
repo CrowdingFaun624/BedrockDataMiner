@@ -1,0 +1,61 @@
+Difference of "shaders_resource_packs" between "1.20.15" and "1.20.20.20" (beta of "1.20.30").
+
+Changed resource pack "hb_batched.fragment":
+	Changed file "vanilla":
+		Total line: 85 (+0, -0)
+		        '''
+		        ...
+		33 33   		if (ShaderType == 0) {
+		34 34   			// Rect/stroke rect
+		35 35   			alpha = min(1.0, AdditionalOut.x * AdditionalOut.y);
+		36 36   		} else if (ShaderType == 3) {
+		37 37   			// Image
+		   38 + 			vec2 uvPos = vec2(AdditionalOut.x, 1.0 - AdditionalOut.y);
+		38    - 			vec2 uvPos = vec2(AdditionalOut.x, 1 - AdditionalOut.y);
+		39 39   			color = texture2D(TEXTURE_0, uvPos.xy);
+		40 40   			alpha = ColorOut.a * clamp(AdditionalOut.z, 0.0, 1.0);
+		41 41   		} else if (ShaderType == 17) {
+		42 42   			// Raster text
+		43 43   			vec2 uvPos = vec2(AdditionalOut.x, AdditionalOut.y);
+		        ...
+		        '''
+Changed resource pack "hb_standard.vertex":
+	Changed file "vanilla":
+		Total line: 38 (+0, -0)
+		        '''
+		        ...
+		26 26   
+		27 27   	ColorOut = HB_COLOR;
+		28 28   	AdditionalOut = HB_ADDITIONAL;
+		29 29   
+		30 30   #if defined(INVERT_ADDITIONAL_OUT_Y)
+		   31 + 	AdditionalOut.y = 1.0 - AdditionalOut.y;
+		31    - 	AdditionalOut.y = 1 - AdditionalOut.y;
+		32 32   #endif
+		33 33   #if defined(INVERT_ADDITIONAL_OUT_W)
+		   34 + 	AdditionalOut.w = 1.0 - AdditionalOut.w;
+		34    - 	AdditionalOut.w = 1 - AdditionalOut.w;
+		35 35   #endif
+		36 36   
+		37 37   	gl_Position = outPos;
+		38 38   }
+		        '''
+Changed resource pack "hb_standard_texture.fragment":
+	Changed file "vanilla":
+		Total line: 30 (+0, -0)
+		        '''
+		        ...
+		18 18   void main() {
+		19 19   	vec2 uvPoint = AdditionalOut.xy;
+		20 20   	if ((PRIM_PROPS_1.z != (-1.0)) || (PRIM_PROPS_1.w != (-1.0)))
+		21 21   	{
+		22 22   		uvPoint.x = clamp(AdditionalOut.x, PRIM_PROPS_1.x, PRIM_PROPS_1.x + PRIM_PROPS_1.z);
+		   23 + 		uvPoint.y = clamp(AdditionalOut.y, 1.0 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1.0 - PRIM_PROPS_1.y);
+		23    - 		uvPoint.y = clamp(AdditionalOut.y, 1 - (PRIM_PROPS_1.y + PRIM_PROPS_1.w), 1 - PRIM_PROPS_1.y);
+		24 24   	}
+		25 25   
+		26 26   	vec4 outColor = texture2D(TEXTURE_0, uvPoint);
+		27 27   	outColor.w = mix(1.0 - outColor.w, outColor.w, ColorOut.x);
+		28 28   	float alpha = ColorOut.w * clamp(AdditionalOut.z, 0.0, 1.0);
+		        ...
+		        '''

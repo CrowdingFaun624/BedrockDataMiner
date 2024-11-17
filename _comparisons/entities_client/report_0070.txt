@@ -1,9 +1,8 @@
 Difference of "entities_client" between "1.16.230.56" (beta of "1.17.0") and "1.17.0.50" (beta of "1.17.0").
 
-Changed entity "player.entity":
+Changed entity "player.entity.json":
 	Total resource pack: 2 (+1, -0)
 	Added resource pack "experimental":
-		field "defined_in": resource pack: "experimental_caves_and_cliffs"
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
@@ -72,7 +71,7 @@ Changed entity "player.entity":
 					render controller: render controller item "controller.render.player.third_person": "!variable.is_first_person && !variable.map_face_icon"
 					render controller: render controller item "controller.render.player.map": "variable.map_face_icon"
 				field "scripts":
-					field "animate": script: "root"
+					field "scale": "0.9375"
 					field "initialize":
 						script: "variable.is_holding_right = 0.0;"
 						script: "variable.is_blinking = 0.0;"
@@ -89,7 +88,7 @@ Changed entity "player.entity":
 						script: "variable.hand_bob = query.life_time < 0.01 ? 0.0 : variable.hand_bob + ((query.is_on_ground && query.is_alive ? math.clamp(math.sqrt(math.pow(query.position_delta(0), 2.0) + math.pow(query.position_delta(2), 2.0)), 0.0, 0.1) : 0.0) - variable.hand_bob) * 0.02;"
 						script: "variable.map_angle = math.clamp(1 - variable.player_x_rotation / 45.1, 0.0, 1.0);"
 						script: "variable.item_use_normalized = query.main_hand_item_use_duration / query.main_hand_item_max_duration;"
-					field "scale": "0.9375"
+					field "animate": script: "root"
 				field "textures":
 					texture "cape": "textures/entity/cape_invisible"
 					texture "default": "textures/entity/steve"

@@ -1,0 +1,24 @@
+Difference of "shaders_resource_packs" between "1.17.20.21" (beta of "1.17.30") and "1.17.20.22" (beta of "1.17.30").
+
+Moved resource pack "barrier.vertex" to "cameraFacingSprite.vertex".
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 188 (+0, -0)
+		          '''
+		          ...
+		 72  72   
+		 73  73   #ifdef MASKED_MULTITEXTURE
+		 74  74   	vec4 tex1 = texture2D( TEXTURE_1, uv );
+		 75  75   
+		 76  76   	// If tex1 has a non-black color and no alpha, use color; otherwise use tex1 
+		     77 + 	float maskedTexture = float(dot( tex1.rgb, vec3(1.0, 1.0, 1.0) ) * ( 1.0 - tex1.a ) > 0.0);
+		     78 + 	color = mix(tex1, color, maskedTexture);
+		 77     - 	float maskedTexture = ceil( dot( tex1.rgb, vec3(1.0, 1.0, 1.0) ) * ( 1.0 - tex1.a ) );
+		 78     - 	color = mix(tex1, color, clamp(maskedTexture, 0.0, 1.0));
+		 79  79   #endif // MASKED_MULTITEXTURE
+		 80  80   
+		 81  81   #if defined(ALPHA_TEST) && !defined(USE_MULTITEXTURE) && !defined(MULTIPLICATIVE_TINT)
+		 82  82   	if(NEEDS_DISCARD(color))
+		 83  83   		discard;
+		          ...
+		          '''

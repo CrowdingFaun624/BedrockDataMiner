@@ -1,0 +1,34 @@
+Difference of "shaders_resource_packs" between "a0.12.1_build9" (beta of "a0.12.1") and "a0.12.1_build10" (beta of "a0.12.1").
+
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 55 (+2, -0)
+		        '''
+		        ...
+		12 12   uniform sampler2D TEXTURE_1;
+		13 13   uniform sampler2D TEXTURE_2;
+		14 14   
+		15 15   void main()
+		16 16   {
+		   17 + 	vec4 diffuse = texture2D( TEXTURE_0, uv0 );
+		17    - 	vec4 diffuse = texture2D( TEXTURE_0, uv0 ) * texture2D( TEXTURE_1, uv1 );
+		18 18   	vec4 inColor = color;
+		19 19   	
+		20 20   #ifdef SEASONS_FAR
+		21 21   	diffuse.a = 1.0;
+		22 22   	inColor.b = 1.0;
+		        ...
+		25 25   #ifdef ALPHA_TEST
+		26 26   	if(diffuse.a < 0.5)
+		27 27   	 	discard;
+		28 28   #endif
+		29 29   	
+		   30 + 	diffuse = diffuse * texture2D( TEXTURE_1, uv1 );
+		   31 + 
+		30 32   #ifndef SEASONS
+		31 33   
+		32 34   #if !defined(ALPHA_TEST) && !defined(BLEND)
+		33 35   	inColor.rgb = mix(inColor.aaa, inColor.rgb, diffuse.a);
+		34 36   	diffuse.a = inColor.a;
+		        ...
+		        '''

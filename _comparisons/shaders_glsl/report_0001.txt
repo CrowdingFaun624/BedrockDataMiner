@@ -1,0 +1,647 @@
+Difference of "shaders_resource_packs" between "a0.10.0_build1" (beta of "a0.10.0") and "a0.10.0_build2" (beta of "a0.10.0").
+
+Changed resource pack "cloud.vertex":
+	Changed file "vanilla":
+		Total line: 25 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform MAT4 WORLDVIEWPROJ;
+		    4 + uniform float RENDER_DISTANCE;
+		    5 + uniform vec4 FOG_COLOR;
+		    6 + uniform vec4 CURRENT_COLOR;
+		 3    - uniform mat4 WORLDVIEWPROJ;
+		 4    - uniform lowp float RENDER_DISTANCE;
+		 5    - uniform lowp vec4 FOG_COLOR;
+		 6    - uniform lowp vec4 CURRENT_COLOR;
+		 7  7   
+		 8  8   attribute mediump vec4 POSITION;
+		    9 + attribute vec4 COLOR;
+		 9    - attribute lowp vec4 COLOR;
+		10 10   
+		   11 + varying vec4 color;
+		11    - varying lowp vec4 color;
+		12 12   
+		13 13   const float fogNear = 0.5;
+		14 14   
+		15 15   const vec3 inverseLightDirection = vec3(0.62, 0.78, 0.0);
+		16 16   const float ambient = 0.7;
+		17 17   
+		18 18   void main()
+		19 19   {
+		20 20       gl_Position = WORLDVIEWPROJ * POSITION;
+		21 21   
+		   22 +  	float fog = clamp(gl_Position.z / RENDER_DISTANCE - fogNear, 0.0, 0.9);
+		22    -  	lowp float fog = clamp(gl_Position.z / RENDER_DISTANCE - fogNear, 0.0, 0.9);
+		23 23   
+		24 24       color = mix( COLOR * CURRENT_COLOR, FOG_COLOR, fog + 0.1 );
+		25 25   }
+		        '''
+Changed resource pack "color.fragment":
+	Changed file "vanilla":
+		Total line: 8 (+0, -0)
+		      '''
+		1 1   
+		2 2   
+		  3 + varying vec4 color;
+		3   - varying lowp vec4 color;
+		4 4   
+		5 5   void main()
+		6 6   {
+		7 7   	gl_FragColor = color;
+		8 8   }
+		      '''
+Changed resource pack "color.vertex":
+	Changed file "vanilla":
+		Total line: 15 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform MAT4 WORLDVIEWPROJ;
+		 3    - uniform mat4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		    6 + attribute vec4 COLOR;
+		 6    - attribute lowp vec4 COLOR;
+		 7  7   
+		    8 + varying vec4 color;
+		 8    - varying lowp vec4 color;
+		 9  9   
+		10 10   void main()
+		11 11   {
+		12 12       gl_Position = WORLDVIEWPROJ * POSITION;
+		13 13   
+		        ...
+		        '''
+Changed resource pack "color_ex.fragment":
+	Changed file "vanilla":
+		Total line: 10 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform vec4 CURRENT_COLOR;
+		 3    - uniform lowp vec4 CURRENT_COLOR;
+		 4  4   
+		    5 + varying vec4 color;
+		 5    - varying lowp vec4 color;
+		 6  6   
+		 7  7   void main()
+		 8  8   {
+		 9  9   	gl_FragColor = color * CURRENT_COLOR;
+		10 10   }
+		        '''
+Changed resource pack "color_texture.fragment":
+	Changed file "vanilla":
+		Total line: 23 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   uniform sampler2D TEXTURE_0;
+		    3 + uniform vec4 OVERLAY_COLOR;
+		 3    - uniform lowp vec4 OVERLAY_COLOR;
+		 4  4   
+		    5 + varying vec4 color;
+		    6 + varying vec2 uv;
+		 5    - varying lowp vec4 color;
+		 6    - varying lowp vec2 uv;
+		 7  7   
+		 8  8   void main()
+		 9  9   {
+		   10 + 	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		10    - 	lowp vec4 diffuse = texture2D( TEXTURE_0, uv );
+		11 11   	
+		12 12   #ifdef ALPHA_TEST
+		13 13   	if(diffuse.a < 0.5)
+		14 14   	 	discard;
+		15 15   #endif
+		        ...
+		        '''
+Changed resource pack "color_uv.vertex":
+	Changed file "vanilla":
+		Total line: 18 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform MAT4 WORLDVIEWPROJ;
+		 3    - uniform mat4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		    6 + attribute vec4 COLOR;
+		    7 + attribute vec2 TEXCOORD_0;
+		 6    - attribute lowp vec4 COLOR;
+		 7    - attribute lowp vec2 TEXCOORD_0;
+		 8  8   
+		    9 + varying vec4 color;
+		   10 + varying vec2 uv;
+		 9    - varying lowp vec4 color;
+		10    - varying lowp vec2 uv;
+		11 11   
+		12 12   void main()
+		13 13   {
+		14 14       gl_Position = WORLDVIEWPROJ * POSITION;
+		15 15   
+		        ...
+		        '''
+Changed resource pack "current_color.fragment":
+	Changed file "vanilla":
+		Total line: 8 (+0, -0)
+		      '''
+		1 1   
+		2 2   
+		  3 + uniform vec4 CURRENT_COLOR;
+		3   - uniform lowp vec4 CURRENT_COLOR;
+		4 4   
+		5 5   void main()
+		6 6   {
+		7 7   	gl_FragColor = CURRENT_COLOR;
+		8 8   }
+		      '''
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 45 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   uniform sampler2D TEXTURE_0;
+		    3 + uniform vec4 OVERLAY_COLOR;
+		 3    - uniform lowp vec4 OVERLAY_COLOR;
+		 4  4   
+		 5  5   #ifndef COLOR_BASED
+		    6 + 	varying vec2 uv;
+		 6    - 	varying lowp vec2 uv;
+		 7  7   #endif 
+		 8  8   
+		    9 + varying vec4 light;
+		   10 + varying vec4 fogColor;
+		 9    - varying lowp vec4 light;
+		10    - varying lowp vec4 fogColor;
+		11 11   
+		12 12   #ifdef USE_EMISSIVE
+		13 13   #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+		14 14   #else
+		15 15   #define NEEDS_DISCARD(C)	(C.a < 0.5)
+		        ...
+		        '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 66 (+0, -0)
+		        '''
+		 1  1   
+		    2 + uniform MAT4 WORLDVIEWPROJ;
+		    3 + uniform MAT4 WORLD;
+		    4 + uniform vec3 TILE_LIGHT_COLOR;
+		    5 + uniform vec4 OVERLAY_COLOR;
+		    6 + uniform vec4 FOG_COLOR;
+		    7 + uniform vec2 FOG_CONTROL;
+		    8 + uniform float RENDER_DISTANCE;
+		 2    - uniform mat4 WORLDVIEWPROJ;
+		 3    - uniform mat4 WORLD;
+		 4    - uniform lowp vec3 TILE_LIGHT_COLOR;
+		 5    - uniform lowp vec4 OVERLAY_COLOR;
+		 6    - uniform lowp vec4 FOG_COLOR;
+		 7    - uniform lowp vec2 FOG_CONTROL;
+		 8    - uniform lowp float RENDER_DISTANCE;
+		 9  9   
+		10 10   attribute mediump vec4 POSITION;
+		   11 + attribute vec2 TEXCOORD_0;
+		   12 + attribute vec4 NORMAL;
+		11    - attribute lowp vec2 TEXCOORD_0;
+		12    - attribute lowp vec4 NORMAL;
+		13 13   
+		14 14   #ifdef COLOR_BASED
+		   15 + 	attribute vec4 COLOR;
+		15    - 	attribute lowp vec4 COLOR;
+		16 16   #endif
+		17 17   
+		   18 + varying vec2 uv;
+		   19 + varying vec4 light;
+		   20 + varying vec4 fogColor;
+		18    - varying lowp vec2 uv;
+		19    - varying lowp vec4 light;
+		20    - varying lowp vec4 fogColor;
+		21 21   
+		22 22   const float AMBIENT = 0.45;
+		23 23   
+		24 24   const float XFAC = -0.1;
+		25 25   const float ZFAC = 0.1;
+		26 26   
+		   27 + float lightIntensity() {
+		27    - lowp float lightIntensity() {
+		28 28   #ifdef FANCY
+		   29 +     vec3 N = normalize( WORLD * NORMAL ).xyz;
+		29    -     lowp vec3 N = normalize( WORLD * NORMAL ).xyz;
+		30 30   
+		31 31       //take care of double sided polygons on materials without culling
+		32 32   #ifdef FLIP_BACKFACES
+		   33 +     vec3 viewDir = normalize((WORLD * POSITION).xyz);
+		33    -     lowp vec3 viewDir = normalize((WORLD * POSITION).xyz);
+		34 34       if( dot(N, viewDir) > 0.0 )
+		35 35           N *= -1.0;
+		36 36   #endif
+		37 37   
+		   38 +     float yLight = (1.0+N.y) * 0.5;
+		38    -     lowp float yLight = (1.0+N.y) * 0.5;
+		39 39       return yLight * (1.0-AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+		40 40   #else
+		41 41       return 1.0;
+		42 42   #endif
+		43 43   }
+		44 44   
+		45 45   void main()
+		46 46   {
+		47 47       gl_Position = WORLDVIEWPROJ * POSITION;
+		48 48   
+		   49 +     float L = lightIntensity();
+		49    -     lowp float L = lightIntensity();
+		50 50   
+		51 51   #ifdef USE_OVERLAY
+		52 52   	L += OVERLAY_COLOR.a * 0.35;
+		53 53   #endif
+		54 54    
+		        ...
+		        '''
+Changed resource pack "iteminhand.fragment":
+	Changed file "vanilla":
+		Total line: 11 (+0, -0)
+		        '''
+		 1  1   
+		    2 + uniform vec4 OVERLAY_COLOR;
+		 2    - uniform lowp vec4 OVERLAY_COLOR;
+		 3  3   
+		    4 + varying vec4 light;
+		 4    - varying lowp vec4 light;
+		 5  5   
+		 6  6   void main()
+		 7  7   {
+		 8  8   	gl_FragColor = mix(vec4(1), light, light.a );
+		 9  9   
+		        ...
+		        '''
+Changed resource pack "normal_as_color.vertex":
+	Changed file "vanilla":
+		Total line: 16 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform MAT4 WORLDVIEWPROJ;
+		 3    - uniform mat4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		    6 + attribute vec4 NORMAL;
+		 6    - attribute lowp vec4 NORMAL;
+		 7  7   
+		    8 + varying vec4 color;
+		 8    - varying lowp vec4 color;
+		 9  9   
+		10 10   void main()
+		11 11   {
+		12 12       gl_Position = WORLDVIEWPROJ * POSITION;
+		13 13   
+		        ...
+		        '''
+Changed resource pack "position.vertex":
+	Changed file "vanilla":
+		Total line: 10 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform MAT4 WORLDVIEWPROJ;
+		 3    - uniform mat4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		 6  6   
+		 7  7   void main()
+		 8  8   {
+		        ...
+		        '''
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 27 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + varying vec2 uv0;
+		    4 + varying vec2 uv1;
+		    5 + varying vec4 color;
+		 3    - varying lowp vec2 uv0;
+		 4    - varying lowp vec2 uv1;
+		 5    - varying lowp vec4 color;
+		 6  6   
+		 7  7   #ifdef FOG
+		    8 + 	varying vec4 fogColor;
+		 8    - 	varying lowp vec4 fogColor;
+		 9  9   #endif
+		10 10   
+		11 11   uniform sampler2D TEXTURE_0;
+		12 12   uniform sampler2D TEXTURE_1;
+		13 13   
+		        ...
+		        '''
+Changed resource pack "renderchunk.vertex":
+	Changed file "vanilla":
+		Total line: 97 (+13, -24)
+		          '''
+		          ...
+		  7   7   #endif
+		  8   8   
+		  9   9   #define POS3 POSITIONP vec3
+		 10  10   #define POS4 POSITIONP vec4
+		 11  11   
+		     12 + uniform MAT4 WORLDVIEWPROJ;
+		     13 + uniform vec4 FOG_COLOR;
+		     14 + uniform vec2 FOG_CONTROL;
+		     15 + uniform float RENDER_DISTANCE;
+		     16 + uniform vec2 VIEWPORT_DIMENSION;
+		     17 + uniform vec4 CURRENT_COLOR;		//current color r contains the offset to apply to the fog for the "fade in"
+		 12     - uniform mat4 WORLDVIEWPROJ;
+		 13     - uniform lowp vec4 FOG_COLOR;
+		 14     - uniform lowp vec2 FOG_CONTROL;
+		 15     - uniform lowp float RENDER_DISTANCE;
+		 16     - uniform lowp vec2 VIEWPORT_DIMENSION;
+		 17     - uniform lowp vec4 CURRENT_COLOR;		//current color r contains the offset to apply to the fog for the "fade in"
+		 18  18   uniform POS3 CHUNK_ORIGIN;
+		 19  19   uniform POS3 VIEW_POS;
+		     20 + uniform float FAR_CHUNKS_DISTANCE;
+		 20     - uniform lowp float FAR_CHUNKS_DISTANCE;
+		 21  21   
+		 22  22   attribute POS4 POSITION;
+		     23 + attribute vec4 COLOR;
+		     24 + attribute vec2 TEXCOORD_0;
+		     25 + attribute vec2 TEXCOORD_1;
+		 23     - attribute lowp vec4 COLOR;
+		 24     - attribute lowp vec2 TEXCOORD_0;
+		 25     - attribute lowp vec2 TEXCOORD_1;
+		 26  26   
+		     27 + varying vec2 uv0;
+		     28 + varying vec2 uv1;
+		     29 + varying vec4 color;
+		 27     - varying lowp vec2 uv0;
+		 28     - varying lowp vec2 uv1;
+		 29     - varying lowp vec4 color;
+		 30  30   
+		 31  31   #ifdef FOG
+		     32 + 	varying vec4 fogColor;
+		 32     - 	varying lowp vec4 fogColor;
+		 33  33   #endif
+		 34  34   
+		 35  35   const float rA = 1.0;
+		 36  36   const float rB = 1.0;
+		 37  37   const vec3 UNIT_Y = vec3(0,1,0);
+		 38  38   const float DIST_DESATURATION = 56.0 / 255.0; //WARNING this value is also hardcoded in the water color, don'tchange
+		 39  39   
+		     40 + void main()
+		     41 + {
+		 40     - float circularFogFactor(POS4 position, lowp float near, lowp float far) {
+		 41     - 	
+		     42 +     gl_Position = WORLDVIEWPROJ * POSITION;
+		 42     - 	lowp float depth = position.z / RENDER_DISTANCE;
+		 43  43   
+		 44     - //sphericize the depths
+		 45     - #ifdef FANCY
+		 46     - 	lowp vec2 screenPos = abs( position.xy / position.w  );
+		     44 +     uv0 = TEXCOORD_0;
+		     45 +     uv1 = TEXCOORD_1;
+		     46 + 	color = COLOR;
+		 47     - 	depth += (screenPos.x * 0.3 + screenPos.y * 0.15) * far;
+		 48     - #else
+		 49     - 	depth += far * 0.2;
+		 50     - #endif
+		 51  47   
+		 52     - #ifdef ALLOW_FADE
+		 53     - 	depth += CURRENT_COLOR.r;
+		     48 + ///// find distance from the camera
+		 54     - #endif
+		 55  49   
+		     50 + #if defined(FOG) || defined(NEAR_WATER)
+		     51 + 		#ifdef FANCY
+		     52 + 		vec3 relPos = VIEW_POS - (POSITION.xyz + CHUNK_ORIGIN);
+		     53 + 		float cameraDepth = length(relPos);
+		     54 + 	#else
+		     55 + 		float cameraDepth = gl_Position.z + RENDER_DISTANCE * 0.1;
+		     56 + 	#endif
+		     57 + #endif
+		 56     - 	return clamp((depth - near) / (far - near), 0.0, 1.0);
+		 57     - }
+		 58     - 
+		 59     - lowp vec4 fancyWater(POS3 position, lowp vec4 baseColor) {
+		 60     - 	POS3 world = position + CHUNK_ORIGIN;
+		 61  58   
+		 62     - 	POS3 viewDir = VIEW_POS - world;
+		 63     - 	lowp float len = length(viewDir);
+		 64     - 	viewDir /= len;
+		     59 + ///// apply fog
+		 65     - 	lowp float F = dot(viewDir, UNIT_Y);
+		 66  60   
+		 67     - //if both NEAR_WATER and FOG are defined, it's forced fog and we're underwater
+		     61 + #ifdef FOG
+		     62 + 	float len = cameraDepth / RENDER_DISTANCE;
+		     63 + 	#ifdef ALLOW_FADE
+		     64 + 		len += CURRENT_COLOR.r;
+		     65 + 	#endif
+		 68     - #ifndef FOG  //over water
+		 69     - 	F = 1.0 - max(F, 0.1);
+		 70     - #else //under water
+		 71     - 	baseColor.a = 0.7; //disable fake transparency and be transparent
+		 72     - #endif
+		 73     - 
+		 74     - 	F = 1.0 - mix(F*F*F*F, 1.0, min(1.0, len / FAR_CHUNKS_DISTANCE));
+		 75  66   
+		     67 +     fogColor.rgb = FOG_COLOR.rgb;
+		     68 + 	fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		     69 + #endif
+		 76     - 	baseColor.rg -= vec2(F * DIST_DESATURATION);
+		 77  70   
+		     71 + ///// water magic
+		     72 + #ifdef NEAR_WATER
+		 78     - 	vec4 depthColor = vec4(baseColor.rgb * 0.5, 1.0);
+		     73 + 	#ifdef FANCY  /////enhance water
+		     74 + 		float F = dot(normalize(relPos), UNIT_Y);
+		 79     - 	vec4 traspColor = vec4(baseColor.rgb * 0.45, 0.8);
+		 80     - 	vec4 surfColor = vec4(baseColor.rgb, 1.0);
+		 81  75   
+		     76 + 		//if both NEAR_WATER and FOG are defined, it's forced fog and we're underwater
+		     77 + 		#ifndef FOG  //over water
+		     78 + 			F = 1.0 - max(F, 0.1);
+		     79 + 		#else //under water
+		     80 + 			color.a = 0.7; //disable fake transparency and be transparent
+		     81 + 		#endif
+		 82     - 	vec4 nearColor = mix(traspColor, depthColor, baseColor.a);
+		 83     - 	return mix(surfColor,nearColor, F);
+		 84     - }
+		 85  82   
+		 86     - void main()
+		 87     - {
+		     83 + 		F = 1.0 - mix(F*F*F*F, 1.0, min(1.0, cameraDepth / FAR_CHUNKS_DISTANCE));
+		 88     -     gl_Position = WORLDVIEWPROJ * POSITION;
+		 89  84   
+		     85 + 		color.rg -= vec2(F * DIST_DESATURATION);
+		 90     -     uv0 = TEXCOORD_0;
+		 91     -     uv1 = TEXCOORD_1;
+		 92  86   
+		 93     - #ifdef FOG
+		 94     -     fogColor.rgb = FOG_COLOR.rgb;
+		     87 + 		vec4 depthColor = vec4(color.rgb * 0.5, 1.0);
+		     88 + 		vec4 traspColor = vec4(color.rgb * 0.45, 0.8);
+		     89 + 		vec4 surfColor = vec4(color.rgb, 1.0);
+		     90 + 
+		     91 + 		vec4 nearColor = mix(traspColor, depthColor, color.a);
+		     92 + 		color = mix(surfColor, nearColor, F);
+		     93 + 	#else
+		 95     - 	fogColor.a = circularFogFactor(gl_Position, FOG_CONTROL.x, FOG_CONTROL.y );
+		 96     - #endif
+		 97     - 	
+		 98     - #ifdef NEAR_WATER
+		 99     - #ifdef FANCY
+		100     - 	color = fancyWater(POSITION.xyz, COLOR);
+		101     - #else
+		102     - 	color = COLOR;
+		     94 + 		color.a = gl_Position.z / FAR_CHUNKS_DISTANCE + 0.5;
+		     95 + 	#endif //FANCY
+		103     - 	color.a = (gl_Position.z) / FAR_CHUNKS_DISTANCE + 0.5;
+		104     - #endif //FANCY
+		105     - #else
+		106     - 	color = COLOR;
+		107  96   #endif
+		108  97   }
+		          '''
+Changed resource pack "sky.vertex":
+	Changed file "vanilla":
+		Total line: 19 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform MAT4 WORLDVIEWPROJ;
+		    4 + uniform vec4 FOG_COLOR;
+		    5 + uniform vec4 CURRENT_COLOR;
+		 3    - uniform mat4 WORLDVIEWPROJ;
+		 4    - uniform lowp vec4 FOG_COLOR;
+		 5    - uniform lowp vec4 CURRENT_COLOR;
+		 6  6   
+		 7  7   attribute mediump vec4 POSITION;
+		    8 + attribute vec4 COLOR;
+		 8    - attribute lowp vec4 COLOR;
+		 9  9   
+		   10 + varying vec4 color;
+		10    - varying lowp vec4 color;
+		11 11   
+		12 12   const float fogNear = 0.3;
+		13 13   
+		14 14   void main()
+		15 15   {
+		        ...
+		        '''
+Changed resource pack "texture.fragment":
+	Changed file "vanilla":
+		Total line: 15 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + varying vec2 uv;
+		 3    - varying lowp vec2 uv;
+		 4  4   
+		 5  5   uniform sampler2D TEXTURE_0;
+		 6  6   
+		 7  7   void main()
+		 8  8   {
+		        ...
+		        '''
+Changed resource pack "texture_ccolor.fragment":
+	Changed file "vanilla":
+		Total line: 18 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + varying vec2 uv;
+		 3    - varying lowp vec2 uv;
+		 4  4   
+		    5 + uniform vec4 CURRENT_COLOR;
+		 5    - uniform lowp vec4 CURRENT_COLOR;
+		 6  6   uniform sampler2D TEXTURE_0;
+		 7  7   
+		 8  8   void main()
+		 9  9   {
+		   10 + 	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		10    - 	lowp vec4 diffuse = texture2D( TEXTURE_0, uv );
+		11 11   
+		12 12   #ifdef ALPHA_TEST
+		13 13   	if(diffuse.a < 0.5)
+		14 14   		discard;
+		15 15   #endif
+		        ...
+		        '''
+Changed resource pack "texture_cutout.fragment":
+	Changed file "vanilla":
+		Total line: 13 (+0, -0)
+		        '''
+		    1 + varying vec2 uv;
+		 1    - varying lowp vec2 uv;
+		 2  2   
+		    3 + uniform vec4 CURRENT_COLOR;
+		 3    - uniform lowp vec4 CURRENT_COLOR;
+		 4  4   uniform sampler2D TEXTURE_0;
+		 5  5   
+		 6  6   void main()
+		 7  7   {
+		    8 + 	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		 8    - 	lowp vec4 diffuse = texture2D( TEXTURE_0, uv );
+		 9  9   	if(diffuse.a < 0.5)
+		10 10   		discard;
+		11 11   		
+		12 12   	gl_FragColor = CURRENT_COLOR;
+		13 13   }
+		        '''
+Changed resource pack "uv.vertex":
+	Changed file "vanilla":
+		Total line: 15 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform MAT4 WORLDVIEWPROJ;
+		 3    - uniform mat4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		    6 + attribute vec2 TEXCOORD_0;
+		 6    - attribute lowp vec2 TEXCOORD_0;
+		 7  7   
+		    8 + varying vec2 uv;
+		 8    - varying lowp vec2 uv;
+		 9  9   
+		10 10   void main()
+		11 11   {
+		12 12       gl_Position = WORLDVIEWPROJ * POSITION;
+		13 13   
+		        ...
+		        '''
+Changed resource pack "uv1.vertex":
+	Changed file "vanilla":
+		Total line: 15 (+0, -0)
+		        '''
+		 1  1   
+		 2  2   
+		    3 + uniform MAT4 WORLDVIEWPROJ;
+		 3    - uniform mat4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		    6 + attribute vec2 TEXCOORD_1;
+		 6    - attribute lowp vec2 TEXCOORD_1;
+		 7  7   
+		    8 + varying vec2 uv;
+		 8    - varying lowp vec2 uv;
+		 9  9   
+		10 10   void main()
+		11 11   {
+		12 12       gl_Position = WORLDVIEWPROJ * POSITION;
+		13 13   
+		        ...
+		        '''
+Changed resource pack "uv_as_color.fragment":
+	Changed file "vanilla":
+		Total line: 7 (+0, -0)
+		      '''
+		1 1   
+		  2 + varying vec2 uv;
+		2   - varying lowp vec2 uv;
+		3 3   
+		4 4   void main()
+		5 5   {
+		6 6   	gl_FragColor = vec4(uv.x, uv.y,0.0,1.0);
+		7 7   }
+		      '''

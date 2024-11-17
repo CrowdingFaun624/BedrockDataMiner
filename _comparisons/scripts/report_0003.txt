@@ -1,0 +1,587 @@
+Difference of "scripts" between "1.16.221" and "1.16.230.50" (beta of "1.17.0").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "APITests.js":
+		Total line: 99 (+91, -1)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		  2   2   import { BlockLocation, World } from "Minecraft";
+		  3   3   
+		      4 + GameTest.register("APITests", "color_component", (test) => {
+		      5 +   const sheep = test.spawn("minecraft:sheep", new BlockLocation(1, 2, 1));
+		      6 +   let counter = 0;
+		      7 +   test.succeedWhen(() => {
+		      8 +     const colorComponent = sheep.getComponent("minecraft:color");
+		      9 +     const color = colorComponent.value;
+		     10 +     colorComponent.setColor((color + 1) % 16);
+		     11 +     if (++counter != 48) {
+		     12 +       throw "Disco sheep!";
+		     13 +     }
+		     14 +   });
+		     15 + });
+		     16 + 
+		     17 + GameTest.register("APITests", "get_component_on_dead_entity", (test) => {
+		     18 +   const horse = test.spawn("minecraft:horse", new BlockLocation(1, 2, 1));
+		     19 +   horse.kill();
+		     20 +   test.runAfterDelay(40, () => {
+		     21 +     try {
+		     22 +       // This should throw since the entity is dead
+		     23 +       horse.getComponent("minecraft:tamemount").setTamed();
+		     24 +       test.fail();
+		     25 +     } catch (e) {
+		     26 +       test.succeed();
+		     27 +     }
+		     28 +   });
+		     29 + });
+		     30 + 
+		     31 + GameTest.register("APITests", "is_saddled_component", (test) => {
+		     32 +   const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     33 +   // TODO: Give saddle to pig
+		     34 +   test.succeedWhen(() => {
+		     35 +     const isSaddled = pig.getComponent("minecraft:is_saddled") !== undefined;
+		     36 +     if (!isSaddled) {
+		     37 +       throw "Not saddled";
+		     38 +     }
+		     39 +   });
+		     40 + }).tag(GameTest.Tags.suiteDisabled);
+		     41 + 
+		     42 + GameTest.register("APITests", "get_components", (test) => {
+		     43 +   const horse = test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     44 +   test.print("---Start Components---");
+		     45 +   for (const component of horse.getComponents()) {
+		     46 +     test.print(component.getName());
+		     47 +   }
+		     48 +   test.print("---End Components---");
+		     49 +   test.succeed();
+		     50 + });
+		     51 + 
+		     52 + GameTest.register("APITests", "leashable_component", (test) => {
+		     53 +   const pig1 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     54 +   const pig2 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 1));
+		     55 +   const leashable = pig1.getComponent("minecraft:leashable");
+		     56 +   if (leashable) {
+		     57 +     test.print("softDistance: " + leashable.softDistance);
+		     58 +     leashable.leash(pig2);
+		     59 +     test.runAtTickTime(20, () => {
+		     60 +       leashable.unleash();
+		     61 +     });
+		     62 +     test.succeedWhen(() => {
+		     63 +       test.assertEntityPresentInArea("minecraft:item"); // Make sure the lead dropped
+		     64 +     });
+		     65 +   } else {
+		     66 +     test.fail();
+		     67 +   }
+		     68 + });
+		     69 + 
+		     70 + GameTest.register("APITests", "health_component", (test) => {
+		     71 +   const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
+		     72 +   const sheepPos = new BlockLocation(4, 2, 2);
+		     73 +   const sheep = test.spawn(sheepId, sheepPos);
+		     74 +   test.assertEntityInstancePresent(sheep);
+		     75 +   test.pullLever(new BlockLocation(2, 3, 2));
+		     76 +   const healthComponent = sheep.getComponent("minecraft:health");
+		     77 +   if (healthComponent) {
+		     78 +     test.succeedWhen(() => {
+		     79 +       let currentHealth = healthComponent.current;
+		     80 +       if (currentHealth !== 0) {
+		     81 +         throw "Unexpected health";
+		     82 +       }
+		     83 +     });
+		     84 +   } else {
+		     85 +     test.fail();
+		     86 +   }
+		     87 + })
+		     88 +   .maxTicks(200);
+		     89 + 
+		     90 + GameTest.register("APITests", "on_entity_created", (test) => {
+		     91 +   World.addEventListener("onEntityCreated", (entity) => {
+		     92 +     if (entity) {
+		     93 +         test.succeed();
+		     94 +     } else {
+		  4     - GameTest.register("APITests", "on_entity_created", (test) => {
+		     95 +         test.fail("Expected entity");
+		     96 +     }
+		  5     -   World.attachEvent("onEntityCreated", (entity) => {
+		  6     -     test.succeed();
+		  7  97     });
+		  8  98     test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		  9  99   });
+		          '''
+	Changed script "BlockTests.js":
+		Total line: 136 (+1, -1)
+		          '''
+		          ...
+		112 112         2.0
+		113 113       );
+		114 114     });
+		115 115   })
+		116 116     .maxTicks(TicksPerSecond * 10)
+		    117 +   .tag(GameTest.Tags.suiteDisabled)
+		117     -   .tag(GameTest.Tags.suiteBroken)
+		118 118     .maxAttempts(3);
+		119 119   
+		120 120   GameTest.register(
+		121 121     "BlockTests",
+		122 122     "concrete_pops_off_waterlogged_chest",
+		          ...
+		          '''
+	Changed script "DispenserTests.js":
+		Total line: 246 (+30, -100)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		  2     - import { BlockLocation, Blocks, ItemStack } from "Minecraft";
+		  3     - 
+		  4     - const dispenserDelay = 5; // Number of ticks to wait for the dispenser to use or dispense an item
+		  5     - const armorSlotTorso = 1;
+		  6     - const pinkCarpet = 6;
+		  7     - const threeSecondsInTicks = 60;
+		  8     - 
+		  9     - GameTest.register("DispenserTests", "dispenser_shears_sheep", (test) => {
+		 10     -   const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
+		 11     -   const entityLoc = new BlockLocation(1, 2, 1);
+		 12     -   test.spawn(sheepId, entityLoc);
+		 13     -   test.assertEntityPresent(sheepId, entityLoc);
+		 14     -   test.assertEntityHasComponent(
+		 15     -     sheepId,
+		 16     -     "minecraft:is_sheared",
+		 17     -     entityLoc,
+		 18     -     false
+		 19     -   );
+		 20     - 
+		 21     -   test.pressButton(new BlockLocation(0, 2, 0));
+		 22     - 
+		 23     -   test.assertEntityPresent(sheepId, entityLoc);
+		 24     -   test.succeedWhenEntityHasComponent(
+		 25     -     sheepId,
+		 26     -     "minecraft:is_sheared",
+		 27     -     entityLoc,
+		 28     -     true
+		 29     -   );
+		 30     - })
+		 31     -   .maxTicks(threeSecondsInTicks)
+		 32     -   .tag(GameTest.Tags.suiteDefault);
+		 33     - 
+		 34     - GameTest.register("DispenserTests", "dispenser_shears_mooshroom", (test) => {
+		 35     -   const cowId = "minecraft:cow<minecraft:ageable_grow_up>";
+		 36     -   const mooshroomId = "minecraft:mooshroom<minecraft:ageable_grow_up>";
+		 37     -   const entityLoc = new BlockLocation(1, 2, 1);
+		 38     -   test.spawn(mooshroomId, entityLoc);
+		 39     -   test.assertEntityPresent(mooshroomId, entityLoc);
+		 40     -   test.assertEntityHasComponent(
+		 41     -     mooshroomId,
+		 42     -     "minecraft:is_sheared",
+		 43     -     entityLoc,
+		 44     -     false
+		 45     -   );
+		 46     -   test.pressButton(new BlockLocation(0, 2, 0));
+		 47     - 
+		 48     -   test.succeedWhenEntityPresent(cowId, entityLoc);
+		 49     - })
+		 50     -   .maxTicks(threeSecondsInTicks)
+		 51     -   .tag("suite:java_parity")
+		 52     -   .tag(GameTest.Tags.suiteBroken);
+		 53     - 
+		 54     - GameTest.register("DispenserTests", "dispenser_shears_snowgolem", (test) => {
+		 55     -   const snowGolemId = "minecraft:snow_golem";
+		 56     -   const entityLoc = new BlockLocation(1, 2, 1);
+		 57     -   test.spawn(snowGolemId, entityLoc);
+		 58     -   test.assertEntityPresent(snowGolemId, entityLoc);
+		 59     -   test.assertEntityHasComponent(
+		 60     -     snowGolemId,
+		 61     -     "minecraft:is_sheared",
+		 62     -     entityLoc,
+		 63     -     false
+		 64     -   );
+		 65     - 
+		      2 + import { BlockLocation, Blocks } from "Minecraft";
+		 66     -   test.pressButton(new BlockLocation(0, 2, 0));
+		 67   3   
+		      4 + const dispenserDelay = 5; // Number of ticks to wait for the dispenser to use or dispense an item
+		      5 + const armorSlotTorso = 1;
+		 68     -   test.assertEntityPresent(snowGolemId, entityLoc);
+		      6 + const pinkCarpet = 6;
+		      7 + const tameMountComponentName = "minecraft:tamemount";
+		      8 + const threeSecondsInTicks = 60;
+		      9 + 
+		     10 + GameTest.register("DispenserTests", "dispenser_shears_sheep", (test) => {
+		     11 +   const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
+		     12 +   const entityLoc = new BlockLocation(1, 2, 1);
+		     13 +   test.spawn(sheepId, entityLoc);
+		     14 +   test.assertEntityPresent(sheepId, entityLoc);
+		     15 +   test.assertEntityHasComponent(sheepId, "minecraft:is_sheared", entityLoc, false);
+		 69     -   test.succeedWhenEntityHasComponent(
+		 70     -     snowGolemId,
+		 71     -     "minecraft:is_sheared",
+		 72     -     entityLoc,
+		 73     -     true
+		 74     -   );
+		 75     - })
+		 76     -   .maxTicks(threeSecondsInTicks)
+		 77     -   .tag("suite:java_parity")
+		 78     -   .tag(GameTest.Tags.suiteBroken);
+		 79  16   
+		 80     - GameTest.register("DispenserTests", "dispenser_horsearmor_on_horse", (test) => {
+		 81     -   const horseId = "minecraft:horse<minecraft:ageable_grow_up>";
+		 82     -   const entityLoc = new BlockLocation(1, 2, 1);
+		 83     -   test.spawn(horseId, entityLoc);
+		     17 +   test.pressButton(new BlockLocation(0, 2, 0));
+		 84     -   test.setEntityTamed(horseId, entityLoc);
+		 85  18   
+		     19 +   test.assertEntityPresent(sheepId, entityLoc);
+		     20 +   test.succeedWhenEntityHasComponent(sheepId, "minecraft:is_sheared", entityLoc, true);
+		     21 + })
+		     22 +   .maxTicks(threeSecondsInTicks)
+		 86     -   test.assertEntityHasArmor(horseId, armorSlotTorso, "", 0, entityLoc, false);
+		 87     - 
+		     23 +   .tag(GameTest.Tags.suiteDefault);
+		 88     -   test.pressButton(new BlockLocation(0, 2, 0));
+		 89  24   
+		     25 + GameTest.register("DispenserTests", "dispenser_shears_mooshroom", (test) => {
+		 90     -   test.assertEntityPresent(horseId, entityLoc);
+		 91     -   test.succeedOnTickWhen(dispenserDelay, () => {
+		 92     -     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		     26 +   const cowId = "minecraft:cow<minecraft:ageable_grow_up>";
+		     27 +   const mooshroomId = "minecraft:mooshroom<minecraft:ageable_grow_up>";
+		     28 +   const entityLoc = new BlockLocation(1, 2, 1);
+		     29 +   test.spawn(mooshroomId, entityLoc);
+		     30 +   test.assertEntityPresent(mooshroomId, entityLoc);
+		     31 +   test.assertEntityHasComponent(mooshroomId, "minecraft:is_sheared", entityLoc, false);
+		     32 +   test.pressButton(new BlockLocation(0, 2, 0));
+		     33 + 
+		     34 +   test.succeedWhenEntityPresent(cowId, entityLoc);
+		 93     -     test.assertEntityHasArmor(
+		 94     -       horseId,
+		 95     -       armorSlotTorso,
+		 96     -       "diamond_horse_armor",
+		 97     -       0,
+		 98     -       entityLoc,
+		 99     -       true
+		100     -     );
+		101     -   });
+		102  35   })
+		103  36     .maxTicks(threeSecondsInTicks)
+		104  37     .tag("suite:java_parity")
+		     38 +   .tag(GameTest.Tags.suiteDisabled);
+		105     -   .tag(GameTest.Tags.suiteBroken);
+		106  39   
+		     40 + GameTest.register("DispenserTests", "dispenser_shears_snowgolem", (test) => {
+		     41 +   const snowGolemId = "minecraft:snow_golem";
+		107     - GameTest.register("DispenserTests", "dispenser_saddle_on_pig", (test) => {
+		108     -   const pigId = "minecraft:pig<minecraft:ageable_grow_up>";
+		109  42     const entityLoc = new BlockLocation(1, 2, 1);
+		110     -   test.spawn(pigId, entityLoc);
+		111     -   test.assertEntityHasComponent(
+		112     -     pigId,
+		113     -     "minecraft:is_saddled",
+		     43 +   test.spawn(snowGolemId, entityLoc);
+		     44 +   test.assertEntityPresent(snowGolemId, entityLoc);
+		     45 +   test.assertEntityHasComponent(snowGolemId, "minecraft:is_sheared", entityLoc, false);
+		114     -     entityLoc,
+		115     -     false
+		116     -   );
+		117  46   
+		118  47     test.pressButton(new BlockLocation(0, 2, 0));
+		119  48   
+		     49 +   test.assertEntityPresent(snowGolemId, entityLoc);
+		     50 +   test.succeedWhenEntityHasComponent(snowGolemId, "minecraft:is_sheared", entityLoc, true);
+		     51 + })
+		120     -   test.assertEntityPresent(pigId, entityLoc);
+		     52 +   .maxTicks(threeSecondsInTicks)
+		     53 +   .tag("suite:java_parity")
+		     54 +   .tag(GameTest.Tags.suiteDisabled);
+		     55 + 
+		     56 + GameTest.register("DispenserTests", "dispenser_horsearmor_on_horse", (test) => {
+		     57 +   const horseId = "minecraft:horse<minecraft:ageable_grow_up>";
+		     58 +   const entityLoc = new BlockLocation(1, 2, 1);
+		     59 +   const horse = test.spawn(horseId, entityLoc);
+		     60 +   horse.getComponent(tameMountComponentName).setTamed(false);
+		     61 + 
+		     62 +   test.assertEntityHasArmor(horseId, armorSlotTorso, "", 0, entityLoc, false);
+		     63 + 
+		     64 +   test.pressButton(new BlockLocation(0, 2, 0));
+		121     -   test.succeedOnTickWhen(dispenserDelay, () => {
+		122     -     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		123     -     test.assertEntityHasComponent(
+		124     -       pigId,
+		125     -       "minecraft:is_saddled",
+		126     -       entityLoc,
+		127     -       true
+		128     -     );
+		129     -   });
+		130     - })
+		131     -   .maxTicks(threeSecondsInTicks)
+		132     -   .tag("suite:java_parity")
+		133     -   .tag(GameTest.Tags.suiteBroken);
+		134  65   
+		     66 +   test.assertEntityPresent(horseId, entityLoc);
+		     67 +   test.succeedOnTickWhen(dispenserDelay, () => {
+		     68 +     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		     69 +     test.assertEntityHasArmor(horseId, armorSlotTorso, "diamond_horse_armor", 0, entityLoc, true);
+		     70 +   });
+		     71 + })
+		     72 +   .maxTicks(threeSecondsInTicks)
+		     73 +   .tag("suite:java_parity")
+		     74 +   .tag(GameTest.Tags.suiteDisabled);
+		     75 + 
+		     76 + GameTest.register("DispenserTests", "dispenser_saddle_on_pig", (test) => {
+		     77 +   const pigId = "minecraft:pig<minecraft:ageable_grow_up>";
+		     78 +   const entityLoc = new BlockLocation(1, 2, 1);
+		     79 +   test.spawn(pigId, entityLoc);
+		135     - GameTest.register("DispenserTests", "dispenser_saddle_on_horse", (test) => {
+		136     -   const horseId = "minecraft:horse<minecraft:ageable_grow_up>";
+		137     -   const entityLoc = new BlockLocation(1, 2, 1);
+		138     -   test.spawn(horseId, entityLoc);
+		139     -   test.setEntityTamed(horseId, entityLoc);
+		140     -   test.assertEntityHasComponent(
+		141     -     horseId,
+		142     -     "minecraft:is_saddled",
+		143     -     entityLoc,
+		144     -     false
+		145     -   );
+		146     - 
+		     80 +   test.assertEntityHasComponent(pigId, "minecraft:is_saddled", entityLoc, false);
+		147     -   test.pressButton(new BlockLocation(0, 2, 0));
+		148  81   
+		149     -   test.assertEntityPresent(horseId, entityLoc);
+		150     -   test.succeedOnTickWhen(dispenserDelay, () => {
+		151     -     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		     82 +   test.pressButton(new BlockLocation(0, 2, 0));
+		     83 + 
+		     84 +   test.assertEntityPresent(pigId, entityLoc);
+		     85 +   test.succeedOnTickWhen(dispenserDelay, () => {
+		     86 +     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		     87 +     test.assertEntityHasComponent(pigId, "minecraft:is_saddled", entityLoc, true);
+		152     -     test.assertEntityHasComponent(
+		153     -       horseId,
+		154     -       "minecraft:is_saddled",
+		155     -       entityLoc,
+		156     -       true
+		157     -     );
+		158  88     });
+		159  89   })
+		160  90     .maxTicks(threeSecondsInTicks)
+		161  91     .tag("suite:java_parity")
+		     92 +   .tag(GameTest.Tags.suiteDisabled);
+		162     -   .tag(GameTest.Tags.suiteBroken);
+		163  93   
+		     94 + GameTest.register("DispenserTests", "dispenser_saddle_on_horse", (test) => {
+		     95 +   const horseId = "minecraft:horse<minecraft:ageable_grow_up>";
+		164     - GameTest.register("DispenserTests", "dispenser_chest_on_llama", (test) => {
+		165     -   const llamaId = "minecraft:llama<minecraft:ageable_grow_up>";
+		166  96     const entityLoc = new BlockLocation(1, 2, 1);
+		167     -   test.spawn(llamaId, entityLoc);
+		168     -   test.setEntityTamed(llamaId, entityLoc);
+		169     -   test.assertEntityHasComponent(
+		     97 +   const horse = test.spawn(horseId, entityLoc);
+		     98 +   test.assertEntityInstancePresent(horse, entityLoc);
+		     99 +   horse.getComponent(tameMountComponentName).setTamed(false);
+		    100 +   test.assertEntityHasComponent(horseId, "minecraft:is_saddled", entityLoc, false);
+		    101 + 
+		    102 +   test.pressButton(new BlockLocation(0, 2, 0));
+		170     -     llamaId,
+		171     -     "minecraft:is_chested",
+		172     -     entityLoc,
+		173     -     false
+		174     -   );
+		175     -   test.assertEntityHasArmor(llamaId, armorSlotTorso, "", 0, entityLoc, false);
+		176 103   
+		    104 +   test.assertEntityPresent(horseId, entityLoc);
+		    105 +   test.succeedOnTickWhen(dispenserDelay, () => {
+		    106 +     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		    107 +     test.assertEntityHasComponent(horseId, "minecraft:is_saddled", entityLoc, true);
+		    108 +   });
+		    109 + })
+		    110 +   .maxTicks(threeSecondsInTicks)
+		    111 +   .tag("suite:java_parity")
+		    112 +   .tag(GameTest.Tags.suiteDisabled);
+		    113 + 
+		    114 + GameTest.register("DispenserTests", "dispenser_chest_on_llama", (test) => {
+		    115 +   const llamaId = "minecraft:llama<minecraft:ageable_grow_up>";
+		    116 +   const entityLoc = new BlockLocation(1, 2, 1);
+		    117 +   const llama = test.spawn(llamaId, entityLoc);
+		    118 +   llama.getComponent(tameMountComponentName).setTamed(false);
+		    119 +   test.assertEntityHasComponent(llamaId, "minecraft:is_chested", entityLoc, false);
+		    120 +   test.assertEntityHasArmor(llamaId, armorSlotTorso, "", 0, entityLoc, false);
+		    121 + 
+		    122 +   test.pressButton(new BlockLocation(0, 2, 0));
+		177     -   test.pressButton(new BlockLocation(0, 2, 0));
+		178     - 
+		179     -   test.assertEntityPresent(llamaId, entityLoc);
+		180     -   test.succeedOnTickWhen(dispenserDelay, () => {
+		181     -     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		182     -     test.assertEntityHasComponent(
+		183     -       llamaId,
+		184     -       "minecraft:is_chested",
+		185     -       entityLoc,
+		186     -       true
+		187     -     );
+		188     -   });
+		189     - })
+		190     -   .maxTicks(threeSecondsInTicks)
+		191     -   .tag("suite:java_parity")
+		192     -   .tag(GameTest.Tags.suiteBroken);
+		193 123   
+		    124 +   test.assertEntityPresent(llamaId, entityLoc);
+		    125 +   test.succeedOnTickWhen(dispenserDelay, () => {
+		194     - GameTest.register("DispenserTests", "dispenser_carpet_on_llama", (test) => {
+		    126 +     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		    127 +     test.assertEntityHasComponent(llamaId, "minecraft:is_chested", entityLoc, true);
+		    128 +   });
+		    129 + })
+		    130 +   .maxTicks(threeSecondsInTicks)
+		    131 +   .tag("suite:java_parity")
+		    132 +   .tag(GameTest.Tags.suiteDisabled);
+		195     -   const llamaId = "minecraft:llama<minecraft:ageable_grow_up>";
+		196     -   const entityLoc = new BlockLocation(1, 2, 1);
+		197     -   test.spawn(llamaId, entityLoc);
+		198     -   test.setEntityTamed(llamaId, entityLoc);
+		199     -   test.assertEntityHasArmor(llamaId, armorSlotTorso, "", 0, entityLoc, false);
+		200     - 
+		201     -   test.pressButton(new BlockLocation(0, 2, 0));
+		202 133   
+		    134 + GameTest.register("DispenserTests", "dispenser_carpet_on_llama", (test) => {
+		    135 +   const llamaId = "minecraft:llama<minecraft:ageable_grow_up>";
+		    136 +   const entityLoc = new BlockLocation(1, 2, 1);
+		203     -   test.assertEntityPresent(llamaId, entityLoc);
+		    137 +   const llama = test.spawn(llamaId, entityLoc);
+		    138 +   llama.getComponent(tameMountComponentName).setTamed(false);
+		    139 +   test.assertEntityHasArmor(llamaId, armorSlotTorso, "", 0, entityLoc, false);
+		    140 + 
+		    141 +   test.pressButton(new BlockLocation(0, 2, 0));
+		    142 + 
+		    143 +   test.assertEntityPresent(llamaId, entityLoc);
+		    144 +   test.succeedOnTickWhen(dispenserDelay, () => {
+		    145 +     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		    146 +     test.assertEntityHasArmor(llamaId, armorSlotTorso, "minecraft:carpet", pinkCarpet, entityLoc, true);
+		204     -   test.succeedOnTickWhen(dispenserDelay, () => {
+		205     -     test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		206     -     test.assertEntityHasArmor(
+		207     -       llamaId,
+		208     -       armorSlotTorso,
+		209     -       "minecraft:carpet",
+		210     -       pinkCarpet,
+		211     -       entityLoc,
+		212     -       true
+		213     -     );
+		214 147     });
+		215 148   })
+		216 149     .maxTicks(threeSecondsInTicks)
+		217 150     .tag("suite:java_parity")
+		    151 +   .tag(GameTest.Tags.suiteDisabled);
+		218     -   .tag(GameTest.Tags.suiteBroken);
+		219 152   
+		    153 + function dispenserMinecartTest(test, entityId) {
+		220     - function dispenserMinecartTest(test, actorId) {
+		221 154     const minecartPos = new BlockLocation(1, 2, 1);
+		    155 +   test.assertEntityNotPresent(entityId, minecartPos);
+		222     -   test.assertEntityNotPresent(actorId, minecartPos);
+		223 156   
+		224 157     test.pressButton(new BlockLocation(0, 2, 0));
+		225 158   
+		226 159     test.succeedOnTickWhen(dispenserDelay, () => {
+		227 160       test.assertContainerEmpty(new BlockLocation(0, 2, 1));
+		    161 +     test.assertEntityPresent(entityId, minecartPos);
+		228     -     test.assertEntityPresent(actorId, minecartPos);
+		229 162     });
+		230 163   }
+		231 164   
+		232 165   GameTest.register("DispenserTests", "dispenser_minecart_track", (test) => {
+		233 166     dispenserMinecartTest(test, "minecraft:minecart");
+		          ...
+		266 199     test.succeedWhenEntityNotPresent(sheepId, sheepPos);
+		267 200   })
+		268 201     .maxTicks(200)
+		269 202     .tag(GameTest.Tags.suiteDefault);
+		270 203   
+		271     - GameTest.register(
+		272     -   "DispenserTests",
+		273     -   "dispenser_charge_respawn_anchor",
+		    204 + GameTest.register("DispenserTests", "dispenser_charge_respawn_anchor", (test) => {
+		    205 +   test.pressButton(new BlockLocation(0, 2, 0));
+		    206 +   const respawnAnchorPos = new BlockLocation(1, 2, 1);
+		    207 +   const dispenserPos = new BlockLocation(0, 2, 1);
+		    208 +   test.assertContainerContains("minecraft:glowstone", dispenserPos);
+		274     -   (test) => {
+		275     -     test.pressButton(new BlockLocation(0, 2, 0));
+		276     -     const respawnAnchorPos = new BlockLocation(1, 2, 1);
+		277     -     const dispenserPos = new BlockLocation(0, 2, 1);
+		278     -     test.assertContainerContains("minecraft:glowstone", dispenserPos);
+		279 209   
+		280 210       test.assertBlockState("respawn_anchor_charge", 0, respawnAnchorPos);
+		281 211       test.succeedWhen(() => {
+		282 212         test.assertBlockState("respawn_anchor_charge", 1, respawnAnchorPos);
+		283 213         test.assertContainerEmpty(dispenserPos);
+		          ...
+		          '''
+	Changed script "DoorTests.js":
+		Total line: 24 (+1, -1)
+		        '''
+		        ...
+		16 16       test.assertEntityPresent(villagerEntityType, new BlockLocation(5, 2, 1));
+		17 17       test.assertEntityPresent(villagerEntityType, new BlockLocation(1, 2, 2));
+		18 18       test.assertEntityPresent(villagerEntityType, new BlockLocation(1, 2, 1));
+		19 19     });
+		20 20   })
+		   21 +   .tag(GameTest.Tags.suiteDisabled) // Villagers can get stuck on the door or on sleeping villagers
+		21    -   .tag(GameTest.Tags.suiteBroken) // Villagers can get stuck on the door or on sleeping villagers
+		22 22     .padding(50) // Space out villager tests to stop them from confusing each other
+		23 23     .batch("night") // This should be a constant at some point
+		24 24     .maxTicks(600);
+		        '''
+	Changed script "PathFindingTests.js":
+		Total line: 337 (+5, -5)
+		          '''
+		          ...
+		290 290   addVerticalTest(13, "0", "0.5", "1 slab", "2.5");
+		291 291   addVerticalTest(14, "0", "0.5", "1.5 slab", "2.5");
+		292 292   addVerticalTest(15, "0", "0.5", "1 full", "2.5");
+		293 293   addVerticalTest(16, "0", "0.5", "none", "1");
+		294 294   addVerticalTest(17, "0", "0.5", "none", "1.5");
+		    295 + addVerticalTest(18, "0", "0.5", "none", "2", GameTest.Tags.suiteDisabled); // Villager attempts to jump over slab with single block gap above it
+		295     - addVerticalTest(18, "0", "0.5", "none", "2", GameTest.Tags.suiteBroken); // Villager attempts to jump over slab with single block gap above it
+		296 296   addVerticalTest(19, "0", "0.5", "none", "2.5");
+		297 297   addVerticalTest(20, "0", "1", "1.5 slab", "2.5");
+		298 298   addVerticalTest(21, "0", "1", "none", "1.5");
+		299 299   addVerticalTest(22, "0", "1", "none", "2");
+		300 300   addVerticalTest(23, "0", "1", "none", "2.5");
+		301 301   addVerticalTest(24, "0.5", "0", "0.5 slab", "1.5");
+		302 302   addVerticalTest(25, "0.5", "0", "0.5 slab", "2");
+		303 303   addVerticalTest(26, "0.5", "0", "0.5 slab", "2.5");
+		304 304   addVerticalTest(27, "0.5", "0", "1 slab", "2");
+		305 305   addVerticalTest(28, "0.5", "0", "1 slab", "2.5");
+		    306 + addVerticalTest(29, "0.5", "0", "1 slab", "none", GameTest.Tags.suiteDisabled); // Villager attempts to walk through floating slab while standing on slab
+		306     - addVerticalTest(29, "0.5", "0", "1 slab", "none", GameTest.Tags.suiteBroken); // Villager attempts to walk through floating slab while standing on slab
+		307 307   addVerticalTest(30, "0.5", "0", "1.5 slab", "2.5");
+		308 308   addVerticalTest(31, "0.5", "0", "1.5 slab", "none");
+		309 309   addVerticalTest(32, "0.5", "0", "1 full", "2.5");
+		310 310   addVerticalTest(33, "0.5", "0", "1 full", "none");
+		311 311   addVerticalTest(34, "0.5", "0", "none", "1.5");
+		    312 + addVerticalTest(35, "0.5", "0", "none", "2", GameTest.Tags.suiteDisabled); // Villager attempts to jump down from a slab to a 1.5 block gap but hits head on block
+		312     - addVerticalTest(35, "0.5", "0", "none", "2", GameTest.Tags.suiteBroken); // Villager attempts to jump down from a slab to a 1.5 block gap but hits head on block
+		313 313   addVerticalTest(36, "0.5", "0", "none", "2.5");
+		314 314   addVerticalTest(37, "0.5", "0.5", "1 slab", "2");
+		315 315   addVerticalTest(38, "0.5", "0.5", "1 slab", "2.5");
+		316 316   addVerticalTest(39, "0.5", "0.5", "1 slab", "none");
+		317 317   addVerticalTest(40, "0.5", "0.5", "1.5 slab", "2.5");
+		318 318   addVerticalTest(41, "0.5", "0.5", "1.5 slab", "none");
+		319 319   addVerticalTest(42, "0.5", "0.5", "1 full", "2.5");
+		320 320   addVerticalTest(43, "0.5", "0.5", "1 full", "none");
+		321 321   addVerticalTest(44, "0.5", "0.5", "none", "1.5");
+		    322 + addVerticalTest(45, "0.5", "0.5", "none", "2", GameTest.Tags.suiteDisabled); // Villager attempts to walk through 1 block gap while standing on slab
+		322     - addVerticalTest(45, "0.5", "0.5", "none", "2", GameTest.Tags.suiteBroken); // Villager attempts to walk through 1 block gap while standing on slab
+		323 323   addVerticalTest(46, "0.5", "0.5", "none", "2.5");
+		324 324   addVerticalTest(47, "0.5", "1", "1.5 slab", "2.5");
+		325 325   addVerticalTest(48, "0.5", "1", "1.5 slab", "none");
+		326 326   addVerticalTest(49, "0.5", "1", "none", "1.5");
+		327 327   addVerticalTest(50, "0.5", "1", "none", "2");
+		          ...
+		330 330   addVerticalTest(53, "1", "0", "none", "1.5");
+		331 331   addVerticalTest(54, "1", "0", "none", "2"); // flaky
+		332 332   addVerticalTest(55, "1", "0", "none", "2.5"); // flaky
+		333 333   addVerticalTest(56, "1", "0", "none", "none");
+		334 334   addVerticalTest(57, "1", "0.5", "none", "1.5");
+		    335 + addVerticalTest(58, "1", "0.5", "none", "2", GameTest.Tags.suiteDisabled); // Villager constantly attempts to jump into 1 block gap
+		335     - addVerticalTest(58, "1", "0.5", "none", "2", GameTest.Tags.suiteBroken); // Villager constantly attempts to jump into 1 block gap
+		336 336   addVerticalTest(59, "1", "0.5", "none", "2.5");
+		337 337   addVerticalTest(60, "1", "0.5", "none", "none");
+		          '''

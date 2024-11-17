@@ -1,0 +1,1430 @@
+Difference of "commands" between "a0.16.0_build4" (beta of "a0.16.0") and "a0.16.0_build5" (beta of "a0.16.0").
+
+Removed file "client-only-test.json":
+	command "aigoals":
+		field "versions":
+			version:
+				field "description": "Enables | Disables Drawing AI Goals"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0} Drawing AI Goals"
+							field "parameters":
+								parameter:
+									field "name": "action"
+									field "type": "string"
+	command "bounds":
+		field "versions":
+			version:
+				field "description": "Enables | Disables Drawing Bounding Boxes"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0} Drawing Bounding Boxes"
+							field "parameters":
+								parameter:
+									field "name": "action"
+									field "type": "string"
+	command "clearinventory":
+		field "versions":
+			version:
+				field "description": "Clears a player's inventory."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0} is now poor."
+							field "parameters":
+								parameter:
+									field "name": "playerName"
+									field "type": "string"
+	command "enchant":
+		field "versions":
+			version:
+				field "description": "Enchants the item a player is holding."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "enchantType"
+									field "type": "int"
+									field "optional": true
+								parameter:
+									field "name": "enchantLevel"
+									field "type": "int"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+								parameter:
+									field "name": "enchantType"
+									field "type": "int"
+								parameter:
+									field "name": "enchantName"
+									field "type": "string"
+	command "leaveworld":
+		field "versions":
+			version:
+				field "description": "Leaves the current world (aka level), goes back to start menu screen."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "Leaving world..."
+							field "parameters": empty
+	command "memwarn":
+		field "versions":
+			version:
+				field "description": "Fires low memory warning."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "Memory warning sent"
+							field "parameters": empty
+	command "paths":
+		field "versions":
+			version:
+				field "description": "Enables | Disables Drawing Paths"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0} Drawing Paths"
+							field "parameters":
+								parameter:
+									field "name": "action"
+									field "type": "string"
+	command "villages":
+		field "versions":
+			version:
+				field "description": "Enables | Disables Drawing Village Debug Info"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0} Drawing Village Debug Info"
+							field "parameters":
+								parameter:
+									field "name": "action"
+									field "type": "string"
+	command "wipeout":
+		field "versions":
+			version:
+				field "description": "Wipes out entities across all dimensions."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "Wiping out all other entities across all dimensions."
+							field "parameters": empty
+	command "getselecteditemcount":
+		field "versions":
+			version:
+				field "description": "Determine item count of inventory item."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0} [{1}]"
+							field "parameters":
+								parameter:
+									field "name": "itemName"
+									field "type": "string"
+								parameter:
+									field "name": "itemQuantity"
+									field "type": "int"
+	command "profile":
+		field "versions":
+			version:
+				field "description": "Enables | Disables debug rendering"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "PerfTimer {0}"
+							field "parameters":
+								parameter:
+									field "name": "action"
+									field "type": "string"
+	command "log":
+		field "versions":
+			version:
+				field "description": "Modifies log settings or filters."
+				field "permission": "op"
+				field "overloads":
+					overload "settings":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "setting"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "append"
+										enum value: "flush"
+										enum value: "timestamp"
+										enum value: "trace"
+						field "output":
+							field "format_strings": format string: field "format": "log {0} {1}"
+							field "parameters":
+								parameter:
+									field "name": "setting"
+									field "type": "string"
+								parameter:
+									field "name": "status"
+									field "type": "string"
+					overload "filters":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "filterType"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "area"
+										enum value: "priority"
+								parameter:
+									field "name": "filters"
+									field "type": "rawtext"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getfps":
+		field "versions":
+			version:
+				field "description": "Returns the framerate of the game"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getavgrendertime":
+		field "versions":
+			version:
+				field "description": "Returns the average render time"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getavgticktime":
+		field "versions":
+			version:
+				field "description": "Returns the average tick time"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getavgendframetime":
+		field "versions":
+			version:
+				field "description": "Returns the average end frame time"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getavgunaccountedtimepercent":
+		field "versions":
+			version:
+				field "description": "Returns average percent of unaccounted time"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getchunkrebuildcount":
+		field "versions":
+			version:
+				field "description": "Returns the number of chunks built"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getchunksortcount":
+		field "versions":
+			version:
+				field "description": "Returns the number of chunks sorted"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getchunkdirtycount":
+		field "versions":
+			version:
+				field "description": "Returns the number of dirty chunks"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getsysteminfo":
+		field "versions":
+			version:
+				field "description": "Returns info about the system"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getos":
+		field "versions":
+			version:
+				field "description": "Returns OS version"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getsystemmem":
+		field "versions":
+			version:
+				field "description": "Returns system memory size"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getcpu":
+		field "versions":
+			version:
+				field "description": "Returns CPU description"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getresolution":
+		field "versions":
+			version:
+				field "description": "Returns display resolution"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getgpu":
+		field "versions":
+			version:
+				field "description": "Returns GPU description"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getmsaalevel":
+		field "versions":
+			version:
+				field "description": "Returns MSAA level"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getgpumemory":
+		field "versions":
+			version:
+				field "description": "Returns GPU memory size"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getprofilersecondsperupdate":
+		field "versions":
+			version:
+				field "description": "Returns the amount of time covered by a profiler stat"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getavgremaindertimepercent":
+		field "versions":
+			version:
+				field "description": "Returns the average percent of time accounted for but not classified"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "float"
+	command "getviewdistance":
+		field "versions":
+			version:
+				field "description": "Gets the current view distance."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "viewDistance"
+									field "type": "int"
+	command "setviewdistance":
+		field "versions":
+			version:
+				field "description": "Sets the view distance."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "viewDistance"
+									field "type": "int"
+						field "output":
+							field "format_strings": format string: field "format": "View distance set"
+							field "parameters": empty
+	command "getplayerid":
+		field "versions":
+			version:
+				field "description": "Returns a player's id."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "playerName"
+									field "type": "string"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "playerid"
+									field "type": "int"
+	command "getlocalplayername":
+		field "versions":
+			version:
+				field "description": "Returns the local player name."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "localplayername"
+									field "type": "string"
+	command "selectinventoryitem":
+		field "versions":
+			version:
+				field "description": "Equips a passed item."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "item"
+									field "type": "string"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getdurability":
+		field "versions":
+			version:
+				field "description": "Durability of selected item."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "value"
+									field "type": "int"
+	command "getskin":
+		field "versions":
+			version:
+				field "description": "Gets the current player skin."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "skinName"
+									field "type": "string"
+	command "setskin":
+		field "versions":
+			version:
+				field "description": "Sets the player skin."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "skinName"
+									field "type": "string"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "status"
+									field "type": "string"
+	command "getguiscale":
+		field "versions":
+			version:
+				field "description": "Gets the current gui scale."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "guiscale"
+									field "type": "int"
+	command "setguiscale":
+		field "versions":
+			version:
+				field "description": "Sets the gui scale."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "guiscale"
+									field "type": "int"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "status"
+									field "type": "string"
+	command "getbrightness":
+		field "versions":
+			version:
+				field "description": "Gets the current brightness."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "brightness"
+									field "type": "int"
+	command "setbrightness":
+		field "versions":
+			version:
+				field "description": "Sets the brightness."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "brightness"
+									field "type": "int"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "status"
+									field "type": "string"
+	command "isworldloaded":
+		field "versions":
+			version:
+				field "description": "Checks if the client is loaded into a world."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "isWorldLoaded"
+									field "type": "bool"
+	command "getactivescreen":
+		field "versions":
+			version:
+				field "description": "Gets the current active screen."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "desiredScreensString"
+									field "type": "string"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "screenName"
+									field "type": "string"
+	command "getpos":
+		field "versions":
+			version:
+				field "description": "Gets the position of the player."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "playerPos"
+									field "type": "blockpos"
+	command "emulateinput":
+		field "versions":
+			version:
+				field "description": "Emulates specified input"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "intentId"
+									field "type": "int"
+								parameter:
+									field "name": "state"
+									field "type": "int"
+								parameter:
+									field "name": "startTick"
+									field "type": "int"
+								parameter:
+									field "name": "endTick"
+									field "type": "int"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "findnearbypickup":
+		field "versions":
+			version:
+				field "description": "Finds a nearby pickup."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "distance"
+									field "type": "int"
+								parameter:
+									field "name": "pickupName"
+									field "type": "string"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "foundPosition"
+									field "type": "blockpos"
+	command "getplayerbiome":
+		field "versions":
+			version:
+				field "description": "Gets the biome the player is in."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "biome"
+									field "type": "string"
+Changed file "client-only.json":
+	Changed command "geteduclientinfo":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "output":
+							Changed field "parameters":
+								Added parameter:
+									field "name": "hostuuid"
+									field "type": "string"
+Removed file "dedicated-test.json":
+	command "log":
+		field "versions":
+			version:
+				field "description": "Modifies log settings or filters."
+				field "permission": "admin"
+				field "overloads":
+					overload "settings":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "setting"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "append"
+										enum value: "flush"
+										enum value: "timestamp"
+										enum value: "trace"
+								parameter:
+									field "name": "status"
+									field "type": "bool"
+						field "output":
+							field "format_strings": format string: field "format": "log {0} {1}"
+							field "parameters":
+								parameter:
+									field "name": "setting"
+									field "type": "string"
+								parameter:
+									field "name": "status"
+									field "type": "string"
+					overload "filters":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "filterType"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "area"
+										enum value: "priority"
+								parameter:
+									field "name": "filters"
+									field "type": "rawtext"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+Removed file "pregame-test.json":
+	command "createlocalworld":
+		field "versions":
+			version:
+				field "description": "Creates a new world (aka level) on the local machine."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "gameType"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "Creative"
+										enum value: "Survival"
+								parameter:
+									field "name": "worldName"
+									field "type": "string"
+									field "optional": true
+								parameter:
+									field "name": "worldType"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "Flat"
+										enum value: "Legacy"
+										enum value: "Overworld"
+									field "optional": true
+								parameter:
+									field "name": "seed"
+									field "type": "string"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "Creating world..."
+							field "parameters": empty
+	command "openlocalworld":
+		field "versions":
+			version:
+				field "description": "Opens an existing world (aka level) on the local machine."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "worldName"
+									field "type": "string"
+						field "output":
+							field "format_strings": format string: field "format": "Loading local world..."
+							field "parameters": empty
+	command "quit":
+		field "versions":
+			version:
+				field "description": "Quit the app."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "Quitting..."
+							field "parameters": empty
+	command "joinlangame":
+		field "versions":
+			version:
+				field "description": "Join a game on a remote host."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "ipAddress"
+									field "type": "string"
+						field "output":
+							field "format_strings": format string: field "format": "Joined: {0}"
+							field "parameters":
+								parameter:
+									field "name": "joined"
+									field "type": "bool"
+	command "log":
+		field "versions":
+			version:
+				field "description": "Modifies log settings or filters."
+				field "permission": "op"
+				field "overloads":
+					overload "settings":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "setting"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "append"
+										enum value: "flush"
+										enum value: "timestamp"
+										enum value: "trace"
+						field "output":
+							field "format_strings": format string: field "format": "log {0} {1}"
+							field "parameters":
+								parameter:
+									field "name": "setting"
+									field "type": "string"
+								parameter:
+									field "name": "status"
+									field "type": "string"
+					overload "filters":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "filterType"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "area"
+										enum value: "priority"
+								parameter:
+									field "name": "filters"
+									field "type": "rawtext"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "getactivescreen":
+		field "versions":
+			version:
+				field "description": "Gets the current active screen."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "desiredScreensString"
+									field "type": "string"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "screenName"
+									field "type": "string"
+	command "isworldloaded":
+		field "versions":
+			version:
+				field "description": "Checks if the client is loaded into a world."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "isWorldLoaded"
+									field "type": "bool"
+	command "leaveworld":
+		field "versions":
+			version:
+				field "description": "Leaves the current world (aka level), goes back to start menu screen."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "Leaving world..."
+							field "parameters": empty
+Removed file "standard-test.json":
+	command "rot":
+		field "versions":
+			version:
+				field "description": "Sets a player's current rotation."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "y-rot"
+									field "type": "float"
+								parameter:
+									field "name": "x-rot"
+									field "type": "float"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "victim"
+									field "type": "string"
+	command "getworldname":
+		field "versions":
+			version:
+				field "description": "Gets the name of the current world (aka level)."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "levelName"
+									field "type": "string"
+	command "health":
+		field "versions":
+			version:
+				field "description": "Modifies a player's health."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+								parameter:
+									field "name": "amount"
+									field "type": "int"
+						field "output":
+							field "format_strings": format string: field "format": "{0} health set to {1}"
+							field "parameters":
+								parameter:
+									field "name": "playerName"
+									field "type": "string"
+								parameter:
+									field "name": "amount"
+									field "type": "int"
+	command "hunger":
+		field "versions":
+			version:
+				field "description": "Modifies a player's hunger level."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+								parameter:
+									field "name": "amount"
+									field "type": "float"
+						field "output":
+							field "format_strings": format string: field "format": "{0} hunger set to {1}"
+							field "parameters":
+								parameter:
+									field "name": "playerName"
+									field "type": "string"
+								parameter:
+									field "name": "amount"
+									field "type": "float"
+	command "kit":
+		field "versions":
+			version:
+				field "description": "Gives the local player a kit."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "kitName"
+									field "type": "stringenum"
+									field "enum_values":
+										enum value: "blockui"
+										enum value: "minecart"
+										enum value: "redstone"
+										enum value: "wool"
+						field "output":
+							field "format_strings": format string: field "format": "Gave {0} kit to player."
+							field "parameters":
+								parameter:
+									field "name": "kitName"
+									field "type": "string"
+	command "spawning":
+		field "versions":
+			version:
+				field "description": "Toggles the spawning of entities."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "timelock":
+		field "versions":
+			version:
+				field "description": "Stops | Resumes time elapse."
+				field "permission": "op"
+				field "aliases": alias: "timestop"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "lock"
+									field "type": "bool"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "Time {0}"
+							field "parameters":
+								parameter:
+									field "name": "action"
+									field "type": "string"
+	command "getexperience":
+		field "versions":
+			version:
+				field "description": "Returns the players current experience (score)"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "nearbyentityisbaby":
+		field "versions":
+			version:
+				field "description": "Returns true if the nearest entityType is a baby"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "entityType"
+									field "type": "stringenum"
+									field "enum_type": "entityType"
+								parameter:
+									field "name": "searchRadius"
+									field "type": "int"
+								parameter:
+									field "name": "player"
+									field "type": "target"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "bool"
+	command "lookat":
+		field "versions":
+			version:
+				field "description": "Forces the player to look at a floating point location"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "xPos"
+									field "type": "float"
+								parameter:
+									field "name": "yPos"
+									field "type": "float"
+								parameter:
+									field "name": "zPos"
+									field "type": "float"
+								parameter:
+									field "name": "direction"
+									field "type": "string"
+									field "optional": true
+								parameter:
+									field "name": "player"
+									field "type": "target"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "isplayerflying":
+		field "versions":
+			version:
+				field "description": "Returns if the player is flying"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "isFlying"
+									field "type": "string"
+	command "isplayercrouching":
+		field "versions":
+			version:
+				field "description": "Returns if the player is crouching"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "isCrouching"
+									field "type": "string"
+	command "isplayergrounded":
+		field "versions":
+			version:
+				field "description": "Returns if the player is grounded"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "isGrounded"
+									field "type": "string"
+	command "fly":
+		field "versions":
+			version:
+				field "description": "Sets the player's flying status"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+									field "optional": true
+								parameter:
+									field "name": "shouldFly"
+									field "type": "bool"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+	command "findflatarea":
+		field "versions":
+			version:
+				field "description": "Finds a flat area for further actions."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "xLength"
+									field "type": "int"
+								parameter:
+									field "name": "yLength"
+									field "type": "int"
+								parameter:
+									field "name": "zLength"
+									field "type": "int"
+								parameter:
+									field "name": "baseBlockNameToMatch"
+									field "type": "stringenum"
+									field "enum_type": "blockType"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "teleportPos"
+									field "type": "blockpos"
+	command "getblockname":
+		field "versions":
+			version:
+				field "description": "Gets block names at a given blockpos"
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "from"
+									field "type": "blockpos"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "blockname"
+									field "type": "string"
+	command "tptosuitabletree":
+		field "versions":
+			version:
+				field "description": "Teleports the player to a position where they can chop down a tree."
+				field "permission": "op"
+				field "overloads":
+					overload "default":
+						field "input": field "parameters": empty
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "teleportPos"
+									field "type": "blockpos"
+								parameter:
+									field "name": "treeBasePos"
+									field "type": "blockpos"
+								parameter:
+									field "name": "woodType"
+									field "type": "string"
+	command "getpower":
+		field "versions":
+			version:
+				field "description": "Gets the power at a given blockpos."
+				field "permission": "any"
+				field "overloads":
+					overload "default":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "blockposition"
+									field "type": "blockpos"
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "power"
+									field "type": "int"
+Changed file "standard.json":
+	Changed command "help":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "byName":
+						Changed field "input":
+							Changed field "parameters":
+								Changed parameter:
+									Changed field "type" from "string" to "stringenum".
+									Added field "enum_type" of "commandName".
+	Changed command "list":
+		Changed field "versions":
+			Changed version:
+				Changed field "permission" from "op" to "any".
+	Added command "enchant":
+		field "versions":
+			version:
+				field "description": "commands.enchant.description"
+				field "permission": "op"
+				field "overloads":
+					overload "byName":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+								parameter:
+									field "name": "enchantmentName"
+									field "type": "stringenum"
+									field "enum_type": "enchantmentType"
+								parameter:
+									field "name": "level"
+									field "type": "int"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"
+					overload "byId":
+						field "input":
+							field "parameters":
+								parameter:
+									field "name": "player"
+									field "type": "target"
+								parameter:
+									field "name": "enchantmentId"
+									field "type": "int"
+								parameter:
+									field "name": "level"
+									field "type": "int"
+									field "optional": true
+						field "output":
+							field "format_strings": format string: field "format": "{0}"
+							field "parameters":
+								parameter:
+									field "name": "result"
+									field "type": "string"

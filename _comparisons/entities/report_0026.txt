@@ -1,142 +1,64 @@
-Difference of "entities" between "1.2.0.15" (beta of "1.2.0") and "1.2.0.18" (beta of "1.2.0").
+Difference of "entities" between "1.2.0.22" (beta of "1.2.0") and "1.2.0.25" (beta of "1.2.0").
 
-Changed entity "armor_stand":
+Changed entity "cave_spider.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:spider_hostile":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "attack_interval" from 10 to 5.
+Changed entity "creeper.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 5 (+1, -0)
+				Added component group "minecraft:forced_charged_exploding":
+					component "minecraft:explode":
+						field "fuseLength": 1.5
+						field "fuseLit": true
+						field "power": 6
+						field "causesFire": false
+						field "destroyAffectedByGriefing": true
+					component "minecraft:on_target_escape": empty
+					component "minecraft:target_nearby_sensor": empty
+				Changed component group "minecraft:forced_exploding":
+					Total component: 3 (+2, -1)
+					Added component "minecraft:explode":
+						field "fuseLength": 1.5
+						field "fuseLit": true
+						field "power": 3
+						field "causesFire": false
+						field "destroyAffectedByGriefing": true
+					Added empty component "minecraft:on_target_escape".
+					Removed component "minecraft:timer":
+						field "time": [0, 0]
+						field "looping": false
+						field "time_down_event":
+							field "event": "minecraft:start_exploding"
+							field "target": "self"
 			Changed field "components":
-				Total component: 6 (+1, -0)
-				Added component "minecraft:health":
-					field "max": 6
-					field "value": 6
-				Unchanged component "minecraft:identifier": field "id": "minecraft:armor_stand"
-Changed entity "villager":
+				Unchanged component "minecraft:identifier": field "id": "minecraft:creeper"
+				Changed component "minecraft:on_target_escape":
+					Added field "event" of "minecraft:stop_exploding".
+			Changed field "events":
+				Changed event "minecraft:start_exploding_forced":
+					Removed field "add" of field "component_groups": component group: "minecraft:forced_exploding".
+					Added field "sequence":
+						sequence item 0:
+							field "add": field "component_groups": component group: "minecraft:forced_exploding"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "operator": "!="
+								filter property "value": "minecraft:is_charged"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:forced_charged_exploding"
+							field "filters":
+								filter property "test": "has_component"
+								filter property "value": "minecraft:is_charged"
+Changed entity "spider.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "events":
-				Total event: 12 (+0, -1)
-				Changed event "minecraft:spawn_armorer":
-					Removed field "add":
-						field "component_groups":
-							component group: "armorer"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-					Added field "randomize":
-						randomize item:
-							field "weight": 6
-							field "add":
-								field "component_groups":
-									component group: "armorer"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-							field "remove": field "component_groups": component group: "baby"
-						randomize item:
-							field "weight": 6
-							field "add":
-								field "component_groups":
-									component group: "weaponsmith"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-							field "remove": field "component_groups": component group: "baby"
-						randomize item:
-							field "weight": 6
-							field "add":
-								field "component_groups":
-									component group: "toolsmith"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-							field "remove": field "component_groups": component group: "baby"
-					Removed field "remove" of field "component_groups": component group: "baby".
-				Changed event "minecraft:spawn_butcher":
-					Removed field "add":
-						field "component_groups":
-							component group: "butcher"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-					Added field "randomize":
-						randomize item:
-							field "weight": 10
-							field "add":
-								field "component_groups":
-									component group: "butcher"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-							field "remove": field "component_groups": component group: "baby"
-						randomize item:
-							field "weight": 10
-							field "add":
-								field "component_groups":
-									component group: "leatherworker"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-							field "remove": field "component_groups": component group: "baby"
-					Removed field "remove" of field "component_groups": component group: "baby".
-				Removed event "minecraft:spawn_cartographer":
-					field "add":
-						field "component_groups":
-							component group: "cartographer"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-					field "remove": field "component_groups": component group: "baby"
-				Changed event "minecraft:spawn_farmer":
-					Removed field "add":
-						field "component_groups":
-							component group: "farmer"
-							component group: "adult"
-							component group: "behavior_peasant"
-					Added field "randomize":
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "farmer"
-									component group: "adult"
-									component group: "behavior_peasant"
-							field "remove": field "component_groups": component group: "baby"
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "fisherman"
-									component group: "adult"
-									component group: "behavior_peasant"
-							field "remove": field "component_groups": component group: "baby"
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "shepherd"
-									component group: "adult"
-									component group: "behavior_peasant"
-							field "remove": field "component_groups": component group: "baby"
-						randomize item:
-							field "weight": 5
-							field "add":
-								field "component_groups":
-									component group: "fletcher"
-									component group: "adult"
-									component group: "behavior_peasant"
-							field "remove": field "component_groups": component group: "baby"
-					Removed field "remove" of field "component_groups": component group: "baby".
-				Changed event "minecraft:spawn_librarian":
-					Removed field "add":
-						field "component_groups":
-							component group: "librarian"
-							component group: "adult"
-							component group: "behavior_non_peasant"
-					Added field "randomize":
-						randomize item:
-							field "weight": 20
-							field "add":
-								field "component_groups":
-									component group: "librarian"
-									component group: "adult"
-									component group: "behavior_non_peasant"
-							field "remove": field "component_groups": component group: "baby"
-						randomize item:
-							field "weight": 20
-							field "add":
-								field "component_groups":
-									component group: "cartographer"
-									component group: "behavior_non_peasant"
-							field "remove": field "component_groups": component group: "baby"
-					Removed field "remove" of field "component_groups": component group: "baby".
+			Changed field "component_groups":
+				Changed component group "minecraft:spider_hostile":
+					Changed component "minecraft:behavior.nearest_attackable_target":
+						Changed field "attack_interval" from 10 to 5.

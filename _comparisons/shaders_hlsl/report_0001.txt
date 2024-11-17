@@ -1,0 +1,43 @@
+Difference of "shaders" between "a0.12.1_build1" (beta of "a0.12.1") and "a0.12.1_build2" (beta of "a0.12.1").
+
+Changed file "renderchunk.fragment.hlsl":
+	Total line: 57 (+1, -0)
+	        '''
+	        ...
+	34 34   
+	35 35   #ifndef SEASONS
+	36 36   
+	37 37   #if !defined(ALPHA_TEST) && !defined(BLEND)
+	38 38   	PSInput.color.rgb = lerp(PSInput.color.aaa, PSInput.color.rgb, diffuse.a);
+	   39 + 	diffuse.a = PSInput.color.a;
+	39 40   #elif defined(BLEND)
+	40 41   	diffuse.a *= PSInput.color.a;
+	41 42   #endif	
+	42 43   	diffuse.rgb *= PSInput.color.rgb;
+	43 44   #else
+	        ...
+	        '''
+Changed file "renderchunk.vertex.hlsl":
+	Total line: 79 (+0, -7)
+	        '''
+	        ...
+	58 58   
+	59 59       ///// water magic
+	60 60   #ifdef NEAR_WATER
+	61 61   #ifdef FANCY  /////enhance water
+	62 62       float F = dot( normalize( relPos ), UNIT_Y );
+	63    - 
+	64    -     //if both NEAR_WATER and FOG are defined, it's forced fog and we're underwater
+	65    - #ifndef FOG  //over water
+	66 63       F = 1.0 - max( F, 0.1 );
+	67    - #else //under water
+	68    -     PSInput.color.a = 0.7; //disable fake transparency and be transparent
+	69    - #endif
+	70    - 
+	71 64       F = 1.0 - lerp( F*F*F*F, 1.0, min( 1.0, cameraDepth / FAR_CHUNKS_DISTANCE ) );
+	72 65   
+	73 66       PSInput.color.rg -= float2( float( F * DIST_DESATURATION ).xx );
+	74 67   
+	75 68       float4 depthColor = float4( PSInput.color.rgb * 0.5, 1.0 );
+	        ...
+	        '''

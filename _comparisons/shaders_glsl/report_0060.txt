@@ -1,0 +1,62 @@
+Difference of "shaders_resource_packs" between "1.6.0.6" (beta of "1.6.0") and "1.6.0.8" (beta of "1.6.0").
+
+Changed resource pack "uv_scale.vertex":
+	Changed file "vanilla":
+		Total line: 49 (+33, -1)
+		        '''
+		        ...
+		 3  3   
+		 4  4   #include "shaders/vertexVersionCentroidUV.h"
+		 5  5   
+		 6  6   #include "shaders/uniformWorldConstants.h"
+		 7  7   #include "shaders/uniformEntityConstants.h"
+		    8 + #ifdef USE_SKINNING
+		    9 + #include "shaders/uniformAnimationConstants.h"
+		   10 + #endif
+		   11 + 
+		   12 + attribute mediump vec4 POSITION;
+		   13 + #ifdef USE_SKINNING
+		   14 + #ifdef USE_INT_INDEXING
+		   15 + attribute uint BONEID_0;
+		   16 + #else
+		   17 + attribute float BONEID_0;
+		   18 + #endif
+		   19 + #endif
+		   20 + attribute vec2 TEXCOORD_0;
+		   21 + 
+		   22 + void main()
+		   23 + {
+		   24 + #ifdef USE_SKINNING
+		   25 + #ifdef NO_DYNAMIC_ARRAY_ACCESS
+		   26 + 	if ( BONEID_0 == 0.0 )
+		   27 + 		gl_Position = WORLDVIEWPROJ * (BONES[0] * POSITION);
+		   28 + 	else if ( BONEID_0 == 1.0 )
+		   29 + 		gl_Position = WORLDVIEWPROJ * (BONES[1] * POSITION);
+		   30 + 	else if ( BONEID_0 == 2.0 )
+		   31 + 		gl_Position = WORLDVIEWPROJ * (BONES[2] * POSITION);
+		   32 + 	else if ( BONEID_0 == 3.0 )
+		   33 + 		gl_Position = WORLDVIEWPROJ * (BONES[3] * POSITION);
+		   34 + 	else if ( BONEID_0 == 4.0 )
+		   35 + 		gl_Position = WORLDVIEWPROJ * (BONES[4] * POSITION);
+		   36 + 	else if ( BONEID_0 == 5.0 )
+		   37 + 		gl_Position = WORLDVIEWPROJ * (BONES[5] * POSITION);
+		   38 + 	else if ( BONEID_0 == 6.0 )
+		   39 + 		gl_Position = WORLDVIEWPROJ * (BONES[6] * POSITION);
+		   40 + 	else if ( BONEID_0 == 7.0 )
+		   41 + 		gl_Position = WORLDVIEWPROJ * (BONES[7] * POSITION);
+		   42 + #else
+		   43 + 	gl_Position = WORLDVIEWPROJ * (BONES[int(BONEID_0)] * POSITION);
+		   44 + #endif
+		   45 + #else
+		 8    - 
+		 9    - attribute mediump vec4 POSITION;
+		10    - attribute vec2 TEXCOORD_0;
+		11    - 
+		12    - void main()
+		13    - {
+		14 46       gl_Position = WORLDVIEWPROJ * POSITION;
+		   47 + #endif
+		15    - 
+		16 48       uv = TEXCOORD_0 * GLINT_UV_SCALE.xy;
+		17 49   }
+		        '''

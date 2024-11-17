@@ -1,0 +1,3116 @@
+Difference of "scripts" between "1.18.10.20" (beta of "1.18.10") and "1.18.10.21" (beta of "1.18.10").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 31 (+1, -0)
+	Changed script "APITests.js":
+		Total line: 1062 (+124, -110)
+		            '''
+		            ...
+		 603  603   GameTest.register("APITests", "explode_block_event", (test) => {
+		 604  604     let explodedCount = 0;
+		 605  605     const cobblestoneLoc = new BlockLocation(1, 3, 1);
+		 606  606   
+		 607  607     const blockExplodeCallback = world.events.blockExplode.subscribe((blockExplodeEvent) => {
+		      608 +     if (!isLocationInTest(test, blockExplodeEvent.block.location)) return;
+		      609 +     test.assert(blockExplodeEvent.source !== undefined, "Expected source");
+		      610 +     explodedCount++;
+		      611 +   });
+		      612 + 
+		      613 +   test
+		      614 +     .startSequence()
+		      615 +     .thenExecute(() => {
+		      616 +       test.setBlockType(MinecraftBlockTypes.cobblestone, cobblestoneLoc);
+		      617 +       test.spawn("tnt", new BlockLocation(1, 2, 1));
+		      618 +     })
+		      619 +     .thenExecuteAfter(85, () => {
+		      620 +       test.assert(explodedCount === 10, "Unexpected number of exploded blocks");
+		      621 +       world.events.blockExplode.unsubscribe(blockExplodeCallback);
+		      622 +     })
+		      623 +     .thenSucceed();
+		      624 + })
+		      625 +   .padding(10) // The blast can destroy nearby items and mobs
+		      626 +   .structureName("ComponentTests:platform")
+		      627 +   .tag(GameTest.Tags.suiteDefault);
+		      628 + 
+		      629 + GameTest.register("APITests", "connectivity", (test) => {
+		      630 +   const centerLoc = new BlockLocation(1, 2, 1);
+		      631 + 
+		      632 +   let connectivity = test.getFenceConnectivity(centerLoc);
+		 608      -     if (!isLocationInTest(test, blockExplodeEvent.destroyedBlock.location)) return;
+		 609      -     test.assert(blockExplodeEvent.source !== undefined, "Expected source");
+		 610      -     explodedCount++;
+		 611      -   });
+		 612  633   
+		      634 +   test.assert(!connectivity.north, "The stair is not oriented the right way to connect");
+		      635 +   test.assert(connectivity.east, "Should connect to another fence");
+		 613      -   test
+		 614      -     .startSequence()
+		      636 +   test.assert(connectivity.south, "Should connect to another fence");
+		      637 +   test.assert(connectivity.west, "Should connect to the back of the stairs");
+		      638 + 
+		      639 +   test.succeed();
+		      640 + })
+		      641 +   .rotateTest(true)
+		      642 +   .tag(GameTest.Tags.suiteDefault);
+		      643 + 
+		      644 + GameTest.register("APITests", "spawn_at_location", (test) => {
+		 615      -     .thenExecute(() => {
+		 616      -       test.setBlockType(MinecraftBlockTypes.cobblestone, cobblestoneLoc);
+		 617      -       test.spawn("tnt", new BlockLocation(1, 2, 1));
+		 618      -     })
+		 619      -     .thenExecuteAfter(85, () => {
+		 620      -       test.assert(explodedCount === 10, "Unexpected number of exploded blocks");
+		 621      -       world.events.blockExplode.unsubscribe(blockExplodeCallback);
+		 622      -     })
+		 623      -     .thenSucceed();
+		 624      - })
+		      645 +   const spawnLoc = new Location(1.3, 2, 1.3);
+		      646 +   const chicken = test.spawnAtLocation("chicken", spawnLoc);
+		 625      -   .padding(10) // The blast can destroy nearby items and mobs
+		 626      -   .structureName("ComponentTests:platform")
+		 627      -   .tag(GameTest.Tags.suiteDefault);
+		 628  647   
+		      648 +   test
+		      649 +     .startSequence()
+		      650 +     .thenExecute(() => {
+		      651 +       const chickenLoc = chicken.location;
+		      652 +       const relativeChickenLoc = test.relativeLocation(chickenLoc);
+		      653 +       test.assert(relativeChickenLoc.isNear(spawnLoc, 0.01), "Unexpected spawn location");
+		      654 +     })
+		      655 +     .thenSucceed();
+		      656 + })
+		      657 +   .structureName("ComponentTests:animal_pen")
+		      658 +   .rotateTest(true)
+		      659 +   .tag(GameTest.Tags.suiteDefault);
+		 629      - GameTest.register("APITests", "connectivity", (test) => {
+		 630      -   const centerLoc = new BlockLocation(1, 2, 1);
+		 631      - 
+		 632      -   let connectivity = test.getFenceConnectivity(centerLoc);
+		 633      - 
+		 634      -   test.assert(!connectivity.north, "The stair is not oriented the right way to connect");
+		 635      -   test.assert(connectivity.east, "Should connect to another fence");
+		 636      -   test.assert(connectivity.south, "Should connect to another fence");
+		 637      -   test.assert(connectivity.west, "Should connect to the back of the stairs");
+		 638  660   
+		      661 + GameTest.register("APITests", "walk_to_location", (test) => {
+		      662 +   const spawnLoc = new BlockLocation(1, 2, 1);
+		 639      -   test.succeed();
+		 640      - })
+		      663 +   const chicken = test.spawnWithoutBehaviors("chicken", spawnLoc);
+		 641      -   .rotateTest(true)
+		 642      -   .tag(GameTest.Tags.suiteDefault);
+		 643  664   
+		      665 +   const targetLoc = new Location(2.2, 2, 3.2);
+		 644      - GameTest.register("APITests", "spawn_at_location", (test) => {
+		 645      -   const spawnLoc = new Location(1.3, 2, 1.3);
+		      666 +   test.walkToLocation(chicken, targetLoc, 1);
+		 646      -   const chicken = test.spawnAtLocation("chicken", spawnLoc);
+		 647  667   
+		      668 +   test.succeedWhen(() => {
+		 648      -   test
+		 649      -     .startSequence()
+		 650      -     .thenExecute(() => {
+		      669 +     const chickenLoc = chicken.location;
+		      670 +     const relativeChickenLoc = test.relativeLocation(chickenLoc);
+		      671 +     // Mobs will stop navigating as soon as they intersect the target location
+		      672 +     test.assert(relativeChickenLoc.isNear(targetLoc, 0.65), "Chicken did not reach the target location");
+		      673 +   });
+		 651      -       const chickenLoc = chicken.location;
+		 652      -       const relativeChickenLoc = test.relativeLocation(chickenLoc);
+		 653      -       test.assert(relativeChickenLoc.isNear(spawnLoc, 0.01), "Unexpected spawn location");
+		 654      -     })
+		 655      -     .thenSucceed();
+		 656  674   })
+		      675 +   .structureName("ComponentTests:large_animal_pen")
+		 657      -   .structureName("ComponentTests:animal_pen")
+		 658      -   .rotateTest(true)
+		 659  676     .tag(GameTest.Tags.suiteDefault);
+		 660      - 
+		 661      - GameTest.register("APITests", "walk_to_location", (test) => {
+		 662      -   const spawnLoc = new BlockLocation(1, 2, 1);
+		 663      -   const chicken = test.spawnWithoutBehaviors("chicken", spawnLoc);
+		 664  677   
+		      678 + GameTest.register("APITests", "spread_from_face_toward_direction", (test) => {
+		      679 +   let multifaceLoc = new BlockLocation(1, 4, 0);
+		 665      -   const targetLoc = new Location(2.2, 2, 3.2);
+		      680 +   let spreadLoc = new BlockLocation(1, 3, 0);
+		 666      -   test.walkToLocation(chicken, targetLoc, 1);
+		 667  681   
+		 668      -   test.succeedWhen(() => {
+		 669      -     const chickenLoc = chicken.location;
+		 670      -     const relativeChickenLoc = test.relativeLocation(chickenLoc);
+		      682 +   const glowLichenPermutation = MinecraftBlockTypes.glowLichen.createDefaultBlockPermutation();
+		      683 +   glowLichenPermutation.getProperty(BlockProperties.multiFaceDirectionBits).value = 1 << test.getTestDirection();
+		      684 +   test.setBlockPermutation(glowLichenPermutation, multifaceLoc);
+		      685 + 
+		      686 +   test.assertBlockPresent(MinecraftBlockTypes.glowLichen, multifaceLoc, true);
+		      687 +   test.assertBlockPresent(MinecraftBlockTypes.glowLichen, spreadLoc, false);
+		 671      -     // Mobs will stop navigating as soon as they intersect the target location
+		 672      -     test.assert(relativeChickenLoc.isNear(targetLoc, 0.65), "Chicken did not reach the target location");
+		 673      -   });
+		 674      - })
+		 675      -   .structureName("ComponentTests:large_animal_pen")
+		 676      -   .tag(GameTest.Tags.suiteDefault);
+		 677  688   
+		      689 +   test.spreadFromFaceTowardDirection(multifaceLoc, test.getTestDirection(), Direction.down);
+		      690 +   test
+		      691 +     .startSequence()
+		      692 +     .thenExecuteAfter(1, () => {
+		      693 +       test.assertBlockPresent(MinecraftBlockTypes.glowLichen, spreadLoc, true);
+		      694 +     })
+		      695 +     .thenSucceed();
+		      696 + })
+		      697 +   .rotateTest(true)
+		      698 +   .tag(GameTest.Tags.suiteDefault);
+		 678      - GameTest.register("APITests", "spread_from_face_toward_direction", (test) => {
+		 679      -   let multifaceLoc = new BlockLocation(1, 4, 0);
+		 680      -   let spreadLoc = new BlockLocation(1, 3, 0);
+		 681      - 
+		 682      -   const glowLichenPermutation = MinecraftBlockTypes.glowLichen.createDefaultBlockPermutation();
+		 683      -   glowLichenPermutation.getProperty(BlockProperties.multiFaceDirectionBits).value = 1 << test.getTestDirection();
+		 684      -   test.setBlockPermutation(glowLichenPermutation, multifaceLoc);
+		 685  699   
+		      700 + GameTest.register("APITests", "rotate_direction", (test) => {
+		      701 +   test.assert(
+		      702 +     test.rotateDirection(Direction.south) == test.getTestDirection(),
+		      703 +     "Expected rotated south direction to match test direction"
+		      704 +   );
+		 686      -   test.assertBlockPresent(MinecraftBlockTypes.glowLichen, multifaceLoc, true);
+		 687      -   test.assertBlockPresent(MinecraftBlockTypes.glowLichen, spreadLoc, false);
+		 688  705   
+		      706 +   switch (test.getTestDirection()) {
+		      707 +     case Direction.north:
+		 689      -   test.spreadFromFaceTowardDirection(multifaceLoc, test.getTestDirection(), Direction.down);
+		      708 +       test.assert(
+		      709 +         test.rotateDirection(Direction.north) === Direction.south,
+		      710 +         "Unexpected rotated direction for Direction.north with testDirection Direction.north"
+		      711 +       );
+		      712 +       test.assert(
+		      713 +         test.rotateDirection(Direction.east) === Direction.west,
+		      714 +         "Unexpected rotated direction for Direction.east with testDirection Direction.north"
+		      715 +       );
+		      716 +       test.assert(
+		      717 +         test.rotateDirection(Direction.south) === Direction.north,
+		      718 +         "Unexpected rotated direction for Direction.south with testDirection Direction.north"
+		      719 +       );
+		      720 +       test.assert(
+		      721 +         test.rotateDirection(Direction.west) === Direction.east,
+		      722 +         "Unexpected rotated direction for Direction.west with testDirection Direction.north"
+		      723 +       );
+		      724 +       break;
+		      725 +     case Direction.east:
+		 690      -   test
+		 691      -     .startSequence()
+		 692      -     .thenExecuteAfter(1, () => {
+		 693      -       test.assertBlockPresent(MinecraftBlockTypes.glowLichen, spreadLoc, true);
+		 694      -     })
+		 695      -     .thenSucceed();
+		 696      - })
+		 697      -   .rotateTest(true)
+		 698      -   .tag(GameTest.Tags.suiteDefault);
+		 699      - 
+		 700      - GameTest.register("APITests", "rotate_direction", (test) => {
+		 701      -   test.assert(
+		 702      -     test.rotateDirection(Direction.south) == test.getTestDirection(),
+		 703      -     "Expected rotated south direction to match test direction"
+		 704      -   );
+		 705      - 
+		 706      -   switch (test.getTestDirection()) {
+		 707      -     case Direction.north:
+		 708  726         test.assert(
+		      727 +         test.rotateDirection(Direction.north) === Direction.west,
+		      728 +         "Unexpected rotated direction for Direction.north with testDirection Direction.east"
+		 709      -         test.rotateDirection(Direction.north) === Direction.south,
+		 710      -         "Unexpected rotated direction for Direction.north with testDirection Direction.north"
+		 711  729         );
+		 712  730         test.assert(
+		      731 +         test.rotateDirection(Direction.east) === Direction.north,
+		      732 +         "Unexpected rotated direction for Direction.east with testDirection Direction.east"
+		 713      -         test.rotateDirection(Direction.east) === Direction.west,
+		 714      -         "Unexpected rotated direction for Direction.east with testDirection Direction.north"
+		 715  733         );
+		 716  734         test.assert(
+		      735 +         test.rotateDirection(Direction.south) === Direction.east,
+		      736 +         "Unexpected rotated direction for Direction.south with testDirection Direction.east"
+		 717      -         test.rotateDirection(Direction.south) === Direction.north,
+		 718      -         "Unexpected rotated direction for Direction.south with testDirection Direction.north"
+		 719  737         );
+		 720  738         test.assert(
+		      739 +         test.rotateDirection(Direction.west) === Direction.south,
+		      740 +         "Unexpected rotated direction for Direction.west with testDirection Direction.east"
+		 721      -         test.rotateDirection(Direction.west) === Direction.east,
+		 722      -         "Unexpected rotated direction for Direction.west with testDirection Direction.north"
+		 723  741         );
+		 724  742         break;
+		      743 +     case Direction.south:
+		 725      -     case Direction.east:
+		 726  744         test.assert(
+		      745 +         test.rotateDirection(Direction.north) === Direction.north,
+		      746 +         "Unexpected rotated direction for Direction.north with testDirection Direction.south"
+		 727      -         test.rotateDirection(Direction.north) === Direction.west,
+		 728      -         "Unexpected rotated direction for Direction.north with testDirection Direction.east"
+		 729  747         );
+		 730  748         test.assert(
+		      749 +         test.rotateDirection(Direction.east) === Direction.east,
+		      750 +         "Unexpected rotated direction for Direction.east with testDirection Direction.south"
+		 731      -         test.rotateDirection(Direction.east) === Direction.north,
+		 732      -         "Unexpected rotated direction for Direction.east with testDirection Direction.east"
+		 733  751         );
+		 734  752         test.assert(
+		      753 +         test.rotateDirection(Direction.south) === Direction.south,
+		      754 +         "Unexpected rotated direction for Direction.south with testDirection Direction.south"
+		 735      -         test.rotateDirection(Direction.south) === Direction.east,
+		 736      -         "Unexpected rotated direction for Direction.south with testDirection Direction.east"
+		 737  755         );
+		 738  756         test.assert(
+		      757 +         test.rotateDirection(Direction.west) === Direction.west,
+		      758 +         "Unexpected rotated direction for Direction.west with testDirection Direction.south"
+		 739      -         test.rotateDirection(Direction.west) === Direction.south,
+		 740      -         "Unexpected rotated direction for Direction.west with testDirection Direction.east"
+		 741  759         );
+		 742  760         break;
+		      761 +     case Direction.west:
+		 743      -     case Direction.south:
+		 744  762         test.assert(
+		      763 +         test.rotateDirection(Direction.north) === Direction.east,
+		      764 +         "Unexpected rotated direction for Direction.north with testDirection Direction.west"
+		 745      -         test.rotateDirection(Direction.north) === Direction.north,
+		 746      -         "Unexpected rotated direction for Direction.north with testDirection Direction.south"
+		 747  765         );
+		 748  766         test.assert(
+		      767 +         test.rotateDirection(Direction.east) === Direction.south,
+		      768 +         "Unexpected rotated direction for Direction.east with testDirection Direction.west"
+		 749      -         test.rotateDirection(Direction.east) === Direction.east,
+		 750      -         "Unexpected rotated direction for Direction.east with testDirection Direction.south"
+		 751  769         );
+		 752  770         test.assert(
+		      771 +         test.rotateDirection(Direction.south) === Direction.west,
+		      772 +         "Unexpected rotated direction for Direction.south with testDirection Direction.west"
+		 753      -         test.rotateDirection(Direction.south) === Direction.south,
+		 754      -         "Unexpected rotated direction for Direction.south with testDirection Direction.south"
+		 755  773         );
+		 756  774         test.assert(
+		      775 +         test.rotateDirection(Direction.west) === Direction.north,
+		      776 +         "Unexpected rotated direction for Direction.west with testDirection Direction.west"
+		 757      -         test.rotateDirection(Direction.west) === Direction.west,
+		 758      -         "Unexpected rotated direction for Direction.west with testDirection Direction.south"
+		 759  777         );
+		 760  778         break;
+		      779 +     default:
+		      780 +       test.assert(false, "Invalid test direction");
+		 761      -     case Direction.west:
+		      781 +   }
+		      782 + 
+		      783 +   const buttonLoc = new BlockLocation(1, 2, 1);
+		      784 +   const buttonPermutation = MinecraftBlockTypes.stoneButton.createDefaultBlockPermutation();
+		      785 +   buttonPermutation.getProperty(BlockProperties.facingDirection).value = test.rotateDirection(Direction.north);
+		      786 +   test.setBlockPermutation(buttonPermutation, buttonLoc);
+		      787 + 
+		      788 +   test
+		      789 +     .startSequence()
+		      790 +     .thenExecuteAfter(2, () => {
+		      791 +       test.assertBlockPresent(MinecraftBlockTypes.stoneButton, buttonLoc, true);
+		      792 +     })
+		      793 +     .thenSucceed();
+		      794 + })
+		      795 +   .rotateTest(true)
+		      796 +   .tag(GameTest.Tags.suiteDefault);
+		      797 + 
+		      798 + function isNear(a, b) {
+		      799 +   return Math.abs(a - b) < 0.001;
+		      800 + }
+		 762      -       test.assert(
+		 763      -         test.rotateDirection(Direction.north) === Direction.east,
+		 764      -         "Unexpected rotated direction for Direction.north with testDirection Direction.west"
+		 765      -       );
+		 766      -       test.assert(
+		 767      -         test.rotateDirection(Direction.east) === Direction.south,
+		 768      -         "Unexpected rotated direction for Direction.east with testDirection Direction.west"
+		 769      -       );
+		 770      -       test.assert(
+		 771      -         test.rotateDirection(Direction.south) === Direction.west,
+		 772      -         "Unexpected rotated direction for Direction.south with testDirection Direction.west"
+		 773      -       );
+		 774      -       test.assert(
+		 775      -         test.rotateDirection(Direction.west) === Direction.north,
+		 776      -         "Unexpected rotated direction for Direction.west with testDirection Direction.west"
+		 777      -       );
+		 778      -       break;
+		 779      -     default:
+		 780      -       test.assert(false, "Invalid test direction");
+		 781      -   }
+		 782  801   
+		      802 + GameTest.register("APITests", "cauldron", (test) => {
+		 783      -   const buttonLoc = new BlockLocation(1, 2, 1);
+		 784      -   const buttonPermutation = MinecraftBlockTypes.stoneButton.createDefaultBlockPermutation();
+		      803 +   const loc = new BlockLocation(0, 1, 0);
+		      804 +   var block = test.getBlock(loc);
+		 785      -   buttonPermutation.getProperty(BlockProperties.facingDirection).value = test.rotateDirection(Direction.north);
+		 786      -   test.setBlockPermutation(buttonPermutation, buttonLoc);
+		 787  805   
+		 788      -   test
+		 789      -     .startSequence()
+		 790      -     .thenExecuteAfter(2, () => {
+		      806 +   test.setFluidContainer(loc, GameTest.FluidType.water);
+		      807 +   test.assert(block.getComponent("waterContainer") != null, "This is a water container");
+		      808 +   test.assert(
+		      809 +     block.getComponent("lavaContainer") == null,
+		      810 +     "A water container should not have a lavaContainer component"
+		      811 +   );
+		      812 +   test.assert(
+		      813 +     block.getComponent("snowContainer") == null,
+		      814 +     "A water container should not have a snowContainer component"
+		      815 +   );
+		      816 +   test.assert(
+		      817 +     block.getComponent("potionContainer") == null,
+		      818 +     "A water container should not have a potionContainer component"
+		      819 +   );
+		 791      -       test.assertBlockPresent(MinecraftBlockTypes.stoneButton, buttonLoc, true);
+		 792      -     })
+		 793      -     .thenSucceed();
+		 794      - })
+		 795      -   .rotateTest(true)
+		 796      -   .tag(GameTest.Tags.suiteDefault);
+		 797      - 
+		 798      - function isNear(a, b) {
+		 799      -   return Math.abs(a - b) < 0.001;
+		 800      - }
+		 801      - 
+		 802      - GameTest.register("APITests", "cauldron", (test) => {
+		 803      -   const loc = new BlockLocation(0, 1, 0);
+		 804      -   var block = test.getBlock(loc);
+		 805  820   
+		      821 +   block.getComponent("waterContainer").fillLevel = FluidContainer.maxFillLevel;
+		 806      -   test.setFluidContainer(loc, GameTest.FluidType.water);
+		 807      -   test.assert(block.getComponent("waterContainer") != null, "This is a water container");
+		 808  822     test.assert(
+		      823 +     block.getComponent("waterContainer").fillLevel == FluidContainer.maxFillLevel,
+		      824 +     "The fill level should match with what it was set to"
+		 809      -     block.getComponent("lavaContainer") == null,
+		 810      -     "A water container should not have a lavaContainer component"
+		 811  825     );
+		      826 + 
+		      827 +   block.getComponent("waterContainer").customColor = new Color(1, 0, 0, 1);
+		      828 +   test.assert(block.getComponent("waterContainer").customColor.red == 1, "red component should be set");
+		 812      -   test.assert(
+		      829 +   test.assert(block.getComponent("waterContainer").customColor.green == 0, "green component should be set");
+		      830 +   test.assert(block.getComponent("waterContainer").customColor.blue == 0, "blue component should be set");
+		      831 + 
+		      832 +   block.getComponent("waterContainer").addDye(MinecraftItemTypes.blueDye);
+		      833 +   test.assert(isNear(block.getComponent("waterContainer").customColor.red, 0.616), "red component should be set");
+		      834 +   test.assert(isNear(block.getComponent("waterContainer").customColor.green, 0.133), "green component should be set");
+		      835 +   test.assert(isNear(block.getComponent("waterContainer").customColor.blue, 0.333), "blue component should be set");
+		 813      -     block.getComponent("snowContainer") == null,
+		 814      -     "A water container should not have a snowContainer component"
+		 815      -   );
+		 816      -   test.assert(
+		 817      -     block.getComponent("potionContainer") == null,
+		 818      -     "A water container should not have a potionContainer component"
+		 819      -   );
+		 820  836   
+		      837 +   test.setFluidContainer(loc, GameTest.FluidType.lava);
+		 821      -   block.getComponent("waterContainer").fillLevel = FluidContainer.maxFillLevel;
+		 822  838     test.assert(
+		      839 +     block.getComponent("waterContainer") == null,
+		      840 +     "A lava container should not have a waterContainer component"
+		 823      -     block.getComponent("waterContainer").fillLevel == FluidContainer.maxFillLevel,
+		 824      -     "The fill level should match with what it was set to"
+		 825  841     );
+		      842 +   test.assert(block.getComponent("lavaContainer") != null, "This is a lava component");
+		 826      - 
+		 827      -   block.getComponent("waterContainer").customColor = new Color(1, 0, 0, 1);
+		      843 +   test.assert(
+		      844 +     block.getComponent("snowContainer") == null,
+		      845 +     "A lava container should not have a snowContainer component"
+		      846 +   );
+		      847 +   test.assert(
+		      848 +     block.getComponent("potionContainer") == null,
+		      849 +     "A lava container should not have a potionContainer component"
+		      850 +   );
+		 828      -   test.assert(block.getComponent("waterContainer").customColor.red == 1, "red component should be set");
+		 829      -   test.assert(block.getComponent("waterContainer").customColor.green == 0, "green component should be set");
+		 830      -   test.assert(block.getComponent("waterContainer").customColor.blue == 0, "blue component should be set");
+		 831      - 
+		 832      -   block.getComponent("waterContainer").addDye(MinecraftItemTypes.blueDye);
+		 833      -   test.assert(isNear(block.getComponent("waterContainer").customColor.red, 0.616), "red component should be set");
+		 834      -   test.assert(isNear(block.getComponent("waterContainer").customColor.green, 0.133), "green component should be set");
+		 835      -   test.assert(isNear(block.getComponent("waterContainer").customColor.blue, 0.333), "blue component should be set");
+		 836  851   
+		      852 +   test.setFluidContainer(loc, GameTest.FluidType.powderSnow);
+		 837      -   test.setFluidContainer(loc, GameTest.FluidType.lava);
+		 838  853     test.assert(
+		 839  854       block.getComponent("waterContainer") == null,
+		      855 +     "A snow container should not have a waterContainer component"
+		 840      -     "A lava container should not have a waterContainer component"
+		 841  856     );
+		 842      -   test.assert(block.getComponent("lavaContainer") != null, "This is a lava component");
+		 843  857     test.assert(
+		      858 +     block.getComponent("lavaContainer") == null,
+		      859 +     "A snow container should not have a lavaContainer component"
+		 844      -     block.getComponent("snowContainer") == null,
+		 845      -     "A lava container should not have a snowContainer component"
+		 846  860     );
+		      861 +   test.assert(block.getComponent("snowContainer") != null, "This is a snow container");
+		 847  862     test.assert(
+		 848  863       block.getComponent("potionContainer") == null,
+		      864 +     "A snow container should not have a potionContainer component"
+		 849      -     "A lava container should not have a potionContainer component"
+		 850  865     );
+		 851  866   
+		      867 +   test.setFluidContainer(loc, GameTest.FluidType.potion);
+		 852      -   test.setFluidContainer(loc, GameTest.FluidType.powderSnow);
+		 853  868     test.assert(
+		      869 +     block.getComponent("snowContainer") == null,
+		      870 +     "A potion container should not have a waterContainer component"
+		 854      -     block.getComponent("waterContainer") == null,
+		 855      -     "A snow container should not have a waterContainer component"
+		 856  871     );
+		 857  872     test.assert(
+		 858  873       block.getComponent("lavaContainer") == null,
+		      874 +     "A potion container should not have a lavaContainer component"
+		 859      -     "A snow container should not have a lavaContainer component"
+		 860  875     );
+		 861      -   test.assert(block.getComponent("snowContainer") != null, "This is a snow container");
+		 862  876     test.assert(
+		      877 +     block.getComponent("snowContainer") == null,
+		      878 +     "A potion container should not have a snowContainer component"
+		 863      -     block.getComponent("potionContainer") == null,
+		 864      -     "A snow container should not have a potionContainer component"
+		 865  879     );
+		      880 +   test.assert(block.getComponent("potionContainer") != null, "This is a potion container");
+		 866  881   
+		      882 +   test.succeed();
+		 867      -   test.setFluidContainer(loc, GameTest.FluidType.potion);
+		 868      -   test.assert(
+		 869      -     block.getComponent("snowContainer") == null,
+		      883 + }).tag(GameTest.Tags.suiteDefault);
+		 870      -     "A potion container should not have a waterContainer component"
+		 871      -   );
+		      884 + 
+		      885 + GameTest.register("APITests", "jukebox", (test) => {
+		      886 +   var jukeboxBlock = test.getBlock(new BlockLocation(0, 1, 0));
+		      887 +   var musicPlayerComp = jukeboxBlock.getComponent("recordPlayer");
+		      888 + 
+		      889 +   try {
+		      890 +     musicPlayerComp.setRecord(MinecraftItemTypes.apple);
+		      891 +     test.fail("An exception should be thrown when playing an item that is not a music disk");
+		      892 +   } catch (e) {}
+		 872      -   test.assert(
+		 873      -     block.getComponent("lavaContainer") == null,
+		 874      -     "A potion container should not have a lavaContainer component"
+		 875      -   );
+		 876      -   test.assert(
+		 877      -     block.getComponent("snowContainer") == null,
+		 878      -     "A potion container should not have a snowContainer component"
+		 879      -   );
+		 880      -   test.assert(block.getComponent("potionContainer") != null, "This is a potion container");
+		 881  893   
+		      894 +   test.assert(musicPlayerComp.isPlaying() === false, "Should be stopped");
+		      895 +   musicPlayerComp.setRecord(MinecraftItemTypes.musicDiscMellohi);
+		 882      -   test.succeed();
+		      896 +   test.assert(musicPlayerComp.isPlaying() === true, "Should be playing");
+		 883      - }).tag(GameTest.Tags.suiteDefault);
+		 884  897   
+		      898 +   test
+		      899 +     .startSequence()
+		      900 +     .thenExecuteAfter(20, () => {
+		      901 +       test.assert(musicPlayerComp.isPlaying() === true, "Disk should not be finished yet");
+		      902 +       musicPlayerComp.clearRecord();
+		      903 +       test.assert(musicPlayerComp.isPlaying() === false, "Disk should be stopped now");
+		      904 +     })
+		      905 +     .thenSucceed();
+		      906 + })
+		      907 +   .maxTicks(25)
+		      908 +   .tag(GameTest.Tags.suiteDefault);
+		 885      - GameTest.register("APITests", "jukebox", (test) => {
+		 886      -   var jukeboxBlock = test.getBlock(new BlockLocation(0, 1, 0));
+		 887      -   var musicPlayerComp = jukeboxBlock.getComponent("recordPlayer");
+		 888      - 
+		 889      -   try {
+		 890      -     musicPlayerComp.setRecord(MinecraftItemTypes.apple);
+		 891      -     test.fail("An exception should be thrown when playing an item that is not a music disk");
+		 892      -   } catch (e) {}
+		 893  909   
+		      910 + GameTest.register("APITests", "maybe_fill_cauldron", (test) => {
+		      911 +   test
+		      912 +     .startSequence()
+		 894      -   test.assert(musicPlayerComp.isPlaying() === false, "Should be stopped");
+		      913 +     .thenExecute(() => {
+		      914 +       test.triggerInternalBlockEvent(new BlockLocation(1, 3, 1), "minecraft:drip");
+		      915 +       test.triggerInternalBlockEvent(new BlockLocation(3, 3, 1), "minecraft:drip");
+		      916 +     })
+		      917 +     .thenIdle(61)
+		      918 +     .thenExecute(() => {
+		      919 +       var waterCauldron = test.getBlock(new BlockLocation(3, 2, 1));
+		      920 +       var lavaCauldron = test.getBlock(new BlockLocation(1, 2, 1));
+		      921 +       test.assert(
+		      922 +         waterCauldron.getComponent("waterContainer").fillLevel == 2,
+		      923 +         "Expected water to be at level 2, but got " + waterCauldron.getComponent("waterContainer").fillLevel
+		      924 +       );
+		      925 +       test.assert(
+		      926 +         lavaCauldron.getComponent("lavaContainer").fillLevel == FluidContainer.maxFillLevel,
+		      927 +         "Expected lava to be full, but got a fill level of " + lavaCauldron.getComponent("lavaContainer").fillLevel
+		      928 +       );
+		      929 +     })
+		      930 +     .thenSucceed();
+		      931 + })
+		      932 +   .setupTicks(30) // time it takes lava to flow.
+		      933 +   .maxTicks(100)
+		 895      -   musicPlayerComp.setRecord(MinecraftItemTypes.musicDiscMellohi);
+		 896      -   test.assert(musicPlayerComp.isPlaying() === true, "Should be playing");
+		 897      - 
+		 898      -   test
+		 899      -     .startSequence()
+		 900      -     .thenExecuteAfter(20, () => {
+		 901      -       test.assert(musicPlayerComp.isPlaying() === true, "Disk should not be finished yet");
+		 902      -       musicPlayerComp.clearRecord();
+		 903      -       test.assert(musicPlayerComp.isPlaying() === false, "Disk should be stopped now");
+		 904      -     })
+		 905      -     .thenSucceed();
+		 906      - })
+		 907      -   .maxTicks(25)
+		 908      -   .tag(GameTest.Tags.suiteDefault);
+		 909      - 
+		 910      - GameTest.register("APITests", "maybe_fill_cauldron", (test) => {
+		 911      -   test
+		 912      -     .startSequence()
+		 913      -     .thenExecute(() => {
+		 914      -       test.triggerInternalBlockEvent(new BlockLocation(1, 3, 1), "minecraft:drip");
+		 915      -       test.triggerInternalBlockEvent(new BlockLocation(3, 3, 1), "minecraft:drip");
+		 916      -     })
+		      934 +   .tag(GameTest.Tags.suiteDefault);
+		      935 + 
+		      936 + GameTest.register("APITests", "grow_pointed_dripstone", (test) => {
+		      937 +   test.triggerInternalBlockEvent(new BlockLocation(1, 5, 1), "grow_stalagtite");
+		      938 +   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 4, 1), true);
+		      939 +   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 2, 1), false);
+		      940 + 
+		      941 +   test.triggerInternalBlockEvent(new BlockLocation(1, 5, 1), "grow_stalagmite");
+		      942 +   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 4, 1), true);
+		      943 +   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 2, 1), true);
+		      944 + 
+		      945 +   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 3, 1), false);
+		      946 + 
+		      947 +   test.succeed();
+		      948 + }).tag(GameTest.Tags.suiteDefault);
+		      949 + 
+		      950 + GameTest.register("APITests", "vines", (test) => {
+		      951 +   const testEx = new GameTestExtensions(test);
+		 917      -     .thenIdle(61)
+		 918      -     .thenExecute(() => {
+		 919      -       var waterCauldron = test.getBlock(new BlockLocation(3, 2, 1));
+		 920      -       var lavaCauldron = test.getBlock(new BlockLocation(1, 2, 1));
+		 921      -       test.assert(
+		 922      -         waterCauldron.getComponent("waterContainer").fillLevel == 2,
+		 923      -         "Expected water to be at level 2, but got " + waterCauldron.getComponent("waterContainer").fillLevel
+		 924      -       );
+		 925      -       test.assert(
+		 926      -         lavaCauldron.getComponent("lavaContainer").fillLevel == FluidContainer.maxFillLevel,
+		 927      -         "Expected lava to be full, but got a fill level of " + lavaCauldron.getComponent("lavaContainer").fillLevel
+		 928      -       );
+		 929      -     })
+		 930      -     .thenSucceed();
+		 931      - })
+		 932      -   .setupTicks(30) // time it takes lava to flow.
+		 933      -   .maxTicks(100)
+		 934      -   .tag(GameTest.Tags.suiteDefault);
+		 935  952   
+		      953 +   const allBitmask = 15;
+		      954 +   const northBitmask = 1 << testEx.getVineDirection(Direction.north);
+		 936      - GameTest.register("APITests", "grow_pointed_dripstone", (test) => {
+		      955 +   const eastBitmask = 1 << testEx.getVineDirection(Direction.east);
+		      956 +   const southBitmask = 1 << testEx.getVineDirection(Direction.south);
+		      957 +   const westBitmask = 1 << testEx.getVineDirection(Direction.west);
+		 937      -   test.triggerInternalBlockEvent(new BlockLocation(1, 5, 1), "grow_stalagtite");
+		 938      -   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 4, 1), true);
+		 939      -   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 2, 1), false);
+		 940  958   
+		      959 +   test.triggerInternalBlockEvent(new BlockLocation(1, 4, 2), "grow_down", [southBitmask | northBitmask]);
+		      960 +   testEx.assertBlockProperty(
+		 941      -   test.triggerInternalBlockEvent(new BlockLocation(1, 5, 1), "grow_stalagmite");
+		      961 +     BlockProperties.vineDirectionBits,
+		      962 +     southBitmask | northBitmask,
+		      963 +     new BlockLocation(1, 3, 2)
+		      964 +   );
+		 942      -   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 4, 1), true);
+		 943      -   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 2, 1), true);
+		 944      - 
+		 945      -   test.assertBlockPresent(MinecraftBlockTypes.pointedDripstone, new BlockLocation(1, 3, 1), false);
+		 946  965   
+		      966 +   test.triggerInternalBlockEvent(new BlockLocation(1, 4, 2), "grow_up", [allBitmask]);
+		      967 +   testEx.assertBlockProperty(BlockProperties.vineDirectionBits, southBitmask | eastBitmask, new BlockLocation(1, 5, 2));
+		 947      -   test.succeed();
+		 948      - }).tag(GameTest.Tags.suiteDefault);
+		 949  968   
+		      969 +   test.triggerInternalBlockEvent(new BlockLocation(7, 2, 1), "grow_sideways", [
+		      970 +     testEx.getVineDirection(Direction.west),
+		      971 +   ]);
+		 950      - GameTest.register("APITests", "vines", (test) => {
+		      972 +   testEx.assertBlockProperty(BlockProperties.vineDirectionBits, southBitmask, new BlockLocation(6, 2, 1));
+		 951      -   const testEx = new GameTestExtensions(test);
+		 952  973   
+		      974 +   test.triggerInternalBlockEvent(new BlockLocation(6, 2, 1), "grow_sideways", [
+		 953      -   const allBitmask = 15;
+		 954      -   const northBitmask = 1 << testEx.getVineDirection(Direction.north);
+		      975 +     testEx.getVineDirection(Direction.west),
+		      976 +   ]);
+		      977 +   testEx.assertBlockProperty(BlockProperties.vineDirectionBits, southBitmask | westBitmask, new BlockLocation(6, 2, 1));
+		 955      -   const eastBitmask = 1 << testEx.getVineDirection(Direction.east);
+		 956      -   const southBitmask = 1 << testEx.getVineDirection(Direction.south);
+		 957      -   const westBitmask = 1 << testEx.getVineDirection(Direction.west);
+		 958  978   
+		      979 +   test.triggerInternalBlockEvent(new BlockLocation(7, 2, 1), "grow_sideways", [
+		 959      -   test.triggerInternalBlockEvent(new BlockLocation(1, 4, 2), "grow_down", [southBitmask | northBitmask]);
+		 960      -   testEx.assertBlockProperty(
+		 961      -     BlockProperties.vineDirectionBits,
+		      980 +     testEx.getVineDirection(Direction.east),
+		      981 +   ]);
+		      982 +   testEx.assertBlockProperty(BlockProperties.vineDirectionBits, westBitmask, new BlockLocation(8, 2, 2));
+		 962      -     southBitmask | northBitmask,
+		 963      -     new BlockLocation(1, 3, 2)
+		 964      -   );
+		 965  983   
+		      984 +   test.succeed();
+		      985 + }).tag(GameTest.Tags.suiteDefault);
+		 966      -   test.triggerInternalBlockEvent(new BlockLocation(1, 4, 2), "grow_up", [allBitmask]);
+		 967      -   testEx.assertBlockProperty(BlockProperties.vineDirectionBits, southBitmask | eastBitmask, new BlockLocation(1, 5, 2));
+		 968  986   
+		      987 + GameTest.register("APITests", "tags", (test) => {
+		 969      -   test.triggerInternalBlockEvent(new BlockLocation(7, 2, 1), "grow_sideways", [
+		 970      -     testEx.getVineDirection(Direction.west),
+		      988 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1), "tag_player");
+		      989 +   const dimension = test.getDimension();
+		 971      -   ]);
+		 972      -   testEx.assertBlockProperty(BlockProperties.vineDirectionBits, southBitmask, new BlockLocation(6, 2, 1));
+		 973  990   
+		      991 +   test
+		      992 +     .startSequence()
+		      993 +     .thenExecuteAfter(2, () => {
+		 974      -   test.triggerInternalBlockEvent(new BlockLocation(6, 2, 1), "grow_sideways", [
+		      994 +       dimension.runCommand("tag @p[name=tag_player] add test_tag_1");
+		      995 +       test.assert(player.hasTag("test_tag_1"), "Expected tag test_tag_1");
+		      996 +       test.assert(!player.hasTag("test_tag_2"), "Did not expect tag test_tag_2");
+		      997 +       test.assert(player.removeTag("test_tag_1"), "Expected successful tag removal");
+		      998 +       test.assert(!player.removeTag("test_tag_1"), "Expected failed tag removal");
+		      999 +       test.assert(!player.hasTag("test_tag_1"), "Did not expect tag test_tag_1");
+		     1000 +       player.addTag("test_tag_2");
+		     1001 +       test.assert(player.hasTag("test_tag_2"), "Expected tag test_tag_2");
+		     1002 +       let tags = player.getTags();
+		     1003 +       test.assert(tags.length === 1 && tags[0] === "test_tag_2", "Unexpected tags value");
+		     1004 +     })
+		     1005 +     .thenSucceed();
+		     1006 + })
+		     1007 +   .structureName("ComponentTests:platform")
+		     1008 +   .tag(GameTest.Tags.suiteDefault);
+		 975      -     testEx.getVineDirection(Direction.west),
+		 976      -   ]);
+		 977      -   testEx.assertBlockProperty(BlockProperties.vineDirectionBits, southBitmask | westBitmask, new BlockLocation(6, 2, 1));
+		 978      - 
+		 979      -   test.triggerInternalBlockEvent(new BlockLocation(7, 2, 1), "grow_sideways", [
+		 980      -     testEx.getVineDirection(Direction.east),
+		 981      -   ]);
+		 982      -   testEx.assertBlockProperty(BlockProperties.vineDirectionBits, westBitmask, new BlockLocation(8, 2, 2));
+		 983      - 
+		 984      -   test.succeed();
+		 985      - }).tag(GameTest.Tags.suiteDefault);
+		 986      - 
+		 987      - GameTest.register("APITests", "tags", (test) => {
+		 988      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1), "tag_player");
+		 989      -   const dimension = test.getDimension();
+		 990 1009   
+		     1010 + //AI tests
+		 991      -   test
+		 992      -     .startSequence()
+		     1011 + GameTest.register("APITests", "can_set_target", (test) => {
+		     1012 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		     1013 +   let wolf = test.spawn("minecraft:wolf<minecraft:ageable_grow_up>", new BlockLocation(2, 2, 1));
+		     1014 + 
+		     1015 +   test
+		     1016 +     .startSequence()
+		     1017 +     .thenExecuteAfter(10, () => {
+		     1018 +       wolf.target = player;
+		     1019 +       const targetActor = wolf.target;
+		     1020 +       wolf.kill();
+		     1021 +       test.assert(targetActor == player, "Failed to set/get target on wolf");
+		 993      -     .thenExecuteAfter(2, () => {
+		 994      -       dimension.runCommand("tag @p[name=tag_player] add test_tag_1");
+		 995      -       test.assert(player.hasTag("test_tag_1"), "Expected tag test_tag_1");
+		 996      -       test.assert(!player.hasTag("test_tag_2"), "Did not expect tag test_tag_2");
+		 997      -       test.assert(player.removeTag("test_tag_1"), "Expected successful tag removal");
+		 998      -       test.assert(!player.removeTag("test_tag_1"), "Expected failed tag removal");
+		 999      -       test.assert(!player.hasTag("test_tag_1"), "Did not expect tag test_tag_1");
+		1000      -       player.addTag("test_tag_2");
+		1001      -       test.assert(player.hasTag("test_tag_2"), "Expected tag test_tag_2");
+		1002      -       let tags = player.getTags();
+		1003      -       test.assert(tags.length === 1 && tags[0] === "test_tag_2", "Unexpected tags value");
+		1004 1022       })
+		1005 1023       .thenSucceed();
+		1006 1024   })
+		1007 1025     .structureName("ComponentTests:platform")
+		1008 1026     .tag(GameTest.Tags.suiteDefault);
+		1009 1027   
+		     1028 + GameTest.register("APITests", "set_target_attacks_player", (test) => {
+		1010      - //AI tests
+		1011      - GameTest.register("APITests", "can_set_target", (test) => {
+		1012 1029     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		1013 1030     let wolf = test.spawn("minecraft:wolf<minecraft:ageable_grow_up>", new BlockLocation(2, 2, 1));
+		     1031 + 
+		1014      -   
+		1015 1032     test
+		1016 1033       .startSequence()
+		1017 1034       .thenExecuteAfter(10, () => {
+		1018 1035         wolf.target = player;
+		     1036 +     })
+		     1037 +     .thenWait(() => {
+		1019      -       const targetActor = wolf.target;
+		     1038 +       const healthComponent = player.getComponent("minecraft:health");
+		     1039 +       test.assert(healthComponent.current != healthComponent.value, "Player should have been attacked");
+		1020      -       wolf.kill();
+		1021      -       test.assert(targetActor == player, "Failed to set/get target on wolf");
+		1022 1040       })
+		1023      -     .thenSucceed();
+		1024      - })
+		1025      -   .structureName("ComponentTests:platform")
+		     1041 +     .thenExecute(() => {
+		     1042 +       wolf.kill();
+		     1043 +     })
+		     1044 +     .thenSucceed();
+		     1045 + })
+		     1046 +   .maxTicks(200)
+		     1047 +   .structureName("ComponentTests:platform")
+		     1048 +   .tag(GameTest.Tags.suiteDefault);
+		     1049 + 
+		     1050 + GameTest.register("APITests", "can_get_null_target", (test) => {
+		     1051 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		     1052 +   let wolf = test.spawn("minecraft:wolf<minecraft:ageable_grow_up>", new BlockLocation(2, 2, 1));
+		     1053 + 
+		     1054 +   const target = wolf.target;
+		     1055 +   if (target) {
+		     1056 +     test.fail("Expected wolf to not have a target");
+		     1057 +   }
+		     1058 + 
+		     1059 +   test.succeed();
+		1026      -   .tag(GameTest.Tags.suiteDefault);
+		1027      - 
+		1028      - GameTest.register("APITests", "set_target_attacks_player", (test) => {
+		1029      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		1030      -   let wolf = test.spawn("minecraft:wolf<minecraft:ageable_grow_up>", new BlockLocation(2, 2, 1));
+		1031      -   
+		1032      -   test
+		1033      -     .startSequence()
+		1034      -     .thenExecuteAfter(10, () => {
+		1035      -       wolf.target = player;
+		1036      -     })
+		1037      -     .thenWait(() => {
+		1038      -       const healthComponent = player.getComponent("minecraft:health");
+		1039      -       test.assert(healthComponent.current != healthComponent.value, "Player should have been attacked");
+		1040      -     })
+		1041      -     .thenExecute(() => {
+		1042      -       wolf.kill();
+		1043      -     })
+		1044      -     .thenSucceed();
+		1045 1060   })
+		1046      -   .maxTicks(200)
+		1047 1061     .structureName("ComponentTests:platform")
+		1048 1062     .tag(GameTest.Tags.suiteDefault);
+		            '''
+	Added script "BlockEventTests.js":
+		'''
+		import * as GameTest from "mojang-gametest";
+		import {
+		  world,
+		  MinecraftBlockTypes,
+		  MinecraftItemTypes,
+		  BlockLocation,
+		  ItemStack,
+		  GameMode,
+		  Direction,
+		} from "mojang-minecraft";
+		
+		function registerBlockBreakTest(gameMode, blockType, blockBreakTicks) {
+		  GameTest.register("BlockEventTests", `block_break_event_${gameMode}_${blockType.id}`, async (test) => {
+		    const spawnLocation = new BlockLocation(1, 2, 3);
+		    const blockLocation = new BlockLocation(2, 2, 2);
+		
+		    const player = test.spawnSimulatedPlayer(spawnLocation, `${gameMode}_player`, GameMode[gameMode]);
+		
+		    // Set block
+		    test.setBlockType(blockType, blockLocation);
+		
+		    // Listen for block break
+		    let blockDidBreak = false;
+		    const listener = (event) => {
+		      if (event.block.location.equals(test.worldBlockLocation(blockLocation))) {
+		        blockDidBreak = true;
+		      }
+		    };
+		    world.events.blockBreak.subscribe(listener);
+		
+		    // Start breaking block
+		    player.lookAtBlock(blockLocation);
+		    player.breakBlock(blockLocation);
+		
+		    // Wait for the block to be broken
+		    await test.idle(blockBreakTicks);
+		
+		    // Unsubscribe
+		    world.events.blockBreak.unsubscribe(listener);
+		
+		    if (blockDidBreak) {
+		      test.succeed();
+		    } else {
+		      test.fail(`Block event should have fired for block ${blockType.id}`);
+		    }
+		  })
+		    .structureName("Generic:flat_5x5x5")
+		    .maxTicks(blockBreakTicks + 10)
+		    .batch(`block_break_event_${gameMode}_${blockType.id}`)
+		    .tag(GameTest.Tags.suiteDefault);
+		}
+		
+		function registerBlockPlaceTest(itemType, belowBlock) {
+		  const registerTest = function (gameMode) {
+		    GameTest.register("BlockEventTests", `block_place_event_${gameMode}_${itemType.id}`, async (test) => {
+		      const spawnLocation = new BlockLocation(1, 2, 3);
+		      const blockLocation = new BlockLocation(2, 1, 2);
+		
+		      const player = test.spawnSimulatedPlayer(spawnLocation, `${gameMode}_player`, GameMode[gameMode]);
+		
+		      if (belowBlock) {
+		        // Set bellow block
+		        test.setBlockType(belowBlock, blockLocation);
+		      }
+		
+		      // Listen for block place
+		      let blockDidPlace = false;
+		      const listener = (event) => {
+		        if (event.block.location.equals(test.worldBlockLocation(blockLocation.offset(0, 1, 0)))) {
+		          blockDidPlace = true;
+		        }
+		      };
+		      world.events.blockPlace.subscribe(listener);
+		
+		      await test.idle(10);
+		
+		      // Start place block
+		      player.lookAtBlock(blockLocation);
+		      player.setItem(new ItemStack(itemType, 1), 0, true);
+		      player.useItemInSlotOnBlock(0, blockLocation, Direction.up, 0.5, 1);
+		
+		      // Unsubscribe
+		      world.events.blockPlace.unsubscribe(listener);
+		
+		      if (blockDidPlace) {
+		        test.succeed();
+		      } else {
+		        test.fail(`Block event should have fired for block ${itemType.id}`);
+		      }
+		    })
+		      .structureName("Generic:flat_5x5x5")
+		      .maxTicks(20)
+		      .batch(`block_place_event_${gameMode}_${itemType.id}`)
+		      .tag(GameTest.Tags.suiteDefault);
+		  };
+		
+		  registerTest("survival");
+		  registerTest("creative");
+		}
+		
+		// Break Block Tests
+		registerBlockBreakTest("creative", MinecraftBlockTypes.dirt, 20);
+		registerBlockBreakTest("survival", MinecraftBlockTypes.dirt, 100);
+		
+		// Place Block Tests
+		// Note: These are fired in a bunch of
+		//  different spots in the code, hence the different
+		//  items I chose to test
+		registerBlockPlaceTest(MinecraftItemTypes.dirt);
+		registerBlockPlaceTest(MinecraftItemTypes.bamboo, MinecraftBlockTypes.dirt);
+		registerBlockPlaceTest(MinecraftItemTypes.banner);
+		registerBlockPlaceTest(MinecraftItemTypes.bed);
+		registerBlockPlaceTest(MinecraftItemTypes.flowerPot);
+		registerBlockPlaceTest(MinecraftItemTypes.redstoneWire);
+		registerBlockPlaceTest(MinecraftItemTypes.oakSign);
+		'''
+	Changed script "GameTestExtensions.js":
+		Total line: 56 (+1, -1)
+		        '''
+		        ...
+		34 34     }
+		35 35   
+		36 36   giveItem(player, itemType, amount, slot) {
+		37 37     const inventoryContainer = player.getComponent("inventory").container;
+		38 38     inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
+		   39 +   player.selectedSlot = slot ?? 0;
+		39    -   player.selectSlot(slot ?? 0);
+		40 40   }
+		41 41   
+		42 42     getVineDirection(direction) {
+		43 43       const rotated = this.test.rotateDirection(direction);
+		44 44   
+		        ...
+		        '''
+	Changed script "ItemTests.js":
+		Total line: 268 (+101, -48)
+		          '''
+		          ...
+		 10  10   } from "mojang-minecraft";
+		 11  11   
+		 12  12   function giveItem(player, itemType, amount, slot) {
+		 13  13     const inventoryContainer = player.getComponent("inventory").container;
+		 14  14     inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
+		     15 +   player.selectedSlot = slot ?? 0;
+		     16 + }
+		     17 + 
+		     18 + GameTest.register("ItemTests", "item_use_event", (test) => {
+		     19 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		     20 +   
+		     21 +   const blaze = test.spawn("blaze", new BlockLocation(1, 2, 3));
+		     22 +   test.assert(blaze != undefined, "Failed to initialize Blaze");
+		     23 +   const blazeHealth = blaze.getComponent("health");
+		     24 +   let initialHealth = blazeHealth.current;
+		     25 + 
+		     26 +   const snowball = new ItemStack(MinecraftItemTypes.snowball, 1);
+		     27 +   
+		     28 +   let eventReceived = false;
+		     29 +   const eventSubscription = world.events.itemUse.subscribe((eventData) => {
+		     30 +     if(eventData.source != player) {
+		     31 +       return;
+		     32 +     }
+		     33 +     eventReceived = true;
+		     34 +   });
+		     35 + 
+		     36 +   test
+		     37 +     .startSequence()
+		     38 +     .thenExecuteAfter(5, () => {
+		     39 +       player.useItem(snowball);
+		     40 +     })
+		     41 +     .thenExecuteAfter(5, () => {
+		     42 +       world.events.itemUse.unsubscribe(eventSubscription);
+		     43 + 
+		     44 +       let afterUseHealth = blazeHealth.current;
+		     45 +       blaze.kill(); 
+		     46 + 
+		     47 +       test.assert(eventReceived, "Should have received itemUse event");
+		     48 + 
+		     49 +       test.assert(afterUseHealth < initialHealth, 
+		     50 +         `Blaze was not hurt after snowball throw should have been cancelled: before-> ${initialHealth} after-> ${afterUseHealth}`
+		     51 +       );     
+		     52 + 
+		     53 +     })
+		     54 +     .thenSucceed();
+		     55 + })
+		     56 + .structureName("SimulatedPlayerTests:use_item")
+		     57 + .tag(GameTest.Tags.suiteDefault);
+		     58 + 
+		     59 + GameTest.register("ItemTests", "item_use_event_cancelled", (test) => {
+		     60 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		     61 +   
+		     62 +   const snowball = new ItemStack(MinecraftItemTypes.snowball, 1);
+		     63 +   
+		     64 +   let eventReceived = false;
+		     65 +   let beforeEventReceived = false;
+		     66 + 
+		     67 +   const beforeEventSubscription = world.events.beforeItemUse.subscribe((eventData) => {
+		     68 +     if(eventData.source != player) {
+		     69 +       return;
+		     70 +     }
+		     71 +     beforeEventReceived = true;
+		     72 +     eventData.cancel = true;
+		     73 +   });
+		     74 + 
+		     75 +   const eventSubscription = world.events.itemUse.subscribe((eventData) => {
+		     76 +     if(eventData.source != player) {
+		     77 +       return;
+		     78 +     }
+		     79 +     eventReceived = true;
+		     80 +   });
+		     81 + 
+		     82 +   test
+		     83 +     .startSequence()
+		     84 +     .thenIdle(5)
+		     85 +     .thenExecute(() => {
+		     86 +       player.useItem(snowball);
+		     87 +     })
+		     88 +     .thenExecuteAfter(5, () => {
+		     89 +       world.events.beforeItemUse.unsubscribe(beforeEventSubscription);
+		     90 +       world.events.itemUse.unsubscribe(eventSubscription);
+		 15     -   player.selectSlot(slot ?? 0);
+		 16     - }
+		 17  91   
+		     92 +       test.assert(beforeEventReceived, "Should have received beforeItemUse event");
+		     93 +       test.assert(eventReceived == false, "Should not have received itemUse event");
+		 18     - GameTest.register("ItemTests", "item_use_event", (test) => {
+		 19     -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		     94 +     })
+		     95 +     .thenSucceed();
+		     96 + })
+		     97 + .structureName("ComponentTests:platform")
+		     98 + .tag(GameTest.Tags.suiteDefault);
+		 20     -   
+		 21     -   const blaze = test.spawn("blaze", new BlockLocation(1, 2, 3));
+		 22     -   test.assert(blaze != undefined, "Failed to initialize Blaze");
+		 23     -   const blazeHealth = blaze.getComponent("health");
+		 24     -   let initialHealth = blazeHealth.current;
+		 25  99   
+		    100 + GameTest.register("ItemTests", "item_use_event_cancelled_stops_action", (test) => {
+		    101 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 26     -   const snowball = new ItemStack(MinecraftItemTypes.snowball, 1);
+		 27 102     
+		 28     -   let eventReceived = false;
+		 29     -   const eventSubscription = world.events.itemUse.subscribe((eventData) => {
+		 30     -     if(eventData.source != player) {
+		    103 +   const blaze = test.spawn("blaze", new BlockLocation(1, 2, 3));
+		    104 +   test.assert(blaze != undefined, "Failed to initialize Blaze");
+		    105 +   const blazeHealth = blaze.getComponent("health");
+		    106 +   let initialHealth = blazeHealth.current;
+		 31     -       return;
+		 32     -     }
+		 33     -     eventReceived = true;
+		 34     -   });
+		 35 107   
+		    108 +   const slot = 0;
+		 36     -   test
+		 37     -     .startSequence()
+		 38     -     .thenExecuteAfter(5, () => {
+		    109 +   const snowballCount = 10;
+		    110 +   const inventoryContainer = player.getComponent("inventory").container;
+		    111 +   
+		    112 +   giveItem(player, MinecraftItemTypes.snowball, snowballCount, slot);
+		    113 +     
+		    114 +   let eventReceived = false;
+		    115 +   let beforeEventReceived = false;
+		 39     -       player.useItem(snowball);
+		 40     -     })
+		 41     -     .thenExecuteAfter(5, () => {
+		 42     -       world.events.itemUse.unsubscribe(eventSubscription);
+		 43     - 
+		 44     -       let afterUseHealth = blazeHealth.current;
+		 45     -       blaze.kill(); 
+		 46 116   
+		    117 +   const beforeEventSubscription = world.events.beforeItemUse.subscribe((eventData) => {
+		    118 +     if(eventData.source != player) {
+		    119 +       return;
+		    120 +     }
+		 47     -       test.assert(eventReceived, "Should have received itemUse event");
+		 48     - 
+		    121 +     beforeEventReceived = true;
+		    122 +     eventData.cancel = true;
+		    123 +   });
+		 49     -       test.assert(afterUseHealth < initialHealth, 
+		 50     -         `Blaze was not hurt after snowball throw should have been cancelled: before-> ${initialHealth} after-> ${afterUseHealth}`
+		 51     -       );     
+		 52 124   
+		    125 +   const eventSubscription = world.events.itemUse.subscribe((eventData) => {
+		    126 +     if(eventData.source != player) {
+		 53     -     })
+		    127 +       return;
+		    128 +     }
+		    129 +     eventReceived = true;
+		    130 +   });
+		 54     -     .thenSucceed();
+		 55     - })
+		 56     - .structureName("SimulatedPlayerTests:use_item")
+		 57     - .tag(GameTest.Tags.suiteDefault);
+		 58 131   
+		 59     - GameTest.register("ItemTests", "item_use_event_cancelled", (test) => {
+		 60     -   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		 61     -   
+		    132 +   test
+		    133 +     .startSequence()
+		    134 +     .thenIdle(5)
+		    135 +     .thenExecute(() => {
+		    136 +       player.useItemInSlot(slot);
+		    137 +     })
+		    138 +     .thenExecuteAfter(5, () => {
+		    139 +       world.events.beforeItemUse.unsubscribe(beforeEventSubscription);
+		    140 +       world.events.itemUse.unsubscribe(eventSubscription);
+		    141 + 
+		    142 +       let afterUseHealth = blazeHealth.current;
+		    143 +       blaze.kill(); 
+		 62     -   const snowball = new ItemStack(MinecraftItemTypes.snowball, 1);
+		 63     -   
+		 64     -   let eventReceived = false;
+		 65     -   let beforeEventReceived = false;
+		 66     - 
+		 67     -   const beforeEventSubscription = world.events.beforeItemUse.subscribe((eventData) => {
+		 68     -     if(eventData.source != player) {
+		 69     -       return;
+		 70     -     }
+		 71     -     beforeEventReceived = true;
+		 72     -     eventData.cancel = true;
+		 73     -   });
+		 74 144   
+		 75     -   const eventSubscription = world.events.itemUse.subscribe((eventData) => {
+		 76     -     if(eventData.source != player) {
+		 77     -       return;
+		 78     -     }
+		    145 +       test.assert(beforeEventReceived, "Should have received beforeItemUse event");
+		    146 +       test.assert(eventReceived == false, "Should not have received itemUse event");
+		 79     -     eventReceived = true;
+		 80     -   });
+		 81 147   
+		    148 +       let actualAmount = inventoryContainer.getItem(slot).amount;
+		    149 +       test.assert(
+		 82     -   test
+		 83     -     .startSequence()
+		    150 +         actualAmount === snowballCount,
+		    151 +         `Player should have ${snowballCount} snowballs but has ${actualAmount}`
+		    152 +       );
+		    153 + 
+		    154 +       test.assert(afterUseHealth === initialHealth, 
+		    155 +         `Blaze was hurt after snowball throw should have been cancelled: before-> ${initialHealth} after-> ${afterUseHealth}`
+		    156 +       );     
+		 84     -     .thenIdle(5)
+		 85     -     .thenExecute(() => {
+		 86     -       player.useItem(snowball);
+		 87     -     })
+		 88     -     .thenExecuteAfter(5, () => {
+		 89     -       world.events.beforeItemUse.unsubscribe(beforeEventSubscription);
+		 90     -       world.events.itemUse.unsubscribe(eventSubscription);
+		 91 157   
+		 92     -       test.assert(beforeEventReceived, "Should have received beforeItemUse event");
+		 93     -       test.assert(eventReceived == false, "Should not have received itemUse event");
+		 94 158       })
+		 95 159       .thenSucceed();
+		 96 160   })
+		    161 + .structureName("SimulatedPlayerTests:use_item")
+		 97     - .structureName("ComponentTests:platform")
+		 98 162   .tag(GameTest.Tags.suiteDefault);
+		 99 163   
+		100     - GameTest.register("ItemTests", "item_use_event_cancelled_stops_action", (test) => {
+		101     -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		102     -   
+		    164 + GameTest.register("ItemTests", "item_use_on_event", (test) => {
+		    165 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		    166 +   const dirtLoc = new BlockLocation(2, 1, 1);
+		    167 +   const dirt = new ItemStack(MinecraftItemTypes.dirt);
+		103     -   const blaze = test.spawn("blaze", new BlockLocation(1, 2, 3));
+		104     -   test.assert(blaze != undefined, "Failed to initialize Blaze");
+		105     -   const blazeHealth = blaze.getComponent("health");
+		106     -   let initialHealth = blazeHealth.current;
+		107 168   
+		    169 +   let eventReceived = false;
+		108     -   const slot = 0;
+		109     -   const snowballCount = 10;
+		    170 +   const eventSubscription = world.events.itemUseOn.subscribe((eventData) => {
+		    171 +     if(eventData.source != player) {
+		    172 +       return;
+		    173 +     }
+		    174 +     eventReceived = true;
+		    175 +   });
+		110     -   const inventoryContainer = player.getComponent("inventory").container;
+		111     -   
+		112     -   giveItem(player, MinecraftItemTypes.snowball, snowballCount, slot);
+		113     -     
+		114     -   let eventReceived = false;
+		115     -   let beforeEventReceived = false;
+		116 176   
+		    177 +   test
+		117     -   const beforeEventSubscription = world.events.beforeItemUse.subscribe((eventData) => {
+		118     -     if(eventData.source != player) {
+		    178 +     .startSequence()
+		    179 +     .thenExecuteAfter(5, () => {
+		    180 +       player.useItemOnBlock(dirt, dirtLoc, Direction.up);
+		    181 +     })
+		    182 +     .thenExecuteAfter(5, () => {
+		    183 +       world.events.itemUseOn.unsubscribe(eventSubscription);
+		    184 +       test.assert(eventReceived, "Should have received itemUseOn event");
+		    185 +     })
+		    186 +     .thenSucceed();
+		    187 + })
+		    188 + .structureName("ComponentTests:platform")
+		    189 + .tag(GameTest.Tags.suiteDefault);
+		119     -       return;
+		120     -     }
+		121     -     beforeEventReceived = true;
+		122     -     eventData.cancel = true;
+		123     -   });
+		124     - 
+		125     -   const eventSubscription = world.events.itemUse.subscribe((eventData) => {
+		126     -     if(eventData.source != player) {
+		127     -       return;
+		128     -     }
+		129     -     eventReceived = true;
+		130     -   });
+		131 190   
+		    191 + GameTest.register("ItemTests", "item_use_on_event_cancelled_stops_action", (test) => {
+		    192 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		132     -   test
+		133     -     .startSequence()
+		    193 +   const dirtLoc = new BlockLocation(2, 1, 1);
+		    194 +   const dirt = new ItemStack(MinecraftItemTypes.dirt);
+		    195 + 
+		    196 +   const beforeEventSubscription = world.events.beforeItemUseOn.subscribe((eventData) => {
+		    197 +     if(eventData.source != player) {
+		    198 +       return;
+		    199 +     }
+		134     -     .thenIdle(5)
+		135     -     .thenExecute(() => {
+		136     -       player.useItemInSlot(slot);
+		137     -     })
+		138     -     .thenExecuteAfter(5, () => {
+		139     -       world.events.beforeItemUse.unsubscribe(beforeEventSubscription);
+		140     -       world.events.itemUse.unsubscribe(eventSubscription);
+		141     - 
+		    200 +     eventData.cancel = true;
+		    201 +   });
+		142     -       let afterUseHealth = blazeHealth.current;
+		143     -       blaze.kill(); 
+		144 202   
+		    203 +   test
+		    204 +     .startSequence()
+		    205 +     .thenExecuteAfter(5, () => {
+		145     -       test.assert(beforeEventReceived, "Should have received beforeItemUse event");
+		    206 +       player.useItemOnBlock(dirt, dirtLoc, Direction.up);
+		146     -       test.assert(eventReceived == false, "Should not have received itemUse event");
+		147     - 
+		    207 +     })
+		    208 +     .thenExecuteAfter(5, () => {
+		    209 +       world.events.beforeItemUseOn.unsubscribe(beforeEventSubscription);
+		    210 +       test.assertBlockPresent(MinecraftBlockTypes.dirt, dirtLoc.above(), false);
+		    211 +     })
+		    212 +     .thenSucceed();
+		    213 + })
+		    214 + .structureName("ComponentTests:platform")
+		    215 + .tag(GameTest.Tags.suiteDefault);
+		148     -       let actualAmount = inventoryContainer.getItem(slot).amount;
+		149     -       test.assert(
+		150     -         actualAmount === snowballCount,
+		151     -         `Player should have ${snowballCount} snowballs but has ${actualAmount}`
+		152     -       );
+		153     - 
+		154     -       test.assert(afterUseHealth === initialHealth, 
+		155     -         `Blaze was hurt after snowball throw should have been cancelled: before-> ${initialHealth} after-> ${afterUseHealth}`
+		156     -       );     
+		157 216   
+		    217 + GameTest.register("ItemTests", "item_cooldown_component_is_not_null", (test) => {
+		158     -     })
+		159     -     .thenSucceed();
+		    218 +     const appleItem = new ItemStack(MinecraftItemTypes.apple);
+		    219 +     const itemCooldownComponent = appleItem.getComponent("minecraft:cooldown");
+		    220 +     test.assert(itemCooldownComponent !== undefined, "ItemCooldownComponent should never be null");
+		160     - })
+		161     - .structureName("SimulatedPlayerTests:use_item")
+		162     - .tag(GameTest.Tags.suiteDefault);
+		163     - 
+		    221 +     test.succeed();
+		    222 + })
+		    223 + .structureName("ComponentTests:platform")
+		    224 + .tag(GameTest.Tags.suiteDefault);
+		164     - GameTest.register("ItemTests", "item_use_on_event", (test) => {
+		165     -   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		166     -   const dirtLoc = new BlockLocation(2, 1, 1);
+		167     -   const dirt = new ItemStack(MinecraftItemTypes.dirt, 1);
+		168 225   
+		    226 + GameTest.register("ItemTests", "item_cooldown_component_apple_has_default_values", (test) => {
+		    227 +   const appleItem = new ItemStack(MinecraftItemTypes.apple);
+		    228 +   const itemCooldownComponent = appleItem.getComponent("minecraft:cooldown");
+		169     -   let eventReceived = false;
+		    229 +   test.assert(itemCooldownComponent.cooldownCategory === "", "Apple should have empty cooldown category");
+		    230 +   test.assert(itemCooldownComponent.cooldownTicks === 0, "Apple should have no cooldown");
+		    231 +   test.succeed();
+		    232 + })
+		    233 + .structureName("ComponentTests:platform")
+		    234 + .tag(GameTest.Tags.suiteDefault);
+		170     -   const eventSubscription = world.events.itemUseOn.subscribe((eventData) => {
+		171     -     if(eventData.source != player) {
+		172     -       return;
+		173     -     }
+		174     -     eventReceived = true;
+		175     -   });
+		176 235   
+		177     -   test
+		178     -     .startSequence()
+		179     -     .thenExecuteAfter(5, () => {
+		180     -       player.useItemOnBlock(dirt, dirtLoc, Direction.up);
+		    236 + GameTest.register("ItemTests", "item_cooldown_component_enderpearl_has_cooldown_values", (test) => {
+		    237 +   const enderPearlItem = new ItemStack(MinecraftItemTypes.enderPearl);
+		    238 +   const itemCooldownComponent = enderPearlItem.getComponent("minecraft:cooldown");
+		    239 +   test.assert(itemCooldownComponent.cooldownCategory === "ender_pearl", "Ender Pearl should have ender_pearl cooldown category");
+		    240 +   test.assert(itemCooldownComponent.cooldownTicks === 20, "Ender Pearl should have cooldown of 20 ticks");
+		    241 +   test.succeed();
+		181     -     })
+		182     -     .thenExecuteAfter(5, () => {
+		183     -       world.events.itemUseOn.unsubscribe(eventSubscription);
+		184     -       test.assert(eventReceived, "Should have received itemUseOn event");
+		185     -     })
+		186     -     .thenSucceed();
+		187 242   })
+		188 243   .structureName("ComponentTests:platform")
+		189 244   .tag(GameTest.Tags.suiteDefault);
+		190 245   
+		    246 + GameTest.register("ItemTests", "item_cooldown_component_start_cooldown", (test) => {
+		191     - GameTest.register("ItemTests", "item_use_on_event_cancelled_stops_action", (test) => {
+		192 247     const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		    248 +   const enderPearlItem = new ItemStack(MinecraftItemTypes.enderPearl);
+		    249 +   const itemCooldownComponent = enderPearlItem.getComponent("minecraft:cooldown");
+		193     -   const dirtLoc = new BlockLocation(2, 1, 1);
+		    250 +   
+		    251 +   itemCooldownComponent.startCooldown(player);
+		    252 +   
+		    253 +   test.assert(player.getItemCooldown("ender_pearl") === 20, "Player should have ender_pearl cooldown of 20 ticks");
+		    254 +   test.succeed();
+		    255 + })
+		    256 + .structureName("ComponentTests:platform")
+		    257 + .tag(GameTest.Tags.suiteDefault);
+		194     -   const dirt = new ItemStack(MinecraftItemTypes.dirt, 1);
+		195     - 
+		196     -   const beforeEventSubscription = world.events.beforeItemUseOn.subscribe((eventData) => {
+		197     -     if(eventData.source != player) {
+		198     -       return;
+		199     -     }
+		200     -     eventData.cancel = true;
+		201     -   });
+		202 258   
+		203     -   test
+		204     -     .startSequence()
+		205     -     .thenExecuteAfter(5, () => {
+		    259 + GameTest.register("ItemTests", "player_startitemcooldown_has_enderpearl_cooldown", (test) => {
+		    260 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		    261 +   
+		    262 +   player.startItemCooldown("ender_pearl", 20);
+		    263 +   
+		    264 +   test.assert(player.getItemCooldown("ender_pearl") === 20, "Player should have ender_pearl cooldown of 20 ticks");
+		    265 +   test.succeed();
+		206     -       player.useItemOnBlock(dirt, dirtLoc, Direction.up);
+		207     -     })
+		208     -     .thenExecuteAfter(5, () => {
+		209     -       world.events.beforeItemUseOn.unsubscribe(beforeEventSubscription);
+		210     -       test.assertBlockPresent(MinecraftBlockTypes.dirt, dirtLoc.above(), false);
+		211     -     })
+		212     -     .thenSucceed();
+		213 266   })
+		214 267   .structureName("ComponentTests:platform")
+		215 268   .tag(GameTest.Tags.suiteDefault);
+		          '''
+	Changed script "Main.js":
+		Total line: 30 (+1, -0)
+		        '''
+		 1  1   import "scripts/APITests.js";
+		    2 + import "scripts/BlockEventTests.js";
+		 2  3   import "scripts/BlockTests.js";
+		 3  4   import "scripts/ComponentTests.js";
+		 4  5   import "scripts/CommandTests.js";
+		 5  6   import "scripts/DebugTests.js";
+		 6  7   import "scripts/DispenserTests.js";
+		        ...
+		        '''
+	Changed script "MobTests.js":
+		Total line: 302 (+1, -1)
+		          '''
+		          ...
+		275 275     //Barter with piglin up to 10 times
+		276 276     for (let i = 1; i <= goldIngotCount; i++) {
+		277 277       sequence
+		278 278         .thenExecute(() => {
+		279 279           try {
+		    280 +           player.selectedSlot = 0;
+		280     -           player.selectSlot(0);
+		281 281             player.interactWithEntity(piglin);
+		282 282           } catch { }
+		283 283         })
+		284 284         .thenExecuteAfter(200, () => {
+		285 285           piglin.triggerEvent("stop_zombification_event");
+		          ...
+		          '''
+	Changed script "MultifaceTests.js":
+		Total line: 285 (+3, -3)
+		          '''
+		          ...
+		215 215   }).tag(GameTest.Tags.suiteDefault);
+		216 216   
+		217 217   GameTest.register("MultifaceTests", "break_if_all_supporting_faces_destroyed", (test) => {
+		218 218     const testEx = new GameTestExtensions(test);
+		219 219     // break the supporting block behind the non-waterlogged lichen
+		    220 +   test.setBlockType(MinecraftBlockTypes.air, new BlockLocation(1, 2, 2)); //Use setBlockType(air) instead of breakBlock()
+		220     -   test.setBlockType(MinecraftBlockTypes.air, new BlockLocation(1, 2, 2)); //Use setBlockType(air) instead of destroyBlock()
+		221 221   
+		222 222     // break the supporting block behind the waterlogged lichen
+		    223 +   test.setBlockType(MinecraftBlockTypes.air, new BlockLocation(4, 2, 2)); //Use setBlockType(air) instead of breakBlock()
+		223     -   test.setBlockType(MinecraftBlockTypes.air, new BlockLocation(4, 2, 2)); //Use setBlockType(air) instead of destroyBlock()
+		224 224   
+		225 225     test.succeedWhen(() => {
+		226 226       // check that the non-waterlogged lichen was replaced with air, and that no glow lichen was dropped
+		227 227       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 2), true);
+		228 228       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 2, 1), true);
+		          ...
+		236 236       test.assertItemEntityCountIs(MinecraftItemTypes.glowLichen, new BlockLocation(4, 2, 2), 1, 0);
+		237 237     });
+		238 238   }).tag(GameTest.Tags.suiteDefault);
+		239 239   
+		240 240   GameTest.register("MultifaceTests", "remove_face_if_support_destroyed", (test) => {
+		    241 +   test.setBlockType(MinecraftBlockTypes.air, new BlockLocation(1, 3, 1)); //Use setBlockType(air) instead of breakBlock()
+		241     -   test.setBlockType(MinecraftBlockTypes.air, new BlockLocation(1, 3, 1)); //Use setBlockType(air) instead of destroyBlock()
+		242 242   
+		243 243     test
+		244 244       .startSequence()
+		245 245       .thenExecuteAfter(20, () => {
+		246 246         test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(1, 3, 1), true);
+		          ...
+		          '''
+	Changed script "PlaceSeedsTests.js":
+		Total line: 39 (+1, -1)
+		        '''
+		        ...
+		 8  8   } from "mojang-minecraft";
+		 9  9   
+		10 10   function giveItem(player, itemType, amount, slot) {
+		11 11     const inventoryContainer = player.getComponent("inventory").container;
+		12 12     inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
+		   13 +   player.selectedSlot = slot ?? 0;
+		13    -   player.selectSlot(slot ?? 0);
+		14 14   }
+		15 15   
+		16 16   GameTest.register("PlaceSeedsTests", "place_seed_on_farmland", (test) => {
+		17 17     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		18 18     const grassBlockLoc = new BlockLocation(1, 1, 1);
+		        ...
+		        '''
+	Changed script "SimulatedPlayerTests.js":
+		Total line: 1136 (+257, -212)
+		            '''
+		            ...
+		 216  216       })
+		 217  217       .thenSucceed();
+		 218  218   }).tag(GameTest.Tags.suiteDefault);
+		 219  219   
+		 220  220   GameTest.register("SimulatedPlayerTests", "give_item", (test) => {
+		      221 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      222 +   let useCount = 0;
+		      223 + 
+		      224 +   test.assert(player.giveItem(new ItemStack(MinecraftItemTypes.snowball, 16), true), "giveItem() returned false");
+		      225 +   test.spawn("blaze", new BlockLocation(1, 2, 2));
+		      226 + 
+		      227 +   test
+		      228 +     .startSequence()
+		      229 +     .thenIdle(5)
+		      230 +     .thenWait(() => {
+		      231 +       if (player.useItemInSlot(0)) {
+		      232 +         useCount++;
+		      233 +       }
+		      234 +       test.assertEntityPresentInArea("blaze", false);
+		      235 +     })
+		      236 +     .thenExecute(() => {
+		      237 +       test.assert(useCount === 7, "It should take 7 snowballs to kill a Blaze");
+		      238 +     })
+		      239 +     .thenSucceed();
+		      240 + })
+		      241 +   .maxTicks(200)
+		      242 +   .structureName("SimulatedPlayerTests:blaze_trap")
+		      243 +   .tag(GameTest.Tags.suiteDefault);
+		      244 + 
+		      245 + GameTest.register("SimulatedPlayerTests", "give_item_full_inventory", (test) => {
+		      246 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      247 +   const containerSize = player.getComponent("inventory").container.size;
+		      248 +   for (let i = 0; i < containerSize; i++) {
+		      249 +     test.assert(player.giveItem(new ItemStack(MinecraftItemTypes.dirt, 64), false), "");
+		      250 +   }
+		      251 + 
+		      252 +   test
+		      253 +     .startSequence()
+		      254 +     .thenExecuteAfter(20, () =>
+		      255 +       test.assert(!player.giveItem(new ItemStack(MinecraftItemTypes.oakStairs, 64), true), "")
+		      256 +     )
+		      257 +     .thenSucceed();
+		      258 + })
+		      259 +   .maxTicks(100)
+		      260 +   .structureName("ComponentTests:platform")
+		      261 +   .tag(GameTest.Tags.suiteDefault);
+		      262 + 
+		      263 + GameTest.register("SimulatedPlayerTests", "set_item", (test) => {
+		      264 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      265 +   let useCount = 0;
+		      266 + 
+		      267 +   test.assert(player.setItem(new ItemStack(MinecraftItemTypes.snowball, 16), 0), "setItem() failed");
+		      268 +   test.spawn("blaze", new BlockLocation(1, 2, 2));
+		      269 + 
+		      270 +   test
+		      271 +     .startSequence()
+		      272 +     .thenIdle(5)
+		      273 +     .thenWait(() => {
+		      274 +       if (player.useItemInSlot(0)) {
+		      275 +         useCount++;
+		      276 +       }
+		      277 +       test.assertEntityPresentInArea("blaze", false);
+		      278 +     })
+		      279 +     .thenExecute(() => {
+		      280 +       test.assert(useCount === 7, "It should take 7 snowballs to kill a Blaze");
+		      281 +     })
+		      282 +     .thenSucceed();
+		      283 + })
+		      284 +   .maxTicks(200)
+		      285 +   .structureName("SimulatedPlayerTests:blaze_trap")
+		      286 +   .tag(GameTest.Tags.suiteDefault);
+		      287 + 
+		      288 + GameTest.register("SimulatedPlayerTests", "set_item_full_inventory", (test) => {
+		      289 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      290 +   const containerSize = player.getComponent("inventory").container.size;
+		      291 +   for (let i = 0; i < containerSize; i++) {
+		      292 +     test.assert(player.giveItem(new ItemStack(MinecraftItemTypes.dirt, 64), false), "");
+		      293 +   }
+		      294 + 
+		      295 +   test
+		      296 +     .startSequence()
+		      297 +     .thenExecuteAfter(20, () =>
+		      298 +       test.assert(player.setItem(new ItemStack(MinecraftItemTypes.oakStairs, 64), 0, true), "setItem() failed")
+		      299 +     )
+		      300 +     .thenSucceed();
+		      301 + })
+		      302 +   .maxTicks(100)
+		      303 +   .structureName("ComponentTests:platform")
+		      304 +   .tag(GameTest.Tags.suiteDefault);
+		      305 + 
+		      306 + GameTest.register("SimulatedPlayerTests", "interact_with_entity", (test) => {
+		      307 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		      308 +   const minecart = test.spawn("minecart", new BlockLocation(1, 2, 1));
+		      309 +   player.interactWithEntity(minecart);
+		      310 +   test.succeedWhenEntityPresent("minecraft:player", new BlockLocation(1, 3, 1));
+		      311 + }).tag(GameTest.Tags.suiteDefault);
+		      312 + 
+		      313 + GameTest.register("SimulatedPlayerTests", "destroy_block", (test) => {
+		      314 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		      315 +   const fenceLoc = new BlockLocation(1, 2, 0);
+		      316 +   const chestLoc = new BlockLocation(2, 2, 0);
+		      317 +   const ironOreLoc = new BlockLocation(0, 2, 1);
+		      318 +   const planksLoc = new BlockLocation(1, 2, 1);
+		      319 +   const blockLocs = [fenceLoc, chestLoc, ironOreLoc, planksLoc];
+		 221      -     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 222      -     let useCount = 0;
+		 223      - 
+		 224      -     test.assert(player.giveItem(new ItemStack(MinecraftItemTypes.snowball, 16), true), "giveItem() returned false");
+		 225      -     test.spawn("blaze", new BlockLocation(1, 2, 2));
+		 226  320   
+		 227      -     test
+		 228      -         .startSequence()
+		 229      -         .thenIdle(5)
+		      321 +   const blockTypes = [
+		      322 +     MinecraftBlockTypes.fence,
+		      323 +     MinecraftBlockTypes.chest,
+		      324 +     MinecraftBlockTypes.ironOre,
+		      325 +     MinecraftBlockTypes.planks,
+		      326 +   ];
+		      327 + 
+		      328 +   player.giveItem(new ItemStack(MinecraftItemTypes.ironPickaxe, 1), true);
+		      329 + 
+		      330 +   for (let i = 0; i < blockLocs.length; i++) {
+		      331 +     test.assertBlockPresent(blockTypes[i], blockLocs[i]);
+		      332 +   }
+		      333 + 
+		      334 +   const sequence = test.startSequence().thenIdle(5);
+		 230      -         .thenWait(() => {
+		 231      -             if (player.useItemInSlot(0)) {
+		 232      -                 useCount++;
+		 233      -             }
+		 234      -             test.assertEntityPresentInArea("blaze", false);
+		 235      -         })
+		 236      -         .thenExecute(() => {
+		 237      -             test.assert(useCount === 7, "It should take 7 snowballs to kill a Blaze");
+		 238      -         })
+		 239      -         .thenSucceed();
+		 240      - })
+		 241      -     .maxTicks(200)
+		 242      -     .structureName("SimulatedPlayerTests:blaze_trap")
+		 243      -     .tag(GameTest.Tags.suiteDefault);
+		 244  335   
+		      336 +   for (let i = 0; i < blockLocs.length; i++) {
+		      337 +     sequence
+		      338 +       .thenExecute(() => {
+		      339 +         player.breakBlock(blockLocs[i]);
+		      340 +       })
+		      341 +       .thenWait(() => {
+		      342 +         test.assertBlockPresent(blockTypes[i], blockLocs[i], false);
+		      343 +       });
+		      344 +   }
+		 245      - GameTest.register("SimulatedPlayerTests", "give_item_full_inventory", (test) => {
+		 246      -     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 247      -     const containerSize = player.getComponent("inventory").container.size;
+		 248      -     for (let i = 0; i < containerSize; i++) {
+		 249      -         test.assert(player.giveItem(new ItemStack(MinecraftItemTypes.dirt, 64), false), "");
+		 250      -     }
+		 251  345   
+		 252      -     test
+		 253      -         .startSequence()
+		 254      -         .thenExecuteAfter(20, () => test.assert(!player.giveItem(new ItemStack(MinecraftItemTypes.oakStairs, 64), true), ""))
+		      346 +   sequence.thenSucceed();
+		 255      -         .thenSucceed();
+		 256  347   })
+		      348 +   .maxTicks(300)
+		      349 +   .tag(GameTest.Tags.suiteDefault);
+		      350 + 
+		      351 + GameTest.register("SimulatedPlayerTests", "stop_destroying_block", (test) => {
+		      352 +   const ironOreLoc = new BlockLocation(1, 2, 1);
+		      353 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		 257      -     .maxTicks(100)
+		 258      -     .structureName("ComponentTests:platform")
+		 259      -     .tag(GameTest.Tags.suiteDefault);
+		 260  354   
+		      355 +   test.setBlockType(MinecraftBlockTypes.ironOre, ironOreLoc);
+		 261      - GameTest.register("SimulatedPlayerTests", "set_item", (test) => {
+		 262      -     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      356 +   player.giveItem(new ItemStack(MinecraftItemTypes.ironPickaxe, 1), true);
+		 263      -     let useCount = 0;
+		 264  357   
+		      358 +   test
+		      359 +     .startSequence()
+		      360 +     .thenExecuteAfter(5, () => {
+		      361 +       player.breakBlock(ironOreLoc);
+		      362 +     })
+		      363 +     .thenExecuteAfter(10, () => {
+		      364 +       player.stopBreakingBlock();
+		      365 +     })
+		      366 +     .thenExecuteAfter(20, () => {
+		      367 +       test.assertBlockPresent(MinecraftBlockTypes.ironOre, ironOreLoc);
+		      368 +     })
+		      369 +     .thenSucceed();
+		      370 + })
+		      371 +   .structureName("ComponentTests:platform")
+		      372 +   .tag(GameTest.Tags.suiteDefault);
+		      373 + 
+		      374 + GameTest.register("SimulatedPlayerTests", "use_item_while_destroying_block", (test) => {
+		      375 +   const ironOreLoc = new BlockLocation(1, 2, 1);
+		      376 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		      377 + 
+		      378 +   test.setBlockType(MinecraftBlockTypes.ironOre, ironOreLoc);
+		      379 +   player.giveItem(new ItemStack(MinecraftItemTypes.ironPickaxe, 1), false);
+		      380 +   player.giveItem(new ItemStack(MinecraftItemTypes.potion, 1), false);
+		 265      -     test.assert(player.setItem(new ItemStack(MinecraftItemTypes.snowball, 16), 0), "setItem() failed");
+		 266      -     test.spawn("blaze", new BlockLocation(1, 2, 2));
+		 267      - 
+		 268      -     test
+		 269      -         .startSequence()
+		 270      -         .thenIdle(5)
+		 271      -         .thenWait(() => {
+		 272      -             if (player.useItemInSlot(0)) {
+		 273      -                 useCount++;
+		 274      -             }
+		 275      -             test.assertEntityPresentInArea("blaze", false);
+		 276      -         })
+		 277      -         .thenExecute(() => {
+		 278      -             test.assert(useCount === 7, "It should take 7 snowballs to kill a Blaze");
+		 279      -         })
+		 280      -         .thenSucceed();
+		 281      - })
+		 282      -     .maxTicks(200)
+		 283      -     .structureName("SimulatedPlayerTests:blaze_trap")
+		 284      -     .tag(GameTest.Tags.suiteDefault);
+		 285  381   
+		      382 +   test
+		      383 +     .startSequence()
+		 286      - GameTest.register("SimulatedPlayerTests", "set_item_full_inventory", (test) => {
+		      384 +     .thenExecuteAfter(5, () => {
+		      385 +       player.breakBlock(ironOreLoc);
+		      386 +     })
+		      387 +     .thenExecuteAfter(10, () => {
+		      388 +       player.useItemInSlot(1); // drink potion
+		      389 +     })
+		      390 +     .thenExecuteAfter(30, () => {
+		      391 +       test.assertBlockPresent(MinecraftBlockTypes.ironOre, ironOreLoc);
+		      392 +     })
+		      393 +     .thenSucceed();
+		 287      -     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 288      -     const containerSize = player.getComponent("inventory").container.size;
+		 289      -     for (let i = 0; i < containerSize; i++) {
+		 290      -         test.assert(player.giveItem(new ItemStack(MinecraftItemTypes.dirt, 64), false), "");
+		 291      -     }
+		 292      - 
+		 293      -     test
+		 294      -         .startSequence()
+		 295      -         .thenExecuteAfter(20, () => test.assert(player.setItem(new ItemStack(MinecraftItemTypes.oakStairs, 64), 0, true), "setItem() failed"))
+		 296      -         .thenSucceed();
+		 297  394   })
+		      395 +   .structureName("ComponentTests:platform")
+		 298      -     .maxTicks(100)
+		 299      -     .structureName("ComponentTests:platform")
+		      396 +   .tag(GameTest.Tags.suiteDefault);
+		 300      -     .tag(GameTest.Tags.suiteDefault);
+		 301  397   
+		 302      - GameTest.register("SimulatedPlayerTests", "interact_with_entity", (test) => {
+		 303      -   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		 304      -   const minecart = test.spawn("minecart", new BlockLocation(1, 2, 1));
+		 305      -   player.interactWithEntity(minecart);
+		      398 + GameTest.register("SimulatedPlayerTests", "move", (test) => {
+		      399 +   const player = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 3));
+		 306      -   test.succeedWhenEntityPresent("minecraft:player", new BlockLocation(1, 3, 1));
+		 307      - }).tag(GameTest.Tags.suiteDefault);
+		 308  400   
+		      401 +   test
+		      402 +     .startSequence()
+		 309      - GameTest.register("SimulatedPlayerTests", "destroy_block", (test) => {
+		 310      -   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		      403 +     .thenIdle(10)
+		      404 +     .thenExecute(() => {
+		      405 +       player.move(0, -1);
+		      406 +       player.setBodyRotation(180);
+		      407 +     })
+		      408 +     .thenIdle(16)
+		      409 +     .thenExecute(() => {
+		      410 +       player.move(1, 1);
+		      411 +       player.setBodyRotation(50);
+		      412 +     })
+		      413 +     .thenIdle(16)
+		      414 +     .thenExecute(() => {
+		      415 +       player.move(-1, 1);
+		      416 +       player.setBodyRotation(100);
+		      417 +     })
+		      418 +     .thenIdle(16)
+		      419 +     .thenExecute(() => {
+		      420 +       player.move(-1, -1);
+		      421 +       player.setBodyRotation(220);
+		      422 +     })
+		      423 +     .thenIdle(16)
+		      424 +     .thenExecute(() => {
+		      425 +       player.move(1, -1);
+		      426 +       player.setBodyRotation(0);
+		      427 +     })
+		      428 +     .thenWait(() => {
+		      429 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(2, 2, 0));
+		      430 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(0, 2, 4));
+		      431 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(4, 2, 6));
+		      432 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(6, 2, 2));
+		      433 +     })
+		      434 +     .thenSucceed();
+		 311      -   const fenceLoc = new BlockLocation(1, 2, 0);
+		 312      -   const chestLoc = new BlockLocation(2, 2, 0);
+		 313      -   const ironOreLoc = new BlockLocation(0, 2, 1);
+		 314      -   const planksLoc = new BlockLocation(1, 2, 1);
+		 315      -   const blockLocs = [fenceLoc, chestLoc, ironOreLoc, planksLoc];
+		 316      - 
+		 317      -   const blockTypes = [
+		 318      -     MinecraftBlockTypes.fence,
+		 319      -     MinecraftBlockTypes.chest,
+		 320      -     MinecraftBlockTypes.ironOre,
+		 321      -     MinecraftBlockTypes.planks,
+		 322      -   ];
+		 323      - 
+		 324      -   player.giveItem(new ItemStack(MinecraftItemTypes.ironPickaxe, 1), true);
+		 325      - 
+		 326      -   for (let i = 0; i < blockLocs.length; i++) {
+		 327      -     test.assertBlockPresent(blockTypes[i], blockLocs[i]);
+		 328      -   }
+		 329      - 
+		 330      -   const sequence = test.startSequence().thenIdle(5);
+		 331      - 
+		 332      -   for (let i = 0; i < blockLocs.length; i++) {
+		 333      -     sequence
+		 334      -       .thenExecute(() => {
+		 335      -         player.destroyBlock(blockLocs[i]);
+		 336      -       })
+		 337      -       .thenWait(() => {
+		 338      -         test.assertBlockPresent(blockTypes[i], blockLocs[i], false);
+		 339      -       });
+		 340      -   }
+		 341      - 
+		 342      -   sequence.thenSucceed();
+		 343  435   })
+		      436 +   .maxTicks(110)
+		 344      -   .maxTicks(300)
+		 345  437     .tag(GameTest.Tags.suiteDefault);
+		      438 + 
+		      439 + GameTest.register("SimulatedPlayerTests", "move_relative", (test) => {
+		      440 +   const player = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 3));
+		 346  441   
+		      442 +   test
+		      443 +     .startSequence()
+		      444 +     .thenIdle(10)
+		 347      - GameTest.register("SimulatedPlayerTests", "stop_destroying_block", (test) => {
+		      445 +     .thenExecute(() => {
+		      446 +       player.moveRelative(0, 1);
+		      447 +       player.setBodyRotation(180);
+		      448 +     })
+		      449 +     .thenIdle(16)
+		      450 +     .thenExecute(() => {
+		      451 +       player.setBodyRotation(-45);
+		      452 +     })
+		      453 +     .thenIdle(16)
+		      454 +     .thenExecute(() => {
+		      455 +       player.setBodyRotation(45);
+		 348      -   const ironOreLoc = new BlockLocation(1, 2, 1);
+		 349      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		 350      - 
+		 351      -   test.setBlockType(MinecraftBlockTypes.ironOre, ironOreLoc);
+		 352      -   player.giveItem(new ItemStack(MinecraftItemTypes.ironPickaxe, 1), true);
+		 353      - 
+		 354      - 
+		 355      -   test
+		 356      -     .startSequence()
+		 357      -     .thenExecuteAfter(5, () => {
+		 358      -       player.destroyBlock(ironOreLoc);
+		 359  456       })
+		      457 +     .thenIdle(16)
+		      458 +     .thenExecute(() => {
+		 360      -     .thenExecuteAfter(10, () => {
+		      459 +       player.setBodyRotation(135);
+		 361      -       player.stopDestroyingBlock();
+		 362  460       })
+		      461 +     .thenIdle(16)
+		      462 +     .thenExecute(() => {
+		 363      -     .thenExecuteAfter(20, () => {
+		      463 +       player.setBodyRotation(225);
+		 364      -       test.assertBlockPresent(MinecraftBlockTypes.ironOre, ironOreLoc);
+		 365  464       })
+		      465 +     .thenWait(() => {
+		 366      -     .thenSucceed();
+		 367      - })
+		 368      -   .structureName("ComponentTests:platform")
+		      466 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(2, 2, 0));
+		      467 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(0, 2, 4));
+		      468 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(4, 2, 6));
+		      469 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(6, 2, 2));
+		      470 +     })
+		      471 +     .thenSucceed();
+		      472 + })
+		      473 +   .maxTicks(110)
+		      474 +   .structureName("SimulatedPlayerTests:move")
+		      475 +   .tag(GameTest.Tags.suiteDefault);
+		 369      -   .tag(GameTest.Tags.suiteDefault);
+		 370      - 
+		 371      - GameTest.register("SimulatedPlayerTests", "use_item_while_destroying_block", (test) => {
+		 372      -   const ironOreLoc = new BlockLocation(1, 2, 1);
+		 373      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		 374      - 
+		 375      -   test.setBlockType(MinecraftBlockTypes.ironOre, ironOreLoc);
+		 376      -   player.giveItem(new ItemStack(MinecraftItemTypes.ironPickaxe, 1), false);
+		 377      -   player.giveItem(new ItemStack(MinecraftItemTypes.potion, 1), false);
+		 378      - 
+		 379  476   
+		 380      -   test
+		 381      -     .startSequence()
+		 382      -     .thenExecuteAfter(5, () => {
+		      477 + GameTest.register("SimulatedPlayerTests", "move_to_block", (test) => {
+		      478 +   const player = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 3));
+		      479 +   test
+		      480 +     .startSequence()
+		      481 +     .thenIdle(5)
+		      482 +     .thenExecute(() => {
+		      483 +       player.moveToBlock(new BlockLocation(3, 2, 1));
+		 383      -       player.destroyBlock(ironOreLoc);
+		 384      -     })
+		 385      -     .thenExecuteAfter(10, () => {
+		 386      -       player.useItemInSlot(1); // drink potion
+		 387      -     })
+		 388      -     .thenExecuteAfter(30, () => {
+		 389      -       test.assertBlockPresent(MinecraftBlockTypes.ironOre, ironOreLoc);
+		 390  484       })
+		      485 +     .thenIdle(25)
+		 391      -     .thenSucceed();
+		 392      - })
+		 393      -   .structureName("ComponentTests:platform")
+		      486 +     .thenExecute(() => {
+		      487 +       player.moveToBlock(new BlockLocation(5, 2, 3));
+		      488 +     })
+		      489 +     .thenIdle(25)
+		      490 +     .thenExecute(() => {
+		      491 +       player.moveToBlock(new BlockLocation(3, 2, 5));
+		      492 +     })
+		      493 +     .thenIdle(25)
+		 394      -   .tag(GameTest.Tags.suiteDefault);
+		 395      - 
+		 396      - GameTest.register("SimulatedPlayerTests", "move", (test) => {
+		 397      -   const player = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 3));
+		 398      - 
+		 399      -   test
+		 400      -     .startSequence()
+		 401      -     .thenIdle(10)
+		 402  494       .thenExecute(() => {
+		      495 +       player.moveToBlock(new BlockLocation(1, 2, 3));
+		 403      -       player.move(0, -1);
+		 404      -       player.setBodyRotation(180);
+		 405  496       })
+		      497 +     .thenIdle(25)
+		 406      -     .thenIdle(16)
+		 407  498       .thenExecute(() => {
+		      499 +       player.moveToBlock(new BlockLocation(3, 2, 1));
+		 408      -       player.move(1, 1);
+		 409      -       player.setBodyRotation(50);
+		 410  500       })
+		      501 +     .thenIdle(25)
+		 411      -     .thenIdle(16)
+		 412  502       .thenExecute(() => {
+		      503 +       player.moveToBlock(new BlockLocation(3, 2, 3));
+		 413      -       player.move(-1, 1);
+		 414      -       player.setBodyRotation(100);
+		 415  504       })
+		      505 +     .thenWait(() => {
+		      506 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(2, 2, 0));
+		 416      -     .thenIdle(16)
+		      507 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(0, 2, 4));
+		      508 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(4, 2, 6));
+		      509 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(6, 2, 2));
+		 417      -     .thenExecute(() => {
+		 418      -       player.move(-1, -1);
+		 419      -       player.setBodyRotation(220);
+		 420  510       })
+		      511 +     .thenSucceed();
+		      512 + })
+		      513 +   .maxTicks(200)
+		      514 +   .structureName("SimulatedPlayerTests:move")
+		      515 +   .tag(GameTest.Tags.suiteDefault);
+		      516 + 
+		      517 + GameTest.register("SimulatedPlayerTests", "move_to_location", (test) => {
+		      518 +   const player = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 3));
+		      519 +   test
+		      520 +     .startSequence()
+		      521 +     .thenIdle(5)
+		      522 +     .thenExecute(() => {
+		      523 +       player.moveToLocation(new Location(3.5, 2, 1.5));
+		 421      -     .thenIdle(16)
+		 422      -     .thenExecute(() => {
+		 423      -       player.move(1, -1);
+		 424      -       player.setBodyRotation(0);
+		 425      -     })
+		 426      -     .thenWait(() => {
+		 427      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(2, 2, 0));
+		 428      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(0, 2, 4));
+		 429      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(4, 2, 6));
+		 430      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(6, 2, 2));
+		 431  524       })
+		      525 +     .thenIdle(25)
+		 432      -     .thenSucceed();
+		 433      - })
+		 434      -   .maxTicks(110)
+		      526 +     .thenExecute(() => {
+		      527 +       player.moveToLocation(new Location(5.5, 2, 3.5));
+		      528 +     })
+		      529 +     .thenIdle(25)
+		      530 +     .thenExecute(() => {
+		      531 +       player.moveToLocation(new Location(3.5, 2, 5.5));
+		      532 +     })
+		      533 +     .thenIdle(25)
+		 435      -   .tag(GameTest.Tags.suiteDefault);
+		 436      - 
+		 437      - GameTest.register("SimulatedPlayerTests", "move_relative", (test) => {
+		 438      -   const player = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 3));
+		 439      - 
+		 440      -   test
+		 441      -     .startSequence()
+		 442      -     .thenIdle(10)
+		 443  534       .thenExecute(() => {
+		      535 +       player.moveToLocation(new Location(1.5, 2, 3.5));
+		 444      -       player.moveRelative(0, 1);
+		 445      -       player.setBodyRotation(180);
+		 446  536       })
+		      537 +     .thenIdle(25)
+		 447      -     .thenIdle(16)
+		 448  538       .thenExecute(() => {
+		      539 +       player.moveToLocation(new Location(3.5, 2, 1.5));
+		 449      -       player.setBodyRotation(-45);
+		 450  540       })
+		      541 +     .thenIdle(25)
+		 451      -     .thenIdle(16)
+		 452  542       .thenExecute(() => {
+		      543 +       player.moveToLocation(new Location(3.5, 2, 3.5));
+		 453      -       player.setBodyRotation(45);
+		 454  544       })
+		      545 +     .thenWait(() => {
+		      546 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(2, 2, 0));
+		      547 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(0, 2, 4));
+		 455      -     .thenIdle(16)
+		      548 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(4, 2, 6));
+		      549 +       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(6, 2, 2));
+		 456      -     .thenExecute(() => {
+		 457      -       player.setBodyRotation(135);
+		 458  550       })
+		      551 +     .thenSucceed();
+		      552 + })
+		 459      -     .thenIdle(16)
+		      553 +   .maxTicks(200)
+		      554 +   .structureName("SimulatedPlayerTests:move")
+		 460      -     .thenExecute(() => {
+		 461      -       player.setBodyRotation(225);
+		 462      -     })
+		      555 +   .tag(GameTest.Tags.suiteDefault);
+		      556 + 
+		      557 + GameTest.register("SimulatedPlayerTests", "navigate_to_block", (test) => {
+		      558 +   const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 0));
+		      559 +   const goalLoc = new BlockLocation(0, 3, 2);
+		      560 +   const behindDoorLoc = new BlockLocation(4, 3, 2);
+		      561 + 
+		      562 +   test
+		      563 +     .startSequence()
+		      564 +     .thenExecuteAfter(10, () => {
+		      565 +       const nav = player.navigateToBlock(behindDoorLoc);
+		 463      -     .thenWait(() => {
+		 464      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(2, 2, 0));
+		 465      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(0, 2, 4));
+		 466      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(4, 2, 6));
+		 467      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(6, 2, 2));
+		 468      -     })
+		 469      -     .thenSucceed();
+		 470      - })
+		 471      -   .maxTicks(110)
+		 472      -   .structureName("SimulatedPlayerTests:move")
+		 473      -   .tag(GameTest.Tags.suiteDefault);
+		 474      - 
+		      566 +       test.assert(nav.isFullPath, "Expected successful navigation result");
+		      567 +       const path = nav.path;
+		      568 +       test.assert(path[0].equals(new BlockLocation(2, 2, 0)), "Unexpected starting BlockLocation in navigation path.");
+		      569 +       test.assert(
+		      570 +         path[path.length - 1].equals(new BlockLocation(4, 3, 2)),
+		      571 +         "Unexpected ending BlockLocation in navigation path."
+		      572 +       );
+		 475      - GameTest.register("SimulatedPlayerTests", "move_to_block", (test) => {
+		 476      -   const player = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 3));
+		 477      -   test
+		 478      -     .startSequence()
+		 479      -     .thenIdle(5)
+		 480      -     .thenExecute(() => {
+		 481      -       player.moveToBlock(new BlockLocation(3, 2, 1));
+		 482  573       })
+		      574 +     .thenWait(() => {
+		 483      -     .thenIdle(25)
+		 484      -     .thenExecute(() => {
+		      575 +       test.assertEntityInstancePresent(player, behindDoorLoc);
+		 485      -       player.moveToBlock(new BlockLocation(5, 2, 3));
+		 486  576       })
+		      577 +     .thenExecuteAfter(10, () => {
+		      578 +       const nav = player.navigateToBlock(goalLoc);
+		 487      -     .thenIdle(25)
+		      579 +       test.assert(nav.isFullPath, "Expected successful navigation result");
+		      580 +       const path = nav.path;
+		      581 +       test.assert(
+		      582 +         path[path.length - 1].equals(new BlockLocation(0, 3, 2)),
+		      583 +         "Unexpected ending BlockLocation in navigation path."
+		      584 +       );
+		 488      -     .thenExecute(() => {
+		 489      -       player.moveToBlock(new BlockLocation(3, 2, 5));
+		 490      -     })
+		 491      -     .thenIdle(25)
+		 492      -     .thenExecute(() => {
+		 493      -       player.moveToBlock(new BlockLocation(1, 2, 3));
+		 494  585       })
+		      586 +     .thenWait(() => {
+		 495      -     .thenIdle(25)
+		 496      -     .thenExecute(() => {
+		      587 +       test.assertEntityInstancePresent(player, goalLoc);
+		 497      -       player.moveToBlock(new BlockLocation(3, 2, 1));
+		 498  588       })
+		      589 +     .thenSucceed();
+		      590 + })
+		      591 +   .maxTicks(300)
+		      592 +   .structureName("SimulatedPlayerTests:navigate_to_location")
+		      593 +   .tag(GameTest.Tags.suiteDefault);
+		      594 + 
+		      595 + GameTest.register("SimulatedPlayerTests", "navigate_to_entity", (test) => {
+		      596 +   const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 0));
+		      597 +   const goalLoc = new BlockLocation(0, 3, 2);
+		      598 +   const behindDoorLoc = new BlockLocation(4, 3, 2);
+		      599 + 
+		      600 +   const armorStand1 = test.spawn("armor_stand", behindDoorLoc.above());
+		      601 +   const armorStand2 = test.spawn("armor_stand", goalLoc.above());
+		      602 + 
+		      603 +   test
+		      604 +     .startSequence()
+		      605 +     .thenExecuteAfter(10, () => {
+		      606 +       const nav = player.navigateToEntity(armorStand1);
+		 499      -     .thenIdle(25)
+		 500      -     .thenExecute(() => {
+		 501      -       player.moveToBlock(new BlockLocation(3, 2, 3));
+		 502      -     })
+		 503      -     .thenWait(() => {
+		 504      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(2, 2, 0));
+		 505      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(0, 2, 4));
+		 506      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(4, 2, 6));
+		 507      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(6, 2, 2));
+		 508      -     })
+		 509      -     .thenSucceed();
+		 510      - })
+		 511      -   .maxTicks(200)
+		 512      -   .structureName("SimulatedPlayerTests:move")
+		 513      -   .tag(GameTest.Tags.suiteDefault);
+		 514      - 
+		      607 +       test.assert(nav.isFullPath, "Expected successful navigation result");
+		      608 +       const path = nav.path;
+		      609 +       test.assert(path[0].equals(new BlockLocation(2, 2, 0)), "Unexpected starting BlockLocation in navigation path.");
+		      610 +       test.assert(
+		      611 +         path[path.length - 1].equals(new BlockLocation(4, 3, 2)),
+		      612 +         "Unexpected ending BlockLocation in navigation path."
+		      613 +       );
+		 515      - GameTest.register("SimulatedPlayerTests", "move_to_location", (test) => {
+		 516      -   const player = test.spawnSimulatedPlayer(new BlockLocation(3, 2, 3));
+		 517      -   test
+		 518      -     .startSequence()
+		 519      -     .thenIdle(5)
+		 520      -     .thenExecute(() => {
+		 521      -       player.moveToLocation(new Location(3.5, 2, 1.5));
+		 522  614       })
+		      615 +     .thenWait(() => {
+		 523      -     .thenIdle(25)
+		 524      -     .thenExecute(() => {
+		      616 +       test.assertEntityInstancePresent(player, behindDoorLoc);
+		 525      -       player.moveToLocation(new Location(5.5, 2, 3.5));
+		 526  617       })
+		      618 +     .thenExecuteAfter(10, () => {
+		      619 +       const nav = player.navigateToEntity(armorStand2);
+		 527      -     .thenIdle(25)
+		      620 +       test.assert(nav.isFullPath, "Expected successful navigation result");
+		      621 +       const path = nav.path;
+		      622 +       test.assert(
+		      623 +         path[path.length - 1].equals(new BlockLocation(0, 3, 2)),
+		      624 +         "Unexpected ending BlockLocation in navigation path."
+		      625 +       );
+		 528      -     .thenExecute(() => {
+		 529      -       player.moveToLocation(new Location(3.5, 2, 5.5));
+		 530      -     })
+		 531      -     .thenIdle(25)
+		 532      -     .thenExecute(() => {
+		 533      -       player.moveToLocation(new Location(1.5, 2, 3.5));
+		 534  626       })
+		      627 +     .thenWait(() => {
+		 535      -     .thenIdle(25)
+		 536      -     .thenExecute(() => {
+		      628 +       test.assertEntityInstancePresent(player, goalLoc);
+		 537      -       player.moveToLocation(new Location(3.5, 2, 1.5));
+		 538  629       })
+		      630 +     .thenSucceed();
+		      631 + })
+		      632 +   .maxTicks(300)
+		      633 +   .structureName("SimulatedPlayerTests:navigate_to_location")
+		      634 +   .tag(GameTest.Tags.suiteDefault);
+		      635 + 
+		      636 + GameTest.register("SimulatedPlayerTests", "navigate_to_location", (test) => {
+		      637 +   const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 0));
+		      638 +   const goalLoc = new BlockLocation(0, 3, 2);
+		      639 +   const behindDoorLoc = new BlockLocation(4, 3, 2);
+		      640 + 
+		      641 +   test
+		      642 +     .startSequence()
+		      643 +     .thenExecuteAfter(10, () => {
+		      644 +       const nav = player.navigateToLocation(new Location(4.5, 3, 2.5));
+		      645 +       test.assert(nav.isFullPath, "Expected successful navigation result");
+		      646 +       const path = nav.path;
+		      647 +       test.assert(path[0].equals(new BlockLocation(2, 2, 0)), "Unexpected starting BlockLocation in navigation path.");
+		      648 +       test.assert(
+		      649 +         path[path.length - 1].equals(new BlockLocation(4, 3, 2)),
+		      650 +         "Unexpected ending BlockLocation in navigation path."
+		      651 +       );
+		      652 +     })
+		      653 +     .thenWait(() => {
+		      654 +       test.assertEntityInstancePresent(player, behindDoorLoc);
+		      655 +     })
+		 539      -     .thenIdle(25)
+		 540      -     .thenExecute(() => {
+		 541      -       player.moveToLocation(new Location(3.5, 2, 3.5));
+		 542      -     })
+		 543      -     .thenWait(() => {
+		 544      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(2, 2, 0));
+		 545      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(0, 2, 4));
+		 546      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(4, 2, 6));
+		 547      -       test.assertBlockPresent(MinecraftBlockTypes.air, new BlockLocation(6, 2, 2));
+		 548      -     })
+		 549      -     .thenSucceed();
+		 550      - })
+		 551      -   .maxTicks(200)
+		 552      -   .structureName("SimulatedPlayerTests:move")
+		 553      -   .tag(GameTest.Tags.suiteDefault);
+		 554      - 
+		 555      - GameTest.register("SimulatedPlayerTests", "navigate_to_block", (test) => {
+		 556      -   const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 0));
+		 557      -   const goalLoc = new BlockLocation(0, 3, 2);
+		 558      -   const behindDoorLoc = new BlockLocation(4, 3, 2);
+		 559      - 
+		 560      -   test
+		 561      -     .startSequence()
+		 562  656       .thenExecuteAfter(10, () => {
+		      657 +       const nav = player.navigateToLocation(new Location(0.5, 3, 2.5));
+		 563      -       const nav = player.navigateToBlock(behindDoorLoc);
+		 564  658         test.assert(nav.isFullPath, "Expected successful navigation result");
+		 565  659         const path = nav.path;
+		 566      -       test.assert(path[0].equals(new BlockLocation(2, 2, 0)), "Unexpected starting BlockLocation in navigation path.");
+		 567  660         test.assert(
+		      661 +         path[path.length - 1].equals(new BlockLocation(0, 3, 2)),
+		 568      -         path[path.length - 1].equals(new BlockLocation(4, 3, 2)),
+		 569  662           "Unexpected ending BlockLocation in navigation path."
+		 570  663         );
+		 571  664       })
+		 572  665       .thenWait(() => {
+		      666 +       test.assertEntityInstancePresent(player, goalLoc);
+		 573      -       test.assertEntityInstancePresent(player, behindDoorLoc);
+		 574  667       })
+		      668 +     .thenSucceed();
+		 575      -     .thenExecuteAfter(10, () => {
+		 576      -       const nav = player.navigateToBlock(goalLoc);
+		 577      -       test.assert(nav.isFullPath, "Expected successful navigation result");
+		      669 + })
+		      670 +   .maxTicks(300)
+		      671 +   .tag(GameTest.Tags.suiteDefault);
+		      672 + 
+		      673 + GameTest.register("SimulatedPlayerTests", "navigate_to_locations", (test) => {
+		      674 +   const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 0));
+		      675 +   const goalLoc = new BlockLocation(0, 3, 2);
+		      676 +   const locations = [new Location(4.5, 3, 2.5), new Location(0.5, 3, 2.5)];
+		      677 + 
+		      678 +   test
+		      679 +     .startSequence()
+		      680 +     .thenExecuteAfter(10, () => {
+		      681 +       player.navigateToLocations(locations);
+		      682 +     })
+		      683 +     .thenWait(() => {
+		      684 +       test.assertEntityInstancePresent(player, goalLoc);
+		      685 +     })
+		      686 +     .thenSucceed();
+		      687 + })
+		      688 +   .maxTicks(300)
+		      689 +   .structureName("SimulatedPlayerTests:navigate_to_location")
+		      690 +   .tag(GameTest.Tags.suiteDefault);
+		 578      -       const path = nav.path;
+		 579      -       test.assert(
+		 580      -         path[path.length - 1].equals(new BlockLocation(0, 3, 2)),
+		 581      -         "Unexpected ending BlockLocation in navigation path."
+		 582      -       );
+		 583      -     })
+		 584      -     .thenWait(() => {
+		 585      -       test.assertEntityInstancePresent(player, goalLoc);
+		 586      -     })
+		 587      -     .thenSucceed();
+		 588      - })
+		 589      -   .maxTicks(300)
+		 590      -   .structureName("SimulatedPlayerTests:navigate_to_location")
+		 591      -   .tag(GameTest.Tags.suiteDefault);
+		 592      - 
+		 593      - GameTest.register("SimulatedPlayerTests", "navigate_to_entity", (test) => {
+		 594      -   const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 0));
+		 595      -   const goalLoc = new BlockLocation(0, 3, 2);
+		 596      -   const behindDoorLoc = new BlockLocation(4, 3, 2);
+		 597      - 
+		 598      -   const armorStand1 = test.spawn("armor_stand", behindDoorLoc.above());
+		 599      -   const armorStand2 = test.spawn("armor_stand", goalLoc.above());
+		 600  691   
+		      692 + GameTest.register("SimulatedPlayerTests", "stop_moving", (test) => {
+		 601      -   test
+		 602      -     .startSequence()
+		 603      -     .thenExecuteAfter(10, () => {
+		      693 +   const spawnLoc = new BlockLocation(1, 2, 0);
+		      694 +   const player = test.spawnSimulatedPlayer(spawnLoc);
+		      695 +   player.move(0, 1);
+		      696 + 
+		      697 +   test
+		      698 +     .startSequence()
+		      699 +     .thenExecuteAfter(10, () => {
+		      700 +       player.stopMoving();
+		 604      -       const nav = player.navigateToEntity(armorStand1);
+		 605      -       test.assert(nav.isFullPath, "Expected successful navigation result");
+		 606      -       const path = nav.path;
+		 607      -       test.assert(path[0].equals(new BlockLocation(2, 2, 0)), "Unexpected starting BlockLocation in navigation path.");
+		 608      -       test.assert(
+		 609      -         path[path.length - 1].equals(new BlockLocation(4, 3, 2)),
+		 610      -         "Unexpected ending BlockLocation in navigation path."
+		 611      -       );
+		 612  701       })
+		      702 +     .thenExecuteAfter(20, () => {
+		      703 +       test.assertEntityInstancePresent(player, spawnLoc, false);
+		 613      -     .thenWait(() => {
+		      704 +       test.assertEntityInstancePresent(player, new BlockLocation(1, 3, 4), false);
+		 614      -       test.assertEntityInstancePresent(player, behindDoorLoc);
+		 615  705       })
+		      706 +     .thenSucceed();
+		      707 + }).tag(GameTest.Tags.suiteDefault);
+		 616      -     .thenExecuteAfter(10, () => {
+		      708 + 
+		      709 + GameTest.register("SimulatedPlayerTests", "shoot_bow", (test) => {
+		      710 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      711 +   const lampLoc = new BlockLocation(2, 3, 7);
+		      712 + 
+		      713 +   test
+		      714 +     .startSequence()
+		      715 +     .thenExecuteAfter(5, () => {
+		      716 +       player.giveItem(new ItemStack(MinecraftItemTypes.bow, 1), false);
+		      717 +       player.giveItem(new ItemStack(MinecraftItemTypes.arrow, 64), false);
+		 617      -       const nav = player.navigateToEntity(armorStand2);
+		 618      -       test.assert(nav.isFullPath, "Expected successful navigation result");
+		 619      -       const path = nav.path;
+		 620      -       test.assert(
+		 621      -         path[path.length - 1].equals(new BlockLocation(0, 3, 2)),
+		 622      -         "Unexpected ending BlockLocation in navigation path."
+		 623      -       );
+		 624      -     })
+		 625      -     .thenWait(() => {
+		 626      -       test.assertEntityInstancePresent(player, goalLoc);
+		 627  718       })
+		      719 +     .thenExecuteAfter(5, () => {
+		 628      -     .thenSucceed();
+		 629      - })
+		 630      -   .maxTicks(300)
+		      720 +       player.useItemInSlot(0);
+		      721 +     })
+		      722 +     .thenExecuteAfter(50, () => {
+		      723 +       player.stopUsingItem();
+		      724 +     })
+		      725 +     .thenWait(() => {
+		      726 +       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		      727 +     })
+		      728 +     .thenSucceed();
+		      729 + })
+		      730 +   .structureName("SimulatedPlayerTests:target_practice")
+		      731 +   .tag(GameTest.Tags.suiteDefault);
+		      732 + 
+		      733 + GameTest.register("SimulatedPlayerTests", "shoot_crossbow", (test) => {
+		      734 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      735 +   const lampLoc = new BlockLocation(2, 3, 7);
+		      736 + 
+		      737 +   test
+		      738 +     .startSequence()
+		      739 +     .thenExecuteAfter(5, () => {
+		      740 +       player.giveItem(new ItemStack(MinecraftItemTypes.crossbow, 1), false);
+		      741 +       player.giveItem(new ItemStack(MinecraftItemTypes.arrow, 64), false);
+		 631      -   .structureName("SimulatedPlayerTests:navigate_to_location")
+		 632      -   .tag(GameTest.Tags.suiteDefault);
+		 633      - 
+		 634      - GameTest.register("SimulatedPlayerTests", "navigate_to_location", (test) => {
+		 635      -   const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 0));
+		 636      -   const goalLoc = new BlockLocation(0, 3, 2);
+		 637      -   const behindDoorLoc = new BlockLocation(4, 3, 2);
+		 638      - 
+		 639      -   test
+		 640      -     .startSequence()
+		 641      -     .thenExecuteAfter(10, () => {
+		 642      -       const nav = player.navigateToLocation(new Location(4.5, 3, 2.5));
+		 643      -       test.assert(nav.isFullPath, "Expected successful navigation result");
+		 644      -       const path = nav.path;
+		 645      -       test.assert(path[0].equals(new BlockLocation(2, 2, 0)), "Unexpected starting BlockLocation in navigation path.");
+		 646      -       test.assert(
+		 647      -         path[path.length - 1].equals(new BlockLocation(4, 3, 2)),
+		 648      -         "Unexpected ending BlockLocation in navigation path."
+		 649      -       );
+		 650      -     })
+		 651      -     .thenWait(() => {
+		 652      -       test.assertEntityInstancePresent(player, behindDoorLoc);
+		 653  742       })
+		      743 +     .thenExecuteAfter(5, () => {
+		 654      -     .thenExecuteAfter(10, () => {
+		 655      -       const nav = player.navigateToLocation(new Location(0.5, 3, 2.5));
+		 656      -       test.assert(nav.isFullPath, "Expected successful navigation result");
+		      744 +       player.useItemInSlot(0);
+		      745 +     })
+		      746 +     .thenExecuteAfter(50, () => {
+		      747 +       player.stopUsingItem();
+		      748 +       player.useItemInSlot(0);
+		 657      -       const path = nav.path;
+		 658      -       test.assert(
+		 659      -         path[path.length - 1].equals(new BlockLocation(0, 3, 2)),
+		 660      -         "Unexpected ending BlockLocation in navigation path."
+		 661      -       );
+		 662  749       })
+		 663  750       .thenWait(() => {
+		      751 +       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 664      -       test.assertEntityInstancePresent(player, goalLoc);
+		 665  752       })
+		 666  753       .thenSucceed();
+		 667  754   })
+		      755 +   .maxTicks(150)
+		      756 +   .structureName("SimulatedPlayerTests:target_practice")
+		 668      -   .maxTicks(300)
+		 669  757     .tag(GameTest.Tags.suiteDefault);
+		 670  758   
+		      759 + GameTest.register("SimulatedPlayerTests", "move_in_minecart", (test) => {
+		      760 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		 671      - GameTest.register("SimulatedPlayerTests", "navigate_to_locations", (test) => {
+		 672      -   const player = test.spawnSimulatedPlayer(new BlockLocation(2, 2, 0));
+		      761 +   const minecart = test.spawn("minecart", new BlockLocation(1, 2, 0));
+		      762 +   const lampLoc = new BlockLocation(0, 2, 3);
+		 673      -   const goalLoc = new BlockLocation(0, 3, 2);
+		 674      -   const locations = [new Location(4.5, 3, 2.5), new Location(0.5, 3, 2.5)];
+		 675  763   
+		 676  764     test
+		 677  765       .startSequence()
+		      766 +     .thenExecuteAfter(20, () => {
+		      767 +       player.interactWithEntity(minecart);
+		 678      -     .thenExecuteAfter(10, () => {
+		      768 +       player.move(0, 1);
+		 679      -       player.navigateToLocations(locations);
+		 680  769       })
+		 681  770       .thenWait(() => {
+		      771 +       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 682      -       test.assertEntityInstancePresent(player, goalLoc);
+		 683  772       })
+		 684  773       .thenSucceed();
+		 685  774   })
+		      775 +   .maxTicks(200)
+		 686      -   .maxTicks(300)
+		 687      -   .structureName("SimulatedPlayerTests:navigate_to_location")
+		 688  776     .tag(GameTest.Tags.suiteDefault);
+		 689  777   
+		      778 + GameTest.register("SimulatedPlayerTests", "rotate_body", (test) => {
+		 690      - GameTest.register("SimulatedPlayerTests", "stop_moving", (test) => {
+		 691      -   const spawnLoc = new BlockLocation(1, 2, 0);
+		 692      -   const player = test.spawnSimulatedPlayer(spawnLoc);
+		      779 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 693      -   player.move(0, 1);
+		 694  780   
+		 695  781     test
+		 696  782       .startSequence()
+		 697      -     .thenExecuteAfter(10, () => {
+		 698      -       player.stopMoving();
+		 699      -     })
+		 700      -     .thenExecuteAfter(20, () => {
+		      783 +     .thenExecuteAfter(5, () => {
+		      784 +       test.assert(player.bodyRotation === 0, "Expected body rotation of 0 degrees (1)");
+		 701      -       test.assertEntityInstancePresent(player, spawnLoc, false);
+		 702      -       test.assertEntityInstancePresent(player, new BlockLocation(1, 3, 4), false);
+		 703  785       })
+		      786 +     .thenExecuteAfter(5, () => {
+		 704      -     .thenSucceed();
+		 705      - }).tag(GameTest.Tags.suiteDefault);
+		 706      - 
+		      787 +       player.setBodyRotation(90);
+		      788 +       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees (2)");
+		      789 +     })
+		      790 +     .thenExecuteAfter(5, () => {
+		      791 +       player.setBodyRotation(-90);
+		      792 +       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees (3)");
+		      793 +     })
+		      794 +     .thenExecuteAfter(5, () => {
+		      795 +       player.setBodyRotation(180);
+		      796 +       test.assert(player.bodyRotation === -180, "Expected body rotation of -180 degrees (4)");
+		 707      - GameTest.register("SimulatedPlayerTests", "shoot_bow", (test) => {
+		 708      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 709      -   const lampLoc = new BlockLocation(2, 3, 7);
+		 710      - 
+		 711      - 
+		 712      -   test
+		 713      -       .startSequence()
+		 714      -       .thenExecuteAfter(5, () => {
+		 715      -         player.giveItem(new ItemStack(MinecraftItemTypes.bow, 1), false);
+		 716      -         player.giveItem(new ItemStack(MinecraftItemTypes.arrow, 64), false);
+		 717  797       })
+		 718  798       .thenExecuteAfter(5, () => {
+		      799 +       player.rotateBody(180);
+		      800 +       test.assert(player.bodyRotation === 0, "Expected body rotation of 0 degrees (5)");
+		 719      -       player.useItemInSlot(0);
+		 720  801       })
+		      802 +     .thenExecuteAfter(5, () => {
+		      803 +       player.rotateBody(90);
+		 721      -     .thenExecuteAfter(50, () => {
+		      804 +       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees (6)");
+		 722      -       player.stopUsingItem();
+		 723  805       })
+		      806 +     .thenExecuteAfter(5, () => {
+		      807 +       player.rotateBody(-180);
+		 724      -     .thenWait(() => {
+		      808 +       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees (7)");
+		 725      -       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 726  809       })
+		 727  810       .thenSucceed();
+		 728  811   })
+		      812 +   .structureName("ComponentTests:platform")
+		 729      -   .structureName("SimulatedPlayerTests:target_practice")
+		 730  813     .tag(GameTest.Tags.suiteDefault);
+		 731  814   
+		      815 + GameTest.register("SimulatedPlayerTests", "look_at_entity", (test) => {
+		 732      - GameTest.register("SimulatedPlayerTests", "shoot_crossbow", (test) => {
+		 733  816     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      817 +   const leftArmorStand = test.spawn("armor_stand", new BlockLocation(2, 2, 1));
+		      818 +   const rightArmorStand = test.spawn("armor_stand", new BlockLocation(0, 2, 1));
+		 734      -   const lampLoc = new BlockLocation(2, 3, 7);
+		 735  819   
+		 736  820     test
+		 737      -       .startSequence()
+		 738      -       .thenExecuteAfter(5, () => {
+		 739      -           player.giveItem(new ItemStack(MinecraftItemTypes.crossbow, 1), false);
+		 740      -           player.giveItem(new ItemStack(MinecraftItemTypes.arrow, 64), false);
+		      821 +     .startSequence()
+		 741      -     })
+		 742  822       .thenExecuteAfter(5, () => {
+		 743      -       player.useItemInSlot(0);
+		 744      -     })
+		 745      -     .thenExecuteAfter(50, () => {
+		      823 +       player.lookAtEntity(leftArmorStand);
+		      824 +       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees");
+		 746      -       player.stopUsingItem();
+		 747      -       player.useItemInSlot(0);
+		 748  825       })
+		      826 +     .thenExecuteAfter(5, () => {
+		      827 +       player.lookAtEntity(rightArmorStand);
+		 749      -     .thenWait(() => {
+		      828 +       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees");
+		 750      -       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 751  829       })
+		 752  830       .thenSucceed();
+		 753  831   })
+		      832 +   .structureName("ComponentTests:platform")
+		 754      -   .maxTicks(150)
+		 755      -   .structureName("SimulatedPlayerTests:target_practice")
+		 756  833     .tag(GameTest.Tags.suiteDefault);
+		 757  834   
+		      835 + GameTest.register("SimulatedPlayerTests", "look_at_block", (test) => {
+		      836 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 758      - GameTest.register("SimulatedPlayerTests", "move_in_minecart", (test) => {
+		 759      -   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		      837 +   const leftBlockLoc = new BlockLocation(2, 2, 1);
+		      838 +   const rightBlockLoc = new BlockLocation(0, 2, 1);
+		 760      -   const minecart = test.spawn("minecart", new BlockLocation(1, 2, 0));
+		 761      -   const lampLoc = new BlockLocation(0, 2, 3);
+		 762  839   
+		 763  840     test
+		 764  841       .startSequence()
+		      842 +     .thenExecuteAfter(10, () => {
+		 765      -     .thenExecuteAfter(20, () => {
+		 766      -       player.interactWithEntity(minecart);
+		      843 +       test.assert(player.bodyRotation === 0, "Expected body rotation of 0 degrees");
+		      844 +       test.assert(player.headRotation.pitch === 0, "Expected head pitch of 0 degrees");
+		      845 +       test.assert(player.headRotation.yaw === 0, "Expected head yaw of 0 degrees");
+		      846 +       player.lookAtBlock(leftBlockLoc);
+		 767      -       player.move(0, 1);
+		 768      -     })
+		 769      -     .thenWait(() => {
+		 770      -       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 771  847       })
+		      848 +     .thenExecuteAfter(20, () => {
+		      849 +       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees");
+		 772      -     .thenSucceed();
+		 773      - })
+		      850 +       test.assert(isNear(player.headRotation.pitch, 48.24), "Expected head pitch of ~48.24 degrees");
+		      851 +       test.assert(player.headRotation.yaw === -90, "Expected head yaw of -90 degrees");
+		      852 +     })
+		      853 +     .thenExecuteAfter(10, () => {
+		      854 +       player.lookAtBlock(rightBlockLoc);
+		      855 +     })
+		      856 +     .thenExecuteAfter(20, () => {
+		      857 +       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees");
+		      858 +       test.assert(isNear(player.headRotation.pitch, 48.24), "Expected head pitch of ~48.24 degrees");
+		      859 +       test.assert(player.headRotation.yaw === 90, "Expected head yaw of 90 degrees");
+		 774      -   .maxTicks(200)
+		 775      -   .tag(GameTest.Tags.suiteDefault);
+		 776      - 
+		 777      - GameTest.register("SimulatedPlayerTests", "rotate_body", (test) => {
+		 778      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 779      - 
+		 780      -   test
+		 781      -     .startSequence()
+		 782      -     .thenExecuteAfter(5, () => {
+		 783      -       test.assert(player.bodyRotation === 0, "Expected body rotation of 0 degrees (1)");
+		 784  860       })
+		      861 +     .thenSucceed();
+		      862 + })
+		      863 +   .structureName("ComponentTests:platform")
+		 785      -     .thenExecuteAfter(5, () => {
+		      864 +   .tag(GameTest.Tags.suiteDefault);
+		      865 + 
+		      866 + GameTest.register("SimulatedPlayerTests", "look_at_location", (test) => {
+		      867 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		      868 +   const leftLoc = new Location(2.5, 2, 1.5);
+		      869 +   const rightLoc = new Location(0.5, 2, 1.5);
+		      870 + 
+		      871 +   test
+		      872 +     .startSequence()
+		      873 +     .thenExecuteAfter(10, () => {
+		      874 +       test.assert(player.bodyRotation === 0, "Expected body rotation of 0 degrees");
+		      875 +       test.assert(player.headRotation.pitch === 0, "Expected head pitch of 0 degrees");
+		      876 +       test.assert(player.headRotation.yaw === 0, "Expected head yaw of 0 degrees");
+		      877 +       player.lookAtLocation(leftLoc);
+		 786      -       player.setBodyRotation(90);
+		 787      -       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees (2)");
+		 788      -     })
+		 789      -     .thenExecuteAfter(5, () => {
+		 790      -       player.setBodyRotation(-90);
+		 791      -       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees (3)");
+		 792      -     })
+		 793      -     .thenExecuteAfter(5, () => {
+		 794      -       player.setBodyRotation(180);
+		 795      -       test.assert(player.bodyRotation === -180, "Expected body rotation of -180 degrees (4)");
+		 796      -     })
+		 797      -     .thenExecuteAfter(5, () => {
+		 798      -       player.rotateBody(180);
+		 799      -       test.assert(player.bodyRotation === 0, "Expected body rotation of 0 degrees (5)");
+		 800  878       })
+		      879 +     .thenExecuteAfter(20, () => {
+		      880 +       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees");
+		 801      -     .thenExecuteAfter(5, () => {
+		      881 +       test.assert(isNear(player.headRotation.pitch, 58.31), "Expected head pitch of ~58.31 degrees");
+		      882 +       test.assert(player.headRotation.yaw === -90, "Expected head yaw of -90 degrees");
+		 802      -       player.rotateBody(90);
+		 803      -       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees (6)");
+		 804  883       })
+		      884 +     .thenExecuteAfter(10, () => {
+		 805      -     .thenExecuteAfter(5, () => {
+		 806      -       player.rotateBody(-180);
+		      885 +       player.lookAtLocation(rightLoc);
+		 807      -       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees (7)");
+		 808  886       })
+		      887 +     .thenExecuteAfter(20, () => {
+		      888 +       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees");
+		 809      -     .thenSucceed();
+		 810      - })
+		      889 +       test.assert(isNear(player.headRotation.pitch, 58.31), "Expected head pitch of ~58.31 degrees");
+		      890 +       test.assert(player.headRotation.yaw === 90, "Expected head yaw of 90 degrees");
+		      891 +     })
+		      892 +     .thenSucceed();
+		      893 + })
+		      894 +   .structureName("ComponentTests:platform")
+		      895 +   .tag(GameTest.Tags.suiteDefault);
+		 811      -   .structureName("ComponentTests:platform")
+		 812      -   .tag(GameTest.Tags.suiteDefault);
+		 813      - 
+		 814      - GameTest.register("SimulatedPlayerTests", "look_at_entity", (test) => {
+		 815      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 816      -   const leftArmorStand = test.spawn("armor_stand", new BlockLocation(2, 2, 1));
+		 817      -   const rightArmorStand = test.spawn("armor_stand", new BlockLocation(0, 2, 1));
+		 818  896   
+		 819      -   test
+		 820      -     .startSequence()
+		 821      -     .thenExecuteAfter(5, () => {
+		      897 + GameTest.register("SimulatedPlayerTests", "use_item_in_slot_on_block", (test) => {
+		      898 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		      899 +   const wallLoc = new BlockLocation(1, 3, 2);
+		      900 +   const slabLoc = new BlockLocation(1, 3, 1);
+		      901 +   const woodenSlabSlot = 1;
+		      902 +   const inventoryContainer = player.getComponent("inventory").container;
+		      903 + 
+		      904 +   test
+		      905 +     .startSequence()
+		      906 +     .thenExecuteAfter(5, () => {
+		      907 +       player.setItem(new ItemStack(MinecraftItemTypes.crimsonSlab, 2), 0);
+		      908 +       player.setItem(new ItemStack(MinecraftItemTypes.woodenSlab, 2), woodenSlabSlot);
+		      909 +       player.setItem(new ItemStack(MinecraftItemTypes.warpedSlab, 2), 2);
+		      910 +       test.assert(inventoryContainer.getItem(woodenSlabSlot).amount === 2, "Player should have 2 wooden slabs");
+		      911 +     })
+		      912 +     .thenExecuteAfter(10, () => {
+		      913 +       player.useItemInSlotOnBlock(woodenSlabSlot, wallLoc, Direction.north, 0.5, 0.75); // place upper slab
+		      914 +       test.assert(inventoryContainer.getItem(woodenSlabSlot).amount === 1, "Player should have 1 wooden slab");
+		      915 +     })
+		 822      -       player.lookAtEntity(leftArmorStand);
+		 823      -       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees");
+		 824      -     })
+		 825      -     .thenExecuteAfter(5, () => {
+		 826      -       player.lookAtEntity(rightArmorStand);
+		 827      -       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees");
+		 828      -     })
+		 829      -     .thenSucceed();
+		 830      - })
+		 831      -   .structureName("ComponentTests:platform")
+		 832      -   .tag(GameTest.Tags.suiteDefault);
+		 833      - 
+		 834      - GameTest.register("SimulatedPlayerTests", "look_at_block", (test) => {
+		 835      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 836      -   const leftBlockLoc = new BlockLocation(2, 2, 1);
+		 837      -   const rightBlockLoc = new BlockLocation(0, 2, 1);
+		 838      - 
+		 839      -   test
+		 840      -     .startSequence()
+		 841  916       .thenExecuteAfter(10, () => {
+		      917 +       player.useItemInSlotOnBlock(woodenSlabSlot, wallLoc, Direction.north, 0.5, 0.25); // place lower slab
+		      918 +       test.assert(inventoryContainer.getItem(woodenSlabSlot) === undefined, "Player should have 0 wooden slabs");
+		 842      -       test.assert(player.bodyRotation === 0, "Expected body rotation of 0 degrees");
+		      919 +     })
+		      920 +     .thenWait(() => {
+		      921 +       test.assertBlockPresent(MinecraftBlockTypes.doubleWoodenSlab, slabLoc);
+		 843      -       test.assert(player.headRotation.pitch === 0, "Expected head pitch of 0 degrees");
+		 844      -       test.assert(player.headRotation.yaw === 0, "Expected head yaw of 0 degrees");
+		 845      -       player.lookAtBlock(leftBlockLoc);
+		 846  922       })
+		      923 +     .thenSucceed();
+		      924 + }).tag(GameTest.Tags.suiteDefault);
+		 847      -     .thenExecuteAfter(20, () => {
+		      925 + 
+		      926 + GameTest.register("SimulatedPlayerTests", "use_item_on_block_2", (test) => {
+		      927 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		      928 +   const wallLoc = new BlockLocation(1, 3, 2);
+		      929 +   const slabLoc = new BlockLocation(1, 3, 1);
+		      930 +   const woodenSlab = new ItemStack(MinecraftItemTypes.woodenSlab, 1);
+		      931 + 
+		      932 +   test
+		      933 +     .startSequence()
+		      934 +     .thenExecuteAfter(10, () => {
+		      935 +       player.useItemOnBlock(woodenSlab, wallLoc, Direction.north, 0.5, 0.75); // place upper slab
+		 848      -       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees");
+		 849      -       test.assert(isNear(player.headRotation.pitch, 48.24), "Expected head pitch of ~48.24 degrees");
+		 850      -       test.assert(player.headRotation.yaw === -90, "Expected head yaw of -90 degrees");
+		 851      -     })
+		 852      -     .thenExecuteAfter(10, () => {
+		 853      -       player.lookAtBlock(rightBlockLoc);
+		 854      -     })
+		 855      -     .thenExecuteAfter(20, () => {
+		 856      -       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees");
+		 857      -       test.assert(isNear(player.headRotation.pitch, 48.24), "Expected head pitch of ~48.24 degrees");
+		 858      -       test.assert(player.headRotation.yaw === 90, "Expected head yaw of 90 degrees");
+		 859  936       })
+		 860      -     .thenSucceed();
+		 861      - })
+		 862      -   .structureName("ComponentTests:platform")
+		 863      -   .tag(GameTest.Tags.suiteDefault);
+		      937 +     .thenExecuteAfter(10, () => {
+		      938 +       player.useItemOnBlock(woodenSlab, wallLoc, Direction.north, 0.5, 0.25); // place lower slab
+		      939 +     })
+		      940 +     .thenWait(() => {
+		      941 +       test.assertBlockPresent(MinecraftBlockTypes.doubleWoodenSlab, slabLoc);
+		      942 +     })
+		      943 +     .thenSucceed();
+		      944 + })
+		      945 +   .structureName("SimulatedPlayerTests:use_item_in_slot_on_block")
+		      946 +   .tag(GameTest.Tags.suiteDefault);
+		      947 + 
+		      948 + GameTest.register("SimulatedPlayerTests", "interact", (test) => {
+		      949 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		      950 +   const leverLoc = new BlockLocation(1, 3, 2);
+		      951 +   const lampLoc = new BlockLocation(2, 2, 2);
+		      952 + 
+		      953 +   test
+		      954 +     .startSequence()
+		      955 +     .thenExecuteAfter(5, () => {
+		      956 +       player.lookAtBlock(leverLoc);
+		      957 +       player.interact();
+		 864      - 
+		 865      - GameTest.register("SimulatedPlayerTests", "look_at_location", (test) => {
+		 866      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 1));
+		 867      -   const leftLoc = new Location(2.5, 2, 1.5);
+		 868      -   const rightLoc = new Location(0.5, 2, 1.5);
+		 869      - 
+		 870      -   test
+		 871      -     .startSequence()
+		 872      -     .thenExecuteAfter(10, () => {
+		 873      -       test.assert(player.bodyRotation === 0, "Expected body rotation of 0 degrees");
+		 874      -       test.assert(player.headRotation.pitch === 0, "Expected head pitch of 0 degrees");
+		 875      -       test.assert(player.headRotation.yaw === 0, "Expected head yaw of 0 degrees");
+		 876      -       player.lookAtLocation(leftLoc);
+		 877      -     })
+		 878      -     .thenExecuteAfter(20, () => {
+		 879      -       test.assert(player.bodyRotation === -90, "Expected body rotation of -90 degrees");
+		 880      -       test.assert(isNear(player.headRotation.pitch, 58.31), "Expected head pitch of ~58.31 degrees");
+		 881      -       test.assert(player.headRotation.yaw === -90, "Expected head yaw of -90 degrees");
+		 882      -     })
+		 883      -     .thenExecuteAfter(10, () => {
+		 884      -       player.lookAtLocation(rightLoc);
+		 885  958       })
+		      959 +     .thenWait(() => {
+		 886      -     .thenExecuteAfter(20, () => {
+		 887      -       test.assert(player.bodyRotation === 90, "Expected body rotation of 90 degrees");
+		 888      -       test.assert(isNear(player.headRotation.pitch, 58.31), "Expected head pitch of ~58.31 degrees");
+		      960 +       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 889      -       test.assert(player.headRotation.yaw === 90, "Expected head yaw of 90 degrees");
+		 890  961       })
+		 891  962       .thenSucceed();
+		      963 + }).tag(GameTest.Tags.suiteDefault);
+		 892      - })
+		 893      -   .structureName("ComponentTests:platform")
+		 894      -   .tag(GameTest.Tags.suiteDefault);
+		 895  964   
+		      965 + GameTest.register("SimulatedPlayerTests", "interact_with_block", (test) => {
+		 896      - GameTest.register("SimulatedPlayerTests", "use_item_in_slot_on_block", (test) => {
+		 897  966     const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		      967 +   const leverLoc = new BlockLocation(1, 3, 2);
+		 898      -   const wallLoc = new BlockLocation(1, 3, 2);
+		 899      -   const slabLoc = new BlockLocation(1, 3, 1);
+		 900      -   const woodenSlabSlot = 1;
+		      968 +   const lampLoc = new BlockLocation(2, 2, 2);
+		 901      -   const inventoryContainer = player.getComponent("inventory").container;
+		 902  969   
+		 903  970     test
+		 904  971       .startSequence()
+		 905  972       .thenExecuteAfter(5, () => {
+		      973 +       player.interactWithBlock(leverLoc);
+		      974 +     })
+		 906      -         player.setItem(new ItemStack(MinecraftItemTypes.crimsonSlab, 2), 0);
+		 907      -         player.setItem(new ItemStack(MinecraftItemTypes.woodenSlab, 2), woodenSlabSlot);
+		      975 +     .thenWait(() => {
+		      976 +       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 908      -         player.setItem(new ItemStack(MinecraftItemTypes.warpedSlab, 2), 2);
+		 909      -         test.assert(inventoryContainer.getItem(woodenSlabSlot).amount === 2, "Player should have 2 wooden slabs");
+		 910  977       })
+		      978 +     .thenSucceed();
+		      979 + })
+		 911      -     .thenExecuteAfter(10, () => {
+		      980 +   .structureName("SimulatedPlayerTests:interact")
+		      981 +   .tag(GameTest.Tags.suiteDefault);
+		 912      -       player.useItemInSlotOnBlock(woodenSlabSlot, wallLoc, Direction.north, 0.5, 0.75); // place upper slab
+		 913      -       test.assert(inventoryContainer.getItem(woodenSlabSlot).amount === 1, "Player should have 1 wooden slab");
+		 914      -     })
+		      982 + 
+		      983 + GameTest.register("SimulatedPlayerTests", "one_tick", (test) => {
+		      984 +   for (let i = 0; i < 3; i++) {
+		      985 +     test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		      986 +   }
+		      987 +   test.succeedOnTick(1);
+		      988 + })
+		      989 +   .structureName("ComponentTests:platform")
+		      990 +   .tag(GameTest.Tags.suiteDefault);
+		 915      -     .thenExecuteAfter(10, () => {
+		 916      -       player.useItemInSlotOnBlock(woodenSlabSlot, wallLoc, Direction.north, 0.5, 0.25); // place lower slab
+		 917      -       test.assert(inventoryContainer.getItem(woodenSlabSlot) === undefined, "Player should have 0 wooden slabs");
+		 918      -     })
+		 919      -     .thenWait(() => {
+		 920      -       test.assertBlockPresent(MinecraftBlockTypes.doubleWoodenSlab, slabLoc);
+		 921      -     })
+		 922      -     .thenSucceed();
+		 923      - }).tag(GameTest.Tags.suiteDefault);
+		 924  991   
+		      992 + GameTest.register("SimulatedPlayerTests", "destroy_block_creative", (test) => {
+		 925      - GameTest.register("SimulatedPlayerTests", "use_item_on_block_2", (test) => {
+		 926      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		      993 +   const blockLoc = new BlockLocation(2, 2, 1);
+		      994 +   const spawnLoc = new BlockLocation(2, 2, 3);
+		      995 +   const playerName = "Simulated Player (Creative)";
+		 927      -   const wallLoc = new BlockLocation(1, 3, 2);
+		 928      -   const slabLoc = new BlockLocation(1, 3, 1);
+		 929      -   const woodenSlab = new ItemStack(MinecraftItemTypes.woodenSlab, 1);
+		 930  996   
+		      997 +   let player = test.spawnSimulatedPlayer(spawnLoc, playerName);
+		 931  998     test
+		 932  999       .startSequence()
+		 933      -     .thenExecuteAfter(10, () => {
+		 934      -       player.useItemOnBlock(woodenSlab, wallLoc, Direction.north, 0.5, 0.75); // place upper slab
+		 935      -     })
+		     1000 +     .thenExecuteAfter(5, () => {
+		     1001 +       player.runCommand("gamemode creative");
+		 936      -     .thenExecuteAfter(10, () => {
+		 937      -       player.useItemOnBlock(woodenSlab, wallLoc, Direction.north, 0.5, 0.25); // place lower slab
+		 938 1002       })
+		     1003 +     .thenExecute(() => player.breakBlock(blockLoc))
+		     1004 +     .thenExecuteAfter(5, () => {
+		 939      -     .thenWait(() => {
+		     1005 +       test.assertBlockPresent(MinecraftBlockTypes.redstoneBlock, blockLoc, false);
+		 940      -       test.assertBlockPresent(MinecraftBlockTypes.doubleWoodenSlab, slabLoc);
+		 941 1006       })
+		 942 1007       .thenSucceed();
+		     1008 + }).tag(GameTest.Tags.suiteDefault);
+		     1009 + 
+		     1010 + GameTest.register("SimulatedPlayerTests", "sneaking", (test) => {
+		     1011 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		     1012 +   const goalLoc = new BlockLocation(1, 2, 3);
+		     1013 +   const healthComponent = player.getComponent("minecraft:health");
+		 943      - })
+		 944      -   .structureName("SimulatedPlayerTests:use_item_in_slot_on_block")
+		 945      -   .tag(GameTest.Tags.suiteDefault);
+		 946 1014   
+		     1015 +   player.isSneaking = true;
+		 947      - GameTest.register("SimulatedPlayerTests", "interact", (test) => {
+		 948      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		 949      -   const leverLoc = new BlockLocation(1, 3, 2);
+		     1016 +   player.moveToBlock(goalLoc);
+		 950      -   const lampLoc = new BlockLocation(2, 2, 2);
+		 951 1017   
+		 952 1018     test
+		 953 1019       .startSequence()
+		 954      -     .thenExecuteAfter(5, () => {
+		 955      -       player.lookAtBlock(leverLoc);
+		 956      -       player.interact();
+		 957      -     })
+		     1020 +     .thenExecuteAfter(20, () => {
+		     1021 +       test.assertEntityInstancePresent(player, goalLoc, false);
+		 958      -     .thenWait(() => {
+		 959      -       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 960 1022       })
+		     1023 +     .thenExecuteAfter(60, () => {
+		 961      -     .thenSucceed();
+		 962      - }).tag(GameTest.Tags.suiteDefault);
+		 963      - 
+		     1024 +       test.assertEntityInstancePresent(player, goalLoc);
+		     1025 +       test.assert(healthComponent.current === healthComponent.value, "Player should not be hurt");
+		     1026 +     })
+		     1027 +     .thenSucceed();
+		 964      - GameTest.register("SimulatedPlayerTests", "interact_with_block", (test) => {
+		 965      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		 966      -   const leverLoc = new BlockLocation(1, 3, 2);
+		 967      -   const lampLoc = new BlockLocation(2, 2, 2);
+		 968 1028   
+		     1029 +   test.startSequence();
+		 969      -   test
+		 970      -     .startSequence()
+		 971      -     .thenExecuteAfter(5, () => {
+		     1030 + }).tag(GameTest.Tags.suiteDefault);
+		 972      -       player.interactWithBlock(leverLoc);
+		 973      -     })
+		     1031 + 
+		     1032 + GameTest.register("SimulatedPlayerTests", "move_to_block_slowly", (test) => {
+		     1033 +   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		     1034 +   const goalLoc = new BlockLocation(1, 2, 3);
+		     1035 +   const healthComponent = player.getComponent("minecraft:health");
+		     1036 + 
+		     1037 +   player.moveToBlock(goalLoc, 0.3);
+		 974      -     .thenWait(() => {
+		 975      -       test.assertBlockPresent(MinecraftBlockTypes.litRedstoneLamp, lampLoc);
+		 976      -     })
+		 977      -     .thenSucceed();
+		 978      - })
+		 979      -   .structureName("SimulatedPlayerTests:interact")
+		 980      -   .tag(GameTest.Tags.suiteDefault);
+		 981 1038   
+		     1039 +   test
+		     1040 +     .startSequence()
+		     1041 +     .thenExecuteAfter(20, () => {
+		 982      - GameTest.register("SimulatedPlayerTests", "one_tick", (test) => {
+		     1042 +       test.assertEntityInstancePresent(player, goalLoc, false);
+		     1043 +     })
+		     1044 +     .thenExecuteAfter(60, () => {
+		     1045 +       test.assertEntityInstancePresent(player, goalLoc);
+		     1046 +       test.assert(healthComponent.current !== healthComponent.value, "Player should be hurt");
+		     1047 +     })
+		     1048 +     .thenSucceed();
+		 983      -   for (let i = 0; i < 3; i++) {
+		 984      -     test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		 985      -   }
+		 986      -   test.succeedOnTick(1);
+		 987      - })
+		 988      -   .structureName("ComponentTests:platform")
+		 989      -   .tag(GameTest.Tags.suiteDefault);
+		 990 1049   
+		     1050 +   test.startSequence();
+		     1051 + })
+		 991      - GameTest.register("SimulatedPlayerTests", "destroy_block_creative", (test) => {
+		 992      -   const blockLoc = new BlockLocation(2, 2, 1);
+		     1052 +   .structureName("SimulatedPlayerTests:sneaking")
+		     1053 +   .tag(GameTest.Tags.suiteDefault);
+		 993      -   const spawnLoc = new BlockLocation(2, 2, 3);
+		 994      -   const playerName = "Simulated Player (Creative)";
+		 995 1054   
+		 996      -   let player = test.spawnSimulatedPlayer(spawnLoc, playerName);
+		 997      -   test
+		 998      -     .startSequence()
+		     1055 + GameTest.register("SimulatedPlayerTests", "player_join_leave_events", async (test) => {
+		     1056 +   const thePlayerName = "Gary_The_Duck_411";
+		     1057 + 
+		     1058 +   let expectedPlayerJoined = false;
+		     1059 +   const playerJoinCallback = world.events.playerJoin.subscribe((e) => {
+		     1060 +     if (e.player.name == thePlayerName) {
+		     1061 +       expectedPlayerJoined = true;
+		     1062 +     }
+		     1063 +   });
+		 999      -     .thenExecuteAfter(5, () => {
+		1000      -       player.runCommand("gamemode creative");
+		1001      -     })
+		1002      -     .thenExecute(() => player.destroyBlock(blockLoc))
+		1003      -     .thenExecuteAfter(5, () => {
+		1004      -       test.assertBlockPresent(MinecraftBlockTypes.redstoneBlock, blockLoc, false);
+		1005      -     })
+		1006      -     .thenSucceed();
+		1007      - }).tag(GameTest.Tags.suiteDefault);
+		1008 1064   
+		     1065 +   let expectedPlayerLeft = false;
+		     1066 +   const playerLeaveCallback = world.events.playerLeave.subscribe((e) => {
+		     1067 +     if (e.playerName == thePlayerName) {
+		1009      - GameTest.register("SimulatedPlayerTests", "sneaking", (test) => {
+		     1068 +       expectedPlayerLeft = true;
+		     1069 +     }
+		     1070 +   });
+		1010      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		1011      -   const goalLoc = new BlockLocation(1, 2, 3);
+		1012      -   const healthComponent = player.getComponent("minecraft:health");
+		1013 1071   
+		     1072 +   let simPlayer = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0), thePlayerName);
+		     1073 +   await test.idle(1);
+		1014      -   player.isSneaking = true;
+		1015      -   player.moveToBlock(goalLoc);
+		1016 1074   
+		1017      -   test
+		1018      -     .startSequence()
+		1019      -     .thenExecuteAfter(20, () => {
+		1020      -       test.assertEntityInstancePresent(player, goalLoc, false);
+		     1075 +   if (!expectedPlayerJoined) {
+		     1076 +     test.fail("Expected playerJoin event");
+		     1077 +   }
+		     1078 + 
+		     1079 +   test.removeSimulatedPlayer(simPlayer);
+		     1080 +   await test.idle(1);
+		1021      -     })
+		1022      -     .thenExecuteAfter(60, () => {
+		1023      -       test.assertEntityInstancePresent(player, goalLoc);
+		1024      -       test.assert(healthComponent.current === healthComponent.value, "Player should not be hurt");
+		1025      -     })
+		1026      -     .thenSucceed();
+		1027 1081   
+		     1082 +   if (!expectedPlayerLeft) {
+		     1083 +     test.fail("Expected playerLeave event");
+		1028      -   test.startSequence();
+		     1084 +   }
+		1029      - }).tag(GameTest.Tags.suiteDefault);
+		1030 1085   
+		     1086 +   world.events.playerJoin.unsubscribe(playerJoinCallback);
+		1031      - GameTest.register("SimulatedPlayerTests", "move_to_block_slowly", (test) => {
+		1032      -   const player = test.spawnSimulatedPlayer(new BlockLocation(1, 2, 0));
+		1033      -   const goalLoc = new BlockLocation(1, 2, 3);
+		     1087 +   world.events.playerLeave.unsubscribe(playerLeaveCallback);
+		1034      -   const healthComponent = player.getComponent("minecraft:health");
+		1035 1088   
+		     1089 +   test.succeed();
+		     1090 + })
+		     1091 +   .structureName("ComponentTests:platform")
+		     1092 +   .tag(GameTest.Tags.suiteDefault);
+		1036      -   player.moveToBlock(goalLoc, 0.3);
+		1037 1093   
+		     1094 + GameTest.register("SimulatedPlayerTests", "player_update_selected_slot", async (test) => {
+		1038      -   test
+		1039      -     .startSequence()
+		1040      -     .thenExecuteAfter(20, () => {
+		     1095 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		     1096 + 
+		     1097 +   await test.idle(1);
+		     1098 + 
+		     1099 +   test.assert(player.selectedSlot === 0, "Expected default selected slot of the player to be 0");
+		     1100 + 
+		     1101 +   player.selectedSlot = 1;
+		1041      -       test.assertEntityInstancePresent(player, goalLoc, false);
+		1042      -     })
+		1043      -     .thenExecuteAfter(60, () => {
+		1044      -       test.assertEntityInstancePresent(player, goalLoc);
+		1045      -       test.assert(healthComponent.current !== healthComponent.value, "Player should be hurt");
+		1046      -     })
+		1047      -     .thenSucceed();
+		1048 1102   
+		1049      -   test.startSequence();
+		1050      - })
+		1051      -   .structureName("SimulatedPlayerTests:sneaking")
+		     1103 +   test.assert(player.selectedSlot === 1, "Expected player selected slot to be updated after change");
+		1052      -   .tag(GameTest.Tags.suiteDefault);
+		1053 1104   
+		     1105 +   test.succeed();
+		     1106 + })
+		     1107 + .structureName("ComponentTests:platform")
+		1054      - GameTest.register("SimulatedPlayerTests", "player_join_leave_events", async (test) => {
+		     1108 + .tag(GameTest.Tags.suiteDefault);
+		1055      -     const thePlayerName = "Gary_The_Duck_411";
+		1056 1109   
+		     1110 + GameTest.register("SimulatedPlayerTests", "player_uses_correct_item_from_updated_slot", async (test) => {
+		     1111 +   const player = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0));
+		1057      -     let expectedPlayerJoined = false;
+		     1112 +   const blockLoc = new BlockLocation(2, 1, 1);
+		     1113 +   const dirt = new ItemStack(MinecraftItemTypes.dirt, 1);
+		     1114 +   const stone = new ItemStack(MinecraftItemTypes.stone, 1);
+		     1115 + 
+		     1116 +   await test.idle(1);
+		1058      -     const playerJoinCallback = world.events.playerJoin.subscribe((e) => {
+		1059      -       if (e.player.name == thePlayerName) {
+		1060      -         expectedPlayerJoined = true;
+		1061      -       }
+		1062      -     });
+		1063 1117   
+		     1118 +   player.giveItem(dirt, false);
+		1064      -     let expectedPlayerLeft = false;
+		1065      -     const playerLeaveCallback = world.events.playerLeave.subscribe((e) => {
+		1066      -       if (e.playerName == thePlayerName) {
+		     1119 +   player.giveItem(stone, false);
+		     1120 + 
+		     1121 +   await test.idle(1);
+		1067      -         expectedPlayerLeft = true;
+		1068      -       }
+		1069      -     });
+		1070 1122   
+		     1123 +   test.assert(player.selectedSlot === 0, "Player selected slot should not have been updated");
+		1071      -     let simPlayer = test.spawnSimulatedPlayer(new BlockLocation(0, 2, 0), thePlayerName);
+		1072      -     await test.idle(1);
+		1073 1124   
+		     1125 +   player.selectedSlot = 1;
+		1074      -     if (!expectedPlayerJoined) {
+		1075      -       test.fail("Expected playerJoin event");
+		1076      -     }
+		1077 1126   
+		     1127 +   player.useItemInSlotOnBlock(player.selectedSlot, blockLoc, Direction.up);
+		1078      -     test.removeSimulatedPlayer(simPlayer);
+		1079      -     await test.idle(1);
+		1080 1128   
+		     1129 +   await test.idle(1);
+		1081      -     if (!expectedPlayerLeft) {
+		1082      -       test.fail("Expected playerLeave event");
+		1083      -     }
+		1084 1130   
+		     1131 +   test.assertBlockPresent(MinecraftBlockTypes.stone, blockLoc.above(), true);
+		1085      -     world.events.playerJoin.unsubscribe(playerJoinCallback);
+		1086      -     world.events.playerLeave.unsubscribe(playerLeaveCallback);
+		1087 1132   
+		     1133 +   test.succeed();
+		     1134 + })
+		1088      -     test.succeed();
+		1089      -  })
+		     1135 + .structureName("ComponentTests:platform")
+		     1136 + .tag(GameTest.Tags.suiteDefault);
+		1090      -   .structureName("ComponentTests:platform")
+		1091      -   .tag(GameTest.Tags.suiteDefault);
+		            '''

@@ -1,0 +1,910 @@
+Difference of "scripts" between "1.17.0.52" (beta of "1.17.0") and "1.17.0.54" (beta of "1.17.0").
+
+Changed behavior pack "vanilla_gametest":
+	Total script: 15 (+3, -0)
+	Changed script "APITests.js":
+		Total line: 219 (+44, -121)
+		          '''
+		  1   1   import * as GameTest from "GameTest";
+		  2   2   import { BlockLocation, Effects, Items, ItemStack, Location, World } from "Minecraft";
+		  3   3   
+		  4     - GameTest.register("APITests", "color_component", (test) => {
+		  5     -   const sheep = test.spawn("minecraft:sheep", new BlockLocation(1, 2, 1));
+		  6     -   let counter = 0;
+		  7     -   test.succeedWhen(() => {
+		  8     -     const colorComponent = sheep.getComponent("minecraft:color");
+		  9     -     const color = colorComponent.value;
+		 10     -     if (++counter < 48) {
+		 11     -       colorComponent.setColor((color + 1) % 16);
+		 12     -       throw "Disco sheep!";
+		 13     -     } else {
+		 14     -       colorComponent.setColor(10);
+		 15     -       if (colorComponent.value !== 10) {
+		 16     -         throw "Unexpected color value"
+		 17     -       }
+		 18     -     }
+		 19     -   });
+		 20     - })
+		 21     -   .maxTicks(50)
+		 22     -   .tag(GameTest.Tags.suiteDefault);
+		 23     - 
+		 24     - GameTest.register("APITests", "get_component_on_dead_entity", (test) => {
+		 25     -   const horse = test.spawn("minecraft:horse", new BlockLocation(1, 2, 1));
+		 26     -   horse.kill();
+		 27     -   test.runAfterDelay(40, () => {
+		 28     -     try {
+		 29     -       // This should throw since the entity is dead
+		 30     -       horse.getComponent("minecraft:tamemount").setTamed();
+		 31     -       test.fail();
+		 32     -     } catch (e) {
+		 33     -       test.succeed();
+		 34     -     }
+		 35     -   });
+		 36     - }).tag(GameTest.Tags.suiteDefault);
+		 37     - 
+		 38     - GameTest.register("APITests", "is_saddled_component", (test) => {
+		 39     -   const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		 40     -   // TODO: Give saddle to pig
+		 41     -   test.succeedWhen(() => {
+		 42     -     const isSaddled = pig.getComponent("minecraft:is_saddled") !== undefined;
+		 43     -     if (!isSaddled) {
+		 44     -       throw "Not saddled";
+		 45     -     }
+		 46     -   });
+		 47     - }).tag(GameTest.Tags.suiteDisabled); // No API to give saddle to pig
+		 48     - 
+		 49     - GameTest.register("APITests", "get_components", (test) => {
+		 50     -   const horse = test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		 51     -   test.print("---Start Components---");
+		 52     -   for (const component of horse.getComponents()) {
+		 53     -     test.print(component.getName());
+		 54     -   }
+		 55     -   test.print("---End Components---");
+		 56     -   test.succeed();
+		 57     - });
+		 58     - 
+		 59     - GameTest.register("APITests", "leashable_component", (test) => {
+		 60     -   const pig1 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		 61     -   const pig2 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 1));
+		 62     -   const leashable = pig1.getComponent("minecraft:leashable");
+		 63     -   if (leashable) {
+		 64     -     test.print("softDistance: " + leashable.softDistance);
+		 65     -     leashable.leash(pig2);
+		 66     -     test.runAtTickTime(20, () => {
+		 67     -       leashable.unleash();
+		 68     -     });
+		 69     -     test.succeedWhen(() => {
+		 70     -       test.assertEntityPresentInArea("minecraft:item"); // Make sure the lead dropped
+		 71     -     });
+		 72     -   } else {
+		 73     -     test.fail();
+		 74     -   }
+		 75     - }).tag(GameTest.Tags.suiteDefault);
+		 76     - 
+		 77     - GameTest.register("APITests", "health_component", (test) => {
+		 78     -   const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
+		 79     -   const sheepPos = new BlockLocation(4, 2, 2);
+		 80     -   const sheep = test.spawn(sheepId, sheepPos);
+		 81     -   test.assertEntityInstancePresent(sheep);
+		 82     -   test.pullLever(new BlockLocation(2, 3, 2));
+		 83     -   const healthComponent = sheep.getComponent("minecraft:health");
+		 84     -   if (healthComponent) {
+		 85     -     test.succeedWhen(() => {
+		 86     -       let currentHealth = healthComponent.current;
+		 87     -       if (currentHealth !== 0) {
+		 88     -         throw "Unexpected health";
+		 89     -       }
+		 90     -     });
+		 91     -   } else {
+		 92     -     test.fail();
+		 93     -   }
+		 94     - })
+		 95     -   .maxTicks(200)
+		 96     -   .tag(GameTest.Tags.suiteDefault);
+		 97     - 
+		 98   4   GameTest.register("APITests", "on_entity_created", (test) => {
+		 99   5     World.addEventListener("onEntityCreated", (entity) => {
+		100   6       if (entity) {
+		101   7         test.succeed();
+		102   8       } else {
+		103   9         test.fail("Expected entity");
+		104  10       }
+		105  11     });
+		106  12     test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		     13 + })
+		     14 +   .structureName("ComponentTests:animal_pen")
+		     15 +   .tag(GameTest.Tags.suiteDisabled); // This test will succeed multiple times, need to unregister the listener
+		107     - }).tag(GameTest.Tags.suiteDisabled); // This test will succeed multiple times, need to unregister the listener
+		108  16   
+		109  17   GameTest.register("APITests", "assert_is_waterlogged", (test) => {
+		110  18     const waterChestLoc = new BlockLocation(5, 2, 1);
+		111  19     const waterLoc = new BlockLocation(4, 2, 1);
+		112  20     const chestLoc = new BlockLocation(2, 2, 1);
+		          ...
+		152  60     const pigLoc = new BlockLocation(1, 2, 1);
+		153  61     test.spawn(pigId, pigLoc);
+		154  62     test.succeedWhen(() => {
+		155  63       test.assertEntityData(pigLoc, pigId, (entity) => entity.getName !== undefined);
+		156  64     });
+		     65 + })
+		     66 +   .structureName("ComponentTests:animal_pen")
+		     67 +   .tag(GameTest.Tags.suiteDefault);
+		157     - }).tag(GameTest.Tags.suiteDefault);
+		158  68   
+		159  69   GameTest.register("APITests", "add_effect", (test) => {
+		160  70     const villagerId = "minecraft:villager_v2<minecraft:ageable_grow_up>";
+		161  71     const villagerLoc = new BlockLocation(1, 2, 1);
+		162  72     const villager = test.spawn(villagerId, villagerLoc);
+		          ...
+		172  82   
+		173  83     test.runAfterDelay(duration, () => {
+		174  84       test.assertEntityData(villagerLoc, villagerId, (entity) => entity.getEffect(Effects.poison) === undefined);
+		175  85       test.succeed();
+		176  86     });
+		     87 + })
+		     88 +   .structureName("ComponentTests:animal_pen")
+		     89 +   .tag(GameTest.Tags.suiteDefault);
+		177     - }).tag(GameTest.Tags.suiteDefault);
+		178  90   
+		179  91   GameTest.register("APITests", "assert_entity_present", (test) => {
+		180  92     const villagerId = "minecraft:villager_v2";
+		181  93     const villagerLoc = new BlockLocation(1, 2, 3);
+		182  94     const emeraldItem = new ItemStack(Items.emerald, 1, 0);
+		183  95     const emeraldItemLoc = new BlockLocation(3, 2, 3);
+		184  96     const minecartId = "minecraft:minecart";
+		185  97     const minecartLoc = new BlockLocation(3, 2, 1);
+		186  98     const armorStandId = "minecraft:armor_stand";
+		187  99     const armorStandLoc = new BlockLocation(1, 2, 1);
+		    100 + 
+		    101 +   test.spawn(villagerId, villagerLoc);
+		    102 +   test.spawnItem(emeraldItem, new Location(3.5, 4.5, 3.5));
+		188 103   
+		    104 +   test.succeedWhen(() => {
+		    105 +     test.assertEntityPresent(villagerId, villagerLoc);
+		    106 +     test.assertItemEntityPresent(Items.emerald, emeraldItemLoc, 0);
+		189     -   test.spawn(villagerId, villagerLoc);
+		    107 +     test.assertEntityPresent(armorStandId, armorStandLoc);
+		190     -   test.spawnItem(emeraldItem, new Location(3.5, 4.5, 3.5));
+		191 108   
+		    109 +     // Check all blocks surrounding the minecart
+		    110 +     for (let x = -1; x <= 1; x++) {
+		192     -   test.succeedWhen(() => {
+		    111 +       for (let z = -1; z <= 1; z++) {
+		    112 +         let offsetLoc = new BlockLocation(minecartLoc.x + x, minecartLoc.y, minecartLoc.z + z);
+		    113 +         if (x == 0 && z == 0) {
+		    114 +           test.assertEntityPresent(minecartId, offsetLoc);
+		    115 +         } else {
+		    116 +           test.assertEntityNotPresent(minecartId, offsetLoc);
+		    117 +         }
+		    118 +       }
+		    119 +     }
+		    120 +   });
+		    121 + }).tag(GameTest.Tags.suiteDefault);
+		    122 + 
+		    123 + GameTest.register("APITests", "assert_entity_not_present", (test) => {
+		    124 +   const armorStandId = "minecraft:armor_stand";
+		    125 +   const pigId = "minecraft:pig";
+		    126 +   const armorStandLoc = new BlockLocation(1, 2, 1);
+		    127 +   const airLoc = new BlockLocation(0, 2, 1);
+		193     -     test.assertEntityPresent(villagerId, villagerLoc);
+		194     -     test.assertItemEntityPresent(Items.emerald, emeraldItemLoc, 0);
+		195     -     test.assertEntityPresent(armorStandId, armorStandLoc);
+		196     - 
+		197     -     // Check all blocks surrounding the minecart
+		198     -     for (let x = -1; x <= 1; x++) {
+		199     -       for (let z = -1; z <= 1; z++) {
+		200     -         let offsetLoc = new BlockLocation(minecartLoc.x + x, minecartLoc.y, minecartLoc.z + z);
+		201     -         if (x == 0 && z == 0) {
+		202     -           test.assertEntityPresent(minecartId, offsetLoc);
+		203     -         } else {
+		204     -           test.assertEntityNotPresent(minecartId, offsetLoc);
+		205     -         }
+		206     -       }
+		207     -     }
+		208     -   });
+		209     - }).tag(GameTest.Tags.suiteDefault);
+		210 128   
+		    129 +   try {
+		211     - GameTest.register("APITests", "assert_entity_not_present", (test) => {
+		212     -   const armorStandId = "minecraft:armor_stand";
+		    130 +     test.assertEntityNotPresentInArea(armorStandId);
+		    131 +     test.fail(); // this assert should throw
+		    132 +   } catch (e) {}
+		213     -   const pigId = "minecraft:pig";
+		214     -   const armorStandLoc = new BlockLocation(1, 2, 1);
+		215     -   const airLoc = new BlockLocation(0, 2, 1);
+		216 133   
+		217 134     try {
+		    135 +     test.assertEntityNotPresent(armorStandId, armorStandLoc);
+		218     -     test.assertEntityNotPresentInArea(armorStandId);
+		219 136       test.fail(); // this assert should throw
+		220 137     } catch (e) {}
+		    138 + 
+		    139 +   test.assertEntityNotPresent(armorStandId, airLoc);
+		    140 +   test.assertEntityNotPresentInArea(pigId);
+		221 141   
+		    142 +   test.succeed();
+		    143 + })
+		222     -   try {
+		223     -     test.assertEntityNotPresent(armorStandId, armorStandLoc);
+		    144 +   .structureName("APITests:armor_stand")
+		    145 +   .tag(GameTest.Tags.suiteDefault);
+		224     -     test.fail(); // this assert should throw
+		225     -   } catch (e) {}
+		226 146   
+		    147 + GameTest.register("APITests", "assert_item_entity_count_is", (test) => {
+		    148 +   let oneItemLoc = new BlockLocation(3, 2, 1);
+		    149 +   let fiveItemsLoc = new BlockLocation(1, 2, 1);
+		    150 +   let noItemsLoc = new BlockLocation(2, 2, 1);
+		    151 +   let diamondPickaxeLoc = new BlockLocation(2, 2, 4);
+		227     -   test.assertEntityNotPresent(armorStandId, airLoc);
+		228     -   test.assertEntityNotPresentInArea(pigId);
+		229 152   
+		    153 +   const oneEmerald = new ItemStack(Items.emerald, 1, 0);
+		230     -   test.succeed();
+		231     - })
+		    154 +   const onePickaxe = new ItemStack(Items.diamondPickaxe, 1, 0);
+		    155 +   const fiveEmeralds = new ItemStack(Items.emerald, 5, 0);
+		232     -   .structureName("APITests:armor_stand")
+		233     -   .tag(GameTest.Tags.suiteDefault);
+		234 156   
+		235     - GameTest.register("APITests", "assert_item_entity_count_is", (test) => {
+		236     -   let oneItemLoc = new BlockLocation(3, 2, 1);
+		237     -   let fiveItemsLoc = new BlockLocation(1, 2, 1);
+		    157 +   test.spawnItem(oneEmerald, new Location(3.5, 3, 1.5));
+		    158 +   test.spawnItem(fiveEmeralds, new Location(1.5, 3, 1.5));
+		238     -   let noItemsLoc = new BlockLocation(2, 2, 1);
+		239     -   let diamondPickaxeLoc = new BlockLocation(2, 2, 4);
+		240 159   
+		    160 +   // spawn 9 pickaxes in a 3x3 grid
+		    161 +   for (let x = 1.5; x <= 3.5; x++) {
+		    162 +     for (let z = 3.5; z <= 5.5; z++) {
+		    163 +       test.spawnItem(onePickaxe, new Location(x, 3, z));
+		    164 +     }
+		    165 +   }
+		241     -   const oneEmerald = new ItemStack(Items.emerald, 1, 0);
+		242     -   const onePickaxe = new ItemStack(Items.diamondPickaxe, 1, 0);
+		243     -   const fiveEmeralds = new ItemStack(Items.emerald, 5, 0);
+		244 166   
+		    167 +   test.assertItemEntityCountIs(Items.emerald, noItemsLoc, 0, 0);
+		245     -   test.spawnItem(oneEmerald, new Location(3.5, 3, 1.5));
+		246     -   test.spawnItem(fiveEmeralds, new Location(1.5, 3, 1.5));
+		247 168   
+		    169 +   test.succeedWhen(() => {
+		    170 +     test.assertItemEntityCountIs(Items.feather, oneItemLoc, 0, 0);
+		    171 +     test.assertItemEntityCountIs(Items.emerald, oneItemLoc, 0, 1);
+		248     -   // spawn 9 pickaxes in a 3x3 grid
+		    172 +     test.assertItemEntityCountIs(Items.feather, fiveItemsLoc, 0, 0);
+		    173 +     test.assertItemEntityCountIs(Items.emerald, fiveItemsLoc, 0, 5);
+		    174 +     test.assertItemEntityCountIs(Items.emerald, fiveItemsLoc, 0, 5);
+		    175 +     test.assertItemEntityCountIs(Items.diamondPickaxe, diamondPickaxeLoc, 1, 9);
+		    176 +     test.assertItemEntityCountIs(Items.diamondPickaxe, diamondPickaxeLoc, 0, 1);
+		    177 +   });
+		    178 + }).tag(GameTest.Tags.suiteDefault);
+		249     -   for (let x = 1.5; x <= 3.5; x++) {
+		250     -     for (let z = 3.5; z <= 5.5; z++) {
+		251     -       test.spawnItem(onePickaxe, new Location(x, 3, z));
+		252     -     }
+		253     -   }
+		254     - 
+		255     -   test.assertItemEntityCountIs(Items.emerald, noItemsLoc, 0, 0);
+		256 179   
+		257     -   test.succeedWhen(() => {
+		258     -     test.assertItemEntityCountIs(Items.feather, oneItemLoc, 0, 0);
+		259     -     test.assertItemEntityCountIs(Items.emerald, oneItemLoc, 0, 1);
+		    180 + GameTest.register("APITests", "assert_entity_touching", (test) => {
+		    181 +   const armorStandId = "minecraft:armor_stand";
+		    182 + 
+		    183 +   test.assertEntityTouching(armorStandId, new Location(1.5, 2.5, 1.5));
+		    184 +   test.assertEntityTouching(armorStandId, new Location(1.5, 3.5, 1.5));
+		    185 +   test.assertEntityNotTouching(armorStandId, new Location(1.0, 2.5, 1.5));
+		    186 +   test.assertEntityNotTouching(armorStandId, new Location(2.0, 2.5, 1.5));
+		260     -     test.assertItemEntityCountIs(Items.feather, fiveItemsLoc, 0, 0);
+		261     -     test.assertItemEntityCountIs(Items.emerald, fiveItemsLoc, 0, 5);
+		262     -     test.assertItemEntityCountIs(Items.emerald, fiveItemsLoc, 0, 5);
+		263     -     test.assertItemEntityCountIs(Items.diamondPickaxe, diamondPickaxeLoc, 1, 9);
+		264     -     test.assertItemEntityCountIs(Items.diamondPickaxe, diamondPickaxeLoc, 0, 1);
+		265     -   });
+		266     - }).tag(GameTest.Tags.suiteDefault);
+		267     - 
+		    187 +   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 1.0));
+		    188 +   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 2.0));
+		268     - GameTest.register("APITests", "assert_entity_touching", (test) => {
+		269     -   const armorStandId = "minecraft:armor_stand";
+		270 189   
+		    190 +   test.succeed();
+		271     -   test.assertEntityTouching(armorStandId, new Location(1.5, 2.5, 1.5));
+		272     -   test.assertEntityTouching(armorStandId, new Location(1.5, 3.5, 1.5));
+		273     -   test.assertEntityNotTouching(armorStandId, new Location(1.0, 2.5, 1.5));
+		    191 + })
+		    192 +   .structureName("APITests:armor_stand")
+		    193 +   .tag(GameTest.Tags.suiteDefault);
+		274     -   test.assertEntityNotTouching(armorStandId, new Location(2.0, 2.5, 1.5));
+		275     -   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 1.0));
+		276     -   test.assertEntityNotTouching(armorStandId, new Location(1.5, 2.5, 2.0));
+		277 194   
+		    195 + GameTest.register("APITests", "pulse_redstone", (test) => {
+		    196 +   const pulseLoc = new BlockLocation(1, 2, 2);
+		278     -   test.succeed();
+		    197 +   const lampLoc = new BlockLocation(1, 2, 1);
+		    198 +   test.assertRedstonePower(lampLoc, 0);
+		    199 +   test.pulseRedstone(pulseLoc, 2);
+		279     - })
+		280     -   .structureName("APITests:armor_stand")
+		281     -   .tag(GameTest.Tags.suiteDefault);
+		282 200   
+		    201 +   test
+		    202 +     .startSequence()
+		    203 +     .thenIdle(2)
+		    204 +     .thenExecute(() => test.assertRedstonePower(lampLoc, 15))
+		    205 +     .thenIdle(1)
+		    206 +     .thenExecute(() => test.assertRedstonePower(lampLoc, 0))
+		    207 +     .thenSucceed();
+		    208 + }).tag(GameTest.Tags.suiteDefault);
+		283     - GameTest.register("APITests", "pulse_redstone", (test) => {
+		284     -   const pulseLoc = new BlockLocation(1, 2, 2);
+		285     -   const lampLoc = new BlockLocation(1, 2, 1);
+		286     -   test.assertRedstonePower(lampLoc, 0);
+		287     -   test.pulseRedstone(pulseLoc, 2);
+		288 209   
+		    210 + GameTest.register("APITests", "location", (test) => {
+		    211 +   let testLoc = new BlockLocation(1, 1, 1);
+		    212 +   let worldLoc = test.worldLocation(testLoc);
+		289     -   test
+		    213 +   let relativeLoc = test.relativeLocation(worldLoc);
+		    214 +   test.assert(!relativeLoc.equals(worldLoc), "Expected relativeLoc and worldLoc to be different");
+		    215 +   test.assert(relativeLoc.equals(testLoc), "Expected relativeLoc to match testLoc");
+		    216 +   test.succeed();
+		    217 + })
+		    218 +   .structureName("ComponentTests:platform")
+		    219 +   .tag(GameTest.Tags.suiteDefault);
+		290     -     .startSequence()
+		291     -     .thenIdle(2)
+		292     -     .thenExecute(() => test.assertRedstonePower(lampLoc, 15))
+		293     -     .thenIdle(1)
+		294     -     .thenExecute(() => test.assertRedstonePower(lampLoc, 0))
+		295     -     .thenSucceed();
+		296     - }).tag(GameTest.Tags.suiteDefault);
+		          '''
+	Added script "ComponentTests.js":
+		'''
+		import * as GameTest from "GameTest";
+		import { BlockLocation, Items, ItemStack } from "Minecraft";
+		
+		function isNear(n1, n2) {
+		  return Math.abs(n1 - n2) < 0.01;
+		}
+		
+		GameTest.register("ComponentTests", "color_component", (test) => {
+		  const sheep = test.spawn("minecraft:sheep", new BlockLocation(1, 2, 1));
+		  let counter = 0;
+		  test.succeedWhen(() => {
+		    const colorComponent = sheep.getComponent("minecraft:color");
+		    const color = colorComponent.value;
+		    if (++counter < 48) {
+		      colorComponent.value = (color + 1) % 16;
+		      throw "Disco sheep!";
+		    } else {
+		      colorComponent.value = 10;
+		      test.assert(colorComponent.value === 10, "Unexpected color value");
+		    }
+		  });
+		})
+		  .maxTicks(50)
+		  .structureName("ComponentTests:animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "get_component_on_dead_entity", (test) => {
+		  const horse = test.spawn("minecraft:horse", new BlockLocation(1, 2, 1));
+		  horse.kill();
+		  test.runAfterDelay(40, () => {
+		    try {
+		      // This should throw since the entity is dead
+		      horse.getComponent("minecraft:tamemount").setTamed();
+		      test.fail();
+		    } catch (e) {
+		      test.succeed();
+		    }
+		  });
+		})
+		  .structureName("ComponentTests:animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "is_saddled_component", (test) => {
+		  const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		  // TODO: Give saddle to pig
+		  test.succeedWhen(() => {
+		    const isSaddled = pig.getComponent("minecraft:is_saddled") !== undefined;
+		    test.assert(isSaddled, "Expected pig to be saddled");
+		  });
+		}).tag(GameTest.Tags.suiteDisabled); // No API to give saddle to pig
+		
+		GameTest.register("ComponentTests", "get_components", (test) => {
+		  const horse = test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		  test.print("---Start Components---");
+		  for (const component of horse.getComponents()) {
+		    test.print(component.id);
+		  }
+		  test.print("---End Components---");
+		  test.succeed();
+		}).structureName("ComponentTests:animal_pen");
+		
+		GameTest.register("ComponentTests", "leashable_component", (test) => {
+		  const pig1 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		  const pig2 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 1));
+		  const leashableComp = pig1.getComponent("leashable");
+		  test.assert(leashableComp !== undefined, "Expected leashable component");
+		  test.assert(leashableComp.softDistance === 4, "Unexpected softDistance");
+		  leashableComp.leash(pig2);
+		  test.runAtTickTime(20, () => {
+		    leashableComp.unleash();
+		  });
+		  test.succeedWhen(() => {
+		    test.assertEntityPresentInArea("minecraft:item"); // Make sure the lead dropped
+		  });
+		}).tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "health_component", (test) => {
+		  const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
+		  const sheepPos = new BlockLocation(4, 2, 2);
+		  const sheep = test.spawn(sheepId, sheepPos);
+		  test.assertEntityInstancePresent(sheep);
+		  test.pullLever(new BlockLocation(2, 3, 2));
+		
+		  const healthComponent = sheep.getComponent("minecraft:health");
+		  test.assert(healthComponent !== undefined, "Expected health component");
+		
+		  test.succeedWhen(() => {
+		    test.assert(healthComponent.current === 0, "Unexpected health");
+		  });
+		})
+		  .maxTicks(200)
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "rideable_component", (test) => {
+		  const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		  const boat = test.spawn("minecraft:boat", new BlockLocation(3, 2, 1));
+		  const skeletonHorse = test.spawn("minecraft:skeleton_horse<minecraft:ageable_grow_up>", new BlockLocation(5, 2, 1));
+		
+		  const boatRideableComp = boat.getComponent("minecraft:rideable");
+		  test.assert(boatRideableComp !== undefined, "Expected rideable component");
+		
+		  test.assert(boatRideableComp.seatCount === 2, "Unexpected seatCount");
+		  test.assert(boatRideableComp.crouchingSkipInteract, "Unexpected crouchingSkipInteract");
+		  test.assert(boatRideableComp.interactText === "action.interact.ride.boat", "Unexpected interactText");
+		  test.assert(boatRideableComp.familyTypes.length == 0, "Unexpected familyTypes");
+		  test.assert(boatRideableComp.controllingSeat === 0, "Unexpected controllingSeat");
+		  test.assert(boatRideableComp.pullInEntities, "Unexpected pullInEntities");
+		  test.assert(!boatRideableComp.riderCanInteract, "Unexpected riderCanInteract");
+		
+		  test.assert(boatRideableComp.seats[0].minRiderCount === 0, "Unexpected minRiderCount");
+		  test.assert(boatRideableComp.seats[0].maxRiderCount === 1, "Unexpected maxRiderCount");
+		  test.assert(boatRideableComp.seats[0].lockRiderRotation === 90, "Unexpected lockRiderRotation");
+		
+		  const skeletonHorseRideableComp = skeletonHorse.getComponent("minecraft:rideable");
+		  test.assert(skeletonHorseRideableComp !== undefined, "Expected rideable component");
+		
+		  test
+		    .startSequence()
+		    .thenIdle(20)
+		    .thenExecute(() => boatRideableComp.addRider(pig))
+		    .thenIdle(20)
+		    .thenExecute(() => boatRideableComp.ejectRider(pig))
+		    .thenIdle(20)
+		    .thenExecute(() => boatRideableComp.addRider(skeletonHorse))
+		    .thenExecute(() => boatRideableComp.addRider(pig))
+		    .thenIdle(20)
+		    .thenExecute(() => boatRideableComp.ejectRiders())
+		    .thenSucceed();
+		}).tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "tameable_component", (test) => {
+		  const wolf = test.spawn("minecraft:wolf", new BlockLocation(1, 2, 1));
+		  const tameableComp = wolf.getComponent("minecraft:tameable");
+		  test.assert(tameableComp !== undefined, "Expected tameable component");
+		  test.assert(isNear(tameableComp.probability, 0.333), "Unexpected probability");
+		  test.assert(tameableComp.tameItems[0] === "minecraft:bone", "Unexpected tameItems");
+		  tameableComp.tame(/*player*/); // TODO: Provide an owner
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "healable_component", (test) => {
+		  const parrot = test.spawn("minecraft:parrot", new BlockLocation(1, 2, 1));
+		  const healableComp = parrot.getComponent("minecraft:healable");
+		  test.assert(healableComp !== undefined, "Expected healable component");
+		  test.assert(healableComp.forceUse, "Unexpected forceUse");
+		  test.assert(healableComp.filters !== undefined, "Expected filters");
+		  const feedItem = healableComp.items[0];
+		  test.assert(feedItem.item === "minecraft:cookie", "Unexpected feedItem item");
+		  test.assert(feedItem.healAmount === 0, "Unexpected feedItem healAmount");
+		  const effect = feedItem.effects[0];
+		  test.assert(effect.amplifier === 0, "Unexpected effect amplifier");
+		  test.assert(effect.chance === 1, "Unexpected effect chance");
+		  test.assert(effect.duration === 20000, "Unexpected effect duration");
+		  test.assert(effect.name === "potion.poison", "Unexpected effect name");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_component", (test) => {
+		  const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		  const movementComp = pig.getComponent("minecraft:movement");
+		  test.assert(movementComp !== undefined, "Expected movement component");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "flying_speed_component", (test) => {
+		  const bee = test.spawn("bee", new BlockLocation(1, 2, 1));
+		  const flyingSpeedComp = bee.getComponent("flying_speed");
+		  test.assert(flyingSpeedComp !== undefined, "Expected flying_speed component");
+		  test.assert(isNear(flyingSpeedComp.value, 0.15), "Unexpected value");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_amphibious_component", (test) => {
+		  const turtle = test.spawn("turtle", new BlockLocation(1, 2, 1));
+		  const amphibiousComp = turtle.getComponent("movement.amphibious");
+		  test.assert(amphibiousComp !== undefined, "Expected movement.amphibious component");
+		  test.assert(amphibiousComp.maxTurn === 5, "Unexpected maxTurn");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_basic_component", (test) => {
+		  const chicken = test.spawn("chicken", new BlockLocation(1, 2, 1));
+		  const movementBasicComp = chicken.getComponent("movement.basic");
+		  test.assert(movementBasicComp !== undefined, "Expected movement.basic component");
+		  test.assert(movementBasicComp.maxTurn === 30, "Unexpected maxTurn");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_fly_component", (test) => {
+		  const parrot = test.spawn("parrot", new BlockLocation(1, 2, 1));
+		  const movementFlyComp = parrot.getComponent("movement.fly");
+		  test.assert(movementFlyComp !== undefined, "Expected movement.fly component");
+		  test.assert(movementFlyComp.maxTurn === 30, "Unexpected maxTurn");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_generic_component", (test) => {
+		  const drowned = test.spawn("drowned", new BlockLocation(1, 2, 1));
+		  const movementGenericComp = drowned.getComponent("movement.generic");
+		  test.assert(movementGenericComp !== undefined, "Expected movement.generic component");
+		  test.assert(movementGenericComp.maxTurn === 30, "Unexpected maxTurn");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_glide_component", (test) => {
+		  const phantom = test.spawn("phantom", new BlockLocation(2, 2, 2));
+		  const movementGlideComp = phantom.getComponent("movement.glide");
+		  test.assert(movementGlideComp !== undefined, "Expected movement.glide component");
+		  test.assert(movementGlideComp.maxTurn === 30, "Unexpected maxTurn");
+		  test.assert(isNear(movementGlideComp.startSpeed, 0.1), "Unexpected startSpeed");
+		  test.assert(isNear(movementGlideComp.speedWhenTurning, 0.2), "Unexpected speedWhenTurning");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:large_glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_hover_component", (test) => {
+		  const bee = test.spawn("bee", new BlockLocation(1, 2, 1));
+		  const movementHoverComp = bee.getComponent("movement.hover");
+		  test.assert(movementHoverComp !== undefined, "Expected movement.hover component");
+		  test.assert(movementHoverComp.maxTurn === 30, "Unexpected maxTurn");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_jump_component", (test) => {
+		  const slime = test.spawn("slime", new BlockLocation(2, 2, 2));
+		  const movementJumpComp = slime.getComponent("movement.jump");
+		  test.assert(movementJumpComp !== undefined, "Expected movement.jump component");
+		  test.assert(isNear(movementJumpComp.maxTurn, 0.42), "Unexpected maxTurn");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:large_glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_skip_component", (test) => {
+		  const rabbit = test.spawn("rabbit", new BlockLocation(1, 2, 1));
+		  const movementSkipComp = rabbit.getComponent("movement.skip");
+		  test.assert(movementSkipComp !== undefined, "Expected movement.skip component");
+		  test.assert(movementSkipComp.maxTurn === 30, "Unexpected maxTurn");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "movement_sway_component", (test) => {
+		  const salmon = test.spawn("salmon", new BlockLocation(1, 2, 1));
+		  const movementSwayComp = salmon.getComponent("movement.sway");
+		  test.assert(movementSwayComp !== undefined, "Expected movement.sway component");
+		  test.assert(movementSwayComp.maxTurn === 30, "Unexpected maxTurn");
+		  test.assert(isNear(movementSwayComp.swayFrequency, 0.5), "Unexpected swayFrequency");
+		  test.assert(movementSwayComp.swayAmplitude === 0, "Unexpected swayAmplitude");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "ageable_component", (test) => {
+		  const horse = test.spawn("minecraft:horse<minecraft:entity_born>", new BlockLocation(1, 2, 1));
+		  const ageableComp = horse.getComponent("ageable");
+		  test.assert(ageableComp !== undefined, "Expected ageable component");
+		  test.assert(ageableComp.duration == 1200, "Unexpected duration");
+		  test.assert(ageableComp.feedItems[0].item == "minecraft:wheat", "Unexpected feedItem item");
+		  test.assert(isNear(ageableComp.feedItems[0].growth, "0.016"), "Unexpected feedItem growth");
+		  test.assert(ageableComp.growUp !== undefined, "Expected growUp");
+		  test.assert(ageableComp.dropItems.length === 0, "Expected empty dropItems array");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "addrider_component", (test) => {
+		  const ravager = test.spawn(
+		    "minecraft:ravager<minecraft:spawn_for_raid_with_pillager_rider>",
+		    new BlockLocation(2, 2, 2)
+		  );
+		  const addRiderComp = ravager.getComponent("addrider");
+		  test.assert(addRiderComp !== undefined, "Expected addrider component");
+		  test.assert(addRiderComp.entityType === "minecraft:pillager<minecraft:spawn_for_raid>", "Unexpected entityType");
+		  test.assert(addRiderComp.spawnEvent === "minecraft:spawn_for_raid", "Unexpected spawnEvent");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:large_animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "breathable_component", (test) => {
+		  const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		  const breathableComp = pig.getComponent("breathable");
+		  test.assert(breathableComp !== undefined, "Expected breathable component");
+		  test.assert(breathableComp.totalSupply === 15, "Unexpected totalSupply");
+		  test.assert(breathableComp.suffocateTime === 0, "Unexpected suffocateTime");
+		  test.assert(breathableComp.inhaleTime === 0, "Unexpected inhaleTime");
+		  test.assert(breathableComp.breathesAir, "Unexpected breathesAir");
+		  test.assert(!breathableComp.breathesWater, "Unexpected breathesWater");
+		  test.assert(breathableComp.breathesLava, "Unexpected breathesLava");
+		  test.assert(!breathableComp.breathesSolids, "Unexpected breathesSolids");
+		  test.assert(breathableComp.generatesBubbles, "Unexpected generatesBubbles");
+		  test.assert(breathableComp.breatheBlocks.length == 0, "Unexpected breatheBlocks");
+		  test.assert(breathableComp.nonBreatheBlocks.length == 0, "Unexpected nonBreatheBlocks");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:aquarium")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "navigation_fly_component", (test) => {
+		  const parrot = test.spawn("parrot", new BlockLocation(1, 2, 1));
+		  const flyComp = parrot.getComponent("navigation.fly");
+		  test.assert(flyComp !== undefined, "Expected navigation.fly component");
+		  test.assert(!flyComp.isAmphibious, "Unexpected isAmphibious");
+		  test.assert(!flyComp.avoidSun, "Unexpected avoidSun");
+		  test.assert(flyComp.canPassDoors, "Unexpected canPassDoors");
+		  test.assert(!flyComp.canOpenDoors, "Unexpected canOpenDoors");
+		  test.assert(!flyComp.canOpenIronDoors, "Unexpected canOpenIronDoors");
+		  test.assert(!flyComp.canBreakDoors, "Unexpected canBreakDoors");
+		  test.assert(!flyComp.avoidWater, "Unexpected avoidWater");
+		  test.assert(!flyComp.avoidDamageBlocks, "Unexpected avoidDamageBlocks");
+		  test.assert(flyComp.canFloat, "Unexpected canFloat");
+		  test.assert(flyComp.canSink, "Unexpected canSink");
+		  test.assert(!flyComp.canPathOverLava, "Unexpected canPathOverLava");
+		  test.assert(!flyComp.canWalkInLava, "Unexpected canWalkInLava");
+		  test.assert(!flyComp.avoidPortals, "Unexpected avoidPortals");
+		  test.assert(flyComp.canWalk, "Unexpected canWalk");
+		  test.assert(!flyComp.canSwim, "Unexpected canSwim");
+		  test.assert(!flyComp.canBreach, "Unexpected canBreach");
+		  test.assert(flyComp.canJump, "Unexpected canJump");
+		  test.assert(flyComp.canPathFromAir, "Unexpected canPathFromAir");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "navigation_climb_component", (test) => {
+		  const spider = test.spawn("spider", new BlockLocation(1, 2, 1));
+		  const climbComp = spider.getComponent("navigation.climb");
+		  test.assert(climbComp !== undefined, "Expected navigation.climb component");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "navigation_float_component", (test) => {
+		  const bat = test.spawn("bat", new BlockLocation(1, 2, 1));
+		  const floatComp = bat.getComponent("navigation.float");
+		  test.assert(floatComp !== undefined, "Expected navigation.float component");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "navigation_generic_component", (test) => {
+		  const dolphin = test.spawn("dolphin", new BlockLocation(2, 2, 2));
+		  const genericComp = dolphin.getComponent("navigation.generic");
+		  test.assert(genericComp !== undefined, "Expected navigation.generic component");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:aquarium")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "navigation_hover_component", (test) => {
+		  const bee = test.spawn("bee", new BlockLocation(1, 2, 1));
+		  const hoverComp = bee.getComponent("navigation.hover");
+		  test.assert(hoverComp !== undefined, "Expected navigation.hover component");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "navigation_walk_component", (test) => {
+		  const creeper = test.spawn("creeper", new BlockLocation(1, 2, 1));
+		  const walkComp = creeper.getComponent("navigation.walk");
+		  test.assert(walkComp !== undefined, "Expected navigation.walk component");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "inventory_component", (test) => {
+		  const rightChestCart = test.spawn("chest_minecart", new BlockLocation(1, 2, 1));
+		  const leftChestCart = test.spawn("chest_minecart", new BlockLocation(2, 2, 1));
+		
+		  const rightInventoryComp = rightChestCart.getComponent("inventory");
+		  test.assert(rightInventoryComp !== undefined, "Expected inventory component");
+		
+		  const leftInventoryComp = leftChestCart.getComponent("inventory");
+		  test.assert(leftInventoryComp !== undefined, "Expected inventory component");
+		  test.assert(rightInventoryComp.additionalSlotsPerStrength === 0, "Unexpected additionalSlotsPerStrength");
+		  test.assert(rightInventoryComp.canBeSiphonedFrom, "Unexpected canBeSiphonedFrom");
+		  test.assert(rightInventoryComp.containerType === "MINECART_CHEST", "Unexpected containerType");
+		  test.assert(rightInventoryComp.inventorySize === 27, "Unexpected inventorySize");
+		  test.assert(!rightInventoryComp.private, "Unexpected private");
+		  test.assert(!rightInventoryComp.restrictToOwner, "Unexpected restrictToOwner");
+		
+		  const rightContainer = rightInventoryComp.container;
+		  test.assert(rightContainer !== undefined, "Expected container");
+		
+		  const leftContainer = leftInventoryComp.container;
+		  test.assert(leftContainer !== undefined, "Expected container");
+		
+		  rightContainer.setItem(0, new ItemStack(Items.apple, 10, 0));
+		  test.assert(rightContainer.getItem(0).id === "apple", "Expected apple in right container slot index 0");
+		
+		  rightContainer.setItem(1, new ItemStack(Items.emerald, 10, 0));
+		  test.assert(rightContainer.getItem(1).id === "emerald", "Expected emerald in right container slot index 1");
+		
+		  test.assert(rightContainer.size === 27, "Unexpected size");
+		  test.assert(rightContainer.emptySlotsCount === 25, "Unexpected emptySlotsCount");
+		
+		  const itemStack = rightContainer.getItem(0);
+		  test.assert(itemStack.id === "apple", "Expected apple");
+		  test.assert(itemStack.amount === 10, "Expected 10 apples");
+		  test.assert(itemStack.data === 0, "Expected 0 data");
+		
+		  leftContainer.setItem(0, new ItemStack(Items.cake, 10, 0));
+		
+		  test.assert(rightContainer.transferItem(0, 4, leftContainer), "Expected transferItem to succeed"); // transfer the apple from the right container to the left container
+		  test.assert(rightContainer.swapItems(1, 0, leftContainer), "Expected swapItems to succeed"); // swap the cake and emerald
+		
+		  test.assert(leftContainer.getItem(4).id === "apple", "Expected apple in left container slot index 4");
+		  test.assert(leftContainer.getItem(0).id === "emerald", "Expected emerald in left container slot index 0");
+		  test.assert(rightContainer.getItem(1).id === "cake", "Expected cake in right container slot index 1");
+		
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:platform")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "lava_movement_component", (test) => {
+		  const strider = test.spawn("strider", new BlockLocation(1, 2, 1));
+		  const lavaMovementComp = strider.getComponent("lava_movement");
+		  test.assert(lavaMovementComp !== undefined, "Expected lava_movement component");
+		  test.assert(isNear(lavaMovementComp.value, 0.32), "Unexpected value");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:large_glass_cage")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ComponentTests", "strength_component", (test) => {
+		  const llama = test.spawn("llama", new BlockLocation(1, 2, 1));
+		  const strengthComp = llama.getComponent("strength");
+		  test.assert(strengthComp !== undefined, "Expected strength component");
+		  test.assert(strengthComp.value >= 0 && strengthComp.value <= 5, "Unexpected value");
+		  test.assert(strengthComp.max === 5, "Unexpected max");
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:animal_pen")
+		  .tag(GameTest.Tags.suiteDefault);
+		'''
+	Added script "ExtensionTests.js":
+		'''
+		import * as GameTest from "GameTest";
+		import GameTestExtensions from "./GameTestExtensions.js";
+		import { BlockLocation } from "Minecraft";
+		
+		GameTest.register("ExtensionTests", "add_entity_in_boat", (test) => {
+		  const testEx = new GameTestExtensions(test);
+		  testEx.addEntityInBoat("sheep", new BlockLocation(1, 2, 1));
+		  test.succeed();
+		})
+		  .structureName("ComponentTests:platform")
+		  .tag(GameTest.Tags.suiteDefault);
+		
+		GameTest.register("ExtensionTests", "make_about_to_drown", (test) => {
+		  const testEx = new GameTestExtensions(test);
+		  const villagerId = "minecraft:villager_v2<minecraft:ageable_grow_up>";
+		  const villager = test.spawn(villagerId, new BlockLocation(2, 2, 2));
+		
+		  testEx.makeAboutToDrown(villager);
+		
+		  test.succeedWhen(() => {
+		    test.assertEntityNotPresentInArea(villagerId);
+		  });
+		})
+		  .structureName("ComponentTests:aquarium")
+		  .maxTicks(20)
+		  .tag(GameTest.Tags.suiteDefault);
+		'''
+	Added script "GameTestExtensions.js":
+		'''
+		export default class GameTestExtensions {
+		  constructor(test) {
+		    this.test = test;
+		  }
+		
+		  addEntityInBoat(entityType, blockLoc) {
+		    const boat = this.test.spawn("boat", blockLoc);
+		    this.test.assert(boat !== undefined, "Failed to spawn boat");
+		    const rider = this.test.spawn(entityType, blockLoc);
+		    this.test.assert(rider !== undefined, "Failed to spawn rider");
+		    const boatRideableComp = boat.getComponent("rideable");
+		    this.test.assert(boatRideableComp !== undefined, "Boat missing rideable component");
+		    this.test.assert(boatRideableComp.addRider(rider), "Failed to add rider");
+		    return rider;
+		  }
+		
+		  makeAboutToDrown(entity) {
+		    this.test.assert(entity !== undefined, "Expected entity");
+		    const healthComp = entity.getComponent("health");
+		    this.test.assert(healthComp !== undefined, "Entity missing health component");
+		    const breathableComp = entity.getComponent("breathable");
+		    this.test.assert(breathableComp !== undefined, "Entity missing breathable component");
+		    healthComp.setCurrent(1);
+		    breathableComp.setAirSupply(0);
+		  }
+		}
+		'''
+	Changed script "Main.js":
+		Total line: 14 (+3, -0)
+		        '''
+		 1  1   import "scripts/APITests.js";
+		 2  2   import "scripts/BlockTests.js";
+		    3 + import "scripts/ComponentTests.js";
+		 3  4   import "scripts/DebugTests.js";
+		 4  5   import "scripts/DispenserTests.js";
+		 5  6   import "scripts/DoorTests.js";
+		 6  7   import "scripts/DuplicationTests.js";
+		 7  8   import "scripts/EntityTests.js";
+		    9 + import "scripts/ExtensionTests.js";
+		 8 10   import "scripts/FireAvoidTests.js";
+		   11 + import "scripts/GameTestExtensions.js";
+		 9 12   import "scripts/MinecartTests.js";
+		10 13   import "scripts/MobTests.js";
+		11 14   import "scripts/PathFindingTests.js";
+		        '''

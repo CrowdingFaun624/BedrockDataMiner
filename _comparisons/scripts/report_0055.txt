@@ -1,0 +1,22 @@
+Difference of "scripts" between "1.19.30.21" (beta of "1.19.30") and "1.19.30.22" (beta of "1.19.30").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "AllayTests.js":
+		Total line: 59 (+2, -1)
+		        '''
+		        ...
+		25 25       .maxTicks(TEST_MAX_TICKS)
+		26 26       .tag(GameTest.Tags.suiteDefault);
+		27 27   
+		28 28   // Tests that an Allay can leave a vertically partial block it got stuck into (e.g. lantern).
+		29 29   GameTest.register("AllayTests", "allay_unstucks_from_lantern", (test) => {
+		   30 +     // Really make sure it's stuck up in the lanterns.  
+		   31 +     const spawnPos = new Location(5.75, 4.25, 2.5);
+		30    -     const spawnPos = new Location(5.75, 4, 2.5);
+		31 32       const allayEntityType = "minecraft:allay";
+		32 33       const allay = test.spawnWithoutBehaviorsAtLocation(allayEntityType, spawnPos);
+		33 34   
+		34 35       const targetPos = new BlockLocation(2, 2, 2);
+		35 36       test.walkTo(allay, targetPos, 1);
+		        ...
+		        '''

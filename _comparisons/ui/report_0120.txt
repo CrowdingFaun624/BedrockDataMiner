@@ -1,0 +1,139 @@
+Difference of "ui" between "1.11.0.7" (beta of "1.11.0") and "1.11.0.8" (beta of "1.11.0").
+
+Changed namespace "common":
+	Changed element "static_tooltip_popup_with_image_and_text@common.tooltip_background":
+		Changed field "controls":
+			Changed control:
+				Changed element "image_and_text_stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Total control: 3 (+1, -1)
+						Removed control:
+							element "tooltip_text":
+								field "type": "label"
+								field "size": ["fill", "default"]
+								field "text": "$tooltip_text_binding_name"
+								field "color": "$tooltip_text_color"
+								field "bindings":
+									binding:
+										field "binding_name": "$tooltip_text_binding_name"
+										field "binding_collection_name": "$tooltip_button_collection_name"
+										field "binding_type": "$tooltip_button_binding_type"
+										field "binding_condition": "visibility_changed"
+								field "$variables":
+									variable "$tooltip_text_binding_name|default": "#tooltip_text"
+									variable "$tooltip_text_color|default": "$f_color_format"
+						Added control:
+							element "tooltip_text_panel":
+								field "type": "panel"
+								field "size": ["fill", 20]
+								field "controls":
+									control:
+										element "tooltip_text":
+											field "type": "label"
+											field "size": ["100%", "default"]
+											field "max_size": ["100%", "100%"]
+											field "text": "$tooltip_text_binding_name"
+											field "color": "$tooltip_text_color"
+											field "bindings":
+												binding:
+													field "binding_name": "$tooltip_text_binding_name"
+													field "binding_collection_name": "$tooltip_button_collection_name"
+													field "binding_type": "$tooltip_button_binding_type"
+													field "binding_condition": "visibility_changed"
+											field "$variables":
+												variable "$tooltip_text_binding_name|default": "#tooltip_text"
+												variable "$tooltip_text_color|default": "$f_color_format"
+Changed namespace "mashup":
+	Changed element "interaction_button_panel":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Total control: 4 (+1, -1)
+			Removed control:
+				element "content_action_button@common_buttons.light_content_button":
+					field "bindings":
+						binding:
+							field "binding_name": "$action_button_enabled_binding"
+							field "binding_name_override": "#enabled"
+						binding:
+							field "binding_name": "#action_button_visible"
+							field "binding_name_override": "#visible"
+					field "variables":
+						variable:
+							field "requires": "$is_mashup"
+							field "$variables": variable "$button_content": "mashup.mashup_button_content"
+						variable:
+							field "requires": "(not $is_mashup)"
+							field "$variables": variable "$button_content": "mashup.non_mashup_button_content"
+					field "$variables":
+						variable "$button_focus_precedence|default": 9
+						variable "$pressed_button_name": "$button_action"
+						variable "$focus_id": "$interact_button_id"
+						variable "$action_button_enabled_binding|default": "#item_meets_requirements"
+			Added control:
+				element "content_action_button@common_buttons.light_content_button":
+					field "bindings":
+						binding:
+							field "binding_name": "$action_button_enabled_binding"
+							field "binding_name_override": "#enabled"
+						binding:
+							field "binding_name": "$action_button_visible_binding"
+							field "binding_name_override": "#visible"
+					field "variables":
+						variable:
+							field "requires": "$is_mashup"
+							field "$variables": variable "$button_content": "mashup.mashup_button_content"
+						variable:
+							field "requires": "(not $is_mashup)"
+							field "$variables": variable "$button_content": "mashup.non_mashup_button_content"
+					field "$variables":
+						variable "$button_focus_precedence|default": 9
+						variable "$pressed_button_name": "$button_action"
+						variable "$focus_id": "$interact_button_id"
+						variable "$action_button_enabled_binding|default": "#item_meets_requirements"
+						variable "$action_button_visible_binding|default": "#action_button_visible"
+	Changed element "purchase_buttons_panel":
+		Unchanged field "type": "stack_panel"
+		Changed field "$variables":
+			Total variable: 4 (+1, -0)
+			Added variable "$purchase_button_visible|default" of "#purchase_panel_visible".
+		Changed field "bindings":
+			Total binding: 2 (+1, -1)
+			Removed binding:
+				field "binding_name": "#purchase_panel_visible"
+				field "binding_name_override": "#visible"
+			Added binding:
+				field "binding_name": "$purchase_button_visible"
+				field "binding_name_override": "#visible"
+	Changed element "ratings_content":
+		Unchanged field "type": "panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "content_and_button":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "ratings_interact_panel":
+								Unchanged field "type": "panel"
+								Changed field "controls":
+									Changed control:
+										Changed element "ratings_interact@mashup.interaction_button_panel":
+											Changed field "$variables":
+												Total variable: 7 (+2, -0)
+												Added variable "$action_button_visible_binding" of "#ratings_button_visible".
+												Added variable "$purchase_button_visible" of "#rating_section_purchase_button_visible".
+Changed namespace "settings_common":
+	Changed element "option_text_edit_control@common.text_edit_box":
+		Changed field "$variables":
+			Total variable: 9 (+1, -0)
+			Added variable "$tts_override_control_value|default" of " ".
+		Added field "tts_override_control_value" of "$tts_override_control_value".
+Changed namespace "world_section":
+	Changed element "game_section":
+		Unchanged field "type": "stack_panel"
+		Changed field "controls":
+			Changed control:
+				Changed element "option_text_edit_1@settings_common.option_text_edit":
+					Changed field "$variables":
+						Total variable: 6 (+1, -0)
+						Added variable "$tts_override_control_value" of " ".

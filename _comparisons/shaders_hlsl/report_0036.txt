@@ -1,0 +1,186 @@
+Difference of "shaders" between "1.12.1" and "1.13.0.1" (beta of "1.13.0").
+
+Added file "CohClearQuadPS.hlsl":
+	'''
+	/*
+	This file is part of Renoir, a modern graphics library.
+	
+	Copyright (c) 2012-2019 Coherent Labs AD and/or its licensors. All
+	rights reserved in all media.
+	
+	The coded instructions, statements, computer programs, and/or related
+	material (collectively the "Data") in these files contain confidential
+	and unpublished information proprietary Coherent Labs and/or its
+	licensors, which is protected by United States of America federal
+	copyright law and by international treaties.
+	
+	This software or source code is supplied under the terms of a license
+	agreement and nondisclosure agreement with Coherent Labs AD and may
+	not be copied, disclosed, or exploited except in accordance with the
+	terms of that agreement. The Data may not be disclosed or distributed to
+	third parties, in whole or in part, without the prior written consent of
+	Coherent Labs AD.
+	
+	COHERENT LABS MAKES NO REPRESENTATION ABOUT THE SUITABILITY OF THIS
+	SOURCE CODE FOR ANY PURPOSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT
+	HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+	MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE
+	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER, ITS AFFILIATES,
+	PARENT COMPANIES, LICENSORS, SUPPLIERS, OR CONTRIBUTORS BE LIABLE FOR
+	ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+	OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+	ANY WAY OUT OF THE USE OR PERFORMANCE OF THIS SOFTWARE OR SOURCE CODE,
+	EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	*/
+	
+	#include "ShaderConstants.fxh"
+	
+	struct PS_Input {
+		float4 Position : SV_Position;
+		float4 Color : TEXCOORD0;
+	};
+	
+	struct PS_Output {
+		float4 Color : SV_Target;
+	};
+	
+	void main(in PS_Input PSInput, out PS_Output PSOutput) {
+		PSOutput.Color = PSInput.Color;
+	}
+	'''
+Added file "CohClearQuadVS.hlsl":
+	'''
+	/*
+	This file is part of Renoir, a modern graphics library.
+	
+	Copyright (c) 2012-2019 Coherent Labs AD and/or its licensors. All
+	rights reserved in all media.
+	
+	The coded instructions, statements, computer programs, and/or related
+	material (collectively the "Data") in these files contain confidential
+	and unpublished information proprietary Coherent Labs and/or its
+	licensors, which is protected by United States of America federal
+	copyright law and by international treaties.
+	
+	This software or source code is supplied under the terms of a license
+	agreement and nondisclosure agreement with Coherent Labs AD and may
+	not be copied, disclosed, or exploited except in accordance with the
+	terms of that agreement. The Data may not be disclosed or distributed to
+	third parties, in whole or in part, without the prior written consent of
+	Coherent Labs AD.
+	
+	COHERENT LABS MAKES NO REPRESENTATION ABOUT THE SUITABILITY OF THIS
+	SOURCE CODE FOR ANY PURPOSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT
+	HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+	MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE
+	ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER, ITS AFFILIATES,
+	PARENT COMPANIES, LICENSORS, SUPPLIERS, OR CONTRIBUTORS BE LIABLE FOR
+	ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+	DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+	OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+	ANY WAY OUT OF THE USE OR PERFORMANCE OF THIS SOFTWARE OR SOURCE CODE,
+	EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	*/
+	
+	#include "ShaderConstants.fxh"
+	
+	struct VS_Input {
+		float4 Position : HB_POSITION;
+		float4 Color : HB_COLOR;
+	};
+	
+	struct PS_Input {
+		float4 Position : SV_Position;
+		float4 Color : TEXCOORD0;
+	};
+	
+	void main(in VS_Input VSInput, out PS_Input PSInput) {
+		PSInput.Position = VSInput.Position;
+		PSInput.Color = VSInput.Color;
+	}
+	'''
+Changed file "CohColorMixingPS.hlsl":
+	Total line: 277 (+5, -1)
+	          '''
+	          ...
+	235 235   	else if (mode == 15)
+	236 236   	{
+	237 237   		// Luminosity
+	238 238   		return SetLum(backdrop, Lum(source));
+	239 239   	}
+	    240 + 	else if (mode == 16)
+	    241 + 	{
+	    242 + 		// Additive (linear-dodge)
+	    243 + 		return min(1, source + backdrop);
+	    244 + 	}
+	240 245   	else
+	241 246   	{
+	242 247   		return 0;
+	243 248   	}
+	244 249   }
+	245     - 
+	246 250   
+	247 251   struct PS_Input {
+	248 252   	float4 Position : SV_Position;
+	249 253   	float4 Color : TEXCOORD0;
+	250 254   	float4 Additional: TEXCOORD1;
+	          ...
+	          '''
+Removed file "imgui.fragment.hlsl":
+	'''
+	struct PS_INPUT
+	{
+		float4 pos : SV_POSITION;
+		float4 col : COLOR0;
+		float2 uv  : TEXCOORD_0;
+	};
+	
+	sampler sampler0;
+	Texture2D texture0;
+	
+	float4 main(PS_INPUT input) : SV_Target
+	{
+		float4 out_col = input.col * texture0.Sample(sampler0, input.uv); 
+		return out_col; 
+	}
+	
+	
+	'''
+Removed file "imgui.vertex.hlsl":
+	'''
+	cbuffer ImGuiConstants : register(b0) 
+	{
+		float4x4 ProjectionMatrix;
+	};
+	
+	struct VS_INPUT
+	{
+		float2 pos : POSITION;
+		float4 col : COLOR0;
+		float2 uv  : TEXCOORD_0;
+	};
+	
+	struct PS_INPUT
+	{
+		float4 pos : SV_POSITION;
+		float4 col : COLOR0;
+		float2 uv  : TEXCOORD_0;
+	};
+	
+	PS_INPUT main(VS_INPUT input)
+	{
+		PS_INPUT output;
+		output.pos = mul(ProjectionMatrix, float4(input.pos.xy, 0.f, 1.f));
+		output.col = input.col;
+		output.uv  = input.uv;
+		return output;
+	}
+	
+	'''

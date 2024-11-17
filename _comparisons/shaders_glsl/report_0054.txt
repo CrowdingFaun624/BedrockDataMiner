@@ -1,0 +1,462 @@
+Difference of "shaders_resource_packs" between "1.2.14.3" (beta of "1.4.0") and "1.2.20.1" (beta of "1.4.0").
+
+Changed resource pack "banner.fragment":
+	Changed file "vanilla":
+		Total line: 50 (+0, -0)
+		        '''
+		        ...
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroid.h"
+		 5  5   #include "shaders/uniformShaderConstants.h"
+		 6  6   
+		    7 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 7    - uniform sampler2D TEXTURE_0;
+		 8  8   
+		 9  9   #if __VERSION__ >= 300
+		10 10   _centroid varying vec4 uv;
+		11 11   #else
+		12 12   varying vec4 uv;
+		        ...
+		        '''
+Changed resource pack "blur.fragment":
+	Changed file "vanilla":
+		Total line: 13 (+0, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroidUV.h"
+		 5  5   
+		    6 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 6    - uniform sampler2D TEXTURE_0;
+		 7  7   
+		 8  8   
+		 9  9   void main() {
+		10 10   	//TODO: Implement
+		11 11   	//default to not blur anything
+		        ...
+		        '''
+Changed resource pack "color_grayscale.fragment":
+	Changed file "vanilla":
+		Total line: 25 (+0, -0)
+		        '''
+		        ...
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroidUV.h"
+		 5  5   
+		 6  6   #include "shaders/uniformShaderConstants.h"
+		 7  7   
+		    8 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 8    - uniform sampler2D TEXTURE_0;
+		 9  9   
+		10 10   void main()
+		11 11   {
+		12 12   	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		13 13   
+		        ...
+		        '''
+Changed resource pack "color_texture.fragment":
+	Changed file "vanilla":
+		Total line: 90 (+3, -3)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroidUV.h"
+		 5  5   
+		 6    - uniform sampler2D TEXTURE_0;
+		 7    - uniform sampler2D TEXTURE_1;
+		 8    - 
+		 9  6   #include "shaders/uniformEntityConstants.h"
+		10  7   #include "shaders/uniformShaderConstants.h"
+		    8 + 
+		    9 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		   10 + LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		11 11   
+		12 12   #ifdef EFFECTS_OFFSET
+		13 13   #include "shaders/uniformEffectsConstants.h"
+		14 14   #endif
+		15 15   
+		        ...
+		        '''
+Changed resource pack "depth_downsample.fragment":
+	Changed file "vanilla":
+		Total line: 18 (+0, -0)
+		        '''
+		        ...
+		 6  6   // __multiversion__
+		 7  7   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 8  8   
+		 9  9   #include "shaders/fragmentVersionCentroidUV.h"
+		10 10   
+		   11 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		11    - uniform sampler2D TEXTURE_0;
+		12 12   
+		13 13   
+		14 14   void main()
+		15 15   {
+		16 16   	//TODO: Implement
+		        ...
+		        '''
+Changed resource pack "depth_of_field.fragment":
+	Changed file "vanilla":
+		Total line: 13 (+0, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroidUV.h"
+		 5  5   
+		    6 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 6    - uniform sampler2D TEXTURE_0;
+		 7  7   
+		 8  8   void main()
+		 9  9   {
+		10 10   	//TODO: Implement
+		11 11   	//Default to no depth of field
+		        ...
+		        '''
+Changed resource pack "end_portal.fragment":
+	Changed file "vanilla":
+		Total line: 66 (+1, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroid.h"
+		    5 + #include "shaders/uniformMacro.h"
+		 5  6   
+		 6  7   #if __VERSION__ >= 300
+		 7  8   	#ifndef BYPASS_PIXEL_SHADER
+		 8  9   		#if defined(TEXEL_AA) && defined(TEXEL_AA_FEATURE)
+		 9 10   			_centroid in highp vec2 colorLookupUV;
+		        ...
+		25 26   	#ifdef FOG
+		26 27   		varying vec4 fogColor;
+		27 28   	#endif
+		28 29   #endif
+		29 30   
+		   31 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		   32 + LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		30    - uniform sampler2D TEXTURE_0;
+		31    - uniform sampler2D TEXTURE_1;
+		32 33   
+		33 34   const float MAX_LAYER_DEPTH = 32.0;
+		34 35   
+		35 36   void main()
+		36 37   {
+		        ...
+		        '''
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 162 (+0, -4)
+		          '''
+		          ...
+		  4   4   #include "shaders/fragmentVersionCentroidUV.h"
+		  5   5   
+		  6   6   #include "shaders/uniformShaderConstants.h"
+		  7   7   #include "shaders/util.h"
+		  8   8   
+		  9     - uniform sampler2D TEXTURE_0;
+		 10     - #ifdef MCPE_PLATFORM_NX
+		      9 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 11     - layout(binding = 1) uniform sampler2D TEXTURE_1;
+		 12     - #else
+		     10 + LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		 13     - uniform sampler2D TEXTURE_1;
+		 14     - #endif
+		 15  11   
+		 16  12   #ifdef USE_MULTITEXTURE
+		     13 + 	LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		 17     - 	uniform sampler2D TEXTURE_2;
+		 18  14   #endif
+		 19  15   
+		 20  16   varying vec4 light;
+		 21  17   varying vec4 fogColor;
+		 22  18   
+		          ...
+		          '''
+Changed resource pack "entity_multitexture.fragment":
+	Changed file "vanilla":
+		Total line: 57 (+0, -0)
+		        '''
+		 1  1   #version 100
+		    2 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		    3 + LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		    4 + LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		 2    - uniform sampler2D TEXTURE_0;
+		 3    - uniform sampler2D TEXTURE_1;
+		 4    - uniform sampler2D TEXTURE_2;
+		 5  5   
+		 6  6   varying vec4 light;
+		 7  7   varying vec4 fogColor;
+		 8  8   
+		 9  9   #ifndef COLOR_BASED
+		        ...
+		        '''
+Changed resource pack "rain_snow.fragment":
+	Changed file "vanilla":
+		Total line: 64 (+1, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionSimple.h"
+		    5 + #include "shaders/uniformMacro.h"
+		 5  6   
+		    7 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		    8 + LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		    9 + LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		 6    - uniform sampler2D TEXTURE_0;
+		 7    - uniform sampler2D TEXTURE_1;
+		 8    - uniform sampler2D TEXTURE_2;
+		 9 10   
+		10 11   varying vec2 uv;
+		11 12   varying vec4 color;
+		12 13   varying vec4 worldPosition;
+		13 14   varying vec4 fogColor;
+		        ...
+		        '''
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 100 (+0, -0)
+		          '''
+		          ...
+		 31  31   #endif
+		 32  32   
+		 33  33   #include "shaders/uniformShaderConstants.h"
+		 34  34   #include "shaders/util.h"
+		 35  35   
+		     36 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		     37 + LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
+		     38 + LAYOUT_BINDING(2) uniform sampler2D TEXTURE_2;
+		 36     - uniform sampler2D TEXTURE_0;
+		 37     - uniform sampler2D TEXTURE_1;
+		 38     - uniform sampler2D TEXTURE_2;
+		 39  39   
+		 40  40   void main()
+		 41  41   {
+		 42  42   #ifdef BYPASS_PIXEL_SHADER
+		 43  43   	gl_FragColor = vec4(0, 0, 0, 0);
+		          ...
+		 74  74   
+		 75  75   #if !USE_ALPHA_TEST && !defined(BLEND)
+		 76  76   	diffuse.a = inColor.a;
+		 77  77   #elif defined(BLEND)
+		 78  78   	#ifdef NEAR_WATER
+		     79 + 		diffuse.a = inColor.a;
+		 79     - 		diffuse.a *= inColor.a;
+		 80  80   		float alphaFadeOut = clamp(cameraDist, 0.0, 1.0);
+		 81  81   		diffuse.a = mix(diffuse.a, 1.0, alphaFadeOut);
+		 82  82   	#endif
+		 83  83   #endif	
+		 84  84   	
+		          ...
+		          '''
+Changed resource pack "renderchunk.vertex":
+	Changed file "vanilla":
+		Total line: 116 (+3, -11)
+		          '''
+		          ...
+		 97  97   #endif
+		 98  98   
+		 99  99   ///// water magic
+		100 100   #ifdef NEAR_WATER
+		101 101   	#ifdef FANCY  /////enhance water
+		102     - 		float F = dot(normalize(relPos), UNIT_Y);
+		103     - 		F = 1.0 - max(F, 0.1);
+		104     - 		// Nvidia Tegra 2 and Xoom (maybe the combination) have some bug where "min" returns a highp float
+		105     - 		// in some cases even though the input are lowp floats. This together with the devices/drivers
+		106     - 		// inability to figure out what to do with that causes it to fail due to an ambiguous call to mix.
+		107     - 		F = 1.0 - mix(F*F*F*F, 1.0, float(min(1.0, cameraDepth / FAR_CHUNKS_DISTANCE)));
+		108     - 
+		    102 + 		color = COLOR;
+		109     - 		color.rg -= vec2(F * DIST_DESATURATION);
+		110     - 
+		    103 + 	#else
+		    104 + 		// Completely insane, but if I don't have these two lines in here, the water doesn't render on a Nexus 6
+		111     - 		vec4 depthColor = vec4(color.rgb * 0.5, 1.0);
+		112     - 		vec4 traspColor = vec4(color.rgb * 0.45, 0.8);
+		113 105   		vec4 surfColor = vec4(color.rgb, 1.0);
+		    106 + 		color = surfColor;
+		    107 + 	#endif //FANCY
+		    108 + #endif
+		114 109   
+		115     - 		vec4 nearColor = mix(traspColor, depthColor, color.a);
+		116     - 		color = mix(surfColor, nearColor, F);
+		117     - 	#else
+		    110 + #ifndef BYPASS_PIXEL_SHADER
+		    111 + 	#ifndef FOG
+		    112 + 		// If the FOG_COLOR isn't used, the reflection on NVN fails to compute the correct size of the constant buffer as the uniform will also be gone from the reflection data
+		    113 + 		color.rgb += FOG_COLOR.rgb * 0.000001;
+		    114 + 	#endif
+		118     - 		// Completely insane, but if I don't have these two lines in here, the water doesn't render on a Nexus 6
+		119     - 		vec4 surfColor = vec4(color.rgb, 1.0);
+		120     - 		color = surfColor;
+		121     - 		color.a = pos.z / FAR_CHUNKS_DISTANCE + 0.5;
+		122     - 	#endif //FANCY
+		123 115   #endif
+		124 116   }
+		          '''
+Changed resource pack "text.fragment":
+	Changed file "vanilla":
+		Total line: 65 (+2, -2)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroidUV.h"
+		 5  5   
+		    6 + #include "shaders/uniformShaderConstants.h"
+		 6    - uniform sampler2D TEXTURE_0;
+		 7  7   
+		    8 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 8    - #include "shaders/uniformShaderConstants.h"
+		 9  9   
+		10 10   varying vec4 color;
+		11 11   
+		12 12   float median(float a, float b, float c) {
+		13 13       return max(min(a, b), min(max(a, b), c));
+		        ...
+		        '''
+Changed resource pack "texture.fragment":
+	Changed file "vanilla":
+		Total line: 19 (+1, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroidUV.h"
+		    5 + #include "shaders/uniformMacro.h"
+		 5  6   
+		    7 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 6    - uniform sampler2D TEXTURE_0;
+		 7  8   
+		 8  9   void main()
+		 9 10   {
+		10 11   	vec4 color = texture2D( TEXTURE_0, uv );
+		11 12   
+		        ...
+		        '''
+Changed resource pack "texture_blend.fragment":
+	Changed file "vanilla":
+		Total line: 33 (+1, -0)
+		        '''
+		 1  1   // __multiversion__
+		 2  2   // This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroid.h"
+		    5 + #include "shaders/uniformMacro.h"
+		 5  6   
+		 6  7   #if __VERSION__ >= 300
+		 7  8   _centroid in vec2 uv;
+		 8  9   _centroid in vec2 uv1;
+		 9 10   #else
+		10 11   varying vec2 uv;
+		11 12   varying vec2 uv1;
+		12 13   #endif
+		13 14   
+		   15 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		14    - uniform sampler2D TEXTURE_0;
+		15 16   
+		16 17   #include "shaders/uniformShaderConstants.h"
+		17 18   
+		18 19   void main()
+		19 20   {
+		        ...
+		        '''
+Changed resource pack "texture_ccolor.fragment":
+	Changed file "vanilla":
+		Total line: 39 (+0, -0)
+		        '''
+		        ...
+		18 18   #endif
+		19 19   
+		20 20   #include "shaders/uniformShaderConstants.h"
+		21 21   #include "shaders/util.h"
+		22 22   
+		   23 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		23    - uniform sampler2D TEXTURE_0;
+		24 24   
+		25 25   void main()
+		26 26   {
+		27 27   #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		28 28   	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		        ...
+		        '''
+Changed resource pack "texture_cutout.fragment":
+	Changed file "vanilla":
+		Total line: 17 (+0, -0)
+		        '''
+		        ...
+		 3  3   
+		 4  4   #include "shaders/fragmentVersionCentroidUV.h"
+		 5  5   
+		 6  6   #include "shaders/uniformShaderConstants.h"
+		 7  7   
+		    8 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		 8    - uniform sampler2D TEXTURE_0;
+		 9  9   
+		10 10   void main()
+		11 11   {
+		12 12   	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		13 13   	if(diffuse.a < 0.5)
+		        ...
+		        '''
+Changed resource pack "texture_raw_alphatest.fragment":
+	Changed file "vanilla":
+		Total line: 39 (+0, -0)
+		        '''
+		        ...
+		18 18   #endif
+		19 19   
+		20 20   #include "shaders/uniformShaderConstants.h"
+		21 21   #include "shaders/util.h"
+		22 22   
+		   23 + LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+		23    - uniform sampler2D TEXTURE_0;
+		24 24   
+		25 25   void main()
+		26 26   {
+		27 27   #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		28 28   	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		        ...
+		        '''
+Changed resource pack "uniformMacro.h":
+	Changed file "vanilla":
+		Total line: 20 (+6, -0)
+		        '''
+		        ...
+		 9  9   // Unfortunately this macro does not work on old Amazon platforms #define BEGIN_UNIFORM_BLOCK(x) 
+		10 10   #define END_UNIFORM_BLOCK
+		11 11   #define UNIFORM uniform 
+		12 12   #endif
+		13 13   
+		   14 + #if __VERSION__ >= 420
+		   15 + #define LAYOUT_BINDING(x) layout(binding = x)
+		   16 + #else
+		   17 + #define LAYOUT_BINDING(x) 
+		   18 + #endif
+		   19 + 
+		14 20   #endif
+		        '''
+Changed resource pack "uniformPerFrameConstants.h":
+	Changed file "vanilla":
+		Total line: 18 (+0, -0)
+		        '''
+		        ...
+		 2  2   #define _UNIFORM_PER_FRAME_CONSTANTS_H
+		 3  3   
+		 4  4   #include "shaders/uniformMacro.h"
+		 5  5   
+		 6  6   #ifdef MCPE_PLATFORM_NX
+		    7 + layout(binding = 2, std430) uniform PerFrameConstants {
+		 7    - layout(binding = 2) uniform PerFrameConstants {
+		 8  8   #endif
+		 9  9   // BEGIN_UNIFORM_BLOCK(PerFrameConstants) - unfortunately this macro does not work on old Amazon platforms so using above 3 lines instead
+		10 10   UNIFORM vec3 VIEW_POS;
+		11 11   UNIFORM float TIME;
+		12 12   UNIFORM vec4 FOG_COLOR;
+		        ...
+		        '''

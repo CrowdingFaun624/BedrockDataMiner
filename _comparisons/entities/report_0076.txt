@@ -1,52 +1,96 @@
-Difference of "entities" between "1.12.0.3" (beta of "1.12.0") and "1.12.0.4" (beta of "1.12.0").
+Difference of "entities" between "1.13.0.1" (beta of "1.13.0") and "1.13.0.2" (beta of "1.13.0").
 
-Changed entity "evocation_illager":
+Changed entity "fox.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:raid_configuration":
-					Total component: 3 (+1, -0)
-					Added component "minecraft:ambient_sound_interval":
-						field "event_name": "ambient.in.raid"
-						field "range": 4.0
-						field "value": 2.0
-Changed entity "pillager":
+				Changed component group "minecraft:docile_fox":
+					Changed component "minecraft:behavior.melee_attack":
+						Changed field "priority" from 7 to 10.
+				Changed component group "minecraft:fox_arctic":
+					Changed component "minecraft:behavior.nearest_prioritized_attackable_target":
+						Changed field "priority" from 4 to 6.
+				Changed component group "minecraft:fox_baby":
+					Changed component "minecraft:behavior.follow_parent":
+						Changed field "priority" from 5 to 9.
+				Changed component group "minecraft:fox_day":
+					Changed component "minecraft:behavior.find_cover":
+						Changed field "priority" from 6 to 9.
+					Changed component "minecraft:behavior.nap":
+						Changed field "priority" from 5 to 8.
+				Changed component group "minecraft:fox_night":
+					Changed component "minecraft:behavior.move_to_village":
+						Changed field "priority" from 6 to 11.
+				Changed component group "minecraft:fox_red":
+					Changed component "minecraft:behavior.nearest_prioritized_attackable_target":
+						Changed field "priority" from 4 to 6.
+			Changed field "components":
+				Total component: 29 (+0, -1)
+				Changed component "minecraft:movement":
+					Changed field "value" from 0.35 to 0.3.
+				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "entity_types":
+						Changed entity type:
+							Changed field "filters":
+								Changed filter property "any_of":
+									Changed filter:
+										Changed filter property "all_of":
+											Total filter: 3 (+1, -0)
+											Added filter:
+												filter property "test": "is_sneaking"
+												filter property "subject": "other"
+												filter property "operator": "!="
+												filter property "value": true
+					Changed field "priority" from 2 to 5.
+				Changed component "minecraft:behavior.eat_carried_item":
+					Changed field "priority" from 9 to 12.
+				Changed component "minecraft:behavior.look_at_player":
+					Changed field "priority" from 11 to 14.
+				Changed component "minecraft:behavior.pickup_items":
+					Changed field "priority" from 8 to 11.
+				Changed component "minecraft:behavior.raid_garden":
+					Changed field "priority" from 9 to 12.
+				Changed component "minecraft:behavior.random_look_around_and_sit":
+					Changed field "priority" from 9 to 12.
+				Changed component "minecraft:behavior.random_look_around":
+					Changed field "priority" from 12 to 15.
+				Changed component "minecraft:behavior.random_stroll":
+					Changed field "priority" from 10 to 13.
+				Changed component "minecraft:behavior.stalk_and_pounce_on_target":
+					Changed field "priority" from 4 to 7.
+				Removed component "minecraft:behavior.tempt":
+					field "priority": 3
+					field "speed_multiplier": 0.5
+					field "within_radius": 16
+					field "can_get_scared": true
+					field "items": item: "sweet_berries"
+			Changed field "events":
+				Changed event "minecraft:entity_born":
+					Added field "add":
+						field "component_groups":
+							component group: "minecraft:fox_baby"
+							component group: "minecraft:trusting_fox"
+							component group: "minecraft:docile_fox"
+					Removed field "sequence":
+						sequence item 0:
+							field "add":
+								field "component_groups":
+									component group: "minecraft:fox_baby"
+									component group: "minecraft:trusting_fox"
+									component group: "minecraft:docile_fox"
+						sequence item 1:
+							field "add": field "component_groups": component group: "minecraft:fox_arctic"
+							field "filters":
+								filter property "test": "is_snow_covered"
+								filter property "value": true
+						sequence item 2:
+							field "add": field "component_groups": component group: "minecraft:fox_red"
+							field "filters":
+								filter property "test": "is_snow_covered"
+								filter property "value": false
+Changed entity "ghast.json":
 	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:raid_configuration":
-					Total component: 4 (+1, -0)
-					Added component "minecraft:ambient_sound_interval":
-						field "event_name": "ambient.in.raid"
-						field "range": 4.0
-						field "value": 2.0
-Changed entity "ravager":
+		Changed field "format_version" from "1.12.0" to "1.13.0".
+Changed entity "magma_cube.json":
 	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:raid_configuration":
-					Total component: 4 (+1, -0)
-					Added component "minecraft:ambient_sound_interval":
-						field "event_name": "ambient.in.raid"
-						field "range": 8.0
-						field "value": 4.0
-Changed entity "vindicator":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:raid_configuration":
-					Total component: 6 (+1, -0)
-					Added component "minecraft:ambient_sound_interval":
-						field "event_name": "ambient.in.raid"
-						field "range": 4.0
-						field "value": 2.0
-Changed entity "witch":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:raid_configuration":
-					Total component: 3 (+1, -0)
-					Added component "minecraft:ambient_sound_interval":
-						field "event_name": "ambient.in.raid"
-						field "range": 4.0
-						field "value": 2.0
+		Changed field "format_version" from "1.12.0" to "1.13.0".

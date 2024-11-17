@@ -1,108 +1,36 @@
-Difference of "entities" between "1.6.2" and "1.7.0.2" (beta of "1.7.0").
+Difference of "entities" between "1.8.0.8" (beta of "1.8.0") and "1.8.0.10" (beta of "1.8.0").
 
-Changed entity "phantom":
+Changed entity "agent.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 15 (+0, -1)
-				Removed component "minecraft:follow_range":
-					field "max": 64
-					field "value": 64
-				Unchanged component "minecraft:identifier": field "id": "minecraft:phantom"
-Changed entity "tnt_minecart":
+				Total component: 10 (+1, -0)
+				Added empty component "minecraft:tick_world".
+Changed entity "panda.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 3 (+1, -0)
-				Added component group "minecraft:instant_explode_tnt":
-					component "minecraft:explode":
-						field "causesFire": false
-						field "fuseLength": 0
-						field "fuseLit": true
-						field "on_activate": empty
-						field "power": 3
-					component "minecraft:is_ignited": empty
-					component "minecraft:rail_sensor": empty
-			Changed field "events":
-				Total event: 3 (+1, -0)
-				Added event "minecraft:on_instant_prime":
-					field "add": field "component_groups": component group: "minecraft:instant_explode_tnt"
-					field "remove": field "component_groups": component group: "minecraft:inactive"
-Changed entity "wither_skeleton":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
+				Changed component group "minecraft:panda_aggressive":
+					Changed component "minecraft:attack":
+						Changed field "damage" from 2.0 to 6.0.
 			Changed field "components":
-				Changed component "minecraft:collision_box":
-					Changed field "height" from 2.0 to 2.01.
-				Unchanged component "minecraft:identifier": field "id": "minecraft:wither_skeleton"
-Changed entity "zombie_villager":
+				Total component: 28 (+2, -0)
+				Added component "minecraft:giveable":
+					field "items":
+						item: "bamboo"
+						item: "cake"
+					field "on_give":
+						field "event": "minecraft:on_calm"
+						field "target": "self"
+				Added component "minecraft:inventory":
+					field "inventory_size": 1
+					field "private": true
+				Changed component "minecraft:behavior.snacking":
+					Changed field "priority" from 3 to 1.
+Changed entity "polar_bear.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
-			Changed field "events":
-				Changed event "from_village":
-					Removed field "add" of field "component_groups": component group: "from_abandoned_village".
-					Added field "sequence":
-						sequence item 0:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 9500
-									field "add": field "component_groups": component group: "adult"
-									field "remove": empty
-								randomize item:
-									field "weight": 425
-									field "add": field "component_groups": component group: "baby"
-									field "remove": empty
-								randomize item:
-									field "weight": 75
-									field "add":
-										field "component_groups":
-											component group: "baby"
-											component group: "jockey"
-									field "remove": empty
-						sequence item 1:
-							field "filters":
-								filter property "operator": "!="
-								filter property "test": "has_component"
-								filter property "value": "minecraft:variant"
-							field "randomize":
-								randomize item:
-									field "weight": 5
-									field "add": field "component_groups": component group: "farmer"
-								randomize item:
-									field "weight": 5
-									field "add": field "component_groups": component group: "fisherman"
-								randomize item:
-									field "weight": 5
-									field "add": field "component_groups": component group: "shepherd"
-								randomize item:
-									field "weight": 5
-									field "add": field "component_groups": component group: "fletcher"
-								randomize item:
-									field "weight": 20
-									field "add": field "component_groups": component group: "librarian"
-								randomize item:
-									field "weight": 20
-									field "add": field "component_groups": component group: "cartographer"
-								randomize item:
-									field "weight": 20
-									field "add": field "component_groups": component group: "cleric"
-								randomize item:
-									field "weight": 6
-									field "add": field "component_groups": component group: "armorer"
-								randomize item:
-									field "weight": 6
-									field "add": field "component_groups": component group: "weaponsmith"
-								randomize item:
-									field "weight": 6
-									field "add": field "component_groups": component group: "toolsmith"
-								randomize item:
-									field "weight": 10
-									field "add": field "component_groups": component group: "butcher"
-								randomize item:
-									field "weight": 10
-									field "add": field "component_groups": component group: "leatherworker"
-						sequence item 2: field "add": field "component_groups": component group: "from_abandoned_village"
+			Changed field "component_groups":
+				Changed component group "minecraft:adult_hostile":
+					Changed component "minecraft:behavior.stomp_attack":
+						Added field "require_complete_path" of true.

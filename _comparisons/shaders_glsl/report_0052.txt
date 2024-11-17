@@ -1,0 +1,279 @@
+Difference of "shaders_resource_packs" between "1.2.13.12" (beta of "1.4.0") and "1.2.14.2" (beta of "1.4.0").
+
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 166 (+30, -11)
+		          '''
+		          ...
+		 37  37   	varying vec2 layer2UV;
+		 38  38   	varying vec4 tileLightColor;
+		 39  39   	varying vec4 glintColor;
+		 40  40   #endif
+		 41  41   
+		     42 + #ifdef MULTIPLICATIVE_TINT_COLOR
+		     43 + 	varying vec3 multiplicativeTintColor;
+		     44 + #endif
+		     45 + 
+		 42  46   vec4 glintBlend(vec4 dest, vec4 source) {
+		 43  47   	// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		 44  48   	return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+		 45  49   }
+		 46  50   
+		          ...
+		 53  57   #else
+		 54  58   #ifndef USE_COLOR_MASK
+		 55  59   #define NEEDS_DISCARD(C)	(C.a < 0.5)
+		 56  60   #else
+		 57  61   #define NEEDS_DISCARD(C)	(C.a == 0.0)
+		     62 + #endif
+		 58  63   #endif
+		     64 + 
+		     65 + void main()
+		     66 + {
+		     67 + 	vec4 color = vec4(1.0);
+		 59     - #endif
+		 60  68   
+		     69 + #ifndef NO_TEXTURE
+		     70 + #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		 61     - void main()
+		     71 + 	color = texture2D( TEXTURE_0, uv );
+		     72 + #else
+		 62     - {
+		 63     - 	vec4 color = vec4(1.0);
+		 64     - 
+		     73 + 	color = texture2D_AA(TEXTURE_0, uv);
+		     74 + #endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		 65     - #ifndef NO_TEXTURE
+		 66     - #if !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		     75 + 
+		     76 + #if defined(ALPHA_TEST) && !defined(USE_MULTITEXTURE) && !defined(MULTIPICATIVE_TINT)
+		 67     - 	color = texture2D( TEXTURE_0, uv );
+		     77 + 	if(NEEDS_DISCARD(color))
+		     78 + 		discard;
+		     79 + #endif // ALPHA_TEST
+		 68     - #else
+		 69     - 	color = texture2D_AA(TEXTURE_0, uv);
+		 70     - #endif // !defined(TEXEL_AA) || !defined(TEXEL_AA_FEATURE)
+		 71  80   
+		     81 + #ifdef TINTED_ALPHA_TEST
+		     82 + vec4 testColor = color;
+		     83 + testColor.a *= alphaTestMultiplier;
+		     84 + 	if(NEEDS_DISCARD(testColor))
+		 72     - #if defined(ALPHA_TEST) && !defined(USE_MULTITEXTURE)
+		 73     - 	if(NEEDS_DISCARD(color))
+		 74  85   		discard;
+		     86 + #endif // TINTED_ALPHA_TEST
+		     87 + #endif // NO_TEXTURE
+		 75     - #endif // ALPHA_TEST
+		 76  88   
+		 77     - #ifdef TINTED_ALPHA_TEST
+		 78     - vec4 testColor = color;
+		 79     - testColor.a *= alphaTestMultiplier;
+		     89 + #ifdef USE_COLOR_MASK
+		     90 + 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		     91 + 	color.a *= changeColor.a;
+		     92 + #endif
+		 80     - 	if(NEEDS_DISCARD(testColor))
+		 81     - 		discard;
+		 82     - #endif // TINTED_ALPHA_TEST
+		 83     - #endif // NO_TEXTURE
+		 84  93   
+		     94 + #ifdef ITEM_IN_HAND
+		 85     - #ifdef USE_COLOR_MASK
+		     95 + 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+		 86     - 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		     96 + #if defined(MCPE_PLATFORM_NX) && defined(NO_TEXTURE) && defined(GLINT)
+		     97 + 	// TODO(adfairfi): This needs to be properly fixed soon. We have a User Story for it in VSO: 102633
+		     98 + 	vec3 dummyColor = texture2D(TEXTURE_0, vec2(0.0, 0.0)).rgb;
+		     99 + 	color.rgb += dummyColor * 0.000000001;
+		 87     - 	color.a *= changeColor.a;
+		    100 + #endif
+		 88 101   #endif
+		 89 102   
+		    103 + #ifdef USE_MULTITEXTURE
+		    104 + 	vec4 tex1 = texture2D( TEXTURE_1, uv );
+		    105 + 	vec4 tex2 = texture2D( TEXTURE_2, uv );
+		    106 + 	color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+		 90     - #ifdef ITEM_IN_HAND
+		 91     - 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+		 92     - #if defined(MCPE_PLATFORM_NX) && defined(NO_TEXTURE) && defined(GLINT)
+		    107 + #ifdef ALPHA_TEST
+		    108 + 	if (color.a < 0.5 && tex1.a == 0.0) {
+		    109 + 		discard;
+		    110 + 	}
+		 93     - 	// TODO(adfairfi): This needs to be properly fixed soon. We have a User Story for it in VSO: 102633
+		 94     - 	vec3 dummyColor = texture2D(TEXTURE_0, vec2(0.0, 0.0)).rgb;
+		 95     - 	color.rgb += dummyColor * 0.000000001;
+		 96     - #endif
+		 97 111   #endif
+		 98 112   
+		    113 + #ifdef COLOR_SECOND_TEXTURE
+		 99     - #ifdef USE_MULTITEXTURE
+		    114 + 	if (tex2.a > 0.0) {
+		    115 + 		color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		    116 + 	}
+		    117 + #else
+		    118 + 	color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+		100     - 	vec4 tex1 = texture2D( TEXTURE_1, uv );
+		101     - 	vec4 tex2 = texture2D( TEXTURE_2, uv );
+		102     - 	color.rgb = mix(color.rgb, tex1.rgb, tex1.a);
+		    119 + #endif
+		    120 + #endif
+		    121 + 
+		    122 + #ifdef MULTIPLICATIVE_TINT
+		    123 + 	vec4 tintTex = texture2D(TEXTURE_1, uv);
+		    124 + #ifdef MULTIPLICATIVE_TINT_COLOR
+		    125 + 	tintTex.rgb = tintTex.rgb * multiplicativeTintColor;
+		103     - #ifdef ALPHA_TEST
+		104     - 	if (color.a < 0.5 && tex1.a == 0.0) {
+		105     - 		discard;
+		106     - 	}
+		107 126   #endif
+		108 127   
+		    128 + #ifdef ALPHA_TEST
+		    129 + 	color.rgb = mix(color.rgb, tintTex.rgb, tintTex.a);
+		109     - #ifdef COLOR_SECOND_TEXTURE
+		    130 + 	if (color.a + tintTex.a <= 0.0f) {
+		    131 + 		discard;
+		110     - 	if (tex2.a > 0.0) {
+		111     - 		color.rgb = tex2.rgb + (tex2.rgb * changeColor.rgb - tex2.rgb)*tex2.a;//lerp(tex2.rgb, tex2 * changeColor.rgb, tex2.a)
+		112 132   	}
+		113     - #else
+		114     - 	color.rgb = mix(color.rgb, tex2.rgb, tex2.a);
+		115 133   #endif
+		    134 + 	
+		116 135   #endif
+		117 136   
+		118 137   #ifdef USE_OVERLAY
+		119 138   	//use either the diffuse or the OVERLAY_COLOR
+		120 139   	color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+		          ...
+		          '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 131 (+19, -12)
+		          '''
+		          ...
+		 35  35   	varying vec2 layer2UV;
+		 36  36       varying vec4 tileLightColor;
+		 37  37   	varying vec4 glintColor;
+		 38  38   #endif
+		 39  39   
+		     40 + #ifdef MULTIPLICATIVE_TINT_COLOR
+		     41 + 	varying vec3 multiplicativeTintColor;
+		     42 + #endif
+		     43 + 
+		 40  44   const float AMBIENT = 0.45;
+		 41  45   
+		 42  46   const float XFAC = -0.1;
+		 43  47   const float ZFAC = 0.1;
+		 44  48   
+		          ...
+		 78  82   
+		 79  83   void main()
+		 80  84   {
+		 81  85       POS4 pos = WORLDVIEWPROJ * POSITION;
+		 82  86       gl_Position = pos;
+		     87 + 
+		     88 +     float L = lightIntensity();
+		 83  89   
+		     90 + #ifdef USE_OVERLAY
+		     91 + 	L += OVERLAY_COLOR.a * 0.35;
+		     92 +     overlayColor = OVERLAY_COLOR;
+		     93 + #endif
+		 84     -     float L = lightIntensity();
+		 85  94   
+		     95 + #ifdef TINTED_ALPHA_TEST
+		 86     - #ifdef USE_OVERLAY
+		 87     - 	L += OVERLAY_COLOR.a * 0.35;
+		     96 +     alphaTestMultiplier = OVERLAY_COLOR.a;
+		 88     -     overlayColor = OVERLAY_COLOR;
+		 89  97   #endif
+		 90  98   
+		     99 + #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		 91     - #ifdef TINTED_ALPHA_TEST
+		    100 +     changeColor = CHANGE_COLOR;
+		 92     -     alphaTestMultiplier = OVERLAY_COLOR.a;
+		 93 101   #endif
+		    102 + 
+		    103 +     light = vec4(vec3(L) * TILE_LIGHT_COLOR.xyz, 1.0);
+		 94 104   
+		    105 + #ifdef COLOR_BASED
+		 95     - #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND) || defined(COLOR_SECOND_TEXTURE)
+		    106 + 	light *= COLOR;
+		 96     -     changeColor = CHANGE_COLOR;
+		 97 107   #endif
+		    108 +     
+		 98     - 
+		 99     -     light = vec4(vec3(L) * TILE_LIGHT_COLOR.xyz, 1.0);
+		100     - 
+		    109 + #ifndef NO_TEXTURE
+		    110 +     uv = TEXCOORD_0;
+		101     - #ifdef COLOR_BASED
+		102     - 	light *= COLOR;
+		103 111   #endif
+		    112 + 
+		104     -     
+		    113 + #ifdef USE_UV_ANIM
+		    114 + 	uv.xy = UV_ANIM.xy + (uv.xy * UV_ANIM.zw);
+		105     - #ifndef NO_TEXTURE
+		106     -     uv = TEXCOORD_0;
+		107 115   #endif
+		108 116   
+		    117 + #ifdef GLINT
+		    118 + 	glintColor = GLINT_COLOR;
+		    119 + 	layer1UV = calculateLayerUV(UV_OFFSET.x, UV_ROTATION.x);
+		    120 + 	layer2UV = calculateLayerUV(UV_OFFSET.y, UV_ROTATION.y);
+		    121 +     tileLightColor = TILE_LIGHT_COLOR;
+		109     - #ifdef USE_UV_ANIM
+		110     - 	uv.xy = UV_ANIM.xy + (uv.xy * UV_ANIM.zw);
+		111 122   #endif
+		112 123   
+		113     - #ifdef GLINT
+		114     - 	glintColor = GLINT_COLOR;
+		115     - 	layer1UV = calculateLayerUV(UV_OFFSET.x, UV_ROTATION.x);
+		    124 + #ifdef MULTIPLICATIVE_TINT_COLOR
+		    125 + 	multiplicativeTintColor = MULTIPLICATIVE_TINT_CHANGE_COLOR.rgb;
+		116     - 	layer2UV = calculateLayerUV(UV_OFFSET.y, UV_ROTATION.y);
+		117     -     tileLightColor = TILE_LIGHT_COLOR;
+		118 126   #endif
+		119     - 
+		120 127   
+		121 128   //fog
+		122 129       fogColor.rgb = FOG_COLOR.rgb;
+		123 130   	fogColor.a = clamp(((pos.z / RENDER_DISTANCE) - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		124 131   }
+		          '''
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 100 (+0, -1)
+		          '''
+		          ...
+		 52  52   
+		 53  53   	vec4 inColor = color;
+		 54  54   	
+		 55  55   #ifdef SEASONS_FAR
+		 56  56   	diffuse.a = 1.0;
+		 57     - 	inColor.b = 1.0;
+		 58  57   #endif
+		 59  58   
+		 60  59   #if USE_ALPHA_TEST
+		 61  60   	#ifdef ALPHA_TO_COVERAGE
+		 62  61   	#define ALPHA_THRESHOLD 0.05
+		          ...
+		          '''
+Changed resource pack "uniformEntityConstants.h":
+	Changed file "vanilla":
+		Total line: 21 (+1, -0)
+		        '''
+		        ...
+		13 13   UNIFORM vec4 GLINT_COLOR;
+		14 14   UNIFORM vec4 UV_ANIM;
+		15 15   UNIFORM vec2 UV_OFFSET;
+		16 16   UNIFORM vec2 UV_ROTATION;
+		17 17   UNIFORM vec2 GLINT_UV_SCALE;
+		   18 + UNIFORM vec4 MULTIPLICATIVE_TINT_CHANGE_COLOR;
+		18 19   END_UNIFORM_BLOCK
+		19 20   
+		20 21   #endif
+		        '''

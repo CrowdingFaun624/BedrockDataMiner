@@ -1,0 +1,52 @@
+Difference of "shaders" between "1.2.14.3" (beta of "1.4.0") and "1.2.20.1" (beta of "1.4.0").
+
+Changed file "renderchunk.fragment.hlsl":
+	Total line: 92 (+0, -1)
+	        '''
+	        ...
+	60 60   
+	61 61   #if !USE_ALPHA_TEST && !defined(BLEND)
+	62 62   	diffuse.a = PSInput.color.a;
+	63 63   #elif defined(BLEND)
+	64 64   #ifdef NEAR_WATER	
+	   65 + 	diffuse.a = PSInput.color.a;
+	65    - 	diffuse.a *= PSInput.color.a;
+	66    - 
+	67 66   	float alphaFadeOut = saturate(PSInput.cameraDist.x);
+	68 67   	diffuse.a = lerp(diffuse.a, 1.0f, alphaFadeOut);
+	69 68   #endif
+	70 69   
+	71 70   #endif	
+	        ...
+	        '''
+Changed file "renderchunk.vertex.hlsl":
+	Total line: 117 (+0, -20)
+	          '''
+	          ...
+	112 112   	PSInput.fogColor.rgb = FOG_COLOR.rgb;
+	113 113   	PSInput.fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+	114 114   
+	115 115   #endif
+	116 116   
+	117     - 	///// water magic
+	118     - #ifdef NEAR_WATER
+	119     - #ifdef FANCY  /////enhance water
+	120     - 	float F = dot(normalize(relPos), UNIT_Y);
+	121     - 	F = 1.0 - max(F, 0.1);
+	122     - 	F = 1.0 - lerp(F*F*F*F, 1.0, min(1.0, cameraDepth / FAR_CHUNKS_DISTANCE));
+	123     - 
+	124     - 	PSInput.color.rg -= float2(float(F * DIST_DESATURATION).xx);
+	125     - 
+	126     - 	float4 depthColor = float4(PSInput.color.rgb * 0.5, 1.0);
+	127     - 	float4 traspColor = float4(PSInput.color.rgb * 0.45, 0.8);
+	128     - 	float4 surfColor = float4(PSInput.color.rgb, 1.0);
+	129     - 
+	130     - 	float4 nearColor = lerp(traspColor, depthColor, PSInput.color.a);
+	131     - 	PSInput.color = lerp(surfColor, nearColor, F);
+	132     - #else
+	133     - 	PSInput.color.a = PSInput.position.z / FAR_CHUNKS_DISTANCE + 0.5;
+	134     - #endif //FANCY
+	135     - #endif
+	136     - 
+	137 117   }
+	          '''

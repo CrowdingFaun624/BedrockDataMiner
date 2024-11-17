@@ -1,0 +1,331 @@
+Difference of "shaders_resource_packs" between "a0.13.2-3" and "a0.14.0_build1" (beta of "a0.14.0").
+
+Changed resource pack "color_texture.fragment":
+	Changed file "vanilla":
+		Total line: 72 (+28, -11)
+		        '''
+		 1  1   #version 100
+		 2  2   uniform sampler2D TEXTURE_0;
+		 3  3   uniform sampler2D TEXTURE_1;
+		 4  4   uniform vec4 OVERLAY_COLOR;
+		    5 + 
+		    6 + #ifdef ENABLE_VERTEX_TINT_MASK
+		    7 + uniform vec4 CHANGE_COLOR;
+		    8 + #endif
+		    9 + 
+		   10 + #ifdef GLINT
+		   11 + uniform vec4 GLINT_COLOR;
+		   12 + #endif
+		   13 + 
+		   14 + varying vec4 color;
+		   15 + varying vec2 uv;
+		   16 + 
+		   17 + #ifdef ENABLE_FOG
+		   18 + varying vec4 fogColor;
+		 5    - uniform vec4 CHANGE_COLOR;
+		   19 + #endif
+		 6 20   
+		   21 + #ifdef GLINT
+		   22 + 	varying vec2 layer1UV;
+		   23 + 	varying vec2 layer2UV;
+		 7    - varying vec4 color;
+		 8    - varying vec2 uv;
+		 9 24   
+		   25 + 	vec4 glintBlend(vec4 dest, vec4 source) {
+		   26 + 		return vec4(source.rgb * source.rgb, 0.0) + dest;
+		10    - #ifdef ENABLE_FOG
+		   27 + 	}
+		11    - varying vec4 fogColor;
+		12 28   #endif
+		13 29   
+		   30 + void main()
+		   31 + {
+		14    - #ifdef GLINT
+		15    - 	varying vec2 layer1UV;
+		   32 + 	vec4 diffuse = texture2D( TEXTURE_0,  uv );
+		16    - 	varying vec2 layer2UV;
+		17 33   
+		   34 + #ifdef ALPHA_TEST
+		   35 + #ifdef ENABLE_VERTEX_TINT_MASK
+		   36 + 	if(diffuse.a <= 0.0)
+		   37 + #else
+		   38 + 	if(diffuse.a < 0.5)
+		18    - 	vec4 glintBlend(vec4 dest, vec4 source) {
+		19    - 		return vec4(source.rgb * source.rgb, 0.0) + dest;
+		20    - 	}
+		21 39   #endif
+		   40 + 	 	discard;
+		22    - 
+		23    - void main()
+		24    - {
+		   41 + #endif
+		25    - 	vec4 diffuse = texture2D( TEXTURE_0,  uv );
+		26 42   
+		   43 + #ifdef GLINT
+		   44 + 	vec4 layer1 = texture2D(TEXTURE_1, layer1UV).rgbr * GLINT_COLOR;
+		   45 + 	vec4 layer2 = texture2D(TEXTURE_1, layer2UV).rgbr * GLINT_COLOR;
+		   46 + 	vec4 glint = (layer1 + layer2);
+		27    - #ifdef ALPHA_TEST
+		28    - 	if(diffuse.a < 0.5)
+		29    - 	 	discard;
+		30    - #endif
+		31 47   
+		   48 + 	#ifdef INVENTORY
+		   49 + 		diffuse = glint;
+		   50 + 	#else
+		   51 + 		diffuse = glintBlend(diffuse, glint);
+		   52 + 	#endif
+		   53 + #endif
+		32    - #ifdef GLINT
+		33    - 	vec4 layer1 = texture2D(TEXTURE_1, layer1UV).rgbr * CHANGE_COLOR;
+		34    - 	vec4 layer2 = texture2D(TEXTURE_1, layer2UV).rgbr * CHANGE_COLOR;
+		35    - 	vec4 glint = (layer1 + layer2);
+		36 54   
+		37    - 	#ifdef INVENTORY
+		38    - 		diffuse = glint;
+		   55 + #ifdef USE_OVERLAY
+		   56 + 	//use either the diffuse or the OVERLAY_COLOR
+		   57 + 	diffuse.rgb = mix(diffuse, OVERLAY_COLOR, OVERLAY_COLOR.a).rgb;
+		39    - 	#else
+		40    - 		diffuse = glintBlend(diffuse, glint);
+		41    - 	#endif
+		42 58   #endif
+		43 59   
+		   60 + #ifdef ENABLE_FOG
+		44    - #ifdef USE_OVERLAY
+		   61 + 	//apply fog
+		   62 + 	diffuse.rgb = mix( diffuse.rgb, fogColor.rgb, fogColor.a );
+		45    - 	//use either the diffuse or the OVERLAY_COLOR
+		46    - 	diffuse.rgb = mix(diffuse, OVERLAY_COLOR, OVERLAY_COLOR.a).rgb;
+		47 63   #endif
+		48 64   
+		   65 + #ifdef ENABLE_VERTEX_TINT_MASK
+		49    - #ifdef ENABLE_FOG
+		   66 + 	diffuse.rgb = mix(diffuse.rgb, diffuse.rgb*color.rgb, diffuse.a);
+		   67 + 	diffuse.a = (diffuse.a > 0.0) ? 1.0 : 0.0;
+		50    - 	//apply fog
+		51    - 	diffuse.rgb = mix( diffuse.rgb, fogColor.rgb, fogColor.a );
+		   68 + 	gl_FragColor = diffuse;
+		   69 + #else
+		52    - #endif
+		53    - 
+		54 70   	gl_FragColor = diffuse * color;
+		   71 + #endif
+		55 72   }
+		        '''
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 89 (+12, -8)
+		        '''
+		        ...
+		10 10   #endif
+		11 11   #ifdef USE_OVERLAY
+		12 12   	varying vec4 overlayColor;
+		13 13   #endif
+		14 14   
+		   15 + #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND)
+		15    - #ifdef USE_COLOR_MASK
+		16 16   	varying vec4 changeColor;
+		17 17   #endif
+		18 18   
+		19 19   #ifdef GLINT
+		20 20   	varying vec2 layer1UV;
+		21 21   	varying vec2 layer2UV;
+		   22 + 	varying vec4 tileLightColor;
+		   23 + 	varying vec4 glintColor;
+		22    - 	varying vec4 tileLightColor;
+		23 24   #endif
+		24 25   
+		25 26   vec4 glintBlend(vec4 dest, vec4 source) {
+		26 27   	// glBlendFuncSeparate(GL_SRC_COLOR, GL_ONE, GL_ONE, GL_ZERO)
+		27 28   	return vec4(source.rgb * source.rgb, source.a) + vec4(dest.rgb, 0.0);
+		28 29   }
+		29 30   
+		   31 + #ifdef USE_EMISSIVE
+		   32 + #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+		   33 + #else
+		   34 + #ifndef USE_COLOR_MASK
+		   35 + #define NEEDS_DISCARD(C)	(C.a < 0.5)
+		30    - #ifdef USE_EMISSIVE
+		31    - #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
+		32 36   #else
+		   37 + #define NEEDS_DISCARD(C)	(C.a <= 0.0)
+		33    - #define NEEDS_DISCARD(C)	(C.a < 0.5)
+		   38 + #endif
+		34 39   #endif
+		35 40   
+		36 41   void main()
+		37 42   {
+		38 43   	vec4 color = vec4(1.0);
+		        ...
+		45 50   			discard;
+		46 51   	#endif
+		47 52   #endif
+		48 53   
+		49 54   #ifdef USE_COLOR_MASK
+		50    - 	#ifdef GLINT
+		51    - 		// Applies color mask to glint texture instead and blends with original color
+		   55 + 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		   56 + 	color.a = 1.0;
+		   57 + #endif
+		   58 + 
+		   59 + #ifdef ITEM_IN_HAND
+		   60 + 	color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, light.a);
+		52    - 		vec4 layer1 = texture2D(TEXTURE_1, layer1UV).rgbr * changeColor;
+		53    - 		vec4 layer2 = texture2D(TEXTURE_1, layer2UV).rgbr * changeColor;
+		54    - 		vec4 glint = (layer1 + layer2) * tileLightColor;
+		55    - 	#else
+		56    - 		// Original color mask behavior
+		57    - 		color.rgb = mix(color.rgb, color.rgb*changeColor.rgb, color.a);
+		58    - 		color.a = 1.0;
+		59    - 	#endif
+		60 61   #endif
+		61 62   
+		62 63   #ifdef USE_OVERLAY
+		63 64   	//use either the diffuse or the OVERLAY_COLOR
+		64 65   	color.rgb = mix(color, overlayColor, overlayColor.a).rgb;
+		        ...
+		68 69   	//make glowy stuff
+		69 70   	color *= mix(vec4(1.0), light, color.a );
+		70 71   #else
+		71 72   	color *= light;
+		72 73   #endif
+		   74 + 
+		   75 + 	//apply fog
+		   76 + 	color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+		73 77   
+		   78 + #ifdef GLINT
+		   79 + 	// Applies color mask to glint texture instead and blends with original color
+		   80 + 	vec4 layer1 = texture2D(TEXTURE_1, layer1UV).rgbr * glintColor;
+		   81 + 	vec4 layer2 = texture2D(TEXTURE_1, layer2UV).rgbr * glintColor;
+		   82 + 	vec4 glint = (layer1 + layer2) * tileLightColor;
+		74    - 	//apply fog
+		75    - 	color.rgb = mix( color.rgb, fogColor.rgb, fogColor.a );
+		76 83   
+		77    - #ifdef USE_COLOR_MASK
+		78    - 	#ifdef GLINT
+		   84 + 	color = glintBlend(color, glint);
+		79    - 		color = glintBlend(color, glint);
+		80    - 	#endif
+		81 85   #endif
+		82 86   
+		83 87   	//WARNING do not refactor this 
+		84 88   	gl_FragColor = color;
+		85 89   }
+		        '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 121 (+5, -2)
+		          '''
+		          ...
+		  2   2   uniform MAT4 WORLDVIEWPROJ;
+		  3   3   uniform MAT4 WORLD;
+		  4   4   uniform vec4 TILE_LIGHT_COLOR;
+		  5   5   uniform vec4 OVERLAY_COLOR;
+		  6   6   uniform vec4 CHANGE_COLOR;
+		      7 + uniform vec4 GLINT_COLOR;
+		  7   8   uniform vec4 FOG_COLOR;
+		  8   9   uniform vec2 FOG_CONTROL;
+		  9  10   uniform float RENDER_DISTANCE;
+		 10  11   uniform vec2 UV_ANIM;
+		 11  12   uniform vec2 UV_OFFSET;
+		          ...
+		 26  27   
+		 27  28   #ifdef USE_OVERLAY
+		 28  29   varying vec4 overlayColor;
+		 29  30   #endif
+		 30  31   
+		     32 + #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND)
+		 31     - #ifdef USE_COLOR_MASK
+		 32  33   varying vec4 changeColor;
+		 33  34   #endif
+		 34  35   
+		 35  36   #ifdef GLINT
+		 36  37   	varying vec2 layer1UV;
+		 37  38   	varying vec2 layer2UV;
+		 38  39       varying vec4 tileLightColor;
+		     40 + 	varying vec4 glintColor;
+		 39  41   #endif
+		 40  42   
+		 41  43   const float AMBIENT = 0.45;
+		 42  44   
+		 43  45   const float XFAC = -0.1;
+		          ...
+		 87  89   #ifdef USE_OVERLAY
+		 88  90   	L += OVERLAY_COLOR.a * 0.35;
+		 89  91       overlayColor = OVERLAY_COLOR;
+		 90  92   #endif
+		 91  93   
+		     94 + #if defined(USE_COLOR_MASK) || defined(ITEM_IN_HAND)
+		 92     - #ifdef USE_COLOR_MASK
+		 93  95       changeColor = CHANGE_COLOR;
+		 94  96   #endif
+		 95  97   
+		 96  98       light = vec4(vec3(L) * TILE_LIGHT_COLOR.xyz, 1.0);
+		 97  99   
+		          ...
+		104 106   #ifdef USE_UV_ANIM
+		105 107   	uv.xy += UV_ANIM.xy;
+		106 108   #endif
+		107 109   
+		108 110   #ifdef GLINT
+		    111 + 	glintColor = GLINT_COLOR;
+		109 112   	layer1UV = calculateLayerUV(UV_OFFSET.x, UV_ROTATION.x);
+		110 113   	layer2UV = calculateLayerUV(UV_OFFSET.y, UV_ROTATION.y);
+		111 114       tileLightColor = TILE_LIGHT_COLOR;
+		112 115   #endif
+		113 116   
+		          ...
+		          '''
+Changed resource pack "rain_snow.fragment":
+	Changed file "vanilla":
+		Total line: 41 (+3, -4)
+		        '''
+		        ...
+		19 19   	albedo.a *= color.a;
+		20 20   
+		21 21   	vec2 occlusionUV = worldPosition.xz;
+		22 22   	vec4 occlusionTexture = texture2D( TEXTURE_1, occlusionUV);
+		23 23   
+		24    - 	occlusionTexture.a *= 255.0;	// Alpha stores height of world
+		25    - 
+		26 24   	// clamp the uvs
+		   25 + 	if ( occlusionUV.x >= 0.0 && occlusionUV.x <= 1.0 && 
+		   26 + 		 occlusionUV.y >= 0.0 && occlusionUV.y <= 1.0 && 
+		   27 + 		 worldPosition.y < occlusionTexture.a) {
+		27    - 	vec2 uvclamp = clamp(occlusionUV, 0.0, 1.0);
+		28    - 	if (uvclamp.x == occlusionUV.x && uvclamp.y == occlusionUV.y && worldPosition.y < occlusionTexture.a) {
+		29 28   		albedo.a = 0.0;
+		30 29   	}
+		31 30   
+		   31 + 	float mixAmount = clamp ( (worldPosition.y - occlusionTexture.a)*10.0, 0.0, 1.0);
+		32    - 	float mixAmount = clamp ( (worldPosition.y - occlusionTexture.a)*0.1, 0.0, 1.0);
+		33 32   	vec3 lighting = mix(occlusionTexture.rgb, color.rgb, mixAmount);
+		   33 + 	vec4 finalOutput = albedo;
+		34    - 	gl_FragColor = albedo;
+		   34 + 	finalOutput.rgb *= lighting.rgb;
+		35    - 	gl_FragColor.rgb *= lighting.rgb;
+		36 35   
+		37 36   	//apply fog
+		   37 + 	gl_FragColor.rgb = mix( finalOutput.rgb, fogColor.rgb, fogColor.a );
+		38    - 	gl_FragColor.rgb = mix( gl_FragColor.rgb, fogColor.rgb, fogColor.a );
+		   38 + 	gl_FragColor.a = finalOutput.a;
+		39    - 
+		40 39   }
+		41 40   
+		42 41   
+		        '''
+Changed resource pack "rain_snow.vertex":
+	Changed file "vanilla":
+		Total line: 74 (+1, -0)
+		        '''
+		        ...
+		67 67       fogColor.a = clamp(((bottom.z / RENDER_DISTANCE) - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		68 68   
+		69 69   	worldPositionBottom.xz *= 1.0 / 64.0;	// Scale by 1/TextureDimensions to get values between
+		70 70   	worldPositionBottom.xz += 0.5;			// Offset so that center of view is in the center of occlusion texture
+		71 71   	worldPositionBottom.y += VIEW_POSITION.y - 0.5;
+		   72 + 	worldPositionBottom.y *= 1.0/255.0;
+		72 73   	worldPosition = worldPositionBottom;
+		73 74   }
+		        '''

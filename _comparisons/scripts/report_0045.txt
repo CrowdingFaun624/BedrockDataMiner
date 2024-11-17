@@ -1,0 +1,35 @@
+Difference of "scripts" between "1.19.0.30" (beta of "1.19.0") and "1.19.0.32" (beta of "1.19.0").
+
+Changed behavior pack "vanilla_gametest":
+	Changed script "SculkTests.js":
+		Total line: 697 (+16, -0)
+		          '''
+		          ...
+		294 294       });
+		295 295   })
+		296 296       .padding(TEST_PADDING)
+		297 297       .tag(GameTest.Tags.suiteDefault);
+		298 298   
+		    299 + GameTest.register("SculkTests", "vein_non_spread_fire", (test) => {
+		    300 +     test.spawn("minecraft:creeper", new BlockLocation(1, 3, 1)).kill();
+		    301 +     test.spawn("minecraft:creeper", new BlockLocation(1, 3, 3)).kill();
+		    302 +     test.spawn("minecraft:creeper", new BlockLocation(3, 3, 1)).kill();
+		    303 +     test.spawn("minecraft:creeper", new BlockLocation(3, 3, 3)).kill();
+		    304 + 
+		    305 +     test.startSequence().thenExecuteFor(TicksPerSecond * 2, () => {
+		    306 +         test.assertBlockPresent(MinecraftBlockTypes.fire, new BlockLocation(1, 3, 3));
+		    307 +         test.assertBlockPresent(MinecraftBlockTypes.fire, new BlockLocation(4, 3, 3));
+		    308 +         test.assertBlockPresent(MinecraftBlockTypes.soulFire, new BlockLocation(1, 3, 1));
+		    309 +         test.assertBlockPresent(MinecraftBlockTypes.soulFire, new BlockLocation(4, 3, 1));
+		    310 +     }).thenSucceed();
+		    311 + })
+		    312 +     .padding(TEST_PADDING)
+		    313 +     .tag(GameTest.Tags.suiteDefault);
+		    314 + 
+		299 315   GameTest.register("SculkTests", "spread_under_water", (test) => {
+		300 316       const INITIAL_CHARGE = 30;
+		301 317   
+		302 318       const sculkCatalystPos = new BlockLocation(2, 7, 2);
+		303 319       test.assertBlockPresent(MinecraftBlockTypes.sculkCatalyst, sculkCatalystPos);
+		          ...
+		          '''

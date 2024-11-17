@@ -1,28 +1,43 @@
-Difference of "particles" between "1.21.10.21" (beta of "1.21.20") and "1.21.10.22" (beta of "1.21.20").
+Difference of "particles" between "1.21.31" and "1.21.40.20" (beta of "1.21.40").
 
-Changed particle "trial_spawner_detection.particle":
-	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 2 (+1, -0)
-			Added resource pack "vanilla_1.21.10".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "size":
-						Changed vector item 0 from "variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11; return variable.quadSize * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1) / 6.0;" to "return variable.quadSizeX * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1);".
-						Changed vector item 1 from "variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11; return variable.quadSize * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1);" to "return variable.quadSizeY * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1);".
-				Changed field "minecraft:particle_initialization":
-					Changed field "per_render_expression" from "variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11;" to "variable.quadSizeY = (variable.particle_random_1 * 0.1125) + 0.11; variable.quadSizeX = variable.quadSizeY / 6.0;".
-Changed particle "trial_spawner_detection_ominous.particle":
-	Changed resource pack "core":
-		Changed field "defined_in":
-			Total resource pack: 2 (+1, -0)
-			Added resource pack "vanilla_1.21.10".
-		Changed field "particle_effect":
-			Changed field "components":
-				Changed field "minecraft:particle_appearance_billboard":
-					Changed field "size":
-						Changed vector item 0 from "variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11; return variable.quadSize * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1) / 6.0;" to "return variable.quadSizeX * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1);".
-						Changed vector item 1 from "variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11; return variable.quadSize * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1);" to "return variable.quadSizeY * math.clamp(variable.particle_age / variable.particle_lifetime * 32, 0, 1);".
-				Changed field "minecraft:particle_initialization":
-					Changed field "per_render_expression" from "variable.quadSize = (variable.particle_random_1 * 0.1125) + 0.11;" to "variable.quadSizeY = (variable.particle_random_1 * 0.1125) + 0.11; variable.quadSizeX = variable.quadSizeY / 6.0;".
+Total particle: 168 (+1, -0)
+Added particle "witchspell.json":
+	resource pack "core":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:witchspell_emitter"
+				field "basic_render_parameters":
+					field "material": "particles_alpha"
+					field "texture": "textures/particle/particles"
+			field "components":
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": "Math.random(0, 35) + 10"
+				field "minecraft:emitter_shape_custom":
+					field "offset": ["Math.random(0, 0.13);", "0.5 + Math.random(0, 0.13)", "Math.random(0, 0.13)"]
+					field "direction": ["Math.random(-0.25, 0.25)", "Math.random(0, 1)", "Math.random(-0.25, 0.25)"]
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.125, 0.125]
+					field "facing_camera_mode": "lookat_xyz"
+					field "uv":
+						field "texture_width": 128
+						field "texture_height": 128
+						field "flipbook":
+							field "base_UV": [64, 72]
+							field "size_UV": [8, 8]
+							field "step_UV": [-8, 0]
+							field "frames_per_second": 10
+							field "max_frame": 8
+							field "stretch_to_lifetime": true
+							field "loop": false
+				field "minecraft:particle_appearance_lighting": empty
+				field "minecraft:particle_appearance_tinting": field "color": color: ["variable.particle_random_1 * 0.5 + 0.35", 0, "variable.particle_random_1 * 0.5 + 0.35", 1]
+				field "minecraft:particle_initial_speed": "(Math.random(0, 1) + Math.random(0, 1) + 1) * 0.55"
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "Math.random(0.85, 1.35)"
+				field "minecraft:particle_motion_collision":
+					field "enabled": 1
+					field "expire_on_contact": true
+					field "collision_drag": 1.0
+					field "coefficient_of_restitution": 1.0
+					field "collision_radius": 0.01
+				field "minecraft:particle_motion_dynamic": field "linear_acceleration": ["(variable.particle_random_1 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5", "1 + (0.08 * variable.particle_age) - (variable.particle_age * 0.4) * 1.5", "(variable.particle_random_2 * 2 - 1)*0.5 - (variable.particle_age * 0.4) * 2.5"]

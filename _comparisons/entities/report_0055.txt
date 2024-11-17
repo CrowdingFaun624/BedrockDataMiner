@@ -1,368 +1,129 @@
-Difference of "entities" between "1.7.0.2" (beta of "1.7.0") and "1.7.0.3" (beta of "1.7.0").
+Difference of "entities" between "1.8.0.10" (beta of "1.8.0") and "1.8.0.11" (beta of "1.8.0").
 
-Changed entity "bat":
+Changed entity "balloon.json":
+	Changed behavior pack "education":
+		Added field "format_version" of "1.8.0-beta.1".
+		Changed field "minecraft:entity":
+			Removed field "format_version" of "1.6.0".
+			Changed field "description":
+				Added description "identifier" of "minecraft:balloon".
+				Removed description "minecraft:identifier" of field "id": "minecraft:balloon".
+Changed entity "drowned.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 15 (+2, -0)
-				Unchanged component "minecraft:identifier": field "id": "minecraft:bat"
-				Added empty component "minecraft:jump.static".
-				Changed component "minecraft:navigation.float":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-				Added component "minecraft:behavior.float" of field "priority": 0.
-Changed entity "blaze":
+				Changed component "minecraft:behavior.stomp_turtle_egg":
+					Added field "search_count" of 4.
+Changed entity "husk.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Total component: 26 (+1, -0)
-				Unchanged component "minecraft:identifier": field "id": "minecraft:blaze"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-				Added component "minecraft:behavior.float" of field "priority": 0.
-Changed entity "cave_spider":
-	Changed behavior pack "core":
+				Changed component "minecraft:behavior.stomp_turtle_egg":
+					Added field "search_count" of 4.
+Changed entity "ice_bomb.json":
+	Changed behavior pack "education":
+		Added field "format_version" of "1.8.0-beta.1".
 		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:cave_spider"
-				Changed component "minecraft:navigation.climb":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "chicken":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:chicken"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "cow":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:cow"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "creeper":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:creeper"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "dolphin":
+			Removed field "format_version" of "1.6.0".
+			Changed field "description":
+				Added description "identifier" of "minecraft:ice_bomb".
+				Removed description "minecraft:identifier" of field "id": "minecraft:ice_bomb".
+Changed entity "panda.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Changed component group "minecraft:dolphin_on_land":
-					Changed component "minecraft:navigation.generic":
-						Removed field "can_float" of true.
-						Added field "can_path_over_water" of true.
-				Changed component group "minecraft:dolphin_on_land_in_rain":
-					Changed component "minecraft:navigation.generic":
-						Removed field "can_float" of false.
-						Added field "can_path_over_water" of true.
-				Changed component group "minecraft:dolphin_swimming_navigation":
-					Changed component "minecraft:navigation.generic":
-						Removed field "can_float" of false.
-						Added field "can_path_over_water" of false.
+				Total component group: 12 (+1, -0)
+				Added component group "minecraft:baby_scared":
+					component "minecraft:angry":
+						field "duration": 1
+						field "broadcastAnger": true
+						field "broadcastRange": 41
+						field "broadcast_filters":
+							filter property "test": "is_family"
+							filter property "operator": "=="
+							filter property "value": "panda_aggressive"
+						field "calm_event":
+							field "event": "minecraft:baby_on_calm"
+							field "target": "self"
+				Changed component group "minecraft:panda_adult":
+					Total component: 7 (+4, -0)
+					Added component "minecraft:attack" of field "damage": 2.0.
+					Added component "minecraft:on_target_acquired":
+						field "event": "minecraft:become_angry"
+						field "target": "self"
+					Added component "minecraft:on_target_escape":
+						field "event": "minecraft:on_calm"
+						field "target": "self"
+					Added component "minecraft:behavior.melee_attack":
+						field "priority": 2
+						field "target_dist": 1.2
+						field "track_target": true
+						field "attack_once": true
+						field "reach_multiplier": 1.0
+				Changed component group "minecraft:panda_aggressive":
+					Total component: 5 (+2, -3)
+					Added component "minecraft:on_friendly_anger":
+						field "event": "minecraft:on_anger"
+						field "target": "self"
+					Removed component "minecraft:on_target_acquired":
+						field "event": "minecraft:become_angry"
+						field "target": "self"
+					Removed component "minecraft:on_target_escape":
+						field "event": "minecraft:on_calm"
+						field "target": "self"
+					Added component "minecraft:type_family":
+						field "family":
+							family: "panda"
+							family: "panda_aggressive"
+					Removed component "minecraft:behavior.hurt_by_target" of field "priority": 1.
+				Changed component group "minecraft:panda_angry":
+					Changed component "minecraft:angry":
+						Changed field "broadcastAnger" from false to true.
+						Added field "broadcastRange" of 41.
+						Added field "broadcast_filters":
+							filter property "test": "is_family"
+							filter property "operator": "=="
+							filter property "value": "panda_aggressive"
+				Changed component group "minecraft:panda_baby":
+					Total component: 7 (+1, -0)
+					Added component "minecraft:on_target_acquired":
+						field "event": "minecraft:on_scared"
+						field "target": "self"
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:dolphin"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of true.
-Changed entity "donkey":
+				Total component: 28 (+1, -1)
+				Added component "minecraft:behavior.hurt_by_target" of field "priority": 1.
+				Removed component "minecraft:behavior.panic":
+					field "priority": 1
+					field "speed_multiplier": 1.25
+			Changed field "events":
+				Total event: 13 (+2, -0)
+				Changed event "minecraft:ageable_grow_up":
+					Changed field "sequence":
+						Total sequence item: 4 (+1, -0)
+						Added sequence item 3:
+							field "add": field "component_groups": component group: "minecraft:panda_aggressive"
+							field "filters":
+								filter property "test": "is_variant"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": 6
+				Added event "minecraft:baby_on_calm" of field "remove": field "component_groups": component group: "minecraft:baby_scared".
+				Added event "minecraft:on_scared" of field "add": field "component_groups": component group: "minecraft:baby_scared".
+Changed entity "zombie.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:donkey"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "drowned":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "component_groups":
-				Changed component group "minecraft:hunter_mode":
-					Changed component "minecraft:navigation.generic":
-						Removed field "can_float" of false.
-						Added field "can_path_over_water" of false.
-				Changed component group "minecraft:wander_mode":
-					Changed component "minecraft:navigation.generic":
-						Removed field "can_float" of false.
-						Added field "can_path_over_water" of false.
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:drowned"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "elder_guardian":
+				Changed component "minecraft:behavior.stomp_turtle_egg":
+					Added field "search_count" of 4.
+Changed entity "zombie_pigman.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:elder_guardian"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "enderman":
+				Changed component "minecraft:behavior.stomp_turtle_egg":
+					Added field "search_count" of 4.
+Changed entity "zombie_villager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:enderman"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "endermite":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:endermite"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "evocation_illager":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:evocation_illager"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "fish":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:cod"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "ghast":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Total component: 21 (+2, -0)
-				Unchanged component "minecraft:identifier": field "id": "minecraft:ghast"
-				Added empty component "minecraft:jump.static".
-				Changed component "minecraft:navigation.float":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-				Added component "minecraft:behavior.float" of field "priority": 0.
-Changed entity "guardian":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:guardian"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "horse":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:horse"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "iron_golem":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:iron_golem"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "llama":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:llama"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "magma_cube":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:magma_cube"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "mooshroom":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:mooshroom"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "mule":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:mule"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "ocelot":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:ocelot"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "parrot":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:parrot"
-				Changed component "minecraft:navigation.fly":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "pig":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:pig"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "polar_bear":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:polar_bear"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "pufferfish":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:pufferfish"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "rabbit":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:rabbit"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "salmon":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:salmon"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "sheep":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:sheep"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "silverfish":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:silverfish"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "slime":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:slime"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "spider":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:spider"
-				Changed component "minecraft:navigation.climb":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "squid":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:squid"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "tropicalfish":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:tropicalfish"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "turtle":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:turtle"
-				Changed component "minecraft:navigation.generic":
-					Removed field "can_float" of false.
-					Added field "can_path_over_water" of false.
-Changed entity "vex":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:vex"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "villager":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:villager"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "vindicator":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:vindicator"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "witch":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:witch"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "wither":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:wither"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
-Changed entity "wolf":
-	Changed behavior pack "core":
-		Changed field "minecraft:entity":
-			Changed field "components":
-				Unchanged component "minecraft:identifier": field "id": "minecraft:wolf"
-				Changed component "minecraft:navigation.walk":
-					Removed field "can_float" of true.
-					Added field "can_path_over_water" of true.
+				Changed component "minecraft:behavior.stomp_turtle_egg":
+					Added field "search_count" of 4.

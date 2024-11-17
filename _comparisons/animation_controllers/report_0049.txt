@@ -1,41 +1,12 @@
-Difference of "animation_controllers" between "1.16.230.50" (beta of "1.17.0") and "1.16.230.52" (beta of "1.17.0").
+Difference of "animation_controllers" between "1.16.230.52" (beta of "1.17.0") and "1.16.230.54" (beta of "1.17.0").
 
-Total file: 56 (+1, -0)
-Added file "axolotl.animation_controllers":
-	resource pack "experimental":
-		field "defined_in": resource pack: "experimental_caves_and_cliffs"
-		field "format_version": "1.10.0"
-		field "animation_controllers":
-			animation controller "controller.animation.axolotl.general":
-				field "initial_state": "default"
-				field "states":
-					state "default":
-						field "animations":
-							animation dict: animation "play_dead": "query.is_playing_dead"
-							animation dict: animation "swim_angle": "variable.moving && query.is_in_water && !query.is_on_ground"
-			animation controller "controller.animation.axolotl.move":
-				field "initial_state": "idle"
-				field "states":
-					state "idle":
-						field "animations":
-							animation dict: animation "idle_float": "query.is_in_water && !query.is_on_ground"
-							animation dict: animation "idle_floor": "!query.is_in_water && query.is_on_ground"
-							animation dict: animation "idle_floor_water": "query.is_in_water && query.is_on_ground"
-							animation dict: "look_at_target"
-						field "transitions": transition list: transition "moving": "variable.moving && !query.is_playing_dead"
-					state "moving":
-						field "animations":
-							animation dict: animation "swim": "query.is_in_water && !query.is_on_ground"
-							animation dict: animation "walk_floor": "!query.is_in_water && query.is_on_ground"
-							animation dict: animation "walk_floor_water": "query.is_in_water && query.is_on_ground"
-							animation dict: "look_at_target"
-						field "transitions": transition list: transition "idle": "!variable.moving || query.is_playing_dead"
-Changed file "trident.animation_controllers":
+Changed file "player.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
-			Changed animation controller "controller.animation.trident.wield":
+			Changed animation controller "controller.animation.player.root":
 				Changed field "states":
 					Changed state "first_person":
 						Changed field "animations":
-							Total animation dict: 4 (+1, -0)
-							Added animation dict animation "wield_first_person_raise_shake": "query.main_hand_item_use_duration > 0.0f".
+							Total animation dict: 9 (+1, -1)
+							Removed animation dict animation "first_person_walk": "!variable.bob_animation".
+							Added animation dict animation "first_person_walk": "variable.bob_animation".

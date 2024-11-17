@@ -1,0 +1,358 @@
+Difference of "shaders_resource_packs" between "a0.10.0_build8" (beta of "a0.10.0") and "a0.10.0_build9" (beta of "a0.10.0").
+
+Changed resource pack "cloud.vertex":
+	Changed file "vanilla":
+		Total line: 30 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   uniform float RENDER_DISTANCE;
+		 5  5   uniform vec4 FOG_COLOR;
+		 6  6   uniform vec4 CURRENT_COLOR;
+		        ...
+		        '''
+Changed resource pack "color.fragment":
+	Changed file "vanilla":
+		Total line: 8 (+1, -1)
+		      '''
+		  1 + #version 100
+		1   - 
+		2 2   
+		3 3   varying vec4 color;
+		4 4   
+		5 5   void main()
+		6 6   {
+		      ...
+		      '''
+Changed resource pack "color.vertex":
+	Changed file "vanilla":
+		Total line: 15 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		 6  6   attribute vec4 COLOR;
+		        ...
+		        '''
+Changed resource pack "color_ex.fragment":
+	Changed file "vanilla":
+		Total line: 10 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform vec4 CURRENT_COLOR;
+		 4  4   
+		 5  5   varying vec4 color;
+		 6  6   
+		        ...
+		        '''
+Changed resource pack "color_texture.fragment":
+	Changed file "vanilla":
+		Total line: 23 (+2, -2)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   uniform sampler2D TEXTURE_0;
+		 3  3   uniform vec4 OVERLAY_COLOR;
+		 4  4   
+		 5  5   varying vec4 color;
+		 6  6   varying vec2 uv;
+		 7  7   
+		 8  8   void main()
+		 9  9   {
+		10 10   	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		   11 + 
+		11    - 	
+		12 12   #ifdef ALPHA_TEST
+		13 13   	if(diffuse.a < 0.5)
+		14 14   	 	discard;
+		15 15   #endif
+		16 16   
+		        ...
+		        '''
+Changed resource pack "color_uv.vertex":
+	Changed file "vanilla":
+		Total line: 18 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		 6  6   attribute vec4 COLOR;
+		        ...
+		        '''
+Changed resource pack "current_color.fragment":
+	Changed file "vanilla":
+		Total line: 8 (+1, -1)
+		      '''
+		  1 + #version 100
+		1   - 
+		2 2   
+		3 3   uniform vec4 CURRENT_COLOR;
+		4 4   
+		5 5   void main()
+		6 6   {
+		      ...
+		      '''
+Changed resource pack "entity.fragment":
+	Changed file "vanilla":
+		Total line: 49 (+2, -2)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   uniform sampler2D TEXTURE_0;
+		 3  3   
+		 4  4   varying vec4 light;
+		 5  5   varying vec4 fogColor;
+		 6  6   
+		 7  7   #ifndef COLOR_BASED
+		 8  8   	varying vec2 uv;
+		    9 + #endif
+		 9    - #endif 
+		10 10   #ifdef USE_OVERLAY
+		11 11   	varying vec4 overlayColor;
+		12 12   #endif
+		13 13   
+		14 14   #ifdef USE_EMISSIVE
+		        ...
+		20 20   void main()
+		21 21   {
+		22 22   	vec4 color = vec4(1.0);
+		23 23   #ifndef COLOR_BASED
+		24 24   	color = texture2D( TEXTURE_0, uv );
+		   25 + 
+		25    - 	
+		26 26   	#ifdef ALPHA_TEST
+		27 27   		if(NEEDS_DISCARD(color))
+		28 28   		 	discard;
+		29 29   	#endif
+		30 30   #endif
+		        ...
+		        '''
+Changed resource pack "entity.vertex":
+	Changed file "vanilla":
+		Total line: 72 (+3, -3)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   uniform MAT4 WORLDVIEWPROJ;
+		 3  3   uniform MAT4 WORLD;
+		 4  4   uniform vec3 TILE_LIGHT_COLOR;
+		 5  5   uniform vec4 OVERLAY_COLOR;
+		 6  6   uniform vec4 FOG_COLOR;
+		        ...
+		48 48   
+		49 49   void main()
+		50 50   {
+		51 51       POS4 pos = WORLDVIEWPROJ * POSITION;
+		52 52       gl_Position = pos;
+		   53 + 
+		53    -     
+		54 54       float L = lightIntensity();
+		55 55   
+		56 56   #ifdef USE_OVERLAY
+		57 57   	L += OVERLAY_COLOR.a * 0.35;
+		58 58       overlayColor = OVERLAY_COLOR;
+		59 59   #endif
+		   60 + 
+		60    -  
+		61 61       light = vec4(vec3(L) * TILE_LIGHT_COLOR, 1.0);
+		62 62   
+		63 63   #ifdef COLOR_BASED
+		64 64   	light *= COLOR;
+		65 65   #else
+		        ...
+		        '''
+Changed resource pack "flat_white.fragment":
+	Changed file "vanilla":
+		Total line: 6 (+1, -1)
+		      '''
+		  1 + #version 100
+		1   - 
+		2 2   
+		3 3   void main()
+		4 4   {
+		5 5   	gl_FragColor = vec4(1.0);
+		6 6   }
+		      '''
+Changed resource pack "iteminhand.fragment":
+	Changed file "vanilla":
+		Total line: 13 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   uniform vec4 OVERLAY_COLOR;
+		 3  3   
+		 4  4   varying vec4 light;
+		 5  5   
+		 6  6   void main()
+		        ...
+		        '''
+Changed resource pack "normal_as_color.vertex":
+	Changed file "vanilla":
+		Total line: 16 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		 6  6   attribute vec4 NORMAL;
+		        ...
+		        '''
+Changed resource pack "position.vertex":
+	Changed file "vanilla":
+		Total line: 10 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		 6  6   
+		        ...
+		        '''
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 29 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   varying vec2 uv0;
+		 4  4   varying vec2 uv1;
+		 5  5   varying vec4 color;
+		 6  6   
+		        ...
+		        '''
+Changed resource pack "renderchunk.vertex":
+	Changed file "vanilla":
+		Total line: 88 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   uniform MAT4 WORLDVIEWPROJ;
+		 3  3   uniform vec4 FOG_COLOR;
+		 4  4   uniform vec2 FOG_CONTROL;
+		 5  5   uniform float RENDER_DISTANCE;
+		 6  6   uniform vec2 VIEWPORT_DIMENSION;
+		        ...
+		        '''
+Changed resource pack "sky.vertex":
+	Changed file "vanilla":
+		Total line: 19 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   uniform vec4 FOG_COLOR;
+		 5  5   uniform vec4 CURRENT_COLOR;
+		 6  6   
+		        ...
+		        '''
+Changed resource pack "texture.fragment":
+	Changed file "vanilla":
+		Total line: 17 (+2, -2)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   varying vec2 uv;
+		 4  4   
+		 5  5   uniform sampler2D TEXTURE_0;
+		 6  6   
+		 7  7   void main()
+		 8  8   {
+		 9  9   	vec4 color = texture2D( TEXTURE_0, uv );
+		   10 + 
+		10    - 	
+		11 11   #ifdef ALPHA_TEST
+		12 12   	if(color.a < 0.5)
+		13 13   		discard;
+		14 14   #endif
+		15 15   
+		        ...
+		        '''
+Changed resource pack "texture_ccolor.fragment":
+	Changed file "vanilla":
+		Total line: 18 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   varying vec2 uv;
+		 4  4   
+		 5  5   uniform vec4 CURRENT_COLOR;
+		 6  6   uniform sampler2D TEXTURE_0;
+		        ...
+		        '''
+Changed resource pack "texture_cutout.fragment":
+	Changed file "vanilla":
+		Total line: 14 (+2, -1)
+		        '''
+		    1 + #version 100
+		 1  2   varying vec2 uv;
+		 2  3   
+		 3  4   uniform vec4 CURRENT_COLOR;
+		 4  5   uniform sampler2D TEXTURE_0;
+		 5  6   
+		 6  7   void main()
+		 7  8   {
+		 8  9   	vec4 diffuse = texture2D( TEXTURE_0, uv );
+		 9 10   	if(diffuse.a < 0.5)
+		10 11   		discard;
+		   12 + 
+		11    - 		
+		12 13   	gl_FragColor = CURRENT_COLOR;
+		13 14   }
+		        '''
+Changed resource pack "uv.vertex":
+	Changed file "vanilla":
+		Total line: 15 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		 6  6   attribute vec2 TEXCOORD_0;
+		        ...
+		        '''
+Changed resource pack "uv1.vertex":
+	Changed file "vanilla":
+		Total line: 15 (+1, -1)
+		        '''
+		    1 + #version 100
+		 1    - 
+		 2  2   
+		 3  3   uniform MAT4 WORLDVIEWPROJ;
+		 4  4   
+		 5  5   attribute mediump vec4 POSITION;
+		 6  6   attribute vec2 TEXCOORD_1;
+		        ...
+		        '''
+Changed resource pack "uv_as_color.fragment":
+	Changed file "vanilla":
+		Total line: 7 (+1, -1)
+		      '''
+		  1 + #version 100
+		1   - 
+		2 2   varying vec2 uv;
+		3 3   
+		4 4   void main()
+		5 5   {
+		6 6   	gl_FragColor = vec4(uv.x, uv.y,0.0,1.0);
+		      ...
+		      '''

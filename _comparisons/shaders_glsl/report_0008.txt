@@ -1,0 +1,113 @@
+Difference of "shaders_resource_packs" between "a0.12.1_build1" (beta of "a0.12.1") and "a0.12.1_build2" (beta of "a0.12.1").
+
+Changed resource pack "renderchunk.fragment":
+	Changed file "vanilla":
+		Total line: 53 (+2, -1)
+		        '''
+		        ...
+		29 29   	
+		30 30   #ifndef SEASONS
+		31 31   
+		32 32   #if !defined(ALPHA_TEST) && !defined(BLEND)
+		33 33   	inColor.rgb = mix(inColor.aaa, inColor.rgb, diffuse.a);
+		   34 + 	diffuse.a = inColor.a;
+		34 35   #elif defined(BLEND)
+		35 36   	diffuse.a *= inColor.a;
+		36 37   #endif	
+		   38 + 	
+		37    - 
+		38 39   	diffuse.rgb *= inColor.rgb;
+		39 40   #else
+		40 41   	vec2 uv = inColor.xy;
+		41 42   	uv.y += 1.0 / 512.0;
+		42 43   	diffuse.rgb *= mix(vec3(1.0,1.0,1.0), texture2D( TEXTURE_2, uv).rgb*2.0, inColor.b);
+		        ...
+		        '''
+Changed resource pack "renderchunk.vertex":
+	Changed file "vanilla":
+		Total line: 84 (+13, -17)
+		          '''
+		          ...
+		 38  38   
+		 39  39   ///// find distance from the camera
+		 40  40   
+		 41  41   #if defined(FOG) || defined(NEAR_WATER)
+		 42  42   		#ifdef FANCY
+		 43     - 		vec3 relPos = VIEW_POS - (POSITION.xyz + CHUNK_ORIGIN);
+		 44     - 		float cameraDepth = length(relPos);
+		 45     - 	#else
+		 46     - 		float cameraDepth = pos.z;
+		 47     - 	#endif
+		 48     - #endif
+		 49     - 
+		     43 + 			vec3 relPos = VIEW_POS - (POSITION.xyz + CHUNK_ORIGIN);
+		     44 + 			float cameraDepth = length(relPos);
+		     45 + 		#else
+		     46 + 			float cameraDepth = pos.z;
+		 50     - ///// apply fog
+		 51     - 
+		 52     - #ifdef FOG
+		 53     - 	float len = cameraDepth / RENDER_DISTANCE;
+		 54     - 	#ifdef ALLOW_FADE
+		     47 + 		#endif
+		     48 + #endif
+		 55     - 		len += CURRENT_COLOR.r;
+		 56     - 	#endif
+		     49 + 
+		     50 + ///// apply fog
+		 57  51   
+		     52 + #ifdef FOG
+		     53 + 	float len = cameraDepth / RENDER_DISTANCE;
+		     54 + 	#ifdef ALLOW_FADE
+		     55 + 		len += CURRENT_COLOR.r;
+		     56 + 	#endif
+		 58     -     fogColor.rgb = FOG_COLOR.rgb;
+		 59     - 	fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		 60     - #endif
+		 61  57   
+		     58 +     fogColor.rgb = FOG_COLOR.rgb;
+		 62     - ///// water magic
+		 63     - #ifdef NEAR_WATER
+		     59 + 	fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
+		     60 + #endif
+		 64     - 	#ifdef FANCY  /////enhance water
+		 65     - 		float F = dot(normalize(relPos), UNIT_Y);
+		 66  61   
+		     62 + ///// water magic
+		     63 + #ifdef NEAR_WATER
+		 67     - 		//if both NEAR_WATER and FOG are defined, it's forced fog and we're underwater
+		     64 + 	#ifdef FANCY  /////enhance water
+		 68     - 		#ifndef FOG  //over water
+		     65 + 		float F = dot(normalize(relPos), UNIT_Y);
+		     66 + 		F = 1.0 - max(F, 0.1);
+		 69     - 			F = 1.0 - max(F, 0.1);
+		 70     - 		#else //under water
+		 71     - 			color.a = 0.7; //disable fake transparency and be transparent
+		     67 + 		F = 1.0 - mix(F*F*F*F, 1.0, min(1.0, cameraDepth / FAR_CHUNKS_DISTANCE));
+		 72     - 		#endif
+		 73  68   
+		     69 + 		color.rg -= vec2(F * DIST_DESATURATION);
+		 74     - 		F = 1.0 - mix(F*F*F*F, 1.0, min(1.0, cameraDepth / FAR_CHUNKS_DISTANCE));
+		 75  70   
+		     71 + 		vec4 depthColor = vec4(color.rgb * 0.5, 1.0);
+		     72 + 		vec4 traspColor = vec4(color.rgb * 0.45, 0.8);
+		     73 + 		vec4 surfColor = vec4(color.rgb, 1.0);
+		 76     - 		color.rg -= vec2(F * DIST_DESATURATION);
+		 77  74   
+		     75 + 		vec4 nearColor = mix(traspColor, depthColor, color.a);
+		     76 + 		color = mix(surfColor, nearColor, F);
+		     77 + 	#else
+		     78 + 		// Completely insane, but if I don't have these two lines in here, the water doesn't render on a Nexus 6
+		 78     - 		vec4 depthColor = vec4(color.rgb * 0.5, 1.0);
+		 79     - 		vec4 traspColor = vec4(color.rgb * 0.45, 0.8);
+		 80  79   		vec4 surfColor = vec4(color.rgb, 1.0);
+		 81     - 
+		 82     - 		vec4 nearColor = mix(traspColor, depthColor, color.a);
+		     80 + 		color = surfColor;
+		 83     - 		color = mix(surfColor, nearColor, F);
+		 84     - 	#else
+		 85  81   		color.a = pos.z / FAR_CHUNKS_DISTANCE + 0.5;
+		 86  82   	#endif //FANCY
+		 87  83   #endif
+		 88  84   }
+		          '''

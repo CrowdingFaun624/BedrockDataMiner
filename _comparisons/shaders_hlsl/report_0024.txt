@@ -1,0 +1,65 @@
+Difference of "shaders" between "1.6.0.1" (beta of "1.6.0") and "1.6.0.6" (beta of "1.6.0").
+Unable to create data files for 1 file between: "1.6.0.5"
+
+Changed file "ShaderConstants.fxh":
+	Total line: 258 (+0, -0)
+	          '''
+	          ...
+	109 109       float4 CHUNK_ORIGIN_AND_SCALE;
+	110 110       float RENDER_CHUNK_FOG_ALPHA;
+	111 111   }
+	112 112   
+	113 113   
+	    114 + cbuffer ActorConstants
+	114     - cbuffer EntityConstants
+	115 115   {
+	116 116       float4 OVERLAY_COLOR;
+	117 117       float4 TILE_LIGHT_COLOR;
+	118 118       float4 CHANGE_COLOR;
+	119 119       float4 GLINT_COLOR;
+	          ...
+	          '''
+Changed file "barrier.vertex.hlsl":
+	Total line: 59 (+10, -1)
+	        '''
+	        ...
+	 3  3   struct VS_Input {
+	 4  4   	float3 position : POSITION;
+	 5  5       float4 color : COLOR;
+	 6  6       float2 uv : TEXCOORD_0;
+	 7  7       float2 light_uv : TEXCOORD_1;
+	    8 + 	#ifdef INSTANCEDSTEREO
+	    9 + 		uint instanceID : SV_InstanceID;
+	   10 + 	#endif
+	 8 11   };
+	 9 12   
+	10 13   
+	11 14   struct PS_Input {
+	12 15   	float4 position : SV_Position;
+	        ...
+	35 38   	// color is only positive, so we have to offset by .5
+	36 39   	// we have to subtract because we passed in uvs
+	37 40   
+	38 41   	// we multiply our offsets by the basis vectors and subtract them to get our verts
+	39 42   	float3 vertPos = center - up * (VSInput.color.z - 0.5f) - right * (VSInput.color.x - 0.5f);
+	   43 + 
+	40 44   
+	   45 + 	#ifdef INSTANCEDSTEREO
+	   46 + 		int i = VSInput.instanceID;
+	41 47   
+	   48 + 		PSInput.position = mul(WORLDVIEW_STEREO[i], float4(vertPos, 1 ));
+	   49 + 		PSInput.position = mul(PROJ_STEREO[i], PSInput.position);
+	   50 + 	#else
+	   51 + 		PSInput.position = mul(WORLDVIEW, float4( vertPos, 1.0f ));
+	   52 + 		PSInput.position = mul(PROJ, PSInput.position);
+	42    - 	PSInput.position = mul(WORLDVIEW, float4( vertPos, 1.0f ));
+	43    - 	PSInput.position = mul(PROJ, PSInput.position);
+	   53 + 	#endif 
+	44    - 
+	45 54   	PSInput.uv = VSInput.uv;
+	46 55   	PSInput.light_uv = VSInput.light_uv;
+	47 56   
+	48 57   	// color is hardcoded white
+	49 58   	PSInput.color = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	        ...
+	        '''
