@@ -10,4 +10,5 @@ def ui_separate_variables(data:dict[str,Any]) -> None:
     for variable_name in variables.keys():
         del data[variable_name] # variables are not wanted in the element afterward
     assert "$variables" not in data
-    data["$variables"] = variables
+    if len(variables) > 0:
+        data["$variables"] = variables
