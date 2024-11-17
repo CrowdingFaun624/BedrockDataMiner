@@ -18,7 +18,6 @@ class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
 
     def __init__(self, data: ComponentTyping.StructureTagTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.is_file = data.get("is_file", False)
 

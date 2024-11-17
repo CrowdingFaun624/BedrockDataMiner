@@ -49,7 +49,6 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
 
     def __init__(self, data:ComponentTyping.DictTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.detect_key_moves = data.get("detect_key_moves", True)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", DictStructure.MIN_KEY_SIMILARITY_THRESHOLD)

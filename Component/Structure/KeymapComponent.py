@@ -61,7 +61,6 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
 
     def __init__(self, data:ComponentTyping.KeymapTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.detect_key_moves = data.get("detect_key_moves", False)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", KeymapStructure.MIN_KEY_SIMILARITY_THRESHOLD)

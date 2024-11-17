@@ -38,7 +38,6 @@ class VersionComponent(Component.Component[Version.Version]):
 
     def __init__(self, data:ComponentTyping.VersionTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.time = datetime.date.fromisoformat(data["time"]) if data["time"] is not None else None
 

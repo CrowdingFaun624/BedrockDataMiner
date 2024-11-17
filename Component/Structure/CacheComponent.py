@@ -31,7 +31,6 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
 
     def __init__(self, data:ComponentTyping.CacheTypedDict, name: str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.remove_threshold = data.get("remove_threshold", 10)
         self.cache_check_all_types = data.get("cache_check_all_types", True)

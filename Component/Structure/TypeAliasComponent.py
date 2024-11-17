@@ -18,7 +18,7 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
 
     def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
+
         if name in StructureComponent.DEFAULT_TYPES:
             raise Exceptions.ComponentInvalidNameError(self, list(StructureComponent.DEFAULT_TYPES.keys()))
 

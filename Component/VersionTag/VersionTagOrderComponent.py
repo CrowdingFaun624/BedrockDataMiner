@@ -34,7 +34,6 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
 
     def __init__(self, data: ComponentTyping.VersionTagOrderTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.order_field = FieldListField.FieldListField([
             ComponentListField.ComponentListField(tags, VERSION_TAG_PATTERN, ["order", index], allow_inline=Field.InlinePermissions.reference)

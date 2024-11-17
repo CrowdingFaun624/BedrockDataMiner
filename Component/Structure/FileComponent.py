@@ -31,7 +31,6 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
 
     def __init__(self, data:ComponentTyping.FileTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.children_has_garbage_collection = data.get("garbage_collect", False)
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)

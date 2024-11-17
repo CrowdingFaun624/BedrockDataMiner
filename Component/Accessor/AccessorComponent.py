@@ -60,7 +60,6 @@ class AccessorComponent(Component.Component[AccessorCreator]):
 
     def __init__(self, data: ComponentTyping.AccessorTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.arguments = data["arguments"]
 

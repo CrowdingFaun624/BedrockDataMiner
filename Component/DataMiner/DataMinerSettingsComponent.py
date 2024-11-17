@@ -40,7 +40,6 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
 
     def __init__(self, data:ComponentTyping.DataMinerSettingsTypedDict, name: str, component_group: str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.files_field_exists = "files" in data
         self.arguments = data.get("arguments", {})

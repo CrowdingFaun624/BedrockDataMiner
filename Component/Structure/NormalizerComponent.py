@@ -23,7 +23,6 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
 
     def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.arguments = data.get("arguments", {})
 

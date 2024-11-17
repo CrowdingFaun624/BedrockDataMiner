@@ -34,7 +34,6 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
 
     def __init__(self, data:ComponentTyping.SetTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.sort = data.get("sort", False)
         self.min_similarity_threshold = data.get("min_similarity_threshold", SetStructure.MIN_SIMILARITY_THRESHOLD)

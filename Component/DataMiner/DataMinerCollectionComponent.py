@@ -39,7 +39,6 @@ class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataM
 
     def __init__(self, data: ComponentTyping.DataMinerCollectionTypedDict, name: str, component_group: str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)

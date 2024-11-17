@@ -34,7 +34,6 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
 
     def __init__(self, data:ComponentTyping.SequenceTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
-        self.verify_arguments(data)
 
         self.addition_cost = data.get("addition_cost", 1)
         self.deletion_cost = data.get("deletion_cost", 1)

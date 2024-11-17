@@ -21,6 +21,7 @@ class Component(Generic[a]):
     type_verifier:TypeVerifier.TypeVerifier
 
     def __init__(self, data:Any, name:str, component_group:str, index:int|None) -> None:
+        self.verify_arguments(data)
         self.name = name
         self.component_group = component_group
         self.index = index
