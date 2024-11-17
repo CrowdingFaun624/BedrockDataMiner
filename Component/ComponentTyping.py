@@ -30,8 +30,10 @@ class BaseTypedDict(TypedDict):
     imports: NotRequired[list[ImportTypedDict]]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
+    pre_normalized_types: NotRequired[str|list[str]]
     subcomponent: Required[str]
     type: NotRequired[Literal["Base"]]
+    types: Required[str|list[str]]
 
 class CacheTypedDict(TypedDict):
     cache_check_all_types: NotRequired[bool]
