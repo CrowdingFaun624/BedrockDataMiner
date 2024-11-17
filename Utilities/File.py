@@ -35,7 +35,7 @@ class AbstractFile(Generic[a]):
         ...
 
     def __eq__(self, other:"AbstractFile") -> bool:
-        return self is other or self.hash == other.hash
+        return self is other or hash(self) == hash(other)
 
     def __hash__(self) -> int:
         return self.hash
@@ -84,7 +84,7 @@ class File(AbstractFile[a]):
         # in case you want to clear up memory or something.
         self._data = ...
 
-    data = property(_get_data, _set_data, _del_data)
+    data = property(_get_data, _set_data, _del_data) # type: ignore
 
     def __copy_empty__(self) -> AbstractFile[a]:
         return EmptyFile(self.serializer, self.hash, self._data)
@@ -121,6 +121,8 @@ class EmptyFile(File[a]):
             data:a = super()._get_data()
             self._data = type(data)()
         return self._data
+
+    data = property(_get_data, File._set_data, File._del_data) # type: ignore
 
     def __copy_empty__(self) -> AbstractFile[a]:
         return self
