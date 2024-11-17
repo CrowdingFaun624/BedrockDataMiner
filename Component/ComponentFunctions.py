@@ -29,6 +29,13 @@ def wrap_in_dict(data:list[dict[str,Any]], key:str, delete:bool=False) -> dict[s
             del value[key]
     return output
 
+def turn_to_dict(data:list[dict[str,Any]], key_key:str, value_key:str) -> dict[str,Any]:
+    output:dict[str,Any] = {}
+    for item in data:
+        assert len(item) == 2
+        output[item[key_key]] = item[value_key]
+    return output
+
 def wrap_tuple(data:list[Any], keys:list[str]) -> dict[str,Any]:
     assert len(data) == len(keys)
     return {key: value for key, value in zip(keys, data)}
@@ -58,11 +65,15 @@ def parse_number(data:str) -> int|float:
 def split_lines(data:str, keep_ends:bool=False) -> list[str]:
     return data.splitlines(keep_ends)
 
+def get_file_stem(data:str) -> str:
+    return data.split("/")[-1].split(".", 1)[0]
+
 functions:dict[str,Callable] = {
     "delete_optional_key": delete_optional_key,
     "delete_optional_keys": delete_optional_keys,
     "delete_required_key": delete_required_key,
     "delete_required_keys": delete_required_keys,
+    "get_file_stem": get_file_stem,
     "load_json": load_json,
     "move_key": move_key,
     "open_file": open_file,
@@ -70,6 +81,7 @@ functions:dict[str,Callable] = {
     "parse_int": parse_int,
     "parse_number": parse_number,
     "split_lines": split_lines,
+    "turn_to_dict": turn_to_dict,
     "wrap_in_dict": wrap_in_dict,
     "wrap_tuple": wrap_tuple,
 }

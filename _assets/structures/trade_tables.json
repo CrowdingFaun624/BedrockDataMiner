@@ -101,6 +101,7 @@
         },
         "types": ["dict"],
         "min_similarity_threshold": 0.3,
+        "max_similarity_descendent_depth": 8,
         "subcomponent": "tier"
     },
     "trades": {
@@ -144,6 +145,7 @@
         },
         "types": ["dict"],
         "min_similarity_threshold": 0.75,
+        "max_similarity_descendent_depth": null,
         "subcomponent": "trade:gives.item"
     },
     "trade:wants": {
@@ -154,6 +156,7 @@
         },
         "types": ["dict"],
         "min_similarity_threshold": 0.75,
+        "max_similarity_descendent_depth": null,
         "subcomponent": "trade:wants.item"
     },
     "trade:gives.item": {
@@ -161,7 +164,8 @@
         "sort": "by_component_order",
         "keys": {
             "item": {"type": "str", "subcomponent": {
-                "type": "String"
+                "type": "String",
+                "max_similarity_ancestor_depth": 5
             }, "weight": 12, "delegate_arguments": {"always_print": true}},
             "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
             "biomes": {"type": "list", "subcomponent": "biome_list"},
@@ -184,7 +188,8 @@
         "sort": "by_component_order",
         "keys": {
             "item": {"type": "str", "subcomponent": {
-                "type": "String"
+                "type": "String",
+                "max_similarity_ancestor_depth": 5
             }, "weight": 12, "delegate_arguments": {"always_print": true}},
             "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
             "choice": {"type": "list", "subcomponent": "trade:wants.item.choice"},
