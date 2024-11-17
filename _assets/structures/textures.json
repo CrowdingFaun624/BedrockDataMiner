@@ -10,7 +10,8 @@
         "type": "Dict",
         "types": "dict",
         "delegate_arguments": {
-            "field": "texture"
+            "field": "texture",
+            "measure_length": true
         },
         "key_component": {
             "type": "String",
@@ -25,7 +26,8 @@
         "type": "Dict",
         "types": "dict",
         "delegate_arguments": {
-            "field": "resource pack"
+            "field": "resource pack",
+            "measure_length": true
         },
         "normalizer": {
             "function_name": "normalizers/collapse_resource_packs/flat"
@@ -124,7 +126,7 @@
             "Compression": {"type": "str"},
             "ConnectionSpaceIlluminant": {"type": "str"},
             "Copyright": {"type": "str"},
-            "Copyright-en-US": {"type": "str"},
+            "Copyright-en-US": {"type": "list", "subcomponent": "lines"},
             "CopyrightFlag": {"type": "bool"},
             "CopyrightOwner": {"type": "str"},
             "CreateDate": {"type": "str"},
@@ -140,7 +142,7 @@
             "DerivedFromInstanceID": {"type": "str"},
             "DerivedFromOriginalDocumentID": {"type": "str"},
             "Description": {"type": "str"},
-            "Description-en-US": {"type": "str"},
+            "Description-en-US": {"type": "list", "subcomponent": "lines"},
             "Designer": {"type": "str"},
             "Designer-en-US": {"type": "str"},
             "DesignerURL": {"type": "str"},
@@ -405,7 +407,7 @@
             "TrackUID": {"type": "str"},
             "TrackVolume": {"type": "str"},
             "Trademark": {"type": "str"},
-            "Trademark-en-US": {"type": "str"},
+            "Trademark-en-US": {"type": "list", "subcomponent": "lines"},
             "Transparency": {"type": ["int", "str"]},
             "TransparentColor": {"type": "int"},
             "URL_List": {"type": "list", "subcomponent": "metadata.url_list"},
@@ -614,6 +616,18 @@
             "file_types": "file",
             "content_types": "null",
             "subcomponent": null
+        }
+    },
+    "lines": {
+        "type": "Primitive",
+        "pre_normalized_types": "str",
+        "normalizer": {
+            "function_name": "split_lines"
+        },
+        "types": "list",
+        "delegate": "LongStringDelegate",
+        "delegate_arguments": {
+            "measure_length": true
         }
     }
 }
