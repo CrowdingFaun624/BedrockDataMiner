@@ -41,11 +41,11 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
                 header.append("Unable to create data files for %i %s %s: %s" % (len(versions_between), files_word, between_word, ", ".join("\"%s\"" % version.name for version in versions_between)))
         header.append("")
 
-        lines:list[DefaultDelegate.Line]
+        lines:list[DefaultDelegate.LineType]
         lines, any_changes, new_exceptions = self.get_structure().get_structure().compare_text(data, environment)
         exceptions.extend(new_exceptions)
 
         final = header
-        final.extend(str(line) for line in lines)
+        final.extend("\t" * line[0] + line[1] for line in lines)
 
         return "\n".join(final), any_changes, exceptions

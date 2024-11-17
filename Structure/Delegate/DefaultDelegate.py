@@ -1,6 +1,7 @@
-from typing import Any, Generic, Hashable, Iterable, TypedDict, TypeVar, cast
+from typing import (Any, Generic, Hashable, Iterable, TypeAlias, TypedDict,
+                    TypeVar, cast)
 
-from typing_extensions import NotRequired, Self
+from typing_extensions import NotRequired
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.Delegate.Delegate as Delegate
@@ -27,46 +28,12 @@ b = TypeVar("b")
 
 NoneType = type(None)
 
-class Line():
-    "A line of text in a comparison report."
-
-    def __init__(self, text:str, *, indent:int=0) -> None:
-        '''
-        :text: The text to start this Line with.
-        :indent: The number of indents this Line starts with.
-        '''
-        self.text = text
-        self.indents = indent
-
-    def set_indent(self, indents:int) -> None:
-        '''
-        Forcefully sets the indent of this line.
-        :indents: The number of indents to set this Line to.
-        '''
-        self.indents = indents
-
-    def indent(self, amount:int=1) -> Self:
-        '''
-        Increases the indent of this line.
-        :amount: The amount to increase the indent by.
-        '''
-        self.indents += amount
-        return self
-
-    def __mod__(self, data:Any) -> Self:
-        self.text %= data
-        return self
-
-    def __str__(self) -> str:
-        return "\t" * self.indents + self.text
-
-    def __repr__(self) -> str:
-        return "<%s indent %i; len %i>" % (self.__class__.__name__, self.indents, len(self.text))
+LineType:TypeAlias = tuple[int,str]
 
 class DefaultDelegateKeysTypedDict(TypedDict):
     always_print: NotRequired[bool]
 
-class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tuple[Line, int]]], Generic[a]):
+class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, list[LineType]], Generic[a]):
 
     applies_to = (Structure.Structure, type(None))
 
@@ -125,16 +92,6 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
             case _:
                 raise Exceptions.CannotStringifyError(type(data))
 
-    def cache_store(self, data: list[Line], environment: StructureEnvironment.ComparisonEnvironment) -> list[tuple[Line, int]]:
-        return [(line, line.indents) for line in data]
-
-    def cache_retrieve(self, data: list[tuple[Line, int]], environment: StructureEnvironment.ComparisonEnvironment) -> list[Line]:
-        output:list[Line] = []
-        for line, indents in data:
-            line.set_indent(indents)
-            output.append(line)
-        return output
-
     def enumerate(self, data:list[b]|dict[str,b]|set[b]) -> Iterable[tuple[a, b]]:
         '''
         Returns the key-value pairing of the data.
@@ -161,26 +118,26 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
     def get_compare_text_key_str(self, index:a) -> a|None:
         return index if self.show_item_key else None
 
-    def print_item(self, index:a, substructure_output:list[Line], message:str="") -> list[Line]:
+    def print_item(self, index:a, substructure_output:list[LineType], message:str="") -> list[LineType]:
         if self.passthrough:
             return substructure_output
         substructure_output_length = len(substructure_output)
         item_key = self.get_item_key(index)
         if substructure_output_length == 0:
-            return [Line("%s%s%s: empty") % (message, self.field, item_key)]
+            return [(0, "%s%s%s: empty" % (message, self.field, item_key))]
         elif substructure_output_length == 1:
-            return [Line("%s%s%s: %s") % (message, self.field, item_key, substructure_output[0])]
+            return [(0, "%s%s%s: %s" % (message, self.field, item_key, substructure_output[0][1]))]
         else:
-            output:list[Line] = []
-            output.append(Line("%s%s%s:") % (message, self.field, item_key))
-            output.extend(line.indent() for line in substructure_output)
+            output:list[LineType] = []
+            output.append((0, "%s%s%s:" % (message, self.field, item_key)))
+            output.extend((indentation + 1, line) for indentation, line in substructure_output)
             return output
 
-    def print_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[Line],list[Trace.ErrorTrace]]:
+    def print_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[LineType],list[Trace.ErrorTrace]]:
         if self.structure is None or isinstance(self.structure, (PassthroughStructure.PassthroughStructure, PrimitiveStructure.PrimitiveStructure)):
-            return [Line(self.stringify(data))], []
+            return [(0, self.stringify(data))], []
         exceptions:list[Trace.ErrorTrace] = []
-        output:list[Line] = []
+        output:list[LineType] = []
         items_str:list[str] = [] # print_flat only
         for index, item in self.enumerate(data):
             if not isinstance(self.structure, ObjectStructure.ObjectStructure):
@@ -189,23 +146,23 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                 structure, new_exceptions = self.structure.get_structure(index, item)
                 exceptions.extend(exception.add(self.get_structure().name, index) for exception in new_exceptions)
             if structure is None:
-                substructure_output = [Line(self.stringify(item))]
+                substructure_output = [(0, self.stringify(item))]
             else:
                 substructure_output, new_exceptions = structure.print_text(item, environment)
                 exceptions.extend(exception.add(self.get_structure().name, index) for exception in new_exceptions)
             if self.print_flat:
                 if len(substructure_output) == 1:
-                    items_str.append(substructure_output[0].text)
+                    items_str.append(substructure_output[0][1])
                 else:
                     exceptions.append(Trace.ErrorTrace(Exceptions.StructureCannotPrintFlatError(), self.get_structure().name, index, item))
             else:
                 output.extend(self.print_item(index, substructure_output))
         if self.print_flat:
-            output.append(Line("[" + ", ".join(items_str) + "]"))
+            output.append((0, "[" + ", ".join(items_str) + "]"))
         return output, exceptions
 
-    def compare_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[Line],bool, list[Trace.ErrorTrace]]:
-        output:list[Line] = []
+    def compare_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[LineType],bool, list[Trace.ErrorTrace]]:
+        output:list[LineType] = []
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False
         current_length, addition_length, removal_length = 0, 0, 0
@@ -225,7 +182,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                 if index_diff.is_change:
                     can_print_print_all = False
                     any_changes = True
-                    output.append(Line("Moved %s %s to %s.") % (self.field, self.stringify(index.old), self.stringify(index.new)))
+                    output.append((0, "Moved %s %s to %s." % (self.field, self.stringify(index.old), self.stringify(index.new))))
             else:
                 old_index, new_index = index, index
 
@@ -248,12 +205,12 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                         new_exceptions = self.print_single(item_key, item.old, "Removed", output, structure_set[D.DiffType.old], environment[0])
                 exceptions.extend(exception.add(self.get_structure().name, new_index) for exception in new_exceptions)
             else:
-                substructure_output:list[Line]
+                substructure_output:list[LineType]
                 current_length += 1
                 structure = structure_set[D.DiffType.not_diff]
                 if structure is None:
                     if (self.print_all or new_index in self.always_print_keys) and can_print_print_all:
-                        substructure_output = [Line(self.stringify(item))]
+                        substructure_output = [(0, self.stringify(item))]
                         output.extend(self.print_item(new_index, substructure_output, message="Unchanged "))
                     pass # This means that it is not a Diff and does not contains Diffs, so there is no text to write.
                 else:
@@ -261,17 +218,20 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                     exceptions.extend(exception.add(self.get_structure().name, new_index) for exception in new_exceptions)
                     if has_changes:
                         any_changes = True
-                        output.append(Line("Changed %s%s:") % (self.field, self.get_item_key(new_index)))
-                        output.extend(line.indent() for line in substructure_output)
+                        if self.passthrough:
+                            output.extend(substructure_output)
+                        else:
+                            output.append((0, "Changed %s%s:" % (self.field, self.get_item_key(new_index))))
+                            output.extend((indentation + 1, line) for indentation, line in substructure_output)
                     elif (self.print_all or new_index in self.always_print_keys) and can_print_print_all:
                         substructure_output, new_exceptions = structure.print_text(item, environment[1])
                         exceptions.extend(exception.add(self.get_structure().name, new_index) for exception in new_exceptions)
                         output.extend(self.print_item(new_index, substructure_output, message="Unchanged "))
         if self.measure_length and size_changed:
-            output = [Line("Total %s: %i (+%i, -%i)") % (self.field, current_length, addition_length, removal_length)] + output
+            output = [(0, "Total %s: %i (+%i, -%i)" % (self.field, current_length, addition_length, removal_length))] + output
         return output, any_changes, exceptions
 
-    def print_single(self, key_str:a|None, data:Any, message:str, output:list[Line], printer:Structure.Structure|None, environment:StructureEnvironment.PrinterEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
+    def print_single(self, key_str:a|None, data:Any, message:str, output:list[LineType], printer:Structure.Structure|None, environment:StructureEnvironment.PrinterEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
         '''
         Adds text from a single-type Diff (i.e. an addition or removal). Returns a list of ErrorTraces.
         :key_str: The key to describe the data with. If None, it will not be present.
@@ -286,11 +246,11 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         if printer is None:
             stringified_data = self.stringify(data)
             if key_str is None:
-                output.append(Line("%s %s%s %s.") % (message, self.field, post_message, stringified_data))
+                output.append((0, "%s %s%s %s." % (message, self.field, post_message, stringified_data)))
             else:
-                output.append(Line("%s %s%s %s of %s.") % (message, self.field, post_message, self.stringify(key_str), stringified_data))
+                output.append((0, "%s %s%s %s of %s." % (message, self.field, post_message, self.stringify(key_str), stringified_data)))
         else:
-            substructure_output:list[Line]
+            substructure_output:list[LineType]
             substructure_output, new_exceptions = printer.print_text(data, environment)
             exceptions.extend(exception.add(self.get_structure().name, key_str) for exception in new_exceptions)
             if self.passthrough:
@@ -298,19 +258,19 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
                 return exceptions
             match len(substructure_output), key_str is None:
                 case 0, True:
-                    output.append(Line("%s empty %s%s.") % (message, self.field, post_message))
+                    output.append((0, "%s empty %s%s." % (message, self.field, post_message)))
                 case 0, False:
-                    output.append(Line("%s empty %s%s %s.") % (message, self.field, post_message, self.stringify(key_str)))
+                    output.append((0, "%s empty %s%s %s." % (message, self.field, post_message, self.stringify(key_str))))
                 case 1, True:
-                    output.append(Line("%s %s%s %s.") % (message, self.field, post_message, substructure_output[0]))
+                    output.append((0, "%s %s%s %s." % (message, self.field, post_message, substructure_output[0][1])))
                 case 1, False:
-                    output.append(Line("%s %s%s %s of %s.") % (message, self.field, post_message, self.stringify(key_str), substructure_output[0]))
+                    output.append((0, "%s %s%s %s of %s." % (message, self.field, post_message, self.stringify(key_str), substructure_output[0][1])))
                 case _, True:
-                    output.append(Line("%s %s%s:") % (message, self.field, post_message))
-                    output.extend(line.indent() for line in substructure_output)
+                    output.append((0, "%s %s%s:" % (message, self.field, post_message)))
+                    output.extend((indentation + 1, line) for indentation, line in substructure_output)
                 case _, False:
-                    output.append(Line("%s %s%s %s:") % (message, self.field, post_message, self.stringify(key_str)))
-                    output.extend(line.indent() for line in substructure_output)
+                    output.append((0, "%s %s%s %s:" % (message, self.field, post_message, self.stringify(key_str))))
+                    output.extend((indentation + 1, line) for indentation, line in substructure_output)
         return exceptions
 
     def print_double(
@@ -319,7 +279,7 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         data1:Any,
         data2:Any,
         message:str,
-        output:list[Line],
+        output:list[LineType],
         printers:StructureSet.StructureSet,
         environment:StructureEnvironment.ComparisonEnvironment,
         *,
@@ -339,15 +299,15 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
         printer1 = printers[D.DiffType.old]
         printer2 = printers[D.DiffType.new]
         exceptions:list[Trace.ErrorTrace] = []
-        substructure_output1:list[Line]
-        substructure_output2:list[Line]
+        substructure_output1:list[LineType]
+        substructure_output2:list[LineType]
         if printer1 is None:
-            substructure_output1 = [Line(self.stringify(data1))]
+            substructure_output1 = [(0, self.stringify(data1))]
         else:
             substructure_output1, new_exceptions = printer1.print_text(data1, environment[0])
             exceptions.extend(exception.add(self.get_structure().name, key_str) for exception in new_exceptions)
         if printer2 is None:
-            substructure_output2 = [Line(self.stringify(data2))]
+            substructure_output2 = [(0, self.stringify(data2))]
         else:
             substructure_output2, new_exceptions = printer2.print_text(data2, environment[1])
             exceptions.extend(exception.add(self.get_structure().name, key_str) for exception in new_exceptions)
@@ -355,33 +315,33 @@ class DefaultDelegate(Delegate.Delegate[list[Line], Structure.Structure, list[tu
             output.extend(substructure_output1)
             output.extend(substructure_output2)
             return exceptions
-        if len(substructure_output1) == 0: substructure_output1 = [Line("empty")]
-        if len(substructure_output2) == 0: substructure_output2 = [Line("empty")]
+        if len(substructure_output1) == 0: substructure_output1 = [(0, "empty")]
+        if len(substructure_output2) == 0: substructure_output2 = [(0, "empty")]
         match len(substructure_output1), len(substructure_output2), key_str is None:
             case 1, 1, True:
-                output.append(Line("%s %s%s from %s to %s.") % (message, self.field, post_message, substructure_output1[0], substructure_output2[0]))
+                output.append((0, "%s %s%s from %s to %s." % (message, self.field, post_message, substructure_output1[0][1], substructure_output2[0][1])))
             case 1, 1, False:
-                output.append(Line("%s %s%s %s from %s to %s.") % (message, self.field, post_message, self.stringify(key_str), substructure_output1[0], substructure_output2[0]))
+                output.append((0, "%s %s%s %s from %s to %s." % (message, self.field, post_message, self.stringify(key_str), substructure_output1[0][1], substructure_output2[0][1])))
             case 1, _, True:
-                output.append(Line("%s %s%s from %s to:") % (message, self.field, post_message, substructure_output1[0]))
-                output.extend(line.indent() for line in substructure_output2)
+                output.append((0, "%s %s%s from %s to:" % (message, self.field, post_message, substructure_output1[0][1])))
+                output.extend((indentation + 1, line) for indentation, line in substructure_output2)
             case 1, _, False:
-                output.append(Line("%s %s%s %s from %s to:") % (message, self.field, post_message, self.stringify(key_str), substructure_output1[0]))
-                output.extend(line.indent() for line in substructure_output2)
+                output.append((0, "%s %s%s %s from %s to:" % (message, self.field, post_message, self.stringify(key_str), substructure_output1[0][1])))
+                output.extend((indentation + 1, line) for indentation, line in substructure_output2)
             case _, 1, True:
-                output.append(Line("%s %s%s to %s from:") % (message, self.field, post_message, substructure_output2[0]))
-                output.extend(line.indent() for line in substructure_output1)
+                output.append((0, "%s %s%s to %s from:" % (message, self.field, post_message, substructure_output2[0][1])))
+                output.extend((indentation + 1, line) for indentation, line in substructure_output1)
             case _, 1, False:
-                output.append(Line("%s %s%s %s to %s from:") % (message, self.field, post_message, self.stringify(key_str), substructure_output2[0]))
-                output.extend(line.indent() for line in substructure_output1)
+                output.append((0, "%s %s%s %s to %s from:" % (message, self.field, post_message, self.stringify(key_str), substructure_output2[0][1])))
+                output.extend((indentation + 1, line) for indentation, line in substructure_output1)
             case _, _, True:
-                output.append(Line("%s %s%s from:") % (message, self.field, post_message))
-                output.extend(line.indent() for line in substructure_output1)
-                output.append(Line("to:"))
-                output.extend(line.indent() for line in substructure_output2)
+                output.append((0, "%s %s%s from:" % (message, self.field, post_message)))
+                output.extend((indentation + 1, line) for indentation, line in substructure_output1)
+                output.append((0, "to:"))
+                output.extend((indentation + 1, line) for indentation, line in substructure_output2)
             case _, _, False:
-                output.append(Line("%s %s%s %s from:") % (message, self.field, post_message, self.stringify(key_str)))
-                output.extend(line.indent() for line in substructure_output1)
-                output.append(Line("to:"))
-                output.extend(line.indent() for line in substructure_output2)
+                output.append((0, "%s %s%s %s from:" % (message, self.field, post_message, self.stringify(key_str))))
+                output.extend((indentation + 1, line) for indentation, line in substructure_output1)
+                output.append((0, "to:"))
+                output.extend((indentation + 1, line) for indentation, line in substructure_output2)
         return exceptions
