@@ -35,6 +35,8 @@ class StructureBase():
         self.children_has_garbage_collection = children_has_garbage_collection
 
         self.structure:Structure.Structure|None = None
+        self.types:tuple[type,...]|None = None
+        self.pre_normalized_types:tuple[type,...]|None = None
         self.delegate:Union["Delegate.Delegate[str,StructureBase,str]", None] = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None
@@ -45,6 +47,8 @@ class StructureBase():
     def link_substructures(
         self,
         structure:Structure.Structure,
+        types:tuple[type,...],
+        pre_normalized_types:tuple[type,...],
         delegate:Union["Delegate.Delegate", None],
         default_delegate:Union["Delegate.Delegate", None],
         normalizer:list[Normalizer.Normalizer],
@@ -52,6 +56,8 @@ class StructureBase():
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
         self.structure = structure
+        self.types = types
+        self.pre_normalized_types = pre_normalized_types
         self.delegate = delegate
         self.default_delegate = default_delegate
         self.normalizer = normalizer
@@ -81,6 +87,11 @@ class StructureBase():
         version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
         # base normalizer
         exceptions:list[Trace.ErrorTrace] = []
+        if self.pre_normalized_types is None:
+            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
+        if not isinstance(data, self.pre_normalized_types):
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
+        self.print_exception_list(exceptions, version_tuple)
         if self.normalizer is None:
             raise Exceptions.AttributeNoneError("normalizer", self)
         output = data
@@ -121,6 +132,10 @@ class StructureBase():
                 if output is None:
                     exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
                     break
+        if self.types is None:
+            raise Exceptions.AttributeNoneError("types", self)
+        if not isinstance(output, self.types):
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(output), "Data"), self.name, None, output))
         self.print_exception_list(exceptions, version_tuple)
 
         return output

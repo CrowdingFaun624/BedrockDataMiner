@@ -107,7 +107,6 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: make StructureBase be able to check types.
 # TODO: make logging of errors slightly better.
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
 

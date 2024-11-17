@@ -4,6 +4,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
+import Component.Structure.Field.TypeListField as TypeListField
 import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -27,8 +28,10 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         ), list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", "a str or StructureComponent", True, (str, dict)),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
     def __init__(self, data:ComponentTyping.BaseTypedDict, name:str, component_group:str, index:int|None) -> None:
@@ -41,7 +44,10 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         self.default_delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("default_delegate", "DefaultDelegate"), data.get("default_delegate_arguments", {}), ["default_delegate"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
-        self.fields.extend([self.subcomponent_field, self.delegate_field, self.default_delegate_field, self.normalizer_field, self.post_normalizer_field])
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
+        self.types_field = TypeListField.TypeListField(data["types"], ["types"])
+        self.types_field.verify_with(self.subcomponent_field)
+        self.fields.extend([self.subcomponent_field, self.delegate_field, self.default_delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.types_field])
 
     def create_final(self) -> None:
         super().create_final()
@@ -54,6 +60,8 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         exceptions = super().link_finals()
         self.get_final().link_substructures(
             structure=self.subcomponent_field.get_final(),
+            types=self.types_field.get_types(),
+            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.types_field.get_types(),
             delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
             default_delegate=self.default_delegate_field.create_delegate(None, exceptions=exceptions),
             normalizer=self.normalizer_field.get_finals(),
