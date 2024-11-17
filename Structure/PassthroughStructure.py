@@ -21,8 +21,18 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
     Not all Structures that have this behavior have to subclass this class.
     '''
 
-    def __init__(self, name: str, children_has_normalizer: bool, children_has_garbage_collection: bool) -> None:
+    def __init__(
+        self,
+        name:str,
+        max_similarity_ancestor_depth:int|None,
+        max_similarity_descendent_depth:int|None,
+        children_has_normalizer:bool,
+        children_has_garbage_collection:bool,
+    ) -> None:
         super().__init__(name, children_has_normalizer, children_has_garbage_collection)
+
+        self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
+        self.max_similarity_descendent_depth = max_similarity_descendent_depth
 
         self.structure:Structure.Structure[a]|None = None
         self.delegate:Union["Delegate.Delegate", None] = None
@@ -128,11 +138,13 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         if self.structure is not None and self.children_has_garbage_collection:
             yield from self.structure.get_referenced_files(data, environment)
 
-    def get_similarity(self, data1: a, data2: a, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: a, data2: a, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
+            return float(data1 == data2)
         if self.structure is None:
             return float(data1 == data2)
         else:
-            output = self.structure.get_similarity(data1, data2, environment, exceptions)
+            output = self.structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions)
             return output
 
     def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a, a], bool, list[Trace.ErrorTrace]]:

@@ -26,10 +26,7 @@ class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
         children_has_normalizer: bool,
         children_has_garbage_collection:bool,
     ) -> None:
-        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
-
-        self.max_similarity_descendent_depth = max_similarity_descendent_depth
-        self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
+        super().__init__(name, max_similarity_ancestor_depth, max_similarity_descendent_depth, children_has_normalizer, children_has_garbage_collection)
 
         self.substructures:dict[type,Structure.Structure|None]|None = None
 

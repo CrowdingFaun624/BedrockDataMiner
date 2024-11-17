@@ -31,7 +31,8 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
             children_has_normalizer:bool,
             children_has_garbage_collection:bool,
         ) -> None:
-        super().__init__(name, children_has_normalizer, children_has_garbage_collection)
+        # CacheStructure overrides get_similarity, so max ancestor and descendent depth don't matter.
+        super().__init__(name, None, None, children_has_normalizer, children_has_garbage_collection)
 
         self.searches:int = 0
         '''Increases each time `clear_old_items` is called.'''
