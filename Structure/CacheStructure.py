@@ -169,7 +169,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
 
     def print_text(self, data: d, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
         structure = self.get_structure()
-        if environment.structure_environment.should_cache or not self.cache_print_text:
+        if not environment.structure_environment.should_cache or not self.cache_print_text:
             return structure.print_text(data, environment)
         data_hash = Hashing.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
@@ -189,7 +189,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
 
     def get_similarity(self, data1: d, data2: d, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         structure = self.get_structure()
-        if environment.structure_environment.should_cache or not self.cache_get_similarity:
+        if not environment.structure_environment.should_cache or not self.cache_get_similarity:
             return structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2), depth, max_depth))
         cache_item = self.cache.pop(data_hash, None)
@@ -209,7 +209,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
 
     def compare(self, data1: d, data2: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
         structure = self.get_structure()
-        if environment.structure_environment.should_cache or not self.cache_compare:
+        if not environment.structure_environment.should_cache or not self.cache_compare:
             return structure.compare(data1, data2, environment)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
         cache_item = self.cache.pop(data_hash, None)
@@ -334,7 +334,7 @@ class CacheItem(Generic[d]):
 
     def set_print_text(self, data:tuple[Any, list[Trace.ErrorTrace]], environment:StructureEnvironment.PrinterEnvironment) -> None:
         self.print_text = True
-        self.print_text_data = (self.cache_store(data, environment), [trace.copy() for trace in data[1]])
+        self.print_text_data = (self.cache_store(data[0], environment), [trace.copy() for trace in data[1]])
 
     def get_compare_data(self) -> tuple[d, bool, list[Trace.ErrorTrace]]:
         if self.compare_data is None:
