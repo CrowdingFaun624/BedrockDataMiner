@@ -155,7 +155,8 @@
         "keys": {
             "type": {"type": "str", "delegate_arguments": {"always_print": true}},
             "client_sync": {"type": "bool"},
-            "default": {"type": ["bool", "str"]},
+            "default": {"type": ["bool", "str", "int"]},
+            "range": {"type": "list", "subcomponent": "range_list_int"},
             "values": {"type": "list", "subcomponent": "property:values"}
         }
     },
@@ -1236,6 +1237,7 @@
             "broadcast_anger": {"type": "bool"},
             "broadcast_anger_on_attack": {"type": "bool"},
             "broadcast_anger_on_being_attacked": {"type": "bool"},
+            "broadcast_anger_when_dying": {"type": "bool"},
             "broadcast_filters": {"type": "dict", "subcomponent": "filter"},
             "broadcast_range": {"type": "int"},
             "broadcast_targets": {"type": "list", "subcomponent": "entity_list"},
@@ -1419,6 +1421,7 @@
             "breeds_with": {"type": ["dict", "list"], "subcomponent": "component.breedable:breeds_with_group"},
             "breedsWith": {"type": ["dict", "list"], "subcomponent": "component.breedable:breeds_with_group", "tags": ["outdated"]},
             "causes_pregnancy": {"type": "bool"},
+            "combine_parent_colors": {"type": "bool"},
             "deny_parents_variant": {"type": "dict", "subcomponent": "component.breedable:deny_parents_variant"},
             "environment_requirements": {"type": "dict", "subcomponent": "component.breedable:environment_requirements"},
             "extra_baby_chance": {"type": "decimal"},
@@ -2443,13 +2446,23 @@
     },
     "component.looked_at:look_at_locations": {
         "type": "Set",
-        "types": "str",
+        "types": ["str", "dict"],
         "delegate_arguments": {
             "field": "location",
             "measure_length": true
         },
         "subcomponent": {
-            "type": "String"
+            "type": "Group",
+            "subcomponents": {
+                "str": {"type": "String"},
+                "dict": {
+                    "type": "Keymap",
+                    "keys": {
+                        "location": {"type": "str", "subcomponent": {"type": "String"}},
+                        "vertical_offset": {"type": "decimal"}
+                    }
+                }
+            }
         }
     },
     "component.lookat": {

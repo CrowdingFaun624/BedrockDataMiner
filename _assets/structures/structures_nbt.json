@@ -221,8 +221,8 @@
             "mode": {"type": "TAG_String"},
             "name": {"type": "TAG_String"},
             "next_mob_spawns_at": {"type": "TAG_Long", "tags": ["outdated"]},
-            "normal_config": {"type": "TAG_Compound", "subcomponent": "nbt:normal_config"},
-            "ominous_config": {"type": "TAG_Compound", "subcomponent": "nbt:ominous_config"},
+            "normal_config": {"type": ["TAG_Compound", "TAG_String"], "subcomponent": "nbt:normal_config"},
+            "ominous_config": {"type": ["TAG_Compound", "TAG_String"], "subcomponent": "nbt:ominous_config"},
             "OutputSignal": {"type": "TAG_Int"},
             "Patterns": {"type": "TAG_List", "subcomponent": "nbt:patterns"},
             "placement_priority": {"type": "TAG_Int"},
@@ -376,15 +376,21 @@
         }
     },
     "nbt:normal_config": {
-        "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "keys": {
-            "simultaneous_mobs": {"type": "TAG_Float"},
-            "simultaneous_mobs_added_per_player": {"type": "TAG_Float"},
-            "spawn_potentials": {"type": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials"},
-            "ticks_between_spawn": {"type": "TAG_Int"},
-            "total_mobs": {"type": "TAG_Float"},
-            "total_mobs_added_per_player": {"type": "TAG_Float"}
+        "type": "Group",
+        "subcomponents": {
+            "TAG_String": null,
+            "TAG_Compound":{
+                "type": "Keymap",
+                "this_type": "TAG_Compound",
+                "keys": {
+                    "simultaneous_mobs": {"type": "TAG_Float"},
+                    "simultaneous_mobs_added_per_player": {"type": "TAG_Float"},
+                    "spawn_potentials": {"type": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials"},
+                    "ticks_between_spawn": {"type": "TAG_Int"},
+                    "total_mobs": {"type": "TAG_Float"},
+                    "total_mobs_added_per_player": {"type": "TAG_Float"}
+                }
+            }
         }
     },
     "nbt:normal_config.spawn_potentials": {
@@ -423,13 +429,19 @@
         }
     },
     "nbt:ominous_config": {
-        "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "keys": {
-            "loot_tables_to_eject": {"type": "TAG_List", "subcomponent": "nbt:ominous_config.loot_tables_to_eject"},
-            "simultaneous_mobs": {"type": "TAG_Float"},
-            "spawn_potentials": {"type": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials"},
-            "total_mobs": {"type": "TAG_Float"}
+        "type": "Group",
+        "subcomponents": {
+            "TAG_String": null,
+            "TAG_Compound": {
+                "type": "Keymap",
+                "this_type": "TAG_Compound",
+                "keys": {
+                    "loot_tables_to_eject": {"type": "TAG_List", "subcomponent": "nbt:ominous_config.loot_tables_to_eject"},
+                    "simultaneous_mobs": {"type": "TAG_Float"},
+                    "spawn_potentials": {"type": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials"},
+                    "total_mobs": {"type": "TAG_Float"}
+                }
+            }
         }
     },
     "nbt:ominous_config.loot_tables_to_eject": {
