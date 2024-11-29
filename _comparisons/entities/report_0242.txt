@@ -1,0 +1,298 @@
+Difference of "entities" between "1.21.50.29" (beta of "1.21.50") and "1.21.60.21" (beta of "1.21.60").
+Unable to create data files for 2 files between: "1.21.50.30", "1.21.50"
+
+Changed entity "cat.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:cat_adult":
+					Changed component "minecraft:breedable":
+						Added field "combine_parent_colors" of true.
+Changed entity "creaking.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.50" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:hostile":
+					Total component: 2 (+1, -0)
+					Added component "minecraft:ambient_sound_interval" of field "event_name": "undefined".
+				Changed component group "minecraft:spawned_by_creaking_heart":
+					Total component: 6 (+1, -1)
+					Added component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "enum_property"
+													filter property "domain": "minecraft:creaking_state"
+													filter property "value": "hostile_observed"
+												filter:
+													filter property "test": "enum_property"
+													filter property "domain": "minecraft:creaking_state"
+													filter property "value": "hostile_unobserved"
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "has_target"
+													filter property "value": false
+												filter:
+													filter property "test": "actor_health"
+													filter property "subject": "target"
+													filter property "value": 0
+												filter:
+													filter property "test": "target_distance"
+													filter property "operator": ">"
+													filter property "value": 24
+								field "event": "minecraft:become_neutral"
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "enum_property"
+											filter property "domain": "minecraft:creaking_state"
+											filter property "operator": "not"
+											filter property "value": "twitching"
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "home_distance"
+													filter property "operator": ">"
+													filter property "value": 34
+												filter: filter property "test": "is_daytime"
+								field "event": "minecraft:crumble_and_notify_creaking_heart"
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "enum_property"
+											filter property "domain": "minecraft:creaking_state"
+											filter property "operator": "not"
+											filter property "value": "twitching"
+										filter:
+											filter property "test": "is_bound_to_creaking_heart"
+											filter property "value": false
+								field "event": "minecraft:crumble"
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "int_property"
+											filter property "domain": "minecraft:creaking_swaying_ticks"
+											filter property "operator": ">"
+											filter property "value": 0
+										filter:
+											filter property "test": "int_property"
+											filter property "domain": "minecraft:creaking_swaying_ticks"
+											filter property "operator": "<="
+											filter property "value": 5
+								field "event": "minecraft:increment_swaying_ticks"
+							trigger:
+								field "filters":
+									filter property "test": "int_property"
+									filter property "domain": "minecraft:creaking_swaying_ticks"
+									filter property "operator": ">"
+									filter property "value": 5
+								field "event": "minecraft:reset_swaying_ticks"
+					Removed empty component "minecraft:transient".
+				Changed component group "minecraft:spawned_by_player":
+					Total component: 4 (+1, -0)
+					Added component "minecraft:environment_sensor":
+						field "triggers":
+							trigger:
+								field "filters":
+									filter property "all_of":
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "enum_property"
+													filter property "domain": "minecraft:creaking_state"
+													filter property "value": "hostile_observed"
+												filter:
+													filter property "test": "enum_property"
+													filter property "domain": "minecraft:creaking_state"
+													filter property "value": "hostile_unobserved"
+										filter:
+											filter property "any_of":
+												filter:
+													filter property "test": "has_target"
+													filter property "value": false
+												filter:
+													filter property "test": "actor_health"
+													filter property "subject": "target"
+													filter property "value": 0
+												filter:
+													filter property "test": "target_distance"
+													filter property "operator": ">"
+													filter property "value": 24
+								field "event": "minecraft:become_neutral"
+			Changed field "components":
+				Total component: 12 (+1, -1)
+				Added component "minecraft:despawn" of field "despawn_from_distance": empty.
+				Removed component "minecraft:environment_sensor":
+					field "triggers":
+						trigger:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "enum_property"
+												filter property "domain": "minecraft:creaking_state"
+												filter property "value": "hostile_observed"
+											filter:
+												filter property "test": "enum_property"
+												filter property "domain": "minecraft:creaking_state"
+												filter property "value": "hostile_unobserved"
+									filter:
+										filter property "any_of":
+											filter:
+												filter property "test": "has_target"
+												filter property "value": false
+											filter:
+												filter property "test": "actor_health"
+												filter property "subject": "target"
+												filter property "value": 0
+											filter:
+												filter property "test": "target_distance"
+												filter property "operator": ">"
+												filter property "value": 24
+							field "event": "minecraft:become_neutral"
+						trigger:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "int_property"
+										filter property "domain": "minecraft:creaking_swaying_ticks"
+										filter property "operator": ">"
+										filter property "value": 0
+									filter:
+										filter property "test": "int_property"
+										filter property "domain": "minecraft:creaking_swaying_ticks"
+										filter property "operator": "<="
+										filter property "value": 5
+							field "event": "minecraft:increment_swaying_ticks"
+						trigger:
+							field "filters":
+								filter property "test": "int_property"
+								filter property "domain": "minecraft:creaking_swaying_ticks"
+								filter property "operator": ">"
+								filter property "value": 5
+							field "event": "minecraft:reset_swaying_ticks"
+			Changed field "events":
+				Total event: 13 (+1, -0)
+				Added event "minecraft:crumble_and_notify_creaking_heart":
+					field "trigger": "minecraft:crumble"
+					field "execute_event_on_home_block": field "event": "minecraft:on_spawned_creaking_crumbling"
+Changed entity "donkey.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.10" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 26 (+1, -0)
+				Added empty component "minecraft:ambient_sound_interval".
+Changed entity "drowned.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:baby_drowned":
+					Changed component "minecraft:movement":
+						Changed field "value" from 0.25 to 0.35.
+Changed entity "fox.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.40" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 15 (+1, -0)
+				Added component group "minecraft:fox_ambient_defending_target" of component "minecraft:ambient_sound_interval": field "event_name": "mad".
+			Changed field "events":
+				Changed event "minecraft:fox_configure_defending":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:fox_ambient_defending_target".
+Changed entity "horse.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.10" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 27 (+1, -0)
+				Added empty component "minecraft:ambient_sound_interval".
+Changed entity "mule.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.10" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 26 (+1, -0)
+				Added empty component "minecraft:ambient_sound_interval".
+Changed entity "sheep.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:sheep_adult":
+					Changed component "minecraft:breedable":
+						Added field "combine_parent_colors" of true.
+Changed entity "skeleton_horse.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:lightning_immune":
+					Changed component "minecraft:damage_sensor":
+						Changed field "triggers":
+							Changed field "deals_damage" from false to "no".
+			Changed field "components":
+				Total component: 29 (+1, -0)
+				Added empty component "minecraft:ambient_sound_interval".
+Changed entity "strider.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 23 (+1, -0)
+				Added component "minecraft:movement_sound_distance_offset" of field "value": 0.6.
+Changed entity "wolf.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 17 (+1, -0)
+				Added component group "minecraft:on_tame_collar_color" of component "minecraft:color": field "value": 14.
+				Changed component group "minecraft:wolf_adult":
+					Changed component "minecraft:breedable":
+						Added field "combine_parent_colors" of true.
+				Changed component group "minecraft:wolf_tame":
+					Total component: 10 (+0, -1)
+					Removed component "minecraft:color" of field "value": 14.
+			Changed field "events":
+				Changed event "minecraft:on_tame":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:on_tame_collar_color".
+Changed entity "zombie_horse.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.21.0" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Total component: 24 (+1, -0)
+				Added empty component "minecraft:ambient_sound_interval".
+Changed entity "zombie_villager_v2.json":
+	Changed behavior pack "core":
+		Changed field "format_version" from "1.20.10" to "1.21.60".
+		Changed field "minecraft:entity":
+			Changed field "events":
+				Changed event "minecraft:add_biome_and_skin":
+					Changed field "sequence":
+						Changed sequence item 5:
+							Changed field "filters":
+								Removed filter property "test" of "has_biome_tag".
+								Removed filter property "value" of "swamp".
+								Added filter property "any_of":
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "swamp"
+									filter:
+										filter property "test": "has_biome_tag"
+										filter property "value": "mangrove_swamp"
