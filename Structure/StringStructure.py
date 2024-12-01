@@ -1,3 +1,4 @@
+from itertools import count, takewhile
 from typing import Callable
 
 import Structure.Delegate.Delegate as Delegate
@@ -19,7 +20,7 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         children_has_normalizer: bool,
     ) -> None:
         super().__init__(name, children_has_normalizer)
-        
+
         self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
 
     def link_substructures(
@@ -33,23 +34,28 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
         super().link_substructures(delegate, types, normalizer, pre_normalized_types, tags, children_tags)
-        
+
         self.similarity_function = similarity_function
 
     def get_levenshtein_distance(self, data1:str, data2:str) -> int:
         distances:list[list[int]] = [[0] * (len(data1) + 1) for y in range(len(data2) + 1)]
-        for x in range(1, len(data1) + 1):
+
+        prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1, data2))) # number of items at start that are the same
+        shorter_length = min(len(data1), len(data2))
+        suffix_len = sum(1 for i in takewhile(lambda a: a[0] < shorter_length - prefix_len and a[1] == a[2], zip(count(), reversed(data1), reversed(data2)))) # number of items at end that are the same unless that line is included in prefix_len.
+
+        for x in range(1, len(data1) + 1 - prefix_len - suffix_len):
             distances[0][x] = x
-        for y in range(1, len(data2) + 1):
+        for y in range(1, len(data2) + 1 - prefix_len - suffix_len):
             distances[y][0] = y
-        for y in range(len(data2)):
-            for x in range(len(data1)):
+        for y in range(len(data2) - prefix_len - suffix_len):
+            for x in range(len(data1) - prefix_len - suffix_len):
                 distances[y + 1][x + 1] = min(
                     distances[y+1][x] + 1,
                     distances[y][x+1] + 1,
-                    distances[y][x] + int(data1[x] != data2[y]),
+                    distances[y][x] + int(data1[x + prefix_len] != data2[y + prefix_len]),
                 )
-        return distances[len(data2)][len(data1)]
+        return distances[len(data2) - prefix_len - suffix_len][len(data1) - prefix_len - suffix_len]
 
     def get_similarity(self, data1: str, data2: str, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
         if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
