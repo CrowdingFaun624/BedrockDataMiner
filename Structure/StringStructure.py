@@ -2,7 +2,6 @@ from itertools import count, takewhile
 from typing import Callable
 
 import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.PrimitiveStructure as PrimitiveStructure
 import Structure.StructureEnvironment as StructureEnvironment
@@ -57,7 +56,7 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
                 )
         return distances[len(data2) - prefix_len - suffix_len][len(data1) - prefix_len - suffix_len]
 
-    def get_similarity(self, data1: str, data2: str, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: str, data2: str, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
         if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
             return float(data1 == data2)
         if self.similarity_function is not None:
@@ -72,9 +71,3 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         max_length = len(data1) if len(data1) > len(data2) else len(data2)
         levenshtein_distance = self.get_levenshtein_distance(data1, data2)
         return 1 - (levenshtein_distance / max_length)
-
-    def compare(self, data1: str, data2: str, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str|D.Diff[str], bool, list[Trace.ErrorTrace]]:
-        if data1 is data2 or data1 == data2:
-            return data1, False, []
-        else:
-            return D.Diff(old=data1, new=data2), True, []

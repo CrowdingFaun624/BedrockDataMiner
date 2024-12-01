@@ -240,7 +240,7 @@ class StructureBase():
         :versions_between: A list of any Versions between the first and second Versions.
         :environment: The StructureEnvironment to use.
         '''
-        comparison_environment = StructureEnvironment.ComparisonEnvironment(environment, self.default_delegate, version1, version2, versions_between)
+        comparison_environment = StructureEnvironment.ComparisonEnvironment(environment, self.default_delegate, [version1, version2], [versions_between], False)
         if version1 is None:
             normalized_data2 = self.normalize(data2, comparison_environment[1])
             if hasattr(normalized_data2, "__copy_empty__"):
@@ -286,18 +286,34 @@ class StructureBase():
                 f.write("".join(texts))
             raise Exceptions.StructureError(self)
 
-    def compare(self, data1:Any, data2:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any,bool]:
+    def compare_many(self, *data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any,bool]:
         '''
-        Combines the data into a single object with Diffs in it. Returns the combined object and if there are any differences.
-        :data1: The data from the oldest Version.
-        :data2: The data from the newest Version.
+        Combines many data into a single object with Diffs in it. Returns the combined object and if there are any differences.
+        :data: The normalized data in order from oldest to newest.
         :environment: The StructureEnvironment to use.
         '''
         if self.structure is None:
             raise Exceptions.AttributeNoneError("structure", self)
-        output, has_changes, traces = self.structure.compare(data1, data2, environment)
-        version_tuple:tuple["Version.Version",...] = (environment.version1, environment.version2) if environment.version1 is not None else (environment.version2,)
-        self.print_exception_list(traces, version_tuple)
+        output = data[0]
+        has_changes = False
+        for index, item in enumerate(data[1:]):
+            # branch refers to the index of the newest part of the older data (output).
+            output, any_changes, traces = self.structure.compare(output, item, environment, index, len(data))
+            has_changes = has_changes or any_changes
+            self.print_exception_list(traces, environment.get_non_none_versions())
+        return output, has_changes
+
+    def compare(self, data1:Any, data2:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any,bool]:
+        '''
+        Combines the data into a single object with Diffs in it. Returns the combined object and if there are any differences.
+        :data1: The normalized data from the oldest Version.
+        :data2: The normalized data from the newest Version.
+        :environment: The StructureEnvironment to use.
+        '''
+        if self.structure is None:
+            raise Exceptions.AttributeNoneError("structure", self)
+        output, has_changes, traces = self.structure.compare(data1, data2, environment, 0, 2)
+        self.print_exception_list(traces, environment.get_non_none_versions())
         return output, has_changes
 
     def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[str,bool]:
@@ -311,8 +327,7 @@ class StructureBase():
             output, has_changes, traces = self.get_structure().compare_text(data, environment)
         else:
             output, has_changes, traces = self.delegate.compare_text(data, environment)
-        version_tuple:tuple["Version.Version",...] = (environment.version1, environment.version2) if environment.version1 is not None else (environment.version2,)
-        self.print_exception_list(traces, version_tuple)
+        self.print_exception_list(traces, environment.get_non_none_versions())
         return output, has_changes
 
     def print_text(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> str:

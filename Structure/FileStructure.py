@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, TypeVar, Union
+from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator, TypeVar,
+                    Union, cast)
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -159,30 +160,54 @@ class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
             # function it's a big deal because getting file data is expensive.
             yield from self.structure.get_referenced_files(data.data, environment)
 
-    def get_similarity(self, data1: File.AbstractFile[a], data2: File.AbstractFile[a], depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
-        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
-            return float(data1 == data2)
-        elif self.structure is None:
-            return float(data1 == data2)
-        elif data1 is data2 or data1 == data2:
-            return 1.0
+    def get_similarity(self, data1: File.AbstractFile[a]|File.FileDiff[a], data2: File.AbstractFile[a], depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth) or self.structure is None:
+            if branch == 0:
+                return float(data1 == data2)
+            else:
+                return float(Structure.get_data_at_branch(data1, branch) == data2)
         else:
-            output = self.structure.get_similarity(data1.data, data2.data, depth + 1, max_depth, environment, exceptions)
+            data1_data = data1.last_value.data if isinstance(data1, File.FileDiff) else data1.data
+            output = self.structure.get_similarity(data1_data, data2.data, depth + 1, max_depth, environment, exceptions, branch)
             return output
 
-    def compare(self, data1:File.AbstractFile[a], data2:File.AbstractFile[a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[File.FileDiff, bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1:File.AbstractFile[a]|File.FileDiff[a], data2:File.AbstractFile[a], environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[File.FileDiff[a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        if self.structure is None:
-            if data1 is data2 or data1 == data2:
-                output, has_changes = File.FileDiff(data1, data2, D.Diff(data1.data, data2.data)), False
+        if not isinstance(data1, File.FileDiff) and (data1 is data2 or data1 == data2):
+            output, has_changes = File.FileDiff(data1.data, data1, data2), False
+        elif self.structure is None:
+            has_changes = True
+            if isinstance(data1, File.FileDiff):
+                if isinstance(data1.data, D.Diff):
+                    data1_data = cast("D.Diff[a]", data1.data)
+                    if data1.last_value == data2:
+                        output_diff = data1_data.extend(branch+1)
+                    else:
+                        output_diff = data1_data.append(branch+1, data2.data)
+                else:
+                    # data1 has had no changes across all previous comparisons. self has no Structure, so changes always result in Diffs.
+                    if data1.last_value == data2:
+                        output_diff = data1.last_value.data
+                    else:
+                        output_diff = D.Diff(branches, {tuple(range(0,branch+1)): data1.data, (branch+1,): data2.data})
+                new_files = list(data1.files)
+                new_files.append(data2)
+                output = File.FileDiff(output_diff, *new_files)
             else:
-                output, has_changes = File.FileDiff(data1, data2, D.Diff(data1.data, data2.data)), True
-        elif data1 is data2 or data1 == data2:
-            output, has_changes = File.FileDiff(data1, data2, data1.data), False
+                output = File.FileDiff(D.Diff(branches, {tuple(range(0,branch+1)): data1.data, (branch+1,): data2.data}), data1, data2)
         else:
-            comparison_output, has_changes, new_exceptions = self.structure.compare(data1.data, data2.data, environment)
-            output = File.FileDiff(data1, data2, comparison_output)
+            comparison_output, has_changes, new_exceptions = self.structure.compare(D.last_value(data1.data), data2.data, environment, branch, branches)
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+            if isinstance(data1, File.FileDiff):
+                new_files = list(data1.files)
+                new_files.append(data2)
+            else:
+                new_files = [data1, data2]
+            if isinstance(data1.data, D.Diff):
+                data1_data = cast("D.Diff[a]", data1.data)
+                output = File.FileDiff(data1_data.with_last_as(branch+1, comparison_output), *new_files)
+            else:
+                output = File.FileDiff(comparison_output, *new_files)
         return output, has_changes, exceptions
 
     def print_text(self, data: File.AbstractFile[a], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
@@ -203,23 +228,14 @@ class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
 
     def compare_text(self, data:File.FileDiff[a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        if isinstance(data.data, D.Diff):
-            match data.data.change_type:
-                case D.ChangeType.removal:
-                    data_extracted = D.Diff(old=data.data.old)
-                case D.ChangeType.change:
-                    data_extracted = D.Diff(old=data.data.old, new=data.data.new)
-                case D.ChangeType.addition:
-                    data_extracted = D.Diff(new=data.data.new)
-        else:
-            data_extracted = data.data
+        data_extracted = data.data
         structure, new_exceptions = self.choose_structure(None, data_extracted)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         comparer:Callable[[Any, StructureEnvironment.ComparisonEnvironment],tuple[Any,bool,list[Trace.ErrorTrace]]]
         if self.delegate is not None:
             comparer = self.delegate.compare_text
-        elif structure is not None and D.DiffType.not_diff in structure and structure[D.DiffType.not_diff] is not None:
-            comparer = lambda data, environment: structure.compare_text(D.DiffType.not_diff, data, environment)
+        elif structure is not None and None in structure and structure[None] is not None:
+            comparer = lambda data, environment: structure.compare_text(None, data, environment)
         elif environment.default_delegate is not None:
             comparer = environment.default_delegate.compare_text
         else:

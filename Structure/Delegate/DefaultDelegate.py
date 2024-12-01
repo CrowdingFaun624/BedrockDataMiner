@@ -15,7 +15,6 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureSet as StructureSet
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 a = TypeVar("a", bound=Hashable)
@@ -34,6 +33,8 @@ class DefaultDelegateKeysTypedDict(TypedDict):
     always_print: NotRequired[bool]
 
 class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, list[LineType]], Generic[a]):
+
+    # NOTE: This class assumes that all diffs are of length 2
 
     applies_to = (Structure.Structure, type(None))
 
@@ -79,8 +80,6 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
         :data: The data to stringify.
         '''
         match data:
-            case NbtTypes.TAG():
-                return str(data)
             case str():
                 return "\"%s\"" % data
             case bool():
@@ -90,7 +89,7 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
             case NoneType():
                 return "null"
             case _:
-                raise Exceptions.CannotStringifyError(type(data))
+                return str(data)
 
     def enumerate(self, data:list[b]|dict[str,b]|set[b]) -> Iterable[tuple[a, b]]:
         '''
@@ -103,9 +102,9 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
         if self.structure is None or isinstance(self.structure, (PassthroughStructure.PassthroughStructure, PrimitiveStructure.PrimitiveStructure)):
             return ((None, data),) # type: ignore
         match data:
-            case list() | NbtTypes.TAG_List() | NbtTypes.TAG_Int_Array() | NbtTypes.TAG_Byte_Array() | NbtTypes.TAG_Long_Array():
+            case list():
                 return enumerate(data) # type: ignore
-            case dict() | NbtTypes.TAG_Compound():
+            case dict():
                 return data.items() # type: ignore
             case set():
                 return enumerate(data) # type: ignore
@@ -170,19 +169,21 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
         for index, item in self.enumerate(data):
             can_print_print_all = True # if the print_all thing is overridden for whatever reason.
             if not isinstance(self.structure, ObjectStructure.ObjectStructure):
-                structure_set = StructureSet.StructureSet({D.DiffType.old: None, D.DiffType.new: None} if isinstance(item, D.Diff) else {D.DiffType.not_diff: None})
+                structure_set = StructureSet.StructureSet({(0,): None, (1,): None} if isinstance(item, D.Diff) else {None: None})
             else:
                 structure_set, new_exceptions = self.structure.choose_structure(index, item)
                 exceptions.extend(exception.add(self.get_structure().name, index) for exception in new_exceptions)
 
             old_index:a; new_index:a
             if isinstance(index, D.Diff):
-                index_diff = cast(D.Diff[a], index)
-                old_index, new_index = index_diff.old, index_diff.new
-                if index_diff.is_change:
+                index_diff = cast("D.Diff[a]", index)
+                old_index_diff, new_index_diff = index_diff.get(0), index_diff.get(1)
+                old_index = old_index_diff if not isinstance(old_index_diff, D._NoExistType) else cast(a, new_index_diff)
+                new_index = new_index_diff if not isinstance(new_index_diff, D._NoExistType) else old_index
+                if old_index_diff is not D.NoExist and new_index_diff is not D.NoExist:
                     can_print_print_all = False
                     any_changes = True
-                    output.append((0, "Moved %s %s to %s." % (self.field, self.stringify(index.old), self.stringify(index.new))))
+                    output.append((0, "Moved %s %s to %s." % (self.field, self.stringify(index_diff[0]), self.stringify(index_diff[1]))))
             else:
                 old_index, new_index = index, index
 
@@ -190,24 +191,26 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
                 any_changes = True
                 size_changed = True
 
-                match item.change_type:
-                    case D.ChangeType.addition:
+                match (0 in item, 1 in item):
+                    case False, False:
+                        raise Exceptions.DiffExistenceError(item)
+                    case False, True:
                         item_key = self.get_compare_text_key_str(new_index)
                         current_length += 1; addition_length += 1
-                        new_exceptions = self.print_single(item_key, item.new, "Added", output, structure_set[D.DiffType.new], environment[1])
-                    case D.ChangeType.change:
-                        item_key = self.get_compare_text_key_str(new_index)
-                        current_length += 1
-                        new_exceptions = self.print_double(item_key, item.old, item.new, "Changed", output, structure_set, environment)
-                    case D.ChangeType.removal:
+                        new_exceptions = self.print_single(item_key, item[1], "Added", output, structure_set[1], environment[1])
+                    case True, False:
                         item_key = self.get_compare_text_key_str(old_index)
                         removal_length += 1
-                        new_exceptions = self.print_single(item_key, item.old, "Removed", output, structure_set[D.DiffType.old], environment[0])
+                        new_exceptions = self.print_single(item_key, item[0], "Removed", output, structure_set[0], environment[0])
+                    case True, True:
+                        item_key = self.get_compare_text_key_str(new_index)
+                        current_length += 1
+                        new_exceptions = self.print_double(item_key, item[0], item[1], "Changed", output, structure_set, environment)
                 exceptions.extend(exception.add(self.get_structure().name, new_index) for exception in new_exceptions)
             else:
                 substructure_output:list[LineType]
                 current_length += 1
-                structure = structure_set[D.DiffType.not_diff]
+                structure = structure_set[None]
                 if structure is None:
                     if (self.print_all or new_index in self.always_print_keys) and can_print_print_all:
                         substructure_output = [(0, self.stringify(item))]
@@ -280,7 +283,7 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
         data2:Any,
         message:str,
         output:list[LineType],
-        printers:StructureSet.StructureSet,
+        printers:StructureSet.StructureSet[a],
         environment:StructureEnvironment.ComparisonEnvironment,
         *,
         post_message:str=""
@@ -296,8 +299,8 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
         :environment: The ComparisonEnvironment to use.
         :post_message: A string to put after the field.
         '''
-        printer1 = printers[D.DiffType.old]
-        printer2 = printers[D.DiffType.new]
+        printer1 = printers[0]
+        printer2 = printers[1]
         exceptions:list[Trace.ErrorTrace] = []
         substructure_output1:list[LineType]
         substructure_output2:list[LineType]

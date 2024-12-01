@@ -102,11 +102,14 @@ class PrimitiveStructure(Structure.Structure[d]):
     def get_referenced_files(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
         return; yield
 
-    def compare(self, data1: d, data2: d, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
-        if data1 is data2 or data1 == data2:
+    def compare(self, data1: d, data2: d, environment: StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]:
+        if not environment.is_multi_diff and (data1 is data2 or data1 == data2):
             return data1, False, []
         else:
-            return cast(d, D.Diff(old=data1, new=data2)), True, []
+            # I fill into the past for a reason.
+            # Imagine the parent is an AbstractMappingStructure. If value1 is a Diff, the branches of the below Diff will be thrown out anyways.
+            # If value1 isn't a Diff, then I want a past-filled Diff that represents both value1 and value2; the below Diff satisfies that.
+            return D.Diff(branches, {tuple(range(0,branch+1)): data1, (branch+1,): data2}), True, []
 
-    def get_similarity(self, data1: d, data2: d, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: d, data2: d, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
         return float(data1 == data2)

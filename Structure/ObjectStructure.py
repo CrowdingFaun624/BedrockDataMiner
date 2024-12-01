@@ -19,23 +19,14 @@ class ObjectStructure(Structure.Structure[d]):
         '''
         ...
 
-    def choose_structure(self, key:Any, value:Any|D.Diff[Any]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
+    def choose_structure(self, key:Any, value:Any|D.Diff[Any]) -> tuple[StructureSet.StructureSet[d], list[Trace.ErrorTrace]]:
         '''
         Returns a StructureSet of this Structure's substructure(s).
         '''
+        output:dict[tuple[int,...]|None,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
-        if isinstance(value, D.Diff):
-            output:dict[D.DiffType,Structure.Structure|None] = {}
-            if value.old is not D.NoExist:
-                structure, new_exceptions = self.get_structure(key, value.old)
-                exceptions.extend(exception.add(self.name, key) for exception in exceptions)
-                output[D.DiffType.old] = structure
-            if value.new is not D.NoExist:
-                structure, new_exceptions = self.get_structure(key, value.new)
-                exceptions.extend(exception.add(self.name, key) for exception in exceptions)
-                output[D.DiffType.new] = structure
-            return StructureSet.StructureSet(output), exceptions
-        else:
-            structure, new_exceptions = self.get_structure(key, value)
+        for branch, value_iter in D.iter_diff(value):
+            structure, new_exceptions = self.get_structure(key, value_iter)
             exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
-            return StructureSet.StructureSet({D.DiffType.not_diff: structure}), exceptions
+            output[branch] = structure
+        return StructureSet.StructureSet(output), exceptions

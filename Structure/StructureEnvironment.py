@@ -57,19 +57,38 @@ class ComparisonEnvironment():
         self,
         structure_environment:StructureEnvironment,
         default_delegate:Union["Delegate.Delegate", None],
-        version1:Union["Version.Version", None],
-        version2:"Version.Version",
-        versions_between:list["Version.Version"],
+        versions:list[Union["Version.Version", None]]|list["Version.Version"],
+        versions_between:list[list["Version.Version"]], # has a length of len(versions) - 1
+        is_multi_diff:bool
     ) -> None:
         self.structure_environment = structure_environment
         self.default_delegate = default_delegate
-        self.version1 = version1
-        self.version2 = version2
+        self.versions = versions
         self.versions_between = versions_between
-        self.printer_environments = [PrinterEnvironment(structure_environment, default_delegate, version, branch) for branch, version in enumerate((version1, version2))]
+        self.printer_environments = [PrinterEnvironment(structure_environment, default_delegate, version, branch) for branch, version in enumerate(versions)]
+        self.is_multi_diff = is_multi_diff # if the data1 of comparison may contain diffs.
+
+    def get_first_version(self) -> "Version.Version":
+        '''
+        Returns the first Version that is not None.
+        '''
+        for version in self.versions:
+            if version is not None:
+                return version
+        else:
+            raise Exceptions.ComparisonEnvironmentNoVersionError(self)
+
+    def get_non_none_versions(self) -> tuple["Version.Version",...]:
+        '''
+        Returns all items of versions that are not None.
+        '''
+        return tuple(version for version in self.versions if version is not None)
 
     def __getitem__(self, branch:int) -> "PrinterEnvironment":
         return self.printer_environments[branch]
 
     def __repr__(self) -> str:
-        return "<%s %r %r %r w/ %i between>" % (self.__class__.__name__, self.version1, self.version2, self.structure_environment, len(self.versions_between))
+        if len(self.versions) <= 5:
+            return "<%s [%s]>" % (self.__class__.__name__, ", ".join("\"%s\"" % (version.name,) if version is not None else "None" for version in self.versions))
+        else:
+            return "<%s of %i versions>" % (self.__class__.__name__, len(self.versions))

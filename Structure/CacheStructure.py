@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Generic, Iterator, TypeVar, Union
 
 import Structure.DataPath as DataPath
+import Structure.Difference as D
 import Structure.Hashing as Hashing
 import Structure.PassthroughStructure as PassthroughStructure
 import Structure.Structure as Structure
@@ -188,10 +189,10 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_print_text(output, environment)
         return output
 
-    def get_similarity(self, data1: d, data2: d, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
+    def get_similarity(self, data1: d, data2: d, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
         structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_get_similarity:
-            return structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions)
+            return structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2), depth, max_depth))
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -204,14 +205,14 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions)
+        output = structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
         cache_item.set_get_similarity(output)
         return output
 
-    def compare(self, data1: d, data2: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[d, bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1: d, data2: d, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]:
         structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_compare:
-            return structure.compare(data1, data2, environment)
+            return structure.compare(data1, data2, environment, branch, branches)
         data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -224,7 +225,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.compare(data1, data2, environment)
+        output = structure.compare(data1, data2, environment, branch, branches)
         cache_item.set_compare(output)
         return output
 
@@ -272,7 +273,7 @@ class CacheItem(Generic[d]):
         self.get_similarity = False
         self.get_similarity_data:float|None = None
         self.compare = False
-        self.compare_data:tuple[d, bool, list[Trace.ErrorTrace]]|None = None
+        self.compare_data:tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]|None = None
 
     def get_check_all_types_data(self) -> list[Trace.ErrorTrace]:
         if self.check_all_types_data is None:
@@ -337,11 +338,11 @@ class CacheItem(Generic[d]):
         self.print_text = True
         self.print_text_data = (self.cache_store(data[0], environment), [trace.copy() for trace in data[1]])
 
-    def get_compare_data(self) -> tuple[d, bool, list[Trace.ErrorTrace]]:
+    def get_compare_data(self) -> tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]:
         if self.compare_data is None:
             raise Exceptions.AttributeNoneError("compare_data", self)
         return self.compare_data[0], self.compare_data[1], [trace.copy() for trace in self.compare_data[2]]
 
-    def set_compare(self, data:tuple[d, bool, list[Trace.ErrorTrace]]) -> None:
+    def set_compare(self, data:tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]) -> None:
         self.compare = True
         self.compare_data = (data[0], data[1], [trace.copy() for trace in data[2]])

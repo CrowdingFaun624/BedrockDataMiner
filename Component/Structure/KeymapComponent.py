@@ -100,7 +100,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
                 sorting_function = lambda item: item[1]
             case KeymapSorting.by_component_order:
                 key_order = {key.key: index for index, key in enumerate(self.keys)}
-                sorting_function = lambda item: key_order[key.first_existing_property()] if isinstance((key := item[0]), D.Diff) else key_order[key]
+                sorting_function = lambda item: key_order[key.last_value] if isinstance((key := item[0]), D.Diff) else key_order[key]
         self.final = KeymapStructure.KeymapStructure(
             name=self.name,
             sorting_function=sorting_function,

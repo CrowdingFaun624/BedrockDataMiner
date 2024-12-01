@@ -5,6 +5,7 @@ import Structure.Delegate.DefaultDelegate as DefaultDelegate
 import Structure.Difference as D
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
+import Utilities.Exceptions as Exceptions
 
 
 class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
@@ -45,14 +46,16 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
         old_lines = 0
         new_lines = 0
         for item in data:
-            if isinstance(data, D.Diff):
-                match data.change_type:
-                    case D.ChangeType.addition:
+            if isinstance(item, D.Diff):
+                match (0 in item, 1 in item):
+                    case False, False:
+                        raise Exceptions.DiffExistenceError(item)
+                    case False, True:
                         new_lines += 1
-                    case D.ChangeType.change:
+                    case True, False:
                         new_lines += 1
                         old_lines += 1
-                    case D.ChangeType.removal:
+                    case True, True:
                         new_lines += 1
                         old_lines += 1
             else:
@@ -91,8 +94,11 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
         for index, line in enumerate(data): # index is not for showing, but for random data purposes.
             if isinstance(line, D.Diff):
                 has_changes = True
-                match line.change_type:
-                    case D.ChangeType.addition:
+                match (0 in line, 1 in line):
+                    case False, False:
+                        raise Exceptions.DiffExistenceError(line)
+                    case False, True:
+                        # ADDITION
                         new_index += 1
                         addition_length += 1
                         current_length += 1
@@ -103,17 +109,11 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
                         lines_to_add.extend(change_addition_lines)
                         lines_to_add.extend(change_removal_lines)
                         change_addition_lines.clear(); change_removal_lines.clear()
-                        lines_to_add.append((0, "%s + %s" % (self.format_line_number(old_index, new_index, False, True, maximum_index_length), line.new)))
+                        lines_to_add.append((0, "%s + %s" % (self.format_line_number(old_index, new_index, False, True, maximum_index_length), line[1])))
                         lines_after_count = self.surrounding_line_count
                         last_line_index = index
-                    case D.ChangeType.change:
-                        new_index += 1
-                        old_index += 1
-                        current_length += 1
-                        change_addition_lines.append((0, "%s + %s" % (self.format_line_number(old_index, new_index, False, True, maximum_index_length), line.new)))
-                        change_removal_lines. append((0, "%s - %s" % (self.format_line_number(old_index, new_index, True, False, maximum_index_length), line.old)))
-                        last_change_line_index = index
-                    case D.ChangeType.removal:
+                    case True, False:
+                        # REMOVAL
                         old_index += 1
                         removal_length += 1
                         before_buffer_start_index, buffer_lines = self.get_before_buffer(lines_before_buffer)
@@ -123,9 +123,17 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
                         lines_to_add.extend(change_addition_lines)
                         lines_to_add.extend(change_removal_lines)
                         change_addition_lines.clear(); change_removal_lines.clear()
-                        lines_to_add.append((0, "%s - %s" % (self.format_line_number(old_index, new_index, True, False, maximum_index_length), line.old)))
+                        lines_to_add.append((0, "%s - %s" % (self.format_line_number(old_index, new_index, True, False, maximum_index_length), line[0])))
                         lines_after_count = self.surrounding_line_count
                         last_line_index = index
+                    case True, True:
+                        # CHANGE
+                        new_index += 1
+                        old_index += 1
+                        current_length += 1
+                        change_addition_lines.append((0, "%s + %s" % (self.format_line_number(old_index, new_index, False, True, maximum_index_length), line[1])))
+                        change_removal_lines. append((0, "%s - %s" % (self.format_line_number(old_index, new_index, True, False, maximum_index_length), line[0])))
+                        last_change_line_index = index
             else: # line is not a diff
                 old_index += 1
                 new_index += 1

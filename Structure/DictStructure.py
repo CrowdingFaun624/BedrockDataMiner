@@ -153,8 +153,8 @@ class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
     def get_structure(self, key:str, value:d) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         return self.structure, []
 
-    def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
-        return StructureSet.StructureSet({value_diff_type: self.structure for value_iter, value_diff_type in D.iter_diff(value)}), []
+    def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet[d], list[Trace.ErrorTrace]]:
+        return StructureSet.StructureSet({value_branch: self.structure for value_branch, value_iter in D.iter_diff(value)}), []
 
     def get_max_similarity_descendent_depth(self, key: str) -> int | None:
         return self.max_similarity_descendent_depth

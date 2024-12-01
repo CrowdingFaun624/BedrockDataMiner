@@ -1,6 +1,6 @@
 import datetime
 from typing import (TYPE_CHECKING, Any, Callable, Container, Literal, Optional,
-                    Union)
+                    TypeVar, Union)
 
 from pathlib2 import Path
 
@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     import Structure.Normalizer as Normalizer
     import Structure.Structure as Structure
     import Structure.StructureBase as StructureBase
+    import Structure.StructureEnvironment as StructureEnvironment
     import Structure.StructureSet as StructureSet
     import Structure.StructureTag as StructureTag
     import Structure.Trace as Trace
@@ -42,6 +43,8 @@ if TYPE_CHECKING:
     import Version.VersionFileType as VersionFileType
     import Version.VersionRange as VersionRange
     import Version.VersionTag.VersionTag as VersionTag
+
+a = TypeVar("a")
 
 # Within this file, an "Exception" is an abstract type and
 # an "Error" is a concrete type.
@@ -1798,7 +1801,7 @@ class CacheStructureHashError(StructureException):
 class CompareWithNoneError(StructureException):
     "A StructureSet attempted to compare data using None instead of a Structure."
 
-    def __init__(self, structure:Union["Structure.Structure", "StructureSet.StructureSet"], key:Union["D.DiffType", int, None]=None, message:Optional[str]=None) -> None:
+    def __init__(self, structure:Union["Structure.Structure", "StructureSet.StructureSet"], key:Union[int, None]=None, message:Optional[str]=None) -> None:
         '''
         :structure_set: The Structure or StructureSet with a None substructure.
         :key: The key used to access the StructureSet if it is a StructureSet.
@@ -1817,28 +1820,113 @@ class CompareWithNoneError(StructureException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class DiffKeyError(StructureException):
-    "The Diff object does not have anything at the position indexed."
+class ComparisonEnvironmentNoVersionError(StructureException):
+    "A ComparisonEnvironment has no non-None items in its Version list."
 
-    def __init__(self, side:"D.DiffType", diff:"D.Diff", message:Optional[str]=None) -> None:
+    def __init__(self, environment:"StructureEnvironment.ComparisonEnvironment", message:Optional[str]=None) -> None:
         '''
-        :side: The DiffType that was used to index.
-        :diff: The Diff that was indexed.
+        :environment: The ComparisonEnvironment with no non-None items in its Versions list.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(side, diff)
-        self.side = side
+        super().__init__(environment, message)
+        self.environment = environment
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "%r has no non-None versions" % (self.environment,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class DiffContinuityError(StructureException):
+    "Attempted to create a Diff with overlapping branches."
+    
+    def __init__(self, all_branches:list[int], overlapping_branch:int, message:Optional[str]=None) -> None:
+        '''
+        :all_branches: All branches that the Diff would have.
+        :overlapping_branch: The branch that is already in `all_branches`.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(all_branches, overlapping_branch, message)
+        self.all_branches = all_branches
+        self.overlapping_branches = overlapping_branch
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "Attempted to create a Diff with branch %i overlapping with one of [%s]" % (self.overlapping_branches, ", ".join(str(branch) for branch in self.all_branches))
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class DiffExistenceError(StructureException):
+    "The Diff object has no items except for NoExist."
+
+    def __init__(self, diff:"D.Diff", message:Optional[str]=None) -> None:
+        '''
+        :diff: The Diff object with no items except for NoExist.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(diff, message)
         self.diff = diff
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r does not have" % (self.diff,)
-        if self.side.name == "old":
-            output += " an old object"
-        elif self.side.name == "new":
-            output += " a new object"
-        else:
-            output += " a not_diff object"
+        output = "%r has no items besides NoExist" % (self.diff,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class DiffKeyError(StructureException):
+    "The Diff object does not have anything at the position indexed."
+
+    def __init__(self, index:int|tuple[int,...], diff:"D.Diff[a]", message:Optional[str]=None) -> None:
+        '''
+        :index: The index used to access the Diff.
+        :diff: The Diff that was indexed.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(index, diff, message)
+        self.index = index
+        self.diff = diff
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r does not have an item at index %s" % (self.diff, self.index)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class DiffLengthError(StructureException):
+    "Attempted to create a multi-Diff with a length that does not match the correct length"
+
+    def __init__(self, current_length:int, desired_length:int, message:Optional[str]=None) -> None:
+        '''
+        :current_length: The number of items attempting to be made into a diff.
+        :desired_length: The length that the items should be.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(current_length, desired_length, message)
+        self.current_length = current_length
+        self.desired_length = desired_length
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Attempted to create a diff with with a length of %i instead of %i" % (self.current_length, self.desired_length)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class DiffsLengthError(StructureException):
+    "Two Diffs cannot be zipped because of different lengths."
+
+    def __init__(self, diff1:"D.Diff", diff2:"D.Diff", message:Optional[str]=None) -> None:
+        '''
+        :diff1: The first Diff attempted to be zipped.
+        :diff2: The second Diff attempted to be zipped.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(diff1, diff2, message)
+        self.diff1 = diff1
+        self.diff2 = diff2
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Cannot zip %r is [0, %i) and %r is [0, %i)" % (self.diff1, len(self.diff1), self.diff2, len(self.diff2))
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

@@ -140,24 +140,26 @@ class FakeFile(AbstractFile[a]):
 
 class FileDiff(Generic[a]):
     '''
-    Similar to a FakeFile, but contains the data from two files.
+    Similar to a FakeFile, but contains the data from multiple files.
     This exists because it's easier to hash or something.
     '''
 
-    def __init__(self, file1:AbstractFile[a], file2:AbstractFile[a], data:a|D.Diff[a,a]) -> None:
+    def __init__(self, data:a|D.Diff[a], *files:AbstractFile[a]) -> None:
         self.data = data
-        self.display_name1 = file1.display_name
-        self.display_name2 = file2.display_name
-        self.hash = hash((file1, file2))
+        self.display_names:list[str] = [file.display_name for file in files]
+        self.hash = hash(files)
+        self.files = files
+        self.last_value = files[-1]
 
     def __hash__(self) -> int:
         return self.hash
 
     def __repr__(self) -> str:
-        if self.display_name1 == self.display_name2:
-            return "<%s \"%s\" hash %s>" % (self.__class__.__name__, self.display_name1, hash_int_to_str(self.hash))
-        else:
-            return "<%s \"%s\" and \"%s\" hash %s>" % (self.__class__.__name__, self.display_name1, self.display_name2, hash_int_to_str(self.hash))
+        unique_display_names:list[str] = [] # list of display names such that the previous one is not equal to the current one.
+        for display_name in self.display_names:
+            if len(unique_display_names) == 0 or display_name != unique_display_names[-1]:
+                unique_display_names.append(display_name)
+        return "<%s %s hash %s>" % (self.__class__.__name__, ", ".join("\"%s\"" % display_name for display_name in unique_display_names), hash_int_to_str(self.hash))
 
 NoneType = type(None)
 

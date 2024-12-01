@@ -22,7 +22,8 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
 
     def compare_text(self, data: Any, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        version1, version2, versions_between = environment.version1, environment.version2, environment.versions_between
+        version1, version2, versions_between = environment.versions[0], environment.versions[1], environment.versions_between[0]
+        assert version2 is not None
         header:list[str] = []
         beta_texts:list[str] = ["", ""]
         for index, version in enumerate((version1, version2)):

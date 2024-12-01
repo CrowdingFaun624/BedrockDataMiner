@@ -138,24 +138,25 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         if self.structure is not None and self.children_has_garbage_collection:
             yield from self.structure.get_referenced_files(data, environment)
 
-    def get_similarity(self, data1: a, data2: a, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace]) -> float:
-        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
-            return float(data1 == data2)
-        if self.structure is None:
-            return float(data1 == data2)
+    def get_similarity(self, data1: a, data2: a, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth) or self.structure is None:
+            if branch == 0:
+                return float(data1 == data2)
+            else:
+                return float(Structure.get_data_at_branch(data1, branch) == data2)
         else:
-            output = self.structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions)
+            output = self.structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
             return output
 
-    def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a|D.Diff[a], bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[a|D.Diff[a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:
             if data1 is data2 or data1 == data2:
                 output, has_changes = data1, False
             else:
-                output, has_changes = D.Diff(data1, data2), True
+                output, has_changes = D.Diff(branches, {tuple(range(0,branch+1)): data1, (branch+1,): data2}), True
         else:
-            output, has_changes, new_exceptions = self.structure.compare(data1, data2, environment)
+            output, has_changes, new_exceptions = self.structure.compare(data1, data2, environment, branch, branches)
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions
 
@@ -182,8 +183,8 @@ class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
         comparer:Callable[[Any, StructureEnvironment.ComparisonEnvironment],tuple[Any,bool,list[Trace.ErrorTrace]]]
         if self.delegate is not None:
             comparer = self.delegate.compare_text
-        elif structure is not None and structure[D.DiffType.not_diff] is not None:
-            comparer = lambda data, environment: structure.compare_text(D.DiffType.not_diff, data, environment)
+        elif structure is not None and structure[None] is not None:
+            comparer = lambda data, environment: structure.compare_text(None, data, environment)
         elif environment.default_delegate is not None:
             comparer = environment.default_delegate.compare_text
         else:

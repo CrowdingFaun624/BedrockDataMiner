@@ -90,10 +90,10 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         exceptions.extend(exceptions2)
         return structure1 is structure2
 
-    def get_key_weight(self, key:str, data:MutableMapping[str, d], exceptions:list[Trace.ErrorTrace]) -> int:
+    def get_key_weight(self, key:str, value:d, exceptions:list[Trace.ErrorTrace]) -> int:
         output = self.key_weights.get(key)
         if output is None:
-            exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, data[key]))
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value))
             return 1
         return output
 
@@ -203,22 +203,17 @@ class KeymapStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
         else:
             return None, exceptions
 
-    def choose_structure(self, key:str, value:d) -> tuple[StructureSet.StructureSet, list[Trace.ErrorTrace]]:
+    def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet[d], list[Trace.ErrorTrace]]:
         if self.keys is None:
             raise Exceptions.AttributeNoneError("keys", self)
-        output:dict[D.DiffType,Structure.Structure|None] = {}
+        output:dict[tuple[int,...]|None,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
-        if self.detect_key_moves:
-            iterator = D.double_iter_diff(key, value)
-        else:
-            key_iter = key.first_existing_property() if isinstance(key, D.Diff) else key
-            iterator = ((key_iter, iter_diff_item[0], None, iter_diff_item[1]) for iter_diff_item in D.iter_diff(value))
-        for key_iter, value_iter, key_diff_type, value_diff_type in iterator:
+        for branches, key_iter, value_iter in D.double_iter_diff(key, value):
             structure = self.keys.get((key_iter), ...)
             if structure is ...:
-                exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value))
+                exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key_iter), self.name, key, value))
                 continue
-            output[value_diff_type] = structure
+            output[branches] = structure
         return StructureSet.StructureSet(output), exceptions
 
     def get_max_similarity_descendent_depth(self, key: str) -> int | None:
