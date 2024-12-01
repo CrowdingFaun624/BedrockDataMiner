@@ -52,6 +52,10 @@ class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject],dict[str
             comment = None
         key_value = key_value.rstrip("\t")
         key, value = key_value.split("=", maxsplit=1)
+        if value.endswith("\t#"):
+            value = value.removesuffix("\t#").lstrip("\t")
+        if comment is not None and comment.startswith("#"):
+            comment = comment.removeprefix("#")
         if comment is None:
             return key, {"value": value}
         else:
