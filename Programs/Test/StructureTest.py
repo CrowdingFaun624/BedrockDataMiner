@@ -63,7 +63,8 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
         # get all remaining dataminer collections that didn't have files.
         for failed_dataminer, exception in DataMiners.run(version, dataminers_without_file, structure_environment, all_dataminers, print_messages=False, recalculate_everything=False):
             print("%r on %r on %r (file was just datamined)" % (dataminer_collection, structure, version))
-            traceback.print_exception(exception)
+            if exception is not None:
+                traceback.print_exception(exception)
             failed_structures.append(failed_dataminer.get_structure())
         return failed_structures
 

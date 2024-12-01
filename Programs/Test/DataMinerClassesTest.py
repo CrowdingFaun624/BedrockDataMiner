@@ -42,7 +42,8 @@ class DataMinerClassPlan(TestUtil.Plan[DataMinerClass]):
         failed_dataminer_classes:list[DataMinerClass] = []
         for dataminer_collection, exception in DataMiners.run(version, dataminer_collections, structure_environment, all_dataminer_collections, recalculate_everything=True, print_messages=False):
             print("%r on %r" % (dataminer_collection, version))
-            traceback.print_exception(exception)
+            if exception is not None:
+                traceback.print_exception(exception)
             failed_dataminer_classes.append(dataminer_collection.get_dataminer_settings(version).get_dataminer_class())
         return failed_dataminer_classes
 

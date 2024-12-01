@@ -33,7 +33,8 @@ class DataMinerSettingsPlan(TestUtil.Plan[DataMinerSettings.DataMinerSettings]):
         failed_dataminer_settings:list[DataMinerSettings.DataMinerSettings] = []
         for dataminer_collection, exception in DataMiners.run(version, dataminer_collections, structure_environment, all_dataminer_collections, recalculate_everything=True, print_messages=False):
             print("%r on %r (getting data file failed)" % (dataminer_collection, version))
-            traceback.print_exception(exception)
+            if exception is not None:
+                traceback.print_exception(exception)
             failed_dataminer_settings.append(dataminer_collection.get_dataminer_settings(version))
         return failed_dataminer_settings
 

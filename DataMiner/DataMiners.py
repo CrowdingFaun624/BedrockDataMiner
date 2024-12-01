@@ -50,7 +50,7 @@ def run(
         *,
         recalculate_everything:bool=False,
         print_messages:bool=False
-    ) -> list[tuple[DataMinerCollection.DataMinerCollection, Exception]]:
+    ) -> list[tuple[DataMinerCollection.DataMinerCollection, Exception|None]]:
     '''
     Runs and stores the output of multiple DataMiners. Returns the DataMinerCollections that it failed to datamine and the corresponding exception.
     :version: The Version to run the DataMiners on.
@@ -76,12 +76,14 @@ def run(
                 dataminer_environment.dependency_data.set_item(dataminer_order[i].name, dataminer_order[i].get_data_file(version))
                 del dataminer_order[i]
             else: i += 1
-    failure_dataminers:list[tuple[DataMinerCollection.DataMinerCollection, Exception]] = []
+    failure_dataminers:list[tuple[DataMinerCollection.DataMinerCollection, Exception|None]] = []
     failure_dataminers_set:set[str] = set()
     for dataminer_collection in dataminer_order:
         try:
             dataminer = dataminer_collection.get_dataminer(version)
             if any(dependency.name in failure_dataminers_set for dependency in dataminer.dependencies):
+                failure_dataminers_set.add(dataminer_collection.name)
+                failure_dataminers.append((dataminer_collection, None))
                 continue # no use trying to datamine this if any of its dependencies excepted.
             dataminer_output = dataminer.store(dataminer_environment, dataminers_list)
             dataminer_environment.dependency_data.set_item(dataminer_collection.name, dataminer_output)

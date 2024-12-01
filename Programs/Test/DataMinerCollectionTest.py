@@ -26,7 +26,8 @@ class DataMinerCollectionPlan(TestUtil.Plan[DataMinerCollection.DataMinerCollect
         failed_dataminer_collections:list[DataMinerCollection.DataMinerCollection] = []
         for dataminer_collection, exception in failures:
             print("%r on %r" % (dataminer_collection, version))
-            traceback.print_exception(exception)
+            if exception is not None:
+                traceback.print_exception(exception)
             failed_dataminer_collections.append(dataminer_collection)
         return failed_dataminer_collections
 

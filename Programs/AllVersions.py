@@ -23,7 +23,8 @@ def datamine_version(version:Version.Version, all_dataminers:dict[str,DataMinerC
     if len(failure_dataminers) > 0:
         for failed_dataminer, exception in failure_dataminers:
             print("\nFailed to datamine \"%s\" for \"%s\":" % (failed_dataminer.name, version.name))
-            traceback.print_exception(exception)
+            if exception is not None:
+                traceback.print_exception(exception)
         print()
         raise Exceptions.DataMinersFailureError(version, [dataminer_tuple[0] for dataminer_tuple in failure_dataminers])
     if not version.latest:
