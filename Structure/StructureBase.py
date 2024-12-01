@@ -98,15 +98,14 @@ class StructureBase():
         for normalizer_index, normalizer in enumerate(self.normalizer):
             if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
-                output = normalizer(output)
+                normalizer_output = normalizer(output)
             except Exception as e:
                 output = None
                 exceptions.append(Trace.ErrorTrace(e, self.name, normalizer_index, data))
                 break
             else:
-                if output is None:
-                    exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
-                    break
+                if normalizer_output is not None:
+                    output = normalizer_output
         self.print_exception_list(exceptions, version_tuple)
 
         # other normalizers
@@ -123,15 +122,14 @@ class StructureBase():
         for normalizer_index, normalizer in enumerate(self.post_normalizer):
             if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
-                output = normalizer(output)
+                normalizer_output = normalizer(output)
             except Exception as e:
                 output = None
                 exceptions.append(Trace.ErrorTrace(e, self.name, normalizer_index, data))
                 break
             else:
-                if output is None:
-                    exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self, "(index %i)" % (normalizer_index,)), self.name, normalizer_index, data))
-                    break
+                if normalizer_output is not None:
+                    output = normalizer_output
         if self.types is None:
             raise Exceptions.AttributeNoneError("types", self)
         if not isinstance(output, self.types):
