@@ -39,6 +39,7 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
     applies_to = (Structure.Structure, type(None))
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("enquote_strings", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("field", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("measure_length", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("passthrough", "a bool", False, bool),
@@ -61,6 +62,7 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
         print_all:bool=False,
         print_flat:bool=False,
         show_item_key:bool|None=None,
+        enquote_strings:bool=True
     ) -> None:
         super().__init__(structure, keys)
         self.field = field if field is not None else ("field" if isinstance(structure, AbstractMappingStructure.AbstractMappingStructure) else "item")
@@ -68,6 +70,7 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
         self.passthrough = passthrough
         self.print_all = print_all
         self.print_flat = print_flat
+        self.enquote_strings = enquote_strings
         if show_item_key is None:
             self.show_item_key = not isinstance(self.structure, SetStructure.SetStructure)
         else:
@@ -79,9 +82,14 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
         Returns the string of data containing no Diffs.
         :data: The data to stringify.
         '''
+        if hasattr(data, "__stringify__"):
+            return data.__stringify__()
         match data:
             case str():
-                return "\"%s\"" % data
+                if self.enquote_strings:
+                    return "\"%s\"" % data
+                else:
+                    return data
             case bool():
                 return "true" if data else "false"
             case dict()|list()|int()|float()|bool():

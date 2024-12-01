@@ -4,7 +4,6 @@ import Structure.Difference as D
 import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.Nbt.NbtTypes as NbtTypes
 
 
 def hash_data(data:Any) -> int:
@@ -48,19 +47,6 @@ hash_type_table:dict[type,Callable] = { # I will have type hinting no matter how
     File.EmptyFile: hash_table_item(lambda data: hash(data), File.EmptyFile),
     File.FakeFile: hash_table_item(lambda data: hash(data), File.FakeFile),
     File.FileDiff: hash_table_item(lambda data: hash(data), File.FileDiff),
-    NbtTypes.TAG_Byte: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Byte),
-    NbtTypes.TAG_End: hash_table_item(lambda data: hash(data), NbtTypes.TAG_End),
-    NbtTypes.TAG_Short: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Short),
-    NbtTypes.TAG_Int: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Int),
-    NbtTypes.TAG_Long: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Long),
-    NbtTypes.TAG_Float: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Float),
-    NbtTypes.TAG_Double: hash_table_item(lambda data: hash(data), NbtTypes.TAG_Double),
-    NbtTypes.TAG_Byte_Array: hash_table_item(lambda data: hash(tuple(hash_data(item) for item in data)), NbtTypes.TAG_Byte_Array),
-    NbtTypes.TAG_String: hash_table_item(lambda data: hash(data), NbtTypes.TAG_String),
-    NbtTypes.TAG_List: hash_table_item(lambda data: hash(tuple(hash_data(item) for item in data)), NbtTypes.TAG_List),
-    NbtTypes.TAG_Compound: hash_table_item(lambda data: hash(tuple((hash(key), hash_data(value)) for key, value in data.items())), NbtTypes.TAG_Compound),
-    NbtTypes.TAG_Int_Array: hash_table_item(lambda data: hash(tuple(hash_data(item) for item in data)), NbtTypes.TAG_Int_Array),
-    NbtTypes.TAG_Long_Array: hash_table_item(lambda data: hash(tuple(hash_data(item) for item in data)), NbtTypes.TAG_Long_Array),
     type(None): hash_table_item(lambda data: hash(data), type(None)),
     range: hash_table_item(lambda data: hash(data), range),
     set: hash_table_item(lambda data: hash(tuple(item for item in data)), set),
