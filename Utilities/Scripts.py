@@ -1,19 +1,16 @@
 import importlib
 import importlib.machinery
 import importlib.util
-from typing import IO, Any, Callable, Iterable
+from typing import IO, Any, Callable, Generic, Iterable, TypeVar
 
-import jqpy  # library that doesn't let me compile but will work on Windows
-import lupa  # looks like this has no type hinting whatsoever
 from pathlib2 import Path
 from typing_extensions import Self
 
-import Utilities.DataFile as DataFile
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-EmptyInput = jqpy.EmptyInput
+a = TypeVar("a")
 
 def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
     already_stems:dict[str,Path] = {}
@@ -26,72 +23,13 @@ def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
         else:
             yield from iter_dir(subpath, prepension + subpath.name + "/")
 
-class _ScriptDependencies():
-    '''Class for holding stuff necessary for Scripts to run, like the LuaRuntime'''
-
-    def __init__(self, lua_runtime:lupa.LuaRuntime) -> None:
-        self.lua_runtime = lua_runtime
-
-class AbstractScript():
-
-    def __repr__(self) -> str:
-        return "<%s>" % (self.__class__.__name__)
-
-class Script(AbstractScript):
-    '''Abstract class for scripts.'''
-
-    def __init__(self, path:Path, name:str, script_dependencies:_ScriptDependencies) -> None:
-        self.name = name
-        self.path = path
-
-    def finalize(self) -> None:
-        '''
-        Runs after all scripts have been initialized.
-        '''
-
-    @property
-    def should_skip(self) -> bool:
-        '''
-        if True, will remove the Script from the Scripts list after `finalize` is called.
-        '''
-        return False
-
-    def open_file(self) -> IO[str]:
-        return open(self.path, "rt")
-
-    def __call__(self, data:Any|None=None) -> Any: ...
-
-    def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.name)
-
-class JQScript(Script):
-
-    def __init__(self, path: Path, name: str, script_dependencies:_ScriptDependencies) -> None:
-        super().__init__(path, name, script_dependencies)
-        with self.open_file() as f:
-            self.program = f.read()
-
-    def __call__(self, data:jqpy.JSON|jqpy._TEmptyInput=EmptyInput) -> Any:
-        return jqpy.jq(self.program, data)
-
-class LuaScript(Script):
-
-    def __init__(self, path: Path, name: str, script_dependencies:_ScriptDependencies) -> None:
-        super().__init__(path, name, script_dependencies)
-        with self.open_file() as f:
-            self.compiled_program = script_dependencies.lua_runtime.compile(f.read())
-            self.content = self.compiled_program() # get stored content
-
-    def __call__(self, data:list[Any]|None=None) -> Any:
-        if data is None: data = []
-        return self.content(data)
-
-class PythonScript(Script):
+class Script(Generic[a]):
 
     all_type_verifier = TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=lambda data: (len(data) == 1, "Can only export a single object"))
 
-    def __init__(self, path: Path, name: str, script_dependencies: _ScriptDependencies) -> None:
-        super().__init__(path, name, script_dependencies)
+    def __init__(self, path: Path, name: str) -> None:
+        self.name = name
+        self.path = path
         module_name = "_assets.scripts." + name.replace("/", ".").removesuffix(".py")
         self.module = importlib.import_module(module_name)
 
@@ -120,27 +58,19 @@ class PythonScript(Script):
     def __call__(self, *args, **kwargs) -> Any:
         return self.object(*args, **kwargs)
 
-class InlineScript(AbstractScript):
+    def __repr__(self) -> str:
+        return "<%s %s>" % (self.__class__.__name__, self.name)
 
-    def __init__(self, program:str, script_dependencies:_ScriptDependencies) -> None:
-        self.program = program
-
-class JQInlineScript(InlineScript):
-
-    def __init__(self, program:str, script_dependencies: _ScriptDependencies) -> None:
-        super().__init__(program, script_dependencies)
+    def open_file(self) -> IO[str]:
+        return open(self.path, "rt")
 
 class Scripts():
     '''Collection of scripts.'''
 
     def get_script_type(self, suffix:str, name:str) -> type[Script]:
         match suffix:
-            case ".jq":
-                return JQScript
-            case ".lua":
-                return LuaScript
             case ".py":
-                return PythonScript
+                return Script
             case _:
                 raise Exceptions.InvalidScriptFileSuffix(suffix, name)
 
@@ -148,12 +78,7 @@ class Scripts():
         return suffix == ".pyc"
 
     def __init__(self) -> None:
-        self.lua_runtime = lupa.LuaRuntime()
-        self.lua_runtime.globals()["bdd"] = {
-            "data_files": DataFile.data_files,
-        }
-        script_dependencies = _ScriptDependencies(self.lua_runtime)
-        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, script_dependencies) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name, file)}
+        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name, file)}
         for script in self.scripts.values():
             script.finalize()
         self.scripts = {script_name: script for script_name, script in self.scripts.items() if not script.should_skip}

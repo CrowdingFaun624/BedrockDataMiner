@@ -88,9 +88,7 @@ class OptionalDelegateField(Field.Field):
         if self.delegate_name is None:
             self.delegate_type = None
         else:
-            delegate_type = DELEGATE_CLASSES.get(self.delegate_name)
-            if delegate_type is None:
-                raise Exceptions.UnrecognizedDelegateError(self.delegate_name, repr(source_component))
+            delegate_type = DELEGATE_CLASSES.get(self.delegate_name, message="(referenced by %r)" % (source_component,))
             self.delegate_type = delegate_type
         return [], []
 

@@ -1591,7 +1591,7 @@ class InvalidScriptFileSuffix(ScriptException):
 class InvalidScriptObjectTypeError(ScriptException):
     "An object in a Script has the wrong type."
 
-    def __init__(self, script:"Scripts.AbstractScript", object:Any, allowed_types:list[type], message:Optional[str]=None) -> None:
+    def __init__(self, script:"Scripts.Script", object:Any, allowed_types:list[type], message:Optional[str]=None) -> None:
         '''
         :script: The script with the error.
         :object: The object from the Script with the wrong type.
@@ -1606,50 +1606,6 @@ class InvalidScriptObjectTypeError(ScriptException):
 
     def __str__(self) -> str:
         output = "%r in %r should be one of types [%s] instead of type \"%s\"" % (self.object, self.script, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types), type(self.object))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class InvalidScriptTypeError(ScriptException):
-    "This Script type is invalid for this purpose."
-
-    def __init__(self, script_type:type["Scripts.AbstractScript"], allowed_types:list[type["Scripts.AbstractScript"]], source:Optional[Any]=None, message:Optional[str]=None) -> None:
-        '''
-        :script_type: The invalid Script type.
-        :allowed_types: The types that the Script can be.
-        :source: The object referencing the invalid Script type.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(script_type, allowed_types, source, message)
-        self.script_type = script_type
-        self.allowed_types = allowed_types
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        script_types_str =  ", ".join("\"%s\"" % (script_type.__name__,) for script_type in self.allowed_types)
-        if self.source is None:
-            output = "Script type is not allowed; only [%s] are allowed" % (self.script_type.__name__, script_types_str)
-        else:
-            output = "%r references Script type \"%s\", while only [%s] are allowed" % (self.source, self.script_type.__name__, script_types_str)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class ScriptedClassInheritUnrecognizedClassError(ScriptException):
-    "A scripted type attempts to subclass an unknown built-in type"
-
-    def __init__(self, class_name:str, superclass_name:str, message:Optional[str]=None) -> None:
-        '''
-        :class_name: The name of the type that attempts to inherit from an unknown type.
-        :superclass_name: The name of the unrecognized type.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(class_name, superclass_name, message)
-        self.class_name = class_name
-        self.superclass_name = superclass_name
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Scripted type \"%s\" attempts to subclass unrecognized built-in type \"%s\"" % (self.class_name, self.superclass_name)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -1720,6 +1676,23 @@ class UnrecognizedScriptError(ScriptException):
 
     def __str__(self) -> str:
         output = "Unrecognized Script \"%s\"" % (self.script_name,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class WrongScriptError(ScriptException):
+    "Attempted to import a Script that exists, but cannot be used in this situation."
+    
+    def __init__(self, script:"Scripts.Script", message:Optional[str]=None) -> None:
+        '''
+        :script: The Script that cannot be used in this situation:
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(script, message)
+        self.script = script
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "Cannot load %r in this situation" % (self.script,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

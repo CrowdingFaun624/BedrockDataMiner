@@ -18,9 +18,7 @@ def check(function:Callable, arguments:dict[str,Any], ignore_parameters:set[str]
     :source_component: Component to use for error messages.
     '''
     exceptions:list[Exception] = []
-    if isinstance(function, Scripts.LuaScript):
-        return exceptions # Lua functions cannot be inspected.
-    elif isinstance(function, Scripts.PythonScript):
+    if isinstance(function, Scripts.Script):
         function = function.object
     else:
         function = function
