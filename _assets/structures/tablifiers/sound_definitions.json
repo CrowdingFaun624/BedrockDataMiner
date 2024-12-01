@@ -1,0 +1,171 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate": "tablifiers/sound_definitions/BaseDelegate",
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "detect_key_moves": false,
+        "delegate": "tablifiers/sound_definitions/ResourcePackDelegate",
+        "types": "dict",
+        "normalizer": [
+            {
+                "function_name": "tablifiers/sound_definitions/normalize"
+            },
+            {
+                "function_name": "tablifiers/sound_definitions/remove_format_version"
+            },
+            {
+                "function_name": "normalizers/collapse_resource_packs/dict",
+                "arguments": {
+                    "add_defined_in": true
+                }
+            },
+            {
+                "function_name": "tablifiers/sound_definitions/make_all_tags"
+            }
+        ],
+        "subcomponent": "sound_events"
+    },
+    "sound_events": {
+        "type": "Dict",
+        "types": "dict",
+        "detect_key_moves": true,
+        "delegate": "tablifiers/sound_definitions/SoundEventsDelegate",
+        "key_component": {
+            "type": "String",
+            "delegate": null // controlled by `sound_event`
+        },
+        "sort": "by_key",
+        "normalizer": {
+            "function_name": "tablifiers/sound_definitions/add_name"
+        },
+        "subcomponent": "sound_event"
+    },
+    "sound_event": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "delegate": "tablifiers/sound_definitions/SoundEventDelegate",
+        "normalizer": {
+            "function_name": "delete_optional_keys",
+            "arguments": {
+                // https://bugs.mojang.com/browse/MCPE-153558
+                // https://bugs.mojang.com/browse/MCPE-178265
+                "keys": ["subtitle", "volume", "pitch"]
+            }
+        },
+        "keys": {
+            "name": {"type": "str", "weight": 0, "subcomponent": "string"},
+            "category": {"type": "str", "subcomponent": "category"},
+            "defined_in": {"type": "list", "subcomponent": "defined_in"},
+            "max_distance": {"type": "float", "subcomponent": "make_float"},
+            "min_distance": {"type": "float", "subcomponent": "make_float"},
+            "sounds": {"type": "list", "subcomponent": "sounds"}
+        }
+    },
+    "defined_in": {
+        "type": "Set",
+        "types": "str",
+        "delegate": "tablifiers/sound_definitions/DefinedInDelegate",
+        "subcomponent": "string"
+    },
+    "sounds": {
+        "type": "Set",
+        "types": ["dict"],
+        "min_similarity_threshold": 0.3,
+        "delegate": "tablifiers/sound_definitions/SoundsDelegate",
+        "subcomponent": "sound_properties"
+    },
+    "sound_properties": {
+        "type": "Keymap",
+        "pre_normalized_types": ["str", "dict"],
+        "delegate": "tablifiers/sound_definitions/SoundPropertiesDelegate",
+        "normalizer": [
+            {
+                "function_name": "normalizers/sound_definitions_make_strings_to_dict"
+            },
+            {
+                // https://bugs.mojang.com/browse/MCPE-153561
+                "function_name": "delete_optional_key",
+                "arguments": {
+                    "key": "pitch:"
+                }
+            }
+        ],
+        "key_component": "not_code_string",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "subcomponent": "string", "weight": 10, "required": true},
+            "type": {"type": "str", "subcomponent": "primitive_string", "delegate_arguments": {"always_print": true}},
+            "weight": {"type": "int", "subcomponent": "int"},
+            "volume": {"type": "float", "subcomponent": "make_float"},
+            "pitch": {"type": "float", "subcomponent": "make_float"},
+            "stream": {"type": "bool", "subcomponent": "bool"},
+            "load_on_low_memory": {"type": "bool", "subcomponent": "bool"},
+            "is3D": {"type": "bool", "subcomponent": "bool"},
+            "exclude_from_pocket_platforms": {"type": "bool", "subcomponent": "bool"}
+        }
+    },
+    "category": {
+        "type": "Primitive",
+        "types": "str",
+        "delegate": "tablifiers/sound_definitions/CategoryDelegate",
+        "delegate_arguments": {
+            "code": true
+        }
+    },
+    "string": {
+        "type": "String",
+        "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
+        "max_similarity_ancestor_depth": 7,
+        "delegate_arguments": {
+            "code": true
+        }
+    },
+    "not_code_string": {
+        "type": "Primitive",
+        "types": "str",
+        "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
+        "delegate_arguments": {
+            "code": false
+        }
+    },
+    "primitive_string": {
+        "type": "Primitive",
+        "types": "str",
+        "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
+        "delegate_arguments": {
+            "code": true
+        }
+    },
+    "make_float": {
+        "type": "Primitive",
+        "types": "float",
+        "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
+        "delegate_arguments": {
+            "code": true
+        },
+        "pre_normalized_types": ["float", "int"],
+        "normalizer": {
+            "function_name": "parse_float"
+        }
+    },
+    "int": {
+        "type": "Primitive",
+        "types": "int",
+        "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
+        "delegate_arguments": {
+            "code": true
+        }
+    },
+    "bool": {
+        "type": "Primitive",
+        "types": "bool",
+        "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
+        "delegate_arguments": {
+            "code": true
+        }
+    }
+}
