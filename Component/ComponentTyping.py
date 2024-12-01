@@ -236,6 +236,13 @@ class StructureTagTypedDict(TypedDict):
     is_file: NotRequired[bool]
     type: NotRequired[Literal["StructureTag"]]
 
+class TablifierTypedDict(TypedDict):
+    dataminer_collection: Required[str]
+    file_name: Required[str]
+    structure: Required[str]
+    type: NotRequired[Literal["Tablifier"]]
+    version_provider: Required[str]
+
 class TypeAliasTypedDict(TypedDict):
     type: NotRequired[Literal["TypeAlias"]]
     types: Required[str|list[str]]
@@ -300,6 +307,7 @@ ComponentTypedDicts:TypeAlias = Union[
     SetTypedDict,
     StringTypedDict,
     StructureTagTypedDict,
+    TablifierTypedDict,
     TypeAliasTypedDict,
     VersionFileTypedDict,
     VersionFileTypeTypedDict,

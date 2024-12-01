@@ -40,6 +40,7 @@ def choose_component(
     If `component_data` is a dict, it creates a new inline Component using the `create_component_function`.
     If `component_data` is None, it will select the first Component that matches the `required_properties` Pattern; `imported_components` is ignored.
     Returns the Component and a bool specifying if the Component is inline.
+
     :component_data: The Component name or dictionary of Component data.
     :source_component: The Component referring to the given subcomponent name or subcomponent.
     :required_properties: The Pattern the Component must follow.

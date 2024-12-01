@@ -18,6 +18,7 @@ import Component.Structure.SetComponent as SetComponent
 import Component.Structure.StringComponent as StringComponent
 import Component.Structure.StructureTagComponent as StructureTagComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
+import Component.Tablifier.TablifierComponent as TablifierComponent
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileComponent as VersionFileComponent
 import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
@@ -47,6 +48,7 @@ component_types:list[type[Component.Component]] = [
     StringComponent.StringComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
     StructureTagComponent.StructureTagComponent,
+    TablifierComponent.TablifierComponent,
     TypeAliasComponent.TypeAliasComponent,
     VersionComponent.VersionComponent,
     VersionFileComponent.VersionFileComponent,

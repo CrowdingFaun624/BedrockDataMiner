@@ -15,6 +15,7 @@ import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Serializer.SerializerImporterEnvironment as SerializerImporterEnvironment
 import Component.Structure.StructureImporterEnvironment as StructureImporterEnvironment
 import Component.Structure.StructureTagImporterEnvironment as StructureTagImporterEnvironment
+import Component.Tablifier.TablifierImporterEnvironment as TablifierImporterEnvironment
 import Component.Version.VersionFileTypeImporterEnvironment as VersionFileTypeImporterEnvironment
 import Component.Version.VersionImporterEnvironment as VersionImporterEnvironment
 import Component.VersionTag.LatestSlotImporterEnvironment as LatestSlotImporterEnvironment
@@ -30,6 +31,7 @@ if TYPE_CHECKING:
     import Serializer.Serializer as Serializer
     import Structure.StructureBase as StructureBase
     import Structure.StructureTag as StructureTag
+    import Tablifier.Tablifier as Tablifier
     import Version.Version as Version
     import Version.VersionFileType as VersionFileType
     import Version.VersionTag.VersionTag as VersionTag
@@ -42,6 +44,7 @@ importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] =
     SerializerImporterEnvironment.SerializerImporterEnvironment,
     StructureImporterEnvironment.StructureImporterEnvironment,
     StructureTagImporterEnvironment.StructureTagImporterEnvironment,
+    TablifierImporterEnvironment.TablifierImporterEnvironment,
     VersionFileTypeImporterEnvironment.VersionFileTypeImporterEnvironment,
     VersionImporterEnvironment.VersionImporterEnvironment,
     VersionTagImporterEnvironment.VersionTagImporterEnvironment,
@@ -232,6 +235,7 @@ latest_slots:list[str] = all_component_groups["latest_slots"]
 serializers:dict[str,"Serializer.Serializer"] = all_component_groups["serializers"]
 structures:dict[str,"StructureBase.StructureBase"] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
 structure_tags:dict[str,"StructureTag.StructureTag"] = all_component_groups["structure_tags"]
+tablifiers:dict[str,"Tablifier.Tablifier"] = all_component_groups["tablifiers"]
 version_file_types:dict[str,"VersionFileType.VersionFileType"] = all_component_groups["version_file_types"]
 version_tags_order:"VersionTagOrder.VersionTagOrder" = all_component_groups["version_tags_order"]
 version_tags:dict[str,"VersionTag.VersionTag"] = all_component_groups["version_tags"]

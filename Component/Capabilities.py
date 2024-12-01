@@ -17,6 +17,7 @@ ALLOWED_CAPABILITIES = set([
     "is_serializer",
     "is_structure",
     "is_structure_tag",
+    "is_tablifier",
     "is_type_alias",
     "is_version",
     "is_version_file",

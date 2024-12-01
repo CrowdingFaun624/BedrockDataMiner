@@ -27,7 +27,7 @@
 import threading
 from typing import Any, Callable
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "CustomJson", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "NbtReader", "Scripts", "StoredVersions", "Tests", "UrlValidator"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "CustomJson", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "NbtReader", "Scripts", "StoredVersions", "Tablifiers", "Tests", "UrlValidator"]
 
 user_input_lock = threading.Lock()
 
@@ -56,6 +56,7 @@ import Programs.GarbageCollector as GarbageCollector
 import Programs.GetFile as GetFile
 import Programs.Test.Tests as Tests
 import Programs.UrlValidator as UrlValidator
+import Tablifier.Tablifiers as Tablifiers
 import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 import Utilities.Nbt.NbtReader as NbtReader
@@ -78,6 +79,7 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "NbtReader": NbtReader.main,
     "Scripts": Scripts.main,
     "StoredVersions": StoredVersionsManager.main,
+    "Tablifiers": Tablifiers.main,
     "Tests": Tests.main,
     "UrlValidator": UrlValidator.main,
 }
