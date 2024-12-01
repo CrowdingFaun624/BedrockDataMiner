@@ -50,8 +50,15 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
     def get_assumed_used_components(self, components: dict[str, Component.Component], name:str) -> Iterable[Component.Component]:
         return [self.get_base_component(components, name)]
 
+    def get_from_directory(self, directory_path:Path) -> Iterable[Path]:
+        for subpath in directory_path.iterdir():
+            if subpath.is_file():
+                yield subpath
+            else:
+                yield from self.get_from_directory(subpath)
+
     def get_component_files(self) -> Iterable[Path]:
-        return FileManager.STRUCTURES_DIRECTORY.iterdir()
+        yield from self.get_from_directory(FileManager.STRUCTURES_DIRECTORY)
 
     def get_component_group_name(self, file_path:Path) -> str:
-        return "structures/" + file_path.stem
+        return "structures/" + file_path.relative_to(FileManager.STRUCTURES_DIRECTORY).as_posix().removesuffix(file_path.suffix)
