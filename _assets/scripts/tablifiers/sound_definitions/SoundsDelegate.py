@@ -28,7 +28,8 @@ class SoundsDelegate(Delegate.Delegate[str, AbstractIterableStructure.AbstractIt
                 for branch_index, branch in enumerate(branches):
                     value = item.get(branch)
                     if branch == 0:
-                        upcoming_notes.append("{{Until|BE %s}}" % (PrimitiveDelegate.get_version(branches[branch_index + 1], True, environment),))
+                        if item.get(branches[branch_index + 1]) is not D.NoExist:
+                            upcoming_notes.append("{{Until|BE %s}}" % (PrimitiveDelegate.get_version(branches[branch_index + 1], True, environment),))
                     elif value is D.NoExist:
                         upcoming_notes.append("{{Until|BE %s}}" % (PrimitiveDelegate.get_version(branch, True, environment),))
                     else:
