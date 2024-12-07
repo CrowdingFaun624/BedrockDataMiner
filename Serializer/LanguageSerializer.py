@@ -1,3 +1,4 @@
+from itertools import takewhile
 from typing import Iterable, TypedDict
 
 from typing_extensions import NotRequired
@@ -54,8 +55,9 @@ class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject],dict[str
         key, value = key_value.split("=", maxsplit=1)
         if value.endswith("\t#"):
             value = value.removesuffix("\t#").lstrip("\t")
-        if comment is not None and comment.startswith("#"):
-            comment = comment.removeprefix("#")
+        if comment is not None:
+            octothorpe_count = sum(1 for octothorpe in takewhile(lambda char: char == "#", comment))
+            comment = comment[octothorpe_count:].lstrip() # I will destory ALL OCTOTHORPES HAHAHAHAHAHAHAaaAAAA
         if comment is None:
             return key, {"value": value}
         else:
