@@ -1,0 +1,2863 @@
+Difference of "feature_rules_behavior_packs" between "1.21.60.21" (beta of "1.21.60") and "1.21.60.23" (beta of "1.21.60").
+
+Added feature rule "bamboo_jungle_after_surface_bamboo_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:bamboo_jungle_after_surface_bamboo_feature"
+				field "places_feature": "minecraft:bamboo_then_podzol_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "bamboo_jungle_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:bamboo_jungle_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:jungle_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "bamboo"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "jungle"
+			field "distribution":
+				field "iterations": 25
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "bamboo_jungle_before_surface_bamboo_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:bamboo_jungle_before_surface_bamboo_feature_rules"
+				field "places_feature": "minecraft:bamboo_then_podzol_feature"
+			field "conditions":
+				field "placement_pass": "before_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "bamboo"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "jungle"
+			field "distribution":
+				field "iterations": "math.ceil((query.noise(variable.originx / 80.0, variable.originz / 80.0) + 0.3) * 160.0)"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "bamboo_jungle_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:bamboo_jungle_surface_tall_grass_feature"
+				field "places_feature": "minecraft:jungle_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Changed feature rule "cherry_biome_surface_double_plant_feature_rules.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Unchanged field "value": "cherry_grove"
+						Removed field "operator" of "==".
+			Changed field "distribution":
+				Changed field "iterations" from "10" to "((query.noise((variable.originx + 8) / 200.0, (variable.originz + 8) / 200.0) >= -0.8) && variable.is_legacy == 0.0) ? 7 : 0".
+				Added field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 32
+				Unchanged field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				Changed field "y" to "query.heightmap(variable.worldx, variable.worldz)" from:
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) + 4"]
+				Unchanged field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "cherry_biome_surface_tall_grass_feature_rules.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Unchanged field "value": "cherry_grove"
+						Removed field "operator" of "==".
+			Changed field "distribution":
+				Changed field "iterations" from "20" to "(query.noise((variable.originx + 8) / 200.0, (variable.originz + 8) / 200.0) < -0.8) ? 5 : 10".
+				Added field "scatter_chance" of "variable.is_legacy ? 0.0 : 100.0".
+				Unchanged field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				Changed field "y" to "query.heightmap(variable.worldx, variable.worldz)" from:
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) + 4"]
+				Unchanged field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "cherry_grove_after_surface_cherry_tree_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:cherry_grove_after_surface_cherry_tree_feature_rules"
+				field "places_feature": "minecraft:random_cherry_tree_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "cherry_grove"
+			field "distribution":
+				field "iterations": 5
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "cherry_grove_cherry_tree_feature_rules.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "cherry_grove" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "iterations": 5
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "cherry_grove_pink_petals_feature_rules.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "cherry_grove" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "iterations": "(query.noise((variable.originx) / 200.0, (variable.originz) / 200.0) < -0.8) ? 5 : 10"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "cherry_grove_surface_pink_petals_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:cherry_grove_surface_pink_petals_feature_rules"
+				field "places_feature": "minecraft:pink_petals_scatter_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "cherry_grove"
+			field "distribution":
+				field "iterations": "(query.noise((variable.originx) / 200.0, (variable.originz) / 200.0) < -0.8) ? 5 : 10"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "cold_taiga_after_surface_sweet_berry_bush_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:cold_taiga_after_surface_sweet_berry_bush_feature_rules"
+				field "places_feature": "minecraft:scatter_sweet_berry_bush_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mega"
+					filter 2:
+						field "test": "has_biome_tag"
+						field "value": "cold"
+			field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 384
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "cold_taiga_first_sweet_berry_bush_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:cold_taiga_first_sweet_berry_bush_feature"
+				field "places_feature": "minecraft:scatter_sweet_berry_bush_feature"
+			field "conditions":
+				field "placement_pass": "first_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "desert_after_surface_cactus_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:desert_after_surface_cactus_feature_rules"
+				field "places_feature": "minecraft:cactus_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "desert"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 6
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "desert_after_surface_dead_bush_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:desert_after_surface_dead_bush_feature_rules"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "desert"
+			field "distribution":
+				field "iterations": 2
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "desert_after_surface_reeds_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:desert_after_surface_reeds_feature_rules"
+				field "places_feature": "minecraft:reeds_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "desert"
+			field "distribution":
+				field "iterations": 1
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "desert_surface_cactus_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:desert_surface_cactus_feature"
+				field "places_feature": "minecraft:cactus_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "desert_surface_dead_bush_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:desert_surface_dead_bush_feature"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "desert_surface_reeds_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:desert_surface_reeds_feature"
+				field "places_feature": "minecraft:reeds_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "flower_forest_after_surface_flowers_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:flower_forest_after_surface_flowers_feature_rules"
+				field "places_feature": "minecraft:scatter_flower_forest_flower_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "flower_forest"
+			field "distribution":
+				field "iterations": 3
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 2
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "flower_forest_surface_flowers_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:flower_forest_surface_flowers_feature"
+				field "places_feature": "minecraft:scatter_flower_forest_flower_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "forest_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:forest_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "forest"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "taiga"
+			field "distribution":
+				field "iterations": 2
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "forest_surface_flowers_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:forest_surface_flowers_feature"
+				field "places_feature": "minecraft:legacy:forest_flower_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "forest_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:forest_surface_tall_grass_feature"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "jungle_after_surface_bamboo_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:jungle_after_surface_bamboo_feature"
+				field "places_feature": "minecraft:bamboo_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "jungle"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "edge"
+					filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "bamboo"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "jungle_after_surface_flowers_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:jungle_after_surface_flowers_feature_rules"
+				field "places_feature": "minecraft:scatter_overworld_flower_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "jungle"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 16
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "jungle_after_surface_melon_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:jungle_after_surface_melon_feature"
+				field "places_feature": "minecraft:melon_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "jungle"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "edge"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 6
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "jungle_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:jungle_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_jungle_plant_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "jungle"
+			field "distribution":
+				field "iterations": 25
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "jungle_edge_after_surface_melon_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:jungle_edge_after_surface_melon_feature"
+				field "places_feature": "minecraft:melon_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "jungle"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "edge"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 64
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "jungle_surface_flowers_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:jungle_surface_flowers_feature"
+				field "places_feature": "minecraft:scatter_overworld_flower_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "jungle_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:jungle_surface_tall_grass_feature"
+				field "places_feature": "minecraft:jungle_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "lukewarm_ocean_after_surface_kelp_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:lukewarm_ocean_after_surface_kelp_feature_rules"
+				field "places_feature": "minecraft:kelp_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "ocean"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "lukewarm"
+			field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": "math.ceil(query.noise(variable.originx / 80.0, variable.originz / 80.0) * 80.0)"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "lukewarm_ocean_surface_kelp_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:lukewarm_ocean_surface_kelp_feature"
+				field "places_feature": "minecraft:kelp_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "mangrove_swamp_after_surface_dead_bush_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mangrove_swamp_after_surface_dead_bush_feature_rules"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "mangrove_swamp"
+			field "distribution":
+				field "iterations": 1
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mangrove_swamp_after_surface_seagrass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mangrove_swamp_after_surface_seagrass_feature_rules"
+				field "places_feature": "minecraft:seagrass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "mangrove_swamp"
+			field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 8
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mangrove_swamp_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mangrove_swamp_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "mangrove_swamp"
+			field "distribution":
+				field "iterations": 5
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "mangrove_swamp_mangrove_tree_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Unchanged field "value": "mangrove_swamp"
+						Removed field "operator" of "==".
+			Changed field "distribution":
+				Changed field "iterations" from 8 to 25.
+				Unchanged field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				Changed field "y" from "query.heightmap(variable.worldx, variable.worldz)" to "math.max(query.above_top_solid(variable.worldx, variable.worldz), query.heightmap(variable.worldx, variable.worldz) - 4)".
+				Unchanged field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+			Changed field "description":
+				Unchanged field "identifier": "minecraft:mangrove_swamp_mangrove_tree_feature"
+				Changed field "places_feature" from "minecraft:mangrove_tree_feature" to "minecraft:random_mangrove_tree_feature".
+Changed feature rule "mangrove_swamp_surface_dead_bush_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Removed field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "operator": "=="
+								field "value": "mangrove_swamp"
+						Added field "test" of "has_biome_tag".
+						Added field "value" of "deprecated".
+			Removed field "distribution":
+				field "iterations": 6
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y":
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) * 2"]
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "mangrove_swamp_surface_seagrass_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "mangrove_swamp" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 8
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "mangrove_swamp_surface_tall_grass_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "mangrove_swamp" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "iterations": 32
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y":
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) * 2"]
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "mangrove_swamp_tall_mangrove_tree_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "mangrove_swamp" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "iterations": 48
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "meadow_after_surface_double_plant_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:meadow_after_surface_double_plant_feature_rules"
+				field "places_feature": "minecraft:grass_double_plant_patch_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "meadow"
+			field "distribution":
+				field "iterations": "((query.noise((variable.originx + 8) / 200.0, (variable.originz + 8) / 200.0) >= -0.8) && variable.is_legacy == 0.0) ? 7 : 0"
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 32
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "meadow_after_surface_flowers_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:meadow_after_surface_flowers_feature_rules"
+				field "places_feature": "minecraft:scatter_meadow_flower_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "meadow"
+			field "distribution":
+				field "iterations": 1
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "meadow_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:meadow_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "meadow"
+			field "distribution":
+				field "iterations": "(query.noise((variable.originx + 8) / 200.0, (variable.originz + 8) / 200.0) < -0.8) ? 5 : 10"
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "meadow_flowers_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "meadow" to "deprecated".
+						Removed field "operator" of "==".
+			Changed field "description":
+				Unchanged field "identifier": "minecraft:meadow_flowers_feature"
+				Changed field "places_feature" from "minecraft:meadow_flower_feature" to "minecraft:scatter_meadow_flower_feature".
+			Removed field "distribution":
+				field "iterations": 64
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "meadow_surface_double_plant_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:meadow_surface_double_plant_feature_rules"
+				field "places_feature": "minecraft:grass_double_plant_patch_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "meadow_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:meadow_surface_tall_grass_feature"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "mega_taiga_after_surface_brown_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mega_taiga_after_surface_brown_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_brown_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "mega"
+			field "distribution":
+				field "iterations": 3
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mega_taiga_after_surface_dead_bush_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mega_taiga_after_surface_dead_bush_feature_rules"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "mega"
+			field "distribution":
+				field "iterations": 1
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mega_taiga_after_surface_red_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mega_taiga_after_surface_red_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_red_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "mega"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 171
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mega_taiga_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mega_taiga_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_taiga_plant_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "mega"
+			field "distribution":
+				field "iterations": 7
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mega_taiga_surface_dead_bush_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mega_taiga_surface_dead_bush_feature"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Changed feature rule "mega_taiga_surface_mushrooms_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Total filter: 1 (+0, -1)
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "taiga" to "deprecated".
+						Removed field "operator" of "==".
+					Removed filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "=="
+						field "value": "mega"
+			Removed field "distribution":
+				field "iterations": 3
+				field "x": 0
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z": 0
+Added feature rule "mega_taiga_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mega_taiga_surface_tall_grass_feature"
+				field "places_feature": "minecraft:scatter_taiga_plant_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "mesa_after_surface_cactus_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mesa_after_surface_cactus_feature_rules"
+				field "places_feature": "minecraft:cactus_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "mesa"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 13
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mesa_after_surface_dead_bush_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mesa_after_surface_dead_bush_feature_rules"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "mesa"
+			field "distribution":
+				field "iterations": 20
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mesa_after_surface_reeds_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mesa_after_surface_reeds_feature_rules"
+				field "places_feature": "minecraft:reeds_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "mesa"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 5
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mesa_surface_cactus_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mesa_surface_cactus_feature"
+				field "places_feature": "minecraft:cactus_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "mesa_surface_dead_bush_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mesa_surface_dead_bush_feature"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "mesa_surface_reeds_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mesa_surface_reeds_feature"
+				field "places_feature": "minecraft:reeds_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "mushroom_island_after_surface_brown_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mushroom_island_after_surface_brown_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_brown_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "mooshroom_island"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "mushroom_island_after_surface_red_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:mushroom_island_after_surface_red_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_red_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "mooshroom_island"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 256
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "mushroom_island_surface_mushrooms_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "mooshroom_island" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "iterations": 1
+				field "x": 0
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z": 0
+Added feature rule "ocean_after_surface_kelp_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:ocean_after_surface_kelp_feature_rules"
+				field "places_feature": "minecraft:kelp_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "ocean"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "warm"
+					filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "lukewarm"
+					filter 3:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "operator": "not"
+								field "value": "frozen"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "legacy"
+			field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": "math.ceil(query.noise(variable.originx / 80.0, variable.originz / 80.0) * 120.0)"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "ocean_after_surface_seagrass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:ocean_after_surface_seagrass_feature_rules"
+				field "places_feature": "minecraft:seagrass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "ocean"
+			field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 12
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "ocean_surface_kelp_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Total filter: 1 (+0, -2)
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "ocean" to "deprecated".
+						Removed field "operator" of "==".
+					Removed filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "warm"
+					Removed filter 2:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "operator": "!="
+								field "value": "frozen"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "operator": "!="
+								field "value": "monster"
+			Removed field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 20
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 18
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 35]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 35]
+Changed feature rule "ocean_surface_seagrass_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "ocean" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 12
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "overworld_after_surface_extra_brown_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_extra_brown_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_brown_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "pale_garden"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 256
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "overworld_after_surface_extra_red_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_extra_red_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_red_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "pale_garden"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 512
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "overworld_after_surface_flowers_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_flowers_feature_rules"
+				field "places_feature": "minecraft:scatter_overworld_flower_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "jungle"
+					filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "flower_forest"
+					filter 3:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "swamp"
+					filter 4:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mangrove_swamp"
+					filter 5:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mesa"
+					filter 6:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mooshroom_island"
+					filter 7:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "plains"
+					filter 8:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "cherry_grove"
+					filter 9:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "pale_garden"
+					filter 10:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "operator": "not"
+								field "value": "savanna"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "mutated"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 32
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "overworld_after_surface_kelp_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_kelp_feature_rules"
+				field "places_feature": "minecraft:kelp_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "all_of":
+									filter 0:
+										field "any_of":
+											filter 0:
+												field "test": "has_biome_tag"
+												field "value": "overworld"
+											filter 1:
+												field "test": "has_biome_tag"
+												field "value": "overworld_generation"
+									filter 1:
+										field "test": "has_biome_tag"
+										field "operator": "not"
+										field "value": "ocean"
+							filter 1:
+								field "all_of":
+									filter 0:
+										field "test": "has_biome_tag"
+										field "value": "ocean"
+									filter 1:
+										field "any_of":
+											filter 0:
+												field "test": "has_biome_tag"
+												field "value": "warm"
+											filter 1:
+												field "all_of":
+													filter 0:
+														field "test": "has_biome_tag"
+														field "value": "frozen"
+													filter 1:
+														field "test": "has_biome_tag"
+														field "operator": "not"
+														field "value": "legacy"
+			field "distribution":
+				field "iterations": 0
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 18
+				field "x": 0
+				field "y": 0
+				field "z": 0
+Added feature rule "overworld_after_surface_pumpkin_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_pumpkin_feature_rules"
+				field "places_feature": "minecraft:pumpkin_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+			field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 300
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "overworld_after_surface_reeds_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_reeds_feature_rules"
+				field "places_feature": "minecraft:reeds_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "desert"
+					filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "swamp"
+					filter 3:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mesa"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 6
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "overworld_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "plains"
+					filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "taiga"
+					filter 3:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "jungle"
+					filter 4:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mooshroom_island"
+					filter 5:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "savanna"
+					filter 6:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "swamp"
+					filter 7:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mangrove_swamp"
+					filter 8:
+						field "any_of":
+							filter 0:
+								field "all_of":
+									filter 0:
+										field "test": "has_biome_tag"
+										field "operator": "not"
+										field "value": "forest"
+									filter 1:
+										field "test": "has_biome_tag"
+										field "operator": "not"
+										field "value": "forest_generation"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "extreme_hills"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "overworld_surface_extra_brown_mushroom_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "description":
+				Unchanged field "identifier": "minecraft:overworld_surface_extra_brown_mushroom_feature"
+				Changed field "places_feature" from "minecraft:brown_mushroom_feature" to "minecraft:scatter_brown_mushroom_feature".
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Total filter: 1 (+0, -1)
+					Changed filter 0:
+						Removed field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+						Added field "test" of "has_biome_tag".
+						Added field "value" of "deprecated".
+					Removed filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "pale_garden"
+			Removed field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y":
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) * 2"]
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "overworld_surface_extra_red_mushroom_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "description":
+				Unchanged field "identifier": "minecraft:overworld_surface_extra_red_mushroom_feature"
+				Changed field "places_feature" from "minecraft:red_mushroom_feature" to "minecraft:scatter_red_mushroom_feature".
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Total filter: 1 (+0, -1)
+					Changed filter 0:
+						Removed field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+						Added field "test" of "has_biome_tag".
+						Added field "value" of "deprecated".
+					Removed filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "pale_garden"
+			Removed field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 8
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y":
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) * 2"]
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "overworld_surface_flowers_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "description":
+				Unchanged field "identifier": "minecraft:overworld_surface_flowers_feature"
+				Changed field "places_feature" from "minecraft:legacy:overworld_flower_feature" to "minecraft:scatter_overworld_flower_feature".
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Total filter: 1 (+0, -11)
+					Changed filter 0:
+						Removed field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+						Added field "test" of "has_biome_tag".
+						Added field "value" of "deprecated".
+					Removed filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "jungle"
+					Removed filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "flower_forest"
+					Removed filter 3:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "swamp"
+					Removed filter 4:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mangrove_swamp"
+					Removed filter 5:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mesa"
+					Removed filter 6:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mooshroom_island"
+					Removed filter 7:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "plains"
+					Removed filter 8:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "cherry_grove"
+					Removed filter 9:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "pale_garden"
+					Removed filter 10:
+						field "any_of":
+							filter 0:
+								field "all_of":
+									filter 0:
+										field "test": "has_biome_tag"
+										field "operator": "not"
+										field "value": "forest"
+									filter 1:
+										field "test": "has_biome_tag"
+										field "operator": "not"
+										field "value": "forest_generation"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "extreme_hills"
+							filter 2:
+								field "test": "has_biome_tag"
+								field "value": "taiga"
+					Removed filter 11:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "operator": "not"
+								field "value": "savanna"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "mutated"
+			Removed field "distribution":
+				field "iterations": 2
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y":
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) + 32"]
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "overworld_surface_kelp_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Removed field "any_of":
+							filter 0:
+								field "all_of":
+									filter 0:
+										field "any_of":
+											filter 0:
+												field "test": "has_biome_tag"
+												field "operator": "=="
+												field "value": "overworld"
+											filter 1:
+												field "test": "has_biome_tag"
+												field "operator": "=="
+												field "value": "overworld_generation"
+									filter 1:
+										field "test": "has_biome_tag"
+										field "operator": "!="
+										field "value": "ocean"
+							filter 1:
+								field "all_of":
+									filter 0:
+										field "test": "has_biome_tag"
+										field "operator": "=="
+										field "value": "ocean"
+									filter 1:
+										field "any_of":
+											filter 0:
+												field "test": "has_biome_tag"
+												field "operator": "=="
+												field "value": "warm"
+											filter 1:
+												field "all_of":
+													filter 0:
+														field "test": "has_biome_tag"
+														field "operator": "=="
+														field "value": "frozen"
+													filter 1:
+														field "test": "has_biome_tag"
+														field "operator": "=="
+														field "value": "monster"
+						Added field "test" of "has_biome_tag".
+						Added field "value" of "deprecated".
+			Removed field "distribution":
+				field "iterations": 0
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 18
+				field "x": 0
+				field "y": 0
+				field "z": 0
+Added feature rule "overworld_surface_pumpkin_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_surface_pumpkin_feature"
+				field "places_feature": "minecraft:pumpkin_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "overworld_surface_reeds_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_surface_reeds_feature"
+				field "places_feature": "minecraft:reeds_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Changed feature rule "overworld_surface_tall_grass_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Total filter: 1 (+0, -7)
+					Changed filter 0:
+						Removed field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "operator": "=="
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "operator": "=="
+								field "value": "overworld_generation"
+						Added field "test" of "has_biome_tag".
+						Added field "value" of "deprecated".
+					Removed filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "taiga"
+					Removed filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "jungle"
+					Removed filter 3:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "mooshroom_island"
+					Removed filter 4:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "savanna"
+					Removed filter 5:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "swamp"
+					Removed filter 6:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "mangrove_swamp"
+					Removed filter 7:
+						field "any_of":
+							filter 0:
+								field "all_of":
+									filter 0:
+										field "test": "has_biome_tag"
+										field "operator": "!="
+										field "value": "forest"
+									filter 1:
+										field "test": "has_biome_tag"
+										field "operator": "!="
+										field "value": "forest_generation"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "operator": "=="
+								field "value": "extreme_hills"
+			Removed field "distribution":
+				field "iterations": 1
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y":
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) * 2"]
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "pale_garden_surface_double_plant_feature_rules.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "pale_garden" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "iterations": "10"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y":
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) + 4"]
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "pale_garden_surface_tall_grass_feature_rules.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Unchanged field "value": "pale_garden"
+						Removed field "operator" of "==".
+			Changed field "distribution":
+				Changed field "iterations" from "20" to 2.
+				Unchanged field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				Changed field "y" to "query.heightmap(variable.worldx, variable.worldz)" from:
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) + 4"]
+				Unchanged field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "plains_after_surface_double_plant_sunflower_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:plains_after_surface_double_plant_sunflower_feature_rules"
+				field "places_feature": "minecraft:sunflower_double_plant_patch_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "plains"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "mutated"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 3
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "plains_after_surface_flowers_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:plains_after_surface_flowers_feature_rules"
+				field "places_feature": "minecraft:scatter_plains_flower_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "plains"
+			field "distribution":
+				field "iterations": "(query.noise((variable.originx + 8) / 200.0, (variable.originz + 8) / 200.0) < -0.8) ? 4 : 1"
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 8
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "plains_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:plains_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "plains"
+			field "distribution":
+				field "iterations": "(query.noise((variable.originx + 8) / 200.0, (variable.originz + 8) / 200.0) < -0.8) ? 5 : 10"
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "plains_first_double_plant_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:plains_first_double_plant_grass_feature"
+				field "places_feature": "minecraft:grass_double_plant_patch_feature"
+			field "conditions":
+				field "placement_pass": "first_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "plains"
+			field "distribution":
+				field "iterations": "variable.is_legacy == 0.0 ? 1 : 0"
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "plains_first_double_plant_sunflower_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:plains_first_double_plant_sunflower_feature"
+				field "places_feature": "minecraft:sunflower_double_plant_patch_feature"
+			field "conditions":
+				field "placement_pass": "first_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "plains_surface_flowers_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:plains_surface_flowers_feature"
+				field "places_feature": "minecraft:scatter_plains_flower_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "plains_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:plains_surface_tall_grass_feature"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "river_after_surface_seagrass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:river_after_surface_seagrass_feature_rules"
+				field "places_feature": "minecraft:seagrass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "river"
+			field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 12
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "river_surface_seagrass_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "river" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 12
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "savanna_after_surface_flowers_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:savanna_after_surface_flowers_feature_rules"
+				field "places_feature": "minecraft:scatter_overworld_flower_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "savanna"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mutated"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 16
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "savanna_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:savanna_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "savanna"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mutated"
+			field "distribution":
+				field "iterations": 20
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "savanna_first_double_plant_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:savanna_first_double_plant_grass_feature"
+				field "places_feature": "minecraft:grass_double_plant_patch_feature"
+			field "conditions":
+				field "placement_pass": "first_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "savanna"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mutated"
+			field "distribution":
+				field "iterations": "variable.is_legacy ? 0 : 1"
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 5
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "savanna_mutated_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:minecraft:savanna_mutated_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "savanna"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "mutated"
+			field "distribution":
+				field "iterations": 5
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "savanna_mutated_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:minecraft:savanna_mutated_surface_tall_grass_feature"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "savanna_surface_flowers_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:savanna_surface_flowers_feature"
+				field "places_feature": "minecraft:scatter_overworld_flower_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "savanna_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:savanna_surface_tall_grass_feature"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "swamp_after_surface_brown_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_brown_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_brown_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "swamp"
+			field "distribution":
+				field "iterations": 2
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "swamp_after_surface_dead_bush_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_dead_bush_feature_rules"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "swamp"
+			field "distribution":
+				field "iterations": 1
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "swamp_after_surface_flowers_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_flowers_feature_rules"
+				field "places_feature": "minecraft:scatter_swamp_flower_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "swamp"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 32
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "swamp_after_surface_red_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_red_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_red_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "swamp"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 64
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "swamp_after_surface_reeds_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_reeds_feature_rules"
+				field "places_feature": "minecraft:reeds_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "swamp"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 3
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "swamp_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "swamp"
+			field "distribution":
+				field "iterations": 5
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "swamp_after_surface_waterlily_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_waterlily_feature_rules"
+				field "places_feature": "minecraft:fixup_waterlily_position_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "swamp"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "mangrove_swamp"
+			field "distribution":
+				field "iterations": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "swamp_surface_dead_bush_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_surface_dead_bush_feature"
+				field "places_feature": "minecraft:dead_bush_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "swamp_surface_flowers_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_surface_flowers_feature"
+				field "places_feature": "minecraft:scatter_swamp_flower_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Changed feature rule "swamp_surface_mushrooms_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "swamp" to "deprecated".
+						Removed field "operator" of "==".
+			Removed field "distribution":
+				field "iterations": 8
+				field "x": 0
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z": 0
+Added feature rule "swamp_surface_reeds_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_surface_reeds_feature"
+				field "places_feature": "minecraft:reeds_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Added feature rule "swamp_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_surface_tall_grass_feature"
+				field "places_feature": "minecraft:scatter_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Changed feature rule "swamp_surface_waterlily_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Changed filter 0:
+						Removed field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "operator": "=="
+								field "value": "swamp"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "operator": "=="
+								field "value": "mangrove_swamp"
+						Added field "test" of "has_biome_tag".
+						Added field "value" of "deprecated".
+			Removed field "distribution":
+				field "iterations": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y":
+					field "distribution": "uniform"
+					field "extent": [0, "query.heightmap(variable.worldx, variable.worldz) * 2"]
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "taiga_after_surface_brown_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:taiga_after_surface_brown_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_brown_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mega"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "taiga_after_surface_red_mushroom_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:taiga_after_surface_red_mushroom_feature_rules"
+				field "places_feature": "minecraft:scatter_red_mushroom_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mega"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 256
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "taiga_after_surface_sweet_berry_bush_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:taiga_after_surface_sweet_berry_bush_feature_rules"
+				field "places_feature": "minecraft:scatter_sweet_berry_bush_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "cold"
+			field "distribution":
+				field "coordinate_eval_order": "zxy"
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 32
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "taiga_after_surface_tall_grass_feature_rules.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:taiga_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_taiga_plant_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mega"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "taiga_first_double_plant_fern_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:taiga_first_double_plant_fern_feature"
+				field "places_feature": "minecraft:fern_double_plant_patch_feature"
+			field "conditions":
+				field "placement_pass": "first_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "taiga"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 5
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "taiga_first_sweet_berry_bush_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:taiga_first_sweet_berry_bush_feature"
+				field "places_feature": "minecraft:scatter_sweet_berry_bush_feature"
+			field "conditions":
+				field "placement_pass": "first_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"
+Changed feature rule "taiga_surface_mushrooms_feature.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:feature_rules":
+			Changed field "conditions":
+				Changed field "minecraft:biome_filter":
+					Total filter: 1 (+0, -1)
+					Changed filter 0:
+						Unchanged field "test": "has_biome_tag"
+						Changed field "value" from "taiga" to "deprecated".
+						Removed field "operator" of "==".
+					Removed filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "mega"
+			Removed field "distribution":
+				field "iterations": 1
+				field "x": 0
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z": 0
+Added feature rule "taiga_surface_tall_grass_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:taiga_surface_tall_grass_feature"
+				field "places_feature": "minecraft:scatter_taiga_plant_feature"
+			field "conditions":
+				field "placement_pass": "surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "deprecated"

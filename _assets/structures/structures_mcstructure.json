@@ -114,9 +114,14 @@
         "type": "Keymap",
         "this_type": "TAG_Compound",
         "keys": {
+            "author": {"type": "TAG_String"},
             "Damage": {"type": "TAG_Int"},
             "ench": {"type": "TAG_List", "subcomponent": "item.tag.ench"},
-            "RepairCost": {"type": "TAG_Int"}
+            "generation": {"type": "TAG_Int"},
+            "pages": {"type": "TAG_List", "subcomponent": "item.tag.pages"},
+            "RepairCost": {"type": "TAG_Int"},
+            "title": {"type": "TAG_String"},
+            "xuid": {"type": "TAG_String"}
         }
     },
     "item.tag.ench": {
@@ -136,6 +141,23 @@
             "keys": {
                 "id": {"type": "TAG_Short"},
                 "lvl": {"type": "TAG_Short"}
+            }
+        }
+    },
+    "item.tag.pages": {
+        "type": "Set",
+        "this_type": "TAG_List",
+        "types": "TAG_Compound",
+        "delegate_arguments": {
+            "field": "page",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "Keymap",
+            "this_type": "TAG_Compound",
+            "keys": {
+                "photoname": {"type": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}},
+                "text": {"type": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}}
             }
         }
     },
@@ -598,6 +620,7 @@
             "AttachedBlocks": {"type": "TAG_List", "subcomponent": "empty_list"},
             "auto": {"type": "TAG_Byte"},
             "Base": {"type": "TAG_Int"},
+            "book": {"type": "TAG_Compound", "subcomponent": "item"},
             "BreakBlocks": {"type": "TAG_List", "subcomponent": "vector_tag_int"},
             "color": {"type": ["TAG_Byte", "TAG_Int"]},
             "conditionalMode": {"type": "TAG_Byte"},
@@ -612,6 +635,7 @@
             "Findable": {"type": "TAG_Byte"},
             "FuelAmount": {"type": "TAG_Short"},
             "FuelTotal": {"type": "TAG_Short"},
+            "hasBook": {"type": "TAG_Byte"},
             "id": {"type": "TAG_String"},
             "ignoreEntities": {"type": "TAG_Byte"},
             "IgnoreLighting": {"type": "TAG_Byte"},
@@ -637,6 +661,7 @@
             "name": {"type": "TAG_String"},
             "NewState": {"type": "TAG_Byte"},
             "OutputSignal": {"type": "TAG_Int"},
+            "page": {"type": "TAG_Int"},
             "PersistFormatting": {"type": "TAG_Byte"},
             "PotionId": {"type": "TAG_Short"},
             "PotionType": {"type": "TAG_Short"},
@@ -662,6 +687,7 @@
             "TextIgnoreLegacyBugResolved": {"type": "TAG_Byte"},
             "TextOwner": {"type": "TAG_String"},
             "TickDelay": {"type": "TAG_Int"},
+            "totalPages": {"type": "TAG_Int"},
             "TrackOutput": {"type": "TAG_Byte"},
             "TransferCooldown": {"type": "TAG_Int"},
             "Type": {"type": "TAG_Int"},
