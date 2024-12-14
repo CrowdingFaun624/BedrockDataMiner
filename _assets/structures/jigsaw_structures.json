@@ -1,0 +1,90 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "jigsaw_structures"
+        },
+        "imports": [
+            {
+                "from": "structures/entities",
+                "components": [
+                    {"component": "filter"}
+                ]
+            }
+        ],
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "sort": "by_key",
+        "key_component": {"type": "String"},
+        "delegate_arguments": {
+            "field": "processor",
+            "measure_length": true
+        },
+        "types": "dict",
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "sort": "by_key",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
+        "normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/flat"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "structure"
+        }
+    },
+    "structure": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "format_version": {"type": "str", "weight": 0},
+            "minecraft:jigsaw": {"type": "dict", "subcomponent": "jigsaw"}
+        }
+    },
+    "jigsaw": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
+            "biome_filters": {"type": "list", "subcomponent": "biome_filters"},
+            "step": {"type": "str"},
+            "terrain_adaptation": {"type": "str"},
+            "start_pool": {"type": "str"},
+            "max_depth": {"type": "int"},
+            "start_height": {"type": "int"},
+            "heightmap_projection": {"type": "str"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "identifier": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "biome_filters": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "biome filter",
+            "measure_length": true
+        },
+        "subcomponent": "filter"
+    }
+}

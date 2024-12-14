@@ -1,0 +1,111 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "jigsaw_structure_sets"
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "sort": "by_key",
+        "key_component": {"type": "String"},
+        "delegate_arguments": {
+            "field": "processor",
+            "measure_length": true
+        },
+        "types": "dict",
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "sort": "by_key",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
+        "normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/flat"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "file"
+        }
+    },
+    "file": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "format_version": {"type": "str", "weight": 0},
+            "minecraft:structure_set": {"type": "dict", "subcomponent": "structure_set"}
+        }
+    },
+    "structure_set": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "description": {"type": "dict", "subcomponent": "description", "delegate_arguments": {"always_print": true}},
+            "placement": {"type": "dict", "subcomponent": "placement"},
+            "structures": {"type": "list", "subcomponent": "structures"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "identifier": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "structures": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "structure",
+            "measure_length": true
+        },
+        "subcomponent": "structure"
+    },
+    "structure": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "structure": {"type": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "weight": {"type": "int"}
+        }
+    },
+    "placement": {
+        "type": "Keymap",
+        "normalizer": {
+            "function_name": "wrap_in_value",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "delegate_arguments": {
+            "passthrough": true
+        },
+        "keys": {
+            "minecraft:random_spread": {"type": "dict", "subcomponent": "placement.random_spread"}
+        }
+    },
+    "placement.random_spread": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str"},
+            "salt": {"type": "int"},
+            "separation": {"type" :"int"},
+            "spacing": {"type": "int"},
+            "spread_type": {"type": "str"}
+        }
+    }
+}

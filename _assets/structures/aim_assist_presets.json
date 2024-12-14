@@ -1,0 +1,79 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "aim_assist_presets"
+        },
+        "subcomponent": "behavior_packs"
+    },
+    "behavior_packs": {
+        "type": "Dict",
+        "types": "file",
+        "sort": "by_key",
+        "delegate_arguments": {
+            "field": "behavior pack",
+            "measure_length": true
+        },
+        "normalizer": {
+            "function_name": "normalizers/collapse_resource_packs/flat"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "preset"
+        }
+    },
+    "string_remove_minecraft": {
+        "type": "String",
+        "similarity_function": "normalizers/remove_minecraft_prefix"
+    },
+    "preset": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "format_version": {"type": "str", "weight": 0},
+            "minecraft:aim_assist_preset": {"type": "dict", "subcomponent": "aim_assist_preset"}
+        }
+    },
+    "aim_assist_preset": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "identifier": {"type": "str", "subcomponent": "string_remove_minecraft"},
+            "categories": {"type": "str"},
+            "item_settings": {"type": "dict", "subcomponent": "item_settings"},
+            "default_item_settings": {"type": "str"},
+            "hand_settings": {"type": "str"},
+            "exclusion_list": {"type": "list", "subcomponent": "item_list"},
+            "liquid_targeting_list": {"type": "list", "subcomponent": "item_list"}
+        }
+    },
+    "item_settings": {
+        "type": "Dict",
+        "sort": "by_key",
+        "types": "str",
+        "key_component": "string_remove_minecraft",
+        "subcomponent": "string_remove_minecraft",
+        "delegate_arguments": {
+            "field": "item",
+            "measure_length": true
+        }
+    },
+    "item_list": {
+        "type": "Set",
+        "sort": true,
+        "types": "str",
+        "subcomponent": "string_remove_minecraft",
+        "delegate_arguments": {
+            "field": "item",
+            "measure_length": true
+        }
+    }
+}

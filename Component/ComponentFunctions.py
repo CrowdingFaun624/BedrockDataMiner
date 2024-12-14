@@ -29,6 +29,12 @@ def wrap_in_dict(data:list[dict[str,Any]], key:str, delete:bool=False) -> dict[s
             del value[key]
     return output
 
+def wrap_in_value(data:dict[str,Any], key:str, delete:bool=False) -> dict[str,dict[str,Any]]:
+    value = data[key]
+    if delete:
+        del value[key]
+    return {value: data}
+
 def turn_to_dict(data:list[dict[str,Any]], key_key:str, value_key:str) -> dict[str,Any]:
     output:dict[str,Any] = {}
     for item in data:
@@ -83,5 +89,6 @@ functions:dict[str,Callable] = {
     "split_lines": split_lines,
     "turn_to_dict": turn_to_dict,
     "wrap_in_dict": wrap_in_dict,
+    "wrap_in_value": wrap_in_value,
     "wrap_tuple": wrap_tuple,
 }
