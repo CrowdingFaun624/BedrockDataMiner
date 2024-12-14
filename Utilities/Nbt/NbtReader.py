@@ -48,12 +48,12 @@ def string_test(data:NbtTypes.TAG|type[Exception], data_string:str|None=None) ->
     try:
         reparsed_data = SnbtParser.parse(data_string)
     except Exception as e:
-        if isinstance(data, NbtTypes.TAG):
+        if not isinstance(data, Exception):
             traceback.print_exception(e)
         else:
             if type(e) != data:
                 raise Exceptions.NbtTestFailureError("Error is not expected from %s!" % (data_string))
-    if isinstance(data, NbtTypes.TAG):
+    if not isinstance(data, Exception):
         if reparsed_data is None:
             raise Exceptions.NbtTestFailureError("Failed to parse data %s!" % (data_string))
         if data != reparsed_data:
