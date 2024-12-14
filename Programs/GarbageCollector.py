@@ -4,6 +4,7 @@ import Component.Importer as Importer
 import Utilities.File as File
 import Utilities.FileManager as FileManager
 import Utilities.FileStorageManager as FileStorageManager
+import Utilities.UserInput as UserInput
 
 
 def garbage_collect() -> set[int]:
@@ -80,7 +81,4 @@ def main() -> None:
         "remove": remove,
         "stats": print_stats,
     }
-    user_input = None
-    while user_input not in functions:
-        user_input = input("Choose an action from [%s]: " % (", ".join(functions)))
-    functions[user_input]()
+    UserInput.input_single(functions, "program", show_options=True, close_enough=True)()

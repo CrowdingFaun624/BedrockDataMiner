@@ -33,7 +33,7 @@ def datamine_version(version:Version.Version, all_dataminers:dict[str,DataMinerC
                 accessor.all_done() # remove all of the installed client files from the version directory so I don't have to clog my storage
 
 def main() -> None:
-    dataminers_dict = {dataminer.name: dataminer for dataminer in DataMiners.dataminers}
+    dataminers_dict = Importer.dataminer_collections
     for version in reversed(Importer.versions.values()):
         if not any(dataminer_collection.supports_version(version) for dataminer_collection in dataminers_dict.values()):
             print("Skipped \"%s\" due to being unarchived." % (version.name))

@@ -3,10 +3,10 @@ from typing import Generator, Iterable, TypeVar
 
 import Component.Importer as Importer
 import DataMiner.DataMinerCollection as DataMinerCollection
-import DataMiner.DataMiners as DataMiners
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
+import Utilities.UserInput as UserInput
 import Version.Version as Version
 
 COMPARING_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing)
@@ -62,31 +62,10 @@ def compare_all_of(
     finally:
         dataminer_collection.clear_caches()
 
-def select_dataminers(dataminers:list[DataMinerCollection.DataMinerCollection]) -> list[DataMinerCollection.DataMinerCollection]:
-    '''
-    Allows the user to select any DataMinerCollection.
-    :dataminers: Any DataMinerCollection that the user can pick.
-    '''
-    dataminer_names = {dataminer.name: dataminer for dataminer in dataminers}
-    selected_dataminer_names:list[str] = []
-    print(list(dataminer_names.keys()))
-    while True:
-        user_input = input("Choose a/some DataMinerCollection(s) to compare (space-delimited) (\"*\" for all): ")
-        if user_input == "*":
-            selected_dataminer_names = list(dataminer_names.keys())
-        else:
-            selected_dataminer_names = user_input.split(" ")
-        unrecognized_dataminers:list[str] = [selected_dataminer for selected_dataminer in selected_dataminer_names if selected_dataminer not in dataminer_names]
-        if len(unrecognized_dataminers) > 0:
-            print("Unrecognized DataMinerCollection: [%s]" % ", ".join(unrecognized_dataminers))
-            continue
-        else:
-            break
-    return [dataminer_names[dataminer_name] for dataminer_name in selected_dataminer_names]
-
 def main() -> None:
-    dataminers = [dataminer_collection for dataminer_collection in DataMiners.dataminers if not dataminer_collection.comparing_disabled]
-    selected_dataminers = select_dataminers(dataminers)
+    selected_dataminers = UserInput.input_multi(
+        {dataminer_name: dataminer_collection for dataminer_name, dataminer_collection in Importer.dataminer_collections.items() if not dataminer_collection.comparing_disabled},
+        "dataminer", allow_select_all=True, show_options_first_time=True, close_enough=True)
     versions = Importer.versions
     version_tags = Importer.version_tags
     version_tags_order = Importer.version_tags_order

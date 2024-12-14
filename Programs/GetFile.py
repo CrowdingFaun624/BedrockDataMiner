@@ -1,13 +1,10 @@
 import Component.Importer as Importer
 import Downloader.Accessor as Accessor
+import Utilities.UserInput as UserInput
 
 
 def main() -> None:
-    versions = Importer.versions
-    version = None
-    while version not in versions:
-        version = input("Version: ")
-    version = versions[version]
+    version = UserInput.input_single(Importer.versions, "version")
     file = input("File: ")
     install_manager = version.get_version_files_dict()["client"].get_accessor(required_type=Accessor.DirectoryAccessor)
     if install_manager is not None:

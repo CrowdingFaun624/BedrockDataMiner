@@ -7,6 +7,7 @@ import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
 import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.Nbt.SnbtParser as SnbtParser
+import Utilities.UserInput as UserInput
 
 
 def unpack_bytes(data:bytes, gzipped:bool=True, endianness:Endianness.End|None=None) -> tuple[str|None,NbtTypes.TAG]:
@@ -34,10 +35,8 @@ def main_read_file() -> None:
     path = None
     while path is None or not path.exists():
         user_input = input("Place nbt file in Programs directory and type its name: ")
-        path = Path("./Programs/%s" % user_input)
-    while user_input not in ("yl", "yb", "nl", "nb"):
-        user_input = input("Specify g-zippedness and endianness (y/n, b/l eg. \"yl\")? ")
-    is_gzipped, endianness = {"yl": (True, Endianness.End.LITTLE), "yb": (True, Endianness.End.BIG), "nl": (False, Endianness.End.LITTLE), "nb": (False, Endianness.End.BIG)}[user_input]
+        path = Path("./Programs/%s" % (user_input,))
+    is_gzipped, endianness = UserInput.input_single({"yl": (True, Endianness.End.LITTLE), "yb": (True, Endianness.End.BIG), "nl": (False, Endianness.End.LITTLE), "nb": (False, Endianness.End.BIG)}, "g-zippedness and endianness", show_options=True)
     with open(path, "rb") as f:
         data = unpack_file(f, gzipped=is_gzipped, endianness=endianness)
     print(*data)
@@ -198,10 +197,7 @@ def main() -> None:
         "read_file": main_read_file,
         "string_demo": main_string_demo,
     }
-    user_input = None
-    while user_input not in PROGRAMS:
-        user_input = input("Select a program from [%s]: " % (", ".join(PROGRAMS.keys())))
-    PROGRAMS[user_input]()
+    UserInput.input_single(PROGRAMS, "program", show_options=True, close_enough=True)()
 
 if __name__ == "__main__":
     main()

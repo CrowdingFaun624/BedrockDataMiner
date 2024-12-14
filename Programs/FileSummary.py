@@ -1,13 +1,10 @@
 import Component.Importer as Importer
 import Downloader.Accessor as Accessor
+import Utilities.UserInput as UserInput
 
 
 def main():
-    version_names = Importer.versions
-    selected_version_name = None
-    while selected_version_name not in version_names:
-        selected_version_name = input("Select a version to analyze: ")
-    selected_version = version_names[selected_version_name]
+    selected_version = UserInput.input_single(Importer.versions, "version")
     files = selected_version.get_version_files_dict()["client"].get_accessor(required_type=Accessor.DirectoryAccessor).get_full_file_list()
     file_extensions:dict[str,int] = {}
     for file in files:

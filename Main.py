@@ -32,14 +32,10 @@ PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "CustomJson
 user_input_lock = threading.Lock()
 
 def get_user_input() -> None:
+    import Utilities.UserInput as UserInput
     with user_input_lock:
-        output = ""
-        while output not in PROGRAM_NAMES:
-            try:
-                output = input("Choose a program (%s):\n" % (PROGRAM_NAMES))
-            except EOFError:
-                exit()
-        user_input[0] = output
+        user_input[0] = UserInput.input_single({name: name for name in PROGRAM_NAMES}, "program", show_options=True, close_enough=True, behavior_on_eof=exit)
+
 user_input:list[Any] = [None]
 if __name__ == "__main__":
     import threading
@@ -110,6 +106,7 @@ if __name__ == "__main__":
 
 pass
 # TODO: make logging of errors slightly better.
+# TODO: Make a module specifically for getting user input.
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
 
 # TODO: make more domains

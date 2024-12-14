@@ -9,6 +9,7 @@ from typing_extensions import Self
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.UserInput as UserInput
 
 a = TypeVar("a")
 
@@ -102,8 +103,7 @@ class Scripts():
 def main() -> None:
     user_script:Script|None = None
     print(scripts)
-    while user_script is None:
-        user_script = scripts.scripts.get(input("Choose a script from the scripts directory: "), None)
+    user_script = UserInput.input_single(scripts.scripts, "script from the scripts directory", show_options_first_time=True, close_enough=True)
     output = user_script()
     print(output)
 

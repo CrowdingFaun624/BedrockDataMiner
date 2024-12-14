@@ -8,6 +8,7 @@ from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
+import Utilities.UserInput as UserInput
 from Utilities.FunctionCaller import FunctionCaller
 
 COMPRESSIBLE_FORMATS = [
@@ -224,18 +225,13 @@ def clear_objects() -> None:
 def extract_user() -> None:
     '''Provides a user interface for extraction.'''
     file_list = get_version_list()
-    user_input = None
-    while user_input not in file_list:
-        user_input = input("Select a version from the list: %s " % list(file_list))
+    user_input = UserInput.input_single({file: file for file in file_list}, "file", show_options_first_time=True, close_enough=True)
     extract(user_input)
     print("Extracted \"%s\"" % user_input)
 
 def stats_user() -> None:
     file_list = get_version_list()
-    print("Select a version from the list: %s" % list(file_list))
-    user_input = None
-    while user_input not in file_list:
-        user_input = input()
+    user_input = UserInput.input_single({file: file for file in file_list}, "file", show_options_first_time=True, close_enough=True)
     sizes = get_sizes(user_input)
     top_sizes = dict(islice(sizes.items(), 50))
     print("Top sizes from \"%s\":" % user_input)
@@ -248,7 +244,4 @@ def main() -> None:
         "extract": extract_user,
         "stats": stats_user,
     }
-    user_input = ""
-    while user_input not in PROGRAMS.keys():
-        user_input = input("Select a StoredVersions program from %s: " % list(PROGRAMS.keys()))
-    PROGRAMS[user_input]()
+    UserInput.input_single(PROGRAMS, "program", show_options=True, close_enough=True)()

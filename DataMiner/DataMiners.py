@@ -4,9 +4,10 @@ import Component.Importer as Importer
 import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import Structure.StructureEnvironment as StructureEnvironment
+import Utilities.UserInput as UserInput
 import Version.Version as Version
 
-dataminers = list(Importer.dataminer_collections.values())
+_dataminers = list(Importer.dataminer_collections.values())
 
 SINGLE_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining)
 MANY_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
@@ -17,11 +18,11 @@ def get_dataminable_dataminers(version:Version.Version) -> list[DataMinerCollect
     :version: The version to test.
     :all_dataminers: A dict of all DataMinerCollections.
     '''
-    output = [dataminer for dataminer in dataminers if dataminer.supports_version(version)]
+    output = [dataminer for dataminer in _dataminers if dataminer.supports_version(version)]
     return output
 
 def currently_has_data_files_from(version:Version.Version) -> list[DataMinerCollection.DataMinerCollection]:
-    return [dataminer for dataminer in dataminers if dataminer.get_data_file_path(version).exists()]
+    return [dataminer for dataminer in _dataminers if dataminer.get_data_file_path(version).exists()]
 
 def get_dataminer_order(version:Version.Version, unordered_dataminers:list[DataMinerCollection.DataMinerCollection]) -> list[DataMinerCollection.DataMinerCollection]:
     '''
@@ -102,29 +103,14 @@ def run(
 
 def user_interface() -> None:
     version_names = Importer.versions
-    all_dataminers_dict = {dataminer.name: dataminer for dataminer in dataminers}
-    version = None
-    while version not in version_names and version != "*":
-        version = input("What version will be datamined? ")
-    if version == "*":
-        versions = list(version_names.values())
-        dataminable_file_names = sorted(dataminer.name for dataminer in dataminers)
-        dataminable_dataminers_set = set(dataminers)
-    else:
-        versions = [version_names[version]]
-        dataminable_dataminers_set:set[DataMinerCollection.DataMinerCollection] = set()
-        for version in versions:
-            dataminable_dataminers_set.update(get_dataminable_dataminers(version))
-        dataminable_file_names = sorted(dataminer.name for dataminer in dataminable_dataminers_set)
-
-    dataminer_collection = None
-    while dataminer_collection not in dataminable_file_names and dataminer_collection != "*":
-        dataminer_collection = input("What will be datamined (* for all)? %s " % (dataminable_file_names))
-    if dataminer_collection == "*":
-        dataminers_to_datamine = [dataminer for dataminer in dataminers if dataminer in dataminable_dataminers_set]
-    else:
-        dataminers_to_datamine = [dataminer for dataminer in dataminers if dataminer.name == dataminer_collection]
-
+    all_dataminers_dict = {dataminer.name: dataminer for dataminer in _dataminers}
+    versions = UserInput.input_multi(version_names, "version", allow_select_all=True)
+    selectable_dataminer_collections = {
+        dataminer_collection.name: dataminer_collection
+        for dataminer_collection in Importer.dataminer_collections.values()
+        if any(dataminer_collection.supports_version(version) for version in versions)
+    }
+    dataminer_collections = UserInput.input_multi(selectable_dataminer_collections, "dataminer collection", allow_select_all=True, show_options_first_time=True, close_enough=True)
 
     if len(versions) > 1:
         structure_environment = MANY_VERSION_ENVIRONMENT
@@ -133,7 +119,7 @@ def user_interface() -> None:
     recalculate_everything = False # if all dependencies should be recalculated too
     cannot_datamine:list[Version.Version] = []
     for version in versions:
-        filtered_dataminers = [dataminer for dataminer in dataminers_to_datamine if dataminer.supports_version(version)]
+        filtered_dataminers = [dataminer for dataminer in dataminer_collections if dataminer.supports_version(version)]
         failure_dataminers = run(version, filtered_dataminers, structure_environment, all_dataminers_dict, recalculate_everything=recalculate_everything, print_messages=True)
         if len(failure_dataminers) > 0:
             cannot_datamine.append(version)

@@ -7,6 +7,7 @@ import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.FileDataMiner as FileDataMiner
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.FileManager as FileManager
+import Utilities.UserInput as UserInput
 import Version.Version as Version
 
 
@@ -65,15 +66,10 @@ def do_version(version:Version.Version, all_files_dataminer:DataMinerCollection.
     with open(FileManager.OUTPUT_DIRECTORY.joinpath(get_file_name(version, version_index)), "wt") as f:
         f.write("\n".join(sorted(leftover_files)))
 
-def pick_version(versions:dict[str,Version.Version]) -> tuple[Version.Version, int]:
-    while True:
-        user_input = input("Which version name? ")
-        if user_input in versions:
-            version = versions[user_input]
-            break
-        else: continue
-    version_index = len(versions) - version.index - 1
-    return version, version_index
+def pick_version() -> tuple[Version.Version, int]:
+    all_versions = Importer.versions
+    version = UserInput.input_single(all_versions, "version")
+    return version, len(all_versions) - version.index - 1
 
 def do_all() -> None:
     for file in FileManager.OUTPUT_DIRECTORY.iterdir():
@@ -105,14 +101,14 @@ def do_one() -> None:
     dataminer_collections = Importer.dataminer_collections
     all_files_dataminer = dataminer_collections["all_files"]
     versions = Importer.versions
-    version, version_index = pick_version(versions)
+    version, version_index = pick_version()
     do_version(version, all_files_dataminer, version_index, len(versions), dataminer_collections)
 
 def do_before() -> None:
     dataminer_collections = Importer.dataminer_collections
     all_files_dataminer = dataminer_collections["all_files"]
     versions = Importer.versions
-    target_version, target_version_index = pick_version(versions)
+    target_version, target_version_index = pick_version()
     for version_index, version in enumerate(reversed(versions.values())):
         if version_index < target_version_index: continue
         do_version(version, all_files_dataminer, version_index, len(versions), dataminer_collections)
@@ -247,7 +243,4 @@ def main() -> None:
         "one": do_one,
         "search": search
     }
-    user_input = None
-    while user_input not in functions:
-        user_input = input("Choose from [%s]: " % (", ".join(functions.keys())))
-    functions[user_input]()
+    UserInput.input_single(functions, "program", show_options=True, close_enough=True)()

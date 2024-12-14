@@ -4,6 +4,7 @@ import Programs.Test.DataMinerCollectionTest as DataMinerCollectionTest
 import Programs.Test.DataMinerSettingsTest as DataMinerSettingsTest
 import Programs.Test.StructureTest as StructureTest
 import Programs.Test.TestUtil as TestUtil
+import Utilities.UserInput as UserInput
 
 
 def main() -> None:
@@ -14,7 +15,4 @@ def main() -> None:
         "dataminer_settings": TestUtil.create_test_function(DataMinerSettingsTest.DataMinerSettingsPlan),
         "structures": TestUtil.create_test_function(StructureTest.StructurePlan),
     }
-    user_input:str|None = None
-    while user_input not in tests:
-        user_input = input("Choose a test: [%s]\n" % (", ".join(tests.keys())))
-    tests[user_input]()
+    UserInput.input_single(tests, "test", show_options=True, close_enough=True)()
