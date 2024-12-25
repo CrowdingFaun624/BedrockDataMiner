@@ -6,6 +6,7 @@ import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 from Utilities.Nbt.Endianness import End
 
+__all__ = ["NbtSerializer"]
 
 class NbtSerializer(Serializer.Serializer[NbtTypes.TAG, None]):
 

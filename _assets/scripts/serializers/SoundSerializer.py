@@ -1,12 +1,13 @@
 import enum
 from typing import Any, Iterator, TypedDict
 
-import Programs.EvilFSBExtractor as EvilFSBExtractor
+import _assets.scripts.serializers.EvilFSBExtractor as EvilFSBExtractor
 import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.FileManager as FileManager
 
+__all__ = ["SoundSerializer"]
 
 class SoundFilesTagsTypedDict(TypedDict):
     comment: list[str]
@@ -79,21 +80,16 @@ class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDic
     def deserialize(self, data: bytes) -> dict[str,SoundFilesTypedDict]:
         if data[:3] == b"FSB": # it's an FSB file
             wav_files = EvilFSBExtractor.extract_fsb_file(data)
-            output:dict[str,SoundFilesTypedDict] = {}
-            for wav_file_name, wav_file_promise in wav_files.items():
-                with wav_file_promise.open() as wav_file_data:
-                    output[wav_file_name] = get_metadata(wav_file_data.read())
-                wav_file_promise.all_done()
-            return output
+            return {wav_file_name: get_metadata(wave_file_data) for wav_file_name, wave_file_data in wav_files}
         else:
             return {"main": get_metadata(data)}
 
     def get_referenced_files(self, data: bytes) -> Iterator[int]:
         if data[:3] == b"FSB":
-            wav_files = EvilFSBExtractor.extract_fsb_file(data)
-            for wav_file_name, wav_file_promise in wav_files.items():
-                with wav_file_promise.open() as wav_file_data:
-                    yield File.hash_str_to_int(FileManager.stringify_sha1_hash(FileManager.get_hash(wav_file_data)))
-                wav_file_promise.all_done()
+            # this isn't *that* slow because it's cached.
+            yield from (
+                File.hash_str_to_int(FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(wav_file_data)))
+                for wav_file_name, wav_file_data in EvilFSBExtractor.extract_fsb_file(data)
+            )
         else:
             yield File.hash_str_to_int(FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data)))

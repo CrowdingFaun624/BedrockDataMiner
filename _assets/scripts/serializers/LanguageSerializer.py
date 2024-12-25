@@ -5,6 +5,7 @@ from typing_extensions import NotRequired
 
 import Serializer.Serializer as Serializer
 
+__all__ = ["LanguageSerializer"]
 
 class LanguageObject(TypedDict):
     value: str

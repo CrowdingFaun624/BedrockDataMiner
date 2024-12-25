@@ -30,6 +30,8 @@ class OutputTypedDict(TypedDict):
     TTF: NotRequired[File.File[Any]]
     WEBM: NotRequired[File.File[Any]]
 
+__all__ = ["MediaSerializer"]
+
 class MediaSerializer(Serializer.Serializer):
 
     store_as_file_default = False
