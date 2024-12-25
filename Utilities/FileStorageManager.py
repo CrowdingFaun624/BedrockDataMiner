@@ -1,5 +1,5 @@
 import gzip
-from typing import IO, Literal, overload
+from typing import Literal, overload
 
 from pathlib2 import Path
 
@@ -54,19 +54,6 @@ def archive_data(data:bytes, file_name:str, *, empty_okay:bool=False) -> str:
         index.get()[hex_string] = zipped
 
     return hex_string
-
-def open_archived(hex_string:str, mode:Literal["t", "b"]) -> FileManager.FilePromise:
-    archived_path = get_file_path(hex_string)
-    if not archived_path.exists():
-        raise Exceptions.FileHashNotFound(hex_string)
-    is_zipped = index.get()[hex_string]
-    if is_zipped:
-        temp_file = FileManager.get_temp_file_path()
-        with open(archived_path, "rb") as f, open(temp_file, "wb") as temp_file_io:
-            temp_file_io.write(gzip.decompress(f.read()))
-        return FileManager.FilePromise(FunctionCaller(open, [temp_file, "r" + mode]), temp_file.name, "b", temp_file.unlink)
-    else:
-        return FileManager.FilePromise(FunctionCaller(open, [archived_path, "r" + mode]), hex_string, "b")
 
 @overload
 def read_archived(hex_string:str, mode:Literal["b"]) -> bytes: ...

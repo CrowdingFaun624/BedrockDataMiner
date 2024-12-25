@@ -177,23 +177,6 @@ class InvalidStateError(Exception):
         else:
             return "Invalid state: %s" % (self.args,)
 
-class OpenAllDoneFilePromiseError(Exception):
-    "Attempted to open a FilePromise for which all_done has already been called."
-
-    def __init__(self, file_promise:"FileManager.FilePromise", message:Optional[str]=None) -> None:
-        '''
-        :file_promise: The FilePromise that was already marked as all done.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(file_promise, message)
-        self.file_promise = file_promise
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Cannot open %r due to it already being marked as all done" % (self.file_promise,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class AccessorException(Exception):
     "Abstract Exception class for errors relating to Accessors."
 
@@ -1290,38 +1273,31 @@ class NullDataMinerMethodError(DataMinerException):
 class SoundFilesExtractionError(DataMinerException):
     "Failure to extract from an FSB file."
 
-    def __init__(self, file:Union["FileManager.FilePromise", bytes], exit_code:int, message:Optional[str]=None) -> None:
+    def __init__(self, exit_code:int, message:Optional[str]=None) -> None:
         '''
-        :file: The FilePromise of an FSB file that failed to extract.
         :exit_code: The exit code that the extraction executable returned.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(file, exit_code, message)
-        self.file = file
+        super().__init__(exit_code, message)
         self.exit_code = exit_code
         self.message = message
 
     def __str__(self) -> str:
-        if isinstance(self.file, bytes):
-            output = "Failed to extract FSB file; returned exit code %i" % (self.exit_code,)
-        else:
-            output = "Failed to extract file %r; returned exit code %i" % (self.file, self.exit_code)
+        output = "Failed to extract FSB file; returned exit code %i" % (self.exit_code,)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
 class SoundFilesMetadataError(DataMinerException):
     "audio_metadata failed to extract the sound file."
 
-    def __init__(self, file:Optional["FileManager.FilePromise"]=None, message:Optional[str]=None) -> None:
+    def __init__(self, message:Optional[str]=None) -> None:
         '''
-        :file: The FilePromise that audio_metadata failed to extract.
         :message: Additional text to place after the main message.'''
-        super().__init__(file, message)
-        self.file = file
+        super().__init__(message)
         self.message = message
 
     def __str__(self) -> str:
-        output = "audio_metadata failed to extract %r" % ((self.file if self.file is not None else "a file"),)
+        output = "audio_metadata failed to extract a file"
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

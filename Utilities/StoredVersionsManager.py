@@ -126,18 +126,6 @@ def read_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tupl
         else:
             return data
 
-def get_file(version_name:str, file_name:str, mode:Literal["b", "t"]="b", index:dict[str,tuple[str,bool]]|None=None) -> FileManager.FilePromise:
-    '''Returns a FilePromise of the object.'''
-    if index is None: index = read_index(version_name)
-    if file_name not in index: raise Exceptions.FileNotFoundInVersionArchive(file_name, version_name)
-    file_hash, file_compressed = index[file_name]
-    if file_compressed:
-        temp_path = FileManager.get_temp_file_path()
-        extract_file(version_name, file_name, temp_path, index)
-        return FileManager.FilePromise(FunctionCaller(open, [temp_path, "r" + mode]), file_name.split("/")[-1], mode, temp_path.unlink)
-    else:
-        return FileManager.FilePromise(FunctionCaller(open, [get_hash_file_path(file_hash), "r" + mode]), file_name.split("/")[-1], mode)
-
 def extract_files(version_name:str, files:Iterable[str], destinations:Iterable[Path]) -> None:
     '''Copies files from the given version to the given destinations.'''
     index = read_index(version_name)

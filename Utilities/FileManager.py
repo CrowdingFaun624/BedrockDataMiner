@@ -141,42 +141,4 @@ def clear_temp() -> None:
         else:
             shutil.rmtree(file)
 
-class FilePromise():
-    '''An abstraction for a file that can return an IO object multiple times with FilePromise.open()'''
-
-    def __init__(self, open_callable:FunctionCaller[IO], name:str, mode:Literal["b", "t"], all_done_callable:FunctionCaller|Callable[[],Any]|None=None) -> None:
-        '''
-        :open_callable: Function that takes no arguments and returns an IO object.
-        :name: Name of the file, but has no real meaning.
-        :mode: Describes if the IO returned by open_callable is in binary or text mode.
-        :all_done_callable: Function that takes no arguments and cleans up everything related to the file.
-        '''
-
-        self.open_callable = open_callable
-        self.all_done_callable = all_done_callable
-        self.name = name
-        self.mode = mode
-        self.is_all_done = False
-
-    def open(self) -> IO:
-        '''
-        Calls open_callable used to create this FilePromise and returns its IO object.
-        Cannot be called if `all_done` has been called on this FilePromise.
-        '''
-        if self.is_all_done:
-            raise Exceptions.OpenAllDoneFilePromiseError(self)
-        return self.open_callable()
-
-    def all_done(self) -> None:
-        '''
-        Cleans up everything related to the file.
-        Cannot be opened again afte rthis is called.
-        '''
-        self.is_all_done = True
-        if self.all_done_callable is not None:
-            self.all_done_callable()
-
-    def __repr__(self) -> str:
-        return "<FilePromise %s in %s>" % (self.name, self.mode)
-
 clear_temp()
