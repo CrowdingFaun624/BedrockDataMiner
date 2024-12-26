@@ -9,7 +9,6 @@
 # import Programs.AllVersions as AllVersions
 # import Programs.Cleaner as Cleaner
 # import Programs.CompareAll as CompareAll
-# import Programs.Coverage as Coverage
 # import Programs.FileSummary as FileSummary
 # import Programs.GetFile as GetFile
 # import Programs.Test.Tests as Tests
@@ -24,7 +23,7 @@
 import threading
 from typing import Any, Callable
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "Scripts", "StoredVersions", "Tablifiers", "Tests"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "Scripts", "StoredVersions", "Tablifiers", "Tests"]
 
 user_input_lock = threading.Lock()
 
@@ -43,7 +42,6 @@ import DataMiner.DataMiners as DataMiners
 import Programs.AllVersions as AllVersions
 import Programs.Cleaner as Cleaner
 import Programs.CompareAll as CompareAll
-import Programs.Coverage as Coverage
 import Programs.FileSummary as FileSummary
 import Programs.GarbageCollector as GarbageCollector
 import Programs.GetFile as GetFile
@@ -60,7 +58,6 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "AllVersions": AllVersions.main,
     "Cleaner": Cleaner.main,
     "CompareAll": CompareAll.main,
-    "Coverage": Coverage.main,
     "DataMiners": DataMiners.user_interface,
     "FileSummary": FileSummary.main,
     "GarbageCollector": GarbageCollector.main,

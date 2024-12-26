@@ -51,6 +51,18 @@ class CacheTypedDict(TypedDict):
     type: NotRequired[Literal["Cache"]]
     types: Required[str|list[str]]
 
+class CoverageDataMinerCollectionTypedDict(TypedDict):
+    comparing_disabled: NotRequired[bool]
+    disabled: NotRequired[bool]
+    file_list_dataminer: Required[str]
+    file_name: Required[str]
+    remove_files: NotRequired[list[str]]
+    remove_regex: NotRequired[list[str]]
+    remove_prefixes: NotRequired[list[str]]
+    remove_suffixes: NotRequired[list[str]]
+    structure: str
+    type: Literal["CoverageDataMinerCollection"]
+
 class DataMinerCollectionTypedDict(TypedDict):
     comparing_disabled: NotRequired[bool]
     dataminers: Required[list["DataMinerSettingsTypedDict"]]
@@ -291,6 +303,7 @@ ComponentTypedDicts:TypeAlias = Union[
     AccessorTypeTypedDict,
     BaseTypedDict,
     CacheTypedDict,
+    CoverageDataMinerCollectionTypedDict,
     DataMinerCollectionTypedDict,
     DataMinerSettingsTypedDict,
     DictTypedDict,

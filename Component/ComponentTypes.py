@@ -1,6 +1,7 @@
 import Component.Accessor.AccessorComponent as AccessorComponent
 import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 import Component.Component as Component
+import Component.DataMiner.CoverageDataMinerCollectionComponent as CoverageDataMinerCollectionComponent
 import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
 import Component.DataMiner.DataMinerSettingsComponent as DataMinerSettingsComponent
 import Component.Serializer.SerializerComponent as SerializerComponent
@@ -32,6 +33,7 @@ component_types:list[type[Component.Component]] = [
     AccessorTypeComponent.AccessorTypeComponent,
     BaseComponent.BaseComponent,
     CacheComponent.CacheComponent,
+    CoverageDataMinerCollectionComponent.CoverageDataMinerCollectionComponent,
     DataMinerCollectionComponent.DataMinerCollectionComponent,
     DataMinerSettingsComponent.DataMinerSettingsComponent,
     DictComponent.DictComponent,
