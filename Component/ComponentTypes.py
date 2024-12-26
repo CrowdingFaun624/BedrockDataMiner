@@ -4,6 +4,7 @@ import Component.Component as Component
 import Component.DataMiner.CoverageDataMinerCollectionComponent as CoverageDataMinerCollectionComponent
 import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
 import Component.DataMiner.DataMinerSettingsComponent as DataMinerSettingsComponent
+import Component.Log.LogComponent as LogComponent
 import Component.Serializer.SerializerComponent as SerializerComponent
 import Component.Structure.BaseComponent as BaseComponent
 import Component.Structure.CacheComponent as CacheComponent
@@ -42,6 +43,7 @@ component_types:list[type[Component.Component]] = [
     KeymapComponent.KeymapComponent,
     LatestSlotComponent.LatestSlotComponent,
     ListComponent.ListComponent,
+    LogComponent.LogComponent,
     NormalizerComponent.NormalizerComponent,
     PrimitiveComponent.PrimitiveComponent,
     SerializerComponent.SerializerComponent,

@@ -279,9 +279,10 @@ class StructureBase():
             print(text)
             texts.append(text)
         if len(traces) > 0:
-            with open(FileManager.STRUCTURE_LOG_FILE, "at", encoding="utf-8") as f:
-                f.write("-------- %i EXCEPTIONS IN %s ON %s --------\n\n" % (len(traces), self.name, ", ".join(version.name for version in versions)))
-                f.write("".join(texts))
+            import Component.Importer as Importer
+            if (log := Importer.logs.get("structure_log")) is not None and log.supports_type(log, str):
+                log.write("-------- %i EXCEPTIONS IN %s ON %s --------\n\n" % (len(traces), self.name, ", ".join(version.name for version in versions)))
+                log.write("".join(texts))
             raise Exceptions.StructureError(self)
 
     def compare_many(self, *data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any,bool]:

@@ -1,17 +1,19 @@
+import datetime
 import shutil
+import time
 import zipfile
 from pathlib import Path
 from typing import TypedDict
 
 import requests
 
-import Downloader.DownloadLog as DownloadLog
 import Downloader.Manager as Manager
 import Utilities.Exceptions as Exceptions
 
 
 class DownloadManagerTypedDict(TypedDict):
     url: str
+
 
 class DownloadManager(Manager.Manager):
 
@@ -69,6 +71,21 @@ class DownloadManager(Manager.Manager):
             self.install_all()
         return file_name in self.get_file_set()
 
+    def log(self, response:requests.Response) -> requests.Response:
+        import Component.Importer as Importer
+        if (log := Importer.logs.get("download_log")) is not None and log.supports_type(log, dict):
+            log.write({
+                "version": self.version.name,
+                "time": datetime.datetime.now().isoformat(),
+                "status_code": response.status_code,
+                "headers": {key: value for key, value in response.headers.items()},
+                "url": response.url,
+                "reason": response.reason,
+                "elapsed": str(response.elapsed),
+                "actual_response_length": len(response.content)
+            })
+        return response
+
     def read(self, file_name:str) -> bytes:
         if not self.installed:
             self.install_all()
@@ -102,11 +119,12 @@ class DownloadManager(Manager.Manager):
                 with open(destination, "wb") as f, requests.get(self.url) as response:
                     response_length = len(response.content)
                     response_supposed_length = int(response.headers.get("Content-Length", "0"))
-                    DownloadLog.log(self.version, response, response_length)
-                    f.write(response.content)
+                    f.write(self.log(response).content)
                 tries += 1
                 if tries >= 5:
                     raise Exceptions.DownloadManagerFailError(self, self.url)
+                if response_supposed_length != response_length:
+                    time.sleep(1)
             self.set_installed(True)
             self.open_zip_file()
 

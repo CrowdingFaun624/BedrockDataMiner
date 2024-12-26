@@ -176,6 +176,12 @@ class ListTypedDict(TypedDict):
     type: NotRequired[Literal["List"]]
     types: Required[str|list[str]]
 
+class LogTypedDict(TypedDict):
+    file_name: Required[str]
+    log_type: Required[str]
+    reset_on_reload: Required[bool]
+    type: NotRequired[Literal["Log"]]
+
 class NormalizerTypedDict(TypedDict):
     arguments: NotRequired[dict[str,Any]]
     function_name: Required[str]

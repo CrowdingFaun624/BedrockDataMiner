@@ -34,6 +34,7 @@ if TYPE_CHECKING:
     import Utilities.Cache as Cache
     import Utilities.DataFile as DataFile
     import Utilities.File as File
+    import Utilities.Log as Log
     import Utilities.Scripts as Scripts
     import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
     import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
@@ -1461,6 +1462,49 @@ class UnrecognizedDelegateError(DelegateException):
 
     def __str__(self) -> str:
         output = "Delegate type \"%s\" is not recognized by %s" % (self.delegate_type_str, self.source_str)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class LogException(Exception):
+    "Abstract Exception class for errors relating to Logs."
+
+class LogInvalidFileError(LogException):
+    "Attempted to create a Log with an invalid file path."
+    
+    def __init__(self, log:"Log.Log", path:Path, message:Optional[str]=None) -> None:
+        '''
+        :log: The Log with the invalid file path.
+        :path: The invalid path.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(log, path, message)
+        self.log = log
+        self.path = path
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "The path of %r, \"%s\", is invalid" % (self.log, self.path.as_posix())
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class LogWriteTypeError(LogException):
+    "Attempted to write to a Log with an invalid type for the Log's LogType."
+    
+    def __init__(self, log:"Log.Log", write_type:type, allowed_types:tuple[type,...], message:Optional[str]=None) -> None:
+        '''
+        :log: The Log that attempted to write to.
+        :write_type: The type that was given to `Log.write`.
+        :allowed_types: The types that can be given to `Log.write`.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(log, write_type, allowed_types, message)
+        self.log = log
+        self.write_type = write_type
+        self.allowed_types = allowed_types
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "Attempted to write to %r using type \"%s\" instead of types [%s]" % (self.log, self.write_type.__name__, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types))
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 

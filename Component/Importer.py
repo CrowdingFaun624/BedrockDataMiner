@@ -12,6 +12,7 @@ import Component.ComponentTypes as ComponentTypes
 import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.DataMinerImporterEnvironment as DataMinerImporterEnvironment
 import Component.ImporterEnvironment as ImporterEnvironment
+import Component.Log.LogImporterEnvironment as LogImporterEnvironment
 import Component.Serializer.SerializerImporterEnvironment as SerializerImporterEnvironment
 import Component.Structure.StructureImporterEnvironment as StructureImporterEnvironment
 import Component.Structure.StructureTagImporterEnvironment as StructureTagImporterEnvironment
@@ -32,6 +33,7 @@ if TYPE_CHECKING:
     import Structure.StructureBase as StructureBase
     import Structure.StructureTag as StructureTag
     import Tablifier.Tablifier as Tablifier
+    import Utilities.Log as Log
     import Version.Version as Version
     import Version.VersionFileType as VersionFileType
     import Version.VersionTag.VersionTag as VersionTag
@@ -41,6 +43,7 @@ importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] =
     AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,
     DataMinerImporterEnvironment.DataMinerImporterEnvironment,
     LatestSlotImporterEnvironment.LatestSlotImporterEnvironment,
+    LogImporterEnvironment.LogImporterEnvironment,
     SerializerImporterEnvironment.SerializerImporterEnvironment,
     StructureImporterEnvironment.StructureImporterEnvironment,
     StructureTagImporterEnvironment.StructureTagImporterEnvironment,
@@ -232,6 +235,7 @@ all_component_groups = parse_all_component_groups()
 accessor_types:dict[str,"AccessorType.AccessorType"] = all_component_groups["accessor_types"]
 dataminer_collections:dict[str,"AbstractDataMinerCollection.AbstractDataMinerCollection"] = all_component_groups["dataminer_collections"]
 latest_slots:list[str] = all_component_groups["latest_slots"]
+logs:dict[str,"Log.Log"] = all_component_groups["logs"]
 serializers:dict[str,"Serializer.Serializer"] = all_component_groups["serializers"]
 structures:dict[str,"StructureBase.StructureBase"] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
 structure_tags:dict[str,"StructureTag.StructureTag"] = all_component_groups["structure_tags"]
