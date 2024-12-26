@@ -4,8 +4,8 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.Structure.Field.AbstractTypeField as AbstractTypeField
-import Component.Structure.StructureComponent as StructureComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
+import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
@@ -43,8 +43,8 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
             if subcomponent_data in already_types:
                 raise Exceptions.ComponentDuplicateTypeError(subcomponent_data, self, "(referenced in %sof %r)" % (Field.get_keys_strs(False, self.error_path), source_component))
             already_types.add(subcomponent_data)
-            if subcomponent_data in StructureComponent.DEFAULT_TYPES:
-                subcomponent_type = StructureComponent.DEFAULT_TYPES[subcomponent_data]
+            if subcomponent_data in Types.default_types:
+                subcomponent_type = Types.default_types[subcomponent_data]
                 self.primitive_types.append(subcomponent_type)
             else:
                 subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, imported_components, self.error_path, create_component_function, None)

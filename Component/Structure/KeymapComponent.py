@@ -11,6 +11,7 @@ import Component.Structure.Field.OptionalStructureComponentField as OptionalStru
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
+import Component.Types as Types
 import Structure.Difference as D
 import Structure.KeymapStructure as KeymapStructure
 import Utilities.Exceptions as Exceptions
@@ -82,11 +83,11 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.tags_for_all_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"])
         if self.sort == KeymapSorting.by_value:
-            self.keys.for_each(lambda keymap_key_field: keymap_key_field.types_field.must_be(StructureComponent.SORTABLE_TYPES))
+            self.keys.for_each(lambda keymap_key_field: keymap_key_field.types_field.must_be(Types.sortable_types))
         self.tags_for_all_field.add_to_tag_set(self.children_tags)
         self.keys.for_each(lambda key: key.add_tag_fields(self.tags_for_all_field))
         self.import_field.import_into(self.keys)
-        self.this_type_field.must_be(StructureComponent.MAPPING_TYPES)
+        self.this_type_field.must_be(Types.mapping_types)
         self.fields.extend([self.import_field, self.delegate_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field])
 
     def create_final(self) -> None:
@@ -148,12 +149,12 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
                     types_set.add(key_type)
                     types_list.append(key_type)
             first_type = types_list[0]
-            for category in StructureComponent.MUTUALLY_SORTABLE:
-                if first_type not in category: continue
+            for category_name, category_types in Types.mutually_sortable.items():
+                if first_type not in category_types: continue
                 exceptions.extend(
-                    Exceptions.ComponentTypeInvalidTypeError(self, type, category)
+                    Exceptions.ComponentTypeInvalidTypeError(self, type, category_types, message="(in sortable category \"%s\")" % (category_name,))
                     for type in types_list
-                    if type not in category
+                    if type not in category_types
                 )
                 break
         return exceptions

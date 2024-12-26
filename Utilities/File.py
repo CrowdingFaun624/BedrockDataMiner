@@ -1,12 +1,32 @@
 from types import EllipsisType
-from typing import Any, Generic, Iterator, TypeVar
+from typing import Any, Generic, Iterator, Literal, TypedDict, TypeVar
 
+import Component.Types as Types
 import Serializer.Serializer as Serializer
 import Structure.DataPath as DataPath
 import Structure.Difference as D
+import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.FileStorageManager as FileStorageManager
 
+FileJsonTypedDict = TypedDict("FileJsonTypedDict", {"$special_type": Literal["file"], "hash": str, "name": str, "serializer": str})
+
+class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
+
+    special_type_name = "file"
+
+    @classmethod
+    def decode(cls, data: FileJsonTypedDict) -> "File":
+        import Component.Importer as Importer
+        serializer = Importer.serializers.get(data["serializer"])
+        if serializer is None:
+            raise Exceptions.UnrecognizedSerializerInFileError(data)
+        return File(data["name"], serializer, data_hash=hash_str_to_int(data["hash"]))
+
+    @classmethod
+    def encode(cls, data: "File") -> FileJsonTypedDict:
+        # files contained by data are archived when the File object is created.
+        return {"$special_type": "file", "hash": hash_int_to_str(data.hash), "name": data.display_name, "serializer": data.serializer.name}
 
 def new_file(data:bytes, file_name:str, serializer:Serializer.Serializer) -> "File":
     if not serializer.empty_okay and len(data) == 0:
@@ -23,6 +43,7 @@ def hash_int_to_str(hash_int:int) -> str:
 def hash_str_to_int(hash_str:str) -> int:
     return int(hash_str, base=16)
 
+@Types.register_decorator("abstract_file", hashing_method=hash, is_file=True)
 class AbstractFile(Generic[a]):
 
     data:a
@@ -55,6 +76,7 @@ class AbstractFile(Generic[a]):
         '''
         ...
 
+@Types.register_decorator("file", json_coder=FileCoder)
 class File(AbstractFile[a]):
 
     def __init__(self, display_name:str, serializer:Serializer.Serializer, data_hash:int) -> None:
@@ -94,6 +116,7 @@ class File(AbstractFile[a]):
             file_bytes = FileStorageManager.read_archived(hash_int_to_str(self.hash))
             yield from self.serializer.get_referenced_files(file_bytes)
 
+@Types.register_decorator(None, json_coder=Types.no_coder)
 class EmptyFile(File[a]):
 
     def __init__(
@@ -127,6 +150,7 @@ class EmptyFile(File[a]):
     def __copy_empty__(self) -> AbstractFile[a]:
         return self
 
+@Types.register_decorator("fake_file")
 class FakeFile(AbstractFile[a]):
     '''Similar to a File, but it can be created anywhere and using any hash/data.'''
 
@@ -138,6 +162,7 @@ class FakeFile(AbstractFile[a]):
         return FakeFile("empty_file", type(self.data)(), 0) # FakeFile does not need data_hash.
         # the `hash` attribute must be different for caching reasons, so it's just 0.
 
+@Types.register_decorator(None, hashing_method=hash, is_file=True)
 class FileDiff(Generic[a]):
     '''
     Similar to a FakeFile, but contains the data from multiple files.

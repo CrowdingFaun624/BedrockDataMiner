@@ -5,6 +5,7 @@ import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
+import Component.Types as Types
 import Structure.FileStructure as FileStructure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -44,7 +45,7 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.content_types_field.verify_with(self.subcomponent_field)
-        self.file_types_field.must_be(StructureComponent.FILE_TYPES)
+        self.file_types_field.must_be(Types.file_types)
         self.fields.extend([self.subcomponent_field, self.file_types_field, self.content_types_field, self.delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.file_types_field])
 
     def create_final(self) -> None:

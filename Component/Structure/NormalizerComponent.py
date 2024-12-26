@@ -2,8 +2,8 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.FunctionField as FunctionField
-import Structure.Normalizer as Normalizer
 import Component.Version.Field.VersionRangeField as VersionRangeField
+import Structure.Normalizer as Normalizer
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 

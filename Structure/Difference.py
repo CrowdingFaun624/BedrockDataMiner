@@ -1,8 +1,10 @@
 from typing import Any, Generic, Iterable, NoReturn, TypeVar, Union, cast
 
+import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 
 
+@Types.register_decorator(None, hashing_method=hash)
 class _NoExistType():
     "Class that is different from None."
 
@@ -20,6 +22,7 @@ NoExist = _NoExistType()
 Dt1 = TypeVar("Dt1")
 Dt2 = TypeVar("Dt2")
 
+@Types.register_decorator(None, hashing_method=lambda data: hash(tuple(Types.hash_data(item) for item in cast(Diff, data).items.items())))
 class Diff(Generic[Dt1]):
     '''
     An immutable object containing a difference in data from version to version.

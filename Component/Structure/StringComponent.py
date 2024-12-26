@@ -6,6 +6,7 @@ import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
+import Component.Types as Types
 import Structure.StringStructure as StringStructure
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -35,7 +36,7 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field = TypeListField.TypeListField(data.get("types", "str"), ["types"])
-        self.types_field.must_be(StructureComponent.STRING_TYPES)
+        self.types_field.must_be(Types.string_types)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.tags_field.add_to_tag_set(self.children_tags)
         self.similarity_function_field = OptionalFunctionField.OptionalFunctionField(data.get("similarity_function", None), ["similarity_function"], {"data"})

@@ -1,14 +1,30 @@
 import enum
 import re
-from typing import Protocol, TypeVar, cast
+from typing import Literal, Protocol, TypedDict, TypeVar, cast
 
 import mutf8
 
+import Component.Types as Types
 import Structure.Difference as D
+import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.Nbt.DataReader as DataReader
 import Utilities.Nbt.Endianness as Endianness
 
+NbtJsonTypedDict = TypedDict("NbtJsonTypedDict", {"$special_type": Literal["nbt"], "data": str})
+
+class NbtCoder(CustomJson.Coder[NbtJsonTypedDict, "TAG"]):
+
+    special_type_name = "nbt"
+
+    @classmethod
+    def decode(cls, data: NbtJsonTypedDict) -> "TAG":
+        import Utilities.Nbt.NbtReader as NbtReader
+        return NbtReader.unpack_snbt(data["data"])
+
+    @classmethod
+    def encode(cls, data: "TAG") -> NbtJsonTypedDict:
+        return {"$special_type": "nbt", "data": str(data)}
 
 class IdEnum(enum.IntEnum):
     TAG_End = 0
@@ -56,6 +72,7 @@ class TAG_End(TAG[None]):
     def __deepcopy__(self, memo) -> TAG:
         return self
 
+@Types.register_decorator("TAG_Byte", json_coder=NbtCoder)
 class TAG_Byte(int, TAG[int]):
 
     @classmethod
@@ -65,6 +82,7 @@ class TAG_Byte(int, TAG[int]):
     def __str__(self) -> str:
         return "%ib" % self
 
+@Types.register_decorator("TAG_Short", json_coder=NbtCoder)
 class TAG_Short(int, TAG[int]):
 
     @classmethod
@@ -74,6 +92,7 @@ class TAG_Short(int, TAG[int]):
     def __str__(self) -> str:
         return "%is" % self
 
+@Types.register_decorator("TAG_Int", json_coder=NbtCoder)
 class TAG_Int(int, TAG[int]):
 
     @classmethod
@@ -83,6 +102,7 @@ class TAG_Int(int, TAG[int]):
     def __str__(self) -> str:
         return "%i" % self
 
+@Types.register_decorator("TAG_Long", json_coder=NbtCoder)
 class TAG_Long(int, TAG[int]):
 
     @classmethod
@@ -92,6 +112,7 @@ class TAG_Long(int, TAG[int]):
     def __str__(self) -> str:
         return "%il" % self
 
+@Types.register_decorator("TAG_Float", json_coder=NbtCoder)
 class TAG_Float(float, TAG[float]):
 
     @classmethod
@@ -101,6 +122,7 @@ class TAG_Float(float, TAG[float]):
     def __str__(self) -> str:
         return "%ff" % self
 
+@Types.register_decorator("TAG_Double", json_coder=NbtCoder)
 class TAG_Double(float, TAG[float]):
 
     @classmethod
@@ -110,6 +132,7 @@ class TAG_Double(float, TAG[float]):
     def __str__(self) -> str:
         return "%f" % self
 
+@Types.register_decorator("TAG_Byte_Array", requires_subcomponent=False, can_contain={TAG_Byte}, json_coder=NbtCoder)
 class TAG_Byte_Array(list[TAG_Byte], TAG[list[TAG_Byte]]):
 
     @classmethod
@@ -120,6 +143,7 @@ class TAG_Byte_Array(list[TAG_Byte], TAG[list[TAG_Byte]]):
     def __str__(self) -> str:
         return "[B;" + ", ".join(str(item) for item in self) + "]"
 
+@Types.register_decorator("TAG_String", json_coder=NbtCoder)
 class TAG_String(str, TAG[str]):
 
     @classmethod
@@ -138,6 +162,7 @@ class TAG_String(str, TAG[str]):
         # for DefaultDelegate
         return str(self)
 
+@Types.register_decorator("TAG_List", json_coder=NbtCoder)
 class TAG_List(list[TAG[b]], TAG[list[TAG[b]]]):
 
     @classmethod
@@ -149,6 +174,7 @@ class TAG_List(list[TAG[b]], TAG[list[TAG[b]]]):
     def __str__(self) -> str:
         return "[" + ", ".join(str(item) for item in self) + "]"
 
+@Types.register_decorator("TAG_Compound", json_coder=NbtCoder)
 class TAG_Compound(dict[str,TAG[b]], TAG[dict[str,TAG[b]]]):
 
     @classmethod
@@ -182,6 +208,7 @@ class TAG_Compound(dict[str,TAG[b]], TAG[dict[str,TAG[b]]]):
         if len(key) == 0: return True
         return bool(pattern(key))
 
+@Types.register_decorator("TAG_Int_Array", requires_subcomponent=False, can_contain={TAG_Int}, json_coder=NbtCoder)
 class TAG_Int_Array(list[TAG_Int], TAG[list[TAG_Int]]):
 
     @classmethod
@@ -192,6 +219,7 @@ class TAG_Int_Array(list[TAG_Int], TAG[list[TAG_Int]]):
     def __str__(self) -> str:
         return "[I;" + ", ".join(str(item) for item in self) + "]"
 
+@Types.register_decorator("TAG_Long_Array", requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
 class TAG_Long_Array(list[TAG_Long], TAG[list[TAG_Long]]):
 
     @classmethod

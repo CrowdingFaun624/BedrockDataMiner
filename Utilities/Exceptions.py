@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     import Component.Field.Field as Field
     import Component.ImporterEnvironment as ImporterEnvironment
     import Component.Pattern as Pattern
+    import Component.Types as Types
     import Component.Version.Field.VersionRangeField as VersionRangeField
     import Component.Version.VersionComponent as VersionComponent
     import DataMiner.BuiltIns.TagSearcherDataMiner as TagSearcherDataMiner
@@ -31,8 +32,8 @@ if TYPE_CHECKING:
     import Structure.StructureTag as StructureTag
     import Structure.Trace as Trace
     import Utilities.Cache as Cache
-    import Utilities.CustomJson as CustomJson
     import Utilities.DataFile as DataFile
+    import Utilities.File as File
     import Utilities.Nbt.SnbtParser as SnbtParser
     import Utilities.Scripts as Scripts
     import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -519,7 +520,7 @@ class ComponentTypeContainmentError(ComponentException):
 class ComponentTypeInvalidTypeError(ComponentException):
     "A Component has a value in a TypeField that is not allowed."
 
-    def __init__(self, source_component:"Component.Component", observed_type:type, allowed_types:set[type], message:Optional[str]=None) -> None:
+    def __init__(self, source_component:"Component.Component", observed_type:type, allowed_types:"Types.TypeSet", message:Optional[str]=None) -> None:
         '''
         :source_component: The Component with the disallowed type.
         :observed_type: The type that is not allowed.
@@ -1774,7 +1775,7 @@ class SerializerMethodNonexistentError(SerializerException):
 class UnrecognizedSerializerInFileError(SerializerException):
     "A Serializer's name in a stored File does not exist."
 
-    def __init__(self, file_data:"CustomJson.FileTypedDict", message:Optional[str]=None) -> None:
+    def __init__(self, file_data:"File.FileJsonTypedDict", message:Optional[str]=None) -> None:
         '''
         :file_data: The data used to create the File.
         :message: Additional text to place after the main message.

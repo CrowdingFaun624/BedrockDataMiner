@@ -1,11 +1,11 @@
 from itertools import count, takewhile
-from typing import Callable, Sequence, TypeVar, cast, TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Sequence, TypeVar, cast
 
 import numpy
 
+import Component.Types as Types
 import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.Difference as D
-import Structure.Hashing as Hashing
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
@@ -105,8 +105,8 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         similarity_function:Callable[[d,d,int,int|None,StructureEnvironment.ComparisonEnvironment,list[Trace.ErrorTrace],int],float] =\
             self.structure.get_similarity if self.structure is not None else lambda data1, data2, depth, max_depth, environment, exceptions, branch: float(data1 == data2)
 
-        data1_hashes:list[int] = [Hashing.hash_data(D.last_value(item)) for item in data1]
-        data2_hashes:list[int] = [Hashing.hash_data(item) for item in data2]
+        data1_hashes:list[int] = [Types.hash_data(D.last_value(item)) for item in data1]
+        data2_hashes:list[int] = [Types.hash_data(item) for item in data2]
 
         prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1_hashes, data2_hashes))) # number of items at start that are the same
         shorter_length = min(len(data1), len(data2))

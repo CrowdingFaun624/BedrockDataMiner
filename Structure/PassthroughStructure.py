@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, TypeVar, Union
+from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator, TypeVar,
+                    Union)
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D

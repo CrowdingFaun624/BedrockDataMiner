@@ -1,3 +1,7 @@
+import Component.Types as Types
+
+
+@Types.register_decorator(None, hashing_method=hash)
 class StructureTag():
 
     def __init__(self, name:str, is_file:bool) -> None:

@@ -14,7 +14,6 @@
 # import Programs.GetFile as GetFile
 # import Programs.Test.Tests as Tests
 # import Programs.UrlValidator as UrlValidator
-# import Utilities.CustomJson as CustomJson
 # import Utilities.FileManager as FileManager
 # import Utilities.Nbt.NbtReader as NbtReader
 # import Utilities.Scripts as Scripts
@@ -27,7 +26,7 @@
 import threading
 from typing import Any, Callable
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "CustomJson", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "NbtReader", "Scripts", "StoredVersions", "Tablifiers", "Tests", "UrlValidator"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "NbtReader", "Scripts", "StoredVersions", "Tablifiers", "Tests", "UrlValidator"]
 
 user_input_lock = threading.Lock()
 
@@ -53,7 +52,6 @@ import Programs.GetFile as GetFile
 import Programs.Test.Tests as Tests
 import Programs.UrlValidator as UrlValidator
 import Tablifier.Tablifiers as Tablifiers
-import Utilities.CustomJson as CustomJson
 import Utilities.FileManager as FileManager
 import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Scripts as Scripts
@@ -67,7 +65,6 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "Cleaner": Cleaner.main,
     "CompareAll": CompareAll.main,
     "Coverage": Coverage.main,
-    "CustomJson": CustomJson.main,
     "DataMiners": DataMiners.user_interface,
     "FileSummary": FileSummary.main,
     "GarbageCollector": GarbageCollector.main,

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, TypeAlias
 import Component.Field.Field as Field
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
-import Component.Structure.StructureComponent as StructureComponent
+import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ class AbstractTypeField(Field.Field):
     def __init__(self, path: list[str | int]) -> None:
         super().__init__(path)
         self.verify_with_component:VerifyComponentType|None=None
-        self.must_be_types:set[type]|None = None
+        self.must_be_types:Types.TypeSet|None = None
         self.must_be_fail_message:str|None = None
         self.contained_by_field:AbstractTypeField|None = None
 
@@ -29,7 +29,7 @@ class AbstractTypeField(Field.Field):
                 exceptions.extend(
                     Exceptions.ComponentTypeRequiresComponentError(source_component, value_type)
                     for value_type in component_types
-                    if value_type in StructureComponent.REQUIRES_SUBCOMPONENT_TYPES
+                    if value_type in Types.requires_subcomponent_types
                 )
             else:
                 if set(component_types) != subcomponent.my_type:
@@ -45,7 +45,7 @@ class AbstractTypeField(Field.Field):
                 Exceptions.ComponentTypeContainmentError(source_component, supercomponent_type, component_type)
                 for component_type in self.get_types()
                 for supercomponent_type in self.contained_by_field.get_types()
-                if (containment_types := StructureComponent.CONTAINMENT_TYPES.get(supercomponent_type)) is not None
+                if (containment_types := Types.containment_types.get(supercomponent_type)) is not None
                 if component_type not in containment_types
             )
         return exceptions
@@ -65,7 +65,7 @@ class AbstractTypeField(Field.Field):
         '''
         self.verify_with_component = component_field
 
-    def must_be(self, types:set[type], *, fail_message:str|None=None) -> None:
+    def must_be(self, types:Types.TypeSet, *, fail_message:str|None=None) -> None:
         '''
         Makes this TypeField check that all of its types are a member of `types`.
         :types: The tuple of types that this TypeField must be.

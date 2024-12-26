@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING, Any, Generic, Iterator, TypeVar, Union
 
+import Component.Types as Types
 import Structure.DataPath as DataPath
 import Structure.Difference as D
-import Structure.Hashing as Hashing
 import Structure.PassthroughStructure as PassthroughStructure
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
@@ -67,7 +67,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.should_cache or not self.cache_check_all_types:
             return structure.check_all_types(data, environment)
-        data_hash = Hashing.hash_data(data)
+        data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item # the point of this is to move it to the front.
@@ -87,7 +87,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_normalize:
             return structure.normalize(data, environment)
-        data_hash = Hashing.hash_data(data)
+        data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item
@@ -111,7 +111,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.should_cache or not self.cache_get_tag_paths:
             return structure.get_tag_paths(data, tag, data_path, environment)
-        data_hash = Hashing.hash_data((data, tag))
+        data_hash = Types.hash_data((data, tag))
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item
@@ -133,7 +133,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_get_referenced_files:
             yield from structure.get_referenced_files(data, environment)
-        data_hash = Hashing.hash_data(data)
+        data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item
@@ -153,7 +153,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_compare_text:
             return structure.compare_text(data, environment)
-        data_hash = Hashing.hash_data(data)
+        data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item
@@ -173,7 +173,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_print_text:
             return structure.print_text(data, environment)
-        data_hash = Hashing.hash_data(data)
+        data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item
@@ -193,7 +193,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_get_similarity:
             return structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
-        data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2), depth, max_depth))
+        data_hash = hash((Types.hash_data(data1), Types.hash_data(data2), depth, max_depth))
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item
@@ -213,7 +213,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
         structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_compare:
             return structure.compare(data1, data2, environment, branch, branches)
-        data_hash = hash((Hashing.hash_data(data1), Hashing.hash_data(data2)))
+        data_hash = hash((Types.hash_data(data1), Types.hash_data(data2)))
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item

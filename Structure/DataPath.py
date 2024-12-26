@@ -1,8 +1,25 @@
-from typing import Any, Hashable
+from typing import Any, Hashable, Literal, TypedDict
 
 from typing_extensions import Self
 
+import Component.Types as Types
+import Utilities.CustomJson as CustomJson
 
+DataPathJsonTypedDict = TypedDict("DataPathJsonTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_data": Any|None})
+
+class DataPathCoder(CustomJson.Coder[DataPathJsonTypedDict, "DataPath"]):
+
+    special_type_name = "data_path"
+
+    @classmethod
+    def decode(cls, data:DataPathJsonTypedDict) -> "DataPath":
+        return DataPath(data["path_items"], data["root"], data["embedded_data"])
+
+    @classmethod
+    def encode(cls, data:"DataPath") -> DataPathJsonTypedDict:
+        return {"$special_type": "data_path", "path_items": data.path_items, "root": data.root, "embedded_data": data.embedded_data}
+
+@Types.register_decorator(None, hashing_method=hash, json_coder=DataPathCoder)
 class DataPath():
 
     def __init__(self, path_items:list[Hashable], root:str, embedded_data:Any|None=None) -> None:

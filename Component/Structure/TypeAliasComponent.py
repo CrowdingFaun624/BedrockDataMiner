@@ -1,7 +1,7 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.Structure.StructureComponent as StructureComponent
+import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -19,8 +19,8 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
     def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 
-        if name in StructureComponent.DEFAULT_TYPES:
-            raise Exceptions.ComponentInvalidNameError(self, list(StructureComponent.DEFAULT_TYPES.keys()))
+        if name in Types.default_types:
+            raise Exceptions.ComponentInvalidNameError(self, list(Types.default_types.keys()))
 
         self.types_strs = data["types"]
 
@@ -32,8 +32,8 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
             if type_str in already_types:
                 raise Exceptions.ComponentDuplicateTypeError(type_str, self)
             already_types.add(type_str)
-            if type_str in StructureComponent.DEFAULT_TYPES:
-                final.append(StructureComponent.DEFAULT_TYPES[type_str])
+            if type_str in Types.default_types:
+                final.append(Types.default_types[type_str])
             else:
                 raise Exceptions.ComponentUnrecognizedTypeError(type_str, self)
         self.final = tuple(final)
