@@ -42,6 +42,8 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1, data2))) # number of items at start that are the same
         shorter_length = min(len(data1), len(data2))
         suffix_len = sum(1 for i in takewhile(lambda a: a[0] < shorter_length - prefix_len and a[1] == a[2], zip(count(), reversed(data1), reversed(data2)))) # number of items at end that are the same unless that line is included in prefix_len.
+        if (len(data1) - prefix_len - suffix_len) * (len(data2) - prefix_len - suffix_len) > 1_000_000:
+            raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
 
         for x in range(1, len(data1) + 1 - prefix_len - suffix_len):
             distances[0][x] = x
@@ -62,8 +64,6 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         if self.similarity_function is not None:
             data1 = self.similarity_function(data1)
             data2 = self.similarity_function(data2)
-        if len(data1) * len(data2) > 1_000_000:
-            raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
         if len(data1) == 0 and len(data2) == 0:
             return 1.0
         elif data1 == data2:

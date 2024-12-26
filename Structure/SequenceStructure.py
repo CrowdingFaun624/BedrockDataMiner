@@ -47,25 +47,35 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
                 return float(data1 == data2)
             else:
                 return float(Structure.get_data_at_branch(data1, branch) == data2)
-        if len(data1) * len(data2) > 10_000_000:
+
+        data1_hashes:list[int] = [Types.hash_data(D.last_value(item)) for item in data1]
+        data2_hashes:list[int] = [Types.hash_data(item) for item in data2]
+        prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1_hashes, data2_hashes))) # number of items at start that are the same
+        shorter_length = min(len(data1), len(data2))
+        suffix_len = sum(1 for i in takewhile(lambda a: a[0] < shorter_length - prefix_len and a[1] == a[2], zip(count(), reversed(data1_hashes), reversed(data2_hashes)))) # number of items at end that are the same unless that line is included in prefix_len.
+        if (len(data1) - prefix_len - suffix_len) * (len(data2) - prefix_len - suffix_len) > 10_000_000:
             raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
+
         similarity_function:Callable[[d,d,int,int|None,StructureEnvironment.ComparisonEnvironment,list[Trace.ErrorTrace],int],float] =\
             self.structure.get_similarity if self.structure is not None else lambda data1, data2, depth, max_depth, environment, exceptions, branch: float(data1 == data2)
-        distances = numpy.zeros((len(data2) + 1, len(data1) + 1), numpy.float32)
-        # distances:list[list[float]] = [[0] * (len(data1) + 1) for y in range(len(data2) + 1)]
-        for x in range(1, len(data1) + 1):
+        distances = numpy.zeros((len(data2) + 1 - prefix_len - suffix_len, len(data1) + 1 - prefix_len - suffix_len), numpy.float32)
+        # distances:list[list[float]] = [[0] * (len(data1) + 1 - prefix_len - suffix_len) for y in range(len(data2) + 1 - prefix_len - suffix_len)]
+        for x in range(1, len(data1) + 1 - prefix_len - suffix_len):
             distances[0, x] = x
-        for y in range(1, len(data2) + 1):
+        for y in range(1, len(data2) + 1 - prefix_len - suffix_len):
             distances[y, 0] = y
         for y in range(len(data2)):
             for x in range(len(data1)):
-                distances[y + 1, x + 1] = min(
-                    distances[y + 1, x] + 1,
-                    distances[y, x + 1] + 1,
-                    distances[y, x] + similarity_function(D.last_value(data1[x]), data2[y], depth + 1, max_depth, environment, exceptions, branch),
+                distances[y + 1 + prefix_len, x + 1 + prefix_len] = min(
+                    distances[y + 1 + prefix_len, x + prefix_len] + 1,
+                    distances[y + prefix_len, x + 1 + prefix_len] + 1,
+                    distances[y + prefix_len, x + prefix_len] + \
+                        (1 if (data1_hashes[x + prefix_len] == data2_hashes[y + prefix_len])
+                         else similarity_function(D.last_value(data1[x + prefix_len]), data2[y + prefix_len], depth + 1, max_depth, environment, exceptions, branch)
+                        ),
                 )
-        levenshtein_distance = distances[len(data2)][len(data1)]
-        max_length = len(data1) if len(data1) > len(data2) else len(data2)
+        levenshtein_distance = distances[len(data2) - prefix_len - suffix_len][len(data1) - prefix_len - suffix_len]
+        max_length = len(data1) if len(data1) > len(data2) else len(data2) # DO NOT subtract prefix_len or suffix_len
         return 1 - (levenshtein_distance / max_length)
 
     def compare_sub(self, data1:d|D.Diff[d], data2:d, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[d|D.Diff[d],bool,list[Trace.ErrorTrace]]:
@@ -99,8 +109,6 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
     ) -> tuple[Sequence[d|D.Diff], bool, list[Trace.ErrorTrace]]:
         if not environment.is_multi_diff and (data1 is data2 or data1 == data2):
             return data1, False, []
-        if len(data1) * len(data2) > 10_000_000:
-            raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
         exceptions:list[Trace.ErrorTrace] = []
         similarity_function:Callable[[d,d,int,int|None,StructureEnvironment.ComparisonEnvironment,list[Trace.ErrorTrace],int],float] =\
             self.structure.get_similarity if self.structure is not None else lambda data1, data2, depth, max_depth, environment, exceptions, branch: float(data1 == data2)
@@ -111,6 +119,9 @@ class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
         prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1_hashes, data2_hashes))) # number of items at start that are the same
         shorter_length = min(len(data1), len(data2))
         suffix_len = sum(1 for i in takewhile(lambda a: a[0] < shorter_length - prefix_len and a[1] == a[2], zip(count(), reversed(data1_hashes), reversed(data2_hashes)))) # number of items at end that are the same unless that line is included in prefix_len.
+
+        if (len(data1) - prefix_len - suffix_len) * (len(data2) - prefix_len - suffix_len) > 10_000_000:
+            raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
 
         distances = numpy.zeros((len(data2) + 1 - prefix_len - suffix_len, len(data1) + 1 - prefix_len - suffix_len), numpy.float32)
         path = numpy.zeros((len(data2) + 1 - prefix_len - suffix_len, len(data1) + 1 - prefix_len - suffix_len), numpy.int8)
