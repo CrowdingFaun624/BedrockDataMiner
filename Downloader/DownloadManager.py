@@ -1,6 +1,6 @@
 import shutil
 import zipfile
-from typing import Literal, TypedDict
+from typing import TypedDict
 
 import requests
 from pathlib2 import Path
@@ -69,17 +69,13 @@ class DownloadManager(Manager.Manager):
             self.install_all()
         return file_name in self.get_file_set()
 
-    def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
+    def read(self, file_name:str) -> bytes:
         if not self.installed:
             self.install_all()
         self.open_zip_file()
         if self.zip_file is None:
             raise Exceptions.AttributeNoneError("zip_file", self)
-        data = self.zip_file.read(file_name)
-        if mode == "t":
-            return data.decode("utf-8")
-        else:
-            return data
+        return self.zip_file.read(file_name)
 
     def clear_temp_file(self, temp_path:Path, path_that_zipfile_puts_it_in:Path) -> None:
         path_that_zipfile_puts_it_in.unlink()

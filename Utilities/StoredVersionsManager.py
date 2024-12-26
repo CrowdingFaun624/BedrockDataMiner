@@ -113,17 +113,15 @@ def extract_file(version_name:str, file_name:str, destination:Path, index:dict[s
     else:
         shutil.copy(get_hash_file_path(file_hash), destination)
 
-def read_file(version_name:str, file_name:str, mode:str="b", index:dict[str,tuple[str,bool]]|None=None) -> bytes|str:
+def read_file(version_name:str, file_name:str, index:dict[str,tuple[str,bool]]|None=None) -> bytes:
     if index is None: index = read_index(version_name)
     if file_name not in index: raise Exceptions.FileNotFoundInVersionArchive(file_name, version_name)
     file_hash, file_compressed = index[file_name]
     with open(get_hash_file_path(file_hash), "rb") as f:
-        if file_compressed: data = gzip.decompress(f.read())
-        else: data = f.read()
-        if mode == "t":
-            return data.decode("utf-8")
+        if file_compressed:
+            return gzip.decompress(f.read())
         else:
-            return data
+            return f.read()
 
 def extract_files(version_name:str, files:Iterable[str], destinations:Iterable[Path]) -> None:
     '''Copies files from the given version to the given destinations.'''

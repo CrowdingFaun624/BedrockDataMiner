@@ -109,7 +109,7 @@ class GrabMultiplePackFilesDataMiner(FileDataMiner.FileDataMiner):
                             raise Exceptions.DataMinerUnrecognizedSuffixError(self, file_name, recognized_suffixes)
 
                 if should_store_file:
-                    files[pack["name"], relative_name, file_name] = accessor.read(file_name, "b")
+                    files[pack["name"], relative_name, file_name] = accessor.read(file_name)
 
         if len(files) == 0 and not self.find_none_okay:
             raise Exceptions.DataMinerNothingFoundError(self)

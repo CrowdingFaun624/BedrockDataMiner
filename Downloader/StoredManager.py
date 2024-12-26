@@ -1,11 +1,10 @@
 import shutil
-from typing import Literal, TypedDict
+from typing import TypedDict
 
 from pathlib2 import Path
 
 import Downloader.Manager as Manager
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Utilities.StoredVersionsManager as StoredVersionsManager
 
 
@@ -44,9 +43,9 @@ class StoredManager(Manager.Manager):
             raise Exceptions.AttributeNoneError("index", self)
         return file_name in self.index
 
-    def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
+    def read(self, file_name:str) -> bytes:
         self.read_index()
-        return StoredVersionsManager.read_file(self.name, file_name, mode, self.index)
+        return StoredVersionsManager.read_file(self.name, file_name, self.index)
 
     def all_done(self) -> None:
         if self.apk_location.exists():

@@ -1,5 +1,5 @@
 import bisect
-from typing import TYPE_CHECKING, Any, Literal, overload
+from typing import TYPE_CHECKING, Any
 
 from pathlib2 import Path
 
@@ -47,11 +47,7 @@ class Manager():
         '''Returns a sorted list of all files in the archive.'''
         raise Exceptions.ManagerUndefinedMethodError(self, self.get_file_list)
 
-    @overload
-    def read(self, file_name:str, mode:Literal["b"]) -> bytes: ...
-    @overload
-    def read(self, file_name:str, mode:Literal["t"]) -> str: ...
-    def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
+    def read(self, file_name:str) -> bytes:
         '''Returns the contents of the given file name from the Version'''
         raise Exceptions.ManagerUndefinedMethodError(self, self.read)
 

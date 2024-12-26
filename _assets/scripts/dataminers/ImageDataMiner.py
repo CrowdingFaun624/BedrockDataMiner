@@ -47,10 +47,10 @@ def get_in_directory(directory:str, accessor:Accessor.DirectoryAccessor, ignore_
         file_suffix = file_name.split(".")[-1]
         if file_suffix not in IMAGE_SUFFIXES:
             continue
-        image_dict:ImageTypedDict = {"image": accessor.read(file_name, "b")}
+        image_dict:ImageTypedDict = {"image": accessor.read(file_name)}
         json_file_path = file_without_suffix + ".json"
         if accessor.file_exists(json_file_path):
-            image_dict["json_metadata"] = accessor.read(json_file_path, "b")
+            image_dict["json_metadata"] = accessor.read(json_file_path)
             image_dict["json_metadata_file_name"] = json_file_path
         output[file_name] = image_dict
     return output

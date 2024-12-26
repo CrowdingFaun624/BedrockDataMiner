@@ -85,7 +85,7 @@ class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
                         raise Exceptions.DataMinerUnrecognizedSuffixError(self, file_name, recognized_suffixes)
 
             if should_store_file:
-                files[relative_name, file_name] = accessor.read(file_name, "b")
+                files[relative_name, file_name] = accessor.read(file_name)
 
         if len(files) == 0 and not self.find_none_okay:
             raise Exceptions.DataMinerNothingFoundError(self)

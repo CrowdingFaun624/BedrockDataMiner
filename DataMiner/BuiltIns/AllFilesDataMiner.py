@@ -8,4 +8,4 @@ class AllFilesDataMiner(DataMiner.DataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,str]:
         accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
-        return {file: FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(accessor.read(file, "b"))) for file in accessor.get_file_list()}
+        return {file: FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(accessor.read(file))) for file in accessor.get_file_list()}

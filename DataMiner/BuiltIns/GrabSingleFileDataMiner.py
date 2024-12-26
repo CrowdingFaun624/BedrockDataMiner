@@ -27,7 +27,7 @@ class GrabSingleFileDataMiner(FileDataMiner.FileDataMiner):
     def get_file(self, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> tuple[bytes, str]:
         if not accessor.file_exists(self.location):
             raise Exceptions.DataMinerNothingFoundError(self)
-        return accessor.read(self.location, "b"), self.location
+        return accessor.read(self.location), self.location
 
     def get_output(self, file:bytes, file_name:str, environment:DataMinerEnvironment.DataMinerEnvironment) -> File.File|Any:
         return self.export_file(file, file_name)

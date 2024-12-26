@@ -37,7 +37,7 @@ class GrabReFilesDataMiner(GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner
         for file_name in accessor.get_files_in(self.directory):
             if self.pattern.fullmatch(file_name, len(self.directory)):
                 relative_name = file_name.removeprefix(self.directory)
-                output[relative_name, file_name] = accessor.read(file_name, "b")
+                output[relative_name, file_name] = accessor.read(file_name)
         if len(output) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
         return output

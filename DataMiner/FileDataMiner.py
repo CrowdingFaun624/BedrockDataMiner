@@ -1,13 +1,9 @@
 import bisect
-import traceback
-from typing import (IO, Any, Callable, Iterable, Literal, Mapping, Sequence,
-                    TypeVar, overload)
+from typing import Callable, Iterable, TypeVar
 
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import Downloader.Accessor as Accessor
-import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 
 read_files_typevar = TypeVar("read_files_typevar")
 
@@ -16,14 +12,14 @@ location_item_function:Callable[[str],tuple[bool,str]] = lambda item: (len(item)
 suffix_function:Callable[[str],tuple[bool,str]] = lambda item: (item.startswith("."), "suffix does not start with \".\"")
 
 class FileSet():
-    
+
     def __init__(self, files:Iterable[str]) -> None:
         self.files = sorted(files) # must be sorted for bisection
         self.file_set = set(files)
-    
+
     def __iter__(self) -> Iterable[str]:
         yield from self.files
-    
+
     def get_files_in(self, directory:str) -> list[str]:
         '''Returns all file names that start with the directory string.'''
         directory_length = len(directory)
@@ -42,7 +38,8 @@ class FileDataMiner(DataMiner.DataMiner):
         '''
         Must be overridden by subclasses of FileDataMiner.
         Returns the set of file paths this DataMiner would return if it were
-        activated.\n
+        activated.
+
         :file_set: The set of all file paths.
         :environment: The DataMinerEnvironment to use (for dependencies).
         '''

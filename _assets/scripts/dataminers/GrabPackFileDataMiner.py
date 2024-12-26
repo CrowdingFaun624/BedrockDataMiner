@@ -53,7 +53,7 @@ class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
                 continue
             path = pack["path"] + location
             if accessor.file_exists(path):
-                files[pack["name"], path] = accessor.read(path, "b")
+                files[pack["name"], path] = accessor.read(path)
         if len(files) == 0 and not self.find_none_okay:
             raise Exceptions.DataMinerNothingFoundError(self)
         return files

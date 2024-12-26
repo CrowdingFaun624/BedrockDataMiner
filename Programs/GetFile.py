@@ -9,7 +9,7 @@ def main() -> None:
     install_manager = version.get_version_files_dict()["client"].get_accessor(required_type=Accessor.DirectoryAccessor)
     if install_manager is not None:
         destination = version.get_version_directory().joinpath(file)
-        file_data = install_manager.read(file, "b")
+        file_data = install_manager.read(file)
         with open(destination, "wb") as destination_file:
             destination_file.write(file_data)
         print("File is in %s" % destination)

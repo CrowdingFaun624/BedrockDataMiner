@@ -1,9 +1,8 @@
-from typing import TYPE_CHECKING, Any, Literal, overload
+from typing import TYPE_CHECKING, Any
 
 from pathlib2 import Path
 
 import Downloader.Manager as Manager
-import Utilities.FileManager as FileManager
 
 if TYPE_CHECKING:
     import Version.Version as Version
@@ -27,7 +26,7 @@ class Accessor():
 
 class DummyAccessor(Accessor):
     "Accessor that does nothing."
-    
+
     def all_done(self) -> None:
         pass
 
@@ -54,12 +53,8 @@ class DirectoryAccessor(Accessor):
     def get_full_file_list(self) -> list[str]:
         return self.manager.get_file_list()
 
-    @overload
-    def read(self, file_name:str, mode:Literal["b"]) -> bytes: ...
-    @overload
-    def read(self, file_name:str, mode:Literal["t"]) -> str: ...
-    def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
-        return self.manager.read(self.modify_file_name(file_name), mode)
+    def read(self, file_name:str) -> bytes:
+        return self.manager.read(self.modify_file_name(file_name))
 
     def __repr__(self) -> str:
         return "<%s id %i>" % (self.__class__.__name__, id(self))
