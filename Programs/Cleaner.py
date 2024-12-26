@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Iterable
 
 import Component.Importer as Importer
-import DataMiner.DataMinerCollection as DataMinerCollection
+import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import Utilities.UserInput as UserInput
 import Version.Version as Version
 
@@ -12,7 +12,7 @@ def __remove_files(files:Iterable[Path]) -> None:
     for file in files:
         file.unlink()
 
-def get_files(versions:list[Version.Version], dataminer_collections:list[DataMinerCollection.DataMinerCollection]) -> list[Path]:
+def get_files(versions:list[Version.Version], dataminer_collections:list[AbstractDataMinerCollection.AbstractDataMinerCollection]) -> list[Path]:
     return [
         path
         for version, dataminer_collection in product(versions, dataminer_collections)

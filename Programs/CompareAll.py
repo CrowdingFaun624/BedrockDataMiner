@@ -2,7 +2,7 @@ import traceback
 from typing import Generator, Iterable, TypeVar
 
 import Component.Importer as Importer
-import DataMiner.DataMinerCollection as DataMinerCollection
+import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -18,13 +18,13 @@ def flatten(matrix:Iterable[Iterable[FlattenType]]) -> Generator[FlattenType, No
 def compare(
         version1:Version.Version|None,
         version2:Version.Version,
-        dataminer_collection:DataMinerCollection.DataMinerCollection,
+        dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection,
         undataminable_versions_between:list[Version.Version],
     ) -> None:
     dataminer_collection.compare(version1, version2, undataminable_versions_between, COMPARING_ENVIRONMENT)
 
 def compare_all_of(
-        dataminer_collection:DataMinerCollection.DataMinerCollection,
+        dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection,
         versions:list[Version.Version],
         exception_holder:dict[str,tuple[Exception,Version.Version|None,Version.Version|None]|bool],
     ) -> None:

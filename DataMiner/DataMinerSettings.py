@@ -9,8 +9,8 @@ import Version.VersionFileType as VersionFileType
 import Version.VersionRange as VersionRange
 
 if TYPE_CHECKING:
+    import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
     import DataMiner.DataMiner as DataMiner
-    import DataMiner.DataMinerCollection as DataMinerCollection
 
 class DataMinerSettings():
 
@@ -26,7 +26,7 @@ class DataMinerSettings():
         self.structure:StructureBase.StructureBase|None = None
         self.dataminer_class:type["DataMiner.DataMiner"]|None = None
         self.serializers:dict[str,Serializer.Serializer]|None = None
-        self.dependencies:list["DataMinerCollection.DataMinerCollection"]|None = None
+        self.dependencies:list["AbstractDataMinerCollection.AbstractDataMinerCollection"]|None = None
 
     def link_subcomponents(
         self,
@@ -35,7 +35,7 @@ class DataMinerSettings():
         structure:StructureBase.StructureBase,
         dataminer_class:type["DataMiner.DataMiner"]|None,
         serializers:dict[str,Serializer.Serializer],
-        dependencies:list["DataMinerCollection.DataMinerCollection"],
+        dependencies:list["AbstractDataMinerCollection.AbstractDataMinerCollection"],
         start_version:Version.Version|None,
         end_version:Version.Version|None,
         version_file_types:list[VersionFileType.VersionFileType],
@@ -79,7 +79,7 @@ class DataMinerSettings():
             raise Exceptions.AttributeNoneError("version_file_types_str", self)
         return self.version_file_types_str
 
-    def get_dependencies(self) -> list["DataMinerCollection.DataMinerCollection"]:
+    def get_dependencies(self) -> list["AbstractDataMinerCollection.AbstractDataMinerCollection"]:
         if self.dependencies is None:
             raise Exceptions.AttributeNoneError("dependencies", self)
         return self.dependencies

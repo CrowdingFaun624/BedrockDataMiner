@@ -2,7 +2,7 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Callable, Generic, Hashable, TypeVar
 
 import Component.Importer as Importer
-import DataMiner.DataMinerCollection as DataMinerCollection
+import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import Version.Version as Version
 
 if TYPE_CHECKING:
@@ -50,7 +50,7 @@ class Plan(Generic[a]):
     Plural string labeling this Plan's object.
     '''
 
-    def __init__(self, versions:list[Version.Version], all_dataminer_collections:list[DataMinerCollection.DataMinerCollection], version_objects:dict[Version.Version,set[a]]) -> None:
+    def __init__(self, versions:list[Version.Version], all_dataminer_collections:list[AbstractDataMinerCollection.AbstractDataMinerCollection], version_objects:dict[Version.Version,set[a]]) -> None:
         '''
         :versions: The Versions which support all of the same objects.
         :all_dataminer_collections: A list of every DataMinerCollection.
@@ -68,15 +68,14 @@ class Plan(Generic[a]):
         '''
         self.items_to_test.append(item)
 
-    def test(self, all_dataminer_collections:dict[str,DataMinerCollection.DataMinerCollection]) -> list[a]:
+    def test(self) -> list[a]:
         '''
         Tests all items in the `items_to_test` list.
-        :all_dataminer_collections: A dictionary of DataMinerCollection names to DataMinerCollections.
         '''
         ...
 
     @classmethod
-    def get_obj(cls, dataminer_collection:DataMinerCollection.DataMinerCollection, version:Version.Version) -> a:
+    def get_obj(cls, dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection, version:Version.Version) -> a:
         '''
         Gets this Plan's object from a DataMinerCollection and Version.
         :dataminer_collection: The DataMinerCollection associated with the object.
@@ -147,5 +146,5 @@ def test(plan_type:type[Plan[a]]) -> None:
             assert False, "no plan supports %r" % (structure,)
     failed_objects:list[a] = []
     for bits in bits_needed:
-        failed_objects.extend(plans[bits].test({dataminer_collection.name: dataminer_collection for dataminer_collection in dataminer_collections}))
+        failed_objects.extend(plans[bits].test())
     print("%i %s failed: [%s]" % (len(failed_objects), plan_type.label, ", ".join(plan_type.get_name(object) for object in failed_objects)))

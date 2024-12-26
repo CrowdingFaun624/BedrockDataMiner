@@ -16,10 +16,11 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
+    import Component.DataMiner.AbstractDataMinerCollectionComponent as AbstractDataMinerCollectionComponent
     import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
     import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 
-DEPENDENCY_PATTERN:Pattern.Pattern["DataMinerCollectionComponent.DataMinerCollectionComponent"] = Pattern.Pattern([{"is_dataminer_collection": True}])
+DEPENDENCY_PATTERN:Pattern.Pattern["AbstractDataMinerCollectionComponent.AbstractDataMinerCollectionComponent"] = Pattern.Pattern([{"is_dataminer_collection": True}])
 VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern([{"is_version_file_type": True}])
 
 class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMinerSettings]):

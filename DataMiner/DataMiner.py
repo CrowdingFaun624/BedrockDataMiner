@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, NoReturn, TypeVar
+from typing import Any, NoReturn, TypeVar
 
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerSettings as DataMinerSettings
@@ -12,9 +12,6 @@ import Utilities.File as File
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
-
-if TYPE_CHECKING:
-    import DataMiner.DataMinerCollection as DataMinerCollection
 
 a = TypeVar("a", bound=Accessor.Accessor)
 
@@ -59,23 +56,6 @@ class DataMiner():
     def get_data_file_path(self) -> Path:
         return FileManager.get_version_data_path(self.version.get_version_directory(), self.file_name)
 
-    def store(self, environment:DataMinerEnvironment.DataMinerEnvironment, dataminer_collections:list["DataMinerCollection.DataMinerCollection"]) -> Any:
-        '''Makes the dataminer get the file. Returns the output and stores it in a file.'''
-        data = self.activate(environment)
-        if data is None:
-            raise Exceptions.DataMinerNullReturnError(self)
-        data_path = FileManager.get_version_data_path(self.version.get_version_directory(), None)
-        if not data_path.exists():
-            data_path.mkdir()
-        with open(self.get_data_file_path(), "wt") as f:
-            json.dump(data, f, separators=(",", ":"), cls=CustomJson.encoder)
-
-        if self.settings.structure is not None:
-            normalized_data = self.settings.structure.normalize(data, environment.get_printer_environment(self.version))
-            self.settings.structure.check_types(normalized_data, environment.structure_environment, (self.version,))
-
-        return self.get_data_file() # since the normalizing immediately before may modify it.
-
     def get_data_file(self) -> Any:
         with open(self.get_data_file_path(), "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
@@ -114,9 +94,6 @@ class NullDataMiner(DataMiner):
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> NoReturn:
         raise Exceptions.NullDataMinerMethodError(self, self.activate)
-
-    def store(self, environment:DataMinerEnvironment.DataMinerEnvironment, dataminer_collections:list["DataMinerCollection.DataMinerCollection"]) -> NoReturn:
-        raise Exceptions.NullDataMinerMethodError(self, self.store)
 
     def get_accessor(self, file_type:str) -> NoReturn:
         raise Exceptions.NullDataMinerMethodError(self, self.get_accessor)

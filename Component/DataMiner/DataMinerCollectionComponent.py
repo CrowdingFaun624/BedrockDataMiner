@@ -1,8 +1,7 @@
 from typing import Generator, TypeVar
 
-import Component.Capabilities as Capabilities
-import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.DataMiner.AbstractDataMinerCollectionComponent as AbstractDataMinerCollectionComponent
 import Component.DataMiner.DataMinerSettingsComponent as DataMinerSettingsComponent
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
@@ -18,16 +17,15 @@ DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataMinerSettingsComponent.DataMinerS
 
 a = TypeVar("a")
 def batched(iter:list[a]) -> Generator[tuple[a, a], None, None]:
-    # patched isn't in itertools in 3.10
+    # batched isn't in itertools in 3.10
     if len(iter) == 0: return
     for i in range(0, len(iter) - 1, 2):
         yield iter[i], iter[i + 1]
 
-class DataMinerCollectionComponent(Component.Component[DataMinerCollection.DataMinerCollection]):
+class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.AbstractDataMinerCollectionComponent[DataMinerCollection.DataMinerCollection]):
 
     class_name_article = "a DataMinerCollection"
     class_name = "DataMinerCollection"
-    my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),

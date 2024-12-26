@@ -5,9 +5,8 @@ from typing import Any, Callable
 
 import Component.Importer as Importer
 import DataMiner.DataMiner as DataMiner
-import DataMiner.DataMinerCollection as DataMinerCollection
+import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMiners as DataMiners
 import Structure.DataPath as DataPath
 import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
@@ -166,7 +165,7 @@ class TagSearcherDataMiner(DataMiner.DataMiner):
         dependencies = set(self.dependencies)
         all_tags = Importer.structure_tags
         printer_environment = environment.get_printer_environment(self.version)
-        tag_dataminer_collections:defaultdict[DataMinerCollection.DataMinerCollection,list[StructureTag.StructureTag]] = defaultdict(lambda: [])
+        tag_dataminer_collections:defaultdict[AbstractDataMinerCollection.AbstractDataMinerCollection,list[StructureTag.StructureTag]] = defaultdict(lambda: [])
         for tag in self.tag_names:
             if tag not in all_tags:
                 raise Exceptions.UnrecognizedStructureTagError(self.tags, tag)

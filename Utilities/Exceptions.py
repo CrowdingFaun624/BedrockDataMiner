@@ -13,9 +13,9 @@ if TYPE_CHECKING:
     import Component.Types as Types
     import Component.Version.Field.VersionRangeField as VersionRangeField
     import Component.Version.VersionComponent as VersionComponent
+    import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
     import DataMiner.BuiltIns.TagSearcherDataMiner as TagSearcherDataMiner
     import DataMiner.DataMiner as DataMiner
-    import DataMiner.DataMinerCollection as DataMinerCollection
     import DataMiner.DataMinerEnvironment as DataMinerEnvironment
     import DataMiner.DataMinerSettings as DataMinerSettings
     import Downloader.Accessor as Accessor
@@ -1008,7 +1008,7 @@ class DataMinerDependencyOverwriteError(DataMinerException):
 class DataMinerDuplicateFileNameError(DataMinerException):
     "Two DataMinerCollections have the same file name."
 
-    def __init__(self, file_name:str, dataminers:list["DataMinerCollection.DataMinerCollection"], message:Optional[str]=None) -> None:
+    def __init__(self, file_name:str, dataminers:list["AbstractDataMinerCollection.AbstractDataMinerCollection"], message:Optional[str]=None) -> None:
         '''
         :file_name: The file name shared by all of the DataMinerCollections.
         :dataminers: The DataMinerCollections that share the same file name.
@@ -1087,7 +1087,7 @@ class DataMinerNothingFoundError(DataMinerException):
 class DataMinerNullReturnError(DataMinerException):
     "The DataMiner's activate method has returned None."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"AbstractDataMinerCollection.AbstractDataMinerCollection", message:Optional[str]=None) -> None:
         '''
         :dataminer: The DataMiner whose activate method returned None.
         :message: Additional text to place after the main message.
@@ -1164,7 +1164,7 @@ class DataMinerSettingsImporterLoopError(DataMinerException):
 class DataMinersFailureError(DataMinerException):
     "Multiple DataMiners failed to activate."
 
-    def __init__(self, version:"Version.Version", dataminer_collections:list["DataMinerCollection.DataMinerCollection"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", dataminer_collections:list["AbstractDataMinerCollection.AbstractDataMinerCollection"], message:Optional[str]=None) -> None:
         '''
         :version: The Version for which datamining failed.
         :dataminer_collections: The DataMinerCollections that failed to activate on this Version.
@@ -1264,7 +1264,7 @@ class DataMinerUnregisteredDependencyError(DataMinerException):
 class MissingDataFileError(DataMinerException):
     "The data file for this DataMinerCollection is missing."
 
-    def __init__(self, dataminer:Union["DataMiner.DataMiner", "DataMinerSettings.DataMinerSettings", "DataMinerCollection.DataMinerCollection"], file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:Union["DataMiner.DataMiner", "DataMinerSettings.DataMinerSettings", "AbstractDataMinerCollection.AbstractDataMinerCollection"], file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
         '''
         :dataminer_collection: The DataMiner, DataMinerSettings, or DataMinerCollection that is missing its file.
         :file_name: The name of the file that's missing.
@@ -1340,7 +1340,7 @@ class SoundFilesMetadataError(DataMinerException):
 class TagSearcherDependencyError(DataMinerException):
     "A tag exists in a DataMiner that is not a dependency of this one."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", tag:"StructureTag.StructureTag", dataminer_collection:"DataMinerCollection.DataMinerCollection", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"DataMiner.DataMiner", tag:"StructureTag.StructureTag", dataminer_collection:"AbstractDataMinerCollection.AbstractDataMinerCollection", message:Optional[str]=None) -> None:
         '''
         :dataminer: The DataMiner that attempted to access the tag.
         :tag: The tag that was found in an inaccessible DataMinerCollection.

@@ -26,7 +26,7 @@ import Utilities.Scripts as Scripts
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
-    import DataMiner.DataMinerCollection as DataMinerCollection
+    import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
     import Downloader.AccessorType as AccessorType
     import Serializer.Serializer as Serializer
     import Structure.StructureBase as StructureBase
@@ -230,7 +230,7 @@ def parse_all_component_groups() -> dict[str,Any]:
 all_component_groups = parse_all_component_groups()
 
 accessor_types:dict[str,"AccessorType.AccessorType"] = all_component_groups["accessor_types"]
-dataminer_collections:dict[str,"DataMinerCollection.DataMinerCollection"] = all_component_groups["dataminer_collections"]
+dataminer_collections:dict[str,"AbstractDataMinerCollection.AbstractDataMinerCollection"] = all_component_groups["dataminer_collections"]
 latest_slots:list[str] = all_component_groups["latest_slots"]
 serializers:dict[str,"Serializer.Serializer"] = all_component_groups["serializers"]
 structures:dict[str,"StructureBase.StructureBase"] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
