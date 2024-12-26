@@ -1,7 +1,7 @@
 import struct
 from typing import Any, BinaryIO
 
-import Utilities.Nbt.Endianness as Endianness
+import _assets.scripts.Nbt.Endianness as Endianness
 
 
 class DataReader():

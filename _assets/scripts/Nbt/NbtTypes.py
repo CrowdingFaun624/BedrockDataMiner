@@ -4,12 +4,12 @@ from typing import Literal, Protocol, TypedDict, TypeVar, cast
 
 import mutf8
 
+import _assets.scripts.Nbt.DataReader as DataReader
+import _assets.scripts.Nbt.Endianness as Endianness
+import _assets.scripts.Nbt.NbtExceptions as NbtExceptions
 import Component.Types as Types
 import Structure.Difference as D
 import Utilities.CustomJson as CustomJson
-import Utilities.Exceptions as Exceptions
-import Utilities.Nbt.DataReader as DataReader
-import Utilities.Nbt.Endianness as Endianness
 
 NbtJsonTypedDict = TypedDict("NbtJsonTypedDict", {"$special_type": Literal["nbt"], "data": str})
 
@@ -19,7 +19,7 @@ class NbtCoder(CustomJson.Coder[NbtJsonTypedDict, "TAG"]):
 
     @classmethod
     def decode(cls, data: NbtJsonTypedDict) -> "TAG":
-        import Utilities.Nbt.NbtReader as NbtReader
+        import _assets.scripts.Nbt.NbtReader as NbtReader
         return NbtReader.unpack_snbt(data["data"])
 
     @classmethod
@@ -185,7 +185,7 @@ class TAG_Compound(dict[str,TAG[b]], TAG[dict[str,TAG[b]]]):
             if isinstance(value, TAG_End) or key_name is None:
                 break
             if key_name in output:
-                raise Exceptions.CompoundDuplicateKeyError(key_name)
+                raise NbtExceptions.CompoundDuplicateKeyError(key_name)
             output[key_name] = value
         return cls(output)
 
@@ -263,4 +263,4 @@ def parse_object_from_bytes(data_reader:DataReader.DataReader, content_type:int,
         case IdEnum.TAG_Int_Array:  return TAG_Int_Array.from_bytes(data_reader, endianness)
         case IdEnum.TAG_Long_Array: return TAG_Long_Array.from_bytes(data_reader, endianness)
         case _:
-            raise Exceptions.InvalidNbtContentType(content_type)
+            raise NbtExceptions.InvalidNbtContentType(content_type)

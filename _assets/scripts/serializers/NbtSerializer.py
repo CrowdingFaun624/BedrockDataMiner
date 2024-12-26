@@ -1,10 +1,10 @@
 from typing import Literal
 
+import _assets.scripts.Nbt.NbtReader as NbtReader
+import _assets.scripts.Nbt.NbtTypes as NbtTypes
 import Serializer.Serializer as Serializer
-import Utilities.Nbt.NbtReader as NbtReader
-import Utilities.Nbt.NbtTypes as NbtTypes
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
-from Utilities.Nbt.Endianness import End
+from _assets.scripts.Nbt.Endianness import End
 
 __all__ = ["NbtSerializer"]
 

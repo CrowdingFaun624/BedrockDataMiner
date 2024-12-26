@@ -14,7 +14,6 @@
 # import Programs.GetFile as GetFile
 # import Programs.Test.Tests as Tests
 # import Utilities.FileManager as FileManager
-# import Utilities.Nbt.NbtReader as NbtReader
 # import Utilities.Scripts as Scripts
 # import Utilities.StoredVersionsManager as StoredVersionsManager
 # ''')
@@ -25,7 +24,7 @@
 import threading
 from typing import Any, Callable
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "NbtReader", "Scripts", "StoredVersions", "Tablifiers", "Tests"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Coverage", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "Scripts", "StoredVersions", "Tablifiers", "Tests"]
 
 user_input_lock = threading.Lock()
 
@@ -51,7 +50,6 @@ import Programs.GetFile as GetFile
 import Programs.Test.Tests as Tests
 import Tablifier.Tablifiers as Tablifiers
 import Utilities.FileManager as FileManager
-import Utilities.Nbt.NbtReader as NbtReader
 import Utilities.Scripts as Scripts
 import Utilities.StoredVersionsManager as StoredVersionsManager
 
@@ -67,7 +65,6 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "FileSummary": FileSummary.main,
     "GarbageCollector": GarbageCollector.main,
     "GetFile": GetFile.main,
-    "NbtReader": NbtReader.main,
     "Scripts": Scripts.main,
     "StoredVersions": StoredVersionsManager.main,
     "Tablifiers": Tablifiers.main,
