@@ -1,40 +1,32 @@
-import json
 import subprocess
 from typing import Iterator
 
+import Utilities.Cache as Cache
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.FileStorageManager as FileStorageManager
-from Utilities.FunctionCaller import WaitValue
 
 
-def read_cache() -> dict[str,dict[str,str]]:
-    if not FileManager.FSB_CACHE_FILE.exists():
-        with open(FileManager.FSB_CACHE_FILE, "wt") as f:
-            json.dump({}, f)
-    with open(FileManager.FSB_CACHE_FILE, "rt") as f:
-        return json.load(f)
+class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
 
-def write_cache(cache_data:dict[str,dict[str,str]]) -> None:
-    with open(FileManager.FSB_CACHE_FILE, "wt") as f:
-        json.dump(cache_data, f)
+    def __init__(self) -> None:
+        super().__init__(FileManager.FSB_CACHE_FILE)
 
-def cache_new_item(fsb_hash:str, data:dict[str,str]) -> None:
-    cache = fsb_cache.get()
-    cache[fsb_hash] = data
-    write_cache(cache)
+    def get_default_content(self) -> dict[str, str] | None:
+        return {}
 
-def cache_read_item(fsb_hash:str) -> dict[str,str]|None:
-    '''Returns a dict of wav file names and file hashes in `./_assests/file_storage/objects` or None if the fsb file is unfamiliar.'''
-    return fsb_cache.get().get(fsb_hash, None)
+    def new_item(self, fsb_hash:str, data:dict[str,str]) -> None:
+        self.get()[fsb_hash] = data
+        self.write()
 
-fsb_cache = WaitValue(read_cache)
+fsb_cache = FsbCache()
 
 def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
     fsb_file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(input_file))
-    cache_data = cache_read_item(fsb_file_hash)
+    cache_data = fsb_cache.get().get(fsb_file_hash)
     if cache_data is not None:
-        yield from ((cached_file_path, FileStorageManager.read_archived(cached_file_hash, "b")) for cached_file_path, cached_file_hash in cache_data.items())
+        yield from ((cached_file_path, FileStorageManager.read_archived(cached_file_hash)) for cached_file_path, cached_file_hash in cache_data.items())
+        return
 
     temp_directory = FileManager.get_temp_file_path()
     temp_directory.mkdir()
@@ -57,7 +49,7 @@ def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
             contents = f.read()
             result_file_hashes[result_file_path.name] = FileStorageManager.archive_data(contents, result_file_path.name)
             yield result_file_path.name, contents
-    cache_new_item(fsb_file_hash, result_file_hashes)
+    fsb_cache.new_item(fsb_file_hash, result_file_hashes)
 
     # clean up
     temp_file.unlink()

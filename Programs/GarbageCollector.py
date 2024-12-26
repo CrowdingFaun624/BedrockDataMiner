@@ -55,7 +55,7 @@ def remove() -> None:
             break
     for unused_hash in (File.hash_int_to_str(unused_hash) for unused_hash in unused_hashes):
         FileStorageManager.delete_item(unused_hash)
-    FileStorageManager.save_index()
+    FileStorageManager.index.write()
     FileStorageManager.remove_index_values_without_associated_file()
 
 def print_stats(unused_hashes:set[int]|None=None) -> None:

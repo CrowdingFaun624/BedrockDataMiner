@@ -1,15 +1,16 @@
 import json
 import subprocess
+from collections import defaultdict
 from typing import Any, Iterator, TypedDict
 
 from pathlib2 import Path
 
 import Component.Importer as Importer
 import Serializer.Serializer as Serializer
+import Utilities.Cache as Cache
 import Utilities.CustomJson as CustomJson
 import Utilities.File as File
 import Utilities.FileManager as FileManager
-import Utilities.FileStorageManager as FileStorageManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["MaterialBinSerializer"]
@@ -27,6 +28,35 @@ class SerializerNamesTypedDict(TypedDict):
     main: str
     pass_info: str
     glsl: str
+
+class MaterialBinCache(Cache.LinesCache[dict[str,dict[str,str]], tuple[str,str,str]]):
+
+    def __init__(self) -> None:
+        super().__init__(FileManager.MATERIAL_BIN_CACHE_FILE)
+
+    def get_default_content(self) -> dict[str, dict[str, str]] | None:
+        return defaultdict(lambda: {})
+
+    def deserialize_line(self, line:str) -> dict[str,str]:
+        return dict(zip(("version", "source_hash", "output"), line.split(" ", maxsplit=2), strict=True))
+
+    def deserialize(self, data: bytes) -> dict[str,dict[str,str]]:
+        contents = {(line_data := self.deserialize_line(line))["source_hash"]: (line_data["output"], line_data["version"]) for line in data.decode().splitlines()}
+        output:defaultdict[str,dict[str,str]] = defaultdict(lambda: {})
+        for source_hash, (line_output, version) in contents.items():
+            output[version][source_hash] = line_output
+        return output
+
+    def serialize_line(self, data: tuple[str, str, str]) -> str:
+        version, source_hash, output = data
+        return "%s %s %s\n" % (version, source_hash, output)
+
+    def append_new_line(self, data: tuple[str, str, str]) -> None:
+        version, source_hash, output = data
+        assert source_hash not in self.get()[version]
+        self.get()[version][source_hash] = output
+
+material_bin_cache = MaterialBinCache()
 
 class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[OutputTypedDict]]):
 
@@ -46,7 +76,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
 
     def __init__(self, name: str, version:str, subserializer_names:SerializerNamesTypedDict) -> None:
         super().__init__(name)
-        self.cached_data:dict[str,str]|None = None
+        # self.cached_data:dict[str,str]|None = None
         self.version = version
         assert not any(char in self.version for char in "\\/:*?\"<>|")
         self.data_serializer_name = subserializer_names["data"]
@@ -78,22 +108,10 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
             self.glsl_serializer = Importer.serializers[self.glsl_serializer_name]
         return self.glsl_serializer
 
-    def cache_parse_line(self, line:str) -> dict[str,str]:
-        return dict(zip(("version", "source_hash", "output"), line.split(" ", maxsplit=2), strict=True))
-
-    def get_cache(self) -> dict[str,str]:
-        if self.cached_data is None:
-            with open(FileManager.MATERIAL_BIN_CACHE_FILE, "rt") as f:
-                self.cached_data = {line_data["source_hash"]: line_data["output"] for line in f.readlines() if (line_data := self.cache_parse_line(line))["version"] == self.version}
-        return self.cached_data
-
     def write_cache(self, source_hash:str, output:OutputTypedDict) -> File.File[OutputTypedDict]:
-        assert len(source_hash) == 40
-        cache = self.get_cache()
-        assert source_hash not in cache
         output_file = File.new_file(json.dumps(output, separators=(",", ":"), cls=CustomJson.encoder).encode(), "material_bin_data_of_%s" % (source_hash,), self.get_data_serializer())
-        with open(FileManager.MATERIAL_BIN_CACHE_FILE, "at") as f:
-            f.write("%s %s %s\n" % (self.version, source_hash, json.dumps(output_file, separators=(",", ":"), cls=CustomJson.encoder)))
+        output_str = json.dumps(output_file, separators=(",", ":"), cls=CustomJson.encoder)
+        material_bin_cache.append_new_line((self.version, source_hash, output_str))
         return output_file
 
     def run_material_bin_tool(self, data:bytes) -> Path:
@@ -164,7 +182,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
     def deserialize(self, data: bytes) -> File.File[OutputTypedDict]:
         data_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data))
 
-        cached_output = self.get_cache().get(data_hash)
+        cached_output = material_bin_cache.get()[self.version].get(data_hash)
         if cached_output is not None:
             return json.loads(cached_output, cls=CustomJson.decoder)
 
@@ -182,7 +200,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
 
     def get_referenced_files(self, data: bytes) -> Iterator[int]:
         data_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data))
-        cached_output = self.get_cache().get(data_hash)
+        cached_output = material_bin_cache.get()[self.version].get(data_hash)
         if cached_output is not None:
             # if it's not cached, there's no referenced files. If they do exist
             # in the file storage, they would have to be recalculated anyways.

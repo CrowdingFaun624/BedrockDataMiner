@@ -8,8 +8,6 @@ from pathlib2 import Path
 import Downloader.DownloadLog as DownloadLog
 import Downloader.Manager as Manager
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 
 class DownloadManagerTypedDict(TypedDict):
@@ -19,7 +17,7 @@ class DownloadManager(Manager.Manager):
 
     def prepare_for_install(self, file_type_arguments:DownloadManagerTypedDict) -> None:
         self.apk_location = self.location
-        self.installed = WaitValue(self.apk_location.exists)
+        self._installed:bool|None = None
 
         self.has_zip_file_opened = False
 
@@ -28,17 +26,26 @@ class DownloadManager(Manager.Manager):
 
         self.url = file_type_arguments["url"]
 
+    @property
+    def installed(self) -> bool:
+        if self._installed is None:
+            self._installed = self.apk_location.exists()
+        return self._installed
+
+    def set_installed(self, value:bool) -> None:
+        self._installed = value
+
     def open_zip_file(self) -> None:
         '''Opens the zip file if it hasn't already.'''
         if not self.has_zip_file_opened:
-            if not self.installed.get():
+            if not self.installed:
                 self.install_all()
             self.zip_file = zipfile.ZipFile(self.apk_location)
             self.members = {member.filename: member for member in self.zip_file.filelist}
             self.has_zip_file_opened = True
 
     def get_file_list(self) -> list[str]:
-        if not self.installed.get():
+        if not self.installed:
             self.install_all()
         self.open_zip_file()
         if self.file_list is None:
@@ -58,12 +65,12 @@ class DownloadManager(Manager.Manager):
         return self.file_set
 
     def file_exists(self, file_name:str) -> bool:
-        if not self.installed.get():
+        if not self.installed:
             self.install_all()
         return file_name in self.get_file_set()
 
     def read(self, file_name:str, mode:Literal["b","t"]="b") -> bytes|str:
-        if not self.installed.get():
+        if not self.installed:
             self.install_all()
         self.open_zip_file()
         if self.zip_file is None:
@@ -91,7 +98,7 @@ class DownloadManager(Manager.Manager):
 
     def install_all(self, destination:Path|None=None) -> None:
         if destination is None: destination = self.apk_location
-        if not self.installed.get():
+        if not self.installed:
             response_supposed_length = None
             response_length = 0
             tries = 0
@@ -104,11 +111,11 @@ class DownloadManager(Manager.Manager):
                 tries += 1
                 if tries >= 5:
                     raise Exceptions.DownloadManagerFailError(self, self.url)
-            self.installed.set(True)
+            self.set_installed(True)
             self.open_zip_file()
 
     def all_done(self) -> None:
-        self.installed.set(False)
+        self.set_installed(False)
         self.zip_file = None
         self.members = None
         self.has_zip_file_opened = False

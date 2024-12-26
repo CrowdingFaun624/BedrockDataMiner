@@ -31,9 +31,9 @@ if TYPE_CHECKING:
     import Structure.StructureSet as StructureSet
     import Structure.StructureTag as StructureTag
     import Structure.Trace as Trace
+    import Utilities.Cache as Cache
     import Utilities.CustomJson as CustomJson
     import Utilities.DataFile as DataFile
-    import Utilities.FileManager as FileManager
     import Utilities.Nbt.SnbtParser as SnbtParser
     import Utilities.Scripts as Scripts
     import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -206,6 +206,43 @@ class UnrecognizedAccessorClassError(AccessorException):
             output += " does not exist!"
         else:
             output += " does not exist %s!" % (self.message,)
+        return output
+
+class CacheException(Exception):
+    "Abstract Exception class for errors relating to Caches."
+
+class CacheDeserializeError(CacheException):
+    "Attempted to write a Cache that has no `deserialize` method defined."
+
+    def __init__(self, cache:"Cache.Cache", message:Optional[str]=None) -> None:
+        '''
+        :cache: The Cache with no `deserialize` method.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(cache, message)
+        self.cache = cache
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "%r has no deserialize method; cannot write" % (self.cache,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
+class CacheFileNotFoundError(CacheException):
+    "Attempted to open a Cache that has no `get_default_content` method and no existing file."
+    
+    def __init__(self, cache:"Cache.Cache", message:Optional[str]=None) -> None:
+        '''
+        :cache: The Cache with no `get_default_content` method.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(cache, message)
+        self.cache = cache
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "%r has no get_default_content method and its file does not exist" % (self.cache,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
 class ComponentException(Exception):

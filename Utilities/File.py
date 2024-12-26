@@ -68,7 +68,7 @@ class File(AbstractFile[a]):
 
     def _get_data(self) -> a:
         if self._data is ...:
-            file_bytes = FileStorageManager.read_archived(hash_int_to_str(self.hash), "b")
+            file_bytes = FileStorageManager.read_archived(hash_int_to_str(self.hash))
             try:
                 data:a = self.serializer.deserialize(file_bytes)
                 self._data = data
@@ -91,7 +91,7 @@ class File(AbstractFile[a]):
 
     def get_referenced_files(self) -> Iterator[int]:
         if self.serializer.can_contain_subfiles:
-            file_bytes = FileStorageManager.read_archived(hash_int_to_str(self.hash), "b")
+            file_bytes = FileStorageManager.read_archived(hash_int_to_str(self.hash))
             yield from self.serializer.get_referenced_files(file_bytes)
 
 class EmptyFile(File[a]):

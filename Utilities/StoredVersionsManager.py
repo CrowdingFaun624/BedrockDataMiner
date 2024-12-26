@@ -2,14 +2,13 @@ import gzip
 import shutil
 import zipfile
 from itertools import islice
-from typing import Iterable, Literal
+from typing import Iterable
 
 from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.UserInput as UserInput
-from Utilities.FunctionCaller import FunctionCaller
 
 COMPRESSIBLE_FORMATS = [
     "lang",

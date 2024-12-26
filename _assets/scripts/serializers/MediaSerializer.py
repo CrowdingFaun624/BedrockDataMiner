@@ -6,6 +6,7 @@ from typing_extensions import NotRequired, Required
 
 import Component.Importer as Importer
 import Serializer.Serializer as Serializer
+import Utilities.Cache as Cache
 import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
@@ -31,6 +32,26 @@ class OutputTypedDict(TypedDict):
     WEBM: NotRequired[File.File[Any]]
 
 __all__ = ["MediaSerializer"]
+
+class MediaSerializerCache(Cache.LinesCache[dict[str,OutputTypedDict], tuple[str, OutputTypedDict]]):
+
+    def __init__(self) -> None:
+        super().__init__(FileManager.EXIFTOOL_CACHE)
+
+    def deserialize(self, data:bytes) -> dict[str,OutputTypedDict]:
+        return {line[:40]: json.loads(line[41:], cls=CustomJson.decoder) for line in data.decode("UTF8").splitlines()}
+
+    def append_new_line(self, data: tuple[str, OutputTypedDict]) -> None:
+        sha1_hash, file_data = data
+        assert len(sha1_hash) == 40
+        assert sha1_hash not in self.get()
+        self.get()[sha1_hash] = file_data
+
+    def serialize_line(self, data: tuple[str, OutputTypedDict]) -> str:
+        sha1_hash, file_data = data
+        return "%s %s\n" % (sha1_hash, json.dumps(file_data, separators=(",", ":"), cls=CustomJson.encoder))
+
+media_serializer_cache = MediaSerializerCache()
 
 class MediaSerializer(Serializer.Serializer):
 
@@ -63,23 +84,9 @@ class MediaSerializer(Serializer.Serializer):
             self.file_serializers = {file_type: Importer.serializers[serializer_name] for file_type, serializer_name in self.file_serializer_names.items()}
         return self.file_serializers[file_type]
 
-    def get_cache(self) -> dict[str,OutputTypedDict]:
-        if self.cached_data is None:
-            with open(FileManager.EXIFTOOL_CACHE, "rt") as f:
-                self.cached_data = {line[:40]: json.loads(line[41:], cls=CustomJson.decoder) for line in f.readlines()}
-        return self.cached_data
-
-    def write_cache(self, sha1_hash:str, data:OutputTypedDict) -> None:
-        assert len(sha1_hash) == 40
-        cache = self.get_cache()
-        assert sha1_hash not in cache
-        cache[sha1_hash] = data
-        with open(FileManager.EXIFTOOL_CACHE, "at") as f:
-            f.write("%s %s\n" % (sha1_hash, json.dumps(data, separators=(",", ":"), cls=CustomJson.encoder)))
-
     def deserialize(self, data: bytes) -> OutputTypedDict:
         data_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data))
-        cached_item = self.get_cache().get(data_hash)
+        cached_item = media_serializer_cache.get().get(data_hash)
         if cached_item is not None:
             return cached_item
 
@@ -113,12 +120,12 @@ class MediaSerializer(Serializer.Serializer):
         }
         output[file_type] = File.new_file(data, "media_%s" % (data_hash,), self.get_file_type_serializer(file_type))
 
-        self.write_cache(data_hash, output)
+        media_serializer_cache.write_new_line((data_hash, output))
         return output
 
     def get_referenced_files(self, data: bytes) -> Iterator[int]:
         data_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data))
-        cached_item = self.get_cache().get(data_hash)
+        cached_item = media_serializer_cache.get().get(data_hash)
         if cached_item is not None:
             # if there is no cached data, there are no files stored at the moment
             # for this file. If some do exist, they would have to be

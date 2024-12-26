@@ -1,21 +1,38 @@
 import gzip
-from typing import Literal, overload
 
 from pathlib2 import Path
 
+import Utilities.Cache as Cache
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
-from Utilities.FunctionCaller import FunctionCaller, WaitValue
 
 COMPRESSIBLE_FILES = ["json", "fsb", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"]
 
-def read_index() -> dict[str, bool]:
-    '''Returns a dictionary of hex string hashes, and the file's zippability and a name it has.
-    Should only be called once at the start of the program, and then the `index` variable should be used.'''
-    with open(FileManager.FILE_STORAGE_INDEX_FILE, "rt") as index_file_io:
-        return {line[:40]: bool(int(line[41])) for line in index_file_io.readlines()}
+class FileStorageIndex(Cache.LinesCache[dict[str,bool], tuple[str,bool]]):
+    '''
+    Cache of a dictionary of hex strings to zippability.
+    '''
+    
+    def __init__(self) -> None:
+        super().__init__(FileManager.FILE_STORAGE_INDEX_FILE)
+    
+    def get_default_content(self) -> dict[str, bool] | None:
+        return {}
+    
+    def deserialize(self, data: bytes) -> dict[str, bool]:
+        return {line[:40]: bool(int(line[41])) for line in data.decode("UTF8").splitlines()}
 
-index = WaitValue(read_index)
+    def serialize(self, data: dict[str, bool]) -> bytes:
+        return ("\n".join("%s %i" % (key, value) for key, value in index.get().items()) + "\n").encode("UTF8")
+
+    def serialize_line(self, data: tuple[str, bool]) -> str:
+        return "%s %i\n" % data
+
+    def append_new_line(self, data: tuple[str, bool]) -> None:
+        key, value = data
+        self.get()[key] = value
+
+index = FileStorageIndex()
 
 def should_zip_file(file_path:str) -> bool:
     '''Returns if the file is efficiently zippable.'''
@@ -49,30 +66,16 @@ def archive_data(data:bytes, file_name:str, *, empty_okay:bool=False) -> str:
             destination.write(data)
 
     if hex_string not in index.get():
-        with open(FileManager.FILE_STORAGE_INDEX_FILE, "at") as index_file:
-            index_file.write("%s %i\n" % (hex_string, zipped))
-        index.get()[hex_string] = zipped
+        index.write_new_line((hex_string, zipped))
 
     return hex_string
 
-@overload
-def read_archived(hex_string:str, mode:Literal["b"]) -> bytes: ...
-@overload
-def read_archived(hex_string:str, mode:Literal["t"]) -> str: ...
-def read_archived(hex_string:str, mode:Literal["t", "b"]) -> bytes|str:
-    archived_path = get_file_path(hex_string)
-    is_zipped = index.get()[hex_string]
-    output:str|bytes
-    if is_zipped and mode == "t":
-        with open(archived_path, "rb") as f:
-            output = gzip.decompress(f.read()).decode()
-    elif is_zipped and mode == "b":
-        with open(archived_path, "rb") as f:
-            output = gzip.decompress(f.read())
-    else:
-        with open(archived_path, "r" + mode) as f:
-            output = f.read()
-    return output
+def read_archived(hex_string:str) -> bytes:
+    with open(get_file_path(hex_string), "rb") as f:
+        if index.get()[hex_string]:
+            return gzip.decompress(f.read())
+        else:
+            return f.read()
 
 def delete_item(hex_string:str) -> None:
     '''
@@ -95,12 +98,4 @@ def remove_index_values_without_associated_file() -> None:
             items_to_delete.append(key)
     for item in items_to_delete:
         del loaded_index[item]
-    save_index()
-
-def save_index() -> None:
-    '''
-    Saves the index.
-    Is only necessary when an item is deleted from the index.
-    '''
-    with open(FileManager.FILE_STORAGE_INDEX_FILE, "wt") as index_file:
-        index_file.write("\n".join("%s %i" % (key, value) for key, value in index.get().items()) + "\n")
+    index.write()
