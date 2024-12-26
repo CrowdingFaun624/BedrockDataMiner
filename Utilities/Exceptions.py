@@ -1697,7 +1697,7 @@ class UnrecognizedScriptError(ScriptException):
 
 class WrongScriptError(ScriptException):
     "Attempted to import a Script that exists, but cannot be used in this situation."
-    
+
     def __init__(self, script:"Scripts.Script", message:Optional[str]=None) -> None:
         '''
         :script: The Script that cannot be used in this situation:
@@ -1706,7 +1706,7 @@ class WrongScriptError(ScriptException):
         super().__init__(script, message)
         self.script = script
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "Cannot load %r in this situation" % (self.script,)
         output += "!" if self.message is None else " %s!" % (self.message,)
@@ -1794,23 +1794,6 @@ class UnrecognizedSerializerInFileError(SerializerException):
 class StructureException(Exception):
     "Abstract Exception class for errors relating to Structures"
 
-class CacheStructureHashError(StructureException):
-    "A CacheStructure failed to hash an unknown type."
-
-    def __init__(self, unhashable_type:type, message:Optional[str]=None) -> None:
-        '''
-        :unhashable_type: The type that could not be hashed.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(unhashable_type, message)
-        self.unhashable_type = unhashable_type
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Failed to hash %r" % (self.unhashable_type,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class CompareWithNoneError(StructureException):
     "A StructureSet attempted to compare data using None instead of a Structure."
 
@@ -1844,7 +1827,7 @@ class ComparisonEnvironmentNoVersionError(StructureException):
         super().__init__(environment, message)
         self.environment = environment
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "%r has no non-None versions" % (self.environment,)
         output += "!" if self.message is None else " %s!" % (self.message,)
@@ -1852,7 +1835,7 @@ class ComparisonEnvironmentNoVersionError(StructureException):
 
 class DiffContinuityError(StructureException):
     "Attempted to create a Diff with overlapping branches."
-    
+
     def __init__(self, all_branches:list[int], overlapping_branch:int, message:Optional[str]=None) -> None:
         '''
         :all_branches: All branches that the Diff would have.
@@ -1863,7 +1846,7 @@ class DiffContinuityError(StructureException):
         self.all_branches = all_branches
         self.overlapping_branches = overlapping_branch
         self.message = message
-    
+
     def __str__(self) -> str:
         output = "Attempted to create a Diff with branch %i overlapping with one of [%s]" % (self.overlapping_branches, ", ".join(str(branch) for branch in self.all_branches))
         output += "!" if self.message is None else " %s!" % (self.message,)
@@ -2091,6 +2074,23 @@ class StructureExceptionError(StructureException):
         output = "%r has errors in function \"%s\" where it should not" % (self.structure, self.function.__name__)
         output += ": " if self.message is None else " %s: " % (self.message,)
         output += "[%s]" % (", ".join(exception.finalize().stringify() for exception in self.exceptions))
+        return output
+
+class StructureHashError(StructureException):
+    "A Structure failed to hash an unknown type."
+
+    def __init__(self, unhashable_type:type, message:Optional[str]=None) -> None:
+        '''
+        :unhashable_type: The type that could not be hashed.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(unhashable_type, message)
+        self.unhashable_type = unhashable_type
+        self.message = message
+
+    def __str__(self) -> str:
+        output = "Failed to hash %r" % (self.unhashable_type,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
 class StructureRequiredKeyMissingError(StructureException):

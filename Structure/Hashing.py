@@ -22,7 +22,7 @@ def hash_data(data:Any) -> int:
                 hash_type_table[type(data)] = function
                 return function(data)
         else:
-            raise Exceptions.CacheStructureHashError(data.__class__)
+            raise Exceptions.StructureHashError(data.__class__)
 
 d = TypeVar("d")
 
