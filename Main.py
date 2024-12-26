@@ -1,7 +1,7 @@
 # import cProfile
 # import pstats
 
-# from pathlib2 import Path
+# from pathlib import Path
 
 # profile = cProfile.Profile()
 # profile.run('''
@@ -90,7 +90,7 @@ def main() -> None:
             # profile.dump_stats("./time_report.txt")
 
             # import cProfile
-            # from pathlib2 import Path
+            # from pathlib import Path
             # import pstats
             # profile = cProfile.Profile()
             # profile.run("PROGRAM_FUNCTIONS[user_input[0]]()")

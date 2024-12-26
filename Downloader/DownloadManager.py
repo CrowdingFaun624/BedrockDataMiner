@@ -1,9 +1,9 @@
 import shutil
 import zipfile
+from pathlib import Path
 from typing import TypedDict
 
 import requests
-from pathlib2 import Path
 
 import Downloader.DownloadLog as DownloadLog
 import Downloader.Manager as Manager

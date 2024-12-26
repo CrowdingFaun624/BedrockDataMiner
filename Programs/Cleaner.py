@@ -1,7 +1,6 @@
 from itertools import product
+from pathlib import Path
 from typing import Iterable
-
-from pathlib2 import Path
 
 import Component.Importer as Importer
 import DataMiner.DataMinerCollection as DataMinerCollection

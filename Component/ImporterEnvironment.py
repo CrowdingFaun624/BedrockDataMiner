@@ -1,6 +1,5 @@
+from pathlib import Path
 from typing import Any, Generic, Iterable, TypeVar
-
-from pathlib2 import Path
 
 import Component.Component as Component
 

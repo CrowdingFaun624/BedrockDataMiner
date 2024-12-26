@@ -1,8 +1,7 @@
 import datetime
+from pathlib import Path
 from typing import (TYPE_CHECKING, Any, Callable, Container, Literal, Optional,
                     TypeVar, Union)
-
-from pathlib2 import Path
 
 if TYPE_CHECKING:
     import Component.Capabilities as Capabilities

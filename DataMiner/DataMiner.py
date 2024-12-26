@@ -1,7 +1,6 @@
 import json
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, NoReturn, TypeVar
-
-from pathlib2 import Path
 
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerSettings as DataMinerSettings

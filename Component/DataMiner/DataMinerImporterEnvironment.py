@@ -1,6 +1,5 @@
+from pathlib import Path
 from typing import Any, Iterable
-
-from pathlib2 import Path
 
 import Component.Component as Component
 import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent

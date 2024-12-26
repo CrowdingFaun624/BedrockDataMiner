@@ -1,6 +1,5 @@
+from pathlib import Path
 from typing import Iterable
-
-from pathlib2 import Path
 
 import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 import Component.ImporterEnvironment as ImporterEnvironment

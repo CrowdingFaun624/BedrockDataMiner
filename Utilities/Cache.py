@@ -1,8 +1,7 @@
 import json
+from pathlib import Path
 from types import EllipsisType
 from typing import Generic, TypeVar
-
-from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager

@@ -1,9 +1,9 @@
 import traceback
 from collections import deque
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, cast
 
 import pyjson5 as json
-from pathlib2 import Path
 
 import Component.Accessor.AccessorTypeImporterEnvironment as AccessorTypeImporterEnvironment
 import Component.Component as Component

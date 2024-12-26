@@ -1,7 +1,6 @@
 import shutil
+from pathlib import Path
 from typing import TypedDict
-
-from pathlib2 import Path
 
 import Downloader.Manager as Manager
 import Utilities.Exceptions as Exceptions

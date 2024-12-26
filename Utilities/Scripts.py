@@ -1,9 +1,9 @@
 import importlib
 import importlib.machinery
 import importlib.util
+from pathlib import Path
 from typing import IO, Any, Callable, Generic, Iterable, TypeVar
 
-from pathlib2 import Path
 from typing_extensions import Self
 
 import Utilities.Exceptions as Exceptions

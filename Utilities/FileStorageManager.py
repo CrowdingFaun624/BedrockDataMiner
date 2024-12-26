@@ -1,6 +1,5 @@
 import gzip
-
-from pathlib2 import Path
+from pathlib import Path
 
 import Utilities.Cache as Cache
 import Utilities.Exceptions as Exceptions

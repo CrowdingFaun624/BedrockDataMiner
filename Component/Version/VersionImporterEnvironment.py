@@ -1,7 +1,6 @@
 from collections import defaultdict
+from pathlib import Path
 from typing import Any, Iterable, cast
-
-from pathlib2 import Path
 
 import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment

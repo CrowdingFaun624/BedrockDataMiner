@@ -1,6 +1,5 @@
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
-
-from pathlib2 import Path
 
 import Downloader.Manager as Manager
 

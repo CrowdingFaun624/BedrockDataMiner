@@ -1,9 +1,8 @@
 import hashlib
 import shutil
 import uuid
+from pathlib import Path
 from typing import IO
-
-from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
 

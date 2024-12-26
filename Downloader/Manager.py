@@ -1,7 +1,6 @@
 import bisect
+from pathlib import Path
 from typing import TYPE_CHECKING, Any
-
-from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
 

@@ -1,9 +1,8 @@
 import json
 import subprocess
 from collections import defaultdict
+from pathlib import Path
 from typing import Any, Iterator, TypedDict
-
-from pathlib2 import Path
 
 import Component.Importer as Importer
 import Serializer.Serializer as Serializer

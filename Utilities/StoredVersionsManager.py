@@ -2,9 +2,8 @@ import gzip
 import shutil
 import zipfile
 from itertools import islice
+from pathlib import Path
 from typing import Iterable
-
-from pathlib2 import Path
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager

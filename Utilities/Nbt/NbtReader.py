@@ -30,7 +30,7 @@ def unpack_snbt(data:str) -> NbtTypes.TAG:
     return SnbtParser.parse(data)
 
 def main_read_file() -> None:
-    from pathlib2 import Path
+    from pathlib import Path
     user_input = None
     path = None
     while path is None or not path.exists():
