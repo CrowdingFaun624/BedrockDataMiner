@@ -1,55 +1,44 @@
-import shutil
-from pathlib import Path
 from typing import TypedDict
 
 import Downloader.Manager as Manager
-import Utilities.Exceptions as Exceptions
-import Utilities.StoredVersionsManager as StoredVersionsManager
+import Utilities.Cache as Cache
+import Utilities.FileStorageManager as FileStorageManager
+import Version.Version as Version
 
 
 class StoredManagerTypedDict(TypedDict):
     stored_name: str
 
+class StoredIndex(Cache.LinesCache[dict[str,tuple[str,bool]],None]):
+
+    can_be_written = False
+
+    def __init__(self, version:Version.Version) -> None:
+        super().__init__(version.get_version_directory().joinpath("index.txt"))
+        if not self.path.exists():
+            print(version.name)
+
+    def deserialize(self, data: bytes) -> dict[str,tuple[str,bool]]:
+        return {line[43:]: (line[:40], bool(int(line[41]))) for line in data.decode("UTF8").split("\n")}
+
 class StoredManager(Manager.Manager):
 
     def prepare_for_install(self, file_type_arguments:StoredManagerTypedDict) -> None:
-        self.apk_location = Path(str(self.location) + ".zip")
         self.name = file_type_arguments["stored_name"]
         self.file_list:list[str]|None = None
-        self.index = None
-
-    def read_index(self) -> None:
-        if self.index is not None: return
-        self.index = StoredVersionsManager.read_index(self.name)
-
-    def install_all(self, destination:Path|None=None) -> None:
-        if destination is None: destination = self.apk_location
-        if not destination.exists():
-            self.read_index()
-            StoredVersionsManager.extract(self.name, destination, self.index)
+        self.index = StoredIndex(self.version)
 
     def get_file_list(self) -> list[str]:
         if self.file_list is None:
-            self.read_index()
-            if self.index is None:
-                raise Exceptions.AttributeNoneError("index", self)
-            self.file_list = sorted(self.index.keys())
+            self.file_list = sorted(self.index.get().keys())
         return self.file_list
 
     def file_exists(self, file_name:str) -> bool:
-        self.read_index()
-        if self.index is None:
-            raise Exceptions.AttributeNoneError("index", self)
-        return file_name in self.index
+        return file_name in self.index.get()
 
     def read(self, file_name:str) -> bytes:
-        self.read_index()
-        return StoredVersionsManager.read_file(self.name, file_name, self.index)
+        return FileStorageManager.read_archived(self.index.get()[file_name][0])
 
     def all_done(self) -> None:
-        if self.apk_location.exists():
-            self.apk_location.unlink()
-        if self.location.name == self.version.name: # self.location refers to the `client` subdirectory of the version directory.
-            raise Exceptions.InvalidStateError(self.location.name, self.version.name, "These should not be the same!")
-        if self.location.exists():
-            shutil.rmtree(self.location)
+        self.index.forget()
+        self.file_list = None

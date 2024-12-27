@@ -211,6 +211,23 @@ class UnrecognizedAccessorClassError(AccessorException):
 class CacheException(Exception):
     "Abstract Exception class for errors relating to Caches."
 
+class CacheCannotWriteError(CacheException):
+    "Attempted to write to a Cache that cannot be written to."
+    
+    def __init__(self, cache:"Cache.Cache", message:Optional[str]=None) -> None:
+        '''
+        :cache: The Cache that cannot be written to.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(cache, message)
+        self.cache = cache
+        self.message = message
+    
+    def __str__(self) -> str:
+        output = "%r cannot be written to" % (self.cache,)
+        output += "!" if self.message is None else " %s!" % (self.message,)
+        return output
+
 class CacheDeserializeError(CacheException):
     "Attempted to write a Cache that has no `deserialize` method defined."
 

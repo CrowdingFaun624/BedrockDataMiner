@@ -15,11 +15,6 @@ FILE_STORAGE_INDEX_FILE   = FILE_STORAGE_DIRECTORY.joinpath("index.txt")
 LOG_DIRECTORY             = ASSETS_DIRECTORY.joinpath("log")
 LOGS_FILE                 = LOG_DIRECTORY.joinpath("logs.json")
 SCRIPTS_DIRECTORY         = ASSETS_DIRECTORY.joinpath("scripts")
-STORED_VERSIONS_DIRECTORY = ASSETS_DIRECTORY.joinpath("stored_versions")
-STORED_VERSIONS_INPUT_DIRECTORY = STORED_VERSIONS_DIRECTORY.joinpath("input")
-STORED_VERSIONS_OBJECTS_DIRECTORY = STORED_VERSIONS_DIRECTORY.joinpath("objects")
-STORED_VERSIONS_OUTPUT_DIRECTORY = STORED_VERSIONS_DIRECTORY.joinpath("output")
-STORED_VERSIONS_INDEXES_FILE = STORED_VERSIONS_DIRECTORY.joinpath("indexes.zip")
 STRUCTURES_DIRECTORY      = ASSETS_DIRECTORY.joinpath("structures")
 ACCESSOR_TYPES_FILE       = ASSETS_DIRECTORY.joinpath("accessor_types.json")
 DATAMINER_COLLECTIONS_FILE = ASSETS_DIRECTORY.joinpath("dataminer_collections.json")
@@ -63,12 +58,6 @@ def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/g
     io.seek(start)
     return size
 
-def get_structure_path(structure_name:str) -> Path:
-    structure_path = STRUCTURES_DIRECTORY.joinpath(structure_name + ".json")
-    if STRUCTURES_DIRECTORY not in structure_path.parents:
-        raise Exceptions.InvalidFileNameError(structure_name, "Structure")
-    return structure_path
-
 def get_version_path(version_name:str) -> Path:
     version_path = VERSIONS_DIRECTORY.joinpath(version_name)
     if VERSIONS_DIRECTORY not in version_path.parents:
@@ -80,9 +69,6 @@ def get_data_file_path(file_name:str) -> Path:
     if DATA_DIRECTORY not in data_file_path.parents:
         raise Exceptions.InvalidFileNameError(file_name, "Structure")
     return data_file_path
-
-def get_version_install_path(version_directory:Path) -> Path:
-    return version_directory.joinpath("client")
 
 def get_version_data_path(version_directory:Path, file_name:str|None) -> Path:
     '''Returns the Path in the version directory that a data file name will be stored at. Set `file_name` to None to get the data path.'''

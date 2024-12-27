@@ -15,6 +15,8 @@ class Cache(Generic[T]):
     first accessed. Must be overridden.
     '''
 
+    can_be_written:bool = True
+
     def __init__(self, path:Path) -> None:
         self.path = path
         self.has_opened = False
@@ -46,6 +48,14 @@ class Cache(Generic[T]):
         '''
         ...
 
+    def forget(self) -> None:
+        '''
+        Sets this Cache back to its unopened state, so that its contents can be
+        removed from memory.
+        '''
+        self.has_opened = False
+        self.data = ...
+
     def get(self) -> T:
         '''
         Opens the Cache. Should not be overridden.
@@ -68,6 +78,8 @@ class Cache(Generic[T]):
         is overridden. Should not be overridden. If `value` is None, only
         write to the file without changing the data.
         '''
+        if not self.can_be_written:
+            raise Exceptions.CacheCannotWriteError(self)
         if self.data is ...:
             self.has_opened = True
         if value is not None:
