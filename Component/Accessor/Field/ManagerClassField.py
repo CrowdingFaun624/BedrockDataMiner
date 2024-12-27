@@ -1,15 +1,18 @@
 import Component.Field.Field as Field
+import Component.ScriptImporter as ScriptImporter
 import Downloader.DownloadManager as DownloadManager
 import Downloader.DummyManager as DummyManager
 import Downloader.Manager as Manager
 import Downloader.StoredManager as StoredManager
 import Utilities.Exceptions as Exceptions
 
-MANAGER_CLASSES:dict[str,type[Manager.Manager]] = {manager_class.__name__: manager_class for manager_class in [
+BUILT_IN_MANAGER_CLASSES:dict[str,type[Manager.Manager]] = {manager_class.__name__: manager_class for manager_class in [
     DownloadManager.DownloadManager,
     DummyManager.DummyManager,
     StoredManager.StoredManager,
 ]}
+
+MANAGER_CLASSES = ScriptImporter.import_scripted_types("managers/", BUILT_IN_MANAGER_CLASSES, Manager.Manager)
 
 class ManagerClassField(Field.Field):
 
