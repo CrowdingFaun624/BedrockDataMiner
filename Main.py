@@ -9,12 +9,10 @@
 # import Programs.AllVersions as AllVersions
 # import Programs.Cleaner as Cleaner
 # import Programs.CompareAll as CompareAll
-# import Programs.FileSummary as FileSummary
-# import Programs.GetFile as GetFile
 # import Programs.Test.Tests as Tests
 # import Utilities.FileManager as FileManager
+# import Utilities.FileStorageManager as FileStorageManager
 # import Utilities.Scripts as Scripts
-# import Utilities.StoredVersionsManager as StoredVersionsManager
 # ''')
 # with open(Path("./time_report.txt"), "wt") as stream:
 #     stats = pstats.Stats(profile, stream=stream)
@@ -23,7 +21,7 @@
 import threading
 from typing import Any, Callable
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "DataMiners", "FileSummary", "GarbageCollector", "GetFile", "Scripts", "StoredVersions", "Tablifiers", "Tests"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "DataMiners", "FileStorage", "GarbageCollector", "Scripts", "Tablifiers", "Tests"]
 
 user_input_lock = threading.Lock()
 
@@ -42,25 +40,21 @@ import DataMiner.DataMiners as DataMiners
 import Programs.AllVersions as AllVersions
 import Programs.Cleaner as Cleaner
 import Programs.CompareAll as CompareAll
-import Programs.FileSummary as FileSummary
 import Programs.GarbageCollector as GarbageCollector
-import Programs.GetFile as GetFile
 import Programs.Test.Tests as Tests
 import Tablifier.Tablifiers as Tablifiers
 import Utilities.FileManager as FileManager
+import Utilities.FileStorageManager as FileStorageManager
 import Utilities.Scripts as Scripts
-import Utilities.StoredVersionsManager as StoredVersionsManager
 
 PROGRAM_FUNCTIONS:dict[str,Callable[[],None]] = {
     "AllVersions": AllVersions.main,
     "Cleaner": Cleaner.main,
     "CompareAll": CompareAll.main,
     "DataMiners": DataMiners.user_interface,
-    "FileSummary": FileSummary.main,
+    "FileStorage": FileStorageManager.main,
     "GarbageCollector": GarbageCollector.main,
-    "GetFile": GetFile.main,
     "Scripts": Scripts.main,
-    "StoredVersions": StoredVersionsManager.main,
     "Tablifiers": Tablifiers.main,
     "Tests": Tests.main,
 }
