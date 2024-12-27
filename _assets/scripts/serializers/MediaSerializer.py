@@ -57,7 +57,7 @@ class MediaSerializer(Serializer.Serializer):
 
     store_as_file_default = False
 
-    empty_okay = True # 1.11.0.9 resource_packs/vanilla/textures/ui/book_arrowleft_hover.png
+    empty_okay = False
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("metadata_serializer_name", "a str", True, str),
