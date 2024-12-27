@@ -20,6 +20,10 @@ class ScriptSet(Generic[a]):
         return self.get(key)
 
     def get(self, key:str, message:Optional[str]=None) -> a:
+        '''
+        :key: The name of the object.
+        :message: The message to use for errors.
+        '''
         if key in self.built_in_objects:
             return self.built_in_objects[key]
         script = self.scripts_by_name.get(key)
