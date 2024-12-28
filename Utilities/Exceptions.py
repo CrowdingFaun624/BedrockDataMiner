@@ -408,15 +408,17 @@ class ComponentMismatchedTypesError(ComponentException):
 class ComponentParseError(ComponentException):
     "Multiple Components failed to parse."
 
-    def __init__(self, message:Optional[str]=None) -> None:
+    def __init__(self, failed_component_groups:list[str], message:Optional[str]=None) -> None:
         '''
+        :failed_component_groups: The Component groups that failed to parse.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(message)
+        super().__init__(failed_component_groups, message)
+        self.failed_component_groups = failed_component_groups
         self.message = message
 
     def __str__(self) -> str:
-        return f"Failed to parse Component group(s){message(self.message)}"
+        return f"Failed to parse Component group(s) [{", ".join(self.failed_component_groups)}]{message(self.message)}"
 
 class ComponentTypeContainmentError(ComponentException):
     "A Component has a type that cannot be contained by its current container type."

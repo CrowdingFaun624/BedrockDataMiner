@@ -148,24 +148,30 @@ def create_finals(all_components:dict[str,dict[str,Component.Component]]) -> Non
 
 def link_finals(all_components:dict[str,dict[str,Component.Component]]) -> list[Exception]:
     exceptions:list[Exception] = []
+    failed_component_groups:set[str] = set()
     for components in all_components.values():
         for component in components.values():
-            exceptions.extend(component.link_finals())
+            if len(new_exceptions := component.link_finals()) > 0:
+                failed_component_groups.add(component.component_group)
+                exceptions.extend(new_exceptions)
     if len(exceptions) > 0:
         for exception in exceptions:
             traceback.print_exception(exception)
-        raise Exceptions.ComponentParseError()
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups))
     return exceptions
 
 def check_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
     exceptions:list[Exception] = []
+    failed_component_groups:set[str] = set()
     for components in all_components.values():
         for component in components.values():
-            exceptions.extend(component.check())
+            if len(new_exceptions := component.check()) > 0:
+                failed_component_groups.add(component.component_group)
+                exceptions.extend(new_exceptions)
     if len(exceptions) > 0:
         for exception in exceptions:
             traceback.print_exception(exception)
-        raise Exceptions.ComponentParseError()
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups))
 
 def finalize_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
     for components in all_components.values():
@@ -201,12 +207,15 @@ def finalize_importer_environments(output:dict[str,Any], importer_environments:d
 
 def check_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
     exceptions:list[Exception] = []
+    failed_component_groups:set[str] = set()
     for name, component_group_output in output.items():
-        exceptions.extend(importer_environments[name].check(component_group_output, output))
+        if len(new_exceptions := importer_environments[name].check(component_group_output, output)) > 0:
+            failed_component_groups.add(name)
+            exceptions.extend(new_exceptions)
     if len(exceptions) > 0:
         for exception in exceptions:
             traceback.print_exception(exception)
-        raise Exceptions.ComponentParseError()
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups))
 
 def get_all_functions() -> dict[str,Callable]:
     functions:dict[str,Callable] = {}
