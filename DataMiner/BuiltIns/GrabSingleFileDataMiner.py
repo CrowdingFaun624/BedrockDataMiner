@@ -5,7 +5,6 @@ import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
@@ -36,4 +35,4 @@ class GrabSingleFileDataMiner(FileDataMiner.FileDataMiner):
         accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         file, file_name = self.get_file(accessor, environment)
         file_data = self.get_output(file, file_name, environment)
-        return Sorting.sort_everything(file_data)
+        return file_data

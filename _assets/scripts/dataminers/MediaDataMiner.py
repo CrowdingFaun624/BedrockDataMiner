@@ -6,7 +6,6 @@ import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["MediaDataMiner"]
@@ -60,4 +59,4 @@ class MediaDataMiner(FileDataMiner.FileDataMiner):
         accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         files = self.get_files(self.location, accessor, environment)
         output = self.get_output(files, accessor, environment)
-        return Sorting.sort_everything(output)
+        return output

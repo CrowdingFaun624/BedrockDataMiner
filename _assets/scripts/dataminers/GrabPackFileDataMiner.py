@@ -7,7 +7,6 @@ import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.Sorting as Sorting
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 __all__ = ["GrabPackFileDataMiner"]
@@ -69,4 +68,4 @@ class GrabPackFileDataMiner(FileDataMiner.FileDataMiner):
         packs = self.get_packs(environment)
         files = self.get_files(packs, accessor, environment)
         output = self.get_output(files, environment)
-        return Sorting.sort_everything(output)
+        return output
