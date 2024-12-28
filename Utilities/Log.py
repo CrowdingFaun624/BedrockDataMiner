@@ -1,7 +1,7 @@
 import enum
 import json
 from pathlib import Path
-from typing import Any, Generic, TypeGuard, TypeVar, cast
+from typing import Any, TypeGuard, cast
 
 import Utilities.Exceptions as Exceptions
 
@@ -15,10 +15,7 @@ ALLOWED_TYPES:dict[LogType, tuple[type,...]] = {
     LogType.json_lines: (dict, list, str, int, float, bool, type(None))
 }
 
-T = TypeVar("T")
-A = TypeVar("A")
-
-class Log(Generic[T]):
+class Log[T]():
 
     def __init__(self, name:str, file:Path, log_type:LogType, reset_on_reload:bool) -> None:
         self.name:str = name
@@ -32,7 +29,7 @@ class Log(Generic[T]):
     def __repr__(self) -> str:
         return "<%s %s %s>" % (self.__class__.__name__, self.name, self.log_type.value)
 
-    def supports_type(self, log:"Log[Any]", _type:type[A]) -> TypeGuard["Log[A]"]:
+    def supports_type[A](self, log:"Log[Any]", _type:type[A]) -> TypeGuard["Log[A]"]:
         return any(issubclass(_type, allowed_type) for allowed_type in ALLOWED_TYPES[self.log_type])
 
     def write(self, data:T) -> T:

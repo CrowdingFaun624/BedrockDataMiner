@@ -1,12 +1,11 @@
-from typing import Callable, Generic, MutableSequence, TypeVar
+from typing import Callable, MutableSequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 
-a = TypeVar("a", bound=Field.Field, covariant=True)
 
-class FieldContainer(Field.Field, Generic[a]):
+class FieldContainer[a: Field.Field](Field.Field):
     '''
     Abstract class of Field that contains other Fields.
     '''

@@ -1,9 +1,8 @@
 import json
-from typing import Any, Callable, TypeVar
+from typing import Any, Callable
 
 import Utilities.File as File
 
-a = TypeVar("a")
 
 def delete_required_key(data:dict[str,Any], key:str) -> None:
     del data[key]
@@ -53,7 +52,7 @@ def move_key(data:dict[str,Any], from_key:str, to_key:str) -> None:
         data[to_key] = data[from_key]
         del data[from_key]
 
-def open_file(data:File.AbstractFile[a]) -> a:
+def open_file[a](data:File.AbstractFile[a]) -> a:
     return data.data
 
 def parse_int(data:str) -> int:

@@ -1,5 +1,4 @@
-from typing import (TYPE_CHECKING, Any, Generic, Iterable, Iterator, TypeVar,
-                    Union)
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -12,11 +11,9 @@ if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
     import Structure.StructureEnvironment as StructureEnvironment
 
-a = TypeVar("a")
-
 NoneType = type(None)
 
-class Structure(Generic[a]):
+class Structure[a]():
     "Modular piece that compares and provides structured access to data."
 
     def __init__(self, name:str, children_has_normalizer:bool, children_has_garbage_collection:bool) -> None:
@@ -151,7 +148,7 @@ class Structure(Generic[a]):
 def get_data_at_branch(data:Any, branch:int) -> Any|D._NoExistType:
     '''
     Extracts that data from `data` at `branch`.
-    
+
     :data: The data containing Diffs.
     :branch: The branch to extract.
     '''

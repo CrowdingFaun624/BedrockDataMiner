@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Union, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -12,9 +12,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-d = TypeVar("d")
-
-class PrimitiveStructure(Structure.Structure[d]):
+class PrimitiveStructure[d](Structure.Structure[d]):
     """
     Structure with no substructure.
     """

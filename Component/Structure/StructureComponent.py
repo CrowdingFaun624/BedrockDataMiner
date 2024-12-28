@@ -1,11 +1,8 @@
-from typing import TypeVar
-
 import Component.Component as Component
 import Structure.Structure as Structure
 
-a = TypeVar("a", bound=Structure.Structure)
 
-class StructureComponent(Component.Component[a]):
+class StructureComponent[a: Structure.Structure](Component.Component[a]):
 
     class_name_article = "a StructureComponent"
     class_name = "StructureComponent"

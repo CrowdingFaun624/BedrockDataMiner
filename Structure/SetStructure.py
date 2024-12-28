@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Sequence, TypeVar, cast
+from typing import TYPE_CHECKING, Sequence, cast
 
 import Component.Types as Types
 import Structure.AbstractIterableStructure as AbstractIterableStructure
@@ -8,15 +8,13 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
-d = TypeVar("d")
-
 MIN_SIMILARITY_THRESHOLD = 0.5
 """
 Float between 0 and 1 describing the fraction of similarity necessary
 for an item to be considered "moved" rather than "added" or "removed".
 """
 
-class SetStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
+class SetStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
     """
     Unordered data structure.
     """

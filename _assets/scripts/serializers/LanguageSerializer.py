@@ -1,7 +1,5 @@
 from itertools import takewhile
-from typing import Iterable, TypedDict
-
-from typing_extensions import NotRequired
+from typing import Iterable, NotRequired, TypedDict
 
 import Serializer.Serializer as Serializer
 

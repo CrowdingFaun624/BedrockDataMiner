@@ -1,11 +1,9 @@
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable
 
 import Version.VersionRange as VersionRange
 
-IN = TypeVar("IN")
-OUT = TypeVar("OUT")
 
-class Normalizer(Generic[IN, OUT]):
+class Normalizer[IN, OUT]():
     '''Changes data before a Structure looks at it.'''
 
     def __init__(self, name:str, function:Callable[[IN], OUT], arguments:dict[str,Any]) -> None:

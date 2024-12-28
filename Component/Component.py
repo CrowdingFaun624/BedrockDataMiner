@@ -1,5 +1,4 @@
-from typing import (TYPE_CHECKING, Any, Callable, Generic, Mapping, Sequence,
-                    TypeVar)
+from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
@@ -10,9 +9,7 @@ if TYPE_CHECKING:
     import Component.Field.Field as Field
     import Component.Structure.StructureTagComponent as StructureTagComponent
 
-a = TypeVar("a")
-
-class Component(Generic[a]):
+class Component[a]():
 
     class_name_article = "a Component"
     class_name = "Component"

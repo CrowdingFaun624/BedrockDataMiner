@@ -1,6 +1,4 @@
-from typing import Any, TypedDict, cast
-
-from typing_extensions import NotRequired, Required
+from typing import Any, NotRequired, Required, TypedDict, cast
 
 import Structure.Delegate.Delegate as Delegate
 import Structure.Difference as D

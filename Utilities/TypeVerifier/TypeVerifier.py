@@ -1,7 +1,7 @@
 import enum
 import traceback
-from typing import (Any, Callable, Container, Generic, Iterable, Mapping,
-                    Sequence, TypeVar, cast)
+from typing import (Any, Callable, Container, Hashable, Iterable, Mapping,
+                    Sequence, cast)
 
 import Utilities.Exceptions as Exceptions
 
@@ -55,13 +55,12 @@ def make_trace(trace_items:list[Any]|None) -> Trace:
     trace_items_final:list[tuple[object,TraceItemType]]|None = [(trace_item, TraceItemType.OTHER) for trace_item in trace_items] if trace_items is not None else None
     return Trace(trace_items_final)
 
-type_verifier_typevar = TypeVar("type_verifier_typevar")
-class TypeVerifier(Generic[type_verifier_typevar]):
+class TypeVerifier[A]():
     '''Use `base_verify` to check the types of data.'''
 
-    def verify(self, data:type_verifier_typevar, trace:Trace) -> list[Exceptions.TypeVerificationTypeException]: ...
+    def verify(self, data:A, trace:Trace) -> list[Exceptions.TypeVerificationTypeException]: ...
 
-    def base_verify(self, data:type_verifier_typevar, trace_items:list[Any]|None=None) -> None:
+    def base_verify(self, data:A, trace_items:list[Any]|None=None) -> None:
         exceptions = self.verify(data, make_trace(trace_items))
         if len(exceptions) > 0:
             for exception in exceptions:
@@ -71,23 +70,19 @@ class TypeVerifier(Generic[type_verifier_typevar]):
     def __repr__(self) -> str:
         return "<%s>" % (self.__class__.__name__)
 
-key_typevar = TypeVar("key_typevar")
-value_typevar = TypeVar("value_typevar")
-item_typevar = TypeVar("item_typevar")
-
-class DictTypeVerifier(TypeVerifier[Mapping[key_typevar, value_typevar]]):
+class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
 
     def __init__(
             self,
             data_type:type[Mapping]|tuple[type[Mapping],...],
-            key_type:type[key_typevar]|tuple[type[key_typevar],...]|TypeVerifier[key_typevar],
-            value_type:type[value_typevar]|tuple[type[value_typevar],...]|TypeVerifier[value_typevar],
+            key_type:type[K]|tuple[type[K],...]|TypeVerifier[K],
+            value_type:type[V]|tuple[type[V],...]|TypeVerifier[V],
             data_type_str:str,
             key_type_str:str,
             value_type_str:str,
-            key_function:Callable[[key_typevar, value_typevar],tuple[bool,str|None]]|None=None,
-            value_function:Callable[[key_typevar, value_typevar],tuple[bool,str|None]]|None=None,
-            additional_function:Callable[[Mapping[key_typevar, value_typevar]],tuple[bool,str|None]]|None=None,
+            key_function:Callable[[K, V],tuple[bool,str|None]]|None=None,
+            value_function:Callable[[K, V],tuple[bool,str|None]]|None=None,
+            additional_function:Callable[[Mapping[K, V]],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:
@@ -114,7 +109,7 @@ class DictTypeVerifier(TypeVerifier[Mapping[key_typevar, value_typevar]]):
         self.value_function = value_function
         self.additional_function = additional_function
 
-    def verify(self, data: Mapping[key_typevar, value_typevar], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: Mapping[K, V], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if not isinstance(data, self.data_type):
             exceptions.append(Exceptions.TypeVerificationTypeError(trace, self.data_type_str, type(data)))
@@ -159,15 +154,15 @@ class DictTypeVerifier(TypeVerifier[Mapping[key_typevar, value_typevar]]):
     def __repr__(self) -> str:
         return "<%s \"%s\", \"%s\", \"%s\">" % (self.__class__.__name__, self.key_type_str, self.value_type_str, self.data_type_str)
 
-class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
+class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
 
     def __init__(
             self,
-            key:key_typevar,
+            key:K,
             value_str:str,
             required:bool,
-            value_type:type[value_typevar]|tuple[type[value_typevar],...]|TypeVerifier[value_typevar],
-            function:Callable[[key_typevar, value_typevar],tuple[bool,str|None]]|None=None,
+            value_type:type[V]|tuple[type[V],...]|TypeVerifier[V],
+            function:Callable[[K, V],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:
@@ -185,7 +180,7 @@ class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
         self.required = required
         self.function = function
 
-    def verify(self, data:tuple[key_typevar, value_typevar], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data:tuple[K, V], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         key, value = data
         if self.value_type_is_verifier:
@@ -207,14 +202,14 @@ class TypedDictKeyTypeVerifier(TypeVerifier[tuple[key_typevar, value_typevar]]):
     def __repr__(self) -> str:
         return "<%s %s \"%s\">" % (self.__class__.__name__, self.key, self.value_type_str)
 
-class TypedDictTypeVerifier(TypeVerifier[Mapping[Any, Any]]):
+class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
 
     def __init__(
             self,
             *keys:TypedDictKeyTypeVerifier,
             data_type:type[Mapping]|tuple[type[Mapping],...]=dict,
             data_type_str:str="a dict",
-            function:Callable[[Mapping[key_typevar, value_typevar]],tuple[bool,str|None]]|None=None,
+            function:Callable[[Mapping[K, V]],tuple[bool,str|None]]|None=None,
             loose:bool=False,
             type_check:bool=True,
         ) -> None:
@@ -264,16 +259,16 @@ class TypedDictTypeVerifier(TypeVerifier[Mapping[Any, Any]]):
     def __repr__(self) -> str:
         return "<%s \"%s\" (%s)>" % (self.__class__.__name__, self.data_type_str, ", ".join(self.keys_dict))
 
-class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
+class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
 
     def __init__(
             self,
-            item_type:type[item_typevar]|tuple[type[item_typevar],...]|TypeVerifier[item_typevar],
+            item_type:type[I]|tuple[type[I],...]|TypeVerifier[I],
             data_type:type[Sequence]|tuple[type[Sequence],...],
             item_type_str:str,
             data_type_str:str,
-            item_function:Callable[[item_typevar],tuple[bool,str|None]]|None=None,
-            additional_function:Callable[[Sequence[item_typevar]],tuple[bool,str|None]]|None=None,
+            item_function:Callable[[I],tuple[bool,str|None]]|None=None,
+            additional_function:Callable[[Sequence[I]],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:
@@ -293,7 +288,7 @@ class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
         self.item_function = item_function
         self.additional_function = additional_function
 
-    def verify(self, data: Sequence[item_typevar], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: Sequence[I], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if not isinstance(data, self.data_type):
             exceptions.append(Exceptions.TypeVerificationTypeError(trace, self.data_type_str, type(data)))
@@ -323,27 +318,28 @@ class ListTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
     def __repr__(self) -> str:
         return "<%s \"%s\" \"%s\">" % (self.__class__.__name__, self.item_type_str, self.data_type_str)
 
-class IterableTypeVerifier(ListTypeVerifier):
+class IterableTypeVerifier[I](ListTypeVerifier):
 
     def __init__(
             self,
-            item_type:type[item_typevar]|tuple[type[item_typevar],...]|TypeVerifier[item_typevar],
+            item_type:type[I]|tuple[type[I],...]|TypeVerifier[I],
             data_type:type[Iterable]|tuple[type[Iterable],...],
             item_type_str:str,
             data_type_str:str,
-            item_function:Callable[[item_typevar],tuple[bool,str|None]]|None=None,
-            additional_function:Callable[[Iterable[item_typevar]],tuple[bool,str|None]]|None=None,
+            item_function:Callable[[I],tuple[bool,str|None]]|None=None,
+            additional_function:Callable[[Iterable[I]],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
         return super().__init__(item_type, cast(type[Sequence]|tuple[type[Sequence],...], data_type), item_type_str, data_type_str, item_function, additional_function, type_check)
 
-    def verify(self, data: Iterable[item_typevar], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
-        return super().verify(cast(Sequence[item_typevar], data), trace)
+    def verify(self, data: Iterable[I], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+        return super().verify(cast(Sequence[I], data), trace)
 
-class TupleItemTypeVerifier(TypeVerifier[tuple[int,item_typevar]]):
+class TupleItemTypeVerifier[I](TypeVerifier[tuple[int,I]]):
+
     def __init__(
             self,
-            item_type:type[item_typevar]|tuple[type[item_typevar],...]|TypeVerifier[item_typevar],
+            item_type:type[I]|tuple[type[I],...]|TypeVerifier[I],
             item_type_str:str,
             type_check:bool=True,
         ) -> None:
@@ -356,7 +352,7 @@ class TupleItemTypeVerifier(TypeVerifier[tuple[int,item_typevar]]):
         self.item_type_is_verifier = isinstance(item_type, TypeVerifier)
         self.item_type_str = item_type_str
 
-    def verify(self, data: tuple[int, item_typevar], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: tuple[int, I], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
         index, item = data
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if self.item_type_is_verifier:
@@ -369,14 +365,14 @@ class TupleItemTypeVerifier(TypeVerifier[tuple[int,item_typevar]]):
     def __repr__(self) -> str:
         return "<%s \"%s\">" % (self.__class__.__name__, self.item_type_str)
 
-class TupleTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
+class TupleTypeVerifier[I](TypeVerifier[Sequence[I]]):
 
     def __init__(
             self,
             *items:TupleItemTypeVerifier[Any],
             data_type:type[Sequence]|tuple[type[Sequence],...]=tuple,
             data_type_str:str="a tuple",
-            function:Callable[[Sequence[item_typevar]],tuple[bool,str|None]]|None=None,
+            function:Callable[[Sequence[I]],tuple[bool,str|None]]|None=None,
             type_check:bool=True,
         ) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:
@@ -391,7 +387,7 @@ class TupleTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
         self.data_type_str = data_type_str
         self.function = function
 
-    def verify(self, data: Sequence[item_typevar], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: Sequence[I], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if not isinstance(data, self.data_type):
             exceptions.append(Exceptions.TypeVerificationTypeError(trace, self.data_type_str, type(data)))
@@ -415,14 +411,14 @@ class TupleTypeVerifier(TypeVerifier[Sequence[item_typevar]]):
     def __repr__(self) -> str:
         return "<%s \"%s\" len %i>" % (self.__class__.__name__, self.data_type_str, len(self.items))
 
-class EnumTypeVerifier(TypeVerifier[item_typevar]):
+class EnumTypeVerifier[I](TypeVerifier[I]):
 
-    def __init__(self, options:Container, type_check:bool=True) -> None:
+    def __init__(self, options:Container[I], type_check:bool=True) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__enum_type_verifier.base_verify({"options": options}, ["EnumTypeVerifier"])
         self.options = options
 
-    def verify(self, data: item_typevar, trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: I, trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if data not in self.options:
             exceptions.append(Exceptions.TypeVerificationEnumError(trace, self.options, data))
@@ -431,9 +427,9 @@ class EnumTypeVerifier(TypeVerifier[item_typevar]):
     def __repr__(self) -> str:
         return "<%s %r>" % (self.__class__.__name__, self.options)
 
-class UnionTypeVerifier(TypeVerifier[item_typevar]):
+class UnionTypeVerifier[I](TypeVerifier[I]):
 
-    def __init__(self, type_str:str, *types:type[item_typevar]|TypeVerifier[item_typevar]|Any, type_check:bool=True) -> None:
+    def __init__(self, type_str:str, *types:type[I]|TypeVerifier[I]|Any, type_check:bool=True) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__union_type_verifier.base_verify({
                 "type_str": type_str,
@@ -443,7 +439,7 @@ class UnionTypeVerifier(TypeVerifier[item_typevar]):
         self.types_are_type_verifiers = [isinstance(type, TypeVerifier) for type in types]
         self.type_str = type_str
 
-    def verify(self, data: item_typevar, trace: Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: I, trace: Trace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         union_exceptions:list[list[Exceptions.TypeVerificationTypeException]] = []
         for type_verifier, is_type_verifier in zip(self.types, self.types_are_type_verifiers):

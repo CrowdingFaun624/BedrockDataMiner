@@ -1,5 +1,5 @@
-from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator, TypeVar,
-                    Union, cast)
+from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator, Union,
+                    cast)
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -15,9 +15,7 @@ import Utilities.File as File
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-a = TypeVar("a")
-
-class FileStructure(ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
+class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
 
     def __init__(
         self,

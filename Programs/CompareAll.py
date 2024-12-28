@@ -1,5 +1,5 @@
 import traceback
-from typing import Generator, Iterable, TypeVar
+from itertools import chain
 
 import Component.Importer as Importer
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
@@ -10,10 +10,6 @@ import Utilities.UserInput as UserInput
 import Version.Version as Version
 
 COMPARING_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing)
-
-FlattenType = TypeVar("FlattenType")
-def flatten(matrix:Iterable[Iterable[FlattenType]]) -> Generator[FlattenType, None, None]:
-    yield from (item for row in matrix for item in row)
 
 def compare(
         version1:Version.Version|None,
@@ -78,7 +74,7 @@ def main() -> None:
         child_versions.append(major_version)
         child_versions.extend(child for child in major_version.children if child.get_order_tag() in minor_tags_after)
 
-    sorted_versions = list(flatten(child_versions for child_versions in major_versions.values()))
+    sorted_versions = list(chain.from_iterable(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Version.Version|None,Version.Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
     for dataminer_collection in selected_dataminers:
         compare_all_of(dataminer_collection, sorted_versions, exception_holder)

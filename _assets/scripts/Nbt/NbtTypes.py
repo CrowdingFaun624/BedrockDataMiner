@@ -1,6 +1,6 @@
 import enum
 import re
-from typing import Literal, Protocol, TypedDict, TypeVar, cast
+from typing import Literal, Protocol, TypedDict, cast
 
 import mutf8
 
@@ -41,10 +41,7 @@ class IdEnum(enum.IntEnum):
     TAG_Int_Array = 11
     TAG_Long_Array = 12
 
-a = TypeVar("a", covariant=True)
-b = TypeVar("b")
-
-class TAG(Protocol[a]):
+class TAG(Protocol):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG": ...
@@ -54,7 +51,7 @@ class TAG(Protocol[a]):
     def __repr__(self) -> str:
         return "<%s %s>" % (self.__class__.__name__, str(self))
 
-class TAG_End(TAG[None]):
+class TAG_End(TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_End":
@@ -73,7 +70,7 @@ class TAG_End(TAG[None]):
         return self
 
 @Types.register_decorator("TAG_Byte", json_coder=NbtCoder)
-class TAG_Byte(int, TAG[int]):
+class TAG_Byte(int, TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte":
@@ -83,7 +80,7 @@ class TAG_Byte(int, TAG[int]):
         return "%ib" % self
 
 @Types.register_decorator("TAG_Short", json_coder=NbtCoder)
-class TAG_Short(int, TAG[int]):
+class TAG_Short(int, TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Short":
@@ -93,7 +90,7 @@ class TAG_Short(int, TAG[int]):
         return "%is" % self
 
 @Types.register_decorator("TAG_Int", json_coder=NbtCoder)
-class TAG_Int(int, TAG[int]):
+class TAG_Int(int, TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int":
@@ -103,7 +100,7 @@ class TAG_Int(int, TAG[int]):
         return "%i" % self
 
 @Types.register_decorator("TAG_Long", json_coder=NbtCoder)
-class TAG_Long(int, TAG[int]):
+class TAG_Long(int, TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long":
@@ -113,7 +110,7 @@ class TAG_Long(int, TAG[int]):
         return "%il" % self
 
 @Types.register_decorator("TAG_Float", json_coder=NbtCoder)
-class TAG_Float(float, TAG[float]):
+class TAG_Float(float, TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Float":
@@ -123,7 +120,7 @@ class TAG_Float(float, TAG[float]):
         return "%ff" % self
 
 @Types.register_decorator("TAG_Double", json_coder=NbtCoder)
-class TAG_Double(float, TAG[float]):
+class TAG_Double(float, TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Double":
@@ -133,7 +130,7 @@ class TAG_Double(float, TAG[float]):
         return "%f" % self
 
 @Types.register_decorator("TAG_Byte_Array", requires_subcomponent=False, can_contain={TAG_Byte}, json_coder=NbtCoder)
-class TAG_Byte_Array(list[TAG_Byte], TAG[list[TAG_Byte]]):
+class TAG_Byte_Array(list[TAG_Byte], TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte_Array":
@@ -144,7 +141,7 @@ class TAG_Byte_Array(list[TAG_Byte], TAG[list[TAG_Byte]]):
         return "[B;" + ", ".join(str(item) for item in self) + "]"
 
 @Types.register_decorator("TAG_String", json_coder=NbtCoder)
-class TAG_String(str, TAG[str]):
+class TAG_String(str, TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_String":
@@ -163,30 +160,30 @@ class TAG_String(str, TAG[str]):
         return str(self)
 
 @Types.register_decorator("TAG_List", json_coder=NbtCoder)
-class TAG_List(list[TAG[b]], TAG[list[TAG[b]]]):
+class TAG_List[b: TAG](list[b], TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_List":
         content_type:int = data_reader.unpack_tuple("b", 1, endianness)
         size:int = data_reader.unpack_tuple("i", 4, endianness)
-        return cls([parse_object_from_bytes(data_reader, content_type, endianness) for i in range(size)])
+        return cls(cast(b, parse_object_from_bytes(data_reader, content_type, endianness)) for i in range(size))
 
     def __str__(self) -> str:
         return "[" + ", ".join(str(item) for item in self) + "]"
 
 @Types.register_decorator("TAG_Compound", json_coder=NbtCoder)
-class TAG_Compound(dict[str,TAG[b]], TAG[dict[str,TAG[b]]]):
+class TAG_Compound[b: TAG](dict[str,b], TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Compound":
-        output:dict[str,TAG] = {}
+        output:dict[str,b] = {}
         while True:
             key_name, value = parse_compound_item_from_bytes(data_reader, endianness)
             if isinstance(value, TAG_End) or key_name is None:
                 break
             if key_name in output:
                 raise NbtExceptions.CompoundDuplicateKeyError(key_name)
-            output[key_name] = value
+            output[key_name] = cast(b, value)
         return cls(output)
 
     def __str__(self) -> str:
@@ -209,7 +206,7 @@ class TAG_Compound(dict[str,TAG[b]], TAG[dict[str,TAG[b]]]):
         return bool(pattern(key))
 
 @Types.register_decorator("TAG_Int_Array", requires_subcomponent=False, can_contain={TAG_Int}, json_coder=NbtCoder)
-class TAG_Int_Array(list[TAG_Int], TAG[list[TAG_Int]]):
+class TAG_Int_Array(list[TAG_Int], TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int_Array":
@@ -220,7 +217,7 @@ class TAG_Int_Array(list[TAG_Int], TAG[list[TAG_Int]]):
         return "[I;" + ", ".join(str(item) for item in self) + "]"
 
 @Types.register_decorator("TAG_Long_Array", requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
-class TAG_Long_Array(list[TAG_Long], TAG[list[TAG_Long]]):
+class TAG_Long_Array(list[TAG_Long], TAG):
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long_Array":

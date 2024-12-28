@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING
 
 import Component.Field.Field as Field
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
@@ -9,7 +9,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Component.Component as Component
 
-VerifyComponentType:TypeAlias = StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
+type VerifyComponentType = StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
 
 class AbstractTypeField(Field.Field):
 

@@ -1,8 +1,7 @@
 import json
 import subprocess
-from typing import Any, Iterator, Literal, TypedDict, cast
-
-from typing_extensions import NotRequired, Required
+from typing import (Any, Iterator, Literal, NotRequired, Required, TypedDict,
+                    cast)
 
 import Component.Importer as Importer
 import Serializer.Serializer as Serializer

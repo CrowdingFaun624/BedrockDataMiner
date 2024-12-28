@@ -1,5 +1,4 @@
-from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator, TypeVar,
-                    Union)
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -14,9 +13,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-a = TypeVar("a")
-
-class PassthroughStructure(ObjectStructure.ObjectStructure[a]):
+class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
     '''
     Simply passes data through itself. Can be subclassed.
     Not all Structures that have this behavior have to subclass this class.

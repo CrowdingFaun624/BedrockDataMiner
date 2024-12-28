@@ -2,16 +2,13 @@ import importlib
 import importlib.machinery
 import importlib.util
 from pathlib import Path
-from typing import IO, Any, Callable, Generic, Iterable, TypeVar
-
-from typing_extensions import Self
+from typing import IO, Any, Callable, Iterable, Self
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Utilities.UserInput as UserInput
 
-a = TypeVar("a")
 
 def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
     already_stems:dict[str,Path] = {}
@@ -24,7 +21,7 @@ def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
         else:
             yield from iter_dir(subpath, prepension + subpath.name + "/")
 
-class Script(Generic[a]):
+class Script[a]():
 
     all_type_verifier = TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=lambda data: (len(data) == 1, "Can only export a single object"))
 

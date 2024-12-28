@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Union
 
 import Structure.Difference as D
 import Structure.Trace as Trace
@@ -8,9 +8,7 @@ if TYPE_CHECKING:
     import Structure.Structure as Structure
     import Structure.StructureEnvironment as StructureEnvironment
 
-d = TypeVar("d")
-
-class StructureSet(Generic[d]):
+class StructureSet[d]():
     '''
     Is used when a value is a Diff and can be split between two different Structures.
     '''

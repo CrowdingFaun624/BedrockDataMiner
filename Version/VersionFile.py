@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Literal, TypeVar, Union, overload
+from typing import TYPE_CHECKING, Literal, Union, overload
 
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
@@ -7,8 +7,6 @@ import Version.VersionFileType as VersionFileType
 if TYPE_CHECKING:
     import Component.Accessor.AccessorComponent as AccessorComponent
     import Version.Version as Version
-
-a = TypeVar("a", bound=Accessor.Accessor)
 
 class VersionFile():
 
@@ -59,12 +57,12 @@ class VersionFile():
         return len(self.accessors) > 0
 
     @overload
-    def get_accessor(self, none_okay:Literal[True], *, required_type:type[a]=Accessor.Accessor) -> a|None: ...
+    def get_accessor[a: Accessor.Accessor](self, none_okay:Literal[True], *, required_type:type[a]=Accessor.Accessor) -> a|None: ...
     @overload
-    def get_accessor(self, none_okay:Literal[False], *, required_type:type[a]=Accessor.Accessor) -> a: ...
+    def get_accessor[a: Accessor.Accessor](self, none_okay:Literal[False], *, required_type:type[a]=Accessor.Accessor) -> a: ...
     @overload
-    def get_accessor(self, *, required_type:type[a]=Accessor.Accessor) -> a: ...
-    def get_accessor(self, none_okay:bool=False, *, required_type:type[a]=Accessor.Accessor) -> a|None:
+    def get_accessor[a: Accessor.Accessor](self, *, required_type:type[a]=Accessor.Accessor) -> a: ...
+    def get_accessor[a: Accessor.Accessor](self, none_okay:bool=False, *, required_type:type[a]=Accessor.Accessor) -> a|None:
         '''
         Returns the first Accessor of this VersionFile that meets the requirements.
         :required_type: Type of the Accessor.

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, NoReturn, TypeVar
+from typing import Any, NoReturn
 
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerSettings as DataMinerSettings
@@ -13,7 +13,6 @@ import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
-a = TypeVar("a", bound=Accessor.Accessor)
 
 class DataMiner():
 
@@ -60,7 +59,7 @@ class DataMiner():
         with open(self.get_data_file_path(), "rt") as f:
             return json.load(f, cls=CustomJson.decoder)
 
-    def get_accessor(self, file_type:str, accessor_type:type[a]=Accessor.Accessor) -> a:
+    def get_accessor[a: Accessor.Accessor](self, file_type:str, accessor_type:type[a]=Accessor.Accessor) -> a:
         if file_type not in self.files_str:
             raise Exceptions.DataMinerFileTypePermissionError(self, file_type, sorted(self.files_str))
         accessor = self.version.get_accessor(file_type, accessor_type)

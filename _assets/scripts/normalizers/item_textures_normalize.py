@@ -4,7 +4,7 @@ import Utilities.File as File
 
 __all__ = ["item_textures_normalize"]
 
-item_textures_data_typed_dict = TypedDict("item_textures_data_typed_dict", texture_data=dict[str,Any])
+item_textures_data_typed_dict = TypedDict("item_textures_data_typed_dict", {"texture_data": dict[str,Any]})
 
 def item_textures_normalize(data:dict[str,File.File[item_textures_data_typed_dict]]) -> File.FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}

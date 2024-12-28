@@ -1,7 +1,5 @@
 from collections import defaultdict
-from typing import Any, TypedDict, cast
-
-from typing_extensions import NotRequired
+from typing import Any, NotRequired, TypedDict, cast
 
 import Utilities.File as File
 

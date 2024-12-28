@@ -1,4 +1,4 @@
-from typing import Generator, TypeVar
+from itertools import batched
 
 import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.AbstractDataMinerCollectionComponent as AbstractDataMinerCollectionComponent
@@ -14,13 +14,6 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
 DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataMinerSettingsComponent.DataMinerSettingsComponent] = Pattern.Pattern([{"is_dataminer_settings": True}])
-
-a = TypeVar("a")
-def batched(iter:list[a]) -> Generator[tuple[a, a], None, None]:
-    # batched isn't in itertools in 3.10
-    if len(iter) == 0: return
-    for i in range(0, len(iter) - 1, 2):
-        yield iter[i], iter[i + 1]
 
 class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.AbstractDataMinerCollectionComponent[DataMinerCollection.DataMinerCollection]):
 
@@ -98,7 +91,7 @@ class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.Abstract
                     continue
                 used_versions.append(old_version)
 
-        for new_version, old_version in batched(used_versions):
+        for new_version, old_version in batched(used_versions, 2, strict=True):
             if new_version != old_version:
                 exceptions.append(Exceptions.ComponentVersionRangeGap(self, new_version, old_version))
 

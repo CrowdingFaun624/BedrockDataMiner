@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, TypeVar, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
@@ -6,8 +6,6 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import DataMiner.DataMiner as DataMiner
     import Version.Version as Version
-
-a = TypeVar("a")
 
 class DataMinerDependencies():
     "Controls the dependencies of DataMiners."
@@ -30,7 +28,7 @@ class DataMinerDependencies():
             raise Exceptions.DataMinerUnrecognizedDependencyError(dataminer, dataminer_name)
         return cast(Any, output)
 
-    def get_default(self, dataminer_name:str, dataminer:"DataMiner.DataMiner", default:a) -> Any|a:
+    def get_default[a](self, dataminer_name:str, dataminer:"DataMiner.DataMiner", default:a) -> Any|a:
         '''
         Returns the data associated with the given DataMinerCollection name for this Version, or `default` if the DataMinerCollection exists but has no data for this Version.
         Raises a DataMinerUnregisteredDependencyError if the DataMinerCollection is not listed as a dependency for this DataMiner.

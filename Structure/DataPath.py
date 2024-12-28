@@ -1,6 +1,4 @@
-from typing import Any, Hashable, Literal, TypedDict
-
-from typing_extensions import Self
+from typing import Any, Hashable, Literal, Self, TypedDict
 
 import Component.Types as Types
 import Utilities.CustomJson as CustomJson

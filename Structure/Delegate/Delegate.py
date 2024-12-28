@@ -1,4 +1,4 @@
-from typing import Any, Generic, TypeVar, cast
+from typing import Any, cast
 
 import Structure.ObjectStructure as ObjectStructure
 import Structure.PrimitiveStructure as PrimitiveStructure
@@ -9,20 +9,8 @@ import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-a = TypeVar("a")
-'''
-The output of this Delegate.
-'''
-b = TypeVar("b", bound=Structure.Structure|StructureBase.StructureBase)
-'''
-The Structure types this Delegate works on.
-'''
-c = TypeVar("c")
-'''
-The data that is stored in CacheStructures with this Delegate.
-'''
 
-class Delegate(Generic[a, b, c]):
+class Delegate[a, b:Structure.Structure|StructureBase.StructureBase, c]():
     '''
     Object for displaying the output of Structures in different ways.
     Delegates are a Generic of three TypeVars.

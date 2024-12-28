@@ -1,8 +1,6 @@
 # the old normalizer embedded in SoundsJsonDataMiner had 16 errors, while this file has 0. Yay!
 
-from typing import Any, Mapping, TypeAlias, TypedDict
-
-from typing_extensions import NotRequired
+from typing import Any, Mapping, NotRequired, TypedDict
 
 import Utilities.File as File
 
@@ -15,7 +13,7 @@ class SoundTypedDict(TypedDict):
     volume: NotRequired[float|list[float]]
     pitch: NotRequired[float|list[float]]
 
-SoundType:TypeAlias = str|SoundTypedDict|dict[str,str|SoundTypedDict]
+type SoundType = str|SoundTypedDict|dict[str,str|SoundTypedDict]
 # represents the possibility of being a regular collection or an interactive collection
 
 class CollectionTypedDict(TypedDict):

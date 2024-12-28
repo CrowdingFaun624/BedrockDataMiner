@@ -1,6 +1,6 @@
 import traceback
 from collections import defaultdict
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING
 
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import DataMiner.DataMiner as DataMiner
@@ -13,7 +13,7 @@ import Version.Version as Version
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
 
-DataMinerClass:TypeAlias = type[DataMiner.DataMiner]
+type DataMinerClass = type[DataMiner.DataMiner]
 
 class DataMinerClassPlan(TestUtil.Plan[DataMinerClass]):
 

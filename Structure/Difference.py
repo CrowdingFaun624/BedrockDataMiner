@@ -1,4 +1,4 @@
-from typing import Any, Generic, Iterable, NoReturn, TypeVar, Union, cast
+from typing import Any, Iterable, NoReturn, Union, cast
 
 import Component.Types as Types
 import Utilities.Exceptions as Exceptions
@@ -19,11 +19,8 @@ class _NoExistType():
 
 NoExist = _NoExistType()
 
-Dt1 = TypeVar("Dt1")
-Dt2 = TypeVar("Dt2")
-
 @Types.register_decorator(None, hashing_method=lambda data: hash(tuple(Types.hash_data(item) for item in cast(Diff, data).items.items())))
-class Diff(Generic[Dt1]):
+class Diff[Dt1]():
     '''
     An immutable object containing a difference in data from version to version.
     '''
@@ -208,16 +205,13 @@ class Diff(Generic[Dt1]):
     def __eq__(self, value: object) -> bool:
         return self.length == value.length and self.items == value.items if isinstance(value, Diff) else False
 
-a = TypeVar("a")
-b = TypeVar("b")
-
-def iter_diff(item:a|Diff[a]) -> Iterable[tuple[tuple[int,...]|None,a]]:
+def iter_diff[a](item:a|Diff[a]) -> Iterable[tuple[tuple[int,...]|None,a]]:
     if isinstance(item, Diff):
         yield from item.iter()
     else:
         yield None, item
 
-def double_iter_diff(item1:a|Diff[a], item2:b|Diff[b]) -> Iterable[tuple[tuple[int,...]|None,a,b]]:
+def double_iter_diff[a, b](item1:a|Diff[a], item2:b|Diff[b]) -> Iterable[tuple[tuple[int,...]|None,a,b]]:
     match item1, item2:
         case Diff(), Diff():
             item1_diff, item2_diff = cast("Diff[a]", item1), cast("Diff[b]", item2)
@@ -248,7 +242,7 @@ def double_iter_diff(item1:a|Diff[a], item2:b|Diff[b]) -> Iterable[tuple[tuple[i
             item1_object, item2_object = cast(a, item1), cast(b, item2)
             yield None, item1_object, item2_object
 
-def last_value(item:a|Diff[b]) -> a|b:
+def last_value[a, b](item:a|Diff[b]) -> a|b:
     '''
     Returns the last value if the item is a Diff,
     and just the item otherwise.
@@ -260,7 +254,7 @@ def last_value(item:a|Diff[b]) -> a|b:
     else:
         return item
 
-def last_value_with_branch(item:a|Diff[b]) -> tuple[a|b,int]:
+def last_value_with_branch[a, b](item:a|Diff[b]) -> tuple[a|b,int]:
     '''
     Returns the last value if the item is a Diff, and just the item otherwise.
     Also returns the branch (-1 if not a Diff).

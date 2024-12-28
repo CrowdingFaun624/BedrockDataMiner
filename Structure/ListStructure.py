@@ -1,4 +1,4 @@
-from typing import Sequence, TypeVar, cast
+from typing import Sequence, cast
 
 import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.Difference as D
@@ -7,9 +7,8 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
-d = TypeVar("d")
 
-class ListStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
+class ListStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
     """
     Ordered data structure.
     """

@@ -1,5 +1,5 @@
 import math
-from typing import Any, Iterator, MutableMapping, TypedDict, TypeVar, cast
+from typing import Any, Iterator, MutableMapping, Optional, TypedDict, cast
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.Delegate.DefaultDelegate as DefaultDelegate
@@ -34,7 +34,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
         TypeVerifier.TypedDictKeyTypeVerifier("layer_characters", "a str", False, str, lambda key, value: (len(value) == len(set(value)), "all characters must be unique")),
         TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", "a bool", False, bool),
     )
-    
+
     applies_to = (KeymapStructure.KeymapStructure,)
 
     def __init__(
@@ -209,7 +209,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
                 output.extend((indentation + 1, line) for indentation, line in substructure_output)
         return output, any_changes, exceptions
 
-    def process_pos_dict(self, data:dict[tuple[int,int,int]|D.Diff[tuple[int,int,int]],a]) -> Iterator[tuple[tuple[int,int,int],a]]:
+    def process_pos_dict[a](self, data:dict[tuple[int,int,int]|D.Diff[tuple[int,int,int]],a]) -> Iterator[tuple[tuple[int,int,int],a]]:
         '''
         Yields the items of the data, removing the key from a Diff if it is in a Diff.
         '''

@@ -1,6 +1,4 @@
-from typing import Any, TypedDict
-
-from typing_extensions import NotRequired, Required
+from typing import Any, NotRequired, Required, TypedDict
 
 import Serializer.JsonSerializer as JsonSerializer
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier

@@ -1,7 +1,6 @@
 from types import EllipsisType
-from typing import Callable, NoReturn, TypeVar
+from typing import Callable, NoReturn
 
-a = TypeVar("a")
 
 def get_levenshtein_distance(data1:str, data2:str) -> int:
     distances:list[list[int]] = [[0] * (len(data1) + 1) for y in range(len(data2) + 1)]
@@ -46,7 +45,7 @@ def default_prompt_multi(label:str, options:list[str]|None) -> str:
     else:
         return "Choose a/some %s (space-delimited) (%s): " % (label, ", ".join(options))
 
-def input_single(
+def input_single[a](
     items:dict[str,a],
     label:str,
     *,
@@ -91,7 +90,7 @@ def input_single(
                 print("Assuming user means \"%s\"" % (user_guess,))
     return items[user_input]
 
-def input_multi(
+def input_multi[a](
     items:dict[str,a],
     label:str,
     *,

@@ -1,13 +1,12 @@
-from typing import Any, TypeVar
+from typing import Any
 
 import Structure.Difference as D
 import Structure.Structure as Structure
 import Structure.StructureSet as StructureSet
 import Structure.Trace as Trace
 
-d = TypeVar("d")
 
-class ObjectStructure(Structure.Structure[d]):
+class ObjectStructure[d](Structure.Structure[d]):
     '''
     Opposite of a PrimitiveStructure.
     Must have a substructure.

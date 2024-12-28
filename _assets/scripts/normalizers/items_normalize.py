@@ -1,4 +1,4 @@
-from typing import Any, Iterator, TypeAlias, TypedDict, cast
+from typing import Any, Iterator, TypedDict, cast
 
 import Utilities.File as File
 
@@ -7,9 +7,9 @@ __all__ = ["items_normalize"]
 class ItemsFileFormat(TypedDict):
     items: dict[str,dict[str,Any]]
 
-OldType:TypeAlias = dict[str,File.File[ItemsFileFormat|list[dict[str,str]]]]
+type OldType = dict[str,File.File[ItemsFileFormat|list[dict[str,str]]]]
 
-NewType:TypeAlias = dict[str,dict[str,File.File[Any]]]
+type NewType = dict[str,dict[str,File.File[Any]]]
 
 def is_old_format(data:OldType|NewType) -> bool:
     return isinstance(list(data.values())[0], File.AbstractFile)

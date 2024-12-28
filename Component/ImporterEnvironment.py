@@ -1,11 +1,10 @@
 from pathlib import Path
-from typing import Any, Generic, Iterable, TypeVar
+from typing import Any, Iterable
 
 import Component.Component as Component
 
-a = TypeVar("a")
 
-class ImporterEnvironment(Generic[a]):
+class ImporterEnvironment[a]():
     "Abstract class for configuring how Component.Importer imports Components."
 
     assume_type:str|None = None

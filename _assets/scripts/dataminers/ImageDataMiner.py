@@ -1,6 +1,4 @@
-from typing import TypedDict
-
-from typing_extensions import NotRequired
+from typing import NotRequired, TypedDict
 
 import DataMiner.FileDataMiner as FileDataMiner
 import Downloader.Accessor as Accessor

@@ -1,11 +1,10 @@
-from typing import Callable, Iterator, MutableSequence, TypeVar
+from typing import Callable, Iterator, MutableSequence
 
 import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
 
-a = TypeVar("a", bound=Field.Field, covariant=True)
 
-class FieldListField(FieldContainer.FieldContainer[a]):
+class FieldListField[a: Field.Field](FieldContainer.FieldContainer[a]):
     '''
     Field that contains other Fields.
     '''
@@ -27,9 +26,7 @@ class FieldListField(FieldContainer.FieldContainer[a]):
         '''
         self.fields.extend(field_list.fields)
 
-    b = TypeVar("b")
-
-    def for_each(self, function:Callable[[a],b]) -> None:
+    def for_each[b](self, function:Callable[[a],b]) -> None:
         '''
         Calls the given function on each Field in this Field.
         :function: The function to use.
@@ -37,7 +34,7 @@ class FieldListField(FieldContainer.FieldContainer[a]):
         for field in self.fields:
             function(field)
 
-    def map(self, function:Callable[[a],b]) -> Iterator[b]:
+    def map[b](self, function:Callable[[a],b]) -> Iterator[b]:
         '''
         Calls the given function on each Field in this Field, and returns the results in the same order.
         :function: The function to use.

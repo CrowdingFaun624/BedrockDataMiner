@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Union
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -14,7 +14,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-a = TypeVar("a")
+class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
 
 class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
 

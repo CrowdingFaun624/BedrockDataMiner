@@ -1,5 +1,5 @@
 import enum
-from typing import Callable, Mapping, TypeVar, cast
+from typing import Callable, Mapping, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -25,7 +25,7 @@ class InlinePermissions(enum.Enum):
     reference = 2
     "Only reference Components are allowed."
 
-def choose_component(
+def choose_component[a: Component.Component](
         component_data:str|ComponentTyping.ComponentTypedDicts|None,
         source_component:Component.Component,
         required_properties:Pattern.Pattern[a],

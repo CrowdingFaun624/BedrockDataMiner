@@ -1,5 +1,4 @@
-from typing import (TYPE_CHECKING, Any, Iterable, Iterator, Sequence, TypeVar,
-                    Union)
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence, Union
 
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
@@ -13,9 +12,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-d = TypeVar("d")
-
-class AbstractIterableStructure(ObjectStructure.ObjectStructure[Sequence[d]]):
+class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]]):
     """
     Abstract class of list-using Structures.
     Must override `compare`, `get_similarity`, `get_item_key`, and `get_compare_text_key_str`.

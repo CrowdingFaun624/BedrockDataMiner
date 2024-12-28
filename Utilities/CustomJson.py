@@ -1,21 +1,19 @@
 import json
-from typing import Any, Generic, TypeVar
+from typing import Any
 
 import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 
-dict_type_var = TypeVar("dict_type_var")
-data_type_var = TypeVar("data_type_var")
 
-class Coder(Generic[dict_type_var, data_type_var]):
+class Coder[A, B]():
 
     special_type_name:str
 
     @classmethod
-    def decode(cls, data:dict_type_var) -> data_type_var: ...
+    def decode(cls, data:A) -> B: ...
 
     @classmethod
-    def encode(cls, data:data_type_var) -> dict_type_var: ...
+    def encode(cls, data:B) -> A: ...
 
 class SpecialEncoder(json.JSONEncoder):
 

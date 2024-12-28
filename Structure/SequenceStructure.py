@@ -1,5 +1,5 @@
 from itertools import count, takewhile
-from typing import TYPE_CHECKING, Callable, Sequence, TypeVar, cast
+from typing import TYPE_CHECKING, Callable, Sequence, cast
 
 import numpy
 
@@ -11,15 +11,13 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 
-d = TypeVar("d")
-
 NONE = 0
 HORIZONTAL = 1
 VERTICAL = 2
 DIAGONAL_SUBSTITUTION = 3
 DIAGONAL_NO_CHANGE = 4
 
-class SequenceStructure(AbstractIterableStructure.AbstractIterableStructure[d]):
+class SequenceStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
     '''
     Sequential data structure. Uses levenshtein distance for comparing.
     '''

@@ -1,4 +1,4 @@
-from typing import Callable, Generic, TypeVar, cast
+from typing import Callable, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -6,9 +6,8 @@ import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Utilities.Exceptions as Exceptions
 
-a = TypeVar("a", bound=Component.Component, covariant=True)
 
-class OptionalComponentField(Field.Field, Generic[a]):
+class OptionalComponentField[a: Component.Component](Field.Field):
     '''A link to another Component.'''
 
     def __init__(self, subcomponent_data:str|ComponentTyping.ComponentTypedDicts|None, pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed, assume_type:str|None=None) -> None:

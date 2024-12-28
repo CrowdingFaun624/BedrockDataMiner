@@ -1,12 +1,9 @@
-from typing import TypeVar
-
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 
-a = TypeVar("a", bound=AbstractDataMinerCollection.AbstractDataMinerCollection)
 
-class AbstractDataMinerCollectionComponent(Component.Component[a]):
+class AbstractDataMinerCollectionComponent[a: AbstractDataMinerCollection.AbstractDataMinerCollection](Component.Component[a]):
 
     class_name_article = "an AbstractDataMinerCollection"
     class_name = "AbstractDataMinerCollection"

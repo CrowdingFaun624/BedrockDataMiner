@@ -1,7 +1,6 @@
 import traceback
-from typing import Any, Literal, TypeAlias, TypedDict, Union, cast, overload
-
-from typing_extensions import NotRequired, Required
+from typing import (Any, Literal, NotRequired, Required, TypedDict, Union,
+                    cast, overload)
 
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -54,7 +53,7 @@ class UnionTypedDict(TypedDict):
     type_str: Required[str]
     types: Required[list[Union[str, "TypedVerifierTypedDicts"]]]
 
-TypedVerifierTypedDicts:TypeAlias = DictTypedDict|TypedDictTypedDict|ListTypedDict|TupleTypedDict|EnumTypedDict|UnionTypedDict
+type TypedVerifierTypedDicts = DictTypedDict|TypedDictTypedDict|ListTypedDict|TupleTypedDict|EnumTypedDict|UnionTypedDict
 
 allowed_types = {
     "bool": bool,

@@ -1,13 +1,12 @@
-from typing import Callable, Generic, TypeVar, cast
+from typing import Callable, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Utilities.Exceptions as Exceptions
 
-a = TypeVar("a", bound=Component.Component)
 
-class ComponentGroupField(Field.Field, Generic[a]):
+class ComponentGroupField[a: Component.Component](Field.Field):
 
     def __init__(self, component_group_name:str, path:list[str|int]) -> None:
         '''

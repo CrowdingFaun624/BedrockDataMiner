@@ -1,7 +1,5 @@
 import traceback
-from typing import Any, Hashable
-
-from typing_extensions import Self
+from typing import Any, Hashable, Self
 
 import Utilities.Exceptions as Exceptions
 

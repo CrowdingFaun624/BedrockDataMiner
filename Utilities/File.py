@@ -1,5 +1,5 @@
 from types import EllipsisType
-from typing import Any, Generic, Iterator, Literal, TypedDict, TypeVar
+from typing import Any, Iterator, Literal, TypedDict
 
 import Component.Types as Types
 import Serializer.Serializer as Serializer
@@ -34,8 +34,6 @@ def new_file(data:bytes, file_name:str, serializer:Serializer.Serializer) -> "Fi
     file_hash = hash_str_to_int(FileStorageManager.archive_data(data, file_name, empty_okay=serializer.empty_okay))
     return File(file_name, serializer, file_hash) # not create with value argument to not clog the memory.
 
-a = TypeVar("a")
-
 def hash_int_to_str(hash_int:int) -> str:
     '''Assumes hash length of 40'''
     return hex(hash_int)[2:].zfill(40)
@@ -44,7 +42,7 @@ def hash_str_to_int(hash_str:str) -> int:
     return int(hash_str, base=16)
 
 @Types.register_decorator("abstract_file", hashing_method=hash, is_file=True)
-class AbstractFile(Generic[a]):
+class AbstractFile[a]():
 
     data:a
 
@@ -77,7 +75,7 @@ class AbstractFile(Generic[a]):
         ...
 
 @Types.register_decorator("file", json_coder=FileCoder)
-class File(AbstractFile[a]):
+class File[a](AbstractFile[a]):
 
     def __init__(self, display_name:str, serializer:Serializer.Serializer, data_hash:int) -> None:
         super().__init__(display_name, data_hash)
@@ -117,7 +115,7 @@ class File(AbstractFile[a]):
             yield from self.serializer.get_referenced_files(file_bytes)
 
 @Types.register_decorator(None, json_coder=Types.no_coder)
-class EmptyFile(File[a]):
+class EmptyFile[a](File[a]):
 
     def __init__(
         self,
@@ -151,7 +149,7 @@ class EmptyFile(File[a]):
         return self
 
 @Types.register_decorator("fake_file")
-class FakeFile(AbstractFile[a]):
+class FakeFile[a](AbstractFile[a]):
     '''Similar to a File, but it can be created anywhere and using any hash/data.'''
 
     def __init__(self, display_name: str, data:a, data_hash: int) -> None:
@@ -163,7 +161,7 @@ class FakeFile(AbstractFile[a]):
         # the `hash` attribute must be different for caching reasons, so it's just 0.
 
 @Types.register_decorator(None, hashing_method=hash, is_file=True)
-class FileDiff(Generic[a]):
+class FileDiff[a]():
     '''
     Similar to a FakeFile, but contains the data from multiple files.
     This exists because it's easier to hash or something.

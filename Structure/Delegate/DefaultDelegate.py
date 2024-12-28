@@ -1,7 +1,4 @@
-from typing import (Any, Generic, Hashable, Iterable, TypeAlias, TypedDict,
-                    TypeVar, cast)
-
-from typing_extensions import NotRequired
+from typing import Any, Hashable, Iterable, NotRequired, TypedDict, cast
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.Delegate.Delegate as Delegate
@@ -17,22 +14,14 @@ import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-a = TypeVar("a", bound=Hashable)
-'''
-Type of the index of the iterable.
-i.e., `int` for a `list`, `str` for a `dict`.
-'''
-
-b = TypeVar("b")
-
 NoneType = type(None)
 
-LineType:TypeAlias = tuple[int,str]
+type LineType = tuple[int,str]
 
 class DefaultDelegateKeysTypedDict(TypedDict):
     always_print: NotRequired[bool]
 
-class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, list[LineType]], Generic[a]):
+class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.Structure, list[LineType]]):
 
     # NOTE: This class assumes that all diffs are of length 2
 
@@ -99,7 +88,7 @@ class DefaultDelegate(Delegate.Delegate[list[LineType], Structure.Structure, lis
             case _:
                 return str(data)
 
-    def enumerate(self, data:list[b]|dict[str,b]|set[b]) -> Iterable[tuple[a, b]]:
+    def enumerate[b](self, data:list[b]|dict[str,b]|set[b]) -> Iterable[tuple[a, b]]:
         '''
         Returns the key-value pairing of the data.
         For lists, calls `enumerate(data)`.

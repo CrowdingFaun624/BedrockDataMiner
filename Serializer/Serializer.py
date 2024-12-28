@@ -1,15 +1,11 @@
 import json
-from typing import Any, Generic, Iterator, TypeVar
+from typing import Any, Iterator
 
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-a = TypeVar("a")
-'''JSON form of the object.'''
-b = TypeVar("b")
-'''The object this Serializer deals with.'''
 
-class Serializer(Generic[a, b]):
+class Serializer[a, b]():
 
     type_verifier:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
     '''

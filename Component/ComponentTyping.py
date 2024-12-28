@@ -1,7 +1,5 @@
-from typing import (TYPE_CHECKING, Any, Callable, Literal, TypeAlias,
-                    TypedDict, Union)
-
-from typing_extensions import NotRequired, Required
+from typing import (TYPE_CHECKING, Any, Callable, Literal, NotRequired,
+                    Required, TypedDict, Union)
 
 if TYPE_CHECKING:
     import Component.Component as Component
@@ -303,8 +301,8 @@ class VersionTypedDict(TypedDict):
     time: Required[str|None]
     type: NotRequired[Literal["Version"]]
 
-AutoAssignerTypedDicts:TypeAlias = RangeVersionTagAutoAssignerTypedDict
-ComponentTypedDicts:TypeAlias = Union[
+type AutoAssignerTypedDicts = RangeVersionTagAutoAssignerTypedDict
+type ComponentTypedDicts = Union[
     AccessorTypedDict,
     AccessorTypeTypedDict,
     BaseTypedDict,
@@ -334,7 +332,7 @@ ComponentTypedDicts:TypeAlias = Union[
     VersionTagTypedDict,
     VersionTypedDict,
 ]
-StructureTypedDicts:TypeAlias = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|FileTypedDict|PrimitiveTypedDict|SequenceTypedDict|SetTypedDict|StringTypedDict
+type StructureTypedDicts = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|FileTypedDict|PrimitiveTypedDict|SequenceTypedDict|SetTypedDict|StringTypedDict
 
-ComponentGroupFileType:TypeAlias = dict[str,ComponentTypedDicts]
-CreateComponentFunction:TypeAlias = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]
+type ComponentGroupFileType = dict[str,ComponentTypedDicts]
+type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]

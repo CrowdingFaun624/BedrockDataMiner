@@ -1,13 +1,10 @@
 from collections import defaultdict
-from typing import TypeVar
 
 import _assets.scripts.normalizers.collapse_resource_packs.util as util
 
-a = TypeVar("a")
-
 __all__ = ["collapse_resource_packs_list"]
 
-def collapse_resource_packs_list(data:dict[str,list[a]]) -> dict[str,list[a]]:
+def collapse_resource_packs_list[a](data:dict[str,list[a]]) -> dict[str,list[a]]:
     '''
     Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
     '''

@@ -1,15 +1,12 @@
 import json
 from pathlib import Path
 from types import EllipsisType
-from typing import Generic, TypeVar
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 
-T = TypeVar("T")
-W = TypeVar("W")
 
-class Cache(Generic[T]):
+class Cache[T]():
     '''
     Class that stores data from a file. Does not read the file until it is
     first accessed. Must be overridden.
@@ -94,7 +91,7 @@ class Cache(Generic[T]):
     def __repr__(self) -> str:
         return "<%s %s %s>" % (self.__class__.__name__, ("open" if self.has_opened else "unopened"), self.path.relative_to(FileManager.PARENT_DIRECTORY).as_posix())
 
-class JsonCache(Cache[T]):
+class JsonCache[T](Cache[T]):
 
     decoder:type[json.JSONDecoder] = json.JSONDecoder
 
@@ -106,7 +103,7 @@ class JsonCache(Cache[T]):
     def serialize(self, data: T) -> bytes:
         return json.dumps(data, cls=self.encoder).encode("UTF8")
 
-class LinesCache(Cache[T], Generic[T, W]):
+class LinesCache[T, W](Cache[T]):
 
     def serialize_line(self, data:W) -> str:
         '''

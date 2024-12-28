@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterator, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Iterator, Union
 
 import Structure.CacheStructure as CacheStructure
 import Structure.DataPath as DataPath
@@ -14,11 +14,6 @@ import Utilities.FileManager as FileManager
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
     import Version.Version as Version
-
-a = TypeVar("a")
-b = TypeVar("b")
-c = TypeVar("c", object, D.Diff)
-d = TypeVar("d", object, D.Diff)
 
 file_counts:dict[str,int] = {}
 
@@ -220,7 +215,7 @@ class StructureBase():
         with open(comparison_path, "wt", encoding="UTF8") as f:
             f.write(report)
 
-    def comparison_report(
+    def comparison_report[b](
             self,
             data1:b,
             data2:b,

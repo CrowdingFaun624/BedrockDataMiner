@@ -1,11 +1,8 @@
 from collections import defaultdict
-from typing import Any, Callable, Generic, Iterable, Iterator, Mapping, TypeVar
+from typing import Any, Callable, Iterable, Iterator, Mapping
 
 import Utilities.CustomJson as CustomJson
 
-T = TypeVar("T")
-A = TypeVar("A")
-B = TypeVar("B")
 
 class NoCoder():
     '''
@@ -16,7 +13,7 @@ class NoCoder():
 
 no_coder = NoCoder()
 
-class TypeSet(Generic[T]):
+class TypeSet[T]():
 
     def __init__(self, types:Iterable[type[T]]|None=None) -> None:
         self.types:set[type[T]] = set(types) if types is not None else set()
@@ -48,7 +45,7 @@ class TypeSet(Generic[T]):
         self.not_types.add(_type)
         self.types.discard(_type)
 
-class TypeDict(Generic[T, A]):
+class TypeDict[T, A]():
 
     def __init__(self, types:Mapping[type[T], A]|None=None) -> None:
         self.types:dict[type[T],A] = dict(types) if types is not None else {}
@@ -91,7 +88,7 @@ class TypeDict(Generic[T, A]):
                 self.not_types.add(_type)
                 raise KeyError(_type)
 
-    def get(self, _type:type[T], default:B=None) -> A|B:
+    def get[B](self, _type:type[T], default:B=None) -> A|B:
         if (output := self.types.get(_type, ...)) is not ...:
             return output
         elif _type in self.not_types:
@@ -125,7 +122,7 @@ def hash_data(data:Any) -> int:
     '''
     return hash_type_table[type(data)](data)
 
-def register_decorator(
+def register_decorator[T](
     name:str|None,
     hashing_method:Callable[[Any],int]|None=None,
     *,
@@ -155,7 +152,7 @@ def register_decorator(
         return _type
     return decorator
 
-def register_type(
+def register_type[T](
     _type:type[T],
     name:str|None,
     hashing_method:Callable[[T],int]|None=None,

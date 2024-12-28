@@ -17,9 +17,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-d = TypeVar("d")
-
-class AbstractMappingStructure(ObjectStructure.ObjectStructure[MutableMapping[str, d]]):
+class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping[str, d]]):
     """
     Abstract class of dict-using Structures.
     In subclasses, must provide methods `iter_structures`, `check_type`,

@@ -1,6 +1,4 @@
-from typing import Any, TypedDict
-
-from typing_extensions import NotRequired
+from typing import Any, NotRequired, TypedDict
 
 __all__ = ["attachables_normalize_old"]
 
@@ -27,7 +25,7 @@ output_description_typed_dict = TypedDict("output_description_typed_dict", {
     "textures": Any,
 })
 
-output_attachable_typed_dict = TypedDict("output_attachable_typed_dict", description=output_description_typed_dict)
+output_attachable_typed_dict = TypedDict("output_attachable_typed_dict", {"description": output_description_typed_dict})
 
 output_typed_dict = TypedDict("output_typed_dict", {"minecraft:attachable": output_attachable_typed_dict})
 

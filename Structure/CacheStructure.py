@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Generic, Iterator, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Iterator, Union
 
 import Component.Types as Types
 import Structure.DataPath as DataPath
@@ -13,9 +13,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-d = TypeVar("d")
-
-class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
+class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
 
     def __init__(
             self,
@@ -251,7 +249,7 @@ class CacheStructure(PassthroughStructure.PassthroughStructure[d]):
     def clear_cache(self) -> None:
         self.cache.clear()
 
-class CacheItem(Generic[d]):
+class CacheItem[d]():
 
     def __init__(self, delegate:Union["Delegate.Delegate", None], creation_index:int) -> None:
         self.cache_store = delegate.cache_store if delegate is not None else lambda data, environment: data

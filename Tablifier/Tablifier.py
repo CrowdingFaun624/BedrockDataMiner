@@ -1,4 +1,4 @@
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable
 
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import Structure.Difference as D
@@ -10,9 +10,8 @@ import Version.Version as Version
 import Version.VersionProvider.VersionProvider as VersionProvider
 from Utilities.File import FakeFile
 
-a = TypeVar("a")
 
-class TablifierTest(Generic[a]):
+class TablifierTest[a]():
 
     def __init__(self, data:list[Any], result:a, result_func:Callable[[Any],a]=lambda x: x) -> None:
         self.data = data

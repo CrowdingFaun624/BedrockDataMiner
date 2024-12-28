@@ -1,5 +1,5 @@
 from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator,
-                    MutableMapping, TypeVar, Union)
+                    MutableMapping, Union)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -15,14 +15,12 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-d = TypeVar("d")
-
 MIN_KEY_SIMILARITY_THRESHOLD = 0.0
 MIN_VALUE_SIMILARITY_THRESHOLD = 0.5
 KEY_WEIGHT = 0.2
 VALUE_WEIGHT = 0.8
 
-class DictStructure(AbstractMappingStructure.AbstractMappingStructure[d]):
+class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def __init__(
             self,

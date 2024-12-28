@@ -1,6 +1,4 @@
-from typing import Any, TypedDict
-
-from typing_extensions import NotRequired, Required
+from typing import Any, NotRequired, Required, TypedDict
 
 __all__ = ["commands_normalize_format_string"]
 

@@ -1,9 +1,8 @@
-from typing import Generic, Optional, TypeVar
+from typing import Optional
 
 import Utilities.Exceptions as Exceptions
 import Utilities.Scripts as Scripts
 
-a = TypeVar("a")
 
 class ScriptSet(Generic[a]):
 
@@ -38,7 +37,7 @@ class ScriptSet(Generic[a]):
                 raise Exceptions.WrongScriptError(script, message=message)
         return script.object
 
-def import_scripted_types(folder:str, built_in_classes:dict[str,type[a]], required_superclass:type[a]) -> ScriptSet[type[a]]:
+def import_scripted_types[a](folder:str, built_in_classes:dict[str,type[a]], required_superclass:type[a]) -> ScriptSet[type[a]]:
     '''
     :folder: The subfolder of scripts that contains the desired type.
     :built_in_classes: Classes that Lua Scripts can inherit from.

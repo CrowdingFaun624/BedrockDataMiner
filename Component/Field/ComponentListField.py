@@ -1,4 +1,4 @@
-from typing import Callable, Generic, Iterator, Sequence, TypeVar, cast
+from typing import Callable, Iterator, Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -6,9 +6,8 @@ import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Utilities.Exceptions as Exceptions
 
-a = TypeVar("a", bound=Component.Component, covariant=True)
 
-class ComponentListField(Field.Field, Generic[a]):
+class ComponentListField[a:Component.Component](Field.Field):
     '''A link to multiple other Components.'''
 
     def __init__(self, subcomponents_data:Sequence[str|ComponentTyping.ComponentTypedDicts]|str|ComponentTyping.ComponentTypedDicts, pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed, assume_type:str|None=None) -> None:
@@ -64,9 +63,7 @@ class ComponentListField(Field.Field, Generic[a]):
             raise Exceptions.FieldSequenceBreakError(self.set_field, self.extend, self)
         self.subcomponents.extend(new_components)
 
-    b = TypeVar("b")
-
-    def for_each(self, function:Callable[[a],b]) -> None:
+    def for_each[b](self, function:Callable[[a],b]) -> None:
         '''
         Calls the given function on each Component in this Field.
         :function: The function to use.
@@ -76,7 +73,7 @@ class ComponentListField(Field.Field, Generic[a]):
         for subcomponent in self.subcomponents:
             function(subcomponent)
 
-    def map(self, function:Callable[[a],b]) -> Iterator[b]:
+    def map[b](self, function:Callable[[a],b]) -> Iterator[b]:
         '''
         Calls the given function on each Component in this Field, and returns the results in the same order.
         :function: The function to use.
