@@ -40,7 +40,7 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
             if isinstance(component, BaseComponent.BaseComponent)
         }
         if len(base_components) != 1:
-            raise Exceptions.BaseComponentCountError(name, len(base_components), "(names: [%s])" % (", ".join(base_components.keys()),))
+            raise Exceptions.BaseComponentCountError(name, list(base_components.values()))
         return next(iter(base_components.values()))
 
     def get_output(self, components: dict[str,Component.Component], name: str) -> StructureBase.StructureBase:

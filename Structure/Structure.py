@@ -33,7 +33,7 @@ class Structure[a]():
         self.children_tags = children_tags
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.name)
+        return f"<{self.__class__.__name__} {self.name}>"
 
     def __hash__(self) -> int:
         return id(self)
@@ -169,4 +169,4 @@ def get_data_at_branch(data:Any, branch:int) -> Any|D._NoExistType:
         case bytes() | complex() | bytearray():
             return data
         case _:
-            raise TypeError("Unknown type %s!" % (data.__class__.__name__,))
+            raise TypeError(f"Unknown type {data.__class__.__name__}!")

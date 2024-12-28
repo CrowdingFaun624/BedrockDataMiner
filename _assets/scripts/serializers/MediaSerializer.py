@@ -48,7 +48,7 @@ class MediaSerializerCache(Cache.LinesCache[dict[str,OutputTypedDict], tuple[str
 
     def serialize_line(self, data: tuple[str, OutputTypedDict]) -> str:
         sha1_hash, file_data = data
-        return "%s %s\n" % (sha1_hash, json.dumps(file_data, separators=(",", ":"), cls=CustomJson.encoder))
+        return f"{sha1_hash} {json.dumps(file_data, separators=(",", ":"), cls=CustomJson.encoder)}\n"
 
 media_serializer_cache = MediaSerializerCache()
 
@@ -115,9 +115,9 @@ class MediaSerializer(Serializer.Serializer):
         metadata.pop("FilePermissions", None)
         output:OutputTypedDict = {
             "sha1_hash": data_hash,
-            "metadata": File.new_file(json.dumps(metadata).encode(), "metadata_of_%s" % (data_hash,), self.get_metadata_serializer()),
+            "metadata": File.new_file(json.dumps(metadata).encode(), f"metadata_of_{data_hash}.json", self.get_metadata_serializer()),
         }
-        output[file_type] = File.new_file(data, "media_%s" % (data_hash,), self.get_file_type_serializer(file_type))
+        output[file_type] = File.new_file(data, f"media_{data_hash}.{file_type}", self.get_file_type_serializer(file_type))
 
         media_serializer_cache.write_new_line((data_hash, output))
         return output

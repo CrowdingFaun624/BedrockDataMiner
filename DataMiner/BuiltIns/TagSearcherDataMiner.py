@@ -35,7 +35,7 @@ class DataReader():
         self.position = 0
 
     def __repr__(self) -> str:
-        return "<%s pos %i/%i>" % (self.__class__.__name__, self.position, len(self.data))
+        return f"<{self.__class__.__name__} pos {self.position}/{len(self.data)}>"
 
     def read(self, amount:int=1, back:int=0) -> str:
         output = self.data[self.position : self.position+amount]
@@ -132,7 +132,7 @@ def parse_expression(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath.
             case UnaryOperator.remove_embedded_data:
                 return lambda all_mentioned_tags: {data_path.remove_embedded_data() for data_path in argument(all_mentioned_tags)}, mentioned_tags
     else:
-        raise Exceptions.TagSearcherParseError(data, "Unexpected character \"%s\"" % (character,))
+        raise Exceptions.TagSearcherParseError(data, f"Unexpected character \"{character}\"")
 
 def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]], set[DataPath.DataPath|Any]], set[str]]:
     data = DataReader(string)

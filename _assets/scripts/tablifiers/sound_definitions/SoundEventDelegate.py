@@ -75,12 +75,12 @@ class SoundEventDelegate(Delegate.Delegate[str, KeymapStructure.KeymapStructure,
             other_comparison, any_changes, new_exceptions = structure.compare_text(value, environment)
             exceptions.extend(exception.add(self.get_structure().name, "defined_in") for exception in new_exceptions)
             has_changes = has_changes or any_changes
-            other_comparisons[D.last_value(key)] = "(%s = %s)" % (D.last_value(key), other_comparison)
+            other_comparisons[D.last_value(key)] = f"({D.last_value(key)} = {other_comparison})"
 
         sound_event_column:list[str] = [sound_event_comparison]
         # if defined_in_comparison is not None:
         #     sound_event_column.append(defined_in_comparison)
         sound_event_column.extend(other_comparisons.values())
         
-        output = "| %s || %s || %s" % ("<br>".join(sound_event_column), sounds_comparison, category_comparison)
+        output = f"| {"<br>".join(sound_event_column)} || {sounds_comparison} || {category_comparison}"
         return output, has_changes, exceptions

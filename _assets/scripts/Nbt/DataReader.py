@@ -7,7 +7,7 @@ import _assets.scripts.Nbt.Endianness as Endianness
 class DataReader():
 
     def __repr__(self) -> str:
-        return "<%s>" % (self.__class__.__name__)
+        return f"<{self.__class__.__name__}>"
 
     def read(self, amount:int=1) -> bytes: ...
 
@@ -28,7 +28,7 @@ class DataBytesReader(DataReader):
         self.position = 0
 
     def __repr__(self) -> str:
-        return "<%s pos %i/%i>" % (self.__class__.__name__, self.position, len(self.data))
+        return f"<{self.__class__.__name__} pos {self.position}/{len(self.data)}>"
 
     def read(self, amount:int=1) -> bytes:
         output = self.data[self.position:self.position + amount]
@@ -41,7 +41,7 @@ class DataFileReader(DataReader):
         self.data = file
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.data.name)
+        return f"<{self.__class__.__name__} {self.data.name}>"
 
     def read(self, amount:int=1) -> bytes:
         return self.data.read(amount)

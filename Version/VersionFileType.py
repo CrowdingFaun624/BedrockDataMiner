@@ -50,4 +50,4 @@ class VersionFileType():
         return hash(self.name)
 
     def __repr__(self) -> str:
-        return "<VersionFileType %s>" % (self.name)
+        return f"<VersionFileType {self.name}>"

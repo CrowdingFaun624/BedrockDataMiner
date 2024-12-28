@@ -39,13 +39,13 @@ class PrimitiveDelegate(Delegate.Delegate[str,PrimitiveStructure.PrimitiveStruct
                 if branch == 0:
                     print_output, new_exceptions = self.print_text(item, environment[branch])
                     exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
-                    output.append("%s {{Until|BE %s}}" % (print_output, get_version(branches[index + 1], True, environment)))
+                    output.append(f"{print_output} {{{{Until|BE {get_version(branches[index + 1], True, environment)}}}}}")
                 elif item is D.NoExist:
-                    output.append(" {{Until|BE %s}}" % (get_version(branch, True, environment),))
+                    output.append(f" {{{{Until|BE {get_version(branch, True, environment)}}}}}")
                 else:
                     print_output, new_exceptions = self.print_text(item, environment[branch])
                     exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
-                    output.append("%s {{Upcoming|BE %s}}" % (print_output, get_version(branch, True, environment)))
+                    output.append(f"{print_output} {{{{Upcoming|BE {get_version(branch, True, environment)}}}}}")
             return " ".join(output), True, []
         else:
             print_output, new_exceptions = self.print_text(data, environment[-1])
@@ -59,5 +59,5 @@ class PrimitiveDelegate(Delegate.Delegate[str,PrimitiveStructure.PrimitiveStruct
             case _:
                 output = str(data)
         if self.code:
-            output = "<code>%s</code>" % (output,)
+            output = f"<code>{output}</code>"
         return output, []

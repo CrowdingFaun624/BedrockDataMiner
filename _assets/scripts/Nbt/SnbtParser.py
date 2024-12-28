@@ -12,7 +12,7 @@ class Reader():
         self.stack:list[int] = []
 
     def __repr__(self) -> str:
-        return "<%s pos %i/%i, stacklen %i>" % (self.__class__.__name__, self.position, len(self.data), len(self.stack))
+        return f"<{self.__class__.__name__} pos {self.position}/{len(self.data)}, stacklen {self.stack}>"
 
     def read(self, amount:int=1) -> str:
         output = self.data[self.position:self.position+amount]
@@ -87,7 +87,7 @@ def parse_list(reader:Reader) -> NbtTypes.TAG_List:
             first_type = type(item)
         else:
             if not isinstance(item, first_type):
-                raise NbtExceptions.SnbtParseError("List type %i type \"%s\" does not match first item type \"%s\"" % (index, type(item), first_type), reader)
+                raise NbtExceptions.SnbtParseError(f"List type {index} type \"{item.__class__.__name__}\" does not match first item type \"{first_type.__name__}\"", reader)
         parse_whitespace(reader)
         match reader.read():
             case ",":
@@ -409,7 +409,7 @@ def parse_string(reader:Reader, allow_unquoted_strings:bool=False) -> NbtTypes.T
             if is_escaped:
                 if character == "\\": output += "\\"
                 elif character == quote_type: output += quote_type
-                else: raise NbtExceptions.SnbtParseError("Expected escaped character to be \"\\\" or \"%s\"" % quote_type, reader)
+                else: raise NbtExceptions.SnbtParseError(f"Expected escaped character to be \"\\\" or \"{quote_type}\"", reader)
                 is_escaped = False
             else:
                 if character == "\\": is_escaped = True; continue

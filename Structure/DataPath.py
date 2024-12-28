@@ -68,10 +68,10 @@ class DataPath():
         return self
 
     def __str__(self) -> str:
-        return "".join("[%s]" % (item) for item in self.path_items)
+        return "".join(f"[{item}]" for item in self.path_items)
 
     def __repr__(self) -> str:
-        return "<%s len %i; %s>" % (self.__class__.__name__, len(self.path_items), self.last_key())
+        return f"<{self.__class__.__name__} len {len(self.path_items)}; {self.last_key()}>"
 
     def __getitem__(self, index:int) -> Hashable:
         return self.path_items[index]

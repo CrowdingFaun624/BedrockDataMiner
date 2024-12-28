@@ -87,7 +87,7 @@ def type_verify_type_verifier(key:str, value:TypedVerifierTypedDicts) -> tuple[b
         case "Union":
             exceptions = union_type_verifier.verify(value, trace)
         case _:
-            return False, "Unknown TypeVerifier type \"%s\"!" % value["type"]
+            return False, f"Unknown TypeVerifier type \"{value["type"]}\"!"
     if len(exceptions) > 0:
         return False, "\n".join("\n".join("\t" + exception_line for exception_line in traceback.format_exception(exception)) for exception in exceptions)
     else:

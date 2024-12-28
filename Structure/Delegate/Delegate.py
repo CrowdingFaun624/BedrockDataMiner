@@ -56,9 +56,9 @@ class Delegate[a, b:Structure.Structure|StructureBase.StructureBase, c]():
 
     def __repr__(self) -> str:
         if self.structure is None:
-            return "<%s; no Structure>" % (self.__class__.__name__,)
+            return f"<{self.__class__.__name__}; no Structure>"
         else:
-            return "<%s of %s %s>" % (self.__class__.__name__, self.structure.__class__.__name__, self.structure.name)
+            return f"<{self.__class__.__name__} of {self.structure.__class__.__name__} {self.structure.name}>"
 
     def cache_store(self, data:a, environment:StructureEnvironment.ComparisonEnvironment|StructureEnvironment.PrinterEnvironment) -> c:
         '''

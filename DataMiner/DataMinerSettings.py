@@ -107,7 +107,7 @@ class DataMinerSettings():
 
     def __repr__(self) -> str:
         if self.name is None:
-            return "<DataMinerSettings id %i>" % (id(self),)
+            return f"<{self.__class__.__name__} id {id(self)}>"
         else:
             version_range = self.get_version_range()
-            return "<DataMinerSettings %s \"%s\"–\"%s\">" % (self.get_name(), str(version_range.start), str(version_range.stop))
+            return f"<DataMinerSettings {self.get_name()} \"{str(version_range.start)}\"–\"{str(version_range.stop)}\">"

@@ -28,10 +28,10 @@ class FileStorageIndex(Cache.LinesCache[dict[str,bool], tuple[str,bool]]):
         return {line[:40]: bool(int(line[41])) for line in data.decode("UTF8").splitlines()}
 
     def serialize(self, data: dict[str, bool]) -> bytes:
-        return ("\n".join("%s %i" % (key, value) for key, value in index.get().items()) + "\n").encode("UTF8")
+        return ("\n".join(f"{key} {value}" for key, value in index.get().items()) + "\n").encode("UTF8")
 
     def serialize_line(self, data: tuple[str, bool]) -> str:
-        return "%s %i\n" % data
+        return f"{data[0]} {data[1]}\n"
 
     def append_new_line(self, data: tuple[str, bool]) -> None:
         key, value = data
@@ -74,7 +74,7 @@ def archive_data(data:bytes, file_name:str, *, empty_okay:bool=False) -> str:
     zipped = should_zip_file(file_name)
     with open(archived_path, "wb") as destination:
         if not empty_okay and len(data) == 0:
-            raise Exceptions.EmptyFileError(message="(hash %s)" % (hex_string,))
+            raise Exceptions.EmptyFileError(message=f"(hash {hex_string})")
         if zipped:
             destination.write(gzip.compress(data))
         else:
@@ -135,8 +135,8 @@ def create_archive() -> None:
     index = {key: value for key, value in sorted(index.items(), key=lambda item: item[0])}
     archive_path = FileManager.OUTPUT_DIRECTORY.joinpath(file.name + "_archived.txt")
     with open(archive_path, "wt") as f:
-        f.write("\n".join("%s %i %s" % (file_hash, is_zipped, file_name) for file_name, (file_hash, is_zipped) in index.items()))
-    print("Archived version. Index is at \"%s\"." % (archive_path.name))
+        f.write("\n".join(f"{file_hash} {is_zipped} {file_name}" for file_name, (file_hash, is_zipped) in index.items()))
+    print(f"Archived version. Index is at \"{archive_path.name}\".")
 
 def version_summary() -> None:
     version = UserInput.input_single(Importer.versions, "version")
@@ -154,9 +154,9 @@ def version_summary() -> None:
         else:
             file_extensions[file_extension] = 1
     sorted_file_extensions = {extension: count for count, extension in sorted([(count, extension) for extension, count in file_extensions.items()], reverse=True)}
-    print("There are %i files overall in %s." % (len(files), version.name))
+    print(f"There are {len(files)} files overall in {version.name}.")
     for extension, count in sorted_file_extensions.items():
-        print("There are %i files with the \"%s\" extension." % (count, extension))
+        print(f"There are {count} files with the \"{extension}\" extension.")
 
 def get_file() -> None:
     version = UserInput.input_single(Importer.versions, "version")
@@ -168,16 +168,16 @@ def get_file() -> None:
         file_data = install_manager.read(file)
         with open(destination, "wb") as destination_file:
             destination_file.write(file_data)
-        print("File is in %s" % destination)
+        print(f"File is in {destination}")
     else:
-        print("Version \"%s\" is not archived." % version.name)
+        print(f"Version \"{version.name}\" is not archived.")
 
 def stats() -> None:
     sizes = {file.name: file.stat().st_size for directory in FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.iterdir() for file in directory.iterdir()}
     sizes = dict((name, size) for name, size in sorted(sizes.items(), key=lambda item: item[1], reverse=True))
     top_sizes = dict(islice(sizes.items(), 50))
     print("Top sizes:")
-    print("\t" + "".join("\n\t%s: %i" % (file_name, file_size) for file_name, file_size in top_sizes.items()))
+    print(f"\t{"".join(f"\n\t{file_name}: {file_size}" for file_name, file_size in top_sizes.items())}")
 
 def main() -> None:
     PROGRAMS = {

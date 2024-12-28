@@ -38,7 +38,7 @@ class DataFile():
             pyjson5.dump(self.__contents, f)
     
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.file_name)
+        return f"<{self.__class__.__name__} {self.file_name}>"
 
 def get_all_data_files() -> dict[str,DataFile]:
     return {path.stem: DataFile(path.name) for path in FileManager.DATA_DIRECTORY.iterdir()}

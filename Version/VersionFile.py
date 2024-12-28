@@ -48,7 +48,7 @@ class VersionFile():
         return [accessor_creator.create_accessor() for accessor_creator in self.accessors]
 
     def __repr__(self) -> str:
-        return "<VersionFile %s of %s>" % (self.get_version_file_type().name, self.get_version().name)
+        return f"<VersionFile {self.get_version_file_type().name} of {self.get_version().name}>"
 
     def has_accessors(self) -> bool:
         "Returns True if this VersionFile has at least one Accessor."

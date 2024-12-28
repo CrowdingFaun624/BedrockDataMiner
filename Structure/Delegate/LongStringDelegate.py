@@ -70,17 +70,14 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
         new_index_string = str(new_index)
         if len(new_index_string) < maximum_index_length:
             new_index_string = " " * (maximum_index_length - len(new_index_string)) + new_index_string
-        return "%s %s" % (
-            old_index_string if show_old else " " * maximum_index_length,
-            new_index_string if show_new else " " * maximum_index_length,
-        )
+        return f"{old_index_string if show_old else " " * maximum_index_length} {new_index_string if show_new else " " * maximum_index_length}"
 
     def compare_text(self, data: list[str|D.Diff[str]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[DefaultDelegate.LineType], bool, list[Trace.ErrorTrace]]:
         output:list[DefaultDelegate.LineType] = []
         maximum_index_length = self.get_maximum_index_length(data) # determines the amount of spacing.
         # pre-text stuff takes the form of "[index] (+/-) [line]"
         space_count = maximum_index_length * 2 + 4 # space for an index, a space, another index, a space, the +/- indicator, and another space.
-        output.append((0, "%s'''" % (" " * space_count,)))
+        output.append((0, f"{" " * space_count}'''"))
         change_addition_lines:list[DefaultDelegate.LineType] = [] # these are needed to store lines. Change lines are printed all at once in order.
         change_removal_lines :list[DefaultDelegate.LineType] = [] # so it does additions from changes first and then removals from changes.
         has_changes = False
@@ -104,12 +101,12 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
                         current_length += 1
                         before_buffer_start_index, buffer_lines = self.get_before_buffer(lines_before_buffer)
                         if self.surrounding_line_count is not None and before_buffer_start_index is not None and last_line_index + 1 != before_buffer_start_index:
-                            lines_to_add.append((0, "%s..." % (" " * space_count)))
+                            lines_to_add.append((0, f"{" " * space_count}..."))
                         lines_to_add.extend(buffer_lines)
                         lines_to_add.extend(change_addition_lines)
                         lines_to_add.extend(change_removal_lines)
                         change_addition_lines.clear(); change_removal_lines.clear()
-                        lines_to_add.append((0, "%s + %s" % (self.format_line_number(old_index, new_index, False, True, maximum_index_length), line[1])))
+                        lines_to_add.append((0, f"{self.format_line_number(old_index, new_index, False, True, maximum_index_length)} + {line[1]}"))
                         lines_after_count = self.surrounding_line_count
                         last_line_index = index
                     case True, False:
@@ -118,12 +115,12 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
                         removal_length += 1
                         before_buffer_start_index, buffer_lines = self.get_before_buffer(lines_before_buffer)
                         if self.surrounding_line_count is not None and before_buffer_start_index is not None and last_line_index + 1 != before_buffer_start_index:
-                            lines_to_add.append((0, "%s..." % (" " * space_count)))
+                            lines_to_add.append((0, f"{" " * space_count}..."))
                         lines_to_add.extend(buffer_lines)
                         lines_to_add.extend(change_addition_lines)
                         lines_to_add.extend(change_removal_lines)
                         change_addition_lines.clear(); change_removal_lines.clear()
-                        lines_to_add.append((0, "%s - %s" % (self.format_line_number(old_index, new_index, True, False, maximum_index_length), line[0])))
+                        lines_to_add.append((0, f"{self.format_line_number(old_index, new_index, True, False, maximum_index_length)} - {line[0]}"))
                         lines_after_count = self.surrounding_line_count
                         last_line_index = index
                     case True, True:
@@ -131,8 +128,8 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
                         new_index += 1
                         old_index += 1
                         current_length += 1
-                        change_addition_lines.append((0, "%s + %s" % (self.format_line_number(old_index, new_index, False, True, maximum_index_length), line[1])))
-                        change_removal_lines. append((0, "%s - %s" % (self.format_line_number(old_index, new_index, True, False, maximum_index_length), line[0])))
+                        change_addition_lines.append((0, f"{self.format_line_number(old_index, new_index, False, True, maximum_index_length)} + {line[1]}"))
+                        change_removal_lines. append((0, f"{self.format_line_number(old_index, new_index, True, False, maximum_index_length)} - {line[0]}"))
                         last_change_line_index = index
             else: # line is not a diff
                 old_index += 1
@@ -141,14 +138,14 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
                 if len(change_addition_lines) > 0:
                     before_buffer_start_index, buffer_lines = self.get_before_buffer(lines_before_buffer)
                     if self.surrounding_line_count is not None and before_buffer_start_index is not None and last_line_index + 1 != before_buffer_start_index:
-                        lines_to_add.append((0, "%s..." % (" " * space_count)))
+                        lines_to_add.append((0, f"{" " * space_count}..."))
                     lines_to_add.extend(buffer_lines)
                     lines_to_add.extend(change_addition_lines)
                     lines_to_add.extend(change_removal_lines)
                     change_addition_lines.clear(); change_removal_lines.clear()
                     lines_after_count = self.surrounding_line_count
                     last_line_index = last_change_line_index
-                current_line = (0, "%s   %s" % (self.format_line_number(old_index, new_index, True, True, maximum_index_length), line))
+                current_line = (0, f"{self.format_line_number(old_index, new_index, True, True, maximum_index_length)}   {line}")
                 # do not need to consider the "..." line for the following
                 # because it is either in show all lines mode or it is
                 # showing lines immediately after a change.
@@ -168,16 +165,16 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
         if len(change_addition_lines) > 0:
             before_buffer_start_index, buffer_lines = self.get_before_buffer(lines_before_buffer)
             if self.surrounding_line_count is not None and before_buffer_start_index is not None and last_line_index + 1 != before_buffer_start_index:
-                lines_to_add.append((0, "%s..." % (" " * space_count)))
+                lines_to_add.append((0, f"{" " * space_count}..."))
             lines_to_add.extend(buffer_lines)
             output.extend(change_addition_lines)
             output.extend(change_removal_lines)
             change_addition_lines.clear(); change_removal_lines.clear()
             last_line_index = last_change_line_index
         if self.surrounding_line_count is not None and last_line_index != len(data) - 1:
-            output.append((0, "%s..." % (" " * space_count)))
+            output.append((0, f"{" " * space_count}..."))
 
-        output.append((0, "%s'''" % (" " * space_count,)))
+        output.append((0, f"{" " * space_count}'''"))
         if self.measure_length:
-            output = [(0, "Total %s: %i (+%i, -%i)" % (self.field, current_length, addition_length, removal_length))] + output
+            output = [(0, f"Total {self.field}: {current_length} (+{addition_length}, -{removal_length})")] + output
         return output, has_changes, []

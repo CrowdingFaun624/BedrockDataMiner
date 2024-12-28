@@ -64,9 +64,9 @@ class PacksDataMiner(DataMiner.DataMiner):
                     continue # so they aren't recorded multiple times - wonky behavior
                 pack_names.add(name)
                 if has_subdirectory:
-                    path = "%s%s/%s" % (directory, name, self.subdirectory)
+                    path = f"{directory}{name}/{self.subdirectory}"
                 else:
-                    path = "%s%s/" % (directory, name)
+                    path = f"{directory}{name}/"
                 packs.append({"name": name, "path": path})
 
     def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[PackTypedDict]:

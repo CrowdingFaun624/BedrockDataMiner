@@ -56,7 +56,7 @@ class DirectoryAccessor(Accessor):
         return self.manager.read(self.modify_file_name(file_name))
 
     def __repr__(self) -> str:
-        return "<%s id %i>" % (self.__class__.__name__, id(self))
+        return f"<{self.__class__.__name__} id {id(self)}>"
 
 class SubDirectoryAccessor(DirectoryAccessor):
     '''

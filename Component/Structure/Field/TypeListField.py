@@ -41,7 +41,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         already_types:set[str] = set()
         for subcomponent_data in self.subcomponents_strs:
             if subcomponent_data in already_types:
-                raise Exceptions.ComponentDuplicateTypeError(subcomponent_data, self, "(referenced in %sof %r)" % (Field.get_keys_strs(False, self.error_path), source_component))
+                raise Exceptions.ComponentDuplicateTypeError(subcomponent_data, self, f"(referenced in {Field.get_keys_strs(False, self.error_path)}of {source_component})")
             already_types.add(subcomponent_data)
             if subcomponent_data in Types.default_types:
                 subcomponent_type = Types.default_types[subcomponent_data]

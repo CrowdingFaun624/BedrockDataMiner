@@ -45,4 +45,4 @@ class FieldContainer[a: Field.Field](Field.Field):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s len %i id %i>" % (self.__class__.__name__, len(self.fields), id(self))
+        return f"<{self.__class__.__name__} len {len(self.fields)} id {id(self)}>"

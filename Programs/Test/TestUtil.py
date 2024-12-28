@@ -96,7 +96,7 @@ class Plan[a: Hashable]():
         return repr(item)
 
     def __repr__(self) -> str:
-        return "<%s [%s]>" % (self.__class__.__name__, ", ".join(version.name for version in self.versions))
+        return f"<{self.__class__.__name__} [{", ".join(version.name for version in self.versions)}]>"
 
 def create_test_function[a: Hashable](plan_type:type[Plan[a]]) -> Callable[[],None]:
     return lambda: test(plan_type)
@@ -133,7 +133,7 @@ def test[a: Hashable](plan_type:type[Plan[a]]) -> None:
     }
     all_bits = list(unique_versions.keys())
     bits_needed = get_overlapping_bits(all_bits, len(all_objects))
-    print("Created a plan using %i Versions." % (len(bits_needed),))
+    print(f"Created a plan using {len(bits_needed)} Versions.")
 
     for index, structure in enumerate(all_objects):
         for bits in bits_needed:
@@ -141,8 +141,8 @@ def test[a: Hashable](plan_type:type[Plan[a]]) -> None:
                 plans[bits].add_item(structure)
                 break
         else:
-            assert False, "no plan supports %r" % (structure,)
+            assert False, f"no plan supports {structure}"
     failed_objects:list[a] = []
     for bits in bits_needed:
         failed_objects.extend(plans[bits].test())
-    print("%i %s failed: [%s]" % (len(failed_objects), plan_type.label, ", ".join(plan_type.get_name(object) for object in failed_objects)))
+    print(f"{len(failed_objects)} {plan_type.label} failed: [{", ".join(plan_type.get_name(object) for object in failed_objects)}]")

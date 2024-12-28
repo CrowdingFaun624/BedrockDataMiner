@@ -36,8 +36,8 @@ class ResourcePackDelegate(Delegate.Delegate[str, DictStructure.DictStructure, s
             assert structure is not None
             comparison, any_changes, new_exceptions = structure.compare_text(D.last_value(resource_pack_data), environment)
             has_changes = has_changes or any_changes
-            output.append("=== %s ===\n" % (" ".join(pack.capitalize() for pack in resource_pack_name.split(","))))
-            output.append("{| class=\"wikitable sortable\" data-description=\"List of %s sound events\"\n" % (resource_pack_name.replace(",", " "),))
+            output.append(f"=== {" ".join(pack.capitalize() for pack in resource_pack_name.split(","))} ===\n")
+            output.append(f"{{| class=\"wikitable sortable\" data-description=\"List of {resource_pack_name.replace(",", " ")} sound events\"\n")
             output.append("! Sound Event !! Sound Files Used !! Category\n|-\n")
             output.append(comparison)
             output.append("\n|}\n\n")

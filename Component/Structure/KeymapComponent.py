@@ -152,7 +152,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             for category_name, category_types in Types.mutually_sortable.items():
                 if first_type not in category_types: continue
                 exceptions.extend(
-                    Exceptions.ComponentTypeInvalidTypeError(self, type, category_types, message="(in sortable category \"%s\")" % (category_name,))
+                    Exceptions.ComponentTypeInvalidTypeError(self, type, category_types, message=f"(in sortable category \"{category_name}\")")
                     for type in types_list
                     if type not in category_types
                 )

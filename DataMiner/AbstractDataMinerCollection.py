@@ -119,7 +119,7 @@ class AbstractDataMinerCollection():
         return hash(self.name)
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.name)
+        return f"<{self.__class__.__name__} {self.name}>"
 
     def clear_caches(self) -> None:
         '''Clears all caches of this DataMinerCollection's Structure.'''

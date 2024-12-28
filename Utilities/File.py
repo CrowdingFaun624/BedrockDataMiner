@@ -30,7 +30,7 @@ class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
 
 def new_file(data:bytes, file_name:str, serializer:Serializer.Serializer) -> "File":
     if not serializer.empty_okay and len(data) == 0:
-        raise Exceptions.EmptyFileError(message="(file \"%s\")" % (file_name,))
+        raise Exceptions.EmptyFileError(message=f"(file \"{file_name}\")")
     file_hash = hash_str_to_int(FileStorageManager.archive_data(data, file_name, empty_okay=serializer.empty_okay))
     return File(file_name, serializer, file_hash) # not create with value argument to not clog the memory.
 
@@ -60,7 +60,7 @@ class AbstractFile[a]():
         return self.hash
 
     def __repr__(self) -> str:
-        return "<%s \"%s\" hash %s>" % (self.__class__.__name__, self.display_name, hash_int_to_str(self.hash))
+        return f"<{self.__class__.__name__} \"{self.display_name}\" hash {hash_int_to_str(self.hash)}>"
 
     def get_referenced_files(self) -> Iterator[int]:
         '''
@@ -182,7 +182,7 @@ class FileDiff[a]():
         for display_name in self.display_names:
             if len(unique_display_names) == 0 or display_name != unique_display_names[-1]:
                 unique_display_names.append(display_name)
-        return "<%s %s hash %s>" % (self.__class__.__name__, ", ".join("\"%s\"" % display_name for display_name in unique_display_names), hash_int_to_str(self.hash))
+        return f"<{self.__class__.__name__} {", ".join(f"\"{display_name}\"" for display_name in unique_display_names)} hash {hash_int_to_str(self.hash)}>"
 
 NoneType = type(None)
 

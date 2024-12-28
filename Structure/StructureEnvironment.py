@@ -22,11 +22,7 @@ class StructureEnvironment():
         self.should_cache = environment in (EnvironmentType.comparing, EnvironmentType.garbage_collection, EnvironmentType.checking_all_types)
 
     def __repr__(self) -> str:
-        return "<%s %s %s>" % (
-            self.__class__.__name__,
-            self.environment.name,
-            "caching" if self.should_cache else "uncaching",
-        )
+        return f"<{self.__class__.__name__} {self.environment.name} {"caching" if self.should_cache else "uncaching"}>"
 
 class PrinterEnvironment():
 
@@ -49,7 +45,7 @@ class PrinterEnvironment():
         return self.version
 
     def __repr__(self) -> str:
-        return "<%s %r %r branch %i>" % (self.__class__.__name__, self.version, self.structure_environment, self.branch)
+        return f"<{self.__class__.__name__} {self.version} {self.structure_environment} branch {self.branch}>"
 
 class ComparisonEnvironment():
 
@@ -89,6 +85,6 @@ class ComparisonEnvironment():
 
     def __repr__(self) -> str:
         if len(self.versions) <= 5:
-            return "<%s [%s]>" % (self.__class__.__name__, ", ".join("\"%s\"" % (version.name,) if version is not None else "None" for version in self.versions))
+            return f"<{self.__class__.__name__} [{", ".join(f"\"{version.name}\"" if version is not None else "None" for version in self.versions)}]>"
         else:
-            return "<%s of %i versions>" % (self.__class__.__name__, len(self.versions))
+            return f"<{self.__class__.__name__} of {len(self.versions)} versions>"

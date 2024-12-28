@@ -56,7 +56,7 @@ def import_scripted_types[a](folder:str, built_in_classes:dict[str,type[a]], req
                 continue
         if not issubclass(object_class, required_superclass):
             if file_name.startswith(folder):
-                raise Exceptions.ScriptedClassMissingInheritError(object_class.__name__)
+                raise Exceptions.ScriptedClassMissingInheritError(object_class.__name__, required_superclass)
             else:
                 continue
         scripts_by_file[file_name] = script

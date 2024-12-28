@@ -31,11 +31,11 @@ class DataMinerSettingsPlan(TestUtil.Plan[DataMinerSettings.DataMinerSettings]):
     def test(self) -> list[DataMinerSettings.DataMinerSettings]:
         dataminer_collections = [self.dataminer_settings[dataminer_settings] for dataminer_settings in self.items_to_test]
         version = self.versions[-1]
-        print("Scanning %i DataMinerCollections in %r" % (len(self.items_to_test), version))
+        print(f"Scanning {len(self.items_to_test)} DataMinerCollections in {version}")
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types)
         failed_dataminer_settings:list[DataMinerSettings.DataMinerSettings] = []
         for dataminer_collection, exception in DataMiners.run(version, dataminer_collections, structure_environment, recalculate_everything=True, print_messages=False):
-            print("%r on %r (getting data file failed)" % (dataminer_collection, version))
+            print(f"{dataminer_collection} on {version} (getting data file failed)")
             if exception is not None:
                 traceback.print_exception(exception)
             if isinstance(dataminer_collection, DataMinerCollection.DataMinerCollection):
@@ -52,4 +52,4 @@ class DataMinerSettingsPlan(TestUtil.Plan[DataMinerSettings.DataMinerSettings]):
 
     @classmethod
     def get_name(cls, item: DataMinerSettings.DataMinerSettings) -> str:
-        return "%s on %r" % (item.get_name(), item.version_range)
+        return f"{item.get_name()} on {item.version_range}"

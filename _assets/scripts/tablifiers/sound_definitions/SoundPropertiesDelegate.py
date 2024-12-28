@@ -48,5 +48,5 @@ class SoundPropertiesDelegate(Delegate.Delegate[str, KeymapStructure.KeymapStruc
                 key_object, key_branch = D.last_value_with_branch(key)
                 key_comparison, new_exceptions = key_structure.print_text(key_object, environment[key_branch])
                 exceptions.extend(exception.add(self.get_structure().name, key) for exception in new_exceptions)
-                output.append("%s = %s" % (key_comparison, comparison))
+                output.append(f"{key_comparison} = {comparison}")
         return ", ".join(output), has_changes, exceptions

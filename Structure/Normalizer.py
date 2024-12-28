@@ -26,9 +26,9 @@ class Normalizer[IN, OUT]():
         else:
             function_name = None
         if function_name is None:
-            return "<%s %s>" % (self.__class__.__name__, self.name)
+            return f"<{self.__class__.__name__} {self.name}>"
         else:
-            return "<%s %s %s>" % (self.__class__.__name__, self.name, function_name)
+            return f"<{self.__class__.__name__} {self.name} {function_name}>"
 
     def link_subcomponents(self, version_range:VersionRange.VersionRange) -> None:
         '''

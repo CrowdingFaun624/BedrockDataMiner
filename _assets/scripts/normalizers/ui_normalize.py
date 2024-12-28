@@ -45,7 +45,7 @@ def get_element_type(element_name:str, namespace:str, element_data:dict[str,Any]
     already_elements:set[tuple[str,str]] = set()
     while True:
         if (current_element_namespace, current_element_name) in already_elements:
-            # raise RuntimeError("Encountered loop trying to find type of element \"%s\" of \"%s\"" % (element_name, namespace))
+            # raise RuntimeError(f"Encountered loop trying to find type of element \"{element_name}\" of \"{namespace}\"")
             return "unknown"
         already_elements.add((current_element_namespace, current_element_name))
         if "type" in current_element_data:
@@ -56,7 +56,7 @@ def get_element_type(element_name:str, namespace:str, element_data:dict[str,Any]
             next_element_namespace, next_element_name = extensions[current_element_namespace][current_element_name]
             if next_element_namespace is None or next_element_name is None:
                 return "unknown"
-                # raise RuntimeError("Cannot find type of element \"%s\" of \"%s\"!" % (element_name, namespace))
+                # raise RuntimeError(f"Cannot find type of element \"{element_name}\" of \"{namespace}\"!")
             try:
                 next_element_data = namespaces[next_element_namespace][next_element_name]
             except KeyError:
@@ -108,7 +108,7 @@ def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) ->
     for resource_pack, resource_pack_files in data.items():
         if len(common_files := (set(files) & set(resource_pack_files))) > 0:
             continue
-            # raise RuntimeError("Duplicate files [%s]" % ", ".join(common_files))
+            # raise RuntimeError(f"Duplicate files [{", ".join(common_files)}]")
         files.update(resource_pack_files)
     namespaces, extensions, file_hashes = get_namespaces_and_extensions(files)
     element_types = get_element_types(namespaces, extensions)
@@ -122,7 +122,7 @@ def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) ->
             if superclass_element_name is None:
                 raw_element_name = element_name
             else:
-                raw_element_name = "%s@%s.%s" % (element_name, superclass_namespace, superclass_element_name)
+                raw_element_name = f"{element_name}@{superclass_namespace}.{superclass_element_name}"
             element_type = element_types[namespace][element_name]
             output[namespace][raw_element_name] = {element_type: element_data}
     return File.FakeFile("combined_ui_file", output, hash(tuple(file_hashes)))

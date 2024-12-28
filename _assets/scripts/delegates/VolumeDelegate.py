@@ -1,4 +1,5 @@
 import math
+from itertools import product
 from typing import Any, Iterator, MutableMapping, Optional, TypedDict, cast
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
@@ -74,29 +75,27 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
         if len(new_exceptions) > 0:
             raise new_exceptions[0].exception
         if substructure is None or not isinstance(substructure, AbstractMappingStructure.AbstractMappingStructure):
-            raise TypeError("Substructure of %r is not an AbstractMappingStructure, but instead %r!" % (self, substructure))
+            raise TypeError(f"Substructure of {self} is not an AbstractMappingStructure, but instead {substructure}!")
         self.substructure = substructure
 
     def print_item(self, substructure_output:list[DefaultDelegate.LineType], position:tuple[int,int,int]) -> list[DefaultDelegate.LineType]:
         match len(substructure_output):
             case 0:
-                return [(0, "%s at (%i, %i, %i): empty" % (self.field, *position))]
+                return [(0, f"{self.field} at {position}: empty")]
             case 1:
-                return [(0, "%s at (%i, %i, %i): %s" % (self.field, *position, substructure_output[0][1]))]
+                return [(0, f"{self.field} at {position}: {substructure_output[0][1]}")]
             case _:
                 output:list[DefaultDelegate.LineType] = []
-                output.append((0, "%s at (%i, %i, %i):" % (self.field, *position)))
+                output.append((0, f"{self.field} at {position}:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output)
                 return output
 
     def print_layer(self, data:dict[tuple[int,int,int],int], additional_data:dict[tuple[int,int,int],MutableMapping[str,Any]], layer:int, size:tuple[int,int,int], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[DefaultDelegate.LineType], list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        layer_2d = [[" " for j in range(size[0])] for i in range(size[2])]
-        for x in range(size[0]):
-            for z in range(size[2]):
-                state = data.get((x, layer, z))
-                if state is not None:
-                    layer_2d[z][x] = self.layer_characters[state]
+        layer_2d = [[" "] * size[0] for z in range(size[2])]
+        for x, z in product(range(size[0]), range(size[2])):
+            if (state := data.get((x, layer, z))) is not None:
+                layer_2d[z][x] = self.layer_characters[state]
         x_axis_size = math.ceil(math.log10(size[0] + 1)) # how tall the horizontal axis is
         z_axis_size = math.ceil(math.log10(size[2] + 1)) # how wide the vertical axis is
         x_labels = [str(i) for i in range(size[0])]
@@ -133,7 +132,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
         output:list[DefaultDelegate.LineType] = []
         exceptions:list[Trace.ErrorTrace] = []
         for layer in range(size[1]):
-            output.append((0, "Layer %i/%i:" % (layer, size[1])))
+            output.append((0, f"Layer {layer}/{size[1]}:"))
             new_lines, new_exceptions = self.print_layer(states, additional_data, layer, size, environment)
             output.extend((indentation + 1, line) for indentation, line in new_lines)
             exceptions.extend(exception.add(self.get_structure().name, layer) for exception in new_exceptions)
@@ -145,7 +144,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
         if any(isinstance(axis, D.Diff) for axis in size):
             old_size = "×".join(str(axis[1] if isinstance(axis, D.Diff) else axis) for axis in size)
             new_size = "×".join(str(axis[0] if isinstance(axis, D.Diff) else axis) for axis in size)
-            output.append((0, "Changed size from %s to %s" % (old_size, new_size)))
+            output.append((0, f"Changed size from {old_size} to {new_size}"))
             any_changes = True
         return output, any_changes, []
 
@@ -205,11 +204,11 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
                 case False, False:
                     raise Exceptions.DiffExistenceError(block_data)
                 case False, True:
-                    new_exceptions = self.print_single(None, block_data[1], "Added", output, self.substructure, environment[1], post_message=" at %i, %i, %i" % position)
+                    new_exceptions = self.print_single(None, block_data[1], "Added", output, self.substructure, environment[1], post_message=f" at {", ".join(map(str, position))}")
                 case True, False:
-                    new_exceptions = self.print_single(None, block_data[0], "Removed", output, self.substructure, environment[0], post_message=" at %i, %i, %i" % position)
+                    new_exceptions = self.print_single(None, block_data[0], "Removed", output, self.substructure, environment[0], post_message=f" at {", ".join(map(str, position))}")
                 case True, True:
-                    new_exceptions = self.print_double(None, block_data[0], block_data[1], "Changed", output, cast(Any, self.substructure), environment, post_message=" at %i, %i, %i" % position)
+                    new_exceptions = self.print_double(None, block_data[0], block_data[1], "Changed", output, cast(Any, self.substructure), environment, post_message=f" at {", ".join(map(str, position))}")
             any_changes = True
             exceptions.extend(exception.add(self.get_structure().name, position) for exception in new_exceptions)
         else:
@@ -220,7 +219,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             exceptions.extend(exception.add(self.get_structure().name, position) for exception in new_exceptions)
             if has_changes:
                 any_changes = True
-                output.append((0, "Changed %s at %i, %i, %i:" % (self.field, *position)))
+                output.append((0, f"Changed {self.field} at {', '.join(map(str, position))}:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output)
         return output, any_changes, exceptions
 
@@ -273,7 +272,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
                 layers_to_print.add(position[1])
 
         for layer in sorted(layers_to_print):
-            output.append((0, "Changed layer %i/%i:" % (layer, max_size[1])))
+            output.append((0, f"Changed layer {layer}/{max_size[1]}:"))
             new_lines, new_exceptions = self.compare_text_layer(states, block_data_comparisons[layer], layer, max_size, environment)
             exceptions.extend(exception.add(self.get_structure().name, layer) for exception in new_exceptions)
             output.extend((indentation + 1, line) for indentation, line in new_lines)

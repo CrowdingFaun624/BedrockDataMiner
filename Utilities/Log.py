@@ -27,7 +27,7 @@ class Log[T]():
             self.file.write_text("")
 
     def __repr__(self) -> str:
-        return "<%s %s %s>" % (self.__class__.__name__, self.name, self.log_type.value)
+        return f"<{self.__class__.__name__} {self.name} {self.log_type.value}>"
 
     def supports_type[A](self, log:"Log[Any]", _type:type[A]) -> TypeGuard["Log[A]"]:
         return any(issubclass(_type, allowed_type) for allowed_type in ALLOWED_TYPES[self.log_type])

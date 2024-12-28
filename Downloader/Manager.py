@@ -20,7 +20,7 @@ class Manager():
         self.prepare_for_install(file_type_arguments)
 
     def __repr__(self) -> str:
-        return "<%s for %s>" % (self.__class__.__name__, self.version.name)
+        return f"<{self.__class__.__name__} for {self.version.name}>"
 
     def prepare_for_install(self, file_type_parameters:dict[str,Any]) -> None:
         '''Any actions that can take place before grabbing files can happen.'''

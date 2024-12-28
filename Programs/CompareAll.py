@@ -48,12 +48,12 @@ def compare_all_of(
                 undataminable_versions_between.append(version)
     except Exception as e:
         if version is None:
-            print("%s failed." % (dataminer_collection.name))
+            print(f"{dataminer_collection.name} failed.")
         else:
-            print("%s failed at version %s." % (dataminer_collection.name, version.name))
+            print(f"{dataminer_collection.name} failed at version {version.name}.")
         exception_holder[dataminer_collection.name] = (e, previous_successful_version, version)
     else:
-        print("Compared all of %s." % dataminer_collection.name)
+        print(f"Compared all of {dataminer_collection.name}.")
         exception_holder[dataminer_collection.name] = True
     finally:
         dataminer_collection.clear_caches()
@@ -90,7 +90,7 @@ def main() -> None:
             print()
     if excepted:
         for structure_name, previous_version, version in excepted_threads:
-            print("\"%s\" excepted between Versions \"%s\" and \"%s\"" % (structure_name, previous_version, version))
+            print(f"\"{structure_name}\" excepted between Versions \"{previous_version}\" and \"{version}\"")
         raise Exceptions.StructuresCompareFailureError([structure_name for structure_name, previous_version, version in excepted_threads])
     else:
         print("Compared all versions.")

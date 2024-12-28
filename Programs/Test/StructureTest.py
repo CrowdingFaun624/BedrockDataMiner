@@ -35,7 +35,7 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
                     break
             else:
                 assert False
-        print("Scanning %i DataMinerCollections in %r" % (len(dataminer_collections), version))
+        print(f"Scanning {len(dataminer_collections)} DataMinerCollections in {version}")
         dataminers_without_file:list[AbstractDataMinerCollection.AbstractDataMinerCollection] = []
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types)
         printer_environment = StructureEnvironment.PrinterEnvironment(structure_environment, None, version, 0)
@@ -45,7 +45,7 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
             try:
                 data_file = dataminer_collection.get_data_file(version, non_exist_ok=True)
             except Exception as e:
-                print("%r on %r on %r (getting data file failed)" % (dataminer_collection, structure, version))
+                print(f"{dataminer_collection} on {structure} on {version} (getting data file failed)")
                 traceback.print_exception(e)
                 failed_structures.append(structure)
                 continue
@@ -57,12 +57,12 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
                     normalized_data = structure.normalize(data_file, printer_environment)
                     structure.check_types(normalized_data, structure_environment, (version,))
                 except Exception as e:
-                    print("%r on %r on %r (file was already datamined)" % (dataminer_collection, structure, version))
+                    print(f"{dataminer_collection} on {structure} on {version} (file was already datamined)")
                     traceback.print_exception(e)
                     failed_structures.append(structure)
         # get all remaining dataminer collections that didn't have files.
         for failed_dataminer, exception in DataMiners.run(version, dataminers_without_file, structure_environment, print_messages=False, recalculate_everything=False):
-            print("%r on %r on %r (file was just datamined)" % (dataminer_collection, structure, version))
+            print(f"{dataminer_collection} on {structure} on {version} (file was just datamined)")
             if exception is not None:
                 traceback.print_exception(exception)
             failed_structures.append(failed_dataminer.get_structure())

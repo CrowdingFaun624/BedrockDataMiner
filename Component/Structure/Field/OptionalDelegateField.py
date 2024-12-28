@@ -65,7 +65,7 @@ class OptionalDelegateField(Field.Field):
             try:
                 delegate = delegate_type(structure, keys, **self.arguments)
             except Exception as e:
-                print("Failed to create Delegate of %r!" % (structure,))
+                print(f"Failed to create Delegate of {structure}!")
                 exceptions.append(e)
                 delegate = None
         else:
@@ -86,7 +86,7 @@ class OptionalDelegateField(Field.Field):
         if self.delegate_name is None:
             self.delegate_type = None
         else:
-            delegate_type = DELEGATE_CLASSES.get(self.delegate_name, message="(referenced by %r)" % (source_component,))
+            delegate_type = DELEGATE_CLASSES.get(self.delegate_name, message=f"(referenced by {source_component})")
             self.delegate_type = delegate_type
         return [], []
 

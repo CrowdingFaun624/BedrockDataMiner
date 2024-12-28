@@ -12,5 +12,5 @@ class CategoryDelegate(PrimitiveDelegate.PrimitiveDelegate):
         is_valid = data in normal_categories
         output, exceptions = super().print_text(data, environment)
         if not is_valid:
-            output = "– (%s)" % (output,)
+            output = f"– ({output})"
         return output, exceptions

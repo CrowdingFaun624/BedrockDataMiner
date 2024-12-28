@@ -42,4 +42,4 @@ class Capabilities():
         self.capabilities = capabilities
 
     def __repr__(self) -> str:
-        return "<Capabilities %s>" % (", ".join(property for property, value in self.capabilities.items() if value is True))
+        return f"<{self.__class__.__name__} {", ".join(property for property, value in self.capabilities.items() if value is True)}>"

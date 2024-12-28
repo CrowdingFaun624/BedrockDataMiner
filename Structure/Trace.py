@@ -63,14 +63,14 @@ class ErrorTrace():
         trace_string = "→".join(str(trace_item) for trace_item in self.trace)
         exception_lines = traceback.format_exception(self.exception)
         if self.data is None:
-            return "Exception at %s:\n%s" % (trace_string, "".join(exception_lines))
+            return f"Exception at {trace_string}:\n{"".join(exception_lines)}"
         else:
             data_string = str(self.data)
-            return "Exception at %s from data %s:\n%s" % (trace_string, data_string, "".join(exception_lines))
+            return f"Exception at {trace_string} from data {data_string}:\n{"".join(exception_lines)}"
 
     def __repr__(self) -> str:
         finalized_str = "finalized" if self.is_final else "unfinalized"
-        return "<ErrorTrace %s len %i>" % (finalized_str, len(self.trace))
+        return f"<ErrorTrace {finalized_str} len {len(self.trace)}>"
 
 class _TraceItem():
     "A piece of an ErrorTrace containing the name of a Structure and the position inside it."
@@ -87,10 +87,10 @@ class _TraceItem():
         if self.key is None:
             return self.name
         else:
-            return "%s[%s]" % (self.name, self.key)
+            return f"{self.name}[{self.key}]"
 
     def __repr__(self) -> str:
         if self.key is None:
-            return "<TraceItem %s>" % self.name
+            return f"<{self.__class__.__name__} {self.name}>"
         else:
-            return "<TraceItem %s[%s]>" % (self.name, self.key)
+            return f"<{self.__class__.__name__} {self.name}[{self.key}]>"

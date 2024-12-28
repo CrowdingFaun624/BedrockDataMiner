@@ -57,7 +57,7 @@ class Script[a]():
         return self.object(*args, **kwargs)
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.name)
+        return f"<{self.__class__.__name__} {self.name}>"
 
     def open_file(self) -> IO[str]:
         return open(self.path, "rt")
@@ -95,7 +95,7 @@ class Scripts():
         return {script_name: script for script_name, script in self.scripts.items() if script_name.startswith(directory_name)}
 
     def __repr__(self) -> str:
-        return "<Scripts %s>" % (self.scripts)
+        return f"<{self.__class__.__name__} {self.scripts}>"
 
 def main() -> None:
     user_script:Script|None = None

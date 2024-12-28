@@ -1,7 +1,7 @@
 import datetime
 from pathlib import Path
 from typing import (TYPE_CHECKING, Any, Callable, Container, Literal, Optional,
-                    TypeVar, Union)
+                    Union)
 
 if TYPE_CHECKING:
     import Component.Capabilities as Capabilities
@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     import Component.Field.Field as Field
     import Component.ImporterEnvironment as ImporterEnvironment
     import Component.Pattern as Pattern
+    import Component.Structure.BaseComponent as BaseComponent
     import Component.Types as Types
     import Component.Version.Field.VersionRangeField as VersionRangeField
     import Component.Version.VersionComponent as VersionComponent
@@ -44,7 +45,17 @@ if TYPE_CHECKING:
     import Version.VersionRange as VersionRange
     import Version.VersionTag.VersionTag as VersionTag
 
-a = TypeVar("a")
+def message[a](message:a|None, no_message:str="!", yes_message:str=" %s!", stringify_function:Callable[[a],str]|None=None) -> str:
+    if stringify_function is None:
+        return no_message if message is None else yes_message % (message,)
+    else:
+        return no_message if message is None else yes_message % (stringify_function(message),)
+
+def message_bool(display_switch:bool, false_message:str|Callable[[],str]="", true_message:str|Callable[[],str]="") -> str:
+    if display_switch:
+        return false_message() if callable(false_message) else false_message
+    else:
+        return true_message() if callable(true_message) else true_message
 
 # Within this file, an "Exception" is an abstract type and
 # an "Error" is a concrete type.
@@ -60,9 +71,7 @@ class AttributeNoneError(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attribute \"%s\" of %r is None and should not be" % (self.name, self.source)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attribute \"{self.name}\" of {self.source} is None and should not be{message(self.message)}"
 
 class CannotStringifyError(Exception):
     "Attempted to stringify an invalid object."
@@ -77,9 +86,7 @@ class CannotStringifyError(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attempted to stringify an object of type \"%s\"" % (self.object_type,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attempted to stringify an object of type \"{self.object_type}\"{message(self.message)}"
 
 class EmptyFileError(Exception):
     "The file IO has no bytes."
@@ -92,62 +99,7 @@ class EmptyFileError(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        output = "A file has no bytes"
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class FileHashNotFound(Exception):
-    "A file cannot be found because its hash is missing in an archive."
-
-    def __init__(self, unknown_hash:str, message:Optional[str]=None) -> None:
-        '''
-        :unknown_hash: The hash of the file that is unrecognized.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(unknown_hash, message)
-        self.unknown_hash = unknown_hash
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "File with hash \"%s\" does not exist" % (self.unknown_hash,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class FileNotFoundInVersionArchive(Exception):
-    "A file cannot be found in an archive."
-
-    def __init__(self, file_name:str, version_name:str, message:Optional[str]=None) -> None:
-        '''
-        :file_name: The name of the unrecognized file.
-        :version: The name of the version.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(file_name, version_name, message)
-        self.file_name = file_name
-        self.version_name = version_name
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "File \"%s\" does not exist in version \"%s\" of the archive" % (self.file_name, self.version_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class InvalidFileFormatError(Exception):
-    "A file has an invalid file format."
-
-    def __init__(self, file_name:str, message:Optional[str]=None) -> None:
-        '''
-        :file_name: The file with the invalid file format.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(file_name, message)
-        self.file_name = file_name
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "File \"%s\" has an invalid file format" % (self.file_name,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"A file has no bytes{message(self.message)}"
 
 class InvalidFileNameError(Exception):
     "A string cannot be used as a file name due to invalid characters."
@@ -164,18 +116,13 @@ class InvalidFileNameError(Exception):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%s \"%s\" cannot be created due to invalid characters" % (self.file_label, self.file_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.file_label} \"{self.file_name}\" cannot be created due to invalid characters{message(self.message)}"
 
 class InvalidStateError(Exception):
     "The program has reached an assumedly unreachable part of the code."
 
     def __str__(self) -> str:
-        if len(self.args) == 0:
-            return "Invalid state!"
-        else:
-            return "Invalid state: %s" % (self.args,)
+        return f"Invalid state{message(self.args, yes_message=": %s!")}"
 
 class AccessorException(Exception):
     "Abstract Exception class for errors relating to Accessors."
@@ -197,16 +144,7 @@ class UnrecognizedAccessorClassError(AccessorException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Accessor class \"%s\"" % (self.accessor_class_str)
-        if self.source is not None:
-            output += ", as referenced by %r," % (self.source,)
-        elif self.source_str is not None:
-            output += ", as referenced by %s," % (self.source_str)
-        if self.message is None:
-            output += " does not exist!"
-        else:
-            output += " does not exist %s!" % (self.message,)
-        return output
+        return f"Accessor class \"{self.accessor_class_str}\"{f", as referenced by {self.source if self.source_str is None else self.source_str}," if not (self.source is None and self.source_str is None) else ""} does not exist{message(self.message)}"
 
 class CacheException(Exception):
     "Abstract Exception class for errors relating to Caches."
@@ -224,9 +162,7 @@ class CacheCannotWriteError(CacheException):
         self.message = message
     
     def __str__(self) -> str:
-        output = "%r cannot be written to" % (self.cache,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.cache} cannot be written to{message(self.message)}"
 
 class CacheDeserializeError(CacheException):
     "Attempted to write a Cache that has no `deserialize` method defined."
@@ -241,9 +177,7 @@ class CacheDeserializeError(CacheException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has no deserialize method; cannot write" % (self.cache,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.cache} has no deserialize method; cannot write{message(self.message)}"
 
 class CacheFileNotFoundError(CacheException):
     "Attempted to open a Cache that has no `get_default_content` method and no existing file."
@@ -258,9 +192,7 @@ class CacheFileNotFoundError(CacheException):
         self.message = message
     
     def __str__(self) -> str:
-        output = "%r has no get_default_content method and its file does not exist" % (self.cache,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.cache} has no get_default_content method and its file does not exist{message(self.message)}"
 
 class ComponentException(Exception):
     "Abstract Exception class for errors relating to Components."
@@ -268,21 +200,19 @@ class ComponentException(Exception):
 class BaseComponentCountError(ComponentException):
     "There is an invalid number of BaseComponents."
 
-    def __init__(self, structure_name:str, count:int, message:Optional[str]=None) -> None:
+    def __init__(self, structure_name:str, base_components:list["BaseComponent.BaseComponent"], message:Optional[str]=None) -> None:
         '''
         :structure_name: The name of the Structure with an invalid count of BaseComponents.
-        :count: How many BaseComponents are in this Structure file.
+        :base_components: The list of BaseComponents.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(structure_name, count, message)
+        super().__init__(structure_name, base_components, message)
         self.structure_name = structure_name
-        self.count = count
+        self.base_components = base_components
         self.message = message
 
     def __str__(self) -> str:
-        output = "Structure file \"%s\" has %i BaseComponents, while it should have 1" % (self.structure_name, self.count)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Structure file \"{self.structure_name}\" has more than one BaseComponent: {", ".join(component.name for component in self.base_components)}{message(self.message)}"
 
 class ComponentDuplicateTypeError(ComponentException):
     "A Component has a duplicate type."
@@ -299,9 +229,7 @@ class ComponentDuplicateTypeError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Type \"%s\", as referenced by %r, is duplicate!" % (self.type_str, self.source)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Type \"{self.type_str}\", as referenced by {self.source}, is duplicate{message(self.message)}"
 
 class ComponentFunctionException(ComponentException):
     "Abstract class for exceptions relating to Functions of Components"
@@ -321,9 +249,7 @@ class ComponentFunctionMissingArgumentError(ComponentFunctionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Required parameter \"%s\" is missing from %r" % (self.parameter, self.source)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Required parameter \"{self.parameter}\" is missing from {self.source}{message(self.message)}"
 
 class ComponentFunctionArgumentTypeError(ComponentException):
     "An argument has the wrong type."
@@ -345,9 +271,7 @@ class ComponentFunctionArgumentTypeError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Parameter \"%s\" with value %s of %r is of type \"%s\" instead of types [%s]" % (self.parameter, self.argument, self.source, self.argument_type, ", ".join("\"%s\"" % (item,) for item in self.allowed_types))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Parameter \"{self.parameter}\" with value {self.argument} of {self.source} is of type \"{self.argument_type}\" instead of types [{", ".join(f"\"{item}\"" for item in self.allowed_types)}]{message(self.message)}"
 
 class ComponentFunctionUnrecognizedArgumentError(ComponentFunctionException):
     "An argument exists that the function does not accept."
@@ -366,9 +290,7 @@ class ComponentFunctionUnrecognizedArgumentError(ComponentFunctionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has an additional parameter \"%s\" with value %s" % (self.source, self.parameter, self.argument)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.source} has an additional parameter \"{self.parameter}\" with value {self.argument}{message(self.message)}"
 
 class ComponentImporterCircularImportError(ComponentException):
     "Components attempt to make a circular import."
@@ -383,14 +305,12 @@ class ComponentImporterCircularImportError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Circular import: %s" % (self.structure_names,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Circular import: {self.structure_names}{message(self.message)}"
 
 class ComponentInvalidNameError(ComponentException):
     "A Component's name is invalid."
 
-    def __init__(self, component:"Component.Component", invalid_names:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component.Component", invalid_names:Optional[list[str]]=None, message:Optional[str]=None) -> None:
         '''
         :component: The Component with an invalid name.
         :invalid_names: A list of names that this Component cannot have.
@@ -402,9 +322,7 @@ class ComponentInvalidNameError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "The name of %r cannot be one of %s" % (self.component, self.invalid_names)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"The name of {self.component} {f"cannot be one of {self.invalid_names}" if self.invalid_names is not None else "is invalid"}{message(self.message)}"
 
 class ComponentInvalidVersionRangeException(ComponentException):
     "Abstract exception class for errors relating to the Version ranges in a DataMinerSettings being invalid."
@@ -426,10 +344,7 @@ class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
         self.message = message
 
     def __str__(self) -> str:
-        first_last_text = ("new", "first") if self.is_first else ("old", "last")
-        output = "The %s Version of the %s sub-Component of %r is not None, but instead %r" % (first_last_text[0], first_last_text[1], self.source, self.actual_value)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"The {"new" if self.is_first else "old"} Version of the {"first" if self.is_first else "last"} sub-Component of {self.source} is not None, but instead {self.actual_value}{message(self.message)}"
 
 class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
     "There is a gap in a Components's sub-Components' Versions."
@@ -448,9 +363,7 @@ class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has a gap between Versions %s and %s" % (self.source, self.new_version, self.old_version)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.source} has a gap between Versions {self.new_version} and {self.old_version}{message(self.message)}"
 
 class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
     "The new or old Version of a non-first DataMinerSettings is None."
@@ -469,14 +382,12 @@ class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "The %s Version of sub-Component %i of %r is None" % (self.slot, self.index, self.dataminer_collection_component)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"The {self.slot} Version of sub-Component {self.index} of {self.dataminer_collection_component} is None{message(self.message)}"
 
 class ComponentMismatchedTypesError(ComponentException):
     "The types of one Component and the types of another do not match."
 
-    def __init__(self, component1:Union["Component.Component",str], component1_types:list[type], component2:Union["Component.Component",str], component2_types:list[type], message:Optional[str]=None) -> None:
+    def __init__(self, component1:"Component.Component", component1_types:list[type], component2:"Component.Component", component2_types:list[type], message:Optional[str]=None) -> None:
         '''
         :component1: The first Component or a string representing it.
         :component1_types: The types allowed by the first Component.
@@ -492,11 +403,7 @@ class ComponentMismatchedTypesError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        component1_str = self.component1 if isinstance(self.component1, str) else repr(self.component1)
-        component2_str = self.component2 if isinstance(self.component2, str) else repr(self.component2)
-        output = "%s accepts types [%s], but its subcomponent, %s, accepts types [%s]" % (component1_str, ", ".join("\"%s\"" % type.__name__ for type in self.component1_types), component2_str, ", ".join("\"%s\"" % type.__name__ for type in self.component2_types))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.component1} accepts types [{", ".join(f"\"{type.__name__}\"" for type in self.component1_types)}], but its subcomponent, {self.component2}, accepts types [{", ".join(f"\"{type.__name__}\"" for type in self.component2_types)}]{message(self.message)}"
 
 class ComponentParseError(ComponentException):
     "Multiple Components failed to parse."
@@ -509,9 +416,7 @@ class ComponentParseError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Failed to parse Component group(s)"
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Failed to parse Component group(s){message(self.message)}"
 
 class ComponentTypeContainmentError(ComponentException):
     "A Component has a type that cannot be contained by its current container type."
@@ -530,9 +435,7 @@ class ComponentTypeContainmentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Type \"%s\" of %r cannot be contained by type \"%s\"" % (self.containee_type, self.source_component, self.container_type)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Type \"{self.containee_type}\" of {self.source_component} cannot be contained by type \"{self.container_type}\"{message(self.message)}"
 
 class ComponentTypeInvalidTypeError(ComponentException):
     "A Component has a value in a TypeField that is not allowed."
@@ -551,10 +454,7 @@ class ComponentTypeInvalidTypeError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        type_list = ", ".join(type.__name__ for type in sorted(self.allowed_types, key=lambda value: value.__name__))
-        output = "%r has field with type %s, which is not one of [%s]" % (self.type_field, self.observed_type, type_list)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.type_field} has field with type {self.observed_type}, which is not one of [{", ".join(type.__name__ for type in sorted(self.allowed_types, key=lambda value: value.__name__))}]{message(self.message)}"
 
 class ComponentTypeMissingError(ComponentException):
     "A Component is missing the type key and there is no type assumption."
@@ -571,9 +471,7 @@ class ComponentTypeMissingError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Component \"%s\" in %s is missing its type key" % (self.component_name, self.component_group)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Component \"{self.component_name}\" in {self.component_group} is missing its type key{message(self.message)}"
 
 class ComponentTypeRequiresComponentError(ComponentException):
     "A Component has a type that requires a Component but has no Component."
@@ -590,10 +488,7 @@ class ComponentTypeRequiresComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        component_str = self.component if isinstance(self.component, str) else repr(self.component)
-        output = "%s accepts type \"%s\", which requires a Component, but has no subcomponent" % (component_str, self.accepted_type.__name__)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.component} accepts type \"{self.accepted_type.__name__}\", which requires a Component, but has no sub-Component{message(self.message)}"
 
 class ComponentUnrecognizedFunctionError(ComponentException):
     "This Component references an unrecognized function."
@@ -610,10 +505,7 @@ class ComponentUnrecognizedFunctionError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        source_str = self.source if isinstance(self.source, str) else repr(self.source)
-        output = "Function \"%s\", as referenced by %s, is unrecognized" % (self.function_name, source_str)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Function \"{self.function_name}\", as referenced by {self.source}, is unrecognized{message(self.message)}"
 
 class ComponentUnrecognizedTypeError(ComponentException):
     "This Component references an unrecognized default type."
@@ -630,9 +522,7 @@ class ComponentUnrecognizedTypeError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Type \"%s\", as referenced by %r, is unrecognized" % (self.type_str, self.source)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Type \"{self.type_str}\", as referenced by {self.source}, is unrecognized{message(self.message)}"
 
 class EmptyCapabilitiesError(ComponentException):
     "An empty Capabilities object was created."
@@ -647,9 +537,7 @@ class EmptyCapabilitiesError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is empty" % (self.capabilities,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.capabilities} is empty{message(self.message)}"
 
 class FieldSequenceBreakError(ComponentException):
     "A Field's methods were called in the wrong order."
@@ -668,9 +556,7 @@ class FieldSequenceBreakError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Cannot call \"%s\" before \"%s\" on %r" % (self.second_method.__name__, self.first_method.__name__, self.source)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Cannot call \"{self.second_method.__name__}\" before \"{self.first_method.__name__}\" on {self.source}{message(self.message)}"
 
 class ImporterEnvironmentNameCollisionError(ComponentException):
     "Two Component groups have the same name."
@@ -689,9 +575,7 @@ class ImporterEnvironmentNameCollisionError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "ImporterEnvironments %r and %r both attempted to create a Component group with the name \"%s\"" % (self.importer_environment1, self.importer_environment2, self.name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"ImporterEnvironments {self.importer_environment1} and {self.importer_environment2} both attempted to create a Component group with the name \"{self.name}\"{message(self.message)}"
 
 class ImporterEnvironmentPathCollisionError(ComponentException):
     "Two Component groups come from the same file."
@@ -710,9 +594,7 @@ class ImporterEnvironmentPathCollisionError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "ImporterEnvironments %r and %r both attempted to create a Component group from the same file \"%s\"" % (self.importer_environment1, self.importer_environment2, self.path)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"ImporterEnvironments {self.importer_environment1} and {self.importer_environment2} both attempted to create a Component group from the same file \"{self.path.as_posix()}\"{message(self.message)}"
 
 class InlineComponentError(ComponentException):
     "An inline Component exists where it is not allowed."
@@ -731,10 +613,7 @@ class InlineComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r, %r attempted to create a disallowed inline Component" % (self.component, self.field)
-        if self.message is not None: output += " %s" % (self.message,)
-        output += ": %s" % (self.subcomponent_data,) if self.subcomponent_data is not None else "!"
-        return output
+        return f"{self.component}, {self.field} attempted to create a disallowed inline Component{message(self.message, yes_message=" %s")}{message(self.subcomponent_data, yes_message=": %s")}"
 
 class InvalidComponentError(ComponentException):
     "The referenced Component has the wrong properties."
@@ -755,10 +634,7 @@ class InvalidComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        source_str = self.source if isinstance(self.source, str) else repr(self.source)
-        output = "%r, as referenced by %s, is expected to have %r, but only has %r" % (self.component, source_str, self.required_properties, self.actual_capabilities)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.component}, as referenced by {self.source}, is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}"
 
 class NoComponentMatchError(ComponentException):
     "No Components match the Pattern."
@@ -773,9 +649,7 @@ class NoComponentMatchError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Cannot find any Components with %r" % (self.pattern,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Cannot find Components with {self.pattern}{message(self.message)}"
 
 class ReferenceComponentError(ComponentException):
     "A reference Component exists where it is not allowed."
@@ -794,10 +668,7 @@ class ReferenceComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r, %r attempted to reference a disallowed reference Component" % (self.component, self.field)
-        if self.subcomponent_name is not None: output += " \"%s\"" % (self.subcomponent_name,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.component}, {self.field} attempted to reference a disallowed reference Component{message(self.subcomponent_name, "", " \"%s\"")}{message(self.message)}"
 
 class UnrecognizedCapabilityError(ComponentException):
     "A capability is unrecognized."
@@ -812,9 +683,7 @@ class UnrecognizedCapabilityError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Key \"%s\" is not a recognized property" % (self.property,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Key \"{self.property}\" is not a recognized property{message(self.message)}"
 
 class UnrecognizedComponentError(ComponentException):
     "A Component is unrecognized."
@@ -831,9 +700,7 @@ class UnrecognizedComponentError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Component at \"%s\", as referenced by %s, is unrecognized" % (self.component_type_str, self.source_str)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Component at \"{self.component_type_str}\", as referenced by {self.source_str}, is unrecognized{message(self.message)}"
 
 class UnrecognizedComponentGroupError(ComponentException):
     "A Component group is unrecognized"
@@ -850,9 +717,7 @@ class UnrecognizedComponentGroupError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Component group \"%s\", as referenced by %s, is unrecognized" % (self.component_group_str, self.source_str)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Component group \"{self.component_group_str}\", as referenced by {self.source_str}, is unrecognized{message(self.message)}"
 
 class UnrecognizedComponentTypeError(ComponentException):
     "A Component type is unrecognized."
@@ -869,9 +734,7 @@ class UnrecognizedComponentTypeError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Component type \"%s\", as referenced by %s, is unrecognized" % (self.component_type_str, self.source_str)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Component type \"{self.component_type_str}\", as referenced by {self.source_str}, is unrecognized{message(self.message)}"
 
 class CustomJsonException(Exception):
     "Abstract Exception class for errors relating to custom JSON encoders and decoders."
@@ -889,12 +752,7 @@ class CannotEncodeToJsonError(CustomJsonException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Object %r of type %s cannot be encoded to JSON" % (self.source, self.source.__class__.__name__)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class CustomJsonTestFailError(CustomJsonException):
-    "A test of CustomJsonException has failed."
+        return f"Object {self.source} of type {self.source.__class__.__name__} cannot be encoded to JSON{message(self.message)}"
 
 class InvalidSpecialTypeError(CustomJsonException):
     "The $special_type key has a value that is not recognized."
@@ -909,9 +767,7 @@ class InvalidSpecialTypeError(CustomJsonException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Invalid $special_type of \"%s\" received" % (self.special_type)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Invalid $special_type of \"{self.special_type}\" received{message(self.message)}"
 
 class DataFileException(Exception):
     "Exception relating to DataFiles"
@@ -929,9 +785,7 @@ class DataFileNothingToWriteError(DataFileException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r cannot be written if not yet read" % (self.source,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.source} cannot be written if not yet read{message(self.message)}"
 
 class DataMinerException(Exception):
     "Abstract Exception class for errors relating to DataMiners."
@@ -953,9 +807,7 @@ class DataMinerAccessorWrongTypeError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "VersionFile \"%s\" from %r should have accessor with type \"%s\"" % (self.file_type, self.dataminer, self.accessor_type.__name__)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"VersionFile \"{self.file_type}\" from {self.dataminer} should have Accessor with type \"{self.accessor_type.__name__}\"{message(self.message)}"
 
 class DataMinerAdditionalSerializerError(DataMinerException):
     "This DataMiner has been provided with an additional, unnecessary Serializer."
@@ -978,9 +830,7 @@ class DataMinerAdditionalSerializerError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r provided additional Serializer key \"%s\": %r to DataMiner class \"%s\", which only supports keys [%s]" % (self.dataminer_settings, self.key, self.serializer, self.dataminer_class, ", ".join(sorted(self.allowed_keys)))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.dataminer_settings} provided additional Serializer key \"{self.key}\": {self.serializer} to DataMiner class \"{self.dataminer_class}\", which only supports keys [{", ".join(self.allowed_keys)}]{message(self.message)}"
 
 class DataMinerCollectionFileError(DataMinerException):
     "The \"files\" key in a DataMinerCollection is improperly specified."
@@ -997,12 +847,7 @@ class DataMinerCollectionFileError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        if self.exists:
-            output = "Key \"files\" of %r cannot exist" % (self.source,)
-        else:
-            output = "Key \"files\" of %r must exist" % (self.source,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Key \"files\" of {self.source} {"cannot" if self.exists else "must"} exist{message(self.message)}"
 
 class DataMinerDependencyOverwriteError(DataMinerException):
     "Attempted to set an item of a DataMinerDependencies object that already exists."
@@ -1019,9 +864,7 @@ class DataMinerDependencyOverwriteError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attempted to overwrite dependency \"%s\" of %r" % (self.dependency_name, self.dataminer_dependencies)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attempted to overwrite dependency \"{self.dependency_name}\" of {self.dataminer_dependencies}{message(self.message)}"
 
 class DataMinerDuplicateFileNameError(DataMinerException):
     "Two DataMinerCollections have the same file name."
@@ -1038,9 +881,7 @@ class DataMinerDuplicateFileNameError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "DataMinerCollections [%s] all have the same file name \"%s\"" % (", ".join(dataminer.name for dataminer in self.dataminers), self.file_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"DataMinerCollection [{", ".join(dataminer.name for dataminer in self.dataminers)}] all have the same file name \"{self.file_name}\"{message(self.message)}"
 
 class DataMinerFileTypePermissionError(DataMinerException):
     "A DataMiner attempted to access an VersionFileType it has no permissions to use."
@@ -1059,14 +900,7 @@ class DataMinerFileTypePermissionError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r attempted to access VersionFileType %s; permissions are lacking or it does not exist" % (self.dataminer, self.file_type_name)
-        if self.message is not None:
-            output += " %s" % (self.message,)
-        if self.allowed_file_types is None:
-            output += "!"
-        else:
-            output += ". It may only access %s!" % (self.allowed_file_types,)
-        return output
+        return f"{self.dataminer} attempted to access VersionFileType {self.file_type_name}; permissions are lacking or it does not exist{message(self.message, "", " %s")}{message(self.allowed_file_types, yes_message=". It may only access %s!")}"
 
 class DataMinerLacksActivateError(DataMinerException):
     "A DataMiner did not override the activate function."
@@ -1081,9 +915,7 @@ class DataMinerLacksActivateError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is missing its activate function" % (self.dataminer,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.dataminer} is missing its activate function{message(self.message)}"
 
 class DataMinerNothingFoundError(DataMinerException):
     "This DataMiner found nothing."
@@ -1098,9 +930,7 @@ class DataMinerNothingFoundError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r failed to find anything" % (self.dataminer,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.dataminer} failed to find anything{message(self.message)}"
 
 class DataMinerNullReturnError(DataMinerException):
     "The DataMiner's activate method has returned None."
@@ -1115,29 +945,7 @@ class DataMinerNullReturnError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r returned None upon being activated" % (self.dataminer)
-        if self.message is None:
-            output += "!"
-        else:
-            output += " %s" % (self.message,)
-        return output
-
-class DataMinerReadFilesError(DataMinerException):
-    "The DataMiner failed to read files."
-
-    def __init__(self, dataminer:"DataMiner.DataMiner", message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The DataMiner that failed to read files.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer, message)
-        self.dataminer = dataminer
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r failed to read files" % (self.dataminer,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.dataminer} returned None upon being activated{message(self.message)}"
 
 class DataMinerSerializerMissingError(DataMinerException):
     "A DataMiner class requires a Serializer and does not have one."
@@ -1156,9 +964,7 @@ class DataMinerSerializerMissingError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "DataMiner type \"%s\" from %r requires is missing Serializer \"%s\"" % (self.dataminer_type.__name__, self.dataminer_settings, self.serializer_key)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"DataMiner type \"{self.dataminer_type.__name__}\" from {self.dataminer_settings} is missing Serializer {self.serializer_key}{message(self.message)}"
 
 class DataMinerSettingsImporterLoopError(DataMinerException):
     "A DataMinerSettings has an import loop."
@@ -1175,9 +981,7 @@ class DataMinerSettingsImporterLoopError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has an import loop involving %s" % (self.dataminer_settings, self.loop_items)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.dataminer_settings} has an import loop involving {self.loop_items}{message(self.message)}"
 
 class DataMinersFailureError(DataMinerException):
     "Multiple DataMiners failed to activate."
@@ -1194,9 +998,7 @@ class DataMinersFailureError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Failed to datamine %r on DataMiners [%s]" % (self.version, ", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Failed to datamine {self.version} on DataMiners [{", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections)}]{message(self.message)}"
 
 class DataMinerUnrecognizedSerializerError(DataMinerException):
     "Called `export_file` on a DataMiner with no Serializer"
@@ -1213,9 +1015,7 @@ class DataMinerUnrecognizedSerializerError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attempted to call `export_file` on %r using non-existent Serializer key \"%s\"" % (self.dataminer, self.key)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attempted to call export_file on {self.dataminer} using non-existent Serializer key \"{self.key}\"{message(self.message)}"
 
 class DataMinerUnrecognizedDependencyError(DataMinerException):
     "A dependency does not exist."
@@ -1232,9 +1032,7 @@ class DataMinerUnrecognizedDependencyError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r references dependency \"%s\" that is non-existent for this Version" % (self.dataminer, self.dependency_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.dataminer} references dependency \"{self.dependency_name}\" that is non-existent for this Version{message(self.message)}"
 
 class DataMinerUnrecognizedSuffixError(DataMinerException):
     "A file suffix is unrecognized."
@@ -1253,12 +1051,7 @@ class DataMinerUnrecognizedSuffixError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r found unrecognized suffix on path \"%s\"; it is not in %s" % (self.dataminer, self.path, self.recognized_suffixes)
-        if self.message is None:
-            output += "!"
-        else:
-            output += "; %s!" % (self.message,)
-        return output
+        return f"{self.dataminer} found unrecognized suffix on path \"{self.path}\"; it is not in {self.recognized_suffixes}{message(self.message, yes_message="; %s!")}"
 
 class DataMinerUnregisteredDependencyError(DataMinerException):
     "The dependency exists, but is not listed as a dependency by this DataMiner."
@@ -1275,9 +1068,7 @@ class DataMinerUnregisteredDependencyError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r references unlisted dependency \"%s\"" % (self.dataminer, self.dependency_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.dataminer} references unlisted dependency \"{self.dependency_name}\"{message(self.message)}"
 
 class MissingDataFileError(DataMinerException):
     "The data file for this DataMinerCollection is missing."
@@ -1296,14 +1087,7 @@ class MissingDataFileError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "File %s of %s" % (self.file_name, self.dataminer)
-        if self.version is not None:
-            output += " of Version \"%s\"" % (self.version.name,)
-        if self.message is None:
-            output += " is missing!"
-        else:
-            output += " is missing %s!" % (self.message,)
-        return output
+        return f"File {self.file_name} of {self.dataminer}{message(self.version, "", "of Version \"%s\"", lambda version: version.name)} is missing{message(self.message)}"
 
 class NullDataMinerMethodError(DataMinerException):
     "An invalid exception has been called on a NullDataMiner."
@@ -1320,9 +1104,7 @@ class NullDataMinerMethodError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attempted to call method \"%s\" on %r" % (self.method.__name__, self.dataminer)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attemtped to call method \"{self.method.__name__}\" on {self.dataminer}{message(self.message)}"
 
 class TagSearcherDependencyError(DataMinerException):
     "A tag exists in a DataMiner that is not a dependency of this one."
@@ -1341,9 +1123,7 @@ class TagSearcherDependencyError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r could find %r in %r, but it is not a dependency" % (self.dataminer, self.tag, self.dataminer_collection)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.dataminer} could find {self.tag} in {self.dataminer_collection}, but it is not a dependency{message(self.message)}"
 
 class TagSearcherParseError(DataMinerException):
     "Failed to parse a TagSearcher expression."
@@ -1360,9 +1140,7 @@ class TagSearcherParseError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%s at position %i of expression \"%s\"" % (self.reason, self.data_reader.position, self.data_reader.data)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.reason} at position {self.data_reader.position} of expression \"{self.data_reader.data}\"{message(self.message)}"
 
 class DelegateException(Exception):
     "Abstract Exception class for errors relating to Delegates."
@@ -1390,28 +1168,7 @@ class InapplicableDelegateError(DelegateException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Delegate type \"%s\" can only be applied to types [%s], not %r" % (self.delegate_type.__name__, ", ".join("\"%s\"" % allowed_type.__name__ for allowed_type in self.allowed_types), self.structure)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class UnrecognizedDelegateError(DelegateException):
-    "A Delegate type is unrecognized."
-
-    def __init__(self, delegate_type_str:str, source_str:str, message:Optional[str]=None) -> None:
-        '''
-        :delegate_type_str: The name of the unrecognized Delegate type.
-        :source_str: The object that refers to this Delegate type.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(delegate_type_str, source_str, message)
-        self.delegate_type_str = delegate_type_str
-        self.source_str = source_str
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Delegate type \"%s\" is not recognized by %s" % (self.delegate_type_str, self.source_str)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Delegate type \"{self.delegate_type.__name__}\" can only be applied to types [{", ".join(f"\"{allowed_type.__name__}\"" for allowed_type in self.allowed_types)}], not {self.structure}{message(self.message)}"
 
 class LogException(Exception):
     "Abstract Exception class for errors relating to Logs."
@@ -1431,9 +1188,7 @@ class LogInvalidFileError(LogException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "The path of %r, \"%s\", is invalid" % (self.log, self.path.as_posix())
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"The path of {self.log}, \"{self.path.as_posix()}, is invalid{message(self.message)}"
 
 class LogWriteTypeError(LogException):
     "Attempted to write to a Log with an invalid type for the Log's LogType."
@@ -1452,9 +1207,7 @@ class LogWriteTypeError(LogException):
         self.message = message
     
     def __str__(self) -> str:
-        output = "Attempted to write to %r using type \"%s\" instead of types [%s]" % (self.log, self.write_type.__name__, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attempted to write to {self.log} using type \"{self.write_type.__name__}\" instead of types [{", ".join(f"\"{allowed_type.__name__}\"" for allowed_type in self.allowed_types)}]{message(self.message)}"
 
 class ManagerException(Exception):
     "Abstract Exception class for errors relating to Managers."
@@ -1476,12 +1229,7 @@ class DownloadManagerFailError(ManagerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r failed to download file" % (self.manager,)
-        if self.file is not None:
-            output += " \"%s\"" % (self.file,)
-        output += " from \"%s\"" % (self.url)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.manager} failed to download file{message(self.file, "", " \"%s\"")} from \"{self.url}\"{message(self.message)}"
 
 class ManagerUndefinedMethodError(ManagerException):
     "A Manager has a method that is not overridden by a subclass."
@@ -1498,9 +1246,7 @@ class ManagerUndefinedMethodError(ManagerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Method %s of %r was not overridden" % (self.function.__name__, self.manager)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Method {self.function.__name__} of {self.manager} was not overridden{message(self.message)}"
 
 class UnrecognizedManagerError(DataMinerException):
     "The Manager string is not recognized."
@@ -1517,14 +1263,7 @@ class UnrecognizedManagerError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Manager \"%s\"" % (self.manager_str)
-        if self.source is not None:
-            output += ", as referenced by %r," % (self.source,)
-        if self.message is None:
-            output += " does not exist!"
-        else:
-            output += " does not exist %s!" % (self.message,)
-        return output
+        return f"Manager \"{self.manager_str}\"{message(self.source, "", ", as referenced by %s,")} does note exist{message(self.message)}"
 
 class ScriptException(Exception):
     "Abstract Exception class for errors relating to Scripts."
@@ -1544,9 +1283,7 @@ class InvalidScriptFileSuffix(ScriptException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Invalid file suffix \"%s\" on file \"%s\"" % (self.suffix, self.name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Invalid file suffix \"{self.suffix}\" on file \"{self.name}\"{message(self.message)}"
 
 class InvalidScriptObjectTypeError(ScriptException):
     "An object in a Script has the wrong type."
@@ -1565,26 +1302,24 @@ class InvalidScriptObjectTypeError(ScriptException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r in %r should be one of types [%s] instead of type \"%s\"" % (self.object, self.script, ", ".join("\"%s\"" % (allowed_type.__name__) for allowed_type in self.allowed_types), type(self.object))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.object} in {self.script} should be one of types [{", ".join(f"\"{allowed_type.__name__}\"" for allowed_type in self.allowed_types)}] instead of type \"{self.object.__class__.__name__}\"{message(self.message)}"
 
 class ScriptedClassMissingInheritError(ScriptException):
     "A scripted type failed to correctly inherit."
 
-    def __init__(self, class_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, class_name:str, should_inherit_from:type, message:Optional[str]=None) -> None:
         '''
         :class_name: The name of the type class that failed to inherit.
+        :should_inherit_from: the type the class should subclass.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(class_name, message)
+        super().__init__(class_name, should_inherit_from, message)
         self.class_name = class_name
+        self.should_inherit_from = should_inherit_from
         self.message = message
 
     def __str__(self) -> str:
-        output = "Scripted class \"%s\" is missing the \"inherit\" key" % (self.class_name,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Scripted class \"{self.class_name} does not inherit from {self.should_inherit_from.__name__}{message(self.message)}"
 
 class ScriptFailureError(ScriptException):
     "A Script has failed to load."
@@ -1599,9 +1334,7 @@ class ScriptFailureError(ScriptException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r failed to load" % (self.script,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.script} failed to load{message(self.message)}"
 
 class ScriptNameCollideError(ScriptException):
     "A Script has the same stem as another Script in the same folder."
@@ -1618,9 +1351,7 @@ class ScriptNameCollideError(ScriptException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Scripts on paths \"%s\" and \"%s\" have the same stem" % (self.script_path1, self.script_path2)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Scripts on paths \"{self.script_path1}\" and \"{self.script_path2}\" have the same stem{message(self.message)}"
 
 class UnrecognizedScriptError(ScriptException):
     "An unrecognized Script was referenced."
@@ -1635,16 +1366,14 @@ class UnrecognizedScriptError(ScriptException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Unrecognized Script \"%s\"" % (self.script_name,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Unrecognized Script \"{self.script_name}\"{message(self.message)}"
 
 class WrongScriptError(ScriptException):
     "Attempted to import a Script that exists, but cannot be used in this situation."
 
     def __init__(self, script:"Scripts.Script", message:Optional[str]=None) -> None:
         '''
-        :script: The Script that cannot be used in this situation:
+        :script: The Script that cannot be used in this situation.
         :message: Additional text to place after the main message.
         '''
         super().__init__(script, message)
@@ -1652,31 +1381,10 @@ class WrongScriptError(ScriptException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Cannot load %r in this situation" % (self.script,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Cannot load {self.script} in this situation{message(self.message)}"
 
 class SerializerException(Exception):
     "Abstract Exception class for errors relating to Serializers"
-
-class MediaSerializerFailedError(SerializerException):
-    "MediaSerializer has \"Error\" in its output."
-
-    def __init__(self, serializer:"Serializer.Serializer", error_message:str, message:Optional[str]=None) -> None:
-        '''
-        :serializer: The MediaSerializer that failed.
-        :error_message: The content of the "Error" key.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(serializer, error_message, message)
-        self.serializer = serializer
-        self.error_message = error_message
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r gave error \"%s\"" % (self.serializer, self.error_message)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
 
 class SerializationFailureError(SerializerException):
     "A Serializer failed to serialize."
@@ -1693,9 +1401,7 @@ class SerializationFailureError(SerializerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r failed to serialize file \"%s\"" % (self.serializer, self.file_name)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.serializer} failed to serialize file \"{self.file_name}\"{message(self.message)}"
 
 class SerializerMethodNonexistentError(SerializerException):
     "A Serializer's method does not exist and was called."
@@ -1712,9 +1418,7 @@ class SerializerMethodNonexistentError(SerializerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is missing method %s" % (self.serializer, self.method.__name__)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.serializer} is missing method {self.method.__name__}{message(self.message)}"
 
 class UnrecognizedSerializerInFileError(SerializerException):
     "A Serializer's name in a stored File does not exist."
@@ -1731,9 +1435,7 @@ class UnrecognizedSerializerInFileError(SerializerException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attempted to create File with name \"%s\" and hash \"%s\" using non-existent Serializer \"%s\"" % (self.name, self.hash, self.serializer)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attempted to create File with name \"{self.name}\" and hash \"{self.hash}\" using non-existent Serializer \"{self.serializer}\"{message(self.message)}"
 
 class StructureException(Exception):
     "Abstract Exception class for errors relating to Structures"
@@ -1753,12 +1455,7 @@ class CompareWithNoneError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        if self.key is None:
-            output = "Attempted to compare with %r using a NoneType object" % (self.structure,)
-        else:
-            output = "Attempted to compare with key %s on %r using a NoneType object" % (self.key, self.structure)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attempted to compare with {message(self.key, "", "key %s on ")}{self.structure} using a NoneType object{message(self.message)}"
 
 class ComparisonEnvironmentNoVersionError(StructureException):
     "A ComparisonEnvironment has no non-None items in its Version list."
@@ -1773,9 +1470,7 @@ class ComparisonEnvironmentNoVersionError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has no non-None versions" % (self.environment,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.environment} has non non-None Versions{message(self.message)}"
 
 class DiffContinuityError(StructureException):
     "Attempted to create a Diff with overlapping branches."
@@ -1792,9 +1487,7 @@ class DiffContinuityError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Attempted to create a Diff with branch %i overlapping with one of [%s]" % (self.overlapping_branches, ", ".join(str(branch) for branch in self.all_branches))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Attempted to create a Diff with branch {self.overlapping_branches} overlapping with one of [{", ".join(str(branch) for branch in self.all_branches)}]{message(self.message)}"
 
 class DiffExistenceError(StructureException):
     "The Diff object has no items except for NoExist."
@@ -1809,14 +1502,12 @@ class DiffExistenceError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has no items besides NoExist" % (self.diff,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.diff} has no items besides NoExist{message(self.message)}"
 
 class DiffKeyError(StructureException):
     "The Diff object does not have anything at the position indexed."
 
-    def __init__(self, index:int|tuple[int,...], diff:"D.Diff[a]", message:Optional[str]=None) -> None:
+    def __init__(self, index:int|tuple[int,...], diff:"D.Diff", message:Optional[str]=None) -> None:
         '''
         :index: The index used to access the Diff.
         :diff: The Diff that was indexed.
@@ -1828,47 +1519,7 @@ class DiffKeyError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r does not have an item at index %s" % (self.diff, self.index)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class DiffLengthError(StructureException):
-    "Attempted to create a multi-Diff with a length that does not match the correct length"
-
-    def __init__(self, current_length:int, desired_length:int, message:Optional[str]=None) -> None:
-        '''
-        :current_length: The number of items attempting to be made into a diff.
-        :desired_length: The length that the items should be.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(current_length, desired_length, message)
-        self.current_length = current_length
-        self.desired_length = desired_length
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Attempted to create a diff with with a length of %i instead of %i" % (self.current_length, self.desired_length)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class DiffsLengthError(StructureException):
-    "Two Diffs cannot be zipped because of different lengths."
-
-    def __init__(self, diff1:"D.Diff", diff2:"D.Diff", message:Optional[str]=None) -> None:
-        '''
-        :diff1: The first Diff attempted to be zipped.
-        :diff2: The second Diff attempted to be zipped.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(diff1, diff2, message)
-        self.diff1 = diff1
-        self.diff2 = diff2
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Cannot zip %r is [0, %i) and %r is [0, %i)" % (self.diff1, len(self.diff1), self.diff2, len(self.diff2))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.diff} does not have an item at index {self.index}{message(self.message)}"
 
 class InvalidFileHashType(StructureException):
     "An is_file StructureTag references data that cannot be interpreted as a file hash."
@@ -1886,9 +1537,7 @@ class InvalidFileHashType(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Data %s at path %s of %r of %r is not a valid file hash" % (self.data_path.embedded_data, self.data_path, self.structure_tag, self.version)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Data {self.data_path.embedded_data} at path {self.data_path} of {self.structure_tag} of {self.version} is not a valid file hash{message(self.message)}"
 
 class InvalidSimilarityError(StructureException):
     "A calulated similarity is not in [0.0, 1.0]"
@@ -1909,10 +1558,7 @@ class InvalidSimilarityError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has a similarity of %.4f" % (self.structure, self.similarity)
-        output += ": " if self.message is None else " %s: " % (self.message,)
-        output += "on data %s and %s" % (self.data1, self.data2)
-        return output
+        return f"{self.structure} has a similarity of {self.similarity}{message(self.message, "", " %s")} on data {self.data1} and {self.data2}!"
 
 class NormalizerNoneError(StructureException):
     "A Normalizer has returned None where it should return something."
@@ -1924,9 +1570,7 @@ class NormalizerNoneError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r, as referenced by %r, returned None when it shouldn't have" % (self.normalizer, self.source)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.normalizer}, as referenced by {self.source}, returned None when it shouldn't have{message(self.message)}"
 
 class SequenceTooLongError(StructureException):
     "A StringStructure or SequenceStructure cannot compare or get similarity of data because it is too long."
@@ -1945,9 +1589,7 @@ class SequenceTooLongError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r attempted to compare/get similarity of data too long: first is %i long; second is %i long" % (self.structure, self.len1, self.len2)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.structure} attempted to compare/get similarity of data too long: first is {self.len1} long; second is {self.len2} long{message(self.message)}"
 
 class StructuresCompareFailureError(StructureException):
     "Multiple Structures failed to compare."
@@ -1962,9 +1604,7 @@ class StructuresCompareFailureError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Failed to compare on Structures [%s]" % (", ".join(self.structure_names))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Failed to compare on Structures [{", ".join(self.structure_names)}]{message(self.message)}"
 
 class StructureCannotPrintFlatError(StructureException):
     "Some data cannot be printed on a single line."
@@ -1977,9 +1617,7 @@ class StructureCannotPrintFlatError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Data cannot be printed flat"
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Data cannot be printed flat{message(self.message)}"
 
 class StructureError(StructureException):
     "A StructureBase has failed."
@@ -1994,9 +1632,7 @@ class StructureError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has failed" % (self.structure_base,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.structure_base} has failed{message(self.message)}"
 
 class StructureExceptionError(StructureException):
     "An error occured where it should not."
@@ -2015,27 +1651,7 @@ class StructureExceptionError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has errors in function \"%s\" where it should not" % (self.structure, self.function.__name__)
-        output += ": " if self.message is None else " %s: " % (self.message,)
-        output += "[%s]" % (", ".join(exception.finalize().stringify() for exception in self.exceptions))
-        return output
-
-class StructureHashError(StructureException):
-    "A Structure failed to hash an unknown type."
-
-    def __init__(self, unhashable_type:type, message:Optional[str]=None) -> None:
-        '''
-        :unhashable_type: The type that could not be hashed.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(unhashable_type, message)
-        self.unhashable_type = unhashable_type
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Failed to hash %r" % (self.unhashable_type,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.structure} has errors in function \"{self.function.__name__}\" where it should not{message(self.message, "", " %s")}: [{", ".join(exception.finalize().stringify() for exception in self.exceptions)}]"
 
 class StructureRequiredKeyMissingError(StructureException):
     "A required key is missing."
@@ -2052,9 +1668,7 @@ class StructureRequiredKeyMissingError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Required key \"%s\" from %r is missing" % (self.key, self.structure)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Required key \"{self.key}\" from {self.structure} is missing{message(self.message)}"
 
 class StructureTypeError(StructureException):
     "Data given to a Structure has the wrong type. This Error should only be used with ErrorTraces."
@@ -2073,9 +1687,7 @@ class StructureTypeError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%s must have a type of one of [%s], not \"%s\"" % (self.label, ", ".join("\"%s\"" % required_type.__name__ for required_type in self.required_types), self.actual_type.__name__)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.label} must have a type of one of [{", ".join(f"\"{required_type.__name__}\"" for required_type in self.required_types)}], not \"{self.actual_type.__name__}\"{message(self.message)}"
 
 class StructureUnrecognizedKeyError(StructureException):
     "A key in some data is not a recognized key."
@@ -2092,9 +1704,7 @@ class StructureUnrecognizedKeyError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%s \"%s\" is not recognized" % (self.label, self.unrecognized_key)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.label} \"{self.unrecognized_key}\" is not recognized{message(self.message)}"
 
 class TraceError(StructureException):
     "The operation cannot be performed on this Trace due to its finalization being wrong."
@@ -2113,13 +1723,7 @@ class TraceError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Cannot perform function \"%s\" on %r due to it being " % (self.function.__name__, self.trace)
-        if self.is_finalized:
-            output += "finalized"
-        else:
-            output += "not finalized"
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Cannot perform function \"{self.function.__name__}\" on {self.trace} due to it being {"finalized" if self.is_finalized else "not finalized"}{message(self.message)}"
 
 class UnrecognizedStructureTagError(StructureException):
     "A StructureTag referenced in a tag expression does not exist."
@@ -2136,9 +1740,7 @@ class UnrecognizedStructureTagError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Unrecognized tag \"%s\" referenced in expression \"%s\"" % (self.tag_name, self.expression)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Unrecognized tag \"{self.tag_name}\" referenced in expression \"{self.expression}{message(self.message)}"
 
 class TypeVerifierException(Exception):
     "Abstract Exception class for errors relating to TypeVerifiers."
@@ -2156,9 +1758,7 @@ class TypeVerificationFailedError(TypeVerifierException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r failed verification" % (self.type_verifier,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.type_verifier} failed verification{message(self.message)}"
 
 class TypeVerifierDisallowedError(TypeVerifierException):
     "A TypeVerifier appears in an invalid spot in a JSON TypeVerifier."
@@ -2173,9 +1773,7 @@ class TypeVerifierDisallowedError(TypeVerifierException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Type field %s contains a TypeVerifier and should not" % (self.data,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Type field {self.data} contains a TypeVerifier and should not{message(self.message)}"
 
 class TypeVerificationTypeException(TypeVerifierException):
     "Abstract Exception class for errors that are passed around by TypeVerifiers."
@@ -2194,7 +1792,7 @@ class TypeVerificationEnumError(TypeVerificationTypeException):
         self.value = value
 
     def __str__(self) -> str:
-        return "%s is not one of %s, but instead %s!" % (self.trace.to_str(), self.options, self.value)
+        return f"{self.trace.to_str()} is not one of {self.options}, but instead {self.value}"
 
 class TypeVerificationFunctionError(TypeVerificationTypeException):
 
@@ -2204,16 +1802,7 @@ class TypeVerificationFunctionError(TypeVerificationTypeException):
         self.data = data
 
     def __str__(self) -> str:
-        if self.message is None:
-            if self.data is None:
-                return "%s failed verification!" % (self.trace.to_str())
-            else:
-                return "%s (data %s) failed verification!" % (self.trace.to_str(), self.data)
-        else:
-            if self.data is None:
-                return "%s failed verification due to \"%s\"!" % (self.trace.to_str(), self.message)
-            else:
-                return "%s (data %s) failed verification due to \"%s\"!" % (self.trace.to_str(), self.data, self.message)
+        return f"{self.trace.to_str()}{message(self.data, "", " (data %s)")} failed verification{message(self.message, yes_message=" due to \"%s\"!")}"
 
 class TypeVerificationMissingKeyError(TypeVerificationTypeException):
 
@@ -2221,7 +1810,7 @@ class TypeVerificationMissingKeyError(TypeVerificationTypeException):
         super().__init__(trace)
 
     def __str__(self) -> str:
-        return "Required %s is missing!" % (self.trace.to_str(capitalize=False))
+        return f"Required {self.trace.to_str(capitalize=False)} is missing!"
 
 class TypeVerificationTypeError(TypeVerificationTypeException):
 
@@ -2231,7 +1820,7 @@ class TypeVerificationTypeError(TypeVerificationTypeException):
         self.observed_type = observed_type
 
     def __str__(self) -> str:
-        return "%s is not %s, but instead %s!" % (self.trace.to_str(), self.expected_type, self.observed_type.__name__)
+        return f"{self.trace.to_str() is not {self.expected_type}}, but instead {self.observed_type.__name__}"
 
 class TypeVerificationUnionError(TypeVerificationTypeException):
 
@@ -2242,7 +1831,7 @@ class TypeVerificationUnionError(TypeVerificationTypeException):
         self.causes = causes
 
     def __str__(self) -> str:
-        return "%s is not %s, but instead %s due to %s!" % (self.trace.to_str(), self.expected_type, self.observed_type.__name__, [[str(exception) for exception in exception_list] for exception_list in self.causes])
+        return f"{self.trace.to_str()} is not {self.expected_type}, but instead {self.observed_type.__name__} due to {[[str(exception) for exception in exception_list] for exception_list in self.causes]}"
 
 class TypeVerificationUnrecognizedKeyError(TypeVerificationTypeException):
 
@@ -2250,7 +1839,7 @@ class TypeVerificationUnrecognizedKeyError(TypeVerificationTypeException):
         super().__init__(trace)
 
     def __str__(self) -> str:
-        return "%s is an unrecognized key!" % (self.trace.to_str())
+        return f"{self.trace.to_str()} is an unrecognized key!"
 
 class TypeVerificationWrongLengthError(TypeVerificationTypeException):
 
@@ -2260,7 +1849,7 @@ class TypeVerificationWrongLengthError(TypeVerificationTypeException):
         self.observed_length = observed_length
 
     def __str__(self) -> str:
-        return "%s is not length %i, but instead length %i!" % (self.trace.to_str(), self.expected_length, self.observed_length)
+        return f"{self.trace.to_str()} is not length {self.expected_length}, but instead length {self.observed_length}!"
 
 class VersionException(Exception):
     "Abstract Exception class for errors relating to Versions."
@@ -2280,13 +1869,7 @@ class DuplicateVersionTagOrderError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is duplicated in " % (self.tag,)
-        if isinstance(self.key, tuple):
-            output += "keys [%s] of VersionTagOrder" % (", ".join("\"%s\"" % key for key in self.key),)
-        else:
-            output += "key \"%s\" of VersionTagOrder" % (self.key,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.tag} is duplicated in {f"keys [{", ".join(f"\"{key}\"" for key in self.key)}]" if isinstance(self.key, tuple) else f"key \"{self.key}\""} of VersionTagOrder{message(self.message)}"
 
 class InvalidParentVersionError(VersionException):
     "A Version has an invalid parent Version."
@@ -2303,9 +1886,7 @@ class InvalidParentVersionError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has an invalid parent %r" % (self.version, self.parent)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version} has an invalid parent {self.parent}{message(self.message)}"
 
 class InvalidVersionTimeError(VersionException):
     "A Version has an invalid time."
@@ -2324,9 +1905,7 @@ class InvalidVersionTimeError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has an invalid time %s because %s" % (self.version, self.time, self.reason)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version} has an invalid time {self.time} because {self.reason}{message(self.message)}"
 
 class NoOrderVersionTagsFoundError(VersionException):
     "No ordering VersionTags were found."
@@ -2343,9 +1922,7 @@ class NoOrderVersionTagsFoundError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "No ordering tags found within %r's tags: %s" % (self.version, self.version_tags)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"No ordering tags found with {self.version}'s tags: {self.version_tags}{message(self.message)}"
 
 class NotAllOrderTagsUsedError(VersionException):
     "Not all ordering VersionTags were used."
@@ -2362,13 +1939,7 @@ class NotAllOrderTagsUsedError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r was not used in " % (self.tag,)
-        if isinstance(self.key, tuple):
-            output += "keys [%s] of VersionTagOrder" % (", ".join("\"%s\"" % key for key in self.key))
-        else:
-            output += "key \"%s\" of VersionTagOrder" % (self.key,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.tag} was not used in {f"keys [{", ".join(f"\"key\"" for key in self.key)}]" if isinstance(self.key, tuple) else f"key \"{self.key}\""} of VersionTagOrder{message(self.message)}"
 
 class NotAnOrderTagError(VersionException):
     "The VersionTag is not an ordering tag."
@@ -2383,9 +1954,7 @@ class NotAnOrderTagError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is not an ordering tag" % (self.tag,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.tag} is not an ordering tag{message(self.message)}"
 
 class UnreleasedDownloadableVersionError(VersionException):
     "A Version has the unreleased tag and has a method for downloading."
@@ -2402,9 +1971,7 @@ class UnreleasedDownloadableVersionError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r cannot exist when %r is unreleased" % (self.version_file, self.version)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version_file} cannot exist when {self.version} is unreleased{message(self.message)}"
 
 class VersionChildError(VersionException):
     "The parent Version's ordering tag and child Version's ordering tag cannot go together."
@@ -2425,9 +1992,7 @@ class VersionChildError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r (tag %r), child of %r (tag %r) is not a valid child type of a %r"% (self.child_version, self.child_tag, self.parent_version, self.parent_tag, self.parent_tag)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.child_version} (tag {self.child_tag}), child of {self.parent_version} (tag {self.parent_tag}) is not a valid child type of a {self.parent_tag}{message(self.message)}"
 
 class VersionChildOfMultipleTopLevelVersionsError(VersionException):
     "The Version is a child of multiple top-level Versions."
@@ -2442,9 +2007,7 @@ class VersionChildOfMultipleTopLevelVersionsError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is a child of multiple top-level Versions" % (self.version,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version} is a child of multiple top-level Versions{message(self.message)}"
 
 class VersionChildOrderError(VersionException):
     "The Version's children are in an invalid order."
@@ -2463,9 +2026,7 @@ class VersionChildOrderError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "The children of %r, [%s], are in an invalid order at child %r" % (self.version, (child_tag.name for child_tag in self.child_tags), self.error_child)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"The children of {self.version}, [{", ".join(child_tag.name for child_tag in self.child_tags)}], are in an invalid order at child {self.error_child}{message(self.message)}"
 
 class VersionOrderingTagsError(VersionException):
     "The Version has none or too many ordering VersionTags."
@@ -2484,13 +2045,7 @@ class VersionOrderingTagsError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r lacks ordering VersionTags, only has [%s]" % (self.version)
-        if self.count == 0:
-            output += "lacks ordering VersionTags, only has [%s]" % (", ".join(tag.name for tag in self.tags))
-        else:
-            output += "has too many ordering VersionTags, has [%s]" % (", ".join(tag.name for tag in self.tags))
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version} {"lacks" if self.count == 0 else "has too many"} ordering VersionTags; has [{", ".join(tag.name for tag in self.tags)}]{message(self.message)}"
 
 class VersionOrderSequenceError(VersionException):
     "A Version is before or after a tag that it shouldn't be."
@@ -2513,9 +2068,7 @@ class VersionOrderSequenceError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Child %r (tag %r) of %r (tag %r) comes %s the latter" % (self.child_version, self.child_tag, self.parent_version, self.parent_tag, self.time_text)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Child {self.child_version} (tag {self.child_tag}) of {self.parent_version} (tag {self.parent_tag}) comes {self.time_text} the latter{message(self.message)}"
 
 class VersionOutOfRangeError(VersionException):
     "The Version is not in a VersionRange."
@@ -2532,11 +2085,7 @@ class VersionOutOfRangeError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Version \"%s\" is not within the VersionRange " % (self.version,)
-        if self.version_range is not None:
-            output += "%r" % (self.version_range,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Version {self.version} is not within the VersionRange{message(self.version_range, "", "%r")}{message(self.message)}"
 
 class VersionRangeOrderError(VersionException):
     "The old and new Versions of a VersionRange are switched."
@@ -2561,9 +2110,7 @@ class VersionRangeOrderError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "The Versions of %r, %r (start) and %r (stop), are switched" % (self.version_range, self.start_version, self.stop_version)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"The Versions of {self.version_range}, {self.start_version} (start) and {self.stop_version} (stop), are switched{message(self.message)}"
 
 class VersionTagExclusivePropertyError(VersionException):
     "A VersionTag has properties that are mutually exclusive."
@@ -2576,6 +2123,13 @@ class VersionTagExclusivePropertyError(VersionException):
         :message: Additional text to place after the main message.
         '''
         super().__init__(source, property1, property2, message)
+        self.source = source
+        self.property1 = property1
+        self.property2 = property2
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.source} cannot have both {self.property1} and {self.property2}{message(self.message)}"
 
 class VersionTimeTravelError(VersionException):
     "A Version's children are not in order chronologically."
@@ -2598,9 +2152,7 @@ class VersionTimeTravelError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Date of child %r (%s) comes after date of child %r (%s) despite being before it in the children of %r" % (self.previous_child, self.previous_time, self.current_child, self.current_time, self.parent)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Date of child {self.previous_child} ({self.previous_time}) comes after date of child {self.current_child} ({self.current_time}) despite being before it in the children of {self.parent}{message(self.message)}"
 
 class VersionTopLevelError(VersionException):
     "A Version is a top-level Version but has no top-level VersionTag."
@@ -2617,9 +2169,7 @@ class VersionTopLevelError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is a top-level Version, but does not have the top-level %r" % (self.version, self.top_level_tag)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version} is a top-level Version, but does not have the top-level {self.top_level_tag}{message(self.message)}"
 
 class VersionFileException(Exception):
     "Abstract Exception class for errors relating to VersionFiles or VersionFileTypes."
@@ -2639,9 +2189,7 @@ class RequiredVersionFileTypeMissingError(VersionFileException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Required %r is missing in %r" % (self.file_type, self.version)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Required {self.file_type} is missing in {self.version}{message(self.message)}"
 
 class VersionFileInvalidAccessorError(VersionFileException):
     "The VersionFile has an invalid Accessor."
@@ -2658,9 +2206,7 @@ class VersionFileInvalidAccessorError(VersionFileException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r does not recognize accessor \"%s\"" % (self.version_file, self.accessor_str)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version_file} does not recognize Accessor \"{self.accessor_str}\"{message(self.message)}"
 
 class VersionFileNoAccessorsError(VersionFileException):
     "The VersionFile has no Accessors."
@@ -2675,11 +2221,7 @@ class VersionFileNoAccessorsError(VersionFileException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r has no available Accessors" % (self.version_file,)
-        if self.version_file.has_accessors():
-            output += " from [%s]" % (repr(accessor) for accessor in self.version_file.get_accessors())
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version_file} has no available Accessors{message_bool(self.version_file.has_accessors(), "", lambda: f" from [{", ".join(repr(accessor) for accessor in self.version_file.get_accessors())}]")}{message(self.message)}"
 
 class VersionFileTypeNotAutoAssigning(VersionFileException):
     "The VersionFileType does not auto assign."
@@ -2694,6 +2236,4 @@ class VersionFileTypeNotAutoAssigning(VersionFileException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "%r is not an auto-assigning VersionFileType" % (self.version_file_type,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"{self.version_file_type} is not an auto-assigning VersionFileType{message(self.message)}"

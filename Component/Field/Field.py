@@ -8,13 +8,12 @@ import Utilities.Exceptions as Exceptions
 
 
 def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:
+    capitalize_function:Callable[[str,bool],str] = lambda string, capitalize: string.capitalize() if capitalize else string
     return "".join(
-        ("%sey \"%s\" of " % ("K" if index == 0 and is_capital else "k", key)) if isinstance(key, str)
-        else ("%stem %i of " % ("I" if index == 0 and is_capital else "i", key))
+        capitalize_function(f"key \"{key}\" of " if isinstance(key, str) else f"item {key} of ", index == 0 and is_capital)
         for index, key in enumerate(reversed(keys))
     )
 
-a = TypeVar("a", bound=Component.Component)
 
 class InlinePermissions(enum.Enum):
     "Use when creating a Field to specify if it's allowed to have inline Components."
@@ -66,7 +65,7 @@ def choose_component[a: Component.Component](
                 if component is not None:
                     break
         if component is None:
-            raise Exceptions.UnrecognizedComponentError(component_data, "%s%r" % (get_keys_strs(False, keys), source_component), "(should have %r)" % (required_properties,))
+            raise Exceptions.UnrecognizedComponentError(component_data, f"{get_keys_strs(False, keys)}{source_component}", f"(should have {required_properties})")
     else:
         is_inline = True
         component = create_component_function(component_data, source_component, assume_type)
@@ -124,4 +123,4 @@ class Field():
         return []
 
     def __repr__(self) -> str:
-        return "<%s id %i>" % (self.__class__.__name__, id(self))
+        return f"<{self.__class__.__name__} id {id(self)}>"

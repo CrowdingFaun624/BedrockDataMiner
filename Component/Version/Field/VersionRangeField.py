@@ -47,7 +47,7 @@ class VersionRangeField(FieldContainer.FieldContainer[OptionalVersionField.Optio
         return exceptions
 
     def __repr__(self) -> str:
-        return "<VersionRangeField \"%s\"–\"%s\">" % (str(self.start_version_field.subcomponent_data), str(self.stop_version_field.subcomponent_data))
+        return f"<{self.__class__.__name__} \"{str(self.start_version_field.subcomponent_data)}\"–\"{str(self.stop_version_field.subcomponent_data)}\">"
 
     def get_final(self) -> VersionRange.VersionRange:
         return VersionRange.VersionRange(self.start_version_field.get_final(), self.stop_version_field.get_final())

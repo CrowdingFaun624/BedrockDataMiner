@@ -35,7 +35,7 @@ def main_read_file() -> None:
     path = None
     while path is None or not path.exists():
         user_input = input("Place nbt file in Programs directory and type its name: ")
-        path = Path("./Programs/%s" % (user_input,))
+        path = Path(f"./Programs/{user_input}")
     is_gzipped, endianness = UserInput.input_single({"yl": (True, Endianness.End.LITTLE), "yb": (True, Endianness.End.BIG), "nl": (False, Endianness.End.LITTLE), "nb": (False, Endianness.End.BIG)}, "g-zippedness and endianness", show_options=True)
     with open(path, "rb") as f:
         data = unpack_file(f, gzipped=is_gzipped, endianness=endianness)
@@ -52,15 +52,15 @@ def string_test(data:NbtTypes.TAG|type[Exception], data_string:str|None=None) ->
             traceback.print_exception(e)
         else:
             if type(e) != data:
-                raise NbtExceptions.NbtTestFailureError("Error is not expected from %s!" % (data_string))
+                raise NbtExceptions.NbtTestFailureError(f"Error is not expected from {data_string}!")
     if not isinstance(data, Exception):
         if reparsed_data is None:
-            raise NbtExceptions.NbtTestFailureError("Failed to parse data %s!" % (data_string))
+            raise NbtExceptions.NbtTestFailureError(f"Failed to parse data {data_string}!")
         if data != reparsed_data:
-            raise NbtExceptions.NbtTestFailureError("Parsed data is not equal to original data: original: %s, reparsed: %s" % (data, reparsed_data))
+            raise NbtExceptions.NbtTestFailureError(f"Parsed data is not equal to original data: original: {data}, reparsed: {reparsed_data}")
     else:
         if reparsed_data is not None:
-            raise NbtExceptions.NbtTestFailureError("Expected an error from %s, %s" % (data_string, reparsed_data))
+            raise NbtExceptions.NbtTestFailureError(f"Expected an error from {data_string}, {reparsed_data}")
 
 def main_string_demo() -> None:
     # byte test

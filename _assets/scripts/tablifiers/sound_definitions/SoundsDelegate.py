@@ -29,12 +29,12 @@ class SoundsDelegate(Delegate.Delegate[str, AbstractIterableStructure.AbstractIt
                     value = item.get(branch)
                     if branch == 0:
                         if item.get(branches[branch_index + 1]) is not D.NoExist:
-                            upcoming_notes.append("{{Until|BE %s}}" % (PrimitiveDelegate.get_version(branches[branch_index + 1], True, environment),))
+                            upcoming_notes.append(f"{{{{Until|BE {PrimitiveDelegate.get_version(branches[branch_index + 1], True, environment)}}}}}")
                     elif value is D.NoExist:
-                        upcoming_notes.append("{{Until|BE %s}}" % (PrimitiveDelegate.get_version(branch, True, environment),))
+                        upcoming_notes.append(f"{{{{Until|BE {PrimitiveDelegate.get_version(branch, True, environment)}}}}}")
                     else:
-                        upcoming_notes.append("{{Upcoming|BE %s}}" % (PrimitiveDelegate.get_version(branch, True, environment),))
-                upcoming_note = " (%s)" % (" ".join(upcoming_notes),)
+                        upcoming_notes.append(f"{{{{Upcoming|BE {PrimitiveDelegate.get_version(branch, True, environment)}}}}}")
+                upcoming_note = f" ({" ".join(upcoming_notes)})"
             else:
                 upcoming_note = ""
             structure, new_exceptions = self.get_structure().get_structure(index, item)
@@ -42,5 +42,5 @@ class SoundsDelegate(Delegate.Delegate[str, AbstractIterableStructure.AbstractIt
             assert structure is not None
             comparison, any_changes, new_exceptions = structure.compare_text(D.last_value(item), environment)
             has_changes = has_changes or any_changes
-            output.append("%s%s" % (comparison, upcoming_note))
+            output.append(f"{comparison}{upcoming_note}")
         return "<br>".join(output), has_changes, exceptions

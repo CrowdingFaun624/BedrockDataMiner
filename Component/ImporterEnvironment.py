@@ -76,4 +76,4 @@ class ImporterEnvironment[a]():
         ...
 
     def __repr__(self) -> str:
-        return "<%s %i>" % (self.__class__.__name__, id(self))
+        return f"<{self.__class__.__name__} {id(self)}>"

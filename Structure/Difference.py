@@ -15,7 +15,7 @@ class _NoExistType():
         raise Exceptions.CannotStringifyError(type(self))
 
     def __repr__(self) -> str:
-        return "<%s>" % (self.__class__.__name__,)
+        return f"<{self.__class__.__name__}>"
 
 NoExist = _NoExistType()
 
@@ -182,7 +182,7 @@ class Diff[Dt1]():
         return output
 
     def __repr__(self) -> str:
-        return "<Diff %s>" % (" → ".join("%s at %s" % (item, index[0] if len(index) == 1 else index) for index, item in self.items.items()))
+        return f"<Diff {" → ".join(f"{item} at {index[0] if len(index) == 1 else index}" for index, item in self.items.items())}>"
 
     def __hash__(self) -> int:
         return hash(tuple(self.items.items()))

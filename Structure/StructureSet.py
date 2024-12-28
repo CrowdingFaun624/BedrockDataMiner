@@ -26,7 +26,7 @@ class StructureSet[d]():
         }
 
     def __repr__(self) -> str:
-        return "<StructureSet %s>" % self.structures
+        return f"<{self.__class__.__name__} {self.structures}>"
 
     def __len__(self) -> int:
         return len(self.structures)

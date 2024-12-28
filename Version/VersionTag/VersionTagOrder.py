@@ -52,6 +52,6 @@ class VersionTagOrder():
 
     def __repr__(self) -> str:
         if self.top_level_tag is None:
-            return "<%s uninitialized>" % (self.__class__.__name__)
+            return f"<{self.__class__.__name__} uninitialized>"
         else:
-            return "<%s top: %s>" % (self.__class__.__name__, self.top_level_tag)
+            return f"<{self.__class__.__name__} top: {self.top_level_tag}>"

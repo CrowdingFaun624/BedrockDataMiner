@@ -38,11 +38,11 @@ class DataMinerClassPlan(TestUtil.Plan[DataMinerClass]):
                     break
             else:
                 assert False
-        print("Scanning %i DataMinerCollections in %r" % (len(dataminer_collections), version))
+        print(f"Scanning {len(dataminer_collections)} DataMinerCollections in {version}")
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types)
         failed_dataminer_classes:list[DataMinerClass] = []
         for dataminer_collection, exception in DataMiners.run(version, dataminer_collections, structure_environment, recalculate_everything=True, print_messages=False):
-            print("%r on %r" % (dataminer_collection, version))
+            print(f"{dataminer_collection} on {version}")
             if exception is not None:
                 traceback.print_exception(exception)
             if isinstance(dataminer_collection, DataMinerCollection.DataMinerCollection):

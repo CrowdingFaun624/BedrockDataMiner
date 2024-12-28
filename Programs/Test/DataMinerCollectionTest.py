@@ -20,12 +20,12 @@ class DataMinerCollectionPlan(TestUtil.Plan[AbstractDataMinerCollection.Abstract
 
     def test(self) -> list[AbstractDataMinerCollection.AbstractDataMinerCollection]:
         version = self.versions[-1]
-        print("Scanning %i DataMinerCollections in %r" % (len(self.items_to_test), version))
+        print(f"Scanning {len(self.items_to_test)} DataMinerCollections in {version}")
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types)
         failures = DataMiners.run(version, self.items_to_test, structure_environment, recalculate_everything=True, print_messages=False)
         failed_dataminer_collections:list[AbstractDataMinerCollection.AbstractDataMinerCollection] = []
         for dataminer_collection, exception in failures:
-            print("%r on %r" % (dataminer_collection, version))
+            print(f"{dataminer_collection} on {version}")
             if exception is not None:
                 traceback.print_exception(exception)
             failed_dataminer_collections.append(dataminer_collection)

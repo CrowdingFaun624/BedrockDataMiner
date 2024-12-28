@@ -68,7 +68,7 @@ def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, 
         raise Exceptions.ComponentTypeMissingError(component_name, parent_component.component_group)
     component_type = component_types_dict.get(component_type_str)
     if component_type is None:
-        raise Exceptions.UnrecognizedComponentTypeError(component_type_str, "%s in %s" % (component_name, parent_component.component_group), "(Must be one of [%s])" % (", ".join(component.class_name for component in ComponentTypes.component_types),))
+        raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {parent_component.component_group}", f"(Must be one of [{", ".join(component.class_name for component in ComponentTypes.component_types)}])")
     component = component_type(component_data, component_name, parent_component.component_group, None)
     component.inline_parent = parent_component
     return component
@@ -82,7 +82,7 @@ def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, imp
             raise Exceptions.ComponentTypeMissingError(component_name, name)
         component_type = component_types_dict.get(component_type_str)
         if component_type is None:
-            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, "%s in %s" % (component_name, name), "(Must be one of [%s])" % (", ".join(component.class_name for component in ComponentTypes.component_types),))
+            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {name}", f"(Must be one of [{", ".join(component.class_name for component in ComponentTypes.component_types)}])")
         component = component_type(component_data, component_name, name, index)
         components[component_name] = component
     return components
@@ -193,7 +193,7 @@ def check_for_unused_components(all_components:dict[str,dict[str,Component.Compo
     for components in all_components.values():
         unused_components.extend(component for component in components.values() if component not in visited_nodes)
     for unused_component in unused_components:
-        print("Warning: Unused component: %r" % (unused_component,))
+        print(f"Warning: Unused component: {unused_component}")
 
 def finalize_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
     for name, component_group_output in output.items():

@@ -74,14 +74,16 @@ def serialize(data:Any) -> Any:
     elif type(data) == dict:
         return {key: serialize(value) for key, value in data.items()}
     elif isinstance(data, enum.Enum):
-        return str(data)
+        # audio_metadata changed one of its enums, thus changing all future
+        # comparisons. This change is to undo that.
+        return f"{data.__class__.__name__}.{data.name}"
     elif type(data) == bytes:
         return hex(int.from_bytes(data, "big"))
     else:
         try:
             return serialize(dict(data))
         except Exception:
-            return "Unencodable object \"%s\"" % data.__class__.__name__
+            return f"Unencodable object \"{data.__class__.__name__}\""
 
 class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDict]],dict[str,dict[str,SoundFilesTypedDict]]]):
 

@@ -44,4 +44,4 @@ class Pattern(Generic[a]):
         return id(capabilities) in self.matching_components
 
     def __repr__(self) -> str:
-        return "<Pattern %s>" % (", ".join("(%s)" % (", ".join("%s: %s" % (capability, value) for capability, value in capability_set.items())) for capability_set in self.capabilities))
+        return f"<{self.__class__.__name__} {", ".join(f"({", ".join(f"{capability}: {value}" for capability, value in capability_set.items())})" for capability_set in self.capabilities)}>"

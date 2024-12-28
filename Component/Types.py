@@ -23,7 +23,7 @@ class TypeSet[T]():
         return iter(self.types)
 
     def __repr__(self) -> str:
-        return "<%s {%s}>" % (self.__class__.__name__, ", ".join(contained_type.__name__ for contained_type in self.types))
+        return f"<{self.__class__.__name__} {{{", ".join(contained_type.__name__ for contained_type in self.types)}}}>"
 
     def __contains__(self, _type:type[T]) -> bool:
         if _type in self.types: return True
@@ -52,7 +52,7 @@ class TypeDict[T, A]():
         self.not_types:set[type] = set()
 
     def __repr__(self) -> str:
-        return "<%s {%s}>" % (self.__class__.__name__, ", ".join("%s: %s" % (contained_type.__name__, value) for contained_type, value in self.types.items()))
+        return f"<{self.__class__.__name__} {{{", ".join(f"{contained_type.__name__}: {value}" for contained_type, value in self.types.items())}}}>"
 
     def __contains__(self, _type:type[T]) -> bool:
         if _type in self.types: return True

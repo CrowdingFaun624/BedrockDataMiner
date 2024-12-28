@@ -17,8 +17,11 @@ class VersionRange():
         if start is not None and stop is not None and start > stop:
             raise Exceptions.VersionRangeOrderError(self, start, stop)
 
+    def __str__(self) -> str:
+        return f"\"{str(self.start)}\"–\"{str(self.stop)}\""
+
     def __repr__(self) -> str:
-        return "<VersionRange \"%s\"–\"%s\">" % (str(self.start), str(self.stop))
+        return f"<VersionRange \"{str(self.start)}\"–\"{str(self.stop)}\">"
 
     def __contains__(self, version:"Version.Version") -> bool:
         if self.equals:

@@ -46,9 +46,9 @@ def get_comparison_file_path(name:str, number:int|None=None) -> Path:
     if number is None:
         comparison_path = COMPARISONS_DIRECTORY.joinpath(name)
     else:
-        comparison_path = COMPARISONS_DIRECTORY.joinpath(name, "report_%s.txt" % str(number).zfill(4))
+        comparison_path = COMPARISONS_DIRECTORY.joinpath(name, f"report_{str(number).zfill(4)}.txt")
     if COMPARISONS_DIRECTORY not in comparison_path.parents:
-        raise Exceptions.InvalidFileNameError(name, "Comparison", "(%i)" % (number,))
+        raise Exceptions.InvalidFileNameError(name, "Comparison", f"({number})")
     return comparison_path
 
 def get_file_size(io:IO) -> int: # https://stackoverflow.com/questions/6591931/getting-file-size-in-python
@@ -75,7 +75,7 @@ def get_version_data_path(version_directory:Path, file_name:str|None) -> Path:
     if file_name is None:
         data_path = version_directory.joinpath("./data")
     else:
-        data_path = version_directory.joinpath("./data/%s" % file_name)
+        data_path = version_directory.joinpath(f"./data/{file_name}")
     if version_directory not in data_path.parents:
         raise Exceptions.InvalidFileNameError(data_path.name, "Data file")
     if VERSIONS_DIRECTORY != version_directory.parent:

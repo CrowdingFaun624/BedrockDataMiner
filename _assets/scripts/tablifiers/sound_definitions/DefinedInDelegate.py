@@ -25,4 +25,4 @@ class DefinedInDelegate(Delegate.Delegate[str, AbstractIterableStructure.Abstrac
             comparison, any_changes, new_exceptions = structure.compare_text(D.last_value(item), environment)
             has_changes = has_changes or any_changes
             output.append(comparison)
-        return "Defined in packs %s" % (", ".join(output),), has_changes, exceptions
+        return f"Defined in packs {", ".join(output)}", has_changes, exceptions

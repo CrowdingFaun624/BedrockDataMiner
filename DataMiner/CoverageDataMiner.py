@@ -69,7 +69,7 @@ class CoverageDataMiner(AbstractDataMinerCollection.AbstractDataMinerCollection)
                 for other_dataminer, other_dataminer_coverage in version_files_covered_dict.items()
                 if len(other_dataminer_coverage.intersection(dataminer_files_covered)) > 0
             ]
-            raise RuntimeError("The following files in %r are covered by %r and dataminers [%s]: [%s]" % (version, dataminer, ", ".join(repr(other_dataminer) for other_dataminer in other_dataminers), ", ".join(overlapping_files)))
+            raise RuntimeError(f"The following files in {version} are covered by {dataminer} and dataminers [{", ".join(repr(other_dataminer) for other_dataminer in other_dataminers)}]: [{", ".join(overlapping_files)}]")
         version_files_covered.update(dataminer_files_covered)
         version_files_covered_dict[dataminer] = dataminer_files_covered
 

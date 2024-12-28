@@ -155,7 +155,7 @@ class Version():
         return self.name
 
     def __repr__(self) -> str:
-        return "<Version %s>" % self.name
+        return f"<Version {self.name}>"
 
     def __hash__(self) -> int:
         return hash(self.name)

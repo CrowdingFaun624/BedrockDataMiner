@@ -76,7 +76,7 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
         match data:
             case str():
                 if self.enquote_strings:
-                    return "\"%s\"" % data
+                    return f"\"{data}\""
                 else:
                     return data
             case bool():
@@ -120,12 +120,12 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
         substructure_output_length = len(substructure_output)
         item_key = self.get_item_key(index)
         if substructure_output_length == 0:
-            return [(0, "%s%s%s: empty" % (message, self.field, item_key))]
+            return [(0, f"{message}{self.field}{item_key}: empty")]
         elif substructure_output_length == 1:
-            return [(0, "%s%s%s: %s" % (message, self.field, item_key, substructure_output[0][1]))]
+            return [(0, f"{message}{self.field}{item_key}: {substructure_output[0][1]}")]
         else:
             output:list[LineType] = []
-            output.append((0, "%s%s%s:" % (message, self.field, item_key)))
+            output.append((0, f"{message}{self.field}{item_key}:"))
             output.extend((indentation + 1, line) for indentation, line in substructure_output)
             return output
 
@@ -180,7 +180,7 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
                 if old_index_diff is not D.NoExist and new_index_diff is not D.NoExist:
                     can_print_print_all = False
                     any_changes = True
-                    output.append((0, "Moved %s %s to %s." % (self.field, self.stringify(index_diff[0]), self.stringify(index_diff[1]))))
+                    output.append((0, f"Moved {self.field} {self.stringify(index_diff[0])} to {self.stringify(index_diff[1])}."))
             else:
                 old_index, new_index = index, index
 
@@ -221,14 +221,14 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
                         if self.passthrough:
                             output.extend(substructure_output)
                         else:
-                            output.append((0, "Changed %s%s:" % (self.field, self.get_item_key(new_index))))
+                            output.append((0, f"Changed {self.field}{self.get_item_key(new_index)}:"))
                             output.extend((indentation + 1, line) for indentation, line in substructure_output)
                     elif (self.print_all or new_index in self.always_print_keys) and can_print_print_all:
                         substructure_output, new_exceptions = structure.print_text(item, environment[1])
                         exceptions.extend(exception.add(self.get_structure().name, new_index) for exception in new_exceptions)
                         output.extend(self.print_item(new_index, substructure_output, message="Unchanged "))
         if self.measure_length and size_changed:
-            output = [(0, "Total %s: %i (+%i, -%i)" % (self.field, current_length, addition_length, removal_length))] + output
+            output = [(0, f"Total {self.field}: {current_length} (+{addition_length}, -{removal_length})")] + output
         return output, any_changes, exceptions
 
     def print_single(self, key_str:a|None, data:Any, message:str, output:list[LineType], printer:Structure.Structure|None, environment:StructureEnvironment.PrinterEnvironment, *, post_message:str="") -> list[Trace.ErrorTrace]:
@@ -246,9 +246,9 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
         if printer is None:
             stringified_data = self.stringify(data)
             if key_str is None:
-                output.append((0, "%s %s%s %s." % (message, self.field, post_message, stringified_data)))
+                output.append((0, f"{message} {self.field}{post_message} {stringified_data}."))
             else:
-                output.append((0, "%s %s%s %s of %s." % (message, self.field, post_message, self.stringify(key_str), stringified_data)))
+                output.append((0, f"{message} {self.field}{post_message} {self.stringify(key_str)} of {stringified_data}."))
         else:
             substructure_output:list[LineType]
             substructure_output, new_exceptions = printer.print_text(data, environment)
@@ -258,18 +258,18 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
                 return exceptions
             match len(substructure_output), key_str is None:
                 case 0, True:
-                    output.append((0, "%s empty %s%s." % (message, self.field, post_message)))
+                    output.append((0, f"{message} empty {self.field}{post_message}."))
                 case 0, False:
-                    output.append((0, "%s empty %s%s %s." % (message, self.field, post_message, self.stringify(key_str))))
+                    output.append((0, f"{message} empty {self.field}{post_message} {self.stringify(key_str)}."))
                 case 1, True:
-                    output.append((0, "%s %s%s %s." % (message, self.field, post_message, substructure_output[0][1])))
+                    output.append((0, f"{message} {self.field}{post_message} {substructure_output[0][1]}."))
                 case 1, False:
-                    output.append((0, "%s %s%s %s of %s." % (message, self.field, post_message, self.stringify(key_str), substructure_output[0][1])))
+                    output.append((0, f"{message} {self.field}{post_message} {self.stringify(key_str)} of {substructure_output[0][1]}."))
                 case _, True:
-                    output.append((0, "%s %s%s:" % (message, self.field, post_message)))
+                    output.append((0, f"{message} {self.field}{post_message}:"))
                     output.extend((indentation + 1, line) for indentation, line in substructure_output)
                 case _, False:
-                    output.append((0, "%s %s%s %s:" % (message, self.field, post_message, self.stringify(key_str))))
+                    output.append((0, f"{message} {self.field}{post_message} {self.stringify(key_str)}:"))
                     output.extend((indentation + 1, line) for indentation, line in substructure_output)
         return exceptions
 
@@ -319,28 +319,28 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
         if len(substructure_output2) == 0: substructure_output2 = [(0, "empty")]
         match len(substructure_output1), len(substructure_output2), key_str is None:
             case 1, 1, True:
-                output.append((0, "%s %s%s from %s to %s." % (message, self.field, post_message, substructure_output1[0][1], substructure_output2[0][1])))
+                output.append((0, f"{message} {self.field}{post_message} from {substructure_output1[0][1]} to {substructure_output2[0][1]}."))
             case 1, 1, False:
-                output.append((0, "%s %s%s %s from %s to %s." % (message, self.field, post_message, self.stringify(key_str), substructure_output1[0][1], substructure_output2[0][1])))
+                output.append((0, f"{message} {self.field}{post_message} {self.stringify(key_str)} from {substructure_output1[0][1]} to {substructure_output2[0][1]}."))
             case 1, _, True:
-                output.append((0, "%s %s%s from %s to:" % (message, self.field, post_message, substructure_output1[0][1])))
+                output.append((0, f"{message} {self.field}{post_message} from {substructure_output1[0][1]} to:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output2)
             case 1, _, False:
-                output.append((0, "%s %s%s %s from %s to:" % (message, self.field, post_message, self.stringify(key_str), substructure_output1[0][1])))
+                output.append((0, f"{message} {self.field}{post_message} {self.stringify(key_str)} from {substructure_output1[0][1]} to:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output2)
             case _, 1, True:
-                output.append((0, "%s %s%s to %s from:" % (message, self.field, post_message, substructure_output2[0][1])))
+                output.append((0, f"{message} {self.field}{post_message} to {substructure_output2[0][1]} from:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output1)
             case _, 1, False:
-                output.append((0, "%s %s%s %s to %s from:" % (message, self.field, post_message, self.stringify(key_str), substructure_output2[0][1])))
+                output.append((0, f"{message} {self.field}{post_message} {self.stringify(key_str)} to {substructure_output2[0][1]} from:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output1)
             case _, _, True:
-                output.append((0, "%s %s%s from:" % (message, self.field, post_message)))
+                output.append((0, f"{message} {self.field}{post_message} from:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output1)
                 output.append((0, "to:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output2)
             case _, _, False:
-                output.append((0, "%s %s%s %s from:" % (message, self.field, post_message, self.stringify(key_str))))
+                output.append((0, f"{message} {self.field}{post_message} {self.stringify(key_str)} from:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output1)
                 output.append((0, "to:"))
                 output.extend((indentation + 1, line) for indentation, line in substructure_output2)

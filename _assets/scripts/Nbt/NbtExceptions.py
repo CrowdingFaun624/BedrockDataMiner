@@ -1,6 +1,7 @@
 from typing import Optional
 
 import _assets.scripts.Nbt.SnbtParser as SnbtParser
+import Utilities.Exceptions as Exceptions
 
 
 class NbtException(Exception):
@@ -22,9 +23,7 @@ class CompoundDuplicateKeyError(NbtParseException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "A TAG_Compound has a duplicate key \"%s\"" % (self.key,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"A TAG_Compound has a duplicate key \"{self.key}\"{Exceptions.message(self.message)}"
 
 class InvalidNbtContentType(NbtParseException):
     "An NBT tag has an invalid content type."
@@ -39,9 +38,7 @@ class InvalidNbtContentType(NbtParseException):
         self.message = message
 
     def __str__(self) -> str:
-        output = "Invalid NBT content type %i" % (self.content_type,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
+        return f"Invalid NBT content type {self.content_type}{Exceptions.message(self.message)}"
 
 class NbtTestFailureError(NbtException):
     "An NBT test has failed."

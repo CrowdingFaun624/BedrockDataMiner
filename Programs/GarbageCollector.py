@@ -72,7 +72,7 @@ def print_stats(unused_hashes:set[int]|None=None) -> None:
     if unused_hashes is None:
         unused_hashes = garbage_collect()
     unused_storage_bytes = sum(FileStorageManager.get_file_path(File.hash_int_to_str(unused_hash)).stat().st_size for unused_hash in unused_hashes)
-    print("Found %i unused files (%.2f%% of total) worth %i bytes (%.2f%% of total)." % (len(unused_hashes), 100*len(unused_hashes)/file_count, unused_storage_bytes, 100*unused_storage_bytes/total_storage_bytes))
+    print(f"Found {len(unused_hashes)} unused files ({100*len(unused_hashes)/file_count:.2f}% of total) worth {unused_storage_bytes} bytes ({100*unused_storage_bytes/total_storage_bytes:.2f}% of total).")
 
 def main() -> None:
     functions:dict[str,Callable[[],None]] = {

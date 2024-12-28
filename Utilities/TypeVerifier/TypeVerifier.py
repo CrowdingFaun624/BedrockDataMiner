@@ -23,32 +23,23 @@ class Trace():
         return Trace(new_trace)
 
     def to_str(self, capitalize:bool=True) -> str:
-        result = ""
+        result:list[str] = []
         for item_index, (index, index_type) in enumerate(reversed(self.trace)):
-            index_is_capitalized = item_index == 0 and capitalize
             match index_type:
                 case TraceItemType.KEY:
-                    if index_is_capitalized:
-                        result += "Key \"%s\" of " % (index)
-                    else:
-                        result += "key \"%s\" of " % (index)
+                    item = f"key \"{index}\" of "
                 case TraceItemType.VALUE:
-                    if index_is_capitalized:
-                        result += "Value of \"%s\" of " % (index)
-                    else:
-                        result += "value of \"%s\" of " % (index)
+                    item = f"value of \"{index}\" of "
                 case TraceItemType.ITEM:
-                    if index_is_capitalized:
-                        result += "Item %s of " % (index)
-                    else:
-                        result += "item %s of " % (index)
+                    item = f"item {index} of"
                 case TraceItemType.OTHER:
-                    result += "%s of " % (index)
-        result += "data"
-        return result
+                    item = f"{index} of "
+            result.append(item.capitalize() if item_index == 0 and capitalize else item)
+        result.append("data")
+        return "".join(result)
 
     def __repr__(self) -> str:
-        return "<%s len %i>" % (self.__class__.__name__, len(self.trace))
+        return f"<{self.__class__.__name__} len {len(self.trace)}>"
 
 
 def make_trace(trace_items:list[Any]|None) -> Trace:
@@ -68,7 +59,7 @@ class TypeVerifier[A]():
             raise Exceptions.TypeVerificationFailedError(self)
 
     def __repr__(self) -> str:
-        return "<%s>" % (self.__class__.__name__)
+        return f"<{self.__class__.__name__}>"
 
 class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
 
@@ -152,7 +143,7 @@ class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s \"%s\", \"%s\", \"%s\">" % (self.__class__.__name__, self.key_type_str, self.value_type_str, self.data_type_str)
+        return f"<{self.__class__.__name__} \"{self.key_type_str}\", \"{self.value_type_str}\", \"{self.data_type_str}\">"
 
 class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
 
@@ -200,7 +191,7 @@ class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s %s \"%s\">" % (self.__class__.__name__, self.key, self.value_type_str)
+        return f"<{self.__class__.__name__} {self.key} \"{self.value_type_str}\">"
 
 class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
 
@@ -257,7 +248,7 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s \"%s\" (%s)>" % (self.__class__.__name__, self.data_type_str, ", ".join(self.keys_dict))
+        return f"<{self.__class__.__name__} \"{self.data_type_str}\" ({", ".join(self.keys_dict)})>"
 
 class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
 
@@ -316,7 +307,7 @@ class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s \"%s\" \"%s\">" % (self.__class__.__name__, self.item_type_str, self.data_type_str)
+        return f"<{self.__class__.__name__} \"{self.item_type_str}\" \"{self.data_type_str}\">"
 
 class IterableTypeVerifier[I](ListTypeVerifier):
 
@@ -363,7 +354,7 @@ class TupleItemTypeVerifier[I](TypeVerifier[tuple[int,I]]):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s \"%s\">" % (self.__class__.__name__, self.item_type_str)
+        return f"<{self.__class__.__name__} \"{self.item_type_str}\">"
 
 class TupleTypeVerifier[I](TypeVerifier[Sequence[I]]):
 
@@ -409,7 +400,7 @@ class TupleTypeVerifier[I](TypeVerifier[Sequence[I]]):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s \"%s\" len %i>" % (self.__class__.__name__, self.data_type_str, len(self.items))
+        return f"<{self.__class__.__name__} \"{self.data_type_str}\" len {len(self.items)}>"
 
 class EnumTypeVerifier[I](TypeVerifier[I]):
 
@@ -425,7 +416,7 @@ class EnumTypeVerifier[I](TypeVerifier[I]):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s %r>" % (self.__class__.__name__, self.options)
+        return f"<{self.__class__.__name__} {self.options}>"
 
 class UnionTypeVerifier[I](TypeVerifier[I]):
 
@@ -455,7 +446,7 @@ class UnionTypeVerifier[I](TypeVerifier[I]):
         return exceptions
 
     def __repr__(self) -> str:
-        return "<%s \"%s\">" % (self.__class__.__name__, self.type_str)
+        return f"<{self.__class__.__name__} \"{self.type_str}\">"
 
 NoneType = type(None)
 special_type:type = type(Callable).mro()[2]|NoneType # type: ignore # you can't stop me, Python!

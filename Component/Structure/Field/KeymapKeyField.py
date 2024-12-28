@@ -64,4 +64,4 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         return self.subcomponent_field.get_final()
 
     def __repr__(self) -> str:
-        return "<%s %s id %i>" % (self.__class__.__name__, self.key, id(self))
+        return f"<{self.__class__.__name__} {self.key} id {id(self)}>"

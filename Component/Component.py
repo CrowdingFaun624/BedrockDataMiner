@@ -48,7 +48,7 @@ class Component[a]():
         return self.inline_parent
 
     def get_inline_component_name(self) -> str:
-        output = self.name + ".%i" % (self.inline_component_count)
+        output = self.name + f".{self.inline_component_count}"
         self.inline_component_count += 1
         return output
 
@@ -146,4 +146,4 @@ class Component[a]():
         return hash((self.name, self.component_group))
 
     def __repr__(self) -> str:
-        return "<%s %s in %s>" % (self.class_name, self.name, self.component_group)
+        return f"<{self.class_name} {self.name} in {self.component_group}>"

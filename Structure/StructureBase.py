@@ -60,7 +60,7 @@ class StructureBase():
         self.children_tags = children_tags
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.name)
+        return f"<{self.__class__.__name__} {self.name}>"
 
     def __hash__(self) -> int:
         return hash(self.name)
@@ -276,7 +276,7 @@ class StructureBase():
         if len(traces) > 0:
             import Component.Importer as Importer
             if (log := Importer.logs.get("structure_log")) is not None and log.supports_type(log, str):
-                log.write("-------- %i EXCEPTIONS IN %s ON %s --------\n\n" % (len(traces), self.name, ", ".join(version.name for version in versions)))
+                log.write(f"-------- {len(traces)} EXCEPTIONS IN {self.name} ON {", ".join(version.name for version in versions)} --------\n\n")
                 log.write("".join(texts))
             raise Exceptions.StructureError(self)
 

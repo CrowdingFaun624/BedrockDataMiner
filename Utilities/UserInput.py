@@ -35,15 +35,15 @@ def guess_intent(user_input:str, options:list[str], threshold:int) -> str|None:
 
 def default_prompt_single(label:str, options:list[str]|None) -> str:
     if options is None:
-        return "Choose a %s: " % (label,)
+        return f"Choose a {label}: "
     else:
-        return "Choose a %s (%s): " % (label, ", ".join(options))
+        return f"Choose a {label} ({", ".join(options)}): "
 
 def default_prompt_multi(label:str, options:list[str]|None) -> str:
     if options is None:
-        return "Choose a/some %s (space-delimited): " % (label,)
+        return f"Choose a/some {label} (space-delimited): "
     else:
-        return "Choose a/some %s (space-delimited) (%s): " % (label, ", ".join(options))
+        return f"Choose a/some {label} (space-delimited) ({", ".join(options)}): "
 
 def input_single[a](
     items:dict[str,a],
@@ -87,7 +87,7 @@ def input_single[a](
             user_guess = guess_intent(user_input, options, close_enough_threshold)
             if user_guess is not None:
                 user_input = user_guess
-                print("Assuming user means \"%s\"" % (user_guess,))
+                print(f"Assuming user means \"{user_guess}\"")
     return items[user_input]
 
 def input_multi[a](
@@ -149,7 +149,7 @@ def input_multi[a](
         for index in reversed(pop_indices):
             user_inputs.pop(index)
         if len(user_inputs) > 0 and len(successful_inputs) > 0:
-            print("Recognize %s so far." % (", ".join(successful_inputs),))
+            print(f"Recognize {", ".join(successful_inputs)} so far.")
         if close_enough and len(user_inputs) > 0:
             pop_indices:list[int] = []
             guessed_items:list[tuple[str,str]] = []
@@ -163,8 +163,8 @@ def input_multi[a](
             for index in reversed(pop_indices):
                 user_inputs.pop(index)
             if len(guessed_items) > 0:
-                print("Assuming %s." % (", ".join("\"%s\" means \"%s\"" % (user_input, guess) for user_input, guess in guessed_items),))
+                print(f"Assuming {", ".join(f"\"{user_input}\" means \"{guess}\"" for user_input, guess in guessed_items)}.")
         should_retry = len(user_inputs) > 0
         if len(user_inputs) > 0:
-            print("Cannot recognize %s." % (", ".join(user_inputs)))
+            print(f"Cannot recognize {user_inputs}.")
     return [items[item] for item in successful_inputs]

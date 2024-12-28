@@ -95,12 +95,12 @@ def run(
             failure_dataminers.append((dataminer_collection, e))
             if print_messages:
                 traceback.print_exception(e)
-                print("Failed to store %s for %s." % (dataminer_collection.name, version))
+                print(f"Failed to store {dataminer_collection.name} for {version}.")
         else:
             if print_messages:
-                print("Successfully stored %s for %s." % (dataminer.name, version))
+                print(f"Successfully stored {dataminer_collection.name} for {version}.")
     if len(failure_dataminers) > 0 and print_messages:
-        print("Failed to store dataminers: [%s]" % (", ".join(dataminer[0].name for dataminer in failure_dataminers),))
+        print(f"Failed to store dataminers: [{", ".join(dataminer[0].name for dataminer in failure_dataminers)}]")
     return failure_dataminers
 
 def user_interface() -> None:
@@ -125,4 +125,4 @@ def user_interface() -> None:
         if len(failure_dataminers) > 0:
             cannot_datamine.append(version)
     if len(versions) > 1:
-        print("Failed to datamine %i versions:\n%s" % (len(cannot_datamine), ", ".join(version.name for version in cannot_datamine)))
+        print(f"Failed to datamine {len(cannot_datamine)} versions:\n{", ".join(version.name for version in cannot_datamine)}")

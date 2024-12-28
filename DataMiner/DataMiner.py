@@ -32,12 +32,12 @@ class DataMiner():
         self.dependencies = self.settings.get_dependencies()
         self.dependencies_str = [dependency.name for dependency in self.dependencies]
         if not isinstance(self, NullDataMiner) and self.version not in self.settings.get_version_range():
-            raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, "in DataMiner %r" % (self,))
+            raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, f"in DataMiner {self}")
 
         self.initialize(**settings.arguments)
 
     def __repr__(self) -> str:
-        return "<%s %s on %s>" % (self.__class__.__name__, self.name, self.version.name)
+        return f"<{self.__class__.__name__} {self.name} on {self.version.name}>"
 
     @classmethod
     def manipulate_arguments(cls, arguments:dict[str,Any]) -> None:

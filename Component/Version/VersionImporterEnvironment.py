@@ -50,7 +50,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                 try:
                     version_directory.rmdir()
                 except OSError:
-                    print("Version directory \"%s\" does not exists in versions.json and contains files!" % (version_directory.name,))
+                    print(f"Version directory \"{version_directory.name}\" does not exists in versions.json and contains files!")
 
     def check(self, output: dict[str, Version.Version], other_outputs: dict[str, Any]) -> list[Exception]:
         exceptions = super().check(output, other_outputs)

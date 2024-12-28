@@ -37,7 +37,7 @@ class Serializer[a, b]():
         ...
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, self.name)
+        return f"<{self.__class__.__name__} {self.name}>"
 
     def serialize_json(self, data:a) -> b:
         '''

@@ -13,7 +13,7 @@ def check_types(version:Version.Version, dataminers:list[AbstractDataMinerCollec
         try:
             dataminer_collection.check_types(version, environment)
         except Exception as e:
-            print("Failed on %r on %r" % (dataminer_collection, version))
+            print(f"Failed on {dataminer_collection} on {version}")
             traceback.print_exception(e)
         dataminer_collection.clear_some_caches()
 

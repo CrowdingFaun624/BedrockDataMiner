@@ -1,5 +1,6 @@
 import enum
 import re
+from math import floor
 from typing import Literal, Protocol, TypedDict, cast
 
 import mutf8
@@ -49,7 +50,7 @@ class TAG(Protocol):
     def __str__(self) -> str: ...
 
     def __repr__(self) -> str:
-        return "<%s %s>" % (self.__class__.__name__, str(self))
+        return f"<{self.__class__.__name__} {str(self)}>"
 
 class TAG_End(TAG):
 
@@ -77,7 +78,7 @@ class TAG_Byte(int, TAG):
         return cls(data_reader.unpack_tuple("b", 1, endianness))
 
     def __str__(self) -> str:
-        return "%ib" % self
+        return f"{self:d}b"
 
 @Types.register_decorator("TAG_Short", json_coder=NbtCoder)
 class TAG_Short(int, TAG):
@@ -87,7 +88,7 @@ class TAG_Short(int, TAG):
         return cls(data_reader.unpack_tuple("h", 2, endianness))
 
     def __str__(self) -> str:
-        return "%is" % self
+        return f"{self:d}s"
 
 @Types.register_decorator("TAG_Int", json_coder=NbtCoder)
 class TAG_Int(int, TAG):
@@ -97,7 +98,7 @@ class TAG_Int(int, TAG):
         return cls(data_reader.unpack_tuple("i", 4, endianness))
 
     def __str__(self) -> str:
-        return "%i" % self
+        return f"{self:d}"
 
 @Types.register_decorator("TAG_Long", json_coder=NbtCoder)
 class TAG_Long(int, TAG):
@@ -107,7 +108,7 @@ class TAG_Long(int, TAG):
         return cls(data_reader.unpack_tuple("q", 8, endianness))
 
     def __str__(self) -> str:
-        return "%il" % self
+        return f"{self:d}l"
 
 @Types.register_decorator("TAG_Float", json_coder=NbtCoder)
 class TAG_Float(float, TAG):
@@ -117,7 +118,10 @@ class TAG_Float(float, TAG):
         return cls(data_reader.unpack_tuple("f", 4, endianness))
 
     def __str__(self) -> str:
-        return "%ff" % self
+        if self % 1 == 0:
+            return f"{floor(self):d}f"
+        else:
+            return f"{self:f}f"
 
 @Types.register_decorator("TAG_Double", json_coder=NbtCoder)
 class TAG_Double(float, TAG):
@@ -127,7 +131,10 @@ class TAG_Double(float, TAG):
         return cls(data_reader.unpack_tuple("d", 8, endianness))
 
     def __str__(self) -> str:
-        return "%f" % self
+        if self.is_integer():
+            return f"{floor(self):d}.0"
+        else:
+            return f"{self:f}"
 
 @Types.register_decorator("TAG_Byte_Array", requires_subcomponent=False, can_contain={TAG_Byte}, json_coder=NbtCoder)
 class TAG_Byte_Array(list[TAG_Byte], TAG):
@@ -138,7 +145,7 @@ class TAG_Byte_Array(list[TAG_Byte], TAG):
         return cls([TAG_Byte.from_bytes(data_reader, endianness) for i in range(size)])
 
     def __str__(self) -> str:
-        return "[B;" + ", ".join(str(item) for item in self) + "]"
+        return f"[B;{", ".join(str(item) for item in self)}]"
 
 @Types.register_decorator("TAG_String", json_coder=NbtCoder)
 class TAG_String(str, TAG):
@@ -153,7 +160,7 @@ class TAG_String(str, TAG):
             return cls("")
 
     def __str__(self) -> str:
-        return "\"%s\"" % escape_string(self)
+        return f"\"{escape_string(self)}\""
 
     def __stringify__(self) -> str:
         # for DefaultDelegate
@@ -169,7 +176,7 @@ class TAG_List[b: TAG](list[b], TAG):
         return cls(cast(b, parse_object_from_bytes(data_reader, content_type, endianness)) for i in range(size))
 
     def __str__(self) -> str:
-        return "[" + ", ".join(str(item) for item in self) + "]"
+        return f"[{", ".join(str(item) for item in self)}]"
 
 @Types.register_decorator("TAG_Compound", json_coder=NbtCoder)
 class TAG_Compound[b: TAG](dict[str,b], TAG):
@@ -187,18 +194,18 @@ class TAG_Compound[b: TAG](dict[str,b], TAG):
         return cls(output)
 
     def __str__(self) -> str:
-        output = "{"
+        output:list[str] = ["{"]
         for index, (key, value) in enumerate(self.items()):
             if self.should_enquote_key(key):
-                output += "\"%s\"" % escape_string(key)
+                output.append(f"\"{escape_string(key)}\"")
             else:
-                output += str(key)
-            output += ": "
-            output += str(value)
+                output.append(escape_string(key))
+            output.append(": ")
+            output.append(str(value))
             if index != len(self) - 1:
-                output += ", "
-        output += "}"
-        return output
+                output.append(", ")
+        output.append("}")
+        return "".join(output)
 
     def should_enquote_key(self, key:str, pattern=re.compile(r'[^a-zA-Z0-9._]').search) -> bool:
         if isinstance(key, D.Diff): return False
@@ -214,7 +221,7 @@ class TAG_Int_Array(list[TAG_Int], TAG):
         return cls([TAG_Int.from_bytes(data_reader, endianness) for i in range(size)])
 
     def __str__(self) -> str:
-        return "[I;" + ", ".join(str(item) for item in self) + "]"
+        return f"[I;{", ".join(str(item) for item in self)}]"
 
 @Types.register_decorator("TAG_Long_Array", requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
 class TAG_Long_Array(list[TAG_Long], TAG):
@@ -225,24 +232,24 @@ class TAG_Long_Array(list[TAG_Long], TAG):
         return cls([TAG_Long.from_bytes(data_reader, endianness) for i in range(size)])
 
     def __str__(self) -> str:
-        return "[L;" + ", ".join(str(item) for item in self) + "]"
+        return f"[L;{", ".join(str(item) for item in self)}]"
 
 def escape_string(string:str) -> str:
-    output = ""
+    output:list[str] = []
     for char in string:
         match char:
-            case "\"": output += "\\\""
-            case "\\": output += "\\\\"
-            case _: output += char
-    return output
+            case "\"": output.append("\\\"")
+            case "\\": output.append("\\\\")
+            case _: output.append(char)
+    return "".join(output)
 
-def parse_compound_item_from_bytes(data_reader:DataReader.DataReader, endianness:Endianness.End) -> tuple[str|None,TAG]:
+def parse_compound_item_from_bytes[b:TAG=TAG](data_reader:DataReader.DataReader, endianness:Endianness.End) -> tuple[str|None,b]:
     content_type:int = data_reader.unpack_tuple("b", 1, endianness)
     if content_type == IdEnum.TAG_End:
-        return None, TAG_End.from_bytes(data_reader, endianness) # TAG_End has no name
+        return None, cast(b, TAG_End.from_bytes(data_reader, endianness)) # TAG_End has no name
     key_name = cast(TAG_String, parse_object_from_bytes(data_reader, IdEnum.TAG_String, endianness))
     value = parse_object_from_bytes(data_reader, content_type, endianness)
-    return key_name, value
+    return key_name, cast(b, value)
 
 def parse_object_from_bytes(data_reader:DataReader.DataReader, content_type:int, endianness:Endianness.End) -> TAG:
     match content_type:

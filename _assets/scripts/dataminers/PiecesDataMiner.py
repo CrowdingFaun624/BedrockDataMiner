@@ -36,7 +36,7 @@ class PiecesDataMiner(DataMiner.DataMiner):
                 name = file.removeprefix(directory).split("/", 1)[0]
                 if name in pieces_names:
                     continue
-                pieces.append({"name": name, "path": "%s%s/" % (directory, name)})
+                pieces.append({"name": name, "path": f"{directory}{name}/"})
                 break
 
         if len(pieces) == 0:

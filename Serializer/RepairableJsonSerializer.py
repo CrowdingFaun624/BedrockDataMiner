@@ -253,7 +253,7 @@ class Rule():
         self.action = action
 
     def __repr__(self) -> str:
-        return "<Rule %i of %s>" % (self.index, self.serializer_name)
+        return f"<{self.__class__.__name__} {self.index} of {self.serializer_name}>"
 
     def do(self, data:bytes, is_exception:bool) -> tuple[bool, bytes]:
         if self.condition.match(data, is_exception):

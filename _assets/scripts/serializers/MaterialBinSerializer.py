@@ -48,7 +48,7 @@ class MaterialBinCache(Cache.LinesCache[dict[str,dict[str,str]], tuple[str,str,s
 
     def serialize_line(self, data: tuple[str, str, str]) -> str:
         version, source_hash, output = data
-        return "%s %s %s\n" % (version, source_hash, output)
+        return f"{version} {source_hash} {output}\n"
 
     def append_new_line(self, data: tuple[str, str, str]) -> None:
         version, source_hash, output = data
@@ -108,7 +108,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         return self.glsl_serializer
 
     def write_cache(self, source_hash:str, output:OutputTypedDict) -> File.File[OutputTypedDict]:
-        output_file = File.new_file(json.dumps(output, separators=(",", ":"), cls=CustomJson.encoder).encode(), "material_bin_data_of_%s" % (source_hash,), self.get_data_serializer())
+        output_file = File.new_file(json.dumps(output, separators=(",", ":"), cls=CustomJson.encoder).encode(), f"material_bin_data_of_{source_hash}", self.get_data_serializer())
         output_str = json.dumps(output_file, separators=(",", ":"), cls=CustomJson.encoder)
         material_bin_cache.append_new_line((self.version, source_hash, output_str))
         return output_file
@@ -122,7 +122,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         input_file = temporary_directory.joinpath("data.material.bin")
         with open(input_file, "wb") as f:
             f.write(data)
-        jar_directory = FileManager.LIB_MATERIAL_BIN_TOOL_DIRECTORY.joinpath("MaterialBinTool-%s-all.jar" % (self.version,))
+        jar_directory = FileManager.LIB_MATERIAL_BIN_TOOL_DIRECTORY.joinpath(f"MaterialBinTool-{self.version}-all.jar")
         command = [
             "java",
             "-jar", jar_directory,
@@ -146,7 +146,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         '''
         Returns the main data file and the pass names contained within.
         '''
-        file_name = "main_material_bin_of_%s.json" % (data_hash,)
+        file_name = f"main_material_bin_of_{data_hash}.json"
         main_data_path = output_directory.joinpath("data.json")
         with open(main_data_path, "rb") as f:
             main_data_bytes = f.read()
@@ -162,7 +162,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
             pass_directory = output_directory.joinpath(pass_name)
             pass_info_path = pass_directory.joinpath(pass_name + ".json")
             with open(pass_info_path, "rb") as f:
-                pass_info_file = File.new_file(f.read(), "pass_info_in_%s_of_%s" % (pass_name, data_hash), self.get_pass_info_serializer())
+                pass_info_file = File.new_file(f.read(), f"pass_info_in_{pass_name}_of_{data_hash}", self.get_pass_info_serializer())
             pass_info_path.unlink()
             glsl_files = self.get_glsl_files(pass_directory, data_hash)
             pass_directory.rmdir()
@@ -173,7 +173,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         glsl_files:dict[str,File.File[str]] = {}
         for glsl_file_path in pass_directory.iterdir():
             with open(glsl_file_path, "rb") as f:
-                glsl_file = File.new_file(f.read(), "glsl_file_%s_in_%s_of_%s" % (glsl_file_path.name, pass_directory.name, data_hash), self.get_glsl_serializer())
+                glsl_file = File.new_file(f.read(), f"glsl_file_{glsl_file_path.name}_in_{pass_directory.name}_of_{data_hash}", self.get_glsl_serializer())
             glsl_file_path.unlink()
             glsl_files[glsl_file_path.name] = glsl_file
         return glsl_files

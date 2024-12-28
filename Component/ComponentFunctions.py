@@ -48,7 +48,7 @@ def wrap_tuple(data:list[Any], keys:list[str]) -> dict[str,Any]:
 def move_key(data:dict[str,Any], from_key:str, to_key:str) -> None:
     if from_key in data:
         if to_key in data:
-            raise KeyError("Attempted to move \"%s\" to \"%s\", but \"%s\" already exists!" % (from_key, to_key, to_key))
+            raise KeyError(f"Attempted to move \"{from_key}\" to \"{to_key}\", but \"{to_key}\" already exists!")
         data[to_key] = data[from_key]
         del data[from_key]
 

@@ -89,7 +89,7 @@ class Cache[T]():
                 f.write(deserialized_data)
 
     def __repr__(self) -> str:
-        return "<%s %s %s>" % (self.__class__.__name__, ("open" if self.has_opened else "unopened"), self.path.relative_to(FileManager.PARENT_DIRECTORY).as_posix())
+        return f"<{self.__class__.__name__} {"open" if self.has_opened else "unopened"} {self.path.relative_to(FileManager.PARENT_DIRECTORY).as_posix()}>"
 
 class JsonCache[T](Cache[T]):
 

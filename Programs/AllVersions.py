@@ -14,14 +14,14 @@ def datamine_version(version:Version.Version, print_messages:bool=True) -> None:
     needed_files = [dataminer for dataminer in dataminers if dataminer not in already_files]
     if len(needed_files) == 0:
         if print_messages:
-            print("Skipped \"%s\" due to already being complete." % (version.name))
+            print(f"Skipped \"{version.name}\" due to already being complete.")
         return # All of this Version's data files are already there.
     if print_messages:
-        print("Started \"%s\"." % (version.name))
+        print(f"Started \"{version.name}\".")
     failure_dataminers = DataMiners.run(version, needed_files, STRUCTURE_ENVIRONMENT)
     if len(failure_dataminers) > 0:
         for failed_dataminer, exception in failure_dataminers:
-            print("\nFailed to datamine \"%s\" for \"%s\":" % (failed_dataminer.name, version.name))
+            print(f"\nFailed to datamine \"{failed_dataminer.name}\" for \"{version.name}\":")
             if exception is not None:
                 traceback.print_exception(exception)
         print()
@@ -35,7 +35,7 @@ def main() -> None:
     dataminers_dict = Importer.dataminer_collections
     for version in reversed(Importer.versions.values()):
         if not any(dataminer_collection.supports_version(version) for dataminer_collection in dataminers_dict.values()):
-            print("Skipped \"%s\" due to being unarchived." % (version.name))
+            print(f"Skipped \"{version.name}\" due to being unarchived.")
         else:
             datamine_version(version)
     print("Datamined all versions.")

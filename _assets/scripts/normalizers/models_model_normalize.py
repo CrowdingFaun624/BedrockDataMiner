@@ -52,7 +52,7 @@ def models_model_normalize(data:dict[str,dict[str,File.File[model_file_type1|mod
                 format_version = model_file_data["format_version"]
                 for geometry_item in model_file_data["minecraft:geometry"]:
                     name = geometry_item["description"]["identifier"]
-                    model_output_name = "%s %s" % (model_file_name, name)
+                    model_output_name = f"{model_file_name} {name}"
                     output[model_output_name][resource_pack_name] = {
                         "format_version": format_version,
                         "minecraft:geometry": geometry_item,
@@ -64,7 +64,7 @@ def models_model_normalize(data:dict[str,dict[str,File.File[model_file_type1|mod
                     description:description_typed_dict = {
                         "identifier": name,
                     }
-                    model_output_name = "%s %s" % (model_file_name, name)
+                    model_output_name = f"{model_file_name} {name}"
                     for description_key in [key for key in model_data.keys() if key != "bones"]:
                         description[description_key] = model_data[description_key]
                         del model_data[description_key]
