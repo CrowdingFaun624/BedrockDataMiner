@@ -1,5 +1,4 @@
 import _assets.scripts.normalizers.collapse_resource_packs.util as util
-import Utilities.Exceptions as Exceptions
 
 __all__ = ["collapse_resource_pack_names"]
 
@@ -9,7 +8,7 @@ def collapse_resource_pack_names(data:list[str]) -> list[str]:
     for properties_resource_pack in data:
         tag_str = util.resource_pack_tag_strings.get(properties_resource_pack)
         if tag_str is None:
-            raise Exceptions.UnrecognizedPackError(properties_resource_pack, "pack")
+            raise util.UnrecognizedPackError(properties_resource_pack, "pack")
         if (tag_str_id := id(tag_str)) not in exists_in_output:
             exists_in_output.add(tag_str_id)
             output.append(tag_str)

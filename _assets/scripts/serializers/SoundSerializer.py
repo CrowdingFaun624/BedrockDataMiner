@@ -1,5 +1,5 @@
 import enum
-from typing import Any, Iterator, TypedDict
+from typing import Any, Iterator, Optional, TypedDict
 
 import _assets.scripts.serializers.EvilFSBExtractor as EvilFSBExtractor
 import Serializer.Serializer as Serializer
@@ -8,6 +8,18 @@ import Utilities.File as File
 import Utilities.FileManager as FileManager
 
 __all__ = ["SoundSerializer"]
+
+class SoundFilesMetadataError(Exceptions.DataMinerException):
+    "audio_metadata failed to extract the sound file."
+
+    def __init__(self, message:Optional[str]=None) -> None:
+        '''
+        :message: Additional text to place after the main message.'''
+        super().__init__(message)
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"audio_metadata failed to extract a file{Exceptions.message(self.message)}"
 
 class SoundFilesTagsTypedDict(TypedDict):
     comment: list[str]
@@ -47,7 +59,7 @@ def get_metadata(file:bytes) -> SoundFilesTypedDict:
     try:
         metadata = audio_metadata.loads(file)
     except Exception as e:
-        raise Exceptions.SoundFilesMetadataError()
+        raise SoundFilesMetadataError()
     info = serialize(metadata)
 
     sha1_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(file))

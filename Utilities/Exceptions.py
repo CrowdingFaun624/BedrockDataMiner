@@ -1324,37 +1324,6 @@ class NullDataMinerMethodError(DataMinerException):
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
-class SoundFilesExtractionError(DataMinerException):
-    "Failure to extract from an FSB file."
-
-    def __init__(self, exit_code:int, message:Optional[str]=None) -> None:
-        '''
-        :exit_code: The exit code that the extraction executable returned.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(exit_code, message)
-        self.exit_code = exit_code
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "Failed to extract FSB file; returned exit code %i" % (self.exit_code,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class SoundFilesMetadataError(DataMinerException):
-    "audio_metadata failed to extract the sound file."
-
-    def __init__(self, message:Optional[str]=None) -> None:
-        '''
-        :message: Additional text to place after the main message.'''
-        super().__init__(message)
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "audio_metadata failed to extract a file"
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
 class TagSearcherDependencyError(DataMinerException):
     "A tag exists in a DataMiner that is not a dependency of this one."
 
@@ -1392,44 +1361,6 @@ class TagSearcherParseError(DataMinerException):
 
     def __str__(self) -> str:
         output = "%s at position %i of expression \"%s\"" % (self.reason, self.data_reader.position, self.data_reader.data)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class UnrecognizedPackError(DataMinerException):
-    "The behavior pack/resource pack is not recognized."
-
-    def __init__(self, pack:str|list[str], pack_type:Literal["behavior", "resource", "skin", "emote", "piece", "pack"], source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :pack: The name(s) of the behavior pack/resource pack(s).
-        :pack_type: The type of pack ("behavior", "resource", "skin", "emote", "piece", or "pack").
-        :source: The object that found the behavior pack/resource pack.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(pack, pack_type, source, message)
-        self.pack = pack
-        self.pack_type = pack_type
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        match self.pack_type:
-            case "behavior":
-                pack_string = "Behavior pack"
-            case "resource":
-                pack_string = "Resource pack"
-            case "skin":
-                pack_string = "Skin pack"
-            case "emote":
-                pack_string = "Emote directory"
-            case "piece":
-                pack_string = "Piece directory"
-            case _:
-                pack_string = "Pack"
-        output = "%s " % (pack_string,)
-        output = "\"%s\"" % (self.pack,) if isinstance(self.pack, str) else "[%s]" % (", ".join("\"%s\"" % pack for pack in self.pack))
-        if self.source is not None:
-            output += ", found by %r," % (self.source,)
-        output += " is not recognized"
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
 
@@ -2208,63 +2139,6 @@ class UnrecognizedStructureTagError(StructureException):
         output = "Unrecognized tag \"%s\" referenced in expression \"%s\"" % (self.tag_name, self.expression)
         output += "!" if self.message is None else " %s!" % (self.message,)
         return output
-
-class VolumeStructureAdditionalDataError(StructureException):
-    "The VolumeStructure cannot print a layer because unexpected additional data exists."
-
-    def __init__(self, structure:"Structure.Structure", message:Optional[str]=None) -> None:
-        '''
-        :structure: The VolumeStructure.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(structure, message)
-        self.structure = structure
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%r does not expect additional data" % (self.structure,)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class VolumeStructureMissingKeyError(StructureException):
-    "The VolumeStructure is missing its position or state key."
-
-    def __init__(self, key_type:Literal["Position", "State"], key:str, block:int, message:Optional[str]=None) -> None:
-        '''
-        :key_type: If the key is a position key or a state key.
-        :key: The key that is missing.
-        :block: The index of the block with the missing key.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(key_type, key, block, message)
-        self.key_type = key_type
-        self.key = key
-        self.block = block
-        self.message = message
-
-    def __str__(self) -> str:
-        output = "%s key \"%s\" is missing in block %i" % (self.key_type, self.key, self.block)
-        output += "!" if self.message is None else " %s!" % (self.message,)
-        return output
-
-class VolumeStructureInvalidKeyError(StructureException):
-    "The position or state of a VolumeStructure is invalid."
-
-    def __init__(self, key_type:Literal["Position", "State"], value:Any, block:int, message:str="is invalid") -> None:
-        '''
-        :key_type: If the key is a position key or a state key.
-        :value: The value of the key for this block.
-        :block: The index of the block.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(key_type, value, block, message)
-        self.key_type = key_type
-        self.value = value
-        self.block = block
-        self.message = message
-
-    def __str__(self) -> str:
-        return "%s \"%s\" in block %i %s!" % (self.key_type, self.value, self.block, self.message)
 
 class TypeVerifierException(Exception):
     "Abstract Exception class for errors relating to TypeVerifiers."

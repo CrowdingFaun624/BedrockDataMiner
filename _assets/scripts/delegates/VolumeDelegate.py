@@ -6,12 +6,27 @@ import Structure.Delegate.DefaultDelegate as DefaultDelegate
 import Structure.DictStructure as DictStructure
 import Structure.Difference as D
 import Structure.KeymapStructure as KeymapStructure
+import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
-a = TypeVar("a")
+
+class VolumeStructureAdditionalDataError(Exceptions.StructureException):
+    "The VolumeStructure cannot print a layer because unexpected additional data exists."
+
+    def __init__(self, structure:"Structure.Structure", message:Optional[str]=None) -> None:
+        '''
+        :structure: The VolumeStructure.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(structure, message)
+        self.structure = structure
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.structure} does not expect additional data{Exceptions.message(self.message)}"
 
 LAYER_CHARACTERS_DEFAULT = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+={[}];:'<,>./?αβγδεζηθικλμνξπρσςτυφχψωΓΔΘΛΞΠΣΦΨΩБбгДдËëЖжЗзИиЙйЛлФфЦцЧчШшЩщЪъЫыЬьЭэЮюЯя"
 
@@ -99,7 +114,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
         output:list[DefaultDelegate.LineType] = [(0, "".join(line)) for line in output_grid]
         if self.print_additional_data:
             if len(additional_data) > 0 and self.substructure is None:
-                exceptions.append(Trace.ErrorTrace(Exceptions.VolumeStructureAdditionalDataError(self.get_structure()), self.get_structure().name, layer, additional_data))
+                exceptions.append(Trace.ErrorTrace(VolumeStructureAdditionalDataError(self.get_structure()), self.get_structure().name, layer, additional_data))
 
             if self.substructure is not None:
                 for position, block_data in additional_data.items():

@@ -1,11 +1,26 @@
 import subprocess
-from typing import Iterator
+from typing import Iterator, Optional
 
 import Utilities.Cache as Cache
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.FileStorageManager as FileStorageManager
 
+
+class SoundFilesExtractionError(Exceptions.DataMinerException):
+    "Failure to extract from an FSB file."
+
+    def __init__(self, exit_code:int, message:Optional[str]=None) -> None:
+        '''
+        :exit_code: The exit code that the extraction executable returned.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(exit_code, message)
+        self.exit_code = exit_code
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Failed to extract FSB file; returned exit code {self.exit_code}{Exceptions.message(self.message)}"
 
 class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
 
@@ -37,7 +52,7 @@ def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
     # run fsb extractor on fsb file.
     exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
     if exe_return.returncode != 0:
-        raise Exceptions.SoundFilesExtractionError(exe_return.returncode)
+        raise SoundFilesExtractionError(exe_return.returncode)
 
     # look at what files are there.
     result_file_paths = [result_file for result_file in temp_directory.iterdir() if result_file.name != "fsb.fsb"]

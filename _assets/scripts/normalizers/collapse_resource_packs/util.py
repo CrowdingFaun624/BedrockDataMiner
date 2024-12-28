@@ -1,11 +1,32 @@
 import enum
 from collections import defaultdict
-from typing import Any, Iterable, TypedDict
+from typing import Any, Iterable, Literal, Optional, TypedDict
 
 import Utilities.DataFile as DataFile
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
+
+class UnrecognizedPackError(Exceptions.DataMinerException):
+    "The behavior pack/resource pack is not recognized."
+
+    PACK_TYPES:defaultdict[str,str] = defaultdict(lambda: "Pack", {"behavior": "Behavior pack", "resource": "Resource pack", "skin": "Skin pack", "emote": "Emote directory", "piece": "Piece directory"})
+
+    def __init__(self, pack:str|list[str], pack_type:Literal["behavior", "resource", "skin", "emote", "piece", "pack"], source:Optional[object]=None, message:Optional[str]=None) -> None:
+        '''
+        :pack: The name(s) of the behavior pack/resource pack(s).
+        :pack_type: The type of pack ("behavior", "resource", "skin", "emote", "piece", or "pack").
+        :source: The object that found the behavior pack/resource pack.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(pack, pack_type, source, message)
+        self.pack = pack
+        self.pack_type = pack_type
+        self.source = source
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.PACK_TYPES[self.pack_type]} {f"\"{self.pack}\"" if isinstance(self.pack, str) else f"[{", ".join(f"\"{pack}\"" for pack in self.pack)}]"}{Exceptions.message(self.source, "", ", found by %s,")} is not recognized{Exceptions.message(self.message)}"
 
 class ResourcePackTypedDict(TypedDict):
     name: str
@@ -53,6 +74,6 @@ def get_resource_packs_by_tag(data:dict[str,Any]) -> Iterable[tuple[str,list[str
     for resource_pack in data.keys():
         tag_string = resource_pack_tag_strings.get(resource_pack)
         if tag_string is None:
-            raise Exceptions.UnrecognizedPackError(resource_pack, "pack")
+            raise UnrecognizedPackError(resource_pack, "pack")
         resource_packs_by_tag[tag_string].append(resource_pack)
     return resource_packs_by_tag.items()

@@ -83,7 +83,7 @@ class PacksDataMiner(DataMiner.DataMiner):
             self.do_file_pass(file_list.keys(), unrecognized_packs, packs, pack_names, False)
 
         if len(unrecognized_packs) > 0 and self.care_about_packs_existing:
-            raise Exceptions.UnrecognizedPackError(sorted(unrecognized_packs), self.pack_type, self)
+            raise collapse_resource_packs.UnrecognizedPackError(sorted(unrecognized_packs), self.pack_type, self)
         if len(packs) == 0:
             raise Exceptions.DataMinerNothingFoundError(self)
         if self.care_about_packs_existing:
