@@ -13,6 +13,8 @@ class ImporterEnvironment[a]():
     single_component:bool = False
     "If the Component group has a singular, unnamed Component or multiple Components."
 
+    __slots__ = ()
+
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
         '''
         Given the current Component group and all other Component groups.

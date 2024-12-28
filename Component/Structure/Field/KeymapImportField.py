@@ -16,6 +16,10 @@ IMPORTABLE_KEYS_PATTERN:Pattern.Pattern["KeymapComponent.KeymapComponent"] = Pat
 
 class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.KeymapComponent"]):
 
+    __slots__ = (
+        "import_into_keys",
+    )
+
     def __init__(self, subcomponents_data:list[str]|str, path:list[str|int]) -> None:
         '''
         :subcomponents_data: The names of the Components this Field refers to.

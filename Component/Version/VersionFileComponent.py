@@ -30,6 +30,11 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
         TypeVerifier.TypedDictKeyTypeVerifier("version_file_type", "a str", True, str),
     )
 
+    __slots__ = (
+        "accessors_field",
+        "version_file_type_field",
+    )
+
     def __init__(self, data: ComponentTyping.VersionFileTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

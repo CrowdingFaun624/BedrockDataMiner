@@ -17,6 +17,11 @@ class EnvironmentType(enum.Enum):
 
 class StructureEnvironment():
 
+    __slots__ = (
+        "environment",
+        "should_cache",
+    )
+
     def __init__(self, environment:EnvironmentType) -> None:
         self.environment = environment
         self.should_cache = environment in (EnvironmentType.comparing, EnvironmentType.garbage_collection, EnvironmentType.checking_all_types)
@@ -25,6 +30,13 @@ class StructureEnvironment():
         return f"<{self.__class__.__name__} {self.environment.name} {"caching" if self.should_cache else "uncaching"}>"
 
 class PrinterEnvironment():
+
+    __slots__ = (
+        "structure_environment",
+        "default_delegate",
+        "version",
+        "branch",
+    )
 
     def __init__(
         self,
@@ -48,6 +60,15 @@ class PrinterEnvironment():
         return f"<{self.__class__.__name__} {self.version} {self.structure_environment} branch {self.branch}>"
 
 class ComparisonEnvironment():
+
+    __slots__ = (
+        "default_delegate",
+        "is_multi_diff",
+        "printer_environments",
+        "structure_environment",
+        "versions",
+        "versions_between",
+    )
 
     def __init__(
         self,

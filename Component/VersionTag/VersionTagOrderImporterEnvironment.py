@@ -18,6 +18,8 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
 
     single_component = True
 
+    __slots__ = ()
+
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
         return {"version_tags": all_components["version_tags"]}
 

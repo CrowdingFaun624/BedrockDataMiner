@@ -14,6 +14,11 @@ TAG_PATTERN:Pattern.Pattern["StructureTagComponent.StructureTagComponent"] = Pat
 
 class TagListField(ComponentListField.ComponentListField["StructureTagComponent.StructureTagComponent"]):
 
+    __slots__ = (
+        "import_from_field",
+        "tag_sets",
+    )
+
     def __init__(self, subcomponents_strs:list[str]|str, path:list[str|int]) -> None:
         '''
         :subcomponents_strs: The names of the TagComponents this Field refers to.

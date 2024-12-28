@@ -7,6 +7,8 @@ import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 
 class DataMinerCollectionField(ComponentField.ComponentField[AbstractDataMinerCollectionComponent.AbstractDataMinerCollectionComponent]):
 
+    __slots__ = ()
+
     def __init__(self, subcomponent_data:str, path: list[str | int]) -> None:
         super().__init__(subcomponent_data, Pattern.Pattern([{"is_dataminer_collection": True}]), path, allow_inline=Field.InlinePermissions.reference)
 

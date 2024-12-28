@@ -12,6 +12,8 @@ class LatestSlotComponent(Component.Component[str]):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = ()
+
     def create_final(self) -> None:
         super().create_final()
         self.final = self.name

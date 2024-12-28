@@ -13,6 +13,13 @@ type VerifyComponentType = StructureComponentField.StructureComponentField|Optio
 
 class AbstractTypeField(Field.Field):
 
+    __slots__ = (
+        "contained_by_field",
+        "must_be_fail_message",
+        "must_be_types",
+        "verify_with_component",
+    )
+
     def __init__(self, path: list[str | int]) -> None:
         super().__init__(path)
         self.verify_with_component:VerifyComponentType|None=None

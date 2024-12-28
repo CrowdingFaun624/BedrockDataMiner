@@ -14,6 +14,8 @@ STRUCTURE_COMPONENT_PATTERN = Pattern.Pattern([{"is_structure": True}])
 class StructureComponentField(ComponentField.ComponentField["StructureComponent.StructureComponent"]):
     '''A Field that refers to a StructureComponent (but not a GroupComponent).'''
 
+    __slots__ = ()
+
     def __init__(self, subcomponent_data:str|ComponentTyping.StructureTypedDicts, path: list[str|int], pattern:Pattern.Pattern=STRUCTURE_COMPONENT_PATTERN, *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
         :subcomponent_data: The name of the reference StructureComponent or the data of the inline StructureComponent this Field refers to.

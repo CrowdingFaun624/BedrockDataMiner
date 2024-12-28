@@ -32,6 +32,14 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = (
+        "allowed_children_field",
+        "order_field",
+        "tags_after_top_level_tag",
+        "tags_before_top_level_tag",
+        "top_level_tag_field",
+    )
+
     def __init__(self, data: ComponentTyping.VersionTagOrderTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

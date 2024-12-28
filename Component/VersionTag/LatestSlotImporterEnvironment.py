@@ -11,6 +11,8 @@ class LatestSlotImporterEnvironment(ImporterEnvironment.ImporterEnvironment[list
 
     assume_type=LatestSlotComponent.LatestSlotComponent.class_name
 
+    __slots__ = ()
+
     def get_component_files(self) -> Iterable[Path]:
         return [FileManager.LATEST_SLOTS_FILE]
 

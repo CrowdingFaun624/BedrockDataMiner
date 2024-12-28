@@ -11,6 +11,12 @@ if TYPE_CHECKING:
 
 class VersionRangeField(FieldContainer.FieldContainer[OptionalVersionField.OptionalVersionField]):
 
+    __slots__ = (
+        "equals",
+        "start_version_field",
+        "stop_version_field",
+    )
+
     def __init__(self, start_version_str:str|None, stop_version_str:str|None, path: list[str | int]) -> None:
         '''
         :start_version_str: The name of the oldest Version (inclusive).

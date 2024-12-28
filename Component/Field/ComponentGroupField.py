@@ -8,6 +8,11 @@ import Utilities.Exceptions as Exceptions
 
 class ComponentGroupField[a: Component.Component](Field.Field):
 
+    __slots__ = (
+        "component_group",
+        "component_group_name",
+    )
+
     def __init__(self, component_group_name:str, path:list[str|int]) -> None:
         '''
         :component_group_name: The name of the Component group referenced by this Field.

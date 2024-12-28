@@ -1,6 +1,6 @@
 from types import EllipsisType
 from typing import (TYPE_CHECKING, Any, Callable, Mapping, MutableMapping,
-                    TypeVar, Union, cast)
+                    Union, cast)
 
 import Component.Types as Types
 import Structure.Difference as D
@@ -24,6 +24,21 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
     `get_structure`, `choose_structure`, `get_tag_paths`,
     `get_referenced_files`, `normalize`, and `get_max_similarity_descendent_depth`.
     """
+
+    __slots__ = (
+        "detect_key_moves",
+        "key_structure",
+        "key_weight",
+        "max_similarity_ancestor_depth",
+        "max_key_similarity_descendent_depth",
+        "min_key_similarity_threshold",
+        "min_value_similarity_threshold",
+        "normalizer",
+        "post_normalizer",
+        "required_keys",
+        "sorting_function",
+        "value_weight",
+    )
 
     def __init__(
             self,
@@ -54,6 +69,7 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
         self.key_structure:Structure.Structure[str]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None
+        self.required_keys:list[str]|None = None
 
     def link_substructures(
         self,
@@ -95,6 +111,7 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
             output.extend(exception.add(self.name, key) for exception in new_exceptions)
             if structure is not None:
                 output.extend(exception.add(self.name, key) for exception in structure.check_all_types(value, environment))
+        assert self.required_keys is not None
         for key in self.required_keys:
             if key not in data:
                 output.append(Trace.ErrorTrace(Exceptions.StructureRequiredKeyMissingError(self, key), self.name, None, data))

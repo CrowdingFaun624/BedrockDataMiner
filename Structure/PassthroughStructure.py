@@ -19,6 +19,16 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
     Not all Structures that have this behavior have to subclass this class.
     '''
 
+    __slots__ = (
+        "max_similarity_ancestor_depth",
+        "max_similarity_descendent_depth",
+        "structure",
+        "types",
+        "normalizer",
+        "post_normalizer",
+        "pre_normalized_types",
+    )
+
     def __init__(
         self,
         name:str,
@@ -33,7 +43,6 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         self.max_similarity_descendent_depth = max_similarity_descendent_depth
 
         self.structure:Structure.Structure[a]|None = None
-        self.delegate:Union["Delegate.Delegate", None] = None
         self.types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None

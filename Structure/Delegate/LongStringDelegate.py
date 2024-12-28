@@ -10,6 +10,10 @@ import Utilities.Exceptions as Exceptions
 
 class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
 
+    __slots__ = (
+        "surrounding_line_count",
+    )
+
     def __init__(
         self,
         structure:AbstractIterableStructure.AbstractIterableStructure|None,

@@ -11,6 +11,8 @@ class AccessorTypeImporterEnvironment(ImporterEnvironment.ImporterEnvironment[di
 
     assume_type = AccessorTypeComponent.AccessorTypeComponent.class_name
 
+    __slots__ = ()
+
     def get_component_files(self) -> Iterable[Path]:
         return [FileManager.ACCESSOR_TYPES_FILE]
 

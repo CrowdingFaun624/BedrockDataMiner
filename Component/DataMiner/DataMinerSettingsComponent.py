@@ -39,6 +39,17 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = (
+        "arguments",
+        "dataminer_field",
+        "dependencies_field",
+        "files_field",
+        "files_field_exists",
+        "new_field",
+        "old_field",
+        "serializer_field",
+    )
+
     def __init__(self, data:ComponentTyping.DataMinerSettingsTypedDict, name: str, component_group: str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 

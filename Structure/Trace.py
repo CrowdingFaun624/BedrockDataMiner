@@ -6,6 +6,14 @@ import Utilities.Exceptions as Exceptions
 
 class ErrorTrace():
 
+    __slots__ = (
+        "already_added_names",
+        "data",
+        "exception",
+        "is_final",
+        "trace",
+    )
+
     def __init__(self, exception:Exception, current_pos_name:str|None, current_pos_key:Hashable|None, data:Any|None) -> None:
         '''
         :exception: The Exception that this ErrorTrace envelops.

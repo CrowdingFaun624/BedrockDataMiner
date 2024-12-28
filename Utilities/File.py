@@ -46,6 +46,11 @@ class AbstractFile[a]():
 
     data:a
 
+    __slots__ = (
+        "display_name",
+        "hash",
+    )
+
     def __init__(self, display_name:str, data_hash:int) -> None:
         self.display_name = display_name
         self.hash = data_hash
@@ -76,6 +81,11 @@ class AbstractFile[a]():
 
 @Types.register_decorator("file", json_coder=FileCoder)
 class File[a](AbstractFile[a]):
+
+    __slots__ = (
+        "_data",
+        "serializer",
+    )
 
     def __init__(self, display_name:str, serializer:Serializer.Serializer, data_hash:int) -> None:
         super().__init__(display_name, data_hash)
@@ -117,6 +127,8 @@ class File[a](AbstractFile[a]):
 @Types.register_decorator(None, json_coder=Types.no_coder)
 class EmptyFile[a](File[a]):
 
+    __slots__ = ()
+
     def __init__(
         self,
         serializer:Serializer.Serializer,
@@ -152,6 +164,10 @@ class EmptyFile[a](File[a]):
 class FakeFile[a](AbstractFile[a]):
     '''Similar to a File, but it can be created anywhere and using any hash/data.'''
 
+    __slots__ = (
+        "data"
+    )
+
     def __init__(self, display_name: str, data:a, data_hash: int) -> None:
         super().__init__(display_name, data_hash)
         self.data = data
@@ -166,6 +182,14 @@ class FileDiff[a]():
     Similar to a FakeFile, but contains the data from multiple files.
     This exists because it's easier to hash or something.
     '''
+
+    __slots__ = (
+        "data",
+        "display_names",
+        "files",
+        "hash",
+        "last_value",
+    )
 
     def __init__(self, data:a|D.Diff[a], *files:AbstractFile[a]) -> None:
         self.data = data
@@ -202,4 +226,4 @@ def recursive_examine_data_for_files(data:Any) -> Iterator[int]:
         case DataPath.DataPath():
             yield from recursive_examine_data_for_files(data.embedded_data)
         case _:
-            raise TypeError("How do I recursively examine type %s for files?" % (data.__class__.__name__,))
+            raise TypeError(f"How do I recursively examine type {data.__class__.__name__} for files?")

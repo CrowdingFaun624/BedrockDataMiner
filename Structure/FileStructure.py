@@ -17,6 +17,17 @@ if TYPE_CHECKING:
 
 class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
 
+    __slots__ = (
+        "content_types",
+        "file_types",
+        "max_similarity_descendent_depth",
+        "max_similarity_ancestor_depth",
+        "normalizer",
+        "post_normalizer",
+        "pre_normalized_types",
+        "structure",
+    )
+
     def __init__(
         self,
         name: str,
@@ -31,7 +42,6 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
 
         self.structure:Structure.Structure[a]|None = None
-        self.delegate:Union["Delegate.Delegate", None] = None
         self.file_types:tuple[type,...]|None = None
         self.content_types:tuple[type,...]|None = None
         self.normalizer:list[Normalizer.Normalizer]|None = None

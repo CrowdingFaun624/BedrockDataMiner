@@ -22,6 +22,10 @@ SERIALIZER_CLASSES = ScriptImporter.import_scripted_types("serializers/", BUILT_
 
 class SerializerTypeField(Field.Field):
 
+    __slots__ = (
+        "serializer",
+    )
+
     def __init__(self, serializer_name:str, path: list[str | int]) -> None:
         '''
         :serializer_name: The name of the Serializer referenced by this Field.

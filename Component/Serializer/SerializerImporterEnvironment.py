@@ -7,7 +7,9 @@ import Utilities.FileManager as FileManager
 class SerializerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,Serializer.Serializer]]):
 
     assume_type = "Serializer"
-    
+
+    __slots__ = ()
+
     def get_component_files(self) -> ImporterEnvironment.Iterable[ImporterEnvironment.Path]:
         return [FileManager.SERIALIZERS_FILE]
 

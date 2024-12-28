@@ -11,6 +11,11 @@ if TYPE_CHECKING:
 
 class GroupItemField(FieldContainer.FieldContainer):
 
+    __slots__ = (
+        "subcomponent_field",
+        "type_field",
+    )
+
     def __init__(self, key:str, value:str|ComponentTyping.StructureTypedDicts|None, path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
         :key: The type associated with this GroupItemField.

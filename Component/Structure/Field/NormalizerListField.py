@@ -11,6 +11,8 @@ NORMALIZER_PATTERN:Pattern.Pattern[NormalizerComponent.NormalizerComponent] = Pa
 
 class NormalizerListField(ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent]):
 
+    __slots__ = ()
+
     def __init__(self, subcomponents_data:Sequence[str|ComponentTyping.NormalizerTypedDict]|str|ComponentTyping.NormalizerTypedDict, path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
         :subcomponents_data: The names of the reference Components and/or the data of the inline Components this Field refers to.

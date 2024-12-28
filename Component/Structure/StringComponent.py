@@ -27,6 +27,17 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
+    __slots__ = (
+        "delegate_field",
+        "max_similarity_ancestor_depth",
+        "my_type",
+        "normalizer_field",
+        "pre_normalized_types_field",
+        "similarity_function_field",
+        "tags_field",
+        "types_field",
+    )
+
     def __init__(self, data:ComponentTyping.StringTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

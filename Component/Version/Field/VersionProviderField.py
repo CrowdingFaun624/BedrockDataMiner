@@ -10,7 +10,11 @@ BUILT_IN_VERSION_PROVIDER_CLASSES:dict[str,type[VersionProvider.VersionProvider]
 VERSION_PROVIDER_CLASSES = ScriptImporter.import_scripted_types("version_providers", BUILT_IN_VERSION_PROVIDER_CLASSES, VersionProvider.VersionProvider)
 
 class VersionProviderField(Field.Field):
-    
+
+    __slots__ = (
+        "version_provider",
+    )
+
     def __init__(self, version_provider_name:str, path: list[str | int]) -> None:
         '''
         :version_provider_name: The name of the VersionProvider referenced by this Field.

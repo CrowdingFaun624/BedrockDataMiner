@@ -16,6 +16,13 @@ TYPE_ALIAS_PATTERN:Pattern.Pattern[TypeAliasComponent.TypeAliasComponent] = Patt
 class TypeListField(AbstractTypeField.AbstractTypeField):
     '''A link to multiple TypeAliasComponents and/or types.'''
 
+    __slots__ = (
+        "primitive_types",
+        "subcomponents_strs",
+        "type_aliases",
+        "types",
+    )
+
     def __init__(self, subcomponents_strs:list[str]|str, path:list[str|int]) -> None:
         '''
         :subcomponents_strs: List of string representing a default type or Component.

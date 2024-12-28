@@ -11,6 +11,8 @@ class TablifierImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
 
     assume_type = "Tablifier"
 
+    __slots__ = ()
+
     def get_imports(self, components: dict[str, Component.Component], all_components: dict[str, dict[str, Component.Component]], name: str) -> dict[str, dict[str, Component.Component]]:
         output:dict[str, dict[str, Component.Component]] = {}
         output["dataminer_collections"] = all_components["dataminer_collections"]

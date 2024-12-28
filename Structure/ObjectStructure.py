@@ -12,6 +12,8 @@ class ObjectStructure[d](Structure.Structure[d]):
     Must have a substructure.
     '''
 
+    __slots__ = ()
+
     def get_structure(self, key:Any, value:Any) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
         '''
         Returns the substructure of this Structure.

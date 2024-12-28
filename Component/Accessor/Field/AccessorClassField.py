@@ -13,6 +13,10 @@ ACCESSOR_CLASSES = ScriptImporter.import_scripted_types("accessors/", BUILT_IN_A
 
 class AccessorClassField(Field.Field):
 
+    __slots__ = (
+        "accessor_class",
+    )
+
     def __init__(self, accessor_class_str:str, path: list[str | int]) -> None:
         '''
         :accessor_class_str: The name of the Accessor class this Field refers to.

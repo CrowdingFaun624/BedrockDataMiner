@@ -12,6 +12,11 @@ import Utilities.Exceptions as Exceptions
 
 class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
 
+    __slots__ = (
+        "max_similarity_ancestor_depth",
+        "similarity_function",
+    )
+
     def __init__(
         self,
         name: str,
@@ -21,6 +26,7 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         super().__init__(name, children_has_normalizer)
 
         self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
+        self.similarity_function:Callable[[str],str]|None = None
 
     def link_substructures(
         self,

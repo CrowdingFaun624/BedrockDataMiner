@@ -20,6 +20,10 @@ DATAMINER_CLASSES = ScriptImporter.import_scripted_types("dataminers/", BUILT_IN
 
 class OptionalDataMinerTypeField(Field.Field):
 
+    __slots__ = (
+        "dataminer",
+    )
+
     def __init__(self, dataminer_name:str|None, path: list[str | int]) -> None:
         '''
         :dataminer_name: The name of the DataMiner referenced by this Field.

@@ -22,6 +22,12 @@ class SequenceStructure[d](AbstractIterableStructure.AbstractIterableStructure[d
     Sequential data structure. Uses levenshtein distance for comparing.
     '''
 
+    __slots__ = (
+        "addition_cost",
+        "deletion_cost",
+        "substitution_cost",
+    )
+
     def __init__(
         self,
         name: str,

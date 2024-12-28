@@ -14,6 +14,20 @@ if TYPE_CHECKING:
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
+    __slots__ = (
+        "allow_inline",
+        "delegate_arguments",
+        "key",
+        "max_similarity_descendent_depth",
+        "required",
+        "source_component",
+        "subcomponent_field",
+        "tags_field",
+        "tags_for_all_field",
+        "types_field",
+        "weight",
+    )
+
     def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, tag_set:set["StructureTagComponent.StructureTagComponent"], path:list[str|int], source_component:"Component.Component", *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
         :data: A dictionary containing the keys {"type": str|list[str], "subcomponent": str|ComponentTyping.StructureComponentTypedDicts|None, tags:list[str]}

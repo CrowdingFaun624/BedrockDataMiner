@@ -10,6 +10,10 @@ class FieldContainer[a: Field.Field](Field.Field):
     Abstract class of Field that contains other Fields.
     '''
 
+    __slots__ = (
+        "fields",
+    )
+
     def __init__(self, fields:MutableSequence[a], path: list[str | int]) -> None:
         super().__init__(path)
         self.fields = fields

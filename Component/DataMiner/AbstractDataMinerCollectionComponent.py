@@ -10,3 +10,5 @@ class AbstractDataMinerCollectionComponent[a: AbstractDataMinerCollection.Abstra
     my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
 
     disabled:bool = False
+
+    __slots__ = ()

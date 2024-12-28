@@ -33,6 +33,10 @@ class Delegate[a, b:Structure.Structure|StructureBase.StructureBase, c]():
 
     applies_to:tuple[type[StructureBase.StructureBase]|type[Structure.Structure]|type[None],...] = (StructureBase.StructureBase, ObjectStructure.ObjectStructure, PrimitiveStructure.PrimitiveStructure, type(None))
 
+    __slots__ = (
+        "structure",
+    )
+
     def __init__(self, structure:b|None, keys:dict[str,Any]) -> None:
         '''
         :structure: The Structure that this Delegate belongs to. Can only be None if it is used as the default delegate of a StructureBase.

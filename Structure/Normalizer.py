@@ -6,6 +6,13 @@ import Version.VersionRange as VersionRange
 class Normalizer[IN, OUT]():
     '''Changes data before a Structure looks at it.'''
 
+    __slots__ = (
+        "arguments",
+        "function",
+        "name",
+        "version_range"
+    )
+
     def __init__(self, name:str, function:Callable[[IN], OUT], arguments:dict[str,Any]) -> None:
         '''
         :name: The Component name of this Normalizer.

@@ -7,7 +7,9 @@ import Utilities.FileManager as FileManager
 class StructureTagImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,StructureTag.StructureTag]]):
 
     assume_type = "StructureTag"
-    
+
+    __slots__ = ()
+
     def get_component_files(self) -> ImporterEnvironment.Iterable[ImporterEnvironment.Path]:
         return [FileManager.STRUCTURE_TAGS_FILE]
 

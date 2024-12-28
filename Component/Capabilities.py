@@ -30,6 +30,10 @@ ALLOWED_CAPABILITIES = set([
 
 class Capabilities():
 
+    __slots__ = (
+        "capabilities",
+    )
+
     def __init__(self, **capabilities:bool) -> None:
         if len(capabilities) == 0:
             raise Exceptions.EmptyCapabilitiesError(self)

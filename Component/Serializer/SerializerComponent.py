@@ -17,6 +17,11 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = (
+        "arguments",
+        "serializer_class_field",
+    )
+
     def __init__(self, data:ComponentTyping.SerializerTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

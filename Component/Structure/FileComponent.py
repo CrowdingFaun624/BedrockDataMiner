@@ -30,6 +30,19 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = (
+        "content_types_field",
+        "delegate_field",
+        "file_types_field",
+        "max_similarity_ancestor_depth",
+        "max_similarity_descendent_depth",
+        "my_type",
+        "normalizer_field",
+        "post_normalizer_field",
+        "pre_normalized_types_field",
+        "subcomponent_field",
+    )
+
     def __init__(self, data:ComponentTyping.FileTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 

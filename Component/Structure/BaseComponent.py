@@ -34,6 +34,17 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
+    __slots__ = (
+        "default_delegate_field",
+        "delegate_field",
+        "imports",
+        "normalizer_field",
+        "post_normalizer_field",
+        "pre_normalized_types_field",
+        "subcomponent_field",
+        "types_field",
+    )
+
     def __init__(self, data:ComponentTyping.BaseTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 

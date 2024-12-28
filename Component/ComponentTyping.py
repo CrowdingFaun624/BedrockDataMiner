@@ -261,7 +261,7 @@ class TablifierTypedDict(TypedDict):
 
 class TypeAliasTypedDict(TypedDict):
     type: NotRequired[Literal["TypeAlias"]]
-    types: Required[str|list[str]]
+    types: Required[list[str]]
 
 class VersionFileTypedDict(TypedDict):
     accessors: Required[list[AccessorTypedDict]]

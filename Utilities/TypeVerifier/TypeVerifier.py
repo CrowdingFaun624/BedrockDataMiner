@@ -14,6 +14,11 @@ class TraceItemType(enum.Enum):
     OTHER = 3
 
 class Trace():
+
+    __slots__ = (
+        "trace",
+    )
+
     def __init__(self, trace:list[tuple[object, TraceItemType]]|None=None) -> None:
         self.trace = [] if trace is None else trace
 
@@ -62,6 +67,20 @@ class TypeVerifier[A]():
         return f"<{self.__class__.__name__}>"
 
 class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
+
+    __slots__ = (
+        "additional_function",
+        "data_type",
+        "data_type_str",
+        "key_function",
+        "key_type",
+        "key_type_is_verifier",
+        "key_type_str",
+        "value_function",
+        "value_type",
+        "value_type_is_verifier",
+        "value_type_str",
+    )
 
     def __init__(
             self,
@@ -147,6 +166,15 @@ class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
 
 class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
 
+    __slots__ = (
+        "function",
+        "key",
+        "required",
+        "value_type",
+        "value_type_is_verifier",
+        "value_type_str",
+    )
+
     def __init__(
             self,
             key:K,
@@ -194,6 +222,15 @@ class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
         return f"<{self.__class__.__name__} {self.key} \"{self.value_type_str}\">"
 
 class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
+
+    __slots__ = (
+        "data_type",
+        "data_type_str",
+        "function",
+        "keys_dict",
+        "loose",
+        "required_keys"
+    )
 
     def __init__(
             self,
@@ -251,6 +288,16 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
         return f"<{self.__class__.__name__} \"{self.data_type_str}\" ({", ".join(self.keys_dict)})>"
 
 class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
+
+    __slots__ = (
+        "additional_function",
+        "data_type",
+        "data_type_str",
+        "item_function",
+        "item_type",
+        "item_type_is_verifier",
+        "item_type_str",
+    )
 
     def __init__(
             self,
@@ -311,6 +358,8 @@ class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
 
 class IterableTypeVerifier[I](ListTypeVerifier):
 
+    __slots__ = ()
+
     def __init__(
             self,
             item_type:type[I]|tuple[type[I],...]|TypeVerifier[I],
@@ -327,6 +376,12 @@ class IterableTypeVerifier[I](ListTypeVerifier):
         return super().verify(cast(Sequence[I], data), trace)
 
 class TupleItemTypeVerifier[I](TypeVerifier[tuple[int,I]]):
+
+    __slots__ = (
+        "item_type",
+        "item_type_is_verifier",
+        "item_type_str",
+    )
 
     def __init__(
             self,
@@ -357,6 +412,13 @@ class TupleItemTypeVerifier[I](TypeVerifier[tuple[int,I]]):
         return f"<{self.__class__.__name__} \"{self.item_type_str}\">"
 
 class TupleTypeVerifier[I](TypeVerifier[Sequence[I]]):
+
+    __slots__ = (
+        "data_type",
+        "data_type_str",
+        "function",
+        "items",
+    )
 
     def __init__(
             self,
@@ -404,6 +466,10 @@ class TupleTypeVerifier[I](TypeVerifier[Sequence[I]]):
 
 class EnumTypeVerifier[I](TypeVerifier[I]):
 
+    __slots__ = (
+        "options",
+    )
+
     def __init__(self, options:Container[I], type_check:bool=True) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:
             private__enum_type_verifier.base_verify({"options": options}, ["EnumTypeVerifier"])
@@ -419,6 +485,12 @@ class EnumTypeVerifier[I](TypeVerifier[I]):
         return f"<{self.__class__.__name__} {self.options}>"
 
 class UnionTypeVerifier[I](TypeVerifier[I]):
+
+    __slots__ = (
+        "type_str",
+        "types",
+        "types_are_type_verifiers",
+    )
 
     def __init__(self, type_str:str, *types:type[I]|TypeVerifier[I]|Any, type_check:bool=True) -> None:
         if TYPE_CHECK_TYPE_VERIFIERS and type_check:

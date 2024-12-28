@@ -5,6 +5,10 @@ import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
 
 class TypeVerifierField(Field.Field):
 
+    __slots__ = (
+        "type_verifier",
+    )
+
     def __init__(self, data:TypeVerifierImporter.TypedVerifierTypedDicts, path:list[str|int]) -> None:
         '''
         :data: The data of the TypeVerifier.

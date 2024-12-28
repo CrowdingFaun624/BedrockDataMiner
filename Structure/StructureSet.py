@@ -13,6 +13,11 @@ class StructureSet[d]():
     Is used when a value is a Diff and can be split between two different Structures.
     '''
 
+    __slots__ = (
+        "branches",
+        "structures",
+    )
+
     def __init__(self, structures:dict[tuple[int,...]|None,Union["Structure.Structure[d]",None]]) -> None:
         '''
         :structures: The dict of Structures to store in this StructureSet.

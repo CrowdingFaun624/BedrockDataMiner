@@ -27,6 +27,13 @@ DELEGATE_CLASSES = ScriptImporter.import_scripted_types("delegates", BUILT_IN_DE
 
 class OptionalDelegateField(Field.Field):
 
+    __slots__ = (
+        "arguments",
+        "delegate_name",
+        "delegate_type",
+        "has_set_delegate",
+    )
+
     def __init__(self, delegate_name:str|None, arguments:dict[str,Any], path: list[str | int]) -> None:
         super().__init__(path)
         self.delegate_name = delegate_name

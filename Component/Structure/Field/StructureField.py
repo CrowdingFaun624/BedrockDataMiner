@@ -15,12 +15,17 @@ STRUCTURE_BASE_PATTERN:Pattern.Pattern["BaseComponent.BaseComponent"] = Pattern.
 
 class StructureField(ComponentGroupField.ComponentGroupField["BaseComponent.BaseComponent"]):
 
+    __slots__ = (
+        "subcomponent",
+    )
+
     def __init__(self, structure_str:str, path:list[str|int]) -> None:
         '''
         :structure_str: The name of the Structure referenced by this Field.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(structure_str, path)
+        self.subcomponent:BaseComponent.BaseComponent|None = None
 
     def set_field(
         self,

@@ -25,6 +25,18 @@ class CoverageDataMinerCollectionComponent(AbstractDataMinerCollectionComponent.
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = (
+        "comparing_disabled",
+        "disabled",
+        "file_list_dataminer_field",
+        "file_name",
+        "remove_files",
+        "remove_prefixes",
+        "remove_regex",
+        "remove_suffixes",
+        "structure_field",
+    )
+
     def __init__(self, data: ComponentTyping.CoverageDataMinerCollectionTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

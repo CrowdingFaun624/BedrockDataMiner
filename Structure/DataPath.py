@@ -20,6 +20,13 @@ class DataPathCoder(CustomJson.Coder[DataPathJsonTypedDict, "DataPath"]):
 @Types.register_decorator(None, hashing_method=hash, json_coder=DataPathCoder)
 class DataPath():
 
+    __slots__ = (
+        "embedded_data",
+        "hash",
+        "path_items",
+        "root",
+    )
+
     def __init__(self, path_items:list[Hashable], root:str, embedded_data:Any|None=None) -> None:
         '''
         :path_items: Items in the DataPath. Cannot contain None.

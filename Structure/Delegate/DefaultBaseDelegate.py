@@ -16,6 +16,10 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
         TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
     )
 
+    __slots__ = (
+        "structure_name",
+    )
+
     def __init__(self, structure: StructureBase.StructureBase|None, keys:dict[str,dict[str,Any]], name:str) -> None:
         super().__init__(structure, keys)
         self.structure_name = name

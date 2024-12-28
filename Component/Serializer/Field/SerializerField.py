@@ -8,6 +8,8 @@ SERIALIZER_PATTERN:Pattern.Pattern[SerializerComponent.SerializerComponent] = Pa
 
 class SerializerField(ComponentField.ComponentField[SerializerComponent.SerializerComponent]):
     
+    __slots__ = ()
+    
     def __init__(self, subcomponent_data:str, path: list[str | int]) -> None:
         super().__init__(subcomponent_data, SERIALIZER_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_type="Serializer")
 

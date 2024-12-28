@@ -18,6 +18,10 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.Versi
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = (
+        "version_range_field",
+    )
+
     def __init__(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

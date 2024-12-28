@@ -17,6 +17,8 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
 
     assume_type = DataMinerCollectionComponent.DataMinerCollectionComponent.class_name
 
+    __slots__ = ()
+
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
         imports = {component_group_name: component_group for component_group_name, component_group in all_components.items() if component_group_name.startswith("structures/")}
         imports.update({"versions": all_components["versions"], "version_file_types": all_components["version_file_types"], "serializers": all_components["serializers"]})

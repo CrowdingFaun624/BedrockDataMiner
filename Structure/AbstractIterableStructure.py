@@ -18,6 +18,17 @@ class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]])
     Must override `compare`, `get_similarity`, `get_item_key`, and `get_compare_text_key_str`.
     """
 
+    __slots__ = (
+        "max_similarity_ancestor_depth",
+        "max_similarity_descendent_depth",
+        "normalizer",
+        "post_normalizer",
+        "pre_normalized_types",
+        "structure",
+        "tags",
+        "types",
+    )
+
     def __init__(
             self,
             name:str,

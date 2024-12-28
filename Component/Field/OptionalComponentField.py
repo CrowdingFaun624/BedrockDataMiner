@@ -10,6 +10,17 @@ import Utilities.Exceptions as Exceptions
 class OptionalComponentField[a: Component.Component](Field.Field):
     '''A link to another Component.'''
 
+    __slots__ = (
+        "allow_inline",
+        "assume_type",
+        "has_inline_components",
+        "has_reference_components",
+        "has_set_component",
+        "pattern",
+        "subcomponent",
+        "subcomponent_data",
+    )
+
     def __init__(self, subcomponent_data:str|ComponentTyping.ComponentTypedDicts|None, pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed, assume_type:str|None=None) -> None:
         '''
         :subcomponent_data: The name of the reference Component or the data of the inline Components this Field refers to.

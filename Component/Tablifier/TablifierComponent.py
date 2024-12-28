@@ -21,6 +21,13 @@ class TablifierComponent(Component.Component[Tablifier.Tablifier]):
         TypeVerifier.TypedDictKeyTypeVerifier("version_provider", "a str", True, str),
     )
 
+    __slots__ = (
+        "dataminer_collection_field",
+        "file_name",
+        "structure_field",
+        "version_provider_field",
+    )
+
     def __init__(self, data: ComponentTyping.TablifierTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

@@ -34,6 +34,17 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
         TypeVerifier.TypedDictKeyTypeVerifier("latest_slot", "a str", False, str),
     )
 
+    __slots__ = (
+        "auto_assigner_field",
+        "development_name",
+        "is_development_tag",
+        "is_fork_tag",
+        "is_major_tag",
+        "is_order_tag",
+        "is_unreleased_tag",
+        "latest_slot_field",
+    )
+
     def __init__(self, data: ComponentTyping.VersionTagTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

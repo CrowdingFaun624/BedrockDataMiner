@@ -21,6 +21,13 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = (
+        "arguments",
+        "children_has_normalizer",
+        "function_field",
+        "version_range_field",
+    )
+
     def __init__(self, data:ComponentTyping.NormalizerTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 

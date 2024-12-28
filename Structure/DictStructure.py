@@ -22,6 +22,14 @@ VALUE_WEIGHT = 0.8
 
 class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
 
+    __slots__ = (
+        "max_similarity_descendent_depth",
+        "pre_normalized_types",
+        "structure",
+        "tags",
+        "types",
+    )
+
     def __init__(
             self,
             name:str,

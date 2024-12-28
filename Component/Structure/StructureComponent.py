@@ -8,6 +8,8 @@ class StructureComponent[a: Structure.Structure](Component.Component[a]):
     class_name = "StructureComponent"
     my_type:set[type]
 
+    __slots__ = ()
+
     def finalize(self) -> None:
         super().finalize()
         delegate = self.get_final().delegate

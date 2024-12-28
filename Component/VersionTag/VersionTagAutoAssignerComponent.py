@@ -12,6 +12,8 @@ class VersionTagAutoAssignerComponent(Component.Component[None]):
     class_name_article = "a VersionTagAutoAssigner"
     my_capabilities = Capabilities.Capabilities(is_version_tag_auto_assigner=True)
 
+    __slots__ = ()
+
     def contains_version(self, version:"VersionComponent.VersionComponent") -> bool:
         '''
         Returns True if this VersionTagAutoAssigner should assign its tag to this Version.

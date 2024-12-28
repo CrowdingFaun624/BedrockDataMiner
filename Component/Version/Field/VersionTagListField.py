@@ -15,6 +15,11 @@ VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] =
 
 class VersionTagListField(ComponentListField.ComponentListField["VersionTagComponent.VersionTagComponent"]):
 
+    __slots__ = (
+        "version_component",
+        "version_tag_components",
+    )
+
     def __init__(self, subcomponents_data:list[str]|str, path: list[str | int], version_component:Optional["VersionComponent.VersionComponent"]=None) -> None:
         '''
         :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.

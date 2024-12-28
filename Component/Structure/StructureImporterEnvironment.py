@@ -12,6 +12,8 @@ import Utilities.FileManager as FileManager
 
 class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[StructureBase.StructureBase]):
 
+    __slots__ = ()
+
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str, Component.Component]]:
         output:dict[str,dict[str,Component.Component]] = {}
         output["versions"] = all_components["versions"]

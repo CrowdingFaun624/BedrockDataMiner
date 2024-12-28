@@ -16,6 +16,10 @@ MANAGER_CLASSES = ScriptImporter.import_scripted_types("managers/", BUILT_IN_MAN
 
 class ManagerClassField(Field.Field):
 
+    __slots__ = (
+        "manager_class",
+    )
+
     def __init__(self, manager_class_str:str, path: list[str | int]) -> None:
         '''
         :manager_class_str: The name of the Manager class that this Field references.

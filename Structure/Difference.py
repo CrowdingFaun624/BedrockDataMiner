@@ -25,6 +25,17 @@ class Diff[Dt1]():
     An immutable object containing a difference in data from version to version.
     '''
 
+    __slots__ = (
+        "branches",
+        "existing_count",
+        "items",
+        "first_branches",
+        "first_value",
+        "last_branches",
+        "last_value",
+        "length",
+    )
+
     def __init__(self, length:int, items:dict[tuple[int,...],Dt1]) -> None:
         '''
         :length: The total number of branches.

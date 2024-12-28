@@ -19,6 +19,12 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
         TypeVerifier.TypedDictKeyTypeVerifier("parameters", "a TypeVerifier", True, dict)
     )
 
+    __slots__ = (
+        "accessor_class_field",
+        "manager_class_field",
+        "parameters_field",
+    )
+
     def __init__(self, data: ComponentTyping.AccessorTypeTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

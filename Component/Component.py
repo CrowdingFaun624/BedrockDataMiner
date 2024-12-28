@@ -17,6 +17,22 @@ class Component[a]():
     children_has_normalizer_default = False
     type_verifier:TypeVerifier.TypeVerifier
 
+    __slots__ = (
+        "children_has_garbage_collection",
+        "children_has_normalizer",
+        "children_tags",
+        "component_group",
+        "fields",
+        "final",
+        "index",
+        "inline_component_count",
+        "inline_components",
+        "inline_parent",
+        "links_to_other_components",
+        "name",
+        "parents",
+    )
+
     def __init__(self, data:Any, name:str, component_group:str, index:int|None) -> None:
         self.name = name
         self.component_group = component_group

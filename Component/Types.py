@@ -15,6 +15,11 @@ no_coder = NoCoder()
 
 class TypeSet[T]():
 
+    __slots__ = (
+        "not_types",
+        "types",
+    )
+
     def __init__(self, types:Iterable[type[T]]|None=None) -> None:
         self.types:set[type[T]] = set(types) if types is not None else set()
         self.not_types:set[type] = set()
@@ -46,6 +51,11 @@ class TypeSet[T]():
         self.types.discard(_type)
 
 class TypeDict[T, A]():
+
+    __slots__ = (
+        "not_types",
+        "types",
+    )
 
     def __init__(self, types:Mapping[type[T], A]|None=None) -> None:
         self.types:dict[type[T],A] = dict(types) if types is not None else {}

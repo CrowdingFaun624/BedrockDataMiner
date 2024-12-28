@@ -25,6 +25,14 @@ class Script[a]():
 
     all_type_verifier = TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=lambda data: (len(data) == 1, "Can only export a single object"))
 
+    __slots__ = (
+        "has_all",
+        "module",
+        "name",
+        "object",
+        "path",
+    )
+
     def __init__(self, path: Path, name: str) -> None:
         self.name = name
         self.path = path
@@ -32,6 +40,7 @@ class Script[a]():
         self.module = importlib.import_module(module_name)
 
         self.object:Any = None
+        self.has_all:bool = False
 
     @property
     def should_skip(self) -> bool:

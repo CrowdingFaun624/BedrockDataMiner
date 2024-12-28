@@ -36,6 +36,13 @@ class VersionComponent(Component.Component[Version.Version]):
             } for accessor_key, accessor_value in version_file_value.items()]
         } for version_file_key, version_file_value in files.items()]
 
+    __slots__ = (
+        "files_field",
+        "parent_field",
+        "tags_field",
+        "time",
+    )
+
     def __init__(self, data:ComponentTyping.VersionTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 

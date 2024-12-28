@@ -33,6 +33,22 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
+    __slots__ = (
+        "delegate_field",
+        "max_similarity_ancestor_depth",
+        "max_similarity_descendent_depth",
+        "min_similarity_threshold",
+        "my_type",
+        "normalizer_field",
+        "post_normalizer_field",
+        "pre_normalized_types_field",
+        "sort",
+        "subcomponent_field",
+        "tags_field",
+        "this_type_field",
+        "types_field",
+    )
+
     def __init__(self, data:ComponentTyping.SetTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 

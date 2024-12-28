@@ -41,6 +41,17 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
         TypeVerifier.TypedDictKeyTypeVerifier("always_print", "a bool", False, bool),
     )
 
+    __slots__ = (
+        "always_print_keys",
+        "enquote_strings",
+        "field",
+        "measure_length",
+        "passthrough",
+        "print_all",
+        "print_flat",
+        "show_item_key",
+    )
+
     def __init__(
         self,
         structure:ObjectStructure.ObjectStructure|None,

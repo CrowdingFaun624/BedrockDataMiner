@@ -12,6 +12,8 @@ class LogImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,Lo
     
     assume_type = LogComponent.LogComponent.class_name
 
+    __slots__ = ()
+
     def get_component_files(self) -> Iterable[Path]:
         return (FileManager.LOGS_FILE,)
 

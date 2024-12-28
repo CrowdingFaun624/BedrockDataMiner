@@ -13,6 +13,11 @@ VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] =
 
 class VersionTagOrderAllowedChildrenField(FieldContainer.FieldContainer[Field.Field]):
 
+    __slots__ = (
+        "children_field",
+        "key_field",
+    )
+
     def __init__(self, key:str, children:list[str], path: list[str | int]) -> None:
         '''
         :key: A key of the allowed_children dict.

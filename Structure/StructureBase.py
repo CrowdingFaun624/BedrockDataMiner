@@ -20,6 +20,20 @@ file_counts:dict[str,int] = {}
 class StructureBase():
     '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
 
+    __slots__ = (
+        "cache_substructures",
+        "children_has_garbage_collection",
+        "children_tags",
+        "default_delegate",
+        "delegate",
+        "name",
+        "normalizer",
+        "post_normalizer",
+        "pre_normalized_types",
+        "structure",
+        "types",
+    )
+
     def __init__(
             self,
             name:str,
@@ -33,6 +47,7 @@ class StructureBase():
         self.types:tuple[type,...]|None = None
         self.pre_normalized_types:tuple[type,...]|None = None
         self.delegate:Union["Delegate.Delegate[str,StructureBase,str]", None] = None
+        self.default_delegate:Union["Delegate.Delegate", None] = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None
         self.cache_substructures:list[CacheStructure.CacheStructure] = []

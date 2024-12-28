@@ -19,6 +19,13 @@ class LogComponent(Component.Component[Log.Log]):
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
+    __slots__ = (
+        "file",
+        "file_name",
+        "log_type",
+        "reset_on_reload",
+    )
+
     def __init__(self, data: ComponentTyping.LogTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

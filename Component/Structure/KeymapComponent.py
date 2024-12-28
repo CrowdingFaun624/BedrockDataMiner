@@ -60,6 +60,28 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         TypeVerifier.TypedDictKeyTypeVerifier("value_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
     )
 
+    __slots__ = (
+        "default_max_similarity_descendent_depth",
+        "delegate_field",
+        "detect_key_moves",
+        "import_field",
+        "key_structure_field",
+        "key_weight",
+        "keys",
+        "max_key_similarity_descendent_depth",
+        "max_similarity_ancestor_depth",
+        "min_key_similarity_threshold",
+        "min_value_similarity_threshold",
+        "my_type",
+        "normalizer_field",
+        "post_normalizer_field",
+        "pre_normalized_types_field",
+        "sort",
+        "tags_for_all_field",
+        "this_type_field",
+        "value_weight",
+    )
+
     def __init__(self, data:ComponentTyping.KeymapTypedDict, name:str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 

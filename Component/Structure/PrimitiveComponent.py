@@ -24,6 +24,15 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
+    __slots__ = (
+        "delegate_field",
+        "my_type",
+        "normalizer_field",
+        "pre_normalized_types_field",
+        "tags_field",
+        "types_field",
+    )
+
     def __init__(self, data:ComponentTyping.PrimitiveTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

@@ -22,6 +22,18 @@ VALUE_WEIGHT = 1.0
 
 class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
 
+    __slots__ = (
+        "default_max_similarity_descendent_depth",
+        "key_types",
+        "key_weights",
+        "keys",
+        "keys_max_similarity_descendent_depth",
+        "keys_with_normalizers",
+        "pre_normalized_types",
+        "tags",
+        "unweighted_keys",
+    )
+
     def __init__(
             self,
             name:str,

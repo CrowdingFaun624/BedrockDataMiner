@@ -19,6 +19,11 @@ class SetStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
     Unordered data structure.
     """
 
+    __slots__ = (
+        "min_similarity_threshold",
+        "sort",
+    )
+
     def __init__(
         self,
         name: str,

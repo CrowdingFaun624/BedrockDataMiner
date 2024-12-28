@@ -11,6 +11,13 @@ if TYPE_CHECKING:
 
 class FunctionField(Field.Field):
 
+    __slots__ = (
+        "arguments_to_check",
+        "function",
+        "function_name",
+        "ignore_parameters",
+    )
+
     def __init__(self, function_name:str, path:list[str|int], ignore_parameters:set[str]|None=None) -> None:
         '''
         :function_name: The name of the function this refers to.

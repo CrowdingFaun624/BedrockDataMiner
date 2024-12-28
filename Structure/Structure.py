@@ -16,6 +16,14 @@ NoneType = type(None)
 class Structure[a]():
     "Modular piece that compares and provides structured access to data."
 
+    __slots__ = (
+        "children_has_garbage_collection",
+        "children_has_normalizer",
+        "children_tags",
+        "delegate",
+        "name",
+    )
+
     def __init__(self, name:str, children_has_normalizer:bool, children_has_garbage_collection:bool) -> None:
         self.name = name
         self.children_has_normalizer = children_has_normalizer

@@ -12,6 +12,8 @@ class VersionTagImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict
 
     assume_type = VersionTagComponent.VersionTagComponent.class_name
 
+    __slots__ = ()
+
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
         return {"versions": all_components["versions"], "latest_slots": all_components["latest_slots"]}
 

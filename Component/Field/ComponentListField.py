@@ -10,6 +10,16 @@ import Utilities.Exceptions as Exceptions
 class ComponentListField[a:Component.Component](Field.Field):
     '''A link to multiple other Components.'''
 
+    __slots__ = (
+        "allow_inline",
+        "assume_type",
+        "has_inline_components",
+        "has_reference_components",
+        "pattern",
+        "subcomponents",
+        "subcomponents_data",
+    )
+
     def __init__(self, subcomponents_data:Sequence[str|ComponentTyping.ComponentTypedDicts]|str|ComponentTyping.ComponentTypedDicts, pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed, assume_type:str|None=None) -> None:
         '''
         :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.
@@ -92,7 +102,7 @@ class ComponentListField[a:Component.Component](Field.Field):
         return self.subcomponents # type: ignore
 
     def __repr__(self) -> str:
-        return "<%s len %i id %i>" % (self.__class__.__name__, len(self), id(self))
+        return f"<{self.__class__.__name__} len {len(self)} id {id(self)}>"
 
     def __len__(self) -> int:
         if self.subcomponents is None: return 0

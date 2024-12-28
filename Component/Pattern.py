@@ -8,7 +8,10 @@ if TYPE_CHECKING:
 
 class Pattern[a: "Component.Component"]():
 
-class Pattern(Generic[a]):
+    __slots__ = (
+        "capabilities",
+        "matching_components",
+    )
 
     def __init__(self, capabilities:list[dict[str,bool]]) -> None:
         '''

@@ -15,6 +15,20 @@ if TYPE_CHECKING:
 
 class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
 
+    __slots__ = (
+        "cache",
+        "cache_check_all_types",
+        "cache_compare",
+        "cache_compare_text",
+        "cache_get_referenced_files",
+        "cache_get_similarity",
+        "cache_get_tag_paths",
+        "cache_normalize",
+        "cache_print_text",
+        "cache_remove_threshold",
+        "searches",
+    )
+
     def __init__(
             self,
             name:str,
@@ -250,6 +264,28 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
         self.cache.clear()
 
 class CacheItem[d]():
+
+    __slots__ = (
+        "cache_retrieve",
+        "cache_store",
+        "check_all_types",
+        "check_all_types_data",
+        "compare",
+        "compare_data",
+        "compare_text",
+        "compare_text_data",
+        "get_referenced_files",
+        "get_referenced_files_data",
+        "get_similarity",
+        "get_similarity_data",
+        "get_tag_paths",
+        "get_tag_paths_data",
+        "normalize",
+        "normalize_data",
+        "print_text",
+        "print_text_data",
+        "retrieve_index",
+    )
 
     def __init__(self, delegate:Union["Delegate.Delegate", None], creation_index:int) -> None:
         self.cache_store = delegate.cache_store if delegate is not None else lambda data, environment: data

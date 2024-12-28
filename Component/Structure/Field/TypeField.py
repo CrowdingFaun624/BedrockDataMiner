@@ -16,6 +16,12 @@ TYPE_ALIAS_PATTERN:Pattern.Pattern["TypeAliasComponent.TypeAliasComponent"] = Pa
 class TypeField(AbstractTypeField.AbstractTypeField):
     '''A link to a TypeAliasComponent or type.'''
 
+    __slots__ = (
+        "subcomponent",
+        "subcomponent_data",
+        "types",
+    )
+
     def __init__(self, subcomponent_data:str, path:list[str|int]) -> None:
         '''
         :subcomponent_data: String representing a default type or Component.

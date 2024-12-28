@@ -29,6 +29,22 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a list or str", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
     )
 
+    __slots__ = (
+        "cache_check_all_types",
+        "cache_compare",
+        "cache_compare_text",
+        "cache_get_referenced_files",
+        "cache_get_similarity",
+        "cache_get_tag_paths",
+        "cache_normalize",
+        "cache_print_text",
+        "delegate_field",
+        "my_type",
+        "subcomponent_field",
+        "remove_threshold",
+        "types_field",
+    )
+
     def __init__(self, data:ComponentTyping.CacheTypedDict, name: str, component_group:str, index:int|None) -> None:
         super().__init__(data, name, component_group, index)
 

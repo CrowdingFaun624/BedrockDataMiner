@@ -17,6 +17,13 @@ class PrimitiveStructure[d](Structure.Structure[d]):
     Structure with no substructure.
     """
 
+    __slots__ = (
+        "normalizer",
+        "pre_normalized_types",
+        "tags",
+        "types",
+    )
+
     def __init__(self, name: str, children_has_normalizer: bool) -> None:
         super().__init__(name, children_has_normalizer, False)
 

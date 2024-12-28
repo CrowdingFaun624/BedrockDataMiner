@@ -31,6 +31,17 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
         TypeVerifier.TypedDictKeyTypeVerifier("must_exist", "a bool", True, bool),
     )
 
+    __slots__ = (
+        "allowed_accessor_types_field",
+        "auto_assign_accessor_type",
+        "auto_assign_arguments",
+        "auto_assign_dict",
+        "available_when_unreleased",
+        "has_auto_assign",
+        "install_location",
+        "must_exist",
+    )
+
     def __init__(self, data: ComponentTyping.VersionFileTypeTypedDict, name: str, component_group: str, index: int | None) -> None:
         super().__init__(data, name, component_group, index)
 

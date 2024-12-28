@@ -17,6 +17,14 @@ DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataMinerSettingsComponent.DataMinerS
 
 class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.AbstractDataMinerCollectionComponent[DataMinerCollection.DataMinerCollection]):
 
+    __slots__ = (
+        "comparing_disabled",
+        "dataminer_settings_field",
+        "disabled",
+        "file_name",
+        "structure_field",
+    )
+
     class_name_article = "a DataMinerCollection"
     class_name = "DataMinerCollection"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(

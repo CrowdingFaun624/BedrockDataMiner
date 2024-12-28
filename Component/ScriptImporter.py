@@ -4,7 +4,14 @@ import Utilities.Exceptions as Exceptions
 import Utilities.Scripts as Scripts
 
 
-class ScriptSet(Generic[a]):
+class ScriptSet[a]():
+
+    __slots__ = (
+        "all_scripts",
+        "built_in_objects",
+        "scripts_by_file",
+        "scripts_by_name",
+    )
 
     def __init__(self, all_scripts:dict[str,Scripts.Script], scripts_by_name:dict[str,Scripts.Script], scripts_by_file:dict[str,Scripts.Script], built_in_objects:dict[str,a]) -> None:
         self.all_scripts = all_scripts

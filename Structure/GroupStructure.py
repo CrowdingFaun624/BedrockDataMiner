@@ -16,7 +16,9 @@ if TYPE_CHECKING:
 
 class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
 
-class GroupStructure(PassthroughStructure.PassthroughStructure[a]):
+    __slots__ = (
+        "substructures",
+    )
 
     def __init__(
         self,

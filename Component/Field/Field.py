@@ -76,6 +76,10 @@ def choose_component[a: Component.Component](
 class Field():
     '''Abstract class of Fields. Fields are a modular way to manage the data of Components.'''
 
+    __slots__ = (
+        "error_path",
+    )
+
     def __init__(self, path:list[str|int]) -> None:
         '''
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.

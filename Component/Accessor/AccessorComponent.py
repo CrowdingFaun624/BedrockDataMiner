@@ -18,6 +18,14 @@ ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent.AccessorTypeCompone
 
 class AccessorCreator():
 
+    __slots__ = (
+        "accessor",
+        "accessor_type_field",
+        "arguments",
+        "version_component",
+        "version_file_component",
+    )
+
     def __init__(
         self,
         version_file_component:"VersionFileComponent.VersionFileComponent",
@@ -56,6 +64,11 @@ class AccessorComponent(Component.Component[AccessorCreator]):
         TypeVerifier.TypedDictKeyTypeVerifier("accessor_type", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", True, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+    )
+
+    __slots__ = (
+        "arguments",
+        "accessor_type_field",
     )
 
     def __init__(self, data: ComponentTyping.AccessorTypedDict, name: str, component_group: str, index: int | None) -> None:
