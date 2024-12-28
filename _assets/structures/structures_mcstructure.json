@@ -79,6 +79,9 @@
         "type": "Keymap",
         "this_type": "TAG_Compound",
         "sort": "by_component_order",
+        "normalizer": {
+            "function_name": "normalizers/structures_mcstructure_normalize"
+        },
         "keys": {
             "format_version": {"type": "TAG_Int"},
             "size": {"type": "TAG_List", "subcomponent": "vector_tag_int", "delegate_arguments": {"always_print": true}},
@@ -91,10 +94,51 @@
         "this_type": "TAG_Compound",
         "sort": "by_component_order",
         "keys": {
-            "entities": {"type": "TAG_List", "subcomponent": "entities"},
+            "layers": {"type": "list", "subcomponent": "layers"},
             "palette": {"type": "TAG_Compound", "subcomponent": "palette"},
-            "block_indices": {"type": "TAG_List", "subcomponent": "block_indices"}
+            "entities": {"type": "TAG_List", "subcomponent": "entities"}
         }
+    },
+    "layers": {
+        "type": "List",
+        "types": "dict",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "layer"
+        },
+        "subcomponent": "layer"
+    },
+    "layer": {
+        "type": "Keymap",
+        "delegate": "VolumeDelegate",
+        "delegate_arguments": {
+            "field": "block"
+        },
+        "keys": {
+            "states": {"type": "dict", "subcomponent": "volume_states"},
+            "data": {"type": "dict", "subcomponent": "volume_additional_data"},
+            "size": {"type": "tuple", "subcomponent": {
+                "type": "List",
+                "delegate": null,
+                "this_type": "tuple",
+                "types": "int",
+                "subcomponent": null
+            }}
+        }
+    },
+    "volume_states": {
+        "type": "Dict",
+        "detect_key_moves": false,
+        "types": "int",
+        "delegate": null,
+        "subcomponent": null
+    },
+    "volume_additional_data": {
+        "type": "Dict",
+        "detect_key_moves": false,
+        "types": "TAG_Compound",
+        "delegate": null,
+        "subcomponent": "block_position_data"
     },
     "item": {
         "type": "Keymap",
@@ -102,7 +146,7 @@
         "keys": {
             "id": {"type": "TAG_String"},
             "Count": {"type": "TAG_Byte"},
-            "Block": {"type": "TAG_Compound", "subcomponent": "palette.default.block_palette.item"},
+            "Block": {"type": "TAG_Compound", "subcomponent": "block_palette.item"},
             "Damage": {"type": "TAG_Short", "delegate_arguments": {"always_print": true}},
             "Name": {"type": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
             "Slot": {"type": "TAG_Byte"},
@@ -170,16 +214,6 @@
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
         "subcomponent": "item"
-    },
-    "block_indices": {
-        "type": "Set",
-        "delegate_arguments": {
-            "field": "block",
-            "measure_length": true
-        },
-        "this_type": "TAG_List",
-        "types": ["TAG_List"],
-        "subcomponent": "vector_tag_int"
     },
     "entities": {
         "type": "Set",
@@ -381,7 +415,7 @@
         "type": "Keymap",
         "this_type": "TAG_Compound",
         "keys": {
-            "Block": {"type": "TAG_Compound", "subcomponent": "palette.default.block_palette.item"},
+            "Block": {"type": "TAG_Compound", "subcomponent": "block_palette.item"},
             "Count": {"type": "TAG_Byte"},
             "Damage": {"type": "TAG_Short"},
             "Name": {"type": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}}, 
@@ -440,11 +474,10 @@
         "type": "Keymap",
         "this_type": "TAG_Compound",
         "keys": {
-            "block_palette": {"type": "TAG_List", "subcomponent": "palette.default.block_palette"},
-            "block_position_data": {"type": "TAG_Compound", "subcomponent": "palette.default.block_position_data"}
+            "block_palette": {"type": "TAG_List", "subcomponent": "block_palette"}
         }
     },
-    "palette.default.block_palette": {
+    "block_palette": {
         "type": "Set",
         "delegate_arguments": {
             "field": "palette",
@@ -452,9 +485,9 @@
         },
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
-        "subcomponent": "palette.default.block_palette.item"
+        "subcomponent": "block_palette.item"
     },
-    "palette.default.block_palette.item": {
+    "block_palette.item": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
         "keys": {
@@ -558,52 +591,41 @@
             "wood_type": {"type": "TAG_String"}
         }
     },
-    "palette.default.block_position_data": {
-        "type": "Dict",
-        "delegate_arguments": {
-            "field": "block",
-            "measure_length": true
-        },
-        "this_type": "TAG_Compound",
-        "types": ["TAG_Compound"],
-        "sort": "by_key",
-        "subcomponent": "palette.default.block_position_data.item"
-    },
-    "palette.default.block_position_data.item": {
+    "block_position_data": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
         "keys": {
             "block_entity_data": {"type": "TAG_Compound", "subcomponent": "block_entity_data"},
-            "tick_delay": {"type": "TAG_List", "subcomponent": "palette.default.block_position_data.item.tick_delay"},
-            "tick_queue_data": {"type": "TAG_List", "subcomponent": "palette.default.block_position_data.item.tick_queue_data"}
+            "tick_delay": {"type": "TAG_List", "subcomponent": "block_position_data.tick_delay"},
+            "tick_queue_data": {"type": "TAG_List", "subcomponent": "block_position_data.tick_queue_data"}
         }
     },
-    "palette.default.block_position_data.item.tick_delay": {
+    "block_position_data.tick_delay": {
         "type": "Set",
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
         "delegate_arguments": {
             "measure_length": true
         },
-        "subcomponent": "palette.default.block_position_data.item.tick_delay.item"
+        "subcomponent": "block_position_data.tick_delay.item"
     },
-    "palette.default.block_position_data.item.tick_delay.item": {
+    "block_position_data.tick_delay.item": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
         "keys": {
             "tick_delay": {"type": "TAG_Int"}
         }
     },
-    "palette.default.block_position_data.item.tick_queue_data": {
+    "block_position_data.tick_queue_data": {
         "type": "Set",
         "this_type": "TAG_List",
         "types": ["TAG_Compound"],
         "delegate_arguments": {
             "measure_length": true
         },
-        "subcomponent": "palette.default.block_position_data.item.tick_queue_data.item"
+        "subcomponent": "block_position_data.tick_queue_data.item"
     },
-    "palette.default.block_position_data.item.tick_queue_data.item": {
+    "block_position_data.tick_queue_data.item": {
         "type": "Keymap",
         "this_type": "TAG_Compound",
         "keys": {
