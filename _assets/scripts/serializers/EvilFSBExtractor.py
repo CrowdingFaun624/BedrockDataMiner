@@ -37,7 +37,7 @@ class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
 fsb_cache = FsbCache()
 
 def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
-    fsb_file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(input_file))
+    fsb_file_hash = FileManager.get_hash_hexdigest(input_file)
     cache_data = fsb_cache.get().get(fsb_file_hash)
     if cache_data is not None:
         yield from ((cached_file_path, FileStorageManager.read_archived(cached_file_hash)) for cached_file_path, cached_file_hash in cache_data.items())

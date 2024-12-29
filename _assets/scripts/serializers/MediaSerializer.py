@@ -123,7 +123,7 @@ class MediaSerializer(Serializer.Serializer):
         return output
 
     def get_referenced_files(self, data: bytes) -> Iterator[int]:
-        data_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data))
+        data_hash = FileManager.get_hash_hexdigest(data)
         cached_item = media_serializer_cache.get().get(data_hash)
         if cached_item is not None:
             # if there is no cached data, there are no files stored at the moment

@@ -62,8 +62,7 @@ def get_metadata(file:bytes) -> SoundFilesTypedDict:
         raise SoundFilesMetadataError()
     info = serialize(metadata)
 
-    sha1_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(file))
-    info["sha1_hash"] = sha1_hash
+    info["sha1_hash"] = FileManager.get_hash_hexdigest(file)
     return info
 
 def serialize(data:Any) -> Any:
@@ -102,8 +101,8 @@ class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDic
         if data[:3] == b"FSB":
             # this isn't *that* slow because it's cached.
             yield from (
-                File.hash_str_to_int(FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(wav_file_data)))
+                FileManager.get_hash_int(wav_file_data)
                 for wav_file_name, wav_file_data in EvilFSBExtractor.extract_fsb_file(data)
             )
         else:
-            yield File.hash_str_to_int(FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data)))
+            yield FileManager.get_hash_int(data)

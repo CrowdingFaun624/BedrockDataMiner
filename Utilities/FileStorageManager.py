@@ -57,33 +57,32 @@ def is_archived(*, file_hash:str) -> bool: ...
 def is_archived(*, data:bytes|None=None, file_hash:str|None=None) -> bool:
     if file_hash is None:
         assert data is not None
-        file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data))
+        file_hash = FileManager.get_hash_hexdigest(data)
     return get_file_path(file_hash).exists()
 
 def archive_data(data:bytes, file_name:str, *, empty_okay:bool=False) -> str:
     '''Takes in bytes, and stores a file in the `./_assets/file_storage/objects` directory, and adds its data to the `./_assets/file_storage/index.txt` file.
     Returns the sha1 hash in a hexadecimal string format that the file is stored at.
     If the file already exists in the archive, do nothing.'''
-    file_hash = FileManager.get_hash_bytes(data)
-    hex_string = FileManager.stringify_sha1_hash(file_hash)
-    archived_directory = FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.joinpath(hex_string[:2])
-    archived_path = get_file_path(hex_string)
+    file_hash = FileManager.get_hash_hexdigest(data)
+    archived_directory = FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.joinpath(file_hash[:2])
+    archived_path = get_file_path(file_hash)
     if archived_path.exists():
-        return hex_string
+        return file_hash
     archived_directory.mkdir(exist_ok=True)
     zipped = should_zip_file(file_name)
     with open(archived_path, "wb") as destination:
         if not empty_okay and len(data) == 0:
-            raise Exceptions.EmptyFileError(message=f"(hash {hex_string})")
+            raise Exceptions.EmptyFileError(message=f"(hash {file_hash})")
         if zipped:
             destination.write(gzip.compress(data))
         else:
             destination.write(data)
 
-    if hex_string not in index.get():
-        index.write_new_line((hex_string, zipped))
+    if file_hash not in index.get():
+        index.write_new_line((file_hash, zipped))
 
-    return hex_string
+    return file_hash
 
 def read_archived(hex_string:str) -> bytes:
     with open(get_file_path(hex_string), "rb") as f:
@@ -129,7 +128,7 @@ def create_archive() -> None:
         if zip_info.is_dir():
             continue
         file_contents = zip_file.read(zip_info)
-        file_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(file_contents))
+        file_hash = FileManager.get_hash_hexdigest(file_contents)
         archive_data(file_contents, zip_info.filename)
         index[zip_info.filename] = (file_hash, should_zip_file(zip_info.filename))
     index = {key: value for key, value in sorted(index.items(), key=lambda item: item[0])}

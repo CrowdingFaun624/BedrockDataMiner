@@ -89,29 +89,17 @@ def get_temp_file_path() -> Path:
     '''Returns a path such as `./_temp/a6f780a3-83d0-4afd-a654-dc28df0b9831`.'''
     return TEMP_DIRECTORY.joinpath(str(uuid.uuid4()))
 
-def stringify_sha1_hash(sha1_hash:bytes) -> str:
+def get_hash_hexdigest(file:bytes) -> str:
     '''
-    Returns a hexadecimal string with length 40.
+    Returns the sha1 hash of bytes in the form of a hexadecimal string.
     '''
-    return hex(int.from_bytes(sha1_hash, "big"))[2:].zfill(40)
+    return hashlib.sha1(file).hexdigest()
 
-def get_hash(file:IO) -> bytes:
+def get_hash_int(file:bytes) -> int:
     '''
-    Returns the sha1 hash of a file opened in binary mode.
+    Returns the sha1 hash of bytes in the form of an integer.
     '''
-    BUFFER_SIZE = 65536 # 64kb
-    sha1_hash = hashlib.sha1()
-    while True:
-        data = file.read(BUFFER_SIZE)
-        if not data: break
-        sha1_hash.update(data)
-    return sha1_hash.digest()
-
-def get_hash_bytes(file:bytes) -> bytes:
-    '''
-    Returns the sha1 hash of bytes.
-    '''
-    return hashlib.sha1(file).digest()
+    return int.from_bytes(hashlib.sha1(file).digest())
 
 def clear_temp() -> None:
     '''
