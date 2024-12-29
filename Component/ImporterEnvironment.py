@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 import Component.Component as Component
+import Domain.Domain as Domain
 
 
 class ImporterEnvironment[a]():
@@ -13,7 +14,12 @@ class ImporterEnvironment[a]():
     single_component:bool = False
     "If the Component group has a singular, unnamed Component or multiple Components."
 
-    __slots__ = ()
+    __slots__ = (
+        "domain",
+    )
+
+    def __init__(self, domain:"Domain.Domain") -> None:
+        self.domain = domain
 
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
         '''
@@ -78,4 +84,4 @@ class ImporterEnvironment[a]():
         ...
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {id(self)}>"
+        return f"<{self.__class__.__name__} {id(self)} for {self.domain.name}>"

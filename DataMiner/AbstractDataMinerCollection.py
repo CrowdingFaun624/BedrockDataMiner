@@ -3,22 +3,22 @@ from pathlib import Path
 from typing import Any, Iterator
 
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
+import Domain.Domain as Domain
 import Structure.DataPath as DataPath
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureTag as StructureTag
-import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.FileManager as FileManager
 import Version.Version as Version
 
 
 class AbstractDataMinerCollection():
 
-    def __init__(self, file_name:str, name:str, comparing_disabled:bool) -> None:
+    def __init__(self, file_name:str, name:str, domain:"Domain.Domain", comparing_disabled:bool) -> None:
         self.name = name
         self.file_name = file_name
+        self.domain = domain
         self.comparing_disabled = comparing_disabled
 
         self.structure:StructureBase.StructureBase|None = None
@@ -38,11 +38,8 @@ class AbstractDataMinerCollection():
         data = self.datamine(version, environment)
         if data is None:
             raise Exceptions.DataMinerNullReturnError(self)
-        data_path = FileManager.get_version_data_path(version.get_version_directory(), None)
-        if not data_path.exists():
-            data_path.mkdir()
         with open(self.get_data_file_path(version), "wt") as f:
-            json.dump(data, f, separators=(",", ":"), cls=CustomJson.encoder)
+            json.dump(data, f, separators=(",", ":"), cls=self.domain.json_encoder)
 
         if self.structure is not None:
             normalized_data = self.structure.normalize(data, environment.get_printer_environment(version))
@@ -54,17 +51,17 @@ class AbstractDataMinerCollection():
 
     def get_data_file(self, version:Version.Version, non_exist_ok:bool=False) -> Any:
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
-        data_path = FileManager.get_version_data_path(version.get_version_directory(), self.file_name)
+        data_path = version.get_data_directory().joinpath(self.file_name)
         if not data_path.exists():
             if non_exist_ok:
                 return None
             else:
                 raise Exceptions.MissingDataFileError(self, self.file_name, version)
         with open(data_path, "rt") as f:
-            return json.load(f, cls=CustomJson.decoder)
+            return json.load(f, cls=self.domain.json_decoder)
 
     def remove_data_file(self, version:Version.Version) -> None:
-        data_path = FileManager.get_version_data_path(version.get_version_directory(), self.file_name)
+        data_path = version.get_data_directory().joinpath(self.file_name)
         if data_path.exists():
             data_path.unlink()
 
@@ -133,7 +130,7 @@ class AbstractDataMinerCollection():
         return True
 
     def get_data_file_path(self, version:Version.Version) -> Path:
-        return FileManager.get_version_data_path(version.get_version_directory(), self.file_name)
+        return version.get_data_directory().joinpath(self.file_name)
 
     def get_referenced_files(self, version:Version.Version, structure_tags:dict[str,StructureTag.StructureTag]) -> Iterator[int]:
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.garbage_collection)

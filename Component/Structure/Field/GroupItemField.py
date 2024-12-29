@@ -1,13 +1,9 @@
-from typing import TYPE_CHECKING
-
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TypeField as TypeField
-
-if TYPE_CHECKING:
-    import Component.Structure.StructureComponent as StructureComponent
+import Component.Structure.StructureComponent as StructureComponent
 
 
 class GroupItemField(FieldContainer.FieldContainer):

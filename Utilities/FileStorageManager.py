@@ -2,9 +2,9 @@ import gzip
 import zipfile
 from itertools import islice
 from pathlib import Path
-from typing import overload
+from typing import Callable, overload
 
-import Component.Importer as Importer
+import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
 import Utilities.Cache as Cache
 import Utilities.Exceptions as Exceptions
@@ -114,7 +114,7 @@ def remove_index_values_without_associated_file() -> None:
         del loaded_index[item]
     index.write()
 
-def create_archive() -> None:
+def create_archive(domain:"Domain.Domain") -> None:
     while not any(file.suffix.lower() == ".zip" for file in FileManager.OUTPUT_DIRECTORY.iterdir()):
         input("Place a zip file in the \"_output\" directory. (Press enter to continue)")
     file:Path|None = None
@@ -137,8 +137,8 @@ def create_archive() -> None:
         f.write("\n".join(f"{file_hash} {is_zipped} {file_name}" for file_name, (file_hash, is_zipped) in index.items()))
     print(f"Archived version. Index is at \"{archive_path.name}\".")
 
-def version_summary() -> None:
-    version = UserInput.input_single(Importer.versions, "version")
+def version_summary(domain:"Domain.Domain") -> None:
+    version = UserInput.input_single(domain.versions, "version")
     version_file_type = UserInput.input_single(version.get_version_files_dict(), "version file type", show_options=True, close_enough=True)
     files = version_file_type.get_accessor(required_type=Accessor.DirectoryAccessor).get_full_file_list()
     file_extensions:dict[str,int] = {}
@@ -157,8 +157,8 @@ def version_summary() -> None:
     for extension, count in sorted_file_extensions.items():
         print(f"There are {count} files with the \"{extension}\" extension.")
 
-def get_file() -> None:
-    version = UserInput.input_single(Importer.versions, "version")
+def get_file(domain:"Domain.Domain") -> None:
+    version = UserInput.input_single(domain.versions, "version")
     file = input("File: ")
     version_file_type = UserInput.input_single(version.get_version_files_dict(), "version file type", show_options=True, close_enough=True)
     install_manager = version_file_type.get_accessor(required_type=Accessor.DirectoryAccessor)
@@ -171,18 +171,18 @@ def get_file() -> None:
     else:
         print(f"Version \"{version.name}\" is not archived.")
 
-def stats() -> None:
+def stats(domain:"Domain.Domain") -> None:
     sizes = {file.name: file.stat().st_size for directory in FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.iterdir() for file in directory.iterdir()}
     sizes = dict((name, size) for name, size in sorted(sizes.items(), key=lambda item: item[1], reverse=True))
     top_sizes = dict(islice(sizes.items(), 50))
     print("Top sizes:")
     print(f"\t{"".join(f"\n\t{file_name}: {file_size}" for file_name, file_size in top_sizes.items())}")
 
-def main() -> None:
-    PROGRAMS = {
+def main(domain:"Domain.Domain") -> None:
+    PROGRAMS:dict[str,Callable[[Domain.Domain],None]] = {
         "create_archive": create_archive,
         "get_file": get_file,
         "stats": stats,
         "version_summary": version_summary,
     }
-    UserInput.input_single(PROGRAMS, "program", show_options=True, close_enough=True)()
+    UserInput.input_single(PROGRAMS, "program", show_options=True, close_enough=True)(domain)

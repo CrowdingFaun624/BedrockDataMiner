@@ -1,16 +1,16 @@
 import traceback
 
-import Component.Importer as Importer
 import DataMiner.DataMiners as DataMiners
+import Domain.Domain as Domain
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 import Version.Version as Version
 
 STRUCTURE_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
-def datamine_version(version:Version.Version, print_messages:bool=True) -> None:
-    dataminers = DataMiners.get_dataminable_dataminers(version)
-    already_files = set(DataMiners.currently_has_data_files_from(version))
+def datamine_version(version:Version.Version, domain:Domain.Domain, print_messages:bool=True) -> None:
+    dataminers = DataMiners.get_dataminable_dataminers(version, domain)
+    already_files = set(DataMiners.currently_has_data_files_from(version, domain))
     needed_files = [dataminer for dataminer in dataminers if dataminer not in already_files]
     if len(needed_files) == 0:
         if print_messages:
@@ -31,11 +31,11 @@ def datamine_version(version:Version.Version, print_messages:bool=True) -> None:
             for accessor in version_file.get_accessors():
                 accessor.all_done() # remove all of the installed client files from the version directory so I don't have to clog my storage
 
-def main() -> None:
-    dataminers_dict = Importer.dataminer_collections
-    for version in reversed(Importer.versions.values()):
+def main(domain:Domain.Domain) -> None:
+    dataminers_dict = domain.dataminer_collections
+    for version in reversed(domain.versions.values()):
         if not any(dataminer_collection.supports_version(version) for dataminer_collection in dataminers_dict.values()):
             print(f"Skipped \"{version.name}\" due to being unarchived.")
         else:
-            datamine_version(version)
+            datamine_version(version, domain)
     print("Datamined all versions.")

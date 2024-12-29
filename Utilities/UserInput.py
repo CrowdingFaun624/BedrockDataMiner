@@ -55,6 +55,7 @@ def input_single[a](
     close_enough_threshold:int=3,
     prompt_function:Callable[[str, list[str]|None],str]=default_prompt_single,
     behavior_on_eof:Callable[[],NoReturn]|None=None,
+    enter_can_pick_only:bool=False
 ) -> a:
     '''
     Returns one item from `items`.
@@ -69,6 +70,7 @@ def input_single[a](
     :close_enough_threshold: The maximum distance the guesses can have.
     :prompt_function: Can be overridden to create a custom prompt.
     :behavior_on_eof: Function that is called when input() raises an EOFError.
+    :enter_can_pick_only: If True, entering no input will pick the only option if there is only one option.
     '''
     user_input:str|EllipsisType = ...
     options:list[str] = list(items.keys())
@@ -83,6 +85,8 @@ def input_single[a](
             else:
                 behavior_on_eof()
         tries += 1
+        if enter_can_pick_only and user_input == "" and len(items) == 1:
+            return next(iter(items.values()))
         if close_enough and user_input not in items:
             user_guess = guess_intent(user_input, options, close_enough_threshold)
             if user_guess is not None:

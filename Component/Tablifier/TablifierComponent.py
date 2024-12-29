@@ -49,6 +49,6 @@ class TablifierComponent(Component.Component[Tablifier.Tablifier]):
         self.get_final().link_finals(
             structure=self.structure_field.get_final(),
             dataminer_collection=self.dataminer_collection_field.get_final(),
-            version_provider=self.version_provider_field.get_final()(),
+            version_provider=self.version_provider_field.get_final()(self.domain),
         )
         return exceptions

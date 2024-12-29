@@ -2,20 +2,21 @@ import bisect
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
-    import Utilities.FileManager as FileManager
     import Version.Version as Version
 
 class Manager():
 
-    def __init__(self, version:"Version.Version", file_type_arguments:dict[str,Any], location:Path) -> None:
+    def __init__(self, version:"Version.Version", domain:"Domain.Domain", file_type_arguments:dict[str,Any], location:Path) -> None:
         '''
         :version: Version object this manager is based on.
         :location: File location to the directory containing extracted files.
         '''
         self.version = version
+        self.domain = domain
         self.location = location
         self.prepare_for_install(file_type_arguments)
 

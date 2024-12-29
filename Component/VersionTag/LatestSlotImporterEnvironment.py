@@ -4,7 +4,6 @@ from typing import Iterable
 import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.VersionTag.LatestSlotComponent as LatestSlotComponent
-import Utilities.FileManager as FileManager
 
 
 class LatestSlotImporterEnvironment(ImporterEnvironment.ImporterEnvironment[list[str]]):
@@ -14,7 +13,7 @@ class LatestSlotImporterEnvironment(ImporterEnvironment.ImporterEnvironment[list
     __slots__ = ()
 
     def get_component_files(self) -> Iterable[Path]:
-        return [FileManager.LATEST_SLOTS_FILE]
+        return [self.domain.latest_slots_file]
 
     def get_output(self, components: dict[str, Component.Component], name: str) -> list[str]:
         return [component.get_final() for component in components.values()]

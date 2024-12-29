@@ -1,15 +1,14 @@
 from typing import TYPE_CHECKING, Any, Iterator
 
+import Domain.Domain as Domain
 import Structure.CacheStructure as CacheStructure
 import Structure.DataPath as DataPath
-import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
@@ -26,6 +25,7 @@ class StructureBase():
         "children_tags",
         "default_delegate",
         "delegate",
+        "domain",
         "name",
         "normalizer",
         "post_normalizer",
@@ -37,10 +37,12 @@ class StructureBase():
     def __init__(
             self,
             name:str,
+            domain:"Domain.Domain",
             children_has_garbage_collection:bool,
         ) -> None:
 
         self.name = name
+        self.domain = domain
         self.children_has_garbage_collection = children_has_garbage_collection
 
         self.structure:Structure.Structure|None = None
@@ -223,9 +225,7 @@ class StructureBase():
             store_number = file_counts[name] + 1
         else:
             store_number = 0
-        comparison_path = FileManager.get_comparison_file_path(name, store_number)
-        if not comparison_path.parent.exists(): # type: ignore # >:(
-            comparison_path.parent.mkdir() # type: ignore
+        comparison_path = self.domain.get_comparison_file_path(name, store_number)
         file_counts[name] = store_number
         with open(comparison_path, "wt", encoding="UTF8") as f:
             f.write(report)
@@ -289,8 +289,7 @@ class StructureBase():
             print(text)
             texts.append(text)
         if len(traces) > 0:
-            import Component.Importer as Importer
-            if (log := Importer.logs.get("structure_log")) is not None and log.supports_type(log, str):
+            if (log := self.domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
                 log.write(f"-------- {len(traces)} EXCEPTIONS IN {self.name} ON {", ".join(version.name for version in versions)} --------\n\n")
                 log.write("".join(texts))
             raise Exceptions.StructureError(self)

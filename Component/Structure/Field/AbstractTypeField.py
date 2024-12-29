@@ -1,13 +1,9 @@
-from typing import TYPE_CHECKING
-
+import Component.Component as Component
 import Component.Field.Field as Field
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Types as Types
 import Utilities.Exceptions as Exceptions
-
-if TYPE_CHECKING:
-    import Component.Component as Component
 
 type VerifyComponentType = StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
 

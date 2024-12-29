@@ -1,11 +1,10 @@
 import traceback
 from itertools import chain
 
-import Component.Importer as Importer
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+import Domain.Domain as Domain
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Utilities.UserInput as UserInput
 import Version.Version as Version
 
@@ -20,6 +19,7 @@ def compare(
     dataminer_collection.compare(version1, version2, undataminable_versions_between, COMPARING_ENVIRONMENT)
 
 def compare_all_of(
+        domain:Domain.Domain,
         dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection,
         versions:list[Version.Version],
         exception_holder:dict[str,tuple[Exception,Version.Version|None,Version.Version|None]|bool],
@@ -29,7 +29,7 @@ def compare_all_of(
         version = None
         previous_successful_version = None # The last Version that can be datamined for this file.
         undataminable_versions_between:list[Version.Version] = []
-        comparison_parent = FileManager.get_comparison_file_path(dataminer_collection.name)
+        comparison_parent = domain.comparisons_directory.joinpath(dataminer_collection.name)
         if not comparison_parent.exists():
             comparison_parent.mkdir()
         for already_existing_comparison_file in comparison_parent.iterdir():
@@ -58,13 +58,13 @@ def compare_all_of(
     finally:
         dataminer_collection.clear_caches()
 
-def main() -> None:
+def main(domain:Domain.Domain) -> None:
     selected_dataminers = UserInput.input_multi(
-        {dataminer_name: dataminer_collection for dataminer_name, dataminer_collection in Importer.dataminer_collections.items() if not dataminer_collection.comparing_disabled},
+        {dataminer_name: dataminer_collection for dataminer_name, dataminer_collection in domain.dataminer_collections.items() if not dataminer_collection.comparing_disabled},
         "dataminer", allow_select_all=True, show_options_first_time=True, close_enough=True)
-    versions = Importer.versions
-    version_tags = Importer.version_tags
-    version_tags_order = Importer.version_tags_order
+    versions = domain.versions
+    version_tags = domain.version_tags
+    version_tags_order = domain.version_tags_order
     major_tags = {tag for tag in version_tags.values() if tag.is_major_tag}
     minor_tags_before = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.get_tags_before_top_level_tag()}
     minor_tags_after  = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.get_tags_after_top_level_tag()}
@@ -77,7 +77,7 @@ def main() -> None:
     sorted_versions = list(chain.from_iterable(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Version.Version|None,Version.Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
     for dataminer_collection in selected_dataminers:
-        compare_all_of(dataminer_collection, sorted_versions, exception_holder)
+        compare_all_of(domain, dataminer_collection, sorted_versions, exception_holder)
 
     excepted = False
     excepted_threads:list[tuple[str,Version.Version|None,Version.Version|None]] = []

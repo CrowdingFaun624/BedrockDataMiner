@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Callable
+from typing import Callable
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -7,10 +7,8 @@ import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
+import Component.Structure.KeymapComponent as KeymapComponent
 import Utilities.Exceptions as Exceptions
-
-if TYPE_CHECKING:
-    import Component.Structure.KeymapComponent as KeymapComponent
 
 IMPORTABLE_KEYS_PATTERN:Pattern.Pattern["KeymapComponent.KeymapComponent"] = Pattern.Pattern([{"has_importable_keys": True}])
 

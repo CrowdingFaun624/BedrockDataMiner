@@ -6,10 +6,8 @@ import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerSettings as DataMinerSettings
 import Downloader.Accessor as Accessor
 import Serializer.Serializer as Serializer
-import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
@@ -24,6 +22,7 @@ class DataMiner():
     def __init__(self, version:Version.Version, settings:DataMinerSettings.DataMinerSettings) -> None:
         self.version = version
         self.settings = settings
+        self.domain = self.settings.domain
         self.file_name = self.settings.get_file_name()
         self.name = self.settings.get_name()
         self.serializers = self.settings.serializers
@@ -53,11 +52,11 @@ class DataMiner():
         raise Exceptions.DataMinerLacksActivateError(self)
 
     def get_data_file_path(self) -> Path:
-        return FileManager.get_version_data_path(self.version.get_version_directory(), self.file_name)
+        return self.version.get_data_directory().joinpath(self.file_name)
 
     def get_data_file(self) -> Any:
         with open(self.get_data_file_path(), "rt") as f:
-            return json.load(f, cls=CustomJson.decoder)
+            return json.load(f, cls=self.domain.json_decoder)
 
     def get_accessor[a: Accessor.Accessor](self, file_type:str, accessor_type:type[a]=Accessor.Accessor) -> a:
         if file_type not in self.files_str:

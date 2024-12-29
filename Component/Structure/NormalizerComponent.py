@@ -12,7 +12,7 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
 
     class_name_article = "a Normalizer"
     class_name = "Normalizer"
-
+    children_has_normalizer_default = True
     my_capabilities = Capabilities.Capabilities(is_function=True, is_normalizer=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -31,8 +31,6 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
 
     def initialize_fields(self, data: ComponentTyping.NormalizerTypedDict) -> list[Field.Field]:
         self.arguments = data.get("arguments", {})
-
-        self.children_has_normalizer = True
 
         self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
         self.function_field.check_arguments(self.arguments, ignore_parameters={"data"})

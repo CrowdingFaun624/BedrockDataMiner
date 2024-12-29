@@ -1,4 +1,3 @@
-import Component.Importer as Importer
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import Version.Version as Version
 import Version.VersionProvider.VersionProvider as VersionProvider
@@ -22,7 +21,7 @@ class LatestVersionProvider(VersionProvider.VersionProvider):
                 has_selected_release_major_version = True
             else:
                 continue
-        version_tags_order = Importer.version_tags_order
+        version_tags_order = self.domain.version_tags_order
         major_versions.reverse() # now it's sorted from oldest to newest.
         output:list[Version.Version] = []
         for major_version in major_versions:

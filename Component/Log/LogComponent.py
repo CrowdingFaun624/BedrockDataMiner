@@ -1,8 +1,8 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Utilities.Log as Log
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -30,7 +30,7 @@ class LogComponent(Component.Component[Log.Log]):
         self.file_name = data["file_name"]
         self.log_type = Log.LogType[data["log_type"]]
         self.reset_on_reload = data["reset_on_reload"]
-        self.file = FileManager.LOG_DIRECTORY.joinpath(self.file_name)
+        self.file = self.domain.log_directory.joinpath(self.file_name)
         return []
 
     def create_final(self) -> None:
@@ -44,6 +44,6 @@ class LogComponent(Component.Component[Log.Log]):
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
-        if self.file is FileManager.LOGS_FILE or FileManager.LOG_DIRECTORY not in self.file.parents:
+        if self.domain.log_directory not in self.file.parents:
             exceptions.append(Exceptions.LogInvalidFileError(self.get_final(), self.file))
         return exceptions

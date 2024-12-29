@@ -7,7 +7,6 @@ import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Structure.BaseComponent as BaseComponent
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 
 
 class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[StructureBase.StructureBase]):
@@ -59,7 +58,7 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
                 yield from self.get_from_directory(subpath)
 
     def get_component_files(self) -> Iterable[Path]:
-        yield from self.get_from_directory(FileManager.STRUCTURES_DIRECTORY)
+        yield from self.get_from_directory(self.domain.structures_directory)
 
     def get_component_group_name(self, file_path:Path) -> str:
-        return "structures/" + file_path.relative_to(FileManager.STRUCTURES_DIRECTORY).as_posix().removesuffix(file_path.suffix)
+        return "structures/" + file_path.relative_to(self.domain.structures_directory).as_posix().removesuffix(file_path.suffix)

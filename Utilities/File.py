@@ -2,6 +2,7 @@ from types import EllipsisType
 from typing import Any, Iterator, Literal, TypedDict
 
 import Component.Types as Types
+import Domain.Domain as Domain
 import Serializer.Serializer as Serializer
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -16,15 +17,14 @@ class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
     special_type_name = "file"
 
     @classmethod
-    def decode(cls, data: FileJsonTypedDict) -> "File":
-        import Component.Importer as Importer
-        serializer = Importer.serializers.get(data["serializer"])
+    def decode(cls, data: FileJsonTypedDict, domain:"Domain.Domain") -> "File":
+        serializer = domain.serializers.get(data["serializer"])
         if serializer is None:
             raise Exceptions.UnrecognizedSerializerInFileError(data)
         return File(data["name"], serializer, data_hash=hash_str_to_int(data["hash"]))
 
     @classmethod
-    def encode(cls, data: "File") -> FileJsonTypedDict:
+    def encode(cls, data: "File", domain:"Domain.Domain") -> FileJsonTypedDict:
         # files contained by data are archived when the File object is created.
         return {"$special_type": "file", "hash": hash_int_to_str(data.hash), "name": data.display_name, "serializer": data.serializer.name}
 

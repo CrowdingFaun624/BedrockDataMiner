@@ -72,8 +72,7 @@ class DownloadManager(Manager.Manager):
         return file_name in self.get_file_set()
 
     def log(self, response:requests.Response) -> requests.Response:
-        import Component.Importer as Importer
-        if (log := Importer.logs.get("download_log")) is not None and log.supports_type(log, dict):
+        if (log := self.domain.logs.get("download_log")) is not None and log.supports_type(log, dict):
             log.write({
                 "version": self.version.name,
                 "time": datetime.datetime.now().isoformat(),

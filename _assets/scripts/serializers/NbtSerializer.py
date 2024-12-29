@@ -2,6 +2,7 @@ from typing import Literal
 
 import _assets.scripts.Nbt.NbtReader as NbtReader
 import _assets.scripts.Nbt.NbtTypes as NbtTypes
+import Domain.Domain as Domain
 import Serializer.Serializer as Serializer
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 from _assets.scripts.Nbt.Endianness import End
@@ -17,13 +18,13 @@ class NbtSerializer(Serializer.Serializer[NbtTypes.TAG, None]):
 
     store_as_file_default = True
 
-    def __init__(self, name:str, endianness:Literal["big", "little"], gzipped:bool) -> None:
+    def __init__(self, name:str, domain:"Domain.Domain", endianness:Literal["big", "little"], gzipped:bool) -> None:
         '''
         :name: The Component name of this Serializer.
         :endianness: If the content of the nbt file is big-endian or little-endian.
         :gzipped: If True, decompresses the file using gzip.
         '''
-        super().__init__(name)
+        super().__init__(name, domain)
         self.endianness = End[endianness.upper()]
         self.gzipped = gzipped
 

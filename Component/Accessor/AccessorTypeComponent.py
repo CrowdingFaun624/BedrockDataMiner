@@ -27,8 +27,8 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
     )
 
     def initialize_fields(self, data: ComponentTyping.AccessorTypeTypedDict) -> list[Field.Field]:
-        self.accessor_class_field = AccessorClassField.AccessorClassField(data["accessor_class"], ["accessor_class"])
-        self.manager_class_field = ManagerClassField.ManagerClassField(data["manager_class"], ["manager_class"])
+        self.accessor_class_field = AccessorClassField.AccessorClassField(data["accessor_class"], self.domain, ["accessor_class"])
+        self.manager_class_field = ManagerClassField.ManagerClassField(data["manager_class"], self.domain, ["manager_class"])
         self.parameters_field = TypeVerifierField.TypeVerifierField(data["parameters"], ["parameters"])
         return [self.accessor_class_field, self.manager_class_field, self.parameters_field]
 

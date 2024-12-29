@@ -1,7 +1,6 @@
 import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
 import Serializer.Serializer as Serializer
-import Utilities.FileManager as FileManager
 
 
 class SerializerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,Serializer.Serializer]]):
@@ -11,7 +10,7 @@ class SerializerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict
     __slots__ = ()
 
     def get_component_files(self) -> ImporterEnvironment.Iterable[ImporterEnvironment.Path]:
-        return [FileManager.SERIALIZERS_FILE]
+        return [self.domain.serializers_file]
 
     def get_output(self, components: dict[str, Component.Component], name: str) -> dict[str,Serializer.Serializer]:
         output = super().get_output(components, name)

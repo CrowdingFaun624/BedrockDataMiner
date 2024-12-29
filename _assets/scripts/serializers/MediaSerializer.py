@@ -3,10 +3,10 @@ import subprocess
 from typing import (Any, Iterator, Literal, NotRequired, Required, TypedDict,
                     cast)
 
-import Component.Importer as Importer
+import Domain.Domain as Domain
+import Domain.Domains as Domains
 import Serializer.Serializer as Serializer
 import Utilities.Cache as Cache
-import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.FileManager as FileManager
@@ -34,11 +34,12 @@ __all__ = ["MediaSerializer"]
 
 class MediaSerializerCache(Cache.LinesCache[dict[str,OutputTypedDict], tuple[str, OutputTypedDict]]):
 
-    def __init__(self) -> None:
-        super().__init__(FileManager.EXIFTOOL_CACHE)
+    def __init__(self, domain:Domain.Domain) -> None:
+        super().__init__(domain.exiftool_cache_file)
+        self.domain = domain
 
     def deserialize(self, data:bytes) -> dict[str,OutputTypedDict]:
-        return {line[:40]: json.loads(line[41:], cls=CustomJson.decoder) for line in data.decode("UTF8").splitlines()}
+        return {line[:40]: json.loads(line[41:], cls=self.domain.json_decoder) for line in data.decode("UTF8").splitlines()}
 
     def append_new_line(self, data: tuple[str, OutputTypedDict]) -> None:
         sha1_hash, file_data = data
@@ -48,9 +49,9 @@ class MediaSerializerCache(Cache.LinesCache[dict[str,OutputTypedDict], tuple[str
 
     def serialize_line(self, data: tuple[str, OutputTypedDict]) -> str:
         sha1_hash, file_data = data
-        return f"{sha1_hash} {json.dumps(file_data, separators=(",", ":"), cls=CustomJson.encoder)}\n"
+        return f"{sha1_hash} {json.dumps(file_data, separators=(",", ":"), cls=self.domain.json_encoder)}\n"
 
-media_serializer_cache = MediaSerializerCache()
+media_serializer_cache = MediaSerializerCache(Domains.get_domain_from_module(__name__))
 
 class MediaSerializer(Serializer.Serializer):
 
@@ -65,8 +66,8 @@ class MediaSerializer(Serializer.Serializer):
 
     can_contain_subfiles = True
 
-    def __init__(self, name: str, metadata_serializer_name:str, file_serializer_names:dict[str,str]) -> None:
-        super().__init__(name)
+    def __init__(self, name: str, domain:Domain.Domain, metadata_serializer_name:str, file_serializer_names:dict[str,str]) -> None:
+        super().__init__(name, domain)
         self.cached_data:dict[str,OutputTypedDict]|None = None
         self.metadata_serializer_name = metadata_serializer_name
         self.metadata_serializer:Serializer.Serializer|None = None
@@ -75,16 +76,16 @@ class MediaSerializer(Serializer.Serializer):
 
     def get_metadata_serializer(self) -> Serializer.Serializer:
         if self.metadata_serializer is None:
-            self.metadata_serializer = Importer.serializers[self.metadata_serializer_name]
+            self.metadata_serializer = self.domain.serializers[self.metadata_serializer_name]
         return self.metadata_serializer
 
     def get_file_type_serializer(self, file_type:str) -> Serializer.Serializer:
         if self.file_serializers is None:
-            self.file_serializers = {file_type: Importer.serializers[serializer_name] for file_type, serializer_name in self.file_serializer_names.items()}
+            self.file_serializers = {file_type: self.domain.serializers[serializer_name] for file_type, serializer_name in self.file_serializer_names.items()}
         return self.file_serializers[file_type]
 
     def deserialize(self, data: bytes) -> OutputTypedDict:
-        data_hash = FileManager.stringify_sha1_hash(FileManager.get_hash_bytes(data))
+        data_hash = FileManager.get_hash_hexdigest(data)
         cached_item = media_serializer_cache.get().get(data_hash)
         if cached_item is not None:
             return cached_item

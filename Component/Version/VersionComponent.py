@@ -56,6 +56,7 @@ class VersionComponent(Component.Component[Version.Version]):
         super().create_final()
         self.final = Version.Version(
             name=self.name,
+            domain=self.domain,
             time=self.time,
             index=self.get_index(),
         )

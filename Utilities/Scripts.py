@@ -4,8 +4,8 @@ import importlib.util
 from pathlib import Path
 from typing import IO, Any, Callable, Iterable, Self
 
+import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Utilities.UserInput as UserInput
 
@@ -84,8 +84,9 @@ class Scripts():
     def should_skip_script(self, suffix:str, relative_name:str, path:Path) -> bool:
         return suffix == ".pyc"
 
-    def __init__(self) -> None:
-        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name) for file, relative_name in iter_dir(FileManager.SCRIPTS_DIRECTORY) if not self.should_skip_script(file.suffix, relative_name, file)}
+    def __init__(self, domain:"Domain.Domain") -> None:
+        self.domain = domain
+        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name) for file, relative_name in iter_dir(domain.scripts_directory) if not self.should_skip_script(file.suffix, relative_name, file)}
         for script in self.scripts.values():
             script.finalize()
         self.scripts = {script_name: script for script_name, script in self.scripts.items() if not script.should_skip}
@@ -106,14 +107,12 @@ class Scripts():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.scripts}>"
 
-def main() -> None:
+def main(domain:"Domain.Domain") -> None:
     user_script:Script|None = None
-    print(scripts)
-    user_script = UserInput.input_single(scripts.scripts, "script from the scripts directory", show_options_first_time=True, close_enough=True)
+    print(domain.scripts)
+    user_script = UserInput.input_single(domain.scripts.scripts, "script from the scripts directory", show_options_first_time=True, close_enough=True)
     output = user_script()
     print(output)
-
-scripts = Scripts()
 
 class ScriptedObject():
     '''

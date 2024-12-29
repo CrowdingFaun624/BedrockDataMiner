@@ -1,5 +1,6 @@
 from typing import Any, NotRequired, Required, TypedDict
 
+import Domain.Domain as Domain
 import Serializer.JsonSerializer as JsonSerializer
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -274,8 +275,8 @@ class RepairableJsonSerializer(JsonSerializer.JsonSerializer):
         ), list, "a dict", "a list"))
     )
 
-    def __init__(self, name:str, rules:list[RulesTypedDict], empty_okay:bool=False) -> None:
-        super().__init__(name)
+    def __init__(self, name:str, domain:"Domain.Domain", rules:list[RulesTypedDict], empty_okay:bool=False) -> None:
+        super().__init__(name, domain)
         self.rules = [Rule(name, index, parse_condition(rule["condition"]), parse_action(rule["action"])) for index, rule in enumerate(rules)]
         self.empty_okay = empty_okay
 

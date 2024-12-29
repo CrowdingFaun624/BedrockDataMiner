@@ -58,6 +58,7 @@ class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.Abstract
         self.final = DataMinerCollection.DataMinerCollection(
             file_name=self.file_name,
             name=self.name,
+            domain=self.domain,
             comparing_disabled=self.comparing_disabled,
         )
 

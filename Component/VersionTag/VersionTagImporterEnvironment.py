@@ -4,7 +4,6 @@ from typing import Iterable
 import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.VersionTag.VersionTagComponent as VersionTagComponent
-import Utilities.FileManager as FileManager
 import Version.VersionTag.VersionTag as VersionTag
 
 
@@ -18,7 +17,7 @@ class VersionTagImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict
         return {"versions": all_components["versions"], "latest_slots": all_components["latest_slots"]}
 
     def get_component_files(self) -> Iterable[Path]:
-        return [FileManager.VERSION_TAGS_FILE]
+        return [self.domain.version_tags_file]
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "version_tags"

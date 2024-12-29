@@ -26,7 +26,7 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
     def initialize_fields(self, data: ComponentTyping.SerializerTypedDict) -> list[Field.Field]:
         self.arguments = data.get("arguments", {})
         
-        self.serializer_class_field = SerializerTypeField.SerializerTypeField(data["serializer_class"], ["serializer_class"])
+        self.serializer_class_field = SerializerTypeField.SerializerTypeField(data["serializer_class"], self.domain, ["serializer_class"])
         return [self.serializer_class_field]
 
     def link_finals(self) -> list[Exception]:
@@ -34,7 +34,7 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = self.serializer_class_field.get_final()(self.name, **self.arguments)
+        self.final = self.serializer_class_field.get_final()(self.name, self.domain, **self.arguments)
 
     def check(self) -> list[Exception]:
         exceptions = super().check()

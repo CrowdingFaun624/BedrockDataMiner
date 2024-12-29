@@ -2,8 +2,8 @@ import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Version.VersionFile as VersionFile
 import Version.VersionTag.VersionTag as VersionTag
 
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class Version():
 
-    def __init__(self, name:str, time:datetime.date|None, index:int) -> None:
+    def __init__(self, name:str, domain:"Domain.Domain", time:datetime.date|None, index:int) -> None:
         self.name = name
         self.time = time
         self.index = index
@@ -25,7 +25,8 @@ class Version():
         self.released = True
         self.order_tag:VersionTag.VersionTag|None = None
 
-        self.version_directory = FileManager.get_version_path(self.name)
+        self.version_directory = domain.versions_directory.joinpath(self.name)
+        self.data_directory = self.version_directory.joinpath("data")
         self.version_directory.mkdir(exist_ok=True)
         self.children:list[Version] = []
 
@@ -149,7 +150,12 @@ class Version():
         self.children.append(child)
 
     def get_version_directory(self) -> Path:
+        self.version_directory.mkdir(exist_ok=True)
         return self.version_directory
+
+    def get_data_directory(self) -> Path:
+        self.data_directory.mkdir(exist_ok=True)
+        return self.data_directory
 
     def __str__(self) -> str:
         return self.name

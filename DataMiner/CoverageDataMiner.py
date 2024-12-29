@@ -1,11 +1,11 @@
 import re
 
-import Component.Importer as Importer
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.FileDataMiner as FileDataMiner
+import Domain.Domain as Domain
 import Structure.StructureBase as StructureBase
 import Version.Version as Version
 
@@ -16,13 +16,14 @@ class CoverageDataMiner(AbstractDataMinerCollection.AbstractDataMinerCollection)
         self,
         file_name:str,
         name:str,
+        domain:"Domain.Domain",
         comparing_disabled:bool,
         remove_files:set[str],
         remove_regex:list[re.Pattern[str]],
         remove_prefixes:list[str],
         remove_suffixes:list[str],
     ) -> None:
-        super().__init__(file_name, name, comparing_disabled)
+        super().__init__(file_name, name, domain, comparing_disabled)
         self.remove_files = remove_files
         self.remove_regex = remove_regex
         self.remove_prefixes = remove_prefixes
@@ -36,7 +37,7 @@ class CoverageDataMiner(AbstractDataMinerCollection.AbstractDataMinerCollection)
 
     def get_dependencies(self, version: Version.Version) -> list[DataMinerCollection.DataMinerCollection]:
         return [
-            dataminer_collection for dataminer_collection in Importer.dataminer_collections.values()
+            dataminer_collection for dataminer_collection in self.domain.dataminer_collections.values()
             if dataminer_collection is not self
             if isinstance(dataminer_collection, DataMinerCollection.DataMinerCollection)
             if (dataminer := dataminer_collection.get_dataminer_class(version)) is not None

@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import DataMiner.DataMiners as DataMiners
+import Programs.Test.TestUtil as TestUtil
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
-import Programs.Test.TestUtil as TestUtil
 import Version.Version as Version
 
 if TYPE_CHECKING:

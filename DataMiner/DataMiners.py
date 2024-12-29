@@ -1,28 +1,26 @@
 import traceback
 from typing import Sequence
 
-import Component.Importer as Importer
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
+import Domain.Domain as Domain
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.UserInput as UserInput
 import Version.Version as Version
 
-_dataminers = list(Importer.dataminer_collections.values())
-
 SINGLE_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining)
 MANY_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
-def get_dataminable_dataminers(version:Version.Version) -> list[AbstractDataMinerCollection.AbstractDataMinerCollection]:
+def get_dataminable_dataminers(version:Version.Version, domain:Domain.Domain) -> list[AbstractDataMinerCollection.AbstractDataMinerCollection]:
     '''
     Returns the names of all data files that this Version supports.
     :version: The version to test.
     '''
-    output = [dataminer for dataminer in _dataminers if dataminer.supports_version(version)]
+    output = [dataminer for dataminer in domain.dataminer_collections.values() if dataminer.supports_version(version)]
     return output
 
-def currently_has_data_files_from(version:Version.Version) -> list[AbstractDataMinerCollection.AbstractDataMinerCollection]:
-    return [dataminer for dataminer in _dataminers if dataminer.get_data_file_path(version).exists()]
+def currently_has_data_files_from(version:Version.Version, domain:Domain.Domain) -> list[AbstractDataMinerCollection.AbstractDataMinerCollection]:
+    return [dataminer for dataminer in domain.dataminer_collections.values() if dataminer.get_data_file_path(version).exists()]
 
 def get_dataminer_order(version:Version.Version, unordered_dataminers:Sequence[AbstractDataMinerCollection.AbstractDataMinerCollection]) -> list[AbstractDataMinerCollection.AbstractDataMinerCollection]:
     '''
@@ -103,12 +101,12 @@ def run(
         print(f"Failed to store dataminers: [{", ".join(dataminer[0].name for dataminer in failure_dataminers)}]")
     return failure_dataminers
 
-def user_interface() -> None:
-    version_names = Importer.versions
+def user_interface(domain:Domain.Domain) -> None:
+    version_names = domain.versions
     versions = UserInput.input_multi(version_names, "version", allow_select_all=True)
     selectable_dataminer_collections = {
         dataminer_collection.name: dataminer_collection
-        for dataminer_collection in Importer.dataminer_collections.values()
+        for dataminer_collection in domain.dataminer_collections.values()
         if any(dataminer_collection.supports_version(version) for version in versions)
     }
     dataminer_collections = UserInput.input_multi(selectable_dataminer_collections, "dataminer collection", allow_select_all=True, show_options_first_time=True, close_enough=True)

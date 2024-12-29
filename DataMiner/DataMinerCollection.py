@@ -4,6 +4,7 @@ import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import DataMiner.DataMiner as DataMiner
 import DataMiner.DataMinerEnvironment as DataMinerEnvironment
 import DataMiner.DataMinerSettings as DataMinerSettings
+import Domain.Domain as Domain
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
 import Version.Version as Version
@@ -12,8 +13,8 @@ NoneType = type(None)
 
 class DataMinerCollection(AbstractDataMinerCollection.AbstractDataMinerCollection):
 
-    def __init__(self, file_name:str, name:str, comparing_disabled:bool) -> None:
-        super().__init__(file_name, name, comparing_disabled)
+    def __init__(self, file_name:str, name:str, domain:"Domain.Domain", comparing_disabled:bool) -> None:
+        super().__init__(file_name, name, domain, comparing_disabled)
 
         self.dataminer_settings:list["DataMinerSettings.DataMinerSettings"]|None = None
 

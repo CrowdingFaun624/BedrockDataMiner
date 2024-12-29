@@ -72,7 +72,8 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
     def create_final(self) -> None:
         super().create_final()
         self.final = DataMinerSettings.DataMinerSettings(
-            kwargs=self.arguments
+            kwargs=self.arguments,
+            domain=self.domain
         )
 
     def link_finals(self) -> list[Exception]:

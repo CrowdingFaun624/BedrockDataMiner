@@ -3,11 +3,8 @@ from typing import TYPE_CHECKING, Any, Callable
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.FunctionChecker as FunctionChecker
-import Component.ScriptImporter as ScriptImporter
-import Structure.Delegate.DefaultBaseDelegate as DefaultBaseDelegate
-import Structure.Delegate.DefaultDelegate as DefaultDelegate
+import Domain.Domain as Domain
 import Structure.Delegate.Delegate as Delegate
-import Structure.Delegate.LongStringDelegate as LongStringDelegate
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -16,28 +13,21 @@ if TYPE_CHECKING:
     import Structure.Structure as Structure
     import Structure.StructureBase as StructureBase
 
-BUILT_IN_DELEGATE_CLASSES:dict[str,type[Delegate.Delegate]] = {delegate_type.__name__: delegate_type for delegate_type in [
-    Delegate.Delegate,
-    DefaultDelegate.DefaultDelegate,
-    DefaultBaseDelegate.DefaultBaseDelegate,
-    LongStringDelegate.LongStringDelegate,
-]}
-
-DELEGATE_CLASSES = ScriptImporter.import_scripted_types("delegates", BUILT_IN_DELEGATE_CLASSES, Delegate.Delegate)
-
 class OptionalDelegateField(Field.Field):
 
     __slots__ = (
         "arguments",
         "delegate_name",
         "delegate_type",
+        "domain",
         "has_set_delegate",
     )
 
-    def __init__(self, delegate_name:str|None, arguments:dict[str,Any], path: list[str | int]) -> None:
+    def __init__(self, delegate_name:str|None, arguments:dict[str,Any], domain:"Domain.Domain", path: list[str | int]) -> None:
         super().__init__(path)
         self.delegate_name = delegate_name
         self.arguments = arguments
+        self.domain = domain
 
         self.delegate_type:type[Delegate.Delegate]|None = None
         self.has_set_delegate = False
@@ -93,7 +83,7 @@ class OptionalDelegateField(Field.Field):
         if self.delegate_name is None:
             self.delegate_type = None
         else:
-            delegate_type = DELEGATE_CLASSES.get(self.delegate_name, message=f"(referenced by {source_component})")
+            delegate_type = self.domain.delegate_classes.get(self.delegate_name, message=f"(referenced by {source_component})")
             self.delegate_type = delegate_type
         return [], []
 

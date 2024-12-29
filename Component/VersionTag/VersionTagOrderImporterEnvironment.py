@@ -7,7 +7,6 @@ import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.VersionTag.VersionTagOrderComponent as VersionTagOrderComponent
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Version.VersionTag.VersionTag as VersionTag
 import Version.VersionTag.VersionTagOrder as VersionTagOrder
 
@@ -24,7 +23,7 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
         return {"version_tags": all_components["version_tags"]}
 
     def get_component_files(self) -> Iterable[Path]:
-        return [FileManager.VERSION_TAGS_ORDER_FILE]
+        return [self.domain.version_tags_order_file]
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "version_tags_order"

@@ -9,7 +9,6 @@ import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
 import DataMiner.DataMinerCollection as DataMinerCollection
 import DataMiner.DataMinerSettings as DataMinerSettings
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Version.Version as Version
 
 
@@ -25,7 +24,7 @@ class DataMinerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
         return imports
 
     def get_component_files(self) -> Iterable[Path]:
-        return [FileManager.DATAMINER_COLLECTIONS_FILE]
+        return [self.domain.dataminer_collections_file]
 
     def get_component_group_name(self, file_path:Path) -> str:
         return "dataminer_collections"

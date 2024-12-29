@@ -56,6 +56,7 @@ class CoverageDataMinerCollectionComponent(AbstractDataMinerCollectionComponent.
         self.final = CoverageDataMiner.CoverageDataMiner(
             file_name=self.file_name,
             name=self.name,
+            domain=self.domain,
             comparing_disabled=self.comparing_disabled,
             remove_files=self.remove_files,
             remove_regex=self.remove_regex,

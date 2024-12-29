@@ -42,7 +42,7 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
     def initialize_fields(self, data: ComponentTyping.StringTypedDict) -> list[Field.Field]:
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", 3) # it's common to have a set of dicts with a significant string like [{"name": "bob"}, {"name": "alice"}]
 
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate"), data.get("delegate_arguments", {}), ["delegate"])
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field = TypeListField.TypeListField(data.get("types", "str"), ["types"])

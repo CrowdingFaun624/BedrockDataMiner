@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Any
 
+import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
 import Downloader.Manager as Manager
 import Utilities.Exceptions as Exceptions
@@ -42,6 +43,6 @@ class AccessorType():
             raise Exceptions.AttributeNoneError("parameters", self)
         return self.parameters
 
-    def create_accessor(self, version:"Version.Version", file_type:VersionFileType.VersionFileType, accessor_arguments:Any) -> Accessor.Accessor:
-        manager = self.get_manager_class()(version, accessor_arguments, version.get_version_directory().joinpath(file_type.install_location))
+    def create_accessor(self, version:"Version.Version", domain:"Domain.Domain", file_type:VersionFileType.VersionFileType, accessor_arguments:Any) -> Accessor.Accessor:
+        manager = self.get_manager_class()(version, domain, accessor_arguments, version.get_version_directory().joinpath(file_type.install_location))
         return self.get_accessor_class()(self.name, manager, version, accessor_arguments)

@@ -1,6 +1,8 @@
 import subprocess
 from typing import Iterator, Optional
 
+import Domain.Domain as Domain
+import Domain.Domains as Domains
 import Utilities.Cache as Cache
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -24,8 +26,8 @@ class SoundFilesExtractionError(Exceptions.DataMinerException):
 
 class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
 
-    def __init__(self) -> None:
-        super().__init__(FileManager.FSB_CACHE_FILE)
+    def __init__(self, domain:"Domain.Domain") -> None:
+        super().__init__(domain.fsb_cache_file)
 
     def get_default_content(self) -> dict[str, str] | None:
         return {}
@@ -34,7 +36,7 @@ class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
         self.get()[fsb_hash] = data
         self.write()
 
-fsb_cache = FsbCache()
+fsb_cache = FsbCache(Domains.get_domain_from_module(__name__))
 
 def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
     fsb_file_hash = FileManager.get_hash_hexdigest(input_file)

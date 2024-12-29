@@ -1,7 +1,6 @@
 import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
 import Structure.StructureTag as StructureTag
-import Utilities.FileManager as FileManager
 
 
 class StructureTagImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,StructureTag.StructureTag]]):
@@ -11,7 +10,7 @@ class StructureTagImporterEnvironment(ImporterEnvironment.ImporterEnvironment[di
     __slots__ = ()
 
     def get_component_files(self) -> ImporterEnvironment.Iterable[ImporterEnvironment.Path]:
-        return [FileManager.STRUCTURE_TAGS_FILE]
+        return [self.domain.structure_tags_file]
 
     def get_output(self, components: dict[str, Component.Component], name: str) -> dict[str,StructureTag.StructureTag]:
         output = super().get_output(components, name)

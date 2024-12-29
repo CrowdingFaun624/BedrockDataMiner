@@ -6,7 +6,6 @@ import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Version.VersionComponent as VersionComponent
 import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
 import Version.Version as Version
 import Version.VersionFileType as VersionFileType
 import Version.VersionTag.VersionTag as VersionTag
@@ -23,7 +22,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
         return {"accessor_types": all_components["accessor_types"], "version_file_types": all_components["version_file_types"], "version_tags": all_components["version_tags"]}
 
     def get_component_files(self) -> Iterable[Path]:
-        return [FileManager.VERSIONS_FILE]
+        return [self.domain.versions_file]
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "versions"
@@ -46,7 +45,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                         version.parent.assign_latest()
                     break
 
-        for version_directory in FileManager.VERSIONS_DIRECTORY.iterdir():
+        for version_directory in self.domain.versions_directory.iterdir():
             if not version_directory.is_dir(): continue
             if version_directory.name not in output:
                 try:

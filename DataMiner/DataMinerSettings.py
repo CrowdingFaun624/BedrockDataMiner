@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING, Any
 
+import Domain.Domain as Domain
 import Serializer.Serializer as Serializer
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
@@ -14,12 +15,13 @@ if TYPE_CHECKING:
 
 class DataMinerSettings():
 
-    def __init__(self, kwargs:dict[str,Any]) -> None:
+    def __init__(self, kwargs:dict[str,Any], domain:"Domain.Domain") -> None:
 
         self.version_range:VersionRange.VersionRange|None = None
         self.version_file_types:list[VersionFileType.VersionFileType]|None = None
         self.version_file_types_str:list[str]|None = None
         self.arguments = kwargs
+        self.domain = domain
 
         self.file_name:str|None = None
         self.name:str|None = None

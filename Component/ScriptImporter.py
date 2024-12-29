@@ -1,5 +1,6 @@
 from typing import Optional
 
+import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 import Utilities.Scripts as Scripts
 
@@ -44,13 +45,13 @@ class ScriptSet[a]():
                 raise Exceptions.WrongScriptError(script, message=message)
         return script.object
 
-def import_scripted_types[a](folder:str, built_in_classes:dict[str,type[a]], required_superclass:type[a]) -> ScriptSet[type[a]]:
+def import_scripted_types[a](folder:str, domain:"Domain.Domain", built_in_classes:dict[str,type[a]], required_superclass:type[a]) -> ScriptSet[type[a]]:
     '''
     :folder: The subfolder of scripts that contains the desired type.
     :built_in_classes: Classes that Lua Scripts can inherit from.
     :required_superclass: Type that Python scripts must export.
     '''
-    scripts = Scripts.scripts.scripts
+    scripts = domain.scripts.scripts
     scripts_by_file:dict[str,Scripts.Script[type[a]]] = {}
     scripts_by_name:dict[str,Scripts.Script[type[a]]] = {}
     double_use_scripts:set[str] = set()
@@ -73,4 +74,4 @@ def import_scripted_types[a](folder:str, built_in_classes:dict[str,type[a]], req
                 del scripts_by_name[object_class.__name__]
             else:
                 scripts_by_name[object_class.__name__] = script
-    return ScriptSet(Scripts.scripts.scripts, scripts_by_name, scripts_by_file, built_in_classes)
+    return ScriptSet(domain.scripts.scripts, scripts_by_name, scripts_by_file, built_in_classes)

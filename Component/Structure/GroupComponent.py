@@ -48,7 +48,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
             GroupItemField.GroupItemField(type_str, subcomponent_str, ["subcomponents", index])
             for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())], ["subcomponents"]
         )
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), ["delegate"])
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ["delegate"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])

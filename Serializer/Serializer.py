@@ -1,6 +1,7 @@
 import json
 from typing import Any, Iterator
 
+import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -30,8 +31,9 @@ class Serializer[a, b]():
     If True, will call get_referenced_files during garbage collection.
     '''
 
-    def __init__(self, name:str, **kwargs:Any) -> None:
+    def __init__(self, name:str, domain:"Domain.Domain", **kwargs:Any) -> None:
         self.name = name
+        self.domain = domain
 
     def finalize(self) -> None:
         ...

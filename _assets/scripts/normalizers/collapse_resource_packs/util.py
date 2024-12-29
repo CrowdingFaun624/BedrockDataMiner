@@ -2,7 +2,7 @@ import enum
 from collections import defaultdict
 from typing import Any, Iterable, Literal, Optional, TypedDict
 
-import Utilities.DataFile as DataFile
+import Domain.Domains as Domains
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -45,7 +45,7 @@ type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier
 ), list, "a dict", "a list")
 
 def get_resource_pack_order() -> list[ResourcePackTypedDict]:
-    data = DataFile.data_files["resource_pack_data"].contents
+    data = Domains.get_domain_from_module(__name__).data_files["resource_pack_data"].contents
     type_verifier.base_verify(data)
     return data
 

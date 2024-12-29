@@ -1,7 +1,7 @@
 import traceback
 from collections import deque
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, cast
+from typing import Any, Callable, cast
 
 import pyjson5 as json
 
@@ -22,22 +22,9 @@ import Component.Version.VersionImporterEnvironment as VersionImporterEnvironmen
 import Component.VersionTag.LatestSlotImporterEnvironment as LatestSlotImporterEnvironment
 import Component.VersionTag.VersionTagImporterEnvironment as VersionTagImporterEnvironment
 import Component.VersionTag.VersionTagOrderImporterEnvironment as VersionTagOrderImporterEnvironment
+import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.Scripts as Scripts
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
-
-if TYPE_CHECKING:
-    import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
-    import Downloader.AccessorType as AccessorType
-    import Serializer.Serializer as Serializer
-    import Structure.StructureBase as StructureBase
-    import Structure.StructureTag as StructureTag
-    import Tablifier.Tablifier as Tablifier
-    import Utilities.Log as Log
-    import Version.Version as Version
-    import Version.VersionFileType as VersionFileType
-    import Version.VersionTag.VersionTag as VersionTag
-    import Version.VersionTag.VersionTagOrder as VersionTagOrder
 
 importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] = [
     AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,
@@ -61,19 +48,21 @@ component_group_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVer
     loose=True
 ), "a dict", "a str", "a dict")
 
-def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component, assume_type:str|None) -> Component.Component:
-    component_name = parent_component.get_inline_component_name()
-    component_type_str = component_data.get("type", assume_type)
-    if component_type_str is None:
-        raise Exceptions.ComponentTypeMissingError(component_name, parent_component.component_group)
-    component_type = component_types_dict.get(component_type_str)
-    if component_type is None:
-        raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {parent_component.component_group}", f"(Must be one of [{", ".join(component.class_name for component in ComponentTypes.component_types)}])")
-    component = component_type(component_data, component_name, parent_component.component_group, None)
-    component.inline_parent = parent_component
-    return component
+def get_inline_component_function(domain:"Domain.Domain") -> Callable[[ComponentTyping.ComponentTypedDicts, Component.Component, str|None], Component.Component]:
+    def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component, assume_type:str|None) -> Component.Component:
+        component_name = parent_component.get_inline_component_name()
+        component_type_str = component_data.get("type", assume_type)
+        if component_type_str is None:
+            raise Exceptions.ComponentTypeMissingError(component_name, parent_component.component_group)
+        component_type = component_types_dict.get(component_type_str)
+        if component_type is None:
+            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {parent_component.component_group}", f"(Must be one of [{", ".join(component.class_name for component in ComponentTypes.component_types)}])")
+        component = component_type(component_data, component_name, domain, parent_component.component_group, None)
+        component.inline_parent = parent_component
+        return component
+    return create_inline_component
 
-def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, importer_environment:ImporterEnvironment.ImporterEnvironment) -> dict[str,Component.Component]:
+def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, importer_environment:ImporterEnvironment.ImporterEnvironment, domain:"Domain.Domain") -> dict[str,Component.Component]:
     '''Returns a dict of all Components in the Component group.'''
     components:dict[str,Component.Component] = {}
     for index, (component_name, component_data) in enumerate(data.items()):
@@ -83,7 +72,7 @@ def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, imp
         component_type = component_types_dict.get(component_type_str)
         if component_type is None:
             raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {name}", f"(Must be one of [{", ".join(component.class_name for component in ComponentTypes.component_types)}])")
-        component = component_type(component_data, component_name, name, index)
+        component = component_type(component_data, component_name, domain, name, index)
         components[component_name] = component
     return components
 
@@ -109,12 +98,12 @@ def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) 
                     unvisited_components.add(parent_component)
                     components_queue.append(parent_component)
 
-def create_all_components() -> tuple[dict[str,dict[str,Component.Component]], dict[str,ImporterEnvironment.ImporterEnvironment]]:
+def create_all_components(domain:"Domain.Domain") -> tuple[dict[str,dict[str,Component.Component]], dict[str,ImporterEnvironment.ImporterEnvironment]]:
     all_components:dict[str,dict[str,Component.Component]] = {}
     already_paths:dict[Path,ImporterEnvironment.ImporterEnvironment] = {}
     importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment] = {}
     for importer_environment_type in importer_environment_types:
-        importer_environment = importer_environment_type()
+        importer_environment = importer_environment_type(domain)
         for file_path in importer_environment.get_component_files():
             name = importer_environment.get_component_group_name(file_path)
             if file_path in already_paths:
@@ -127,7 +116,7 @@ def create_all_components() -> tuple[dict[str,dict[str,Component.Component]], di
             if importer_environment.single_component:
                 components_data = cast(ComponentTyping.ComponentGroupFileType, {"": components_data})
             component_group_type_verifier.base_verify(components_data, [name])
-            all_components[name] = create_components(name, components_data, importer_environment)
+            all_components[name] = create_components(name, components_data, importer_environment, domain)
     return all_components, importer_environments
 
 def get_imports(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,dict[str,dict[str,Component.Component]]]:
@@ -136,7 +125,8 @@ def get_imports(all_components:dict[str,dict[str,Component.Component]], importer
         for name, components in all_components.items()
     }
 
-def set_components(all_components:dict[str,dict[str,Component.Component]], component_imports:dict[str,dict[str,dict[str,Component.Component]]], functions:dict[str,Callable]) -> None:
+def set_components(all_components:dict[str,dict[str,Component.Component]], component_imports:dict[str,dict[str,dict[str,Component.Component]]], functions:dict[str,Callable], domain:"Domain.Domain") -> None:
+    create_inline_component = get_inline_component_function(domain)
     for name, components in all_components.items():
         for component in components.values():
             component.set_component(components, component_imports[name], functions, create_inline_component)
@@ -217,17 +207,17 @@ def check_importer_environments(output:dict[str,Any], importer_environments:dict
             traceback.print_exception(exception)
         raise Exceptions.ComponentParseError(sorted(failed_component_groups))
 
-def get_all_functions() -> dict[str,Callable]:
+def get_all_functions(domain:"Domain.Domain") -> dict[str,Callable]:
     functions:dict[str,Callable] = {}
     functions.update(ComponentFunctions.functions)
-    functions.update((name, script) for name, script in Scripts.scripts.scripts.items() if callable(script.object))
+    functions.update((name, script) for name, script in domain.scripts.scripts.items() if callable(script.object))
     return functions
 
-def parse_all_component_groups() -> dict[str,Any]:
-    functions = get_all_functions()
-    all_components, importer_environments = create_all_components()
+def parse_all_component_groups(domain:"Domain.Domain") -> dict[str,Any]:
+    functions = get_all_functions(domain)
+    all_components, importer_environments = create_all_components(domain)
     component_imports = get_imports(all_components, importer_environments)
-    set_components(all_components, component_imports, functions)
+    set_components(all_components, component_imports, functions, domain)
     propagate_variables(all_components)
     create_finals(all_components)
     link_finals(all_components)
@@ -238,18 +228,3 @@ def parse_all_component_groups() -> dict[str,Any]:
     finalize_importer_environments(output, importer_environments)
     check_importer_environments(output, importer_environments)
     return output
-
-all_component_groups = parse_all_component_groups()
-
-accessor_types:dict[str,"AccessorType.AccessorType"] = all_component_groups["accessor_types"]
-dataminer_collections:dict[str,"AbstractDataMinerCollection.AbstractDataMinerCollection"] = all_component_groups["dataminer_collections"]
-latest_slots:list[str] = all_component_groups["latest_slots"]
-logs:dict[str,"Log.Log"] = all_component_groups["logs"]
-serializers:dict[str,"Serializer.Serializer"] = all_component_groups["serializers"]
-structures:dict[str,"StructureBase.StructureBase"] = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
-structure_tags:dict[str,"StructureTag.StructureTag"] = all_component_groups["structure_tags"]
-tablifiers:dict[str,"Tablifier.Tablifier"] = all_component_groups["tablifiers"]
-version_file_types:dict[str,"VersionFileType.VersionFileType"] = all_component_groups["version_file_types"]
-version_tags_order:"VersionTagOrder.VersionTagOrder" = all_component_groups["version_tags_order"]
-version_tags:dict[str,"VersionTag.VersionTag"] = all_component_groups["version_tags"]
-versions:dict[str,"Version.Version"] = all_component_groups["versions"]

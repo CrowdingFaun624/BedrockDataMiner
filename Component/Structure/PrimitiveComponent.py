@@ -35,7 +35,7 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
     )
 
     def initialize_fields(self, data: ComponentTyping.PrimitiveTypedDict) -> list[Field.Field]:
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])

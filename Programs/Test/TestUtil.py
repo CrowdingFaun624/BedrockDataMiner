@@ -1,8 +1,8 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING, Callable, Hashable
 
-import Component.Importer as Importer
 import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+import Domain.Domain as Domain
 import Version.Version as Version
 
 if TYPE_CHECKING:
@@ -98,12 +98,12 @@ class Plan[a: Hashable]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} [{", ".join(version.name for version in self.versions)}]>"
 
-def create_test_function[a: Hashable](plan_type:type[Plan[a]]) -> Callable[[],None]:
-    return lambda: test(plan_type)
+def create_test_function[a: Hashable](plan_type:type[Plan[a]]) -> Callable[[Domain.Domain],None]:
+    return lambda domain: test(plan_type, domain)
 
-def test[a: Hashable](plan_type:type[Plan[a]]) -> None:
-    versions = Importer.versions
-    dataminer_collections = list(Importer.dataminer_collections.values())
+def test[a: Hashable](plan_type:type[Plan[a]], domain:Domain.Domain) -> None:
+    versions = domain.versions
+    dataminer_collections = list(domain.dataminer_collections.values())
     version_objects:dict[Version.Version,set[a]] = {}
     all_objects_set:set[a] = set()
     for version in versions.values():

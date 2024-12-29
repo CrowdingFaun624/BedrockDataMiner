@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -22,6 +23,7 @@ class Component[a]():
         "children_has_normalizer",
         "children_tags",
         "component_group",
+        "domain",
         "fields",
         "final",
         "index",
@@ -33,8 +35,9 @@ class Component[a]():
         "parents",
     )
 
-    def __init__(self, data:Any, name:str, component_group:str, index:int|None) -> None:
+    def __init__(self, data:Any, name:str, domain:"Domain.Domain", component_group:str, index:int|None) -> None:
         self.name = name
+        self.domain = domain
         self.component_group = component_group
         self.index = index
 

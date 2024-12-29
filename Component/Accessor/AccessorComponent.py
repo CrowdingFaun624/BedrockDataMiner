@@ -6,6 +6,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -22,17 +23,20 @@ class AccessorCreator():
         "accessor",
         "accessor_type_field",
         "arguments",
+        "domain",
         "version_component",
         "version_file_component",
     )
 
     def __init__(
         self,
+        domain:"Domain.Domain",
         version_file_component:"VersionFileComponent.VersionFileComponent",
         version_component:"VersionComponent.VersionComponent",
         accessor_type_field:ComponentField.ComponentField["AccessorTypeComponent.AccessorTypeComponent"],
         arguments:dict[str,Any],
     ) -> None:
+        self.domain = domain
         self.version_file_component = version_file_component
         self.version_component = version_component
         self.accessor_type_field = accessor_type_field
@@ -43,6 +47,7 @@ class AccessorCreator():
         if self.accessor is None:
             self.accessor = self.accessor_type_field.get_component().get_final().create_accessor(
                 version=self.version_component.get_final(),
+                domain=self.domain,
                 file_type=self.version_file_component.version_file_type_field.get_component().get_final(),
                 accessor_arguments=self.arguments,
             )
@@ -79,7 +84,7 @@ class AccessorComponent(Component.Component[AccessorCreator]):
     def create_final(self) -> None:
         super().create_final()
         version_file = self.get_inline_parent()
-        self.final = AccessorCreator(cast("VersionFileComponent.VersionFileComponent", self.get_inline_parent()), cast("VersionComponent.VersionComponent", version_file.get_inline_parent()), self.accessor_type_field, self.arguments)
+        self.final = AccessorCreator(self.domain, cast("VersionFileComponent.VersionFileComponent", self.get_inline_parent()), cast("VersionComponent.VersionComponent", version_file.get_inline_parent()), self.accessor_type_field, self.arguments)
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
