@@ -10,10 +10,10 @@ import Version.VersionFileType as VersionFileType
 import Version.VersionRange as VersionRange
 
 if TYPE_CHECKING:
-    import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
-    import DataMiner.DataMiner as DataMiner
+    import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
+    import Dataminer.Dataminer as Dataminer
 
-class DataMinerSettings():
+class DataminerSettings():
 
     def __init__(self, kwargs:dict[str,Any], domain:"Domain.Domain") -> None:
 
@@ -26,18 +26,18 @@ class DataMinerSettings():
         self.file_name:str|None = None
         self.name:str|None = None
         self.structure:StructureBase.StructureBase|None = None
-        self.dataminer_class:type["DataMiner.DataMiner"]|None = None
+        self.dataminer_class:type["Dataminer.Dataminer"]|None = None
         self.serializers:dict[str,Serializer.Serializer]|None = None
-        self.dependencies:list["AbstractDataMinerCollection.AbstractDataMinerCollection"]|None = None
+        self.dependencies:list["AbstractDataminerCollection.AbstractDataminerCollection"]|None = None
 
     def link_subcomponents(
         self,
         file_name:str,
         name:str,
         structure:StructureBase.StructureBase,
-        dataminer_class:type["DataMiner.DataMiner"]|None,
+        dataminer_class:type["Dataminer.Dataminer"]|None,
         serializers:dict[str,Serializer.Serializer],
-        dependencies:list["AbstractDataMinerCollection.AbstractDataMinerCollection"],
+        dependencies:list["AbstractDataminerCollection.AbstractDataminerCollection"],
         start_version:Version.Version|None,
         end_version:Version.Version|None,
         version_file_types:list[VersionFileType.VersionFileType],
@@ -58,10 +58,10 @@ class DataMinerSettings():
         if dataminer_class is not None:
             for key, serializer in serializers.items():
                 if key not in dataminer_class.serializer_names:
-                    exceptions.append(Exceptions.DataMinerAdditionalSerializerError(self, dataminer_class, key, serializer, dataminer_class.serializer_names))
+                    exceptions.append(Exceptions.DataminerAdditionalSerializerError(self, dataminer_class, key, serializer, dataminer_class.serializer_names))
             for required_key in dataminer_class.serializer_names:
                 if required_key not in serializers:
-                    exceptions.append(Exceptions.DataMinerSerializerMissingError(self, dataminer_class, required_key))
+                    exceptions.append(Exceptions.DataminerSerializerMissingError(self, dataminer_class, required_key))
         if dataminer_class is not None:
             dataminer_class.manipulate_arguments(self.arguments)
         return exceptions
@@ -81,19 +81,19 @@ class DataMinerSettings():
             raise Exceptions.AttributeNoneError("version_file_types_str", self)
         return self.version_file_types_str
 
-    def get_dependencies(self) -> list["AbstractDataMinerCollection.AbstractDataMinerCollection"]:
+    def get_dependencies(self) -> list["AbstractDataminerCollection.AbstractDataminerCollection"]:
         if self.dependencies is None:
             raise Exceptions.AttributeNoneError("dependencies", self)
         return self.dependencies
 
-    def get_dataminer_class(self) -> type["DataMiner.DataMiner"]:
+    def get_dataminer_class(self) -> type["Dataminer.Dataminer"]:
         if self.dataminer_class is None:
             raise Exceptions.AttributeNoneError("dataminer_class", self)
         return self.dataminer_class
 
     def get_name(self) -> str:
         '''
-        Get the name of this DataMinerSettings, and raise an exception if it is None.
+        Get the name of this DataminerSettings, and raise an exception if it is None.
         '''
         if self.name is None:
             raise Exceptions.AttributeNoneError("name", self)
@@ -101,7 +101,7 @@ class DataMinerSettings():
 
     def get_file_name(self) -> str:
         '''
-        Get the file name of this DataMinerSettings, and raise an exception if it is None.
+        Get the file name of this DataminerSettings, and raise an exception if it is None.
         '''
         if self.file_name is None:
             raise Exceptions.AttributeNoneError("file_name", self)
@@ -112,4 +112,4 @@ class DataMinerSettings():
             return f"<{self.__class__.__name__} id {id(self)}>"
         else:
             version_range = self.get_version_range()
-            return f"<DataMinerSettings {self.get_name()} \"{str(version_range.start)}\"–\"{str(version_range.stop)}\">"
+            return f"<DataminerSettings {self.get_name()} \"{str(version_range.start)}\"–\"{str(version_range.stop)}\">"

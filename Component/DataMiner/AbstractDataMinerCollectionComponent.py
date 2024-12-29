@@ -1,12 +1,12 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 
 
-class AbstractDataMinerCollectionComponent[a: AbstractDataMinerCollection.AbstractDataMinerCollection](Component.Component[a]):
+class AbstractDataminerCollectionComponent[a: AbstractDataminerCollection.AbstractDataminerCollection](Component.Component[a]):
 
-    class_name_article = "an AbstractDataMinerCollection"
-    class_name = "AbstractDataMinerCollection"
+    class_name_article = "an AbstractDataminerCollection"
+    class_name = "AbstractDataminerCollection"
     my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
 
     disabled:bool = False

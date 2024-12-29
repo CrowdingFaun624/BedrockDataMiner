@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, cast
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.DataMiner.Field.OptionalDataMinerTypeField as OptionalDataMinerTypeField
+import Component.Dataminer.Field.OptionalDataminerTypeField as OptionalDataminerTypeField
 import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
@@ -11,22 +11,22 @@ import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
 import Component.Serializer.Field.SerializerDictField as SerializerDictField
 import Component.Version.Field.OptionalVersionField as OptionalVersionField
-import DataMiner.DataMinerSettings as DataMinerSettings
+import Dataminer.DataminerSettings as DataminerSettings
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
-    import Component.DataMiner.AbstractDataMinerCollectionComponent as AbstractDataMinerCollectionComponent
-    import Component.DataMiner.DataMinerCollectionComponent as DataMinerCollectionComponent
+    import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
+    import Component.Dataminer.DataminerCollectionComponent as DataminerCollectionComponent
     import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 
-DEPENDENCY_PATTERN:Pattern.Pattern["AbstractDataMinerCollectionComponent.AbstractDataMinerCollectionComponent"] = Pattern.Pattern([{"is_dataminer_collection": True}])
+DEPENDENCY_PATTERN:Pattern.Pattern["AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent"] = Pattern.Pattern([{"is_dataminer_collection": True}])
 VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern([{"is_version_file_type": True}])
 
-class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMinerSettings]):
+class DataminerSettingsComponent(Component.Component[DataminerSettings.DataminerSettings]):
 
-    class_name_article = "a DataMinerSettings"
-    class_name = "DataMinerSettings"
+    class_name_article = "a DataminerSettings"
+    class_name = "DataminerSettings"
     my_capabilities = Capabilities.Capabilities(is_dataminer_settings=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", False, dict),
@@ -50,7 +50,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         "serializer_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.DataMinerSettingsTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.DataminerSettingsTypedDict) -> list[Field.Field]:
         self.files_field_exists = "files" in data
         self.arguments = data.get("arguments", {})
 
@@ -58,7 +58,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         self.old_field = OptionalVersionField.OptionalVersionField(data["old"], ["old"])
         self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference)
         self.serializer_field = SerializerDictField.SerializerDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, ["serializer"])
-        self.dataminer_field = OptionalDataMinerTypeField.OptionalDataMinerTypeField(data["name"], self.domain, ["name"])
+        self.dataminer_field = OptionalDataminerTypeField.OptionalDataminerTypeField(data["name"], self.domain, ["name"])
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dependency_name,
@@ -71,14 +71,14 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = DataMinerSettings.DataMinerSettings(
+        self.final = DataminerSettings.DataminerSettings(
             kwargs=self.arguments,
             domain=self.domain
         )
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        parent = cast("DataMinerCollectionComponent.DataMinerCollectionComponent", self.get_inline_parent())
+        parent = cast("DataminerCollectionComponent.DataminerCollectionComponent", self.get_inline_parent())
         exceptions.extend(self.get_final().link_subcomponents(
             file_name=parent.file_name,
             name=parent.name,
@@ -96,8 +96,8 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         exceptions = super().check()
         if self.dataminer_field.exists():
             if not self.files_field_exists:
-                exceptions.append(Exceptions.DataMinerCollectionFileError(False, self, "when \"name\" is not null"))
+                exceptions.append(Exceptions.DataminerCollectionFileError(False, self, "when \"name\" is not null"))
         else:
             if self.files_field_exists:
-                exceptions.append(Exceptions.DataMinerCollectionFileError(True, self, "when \"name\" is null"))
+                exceptions.append(Exceptions.DataminerCollectionFileError(True, self, "when \"name\" is null"))
         return exceptions

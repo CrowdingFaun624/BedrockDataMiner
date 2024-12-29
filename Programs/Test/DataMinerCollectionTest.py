@@ -1,8 +1,8 @@
 import traceback
 from typing import TYPE_CHECKING
 
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
-import DataMiner.DataMiners as DataMiners
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
+import Dataminer.Dataminers as Dataminers
 import Programs.Test.TestUtil as TestUtil
 import Structure.StructureEnvironment as StructureEnvironment
 import Version.Version as Version
@@ -10,20 +10,20 @@ import Version.Version as Version
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
 
-class DataMinerCollectionPlan(TestUtil.Plan[AbstractDataMinerCollection.AbstractDataMinerCollection]):
+class DataminerCollectionPlan(TestUtil.Plan[AbstractDataminerCollection.AbstractDataminerCollection]):
 
-    label = "DataMinerCollections"
+    label = "DataminerCollections"
 
-    def __init__(self, versions: list[Version.Version], all_dataminer_collections: list[AbstractDataMinerCollection.AbstractDataMinerCollection], version_objects: dict[Version.Version, set[AbstractDataMinerCollection.AbstractDataMinerCollection]]) -> None:
+    def __init__(self, versions: list[Version.Version], all_dataminer_collections: list[AbstractDataminerCollection.AbstractDataminerCollection], version_objects: dict[Version.Version, set[AbstractDataminerCollection.AbstractDataminerCollection]]) -> None:
         super().__init__(versions, all_dataminer_collections, version_objects)
         self.dataminer_collections = version_objects[versions[-1]]
 
-    def test(self) -> list[AbstractDataMinerCollection.AbstractDataMinerCollection]:
+    def test(self) -> list[AbstractDataminerCollection.AbstractDataminerCollection]:
         version = self.versions[-1]
-        print(f"Scanning {len(self.items_to_test)} DataMinerCollections in {version}")
+        print(f"Scanning {len(self.items_to_test)} DataminerCollections in {version}")
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types)
-        failures = DataMiners.run(version, self.items_to_test, structure_environment, recalculate_everything=True, print_messages=False)
-        failed_dataminer_collections:list[AbstractDataMinerCollection.AbstractDataMinerCollection] = []
+        failures = Dataminers.run(version, self.items_to_test, structure_environment, recalculate_everything=True, print_messages=False)
+        failed_dataminer_collections:list[AbstractDataminerCollection.AbstractDataminerCollection] = []
         for dataminer_collection, exception in failures:
             print(f"{dataminer_collection} on {version}")
             if exception is not None:
@@ -32,13 +32,13 @@ class DataMinerCollectionPlan(TestUtil.Plan[AbstractDataMinerCollection.Abstract
         return failed_dataminer_collections
 
     @classmethod
-    def get_obj(cls, dataminer_collection: AbstractDataMinerCollection.AbstractDataMinerCollection, version: Version.Version) -> AbstractDataMinerCollection.AbstractDataMinerCollection:
+    def get_obj(cls, dataminer_collection: AbstractDataminerCollection.AbstractDataminerCollection, version: Version.Version) -> AbstractDataminerCollection.AbstractDataminerCollection:
         return dataminer_collection
 
     @classmethod
-    def sort(cls, item: AbstractDataMinerCollection.AbstractDataMinerCollection) -> "SupportsRichComparison":
+    def sort(cls, item: AbstractDataminerCollection.AbstractDataminerCollection) -> "SupportsRichComparison":
         return item.name
 
     @classmethod
-    def get_name(cls, item: AbstractDataMinerCollection.AbstractDataMinerCollection) -> str:
+    def get_name(cls, item: AbstractDataminerCollection.AbstractDataminerCollection) -> str:
         return item.name

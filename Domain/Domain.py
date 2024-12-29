@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING
 
 import Component.Importer as Importer
 import Component.ScriptImporter as ScriptImporter
-import DataMiner.BuiltIns.AllFilesDataMiner as AllFilesDataMiner
-import DataMiner.BuiltIns.GrabMultipleFilesDataMiner as GrabMultipleFilesDataMiner
-import DataMiner.BuiltIns.GrabReFilesDataMiner as GrabReFilesDataMiner
-import DataMiner.BuiltIns.GrabSingleFileDataMiner as GrabSingleFileDataMiner
-import DataMiner.BuiltIns.TagSearcherDataMiner as TagSearcherDataMiner
-import DataMiner.DataMiner as DataMiner
+import Dataminer.BuiltIns.AllFilesDataminer as AllFilesDataminer
+import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
+import Dataminer.BuiltIns.GrabReFilesDataminer as GrabReFilesDataminer
+import Dataminer.BuiltIns.GrabSingleFileDataminer as GrabSingleFileDataminer
+import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
+import Dataminer.Dataminer as Dataminer
 import Downloader.Accessor as Accessor
 import Downloader.DownloadManager as DownloadManager
 import Downloader.DummyManager as DummyManager
@@ -34,7 +34,7 @@ import Version.VersionProvider.LatestVersionProvider as LatestVersionProvider
 import Version.VersionProvider.VersionProvider as VersionProvider
 
 if TYPE_CHECKING:
-    import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+    import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
     import Downloader.AccessorType as AccessorType
     import Serializer.Serializer as Serializer
     import Structure.StructureBase as StructureBase
@@ -52,13 +52,13 @@ BUILT_IN_ACCESSOR_CLASSES:dict[str,type[Accessor.Accessor]] = {accessor_class.__
     Accessor.SubDirectoryAccessor,
 ]}
 
-BUILT_IN_DATAMINER_CLASSES:dict[str,type[DataMiner.DataMiner]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
-    DataMiner.DataMiner,
-    AllFilesDataMiner.AllFilesDataMiner,
-    GrabMultipleFilesDataMiner.GrabMultipleFilesDataMiner,
-    GrabReFilesDataMiner.GrabReFilesDataMiner,
-    GrabSingleFileDataMiner.GrabSingleFileDataMiner,
-    TagSearcherDataMiner.TagSearcherDataMiner,
+BUILT_IN_DATAMINER_CLASSES:dict[str,type[Dataminer.Dataminer]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
+    Dataminer.Dataminer,
+    AllFilesDataminer.AllFilesDataminer,
+    GrabMultipleFilesDataminer.GrabMultipleFilesDataminer,
+    GrabReFilesDataminer.GrabReFilesDataminer,
+    GrabSingleFileDataminer.GrabSingleFileDataminer,
+    TagSearcherDataminer.TagSearcherDataminer,
 ]}
 
 BUILT_IN_DELEGATE_CLASSES:dict[str,type[Delegate.Delegate]] = {delegate_type.__name__: delegate_type for delegate_type in [
@@ -94,7 +94,7 @@ class Domain():
 
     def __init__(self, name:str) -> None:
         self.name = name
-        self.assets_directory           = FileManager.PARENT_DIRECTORY.joinpath("_assets")
+        self.assets_directory           = FileManager.DOMAINS_DIRECTORY.joinpath(name)
         self.data_directory             = self.assets_directory.joinpath("data")
         self.log_directory              = self.assets_directory.joinpath("log")
         self.logs_file                  = self.assets_directory.joinpath("logs.json")
@@ -114,11 +114,13 @@ class Domain():
         self.version_tags_file          = self.version_tags_directory.joinpath("version_tags.json")
         self.version_tags_order_file    = self.version_tags_directory.joinpath("version_tags_order.json")
         self.versions_file              = self.assets_directory.joinpath("versions.json")
-        self.versions_directory         = FileManager.PARENT_DIRECTORY.joinpath("_versions")
-        self.comparisons_directory      = FileManager.PARENT_DIRECTORY.joinpath("_comparisons")
+        self.versions_directory         = FileManager.VERSIONS_DIRECTORY.joinpath(name)
+        self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
+        self.versions_directory.mkdir(exist_ok=True)
+        self.comparisons_directory.mkdir(exist_ok=True)
 
         self._accessor_types:dict[str,"AccessorType.AccessorType"]|None = None
-        self._dataminer_collections:dict[str,"AbstractDataMinerCollection.AbstractDataMinerCollection"]|None = None
+        self._dataminer_collections:dict[str,"AbstractDataminerCollection.AbstractDataminerCollection"]|None = None
         self._latest_slots:list[str]|None = None
         self._logs:dict[str,"Log.Log"]|None = None
         self._serializers:dict[str,"Serializer.Serializer"]|None = None
@@ -138,7 +140,7 @@ class Domain():
         self._json_encoder:             type[json.JSONEncoder]|None = None
         self._scripts:                  Scripts.Scripts|None = None
         self._accessor_classes:         ScriptImporter.ScriptSet[type[Accessor.Accessor]]|None = None
-        self._dataminer_classes:        ScriptImporter.ScriptSet[type[DataMiner.DataMiner]]|None = None
+        self._dataminer_classes:        ScriptImporter.ScriptSet[type[Dataminer.Dataminer]]|None = None
         self._delegate_classes:         ScriptImporter.ScriptSet[type[Delegate.Delegate]]|None = None
         self._manager_classes:          ScriptImporter.ScriptSet[type[Manager.Manager]]|None = None
         self._serializer_classes:       ScriptImporter.ScriptSet[type[Serializer.Serializer]]|None = None
@@ -150,7 +152,7 @@ class Domain():
         self._json_decoder = CustomJson.get_special_decoder(self)
         self._json_encoder = CustomJson.get_special_encoder(self)
         self._accessor_classes = ScriptImporter.import_scripted_types("accessors/", self, BUILT_IN_ACCESSOR_CLASSES, Accessor.Accessor)
-        self._dataminer_classes = ScriptImporter.import_scripted_types("dataminers/", self, BUILT_IN_DATAMINER_CLASSES, DataMiner.DataMiner)
+        self._dataminer_classes = ScriptImporter.import_scripted_types("dataminers/", self, BUILT_IN_DATAMINER_CLASSES, Dataminer.Dataminer)
         self._delegate_classes = ScriptImporter.import_scripted_types("delegates", self, BUILT_IN_DELEGATE_CLASSES, Delegate.Delegate)
         self._manager_classes = ScriptImporter.import_scripted_types("managers/", self, BUILT_IN_MANAGER_CLASSES, Manager.Manager)
         self._serializer_classes = ScriptImporter.import_scripted_types("serializers/", self, BUILT_IN_SERIALIZER_CLASSES, Serializer.Serializer)
@@ -204,7 +206,7 @@ class Domain():
         return self._accessor_classes
 
     @property
-    def dataminer_classes(self) -> ScriptImporter.ScriptSet[type[DataMiner.DataMiner]]:
+    def dataminer_classes(self) -> ScriptImporter.ScriptSet[type[Dataminer.Dataminer]]:
         if self._dataminer_classes is None:
             self.import_components()
         assert self._dataminer_classes is not None
@@ -246,7 +248,7 @@ class Domain():
         return self._accessor_types
 
     @property
-    def dataminer_collections(self) -> dict[str,"AbstractDataMinerCollection.AbstractDataMinerCollection"]:
+    def dataminer_collections(self) -> dict[str,"AbstractDataminerCollection.AbstractDataminerCollection"]:
         if self._dataminer_collections is None:
             self.import_components()
         assert self._dataminer_collections is not None

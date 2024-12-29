@@ -5,7 +5,7 @@
 
 # profile = cProfile.Profile()
 # profile.run('''
-# import DataMiner.DataMiners as DataMiners
+# import Dataminer.Dataminers as Dataminers
 # import Programs.AllVersions as AllVersions
 # import Programs.Cleaner as Cleaner
 # import Programs.CompareAll as CompareAll
@@ -23,7 +23,7 @@ from typing import Any, Callable
 
 import Domain.Domains as Domains
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "DataMiners", "FileStorage", "GarbageCollector", "Scripts", "Tablifiers", "Tests"]
+PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Dataminers", "FileStorage", "GarbageCollector", "Scripts", "Tablifiers", "Tests"]
 
 user_input_lock = threading.Lock()
 
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     user_thread = threading.Thread(target=get_user_input, daemon=True)
     user_thread.start()
 
-import DataMiner.DataMiners as DataMiners
+import Dataminer.Dataminers as Dataminers
 import Domain.Domain as Domain
 import Programs.AllVersions as AllVersions
 import Programs.Cleaner as Cleaner
@@ -53,15 +53,15 @@ import Programs.GarbageCollector as GarbageCollector
 import Programs.Test.Tests as Tests
 import Tablifier.Tablifiers as Tablifiers
 import Utilities.FileManager as FileManager
-import Utilities.FileStorageManager as FileStorageManager
+import Utilities.FileStorage as FileStorage
 import Utilities.Scripts as Scripts
 
 PROGRAM_FUNCTIONS:dict[str,Callable[[Domain.Domain],None]] = {
     "AllVersions": AllVersions.main,
     "Cleaner": Cleaner.main,
     "CompareAll": CompareAll.main,
-    "DataMiners": DataMiners.user_interface,
-    "FileStorage": FileStorageManager.main,
+    "Dataminers": Dataminers.user_interface,
+    "FileStorage": FileStorage.main,
     "GarbageCollector": GarbageCollector.main,
     "Scripts": Scripts.main,
     "Tablifiers": Tablifiers.main,

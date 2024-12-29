@@ -3,9 +3,9 @@ import re
 from collections import defaultdict
 from typing import Any, Callable
 
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
-import DataMiner.DataMiner as DataMiner
-import DataMiner.DataMinerEnvironment as DataMinerEnvironment
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
+import Dataminer.Dataminer as Dataminer
+import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Structure.DataPath as DataPath
 import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
@@ -141,7 +141,7 @@ def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]],
     return output
 
 
-class TagSearcherDataMiner(DataMiner.DataMiner):
+class TagSearcherDataminer(Dataminer.Dataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str", True, str),
@@ -160,11 +160,11 @@ class TagSearcherDataMiner(DataMiner.DataMiner):
         self.sort_output = sort_output
         self.none_okay = none_okay
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> list[DataPath.DataPath|Any]:
+    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[DataPath.DataPath|Any]:
         dependencies = set(self.dependencies)
         all_tags = self.domain.structure_tags
         printer_environment = environment.get_printer_environment(self.version)
-        tag_dataminer_collections:defaultdict[AbstractDataMinerCollection.AbstractDataMinerCollection,list[StructureTag.StructureTag]] = defaultdict(lambda: [])
+        tag_dataminer_collections:defaultdict[AbstractDataminerCollection.AbstractDataminerCollection,list[StructureTag.StructureTag]] = defaultdict(lambda: [])
         for tag in self.tag_names:
             if tag not in all_tags:
                 raise Exceptions.UnrecognizedStructureTagError(self.tags, tag)
@@ -180,7 +180,7 @@ class TagSearcherDataMiner(DataMiner.DataMiner):
         output = self.tag_function(mentioned_tags)
 
         if not self.none_okay and len(output) == 0:
-            raise Exceptions.DataMinerNothingFoundError(self)
+            raise Exceptions.DataminerNothingFoundError(self)
 
         output_list = list(output)
         if self.sort_output:

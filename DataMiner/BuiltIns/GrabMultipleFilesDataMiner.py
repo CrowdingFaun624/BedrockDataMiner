@@ -1,22 +1,22 @@
 from typing import Any
 
-import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.FileDataMiner as FileDataMiner
+import Dataminer.DataminerEnvironment as DataminerEnvironment
+import Dataminer.FileDataminer as FileDataminer
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
+class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataMiner.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=FileDataMiner.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataMiner.suffix_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.suffix_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=FileDataminer.location_value_function),
+        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.suffix_function)),
         TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataMiner.location_item_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.location_item_function)),
         TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
     )
 
@@ -38,7 +38,7 @@ class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
         self.ignore_subdirectories = ignore_subdirectories
         self.ignore_files:set[str] = set(ignore_files) if ignore_files is not None else set()
 
-    def get_coverage(self, file_set:FileDataMiner.FileSet, environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataminer.FileSet, environment:DataminerEnvironment.DataminerEnvironment) -> set[str]:
         output:set[str] = set()
         for file_name in file_set.get_files_in(self.location):
             relative_name = file_name.removeprefix(self.location)
@@ -52,13 +52,13 @@ class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
                     if self.unrecognized_suffix_okay: continue
                     else:
                         recognized_suffixes = self.suffixes if self.ignore_suffixes is None else (self.suffixes + self.ignore_suffixes)
-                        raise Exceptions.DataMinerUnrecognizedSuffixError(self, file_name, recognized_suffixes)
+                        raise Exceptions.DataminerUnrecognizedSuffixError(self, file_name, recognized_suffixes)
             output.add(file_name)
         if len(output) == 0 and not self.find_none_okay:
-            raise Exceptions.DataMinerNothingFoundError(self)
+            raise Exceptions.DataminerNothingFoundError(self)
         return output
 
-    def get_files(self, path_base:str, accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[tuple[str,str],bytes]:
+    def get_files(self, path_base:str, accessor:Accessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
         files:dict[tuple[str,str],bytes] = {}
         for file_name in accessor.get_files_in(path_base):
             should_store_file = True
@@ -81,19 +81,19 @@ class GrabMultipleFilesDataMiner(FileDataMiner.FileDataMiner):
                         continue
                     else:
                         recognized_suffixes = self.suffixes if self.ignore_suffixes is None else (self.suffixes + self.ignore_suffixes)
-                        raise Exceptions.DataMinerUnrecognizedSuffixError(self, file_name, recognized_suffixes)
+                        raise Exceptions.DataminerUnrecognizedSuffixError(self, file_name, recognized_suffixes)
 
             if should_store_file:
                 files[relative_name, file_name] = accessor.read(file_name)
 
         if len(files) == 0 and not self.find_none_okay:
-            raise Exceptions.DataMinerNothingFoundError(self)
+            raise Exceptions.DataminerNothingFoundError(self)
         return files
 
-    def get_output(self, files:dict[tuple[str,str],bytes], accessor:Accessor.DirectoryAccessor, environment:DataMinerEnvironment.DataMinerEnvironment) -> dict[str,File.File|Any]:
+    def get_output(self, files:dict[tuple[str,str],bytes], accessor:Accessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,File.File|Any]:
         return {relative_name: self.export_file(file_bytes, file_name) for (relative_name, file_name), file_bytes in files.items()}
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
         accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
         files = self.get_files(self.location, accessor, environment)
         output = self.get_output(files, accessor, environment)

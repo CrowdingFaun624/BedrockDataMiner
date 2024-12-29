@@ -49,7 +49,7 @@ class CacheTypedDict(TypedDict):
     type: NotRequired[Literal["Cache"]]
     types: Required[str|list[str]]
 
-class CoverageDataMinerCollectionTypedDict(TypedDict):
+class CoverageDataminerCollectionTypedDict(TypedDict):
     comparing_disabled: NotRequired[bool]
     disabled: NotRequired[bool]
     file_list_dataminer: Required[str]
@@ -59,17 +59,17 @@ class CoverageDataMinerCollectionTypedDict(TypedDict):
     remove_prefixes: NotRequired[list[str]]
     remove_suffixes: NotRequired[list[str]]
     structure: str
-    type: Literal["CoverageDataMinerCollection"]
+    type: Literal["CoverageDataminerCollection"]
 
-class DataMinerCollectionTypedDict(TypedDict):
+class DataminerCollectionTypedDict(TypedDict):
     comparing_disabled: NotRequired[bool]
-    dataminers: Required[list["DataMinerSettingsTypedDict"]]
+    dataminers: Required[list["DataminerSettingsTypedDict"]]
     disabled: NotRequired[bool]
     file_name: Required[str]
     structure: Required[str]
-    type: NotRequired[Literal["DataMinerCollection"]]
+    type: NotRequired[Literal["DataminerCollection"]]
 
-class DataMinerSettingsTypedDict(TypedDict):
+class DataminerSettingsTypedDict(TypedDict):
     arguments: NotRequired[dict[str,Any]]
     dependencies: NotRequired[list[str]]
     files: NotRequired[list[str]]
@@ -77,7 +77,7 @@ class DataMinerSettingsTypedDict(TypedDict):
     new: Required[str|None]
     old: Required[str|None]
     serializer: NotRequired[str|dict[str,str]]
-    type: NotRequired[Literal["DataMinerSettings"]]
+    type: NotRequired[Literal["DataminerSettings"]]
 
 class DictTypedDict(TypedDict):
     delegate: NotRequired[str]
@@ -307,9 +307,9 @@ type ComponentTypedDicts = \
     AccessorTypeTypedDict|\
     BaseTypedDict|\
     CacheTypedDict|\
-    CoverageDataMinerCollectionTypedDict|\
-    DataMinerCollectionTypedDict|\
-    DataMinerSettingsTypedDict|\
+    CoverageDataminerCollectionTypedDict|\
+    DataminerCollectionTypedDict|\
+    DataminerSettingsTypedDict|\
     DictTypedDict|\
     FileTypedDict|\
     GroupTypedDict|\

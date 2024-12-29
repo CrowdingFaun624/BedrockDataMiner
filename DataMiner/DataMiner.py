@@ -2,8 +2,8 @@ import json
 from pathlib import Path
 from typing import Any, NoReturn
 
-import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.DataMinerSettings as DataMinerSettings
+import Dataminer.DataminerEnvironment as DataminerEnvironment
+import Dataminer.DataminerSettings as DataminerSettings
 import Downloader.Accessor as Accessor
 import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
@@ -12,14 +12,14 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
 
-class DataMiner():
+class Dataminer():
 
     parameters:TypeVerifier.TypeVerifier|None = TypeVerifier.TypedDictTypeVerifier()
-    '''TypeVerifier for verifying the json arguments of this DataMiner'''
+    '''TypeVerifier for verifying the json arguments of this Dataminer'''
     serializer_names:set[str] = set()
-    '''The keys of Serializers given to this DataMiner's settings must match `serializer_names`.'''
+    '''The keys of Serializers given to this Dataminer's settings must match `serializer_names`.'''
 
-    def __init__(self, version:Version.Version, settings:DataMinerSettings.DataMinerSettings) -> None:
+    def __init__(self, version:Version.Version, settings:DataminerSettings.DataminerSettings) -> None:
         self.version = version
         self.settings = settings
         self.domain = self.settings.domain
@@ -30,8 +30,8 @@ class DataMiner():
         self.files_str = {version_file_type.name for version_file_type in self.files}
         self.dependencies = self.settings.get_dependencies()
         self.dependencies_str = [dependency.name for dependency in self.dependencies]
-        if not isinstance(self, NullDataMiner) and self.version not in self.settings.get_version_range():
-            raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, f"in DataMiner {self}")
+        if not isinstance(self, NullDataminer) and self.version not in self.settings.get_version_range():
+            raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, f"in Dataminer {self}")
 
         self.initialize(**settings.arguments)
 
@@ -40,16 +40,16 @@ class DataMiner():
 
     @classmethod
     def manipulate_arguments(cls, arguments:dict[str,Any]) -> None:
-        '''Manipulates the arguments of this DataMiner before they are passed into `initialize`.'''
+        '''Manipulates the arguments of this Dataminer before they are passed into `initialize`.'''
         return None
 
     def initialize(self, **kwargs) -> None:
-        '''`DataMinerSettings.__init__(**kwargs)` -> `DataMiner.initialize(**kwargs)`.'''
+        '''`DataminerSettings.__init__(**kwargs)` -> `Dataminer.initialize(**kwargs)`.'''
         pass
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> Any:
+    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
-        raise Exceptions.DataMinerLacksActivateError(self)
+        raise Exceptions.DataminerLacksActivateError(self)
 
     def get_data_file_path(self) -> Path:
         return self.version.get_data_directory().joinpath(self.file_name)
@@ -60,10 +60,10 @@ class DataMiner():
 
     def get_accessor[a: Accessor.Accessor](self, file_type:str, accessor_type:type[a]=Accessor.Accessor) -> a:
         if file_type not in self.files_str:
-            raise Exceptions.DataMinerFileTypePermissionError(self, file_type, sorted(self.files_str))
+            raise Exceptions.DataminerFileTypePermissionError(self, file_type, sorted(self.files_str))
         accessor = self.version.get_accessor(file_type, accessor_type)
         if accessor is None:
-            raise Exceptions.DataMinerAccessorWrongTypeError(self, file_type, accessor_type)
+            raise Exceptions.DataminerAccessorWrongTypeError(self, file_type, accessor_type)
         return accessor
 
     def get_serializer(self, serializer_key:str) -> Serializer.Serializer:
@@ -71,7 +71,7 @@ class DataMiner():
             raise Exceptions.AttributeNoneError("serializers", self)
         serializer = self.serializers.get(serializer_key)
         if serializer is None:
-            raise Exceptions.DataMinerUnrecognizedSerializerError(self, serializer_key)
+            raise Exceptions.DataminerUnrecognizedSerializerError(self, serializer_key)
         return serializer
 
     def export_file(self, file_bytes:bytes, file_name:str, serializer_key:str="main") -> File.File|Any:
@@ -82,16 +82,16 @@ class DataMiner():
             try:
                 return serializer.deserialize(file_bytes)
             except Exception:
-                raise Exceptions.SerializationFailureError(serializer, file_name, "(in DataMiner.export_file)")
+                raise Exceptions.SerializationFailureError(serializer, file_name, "(in Dataminer.export_file)")
 
-class NullDataMiner(DataMiner):
+class NullDataminer(Dataminer):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
 
     def initialize(self, **kwargs) -> None:
-        raise Exceptions.NullDataMinerMethodError(self, self.initialize)
+        raise Exceptions.NullDataminerMethodError(self, self.initialize)
 
-    def activate(self, environment:DataMinerEnvironment.DataMinerEnvironment) -> NoReturn:
-        raise Exceptions.NullDataMinerMethodError(self, self.activate)
+    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> NoReturn:
+        raise Exceptions.NullDataminerMethodError(self, self.activate)
 
     def get_accessor(self, file_type:str) -> NoReturn:
-        raise Exceptions.NullDataMinerMethodError(self, self.get_accessor)
+        raise Exceptions.NullDataminerMethodError(self, self.get_accessor)

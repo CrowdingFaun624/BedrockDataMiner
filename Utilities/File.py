@@ -8,7 +8,7 @@ import Structure.DataPath as DataPath
 import Structure.Difference as D
 import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
-import Utilities.FileStorageManager as FileStorageManager
+import Utilities.FileStorage as FileStorage
 
 FileJsonTypedDict = TypedDict("FileJsonTypedDict", {"$special_type": Literal["file"], "hash": str, "name": str, "serializer": str})
 
@@ -31,7 +31,7 @@ class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
 def new_file(data:bytes, file_name:str, serializer:Serializer.Serializer) -> "File":
     if not serializer.empty_okay and len(data) == 0:
         raise Exceptions.EmptyFileError(message=f"(file \"{file_name}\")")
-    file_hash = hash_str_to_int(FileStorageManager.archive_data(data, file_name, empty_okay=serializer.empty_okay))
+    file_hash = hash_str_to_int(FileStorage.archive_data(data, file_name, empty_okay=serializer.empty_okay))
     return File(file_name, serializer, file_hash) # not create with value argument to not clog the memory.
 
 def hash_int_to_str(hash_int:int) -> str:
@@ -98,7 +98,7 @@ class File[a](AbstractFile[a]):
 
     def _get_data(self) -> a:
         if self._data is ...:
-            file_bytes = FileStorageManager.read_archived(hash_int_to_str(self.hash))
+            file_bytes = FileStorage.read_archived(hash_int_to_str(self.hash))
             try:
                 data:a = self.serializer.deserialize(file_bytes)
                 self._data = data
@@ -121,7 +121,7 @@ class File[a](AbstractFile[a]):
 
     def get_referenced_files(self) -> Iterator[int]:
         if self.serializer.can_contain_subfiles:
-            file_bytes = FileStorageManager.read_archived(hash_int_to_str(self.hash))
+            file_bytes = FileStorage.read_archived(hash_int_to_str(self.hash))
             yield from self.serializer.get_referenced_files(file_bytes)
 
 @Types.register_decorator(None, json_coder=Types.no_coder)

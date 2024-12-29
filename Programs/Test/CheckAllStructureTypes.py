@@ -1,13 +1,13 @@
 import traceback
 
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Domain.Domain as Domain
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.UserInput as UserInput
 import Version.Version as Version
 
 
-def check_types(version:Version.Version, dataminers:list[AbstractDataMinerCollection.AbstractDataMinerCollection]) -> None:
+def check_types(version:Version.Version, dataminers:list[AbstractDataminerCollection.AbstractDataminerCollection]) -> None:
     environment = StructureEnvironment.PrinterEnvironment(StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_all_types), None, version, 0)
     for dataminer_collection in dataminers:
         try:

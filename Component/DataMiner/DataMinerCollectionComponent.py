@@ -1,21 +1,21 @@
 from itertools import batched
 
 import Component.ComponentTyping as ComponentTyping
-import Component.DataMiner.AbstractDataMinerCollectionComponent as AbstractDataMinerCollectionComponent
-import Component.DataMiner.DataMinerSettingsComponent as DataMinerSettingsComponent
+import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
+import Component.Dataminer.DataminerSettingsComponent as DataminerSettingsComponent
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
 import Component.Structure.Field.StructureField as StructureField
-import DataMiner.DataMinerCollection as DataMinerCollection
+import Dataminer.DataminerCollection as DataminerCollection
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
-DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataMinerSettingsComponent.DataMinerSettingsComponent] = Pattern.Pattern([{"is_dataminer_settings": True}])
+DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataminerSettingsComponent.DataminerSettingsComponent] = Pattern.Pattern([{"is_dataminer_settings": True}])
 
-class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.AbstractDataMinerCollectionComponent[DataMinerCollection.DataMinerCollection]):
+class DataminerCollectionComponent(AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent[DataminerCollection.DataminerCollection]):
 
     __slots__ = (
         "comparing_disabled",
@@ -25,8 +25,8 @@ class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.Abstract
         "structure_field",
     )
 
-    class_name_article = "a DataMinerCollection"
-    class_name = "DataMinerCollection"
+    class_name_article = "a DataminerCollection"
+    class_name = "DataminerCollection"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
@@ -36,7 +36,7 @@ class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.Abstract
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
-    def initialize_fields(self, data: ComponentTyping.DataMinerCollectionTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.DataminerCollectionTypedDict) -> list[Field.Field]:
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
@@ -48,14 +48,14 @@ class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.Abstract
                 DATAMINER_SETTINGS_PATTERN,
                 ["dataminers", index],
                 allow_inline=Field.InlinePermissions.inline,
-                assume_type=DataMinerSettingsComponent.DataMinerSettingsComponent.class_name
+                assume_type=DataminerSettingsComponent.DataminerSettingsComponent.class_name
             ) for index, dataminer_settings_data in enumerate(data["dataminers"])
         ], ["dataminers"])
         return [self.structure_field, self.dataminer_settings_field]
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = DataMinerCollection.DataMinerCollection(
+        self.final = DataminerCollection.DataminerCollection(
             file_name=self.file_name,
             name=self.name,
             domain=self.domain,
@@ -74,7 +74,7 @@ class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.Abstract
         exceptions = super().check()
         dataminer_settings_components = self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.get_component())
 
-        # ending DataMinerSettings must have null versions on corresponding versions; middle ones cannot be null.
+        # ending DataminerSettings must have null versions on corresponding versions; middle ones cannot be null.
         used_versions:list[Version.Version] = []
         for index, dataminer_settings_component in enumerate(dataminer_settings_components):
             new_version = dataminer_settings_component.new_field.get_final()

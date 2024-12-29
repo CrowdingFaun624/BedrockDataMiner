@@ -4,41 +4,41 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
-    import DataMiner.DataMiner as DataMiner
+    import Dataminer.Dataminer as Dataminer
     import Version.Version as Version
 
-class DataMinerDependencies():
-    "Controls the dependencies of DataMiners."
+class DataminerDependencies():
+    "Controls the dependencies of Dataminers."
 
     def __init__(self, data:dict[str,Any]) -> None:
         '''
-        :data: A dictionary with keys of DataMinerCollection names and values of the data they collected for this Version.
+        :data: A dictionary with keys of DataminerCollection names and values of the data they collected for this Version.
         '''
         self.data = data
 
-    def get(self, dataminer_name:str, dataminer:"DataMiner.DataMiner") -> Any:
+    def get(self, dataminer_name:str, dataminer:"Dataminer.Dataminer") -> Any:
         '''
-        Returns the data associated with the given DataMinerCollection name for this Version.
-        Raises a DataMinerUnregisteredDependencyError if the DataMinerCollection is not listed as a dependency for this DataMiner.
-        :dataminer_name: The name of the DataMinerCollection to access.
-        :dataminer: The DataMiner attempting to access the dependency.
+        Returns the data associated with the given DataminerCollection name for this Version.
+        Raises a DataminerUnregisteredDependencyError if the DataminerCollection is not listed as a dependency for this Dataminer.
+        :dataminer_name: The name of the DataminerCollection to access.
+        :dataminer: The Dataminer attempting to access the dependency.
         '''
         output = self.get_default(dataminer_name, dataminer, ...)
         if output is ...:
-            raise Exceptions.DataMinerUnrecognizedDependencyError(dataminer, dataminer_name)
+            raise Exceptions.DataminerUnrecognizedDependencyError(dataminer, dataminer_name)
         return cast(Any, output)
 
-    def get_default[a](self, dataminer_name:str, dataminer:"DataMiner.DataMiner", default:a) -> Any|a:
+    def get_default[a](self, dataminer_name:str, dataminer:"Dataminer.Dataminer", default:a) -> Any|a:
         '''
-        Returns the data associated with the given DataMinerCollection name for this Version, or `default` if the DataMinerCollection exists but has no data for this Version.
-        Raises a DataMinerUnregisteredDependencyError if the DataMinerCollection is not listed as a dependency for this DataMiner.
-        :dataminer_name: The name of the DataMinerCollection to access.
-        :dataminer: The DataMiner attempting to access the dependency.
+        Returns the data associated with the given DataminerCollection name for this Version, or `default` if the DataminerCollection exists but has no data for this Version.
+        Raises a DataminerUnregisteredDependencyError if the DataminerCollection is not listed as a dependency for this Dataminer.
+        :dataminer_name: The name of the DataminerCollection to access.
+        :dataminer: The Dataminer attempting to access the dependency.
         :default: The default value to return if the data does not exist for this Version.
         '''
         if dataminer_name not in dataminer.dependencies_str:
-            raise Exceptions.DataMinerUnregisteredDependencyError(dataminer, dataminer_name)
-        output = self.data.get(dataminer_name, default) # DataMiners cannot output None
+            raise Exceptions.DataminerUnregisteredDependencyError(dataminer, dataminer_name)
+        output = self.data.get(dataminer_name, default) # Dataminers cannot output None
         return output
 
     def has_item(self, dataminer_name:str) -> bool:
@@ -46,15 +46,15 @@ class DataMinerDependencies():
 
     def set_item(self, name:str, value:Any) -> None:
         if name in self.data:
-            raise Exceptions.DataMinerDependencyOverwriteError(self, name)
+            raise Exceptions.DataminerDependencyOverwriteError(self, name)
         self.data[name] = value
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} [{", ".join(dependency for dependency in self.data.keys())}]>"
 
-class DataMinerEnvironment():
+class DataminerEnvironment():
 
-    def __init__(self, dependency_data:DataMinerDependencies, structure_environment:StructureEnvironment.StructureEnvironment) -> None:
+    def __init__(self, dependency_data:DataminerDependencies, structure_environment:StructureEnvironment.StructureEnvironment) -> None:
         self.dependency_data = dependency_data
         self.structure_environment = structure_environment
 

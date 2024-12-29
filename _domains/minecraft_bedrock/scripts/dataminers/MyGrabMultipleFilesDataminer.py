@@ -1,0 +1,54 @@
+from typing import Any
+
+import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
+import Dataminer.DataminerEnvironment as DataminerEnvironment
+import Dataminer.FileDataminer as FileDataminer
+import Downloader.Accessor as Accessor
+import Utilities.File as File
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+
+__all__ = ["MyGrabMultipleFilesDataminer"]
+
+class MyGrabMultipleFilesDataminer(GrabMultipleFilesDataminer.GrabMultipleFilesDataminer):
+
+    parameters = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.suffix_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=FileDataminer.location_value_function),
+        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.suffix_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.location_item_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("reverse", "a bool", False, bool),
+    )
+
+    def initialize(
+        self,
+        location:str,
+        ignore_suffixes:list[str]|None=None,
+        suffixes:list[str]|None=None,
+        unrecognized_suffix_okay:bool=False,
+        find_none_okay:bool=False,
+        ignore_subdirectories:list[str]|None=None,
+        ignore_files:list[str]|None=None,
+        insert_pack:str|None=None,
+        reverse:bool=False,
+    ) -> None:
+        super().initialize(location, ignore_suffixes, suffixes, unrecognized_suffix_okay, find_none_okay, ignore_subdirectories, ignore_files)
+        self.insert_pack = insert_pack
+        self.reverse = reverse
+
+    def get_output(self, files: dict[str, bytes], accessor: Accessor.DirectoryAccessor, environment: DataminerEnvironment.DataminerEnvironment) -> dict[str, File.File|Any]:
+        output:dict[str,Any] = {}
+        for (relative_name, file_name), file_bytes in files.items():
+            file_data = self.export_file(file_bytes, file_name)
+            if self.insert_pack is None:
+                output[relative_name] = file_data
+            elif self.reverse:
+                if self.insert_pack not in output:
+                    output[self.insert_pack] = {}
+                output[self.insert_pack][relative_name] = file_data
+            else:
+                output[relative_name] = {self.insert_pack: file_data}
+        return output

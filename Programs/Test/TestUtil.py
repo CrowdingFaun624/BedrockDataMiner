@@ -1,7 +1,7 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING, Callable, Hashable
 
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Domain.Domain as Domain
 import Version.Version as Version
 
@@ -48,10 +48,10 @@ class Plan[a: Hashable]():
     Plural string labeling this Plan's object.
     '''
 
-    def __init__(self, versions:list[Version.Version], all_dataminer_collections:list[AbstractDataMinerCollection.AbstractDataMinerCollection], version_objects:dict[Version.Version,set[a]]) -> None:
+    def __init__(self, versions:list[Version.Version], all_dataminer_collections:list[AbstractDataminerCollection.AbstractDataminerCollection], version_objects:dict[Version.Version,set[a]]) -> None:
         '''
         :versions: The Versions which support all of the same objects.
-        :all_dataminer_collections: A list of every DataMinerCollection.
+        :all_dataminer_collections: A list of every DataminerCollection.
         :version_objects: Dictionary mapping Versions to a set of this Plan's objects supported by that Version.
         '''
         self.versions = versions
@@ -73,10 +73,10 @@ class Plan[a: Hashable]():
         ...
 
     @classmethod
-    def get_obj(cls, dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection, version:Version.Version) -> a:
+    def get_obj(cls, dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection, version:Version.Version) -> a:
         '''
-        Gets this Plan's object from a DataMinerCollection and Version.
-        :dataminer_collection: The DataMinerCollection associated with the object.
+        Gets this Plan's object from a DataminerCollection and Version.
+        :dataminer_collection: The DataminerCollection associated with the object.
         :version: The Version associated with the object.
         '''
         ...

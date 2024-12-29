@@ -13,11 +13,11 @@ if TYPE_CHECKING:
     import Component.Types as Types
     import Component.Version.Field.VersionRangeField as VersionRangeField
     import Component.Version.VersionComponent as VersionComponent
-    import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
-    import DataMiner.BuiltIns.TagSearcherDataMiner as TagSearcherDataMiner
-    import DataMiner.DataMiner as DataMiner
-    import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-    import DataMiner.DataMinerSettings as DataMinerSettings
+    import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
+    import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
+    import Dataminer.Dataminer as Dataminer
+    import Dataminer.DataminerEnvironment as DataminerEnvironment
+    import Dataminer.DataminerSettings as DataminerSettings
     import Downloader.Accessor as Accessor
     import Downloader.Manager as Manager
     import Serializer.Serializer as Serializer
@@ -324,7 +324,7 @@ class ComponentInvalidNameError(ComponentException):
         return f"The name of {self.component} {f"cannot be one of {self.invalid_names}" if self.invalid_names is not None else "is invalid"}{message(self.message)}"
 
 class ComponentInvalidVersionRangeException(ComponentException):
-    "Abstract exception class for errors relating to the Version ranges in a DataMinerSettings being invalid."
+    "Abstract exception class for errors relating to the Version ranges in a DataminerSettings being invalid."
 
 class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
     "The new/old Version of the first/last sub-Component is not None."
@@ -333,7 +333,7 @@ class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
         '''
         :source: The Component with an invalid VersionRange.
         :actual_value: The value that is present in the new Version instead of None.
-        :is_first: Whether this DataMinerSettings is the newest one or not.
+        :is_first: Whether this DataminerSettings is the newest one or not.
         :message: Additional text to place after the main message.
         '''
         super().__init__(source, actual_value, is_first, message)
@@ -365,12 +365,12 @@ class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
         return f"{self.source} has a gap between Versions {self.new_version} and {self.old_version}{message(self.message)}"
 
 class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
-    "The new or old Version of a non-first DataMinerSettings is None."
+    "The new or old Version of a non-first DataminerSettings is None."
 
     def __init__(self, source:"Component.Component", index:int, slot:Literal["old", "new"], message:Optional[str]=None) -> None:
         '''
         :source: The Comopnent with an invalid VersionRange.
-        :index: The index of the DataMinerSettings
+        :index: The index of the DataminerSettings
         :slot: The key ("old" or "new") of the sub-Component.
         :message: Additional text to place after the main message.
         '''
@@ -788,15 +788,15 @@ class DataFileNothingToWriteError(DataFileException):
     def __str__(self) -> str:
         return f"{self.source} cannot be written if not yet read{message(self.message)}"
 
-class DataMinerException(Exception):
-    "Abstract Exception class for errors relating to DataMiners."
+class DataminerException(Exception):
+    "Abstract Exception class for errors relating to Dataminers."
 
-class DataMinerAccessorWrongTypeError(DataMinerException):
+class DataminerAccessorWrongTypeError(DataminerException):
     "The assumed type of an Accessor is not its actual type."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", file_type:str, accessor_type:type["Accessor.Accessor"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", file_type:str, accessor_type:type["Accessor.Accessor"], message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner that attempted to access its Accessor.
+        :dataminer: The Dataminer that attempted to access its Accessor.
         :file_type: The name of the VersionFile that has the wrong Accessor type.
         :accessor_type: The type that the Accessor should be.
         :message: Additional text to place after the main message.
@@ -810,16 +810,16 @@ class DataMinerAccessorWrongTypeError(DataMinerException):
     def __str__(self) -> str:
         return f"VersionFile \"{self.file_type}\" from {self.dataminer} should have Accessor with type \"{self.accessor_type.__name__}\"{message(self.message)}"
 
-class DataMinerAdditionalSerializerError(DataMinerException):
-    "This DataMiner has been provided with an additional, unnecessary Serializer."
+class DataminerAdditionalSerializerError(DataminerException):
+    "This Dataminer has been provided with an additional, unnecessary Serializer."
 
-    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", dataminer_class:type["DataMiner.DataMiner"], key:str, serializer:"Serializer.Serializer", allowed_keys:set[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_settings:"DataminerSettings.DataminerSettings", dataminer_class:type["Dataminer.Dataminer"], key:str, serializer:"Serializer.Serializer", allowed_keys:set[str], message:Optional[str]=None) -> None:
         '''
-        :dataminer_settings: The DataMinerSettings that provided the additional Serializer.
-        :dataminer_class: The class of DataMiner that the DataMinerSettings has that does not support the key.
+        :dataminer_settings: The DataminerSettings that provided the additional Serializer.
+        :dataminer_class: The class of Dataminer that the DataminerSettings has that does not support the key.
         :key: The key of the additional Serializer.
         :serializer: The additional Serializer.
-        :allowed_keys: The set of Serializer keys that are allowed in this DataMiner.
+        :allowed_keys: The set of Serializer keys that are allowed in this Dataminer.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer_settings, dataminer_class, key, serializer, allowed_keys, message)
@@ -831,10 +831,10 @@ class DataMinerAdditionalSerializerError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.dataminer_settings} provided additional Serializer key \"{self.key}\": {self.serializer} to DataMiner class \"{self.dataminer_class}\", which only supports keys [{", ".join(self.allowed_keys)}]{message(self.message)}"
+        return f"{self.dataminer_settings} provided additional Serializer key \"{self.key}\": {self.serializer} to Dataminer class \"{self.dataminer_class}\", which only supports keys [{", ".join(self.allowed_keys)}]{message(self.message)}"
 
-class DataMinerCollectionFileError(DataMinerException):
-    "The \"files\" key in a DataMinerCollection is improperly specified."
+class DataminerCollectionFileError(DataminerException):
+    "The \"files\" key in a DataminerCollection is improperly specified."
 
     def __init__(self, exists:bool, source:object, message:Optional[str]=None) -> None:
         '''
@@ -850,12 +850,12 @@ class DataMinerCollectionFileError(DataMinerException):
     def __str__(self) -> str:
         return f"Key \"files\" of {self.source} {"cannot" if self.exists else "must"} exist{message(self.message)}"
 
-class DataMinerDependencyOverwriteError(DataMinerException):
-    "Attempted to set an item of a DataMinerDependencies object that already exists."
+class DataminerDependencyOverwriteError(DataminerException):
+    "Attempted to set an item of a DataminerDependencies object that already exists."
 
-    def __init__(self, dataminer_dependencies:"DataMinerEnvironment.DataMinerDependencies", dependency_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_dependencies:"DataminerEnvironment.DataminerDependencies", dependency_name:str, message:Optional[str]=None) -> None:
         '''
-        :dataminer_dependencies: The DataMinerDependencies that had an item overwritten.
+        :dataminer_dependencies: The DataminerDependencies that had an item overwritten.
         :dependency_name: The dependency that was overwritten.
         :message: Additional text to place after the main message.
         '''
@@ -867,13 +867,13 @@ class DataMinerDependencyOverwriteError(DataMinerException):
     def __str__(self) -> str:
         return f"Attempted to overwrite dependency \"{self.dependency_name}\" of {self.dataminer_dependencies}{message(self.message)}"
 
-class DataMinerDuplicateFileNameError(DataMinerException):
-    "Two DataMinerCollections have the same file name."
+class DataminerDuplicateFileNameError(DataminerException):
+    "Two DataminerCollections have the same file name."
 
-    def __init__(self, file_name:str, dataminers:list["AbstractDataMinerCollection.AbstractDataMinerCollection"], message:Optional[str]=None) -> None:
+    def __init__(self, file_name:str, dataminers:list["AbstractDataminerCollection.AbstractDataminerCollection"], message:Optional[str]=None) -> None:
         '''
-        :file_name: The file name shared by all of the DataMinerCollections.
-        :dataminers: The DataMinerCollections that share the same file name.
+        :file_name: The file name shared by all of the DataminerCollections.
+        :dataminers: The DataminerCollections that share the same file name.
         :message: Additional text to place after the main message.
         '''
         super().__init__(file_name, dataminers, message)
@@ -882,16 +882,16 @@ class DataMinerDuplicateFileNameError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"DataMinerCollection [{", ".join(dataminer.name for dataminer in self.dataminers)}] all have the same file name \"{self.file_name}\"{message(self.message)}"
+        return f"DataminerCollection [{", ".join(dataminer.name for dataminer in self.dataminers)}] all have the same file name \"{self.file_name}\"{message(self.message)}"
 
-class DataMinerFileTypePermissionError(DataMinerException):
-    "A DataMiner attempted to access an VersionFileType it has no permissions to use."
+class DataminerFileTypePermissionError(DataminerException):
+    "A Dataminer attempted to access an VersionFileType it has no permissions to use."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", file_type_name:str, allowed_file_types:Optional[list[str]]=None, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", file_type_name:str, allowed_file_types:Optional[list[str]]=None, message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner that attempted to access a VersionFileType without permission.
+        :dataminer: The Dataminer that attempted to access a VersionFileType without permission.
         :file_type_name: The name of the VersionFileType it attempted to access.
-        :allowed_file_types: A list of all VersionFileType names this DataMiner is allowed to access.
+        :allowed_file_types: A list of all VersionFileType names this Dataminer is allowed to access.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, file_type_name, allowed_file_types, message)
@@ -903,12 +903,12 @@ class DataMinerFileTypePermissionError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer} attempted to access VersionFileType {self.file_type_name}; permissions are lacking or it does not exist{message(self.message, "", " %s")}{message(self.allowed_file_types, yes_message=". It may only access %s!")}"
 
-class DataMinerLacksActivateError(DataMinerException):
-    "A DataMiner did not override the activate function."
+class DataminerLacksActivateError(DataminerException):
+    "A Dataminer did not override the activate function."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner that is missing the activate function.
+        :dataminer: The Dataminer that is missing the activate function.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, message)
@@ -918,12 +918,12 @@ class DataMinerLacksActivateError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer} is missing its activate function{message(self.message)}"
 
-class DataMinerNothingFoundError(DataMinerException):
-    "This DataMiner found nothing."
+class DataminerNothingFoundError(DataminerException):
+    "This Dataminer found nothing."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner that failed to find anything.
+        :dataminer: The Dataminer that failed to find anything.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, message)
@@ -933,12 +933,12 @@ class DataMinerNothingFoundError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer} failed to find anything{message(self.message)}"
 
-class DataMinerNullReturnError(DataMinerException):
-    "The DataMiner's activate method has returned None."
+class DataminerNullReturnError(DataminerException):
+    "The Dataminer's activate method has returned None."
 
-    def __init__(self, dataminer:"AbstractDataMinerCollection.AbstractDataMinerCollection", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"AbstractDataminerCollection.AbstractDataminerCollection", message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner whose activate method returned None.
+        :dataminer: The Dataminer whose activate method returned None.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, message)
@@ -948,13 +948,13 @@ class DataMinerNullReturnError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer} returned None upon being activated{message(self.message)}"
 
-class DataMinerSerializerMissingError(DataMinerException):
-    "A DataMiner class requires a Serializer and does not have one."
+class DataminerSerializerMissingError(DataminerException):
+    "A Dataminer class requires a Serializer and does not have one."
 
-    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", dataminer_type:type["DataMiner.DataMiner"], serializer_key:str, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_settings:"DataminerSettings.DataminerSettings", dataminer_type:type["Dataminer.Dataminer"], serializer_key:str, message:Optional[str]=None) -> None:
         '''
-        :dataminer_settings: The DataMinerSettings whose DataMiner type requires a Serializer.
-        :dataminer_type: The DataMinerSettings' DataMiner type.
+        :dataminer_settings: The DataminerSettings whose Dataminer type requires a Serializer.
+        :dataminer_type: The DataminerSettings' Dataminer type.
         :serializer_key: The key of the missing Serializer.
         :message: Additional text to place after the main message.
         '''
@@ -965,15 +965,15 @@ class DataMinerSerializerMissingError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"DataMiner type \"{self.dataminer_type.__name__}\" from {self.dataminer_settings} is missing Serializer {self.serializer_key}{message(self.message)}"
+        return f"Dataminer type \"{self.dataminer_type.__name__}\" from {self.dataminer_settings} is missing Serializer {self.serializer_key}{message(self.message)}"
 
-class DataMinerSettingsImporterLoopError(DataMinerException):
-    "A DataMinerSettings has an import loop."
+class DataminerSettingsImporterLoopError(DataminerException):
+    "A DataminerSettings has an import loop."
 
-    def __init__(self, dataminer_settings:"DataMinerSettings.DataMinerSettings", loop_items:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_settings:"DataminerSettings.DataminerSettings", loop_items:list[str], message:Optional[str]=None) -> None:
         '''
-        :dataminer_settings: The initial DataMinerSettings containing the loop.
-        :loop_items: A list of DataMinerCollection names contained in the loop.
+        :dataminer_settings: The initial DataminerSettings containing the loop.
+        :loop_items: A list of DataminerCollection names contained in the loop.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer_settings, loop_items, message)
@@ -984,13 +984,13 @@ class DataMinerSettingsImporterLoopError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer_settings} has an import loop involving {self.loop_items}{message(self.message)}"
 
-class DataMinersFailureError(DataMinerException):
-    "Multiple DataMiners failed to activate."
+class DataminersFailureError(DataminerException):
+    "Multiple Dataminers failed to activate."
 
-    def __init__(self, version:"Version.Version", dataminer_collections:list["AbstractDataMinerCollection.AbstractDataMinerCollection"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", dataminer_collections:list["AbstractDataminerCollection.AbstractDataminerCollection"], message:Optional[str]=None) -> None:
         '''
         :version: The Version for which datamining failed.
-        :dataminer_collections: The DataMinerCollections that failed to activate on this Version.
+        :dataminer_collections: The DataminerCollections that failed to activate on this Version.
         :message: Additional text to place after the main message.
         '''
         super().__init__(version, dataminer_collections, message)
@@ -999,14 +999,14 @@ class DataMinersFailureError(DataMinerException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Failed to datamine {self.version} on DataMiners [{", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections)}]{message(self.message)}"
+        return f"Failed to datamine {self.version} on Dataminers [{", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections)}]{message(self.message)}"
 
-class DataMinerUnrecognizedSerializerError(DataMinerException):
-    "Called `export_file` on a DataMiner with no Serializer"
+class DataminerUnrecognizedSerializerError(DataminerException):
+    "Called `export_file` on a Dataminer with no Serializer"
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", key:str, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", key:str, message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner missing a Serializer.
+        :dataminer: The Dataminer missing a Serializer.
         :key: The key that attempted to access the Serializer.
         :message: Additional text to place after the main message.
         '''
@@ -1018,13 +1018,13 @@ class DataMinerUnrecognizedSerializerError(DataMinerException):
     def __str__(self) -> str:
         return f"Attempted to call export_file on {self.dataminer} using non-existent Serializer key \"{self.key}\"{message(self.message)}"
 
-class DataMinerUnrecognizedDependencyError(DataMinerException):
+class DataminerUnrecognizedDependencyError(DataminerException):
     "A dependency does not exist."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", dependency_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", dependency_name:str, message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner attempting to access the dependency.
-        :dependency_name: The name of the DataMinerCollection that does not exist.
+        :dataminer: The Dataminer attempting to access the dependency.
+        :dependency_name: The name of the DataminerCollection that does not exist.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, dependency_name, message)
@@ -1035,12 +1035,12 @@ class DataMinerUnrecognizedDependencyError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer} references dependency \"{self.dependency_name}\" that is non-existent for this Version{message(self.message)}"
 
-class DataMinerUnrecognizedSuffixError(DataMinerException):
+class DataminerUnrecognizedSuffixError(DataminerException):
     "A file suffix is unrecognized."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", path:str, recognized_suffixes:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", path:str, recognized_suffixes:list[str], message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner that found the unrecognized suffix.
+        :dataminer: The Dataminer that found the unrecognized suffix.
         :path: The path containing the unrecognized suffix.
         :recognized_suffixes: A list of suffixes that are recognized.
         :message: Additional text to place after the main message.
@@ -1054,13 +1054,13 @@ class DataMinerUnrecognizedSuffixError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer} found unrecognized suffix on path \"{self.path}\"; it is not in {self.recognized_suffixes}{message(self.message, yes_message="; %s!")}"
 
-class DataMinerUnregisteredDependencyError(DataMinerException):
-    "The dependency exists, but is not listed as a dependency by this DataMiner."
+class DataminerUnregisteredDependencyError(DataminerException):
+    "The dependency exists, but is not listed as a dependency by this Dataminer."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", dependency_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", dependency_name:str, message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner attempting to access the dependency.
-        :dependency_name: The name of the DataMinerCollection that is unregistered.
+        :dataminer: The Dataminer attempting to access the dependency.
+        :dependency_name: The name of the DataminerCollection that is unregistered.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, dependency_name, message)
@@ -1071,14 +1071,14 @@ class DataMinerUnregisteredDependencyError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer} references unlisted dependency \"{self.dependency_name}\"{message(self.message)}"
 
-class MissingDataFileError(DataMinerException):
-    "The data file for this DataMinerCollection is missing."
+class MissingDataFileError(DataminerException):
+    "The data file for this DataminerCollection is missing."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner|DataMinerSettings.DataMinerSettings|AbstractDataMinerCollection.AbstractDataMinerCollection", file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer|DataminerSettings.DataminerSettings|AbstractDataminerCollection.AbstractDataminerCollection", file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
         '''
-        :dataminer_collection: The DataMiner, DataMinerSettings, or DataMinerCollection that is missing its file.
+        :dataminer_collection: The Dataminer, DataminerSettings, or DataminerCollection that is missing its file.
         :file_name: The name of the file that's missing.
-        :version: The Version for which this DataMiner is missing its file.
+        :version: The Version for which this Dataminer is missing its file.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, version, file_name, message)
@@ -1090,13 +1090,13 @@ class MissingDataFileError(DataMinerException):
     def __str__(self) -> str:
         return f"File {self.file_name} of {self.dataminer}{message(self.version, "", "of Version \"%s\"", lambda version: version.name)} is missing{message(self.message)}"
 
-class NullDataMinerMethodError(DataMinerException):
-    "An invalid exception has been called on a NullDataMiner."
+class NullDataminerMethodError(DataminerException):
+    "An invalid exception has been called on a NullDataminer."
 
-    def __init__(self, dataminer:"DataMiner.NullDataMiner", method:Callable, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.NullDataminer", method:Callable, message:Optional[str]=None) -> None:
         '''
-        :dataminer: The NullDataMiner that an invalid method was called on.
-        :method: The method that was called on the NullDataMiner.
+        :dataminer: The NullDataminer that an invalid method was called on.
+        :method: The method that was called on the NullDataminer.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, method, message)
@@ -1107,14 +1107,14 @@ class NullDataMinerMethodError(DataMinerException):
     def __str__(self) -> str:
         return f"Attemtped to call method \"{self.method.__name__}\" on {self.dataminer}{message(self.message)}"
 
-class TagSearcherDependencyError(DataMinerException):
-    "A tag exists in a DataMiner that is not a dependency of this one."
+class TagSearcherDependencyError(DataminerException):
+    "A tag exists in a Dataminer that is not a dependency of this one."
 
-    def __init__(self, dataminer:"DataMiner.DataMiner", tag:"StructureTag.StructureTag", dataminer_collection:"AbstractDataMinerCollection.AbstractDataMinerCollection", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", tag:"StructureTag.StructureTag", dataminer_collection:"AbstractDataminerCollection.AbstractDataminerCollection", message:Optional[str]=None) -> None:
         '''
-        :dataminer: The DataMiner that attempted to access the tag.
-        :tag: The tag that was found in an inaccessible DataMinerCollection.
-        :dataminer_collection: The DataMinerCollection the tag was found in.
+        :dataminer: The Dataminer that attempted to access the tag.
+        :tag: The tag that was found in an inaccessible DataminerCollection.
+        :dataminer_collection: The DataminerCollection the tag was found in.
         :message: Additional text to place after the main message.
         '''
         super().__init__(dataminer, tag, dataminer_collection, message)
@@ -1126,10 +1126,10 @@ class TagSearcherDependencyError(DataMinerException):
     def __str__(self) -> str:
         return f"{self.dataminer} could find {self.tag} in {self.dataminer_collection}, but it is not a dependency{message(self.message)}"
 
-class TagSearcherParseError(DataMinerException):
+class TagSearcherParseError(DataminerException):
     "Failed to parse a TagSearcher expression."
 
-    def __init__(self, data_reader:"TagSearcherDataMiner.DataReader", reason:str, message:Optional[str]=None) -> None:
+    def __init__(self, data_reader:"TagSearcherDataminer.DataReader", reason:str, message:Optional[str]=None) -> None:
         '''
         :data_reader: The DataReader object used to read the expression.
         :reason: The reason for the error.
@@ -1249,7 +1249,7 @@ class ManagerUndefinedMethodError(ManagerException):
     def __str__(self) -> str:
         return f"Method {self.function.__name__} of {self.manager} was not overridden{message(self.message)}"
 
-class UnrecognizedManagerError(DataMinerException):
+class UnrecognizedManagerError(DataminerException):
     "The Manager string is not recognized."
 
     def __init__(self, manager_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:

@@ -4,7 +4,7 @@ import Domain.Domain as Domain
 import Domain.Domains as Domains
 import Utilities.File as File
 import Utilities.FileManager as FileManager
-import Utilities.FileStorageManager as FileStorageManager
+import Utilities.FileStorage as FileStorage
 import Utilities.UserInput as UserInput
 
 
@@ -32,7 +32,7 @@ def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
     return unused_files
 
 def clean_index(domains:list[Domain.Domain]) -> None:
-    FileStorageManager.remove_index_values_without_associated_file()
+    FileStorage.remove_index_values_without_associated_file()
 
 def print_all(domains:list[Domain.Domain]) -> None:
     file_count = sum(
@@ -56,9 +56,9 @@ def remove(domains:list[Domain.Domain]) -> None:
         if input("Are you sure you want to continue? (y/ctrl+C): ") == "y":
             break
     for unused_hash in (File.hash_int_to_str(unused_hash) for unused_hash in unused_hashes):
-        FileStorageManager.delete_item(unused_hash)
-    FileStorageManager.index.write()
-    FileStorageManager.remove_index_values_without_associated_file()
+        FileStorage.delete_item(unused_hash)
+    FileStorage.index.write()
+    FileStorage.remove_index_values_without_associated_file()
 
 def print_stats(domains:list[Domain.Domain], unused_hashes:set[int]|None=None) -> None:
     file_count = sum(
@@ -73,7 +73,7 @@ def print_stats(domains:list[Domain.Domain], unused_hashes:set[int]|None=None) -
     )
     if unused_hashes is None:
         unused_hashes = garbage_collect(domains)
-    unused_storage_bytes = sum(FileStorageManager.get_file_path(File.hash_int_to_str(unused_hash)).stat().st_size for unused_hash in unused_hashes)
+    unused_storage_bytes = sum(FileStorage.get_file_path(File.hash_int_to_str(unused_hash)).stat().st_size for unused_hash in unused_hashes)
     print(f"Found {len(unused_hashes)} unused files ({100*len(unused_hashes)/file_count:.2f}% of total) worth {unused_storage_bytes} bytes ({100*unused_storage_bytes/total_storage_bytes:.2f}% of total).")
 
 def main(domain:Domain.Domain) -> None:

@@ -10,7 +10,7 @@ import Component.Component as Component
 import Component.ComponentFunctions as ComponentFunctions
 import Component.ComponentTypes as ComponentTypes
 import Component.ComponentTyping as ComponentTyping
-import Component.DataMiner.DataMinerImporterEnvironment as DataMinerImporterEnvironment
+import Component.Dataminer.DataminerImporterEnvironment as DataminerImporterEnvironment
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Log.LogImporterEnvironment as LogImporterEnvironment
 import Component.Serializer.SerializerImporterEnvironment as SerializerImporterEnvironment
@@ -28,7 +28,7 @@ import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] = [
     AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,
-    DataMinerImporterEnvironment.DataMinerImporterEnvironment,
+    DataminerImporterEnvironment.DataminerImporterEnvironment,
     LatestSlotImporterEnvironment.LatestSlotImporterEnvironment,
     LogImporterEnvironment.LogImporterEnvironment,
     SerializerImporterEnvironment.SerializerImporterEnvironment,

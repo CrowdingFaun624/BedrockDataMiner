@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 file_counts:dict[str,int] = {}
 
 class StructureBase():
-    '''Can be created by a DataMinerCollection to compare the output of the DataMiners with each other.'''
+    '''Can be created by a DataminerCollection to compare the output of the Dataminers with each other.'''
 
     __slots__ = (
         "cache_substructures",

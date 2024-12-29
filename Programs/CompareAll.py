@@ -1,7 +1,7 @@
 import traceback
 from itertools import chain
 
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Domain.Domain as Domain
 import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.Exceptions as Exceptions
@@ -13,14 +13,14 @@ COMPARING_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvir
 def compare(
         version1:Version.Version|None,
         version2:Version.Version,
-        dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection,
+        dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
         undataminable_versions_between:list[Version.Version],
     ) -> None:
     dataminer_collection.compare(version1, version2, undataminable_versions_between, COMPARING_ENVIRONMENT)
 
 def compare_all_of(
         domain:Domain.Domain,
-        dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection,
+        dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
         versions:list[Version.Version],
         exception_holder:dict[str,tuple[Exception,Version.Version|None,Version.Version|None]|bool],
     ) -> None:

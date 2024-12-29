@@ -1,6 +1,6 @@
 from typing import Any, Callable
 
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Structure.Difference as D
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
@@ -233,13 +233,13 @@ class Tablifier():
         self.path = FileManager.OUTPUT_DIRECTORY.joinpath(self.file_name)
 
         self.structure:StructureBase.StructureBase|None = None
-        self.dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection|None = None
+        self.dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection|None = None
         self.version_provider:VersionProvider.VersionProvider|None = None
 
     def link_finals(
         self,
         structure:StructureBase.StructureBase,
-        dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection,
+        dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
         version_provider:VersionProvider.VersionProvider,
     ) -> None:
         self.structure = structure

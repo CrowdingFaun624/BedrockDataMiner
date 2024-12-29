@@ -26,6 +26,7 @@ class Script[a]():
     all_type_verifier = TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=lambda data: (len(data) == 1, "Can only export a single object"))
 
     __slots__ = (
+        "domain",
         "has_all",
         "module",
         "name",
@@ -33,10 +34,11 @@ class Script[a]():
         "path",
     )
 
-    def __init__(self, path: Path, name: str) -> None:
+    def __init__(self, path: Path, name: str, domain:"Domain.Domain") -> None:
         self.name = name
         self.path = path
-        module_name = "_assets.scripts." + name.replace("/", ".").removesuffix(".py")
+        self.domain = domain
+        module_name = f"_domains.{domain.name}.scripts.{name.replace("/", ".").removesuffix(".py")}"
         self.module = importlib.import_module(module_name)
 
         self.object:Any = None
@@ -86,7 +88,7 @@ class Scripts():
 
     def __init__(self, domain:"Domain.Domain") -> None:
         self.domain = domain
-        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name) for file, relative_name in iter_dir(domain.scripts_directory) if not self.should_skip_script(file.suffix, relative_name, file)}
+        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, domain) for file, relative_name in iter_dir(domain.scripts_directory) if not self.should_skip_script(file.suffix, relative_name, file)}
         for script in self.scripts.values():
             script.finalize()
         self.scripts = {script_name: script for script_name, script in self.scripts.items() if not script.should_skip}

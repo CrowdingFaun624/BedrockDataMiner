@@ -1,18 +1,18 @@
 import re
 
 import Component.ComponentTyping as ComponentTyping
-import Component.DataMiner.AbstractDataMinerCollectionComponent as AbstractDataMinerCollectionComponent
-import Component.DataMiner.Field.DataMinerCollectionField as DataMinerCollectionField
+import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
+import Component.Dataminer.Field.DataminerCollectionField as DataminerCollectionField
 import Component.Field.Field as Field
 import Component.Structure.Field.StructureField as StructureField
-import DataMiner.CoverageDataMiner as CoverageDataMiner
+import Dataminer.CoverageDataminer as CoverageDataminer
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
-class CoverageDataMinerCollectionComponent(AbstractDataMinerCollectionComponent.AbstractDataMinerCollectionComponent[CoverageDataMiner.CoverageDataMiner]):
+class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent[CoverageDataminer.CoverageDataminer]):
 
-    class_name_article = "a CoverageDataMinerCollection"
-    class_name = "CoverageDataMinerCollection"
+    class_name_article = "a CoverageDataminerCollection"
+    class_name = "CoverageDataminerCollection"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool),
@@ -38,7 +38,7 @@ class CoverageDataMinerCollectionComponent(AbstractDataMinerCollectionComponent.
         "structure_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.CoverageDataMinerCollectionTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.CoverageDataminerCollectionTypedDict) -> list[Field.Field]:
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
@@ -47,13 +47,13 @@ class CoverageDataMinerCollectionComponent(AbstractDataMinerCollectionComponent.
         self.remove_prefixes = data.get("remove_prefixes", [])
         self.remove_suffixes = data.get("remove_suffixes", [])
 
-        self.file_list_dataminer_field = DataMinerCollectionField.DataMinerCollectionField(data["file_list_dataminer"], ["file_list_dataminer"])
+        self.file_list_dataminer_field = DataminerCollectionField.DataminerCollectionField(data["file_list_dataminer"], ["file_list_dataminer"])
         self.structure_field = StructureField.StructureField(data["structure"], ["structure"])
         return [self.file_list_dataminer_field, self.structure_field]
 
     def create_final(self) -> None:
         super().create_final()
-        self.final = CoverageDataMiner.CoverageDataMiner(
+        self.final = CoverageDataminer.CoverageDataminer(
             file_name=self.file_name,
             name=self.name,
             domain=self.domain,

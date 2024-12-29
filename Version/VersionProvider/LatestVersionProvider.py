@@ -1,11 +1,11 @@
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Version.Version as Version
 import Version.VersionProvider.VersionProvider as VersionProvider
 
 
 class LatestVersionProvider(VersionProvider.VersionProvider):
     
-    def get_versions(self, versions: list[Version.Version], *, supports_dataminer_collection:AbstractDataMinerCollection.AbstractDataMinerCollection) -> list[Version.Version]:
+    def get_versions(self, versions: list[Version.Version], *, supports_dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection) -> list[Version.Version]:
         major_versions:list[Version.Version] = [] # starts out sorted newest to oldest
         has_selected_release_major_version = False
         for version in reversed(versions):

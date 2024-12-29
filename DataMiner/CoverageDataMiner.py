@@ -1,16 +1,16 @@
 import re
 
-import DataMiner.AbstractDataMinerCollection as AbstractDataMinerCollection
-import DataMiner.DataMiner as DataMiner
-import DataMiner.DataMinerCollection as DataMinerCollection
-import DataMiner.DataMinerEnvironment as DataMinerEnvironment
-import DataMiner.FileDataMiner as FileDataMiner
+import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
+import Dataminer.Dataminer as Dataminer
+import Dataminer.DataminerCollection as DataminerCollection
+import Dataminer.DataminerEnvironment as DataminerEnvironment
+import Dataminer.FileDataminer as FileDataminer
 import Domain.Domain as Domain
 import Structure.StructureBase as StructureBase
 import Version.Version as Version
 
 
-class CoverageDataMiner(AbstractDataMinerCollection.AbstractDataMinerCollection):
+class CoverageDataminer(AbstractDataminerCollection.AbstractDataminerCollection):
 
     def __init__(
         self,
@@ -29,19 +29,19 @@ class CoverageDataMiner(AbstractDataMinerCollection.AbstractDataMinerCollection)
         self.remove_prefixes = remove_prefixes
         self.remove_suffixes = remove_suffixes
 
-        self.file_list_dataminer:AbstractDataMinerCollection.AbstractDataMinerCollection|None = None
+        self.file_list_dataminer:AbstractDataminerCollection.AbstractDataminerCollection|None = None
 
-    def link_subcomponents(self, file_list_dataminer:AbstractDataMinerCollection.AbstractDataMinerCollection, structure: StructureBase.StructureBase) -> None:
+    def link_subcomponents(self, file_list_dataminer:AbstractDataminerCollection.AbstractDataminerCollection, structure: StructureBase.StructureBase) -> None:
         super().link_subcomponents(structure)
         self.file_list_dataminer = file_list_dataminer
 
-    def get_dependencies(self, version: Version.Version) -> list[DataMinerCollection.DataMinerCollection]:
+    def get_dependencies(self, version: Version.Version) -> list[DataminerCollection.DataminerCollection]:
         return [
             dataminer_collection for dataminer_collection in self.domain.dataminer_collections.values()
             if dataminer_collection is not self
-            if isinstance(dataminer_collection, DataMinerCollection.DataMinerCollection)
+            if isinstance(dataminer_collection, DataminerCollection.DataminerCollection)
             if (dataminer := dataminer_collection.get_dataminer_class(version)) is not None
-            if issubclass(dataminer, FileDataMiner.FileDataMiner)
+            if issubclass(dataminer, FileDataminer.FileDataminer)
         ]
 
     def supports_version(self, version: Version.Version) -> bool:
@@ -50,20 +50,20 @@ class CoverageDataMiner(AbstractDataMinerCollection.AbstractDataMinerCollection)
 
     def do_dataminer_collection(
         self,
-        dataminer_collection:DataMinerCollection.DataMinerCollection,
+        dataminer_collection:DataminerCollection.DataminerCollection,
         version:Version.Version,
-        environment:DataMinerEnvironment.DataMinerEnvironment,
-        file_set:FileDataMiner.FileSet,
+        environment:DataminerEnvironment.DataminerEnvironment,
+        file_set:FileDataminer.FileSet,
         version_files_covered:set[str],
-        version_files_covered_dict:dict[DataMiner.DataMiner,set[str]],
+        version_files_covered_dict:dict[Dataminer.Dataminer,set[str]],
     ) -> None:
         dataminer = dataminer_collection.get_dataminer(version)
-        assert isinstance(dataminer, FileDataMiner.FileDataMiner)
+        assert isinstance(dataminer, FileDataminer.FileDataminer)
         dataminer_files_covered = dataminer.get_coverage(file_set, environment)
         # because this thing says that its dependencies are every single
-        # DataMinerCollection, the dependencies of all of its dependencies are
+        # DataminerCollection, the dependencies of all of its dependencies are
         # already fulfilled. Truly a wonderful advantage of having Coverage be
-        # a type of DataMinerCollection.
+        # a type of DataminerCollection.
         if len(overlapping_files := version_files_covered.intersection(dataminer_files_covered)) > 0:
             other_dataminers = [
                 other_dataminer
@@ -74,13 +74,13 @@ class CoverageDataMiner(AbstractDataMinerCollection.AbstractDataMinerCollection)
         version_files_covered.update(dataminer_files_covered)
         version_files_covered_dict[dataminer] = dataminer_files_covered
 
-    def datamine(self, version: Version.Version, environment: DataMinerEnvironment.DataMinerEnvironment) -> list[str]:
+    def datamine(self, version: Version.Version, environment: DataminerEnvironment.DataminerEnvironment) -> list[str]:
         assert self.file_list_dataminer is not None
         file_set_list:dict[str,str] = self.file_list_dataminer.get_data_file(version)
         file_set_set = set(file_set_list)
-        file_set = FileDataMiner.FileSet(file_set_list)
+        file_set = FileDataminer.FileSet(file_set_list)
         version_files_covered:set[str] = set()
-        version_files_covered_dict:dict[DataMiner.DataMiner,set[str]] = {}
+        version_files_covered_dict:dict[Dataminer.Dataminer,set[str]] = {}
         for dataminer_collection in self.get_dependencies(version):
             self.do_dataminer_collection(dataminer_collection, version, environment, file_set, version_files_covered, version_files_covered_dict)
         leftover_files = file_set_set - version_files_covered

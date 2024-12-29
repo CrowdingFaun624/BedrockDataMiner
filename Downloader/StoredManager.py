@@ -2,7 +2,7 @@ from typing import TypedDict
 
 import Downloader.Manager as Manager
 import Utilities.Cache as Cache
-import Utilities.FileStorageManager as FileStorageManager
+import Utilities.FileStorage as FileStorage
 import Version.Version as Version
 
 
@@ -37,7 +37,7 @@ class StoredManager(Manager.Manager):
         return file_name in self.index.get()
 
     def read(self, file_name:str) -> bytes:
-        return FileStorageManager.read_archived(self.index.get()[file_name][0])
+        return FileStorage.read_archived(self.index.get()[file_name][0])
 
     def all_done(self) -> None:
         self.index.forget()

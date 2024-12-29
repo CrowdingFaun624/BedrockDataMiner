@@ -1,8 +1,8 @@
 import bisect
 from typing import Callable, Iterable
 
-import DataMiner.DataMiner as DataMiner
-import DataMiner.DataMinerEnvironment as DataMinerEnvironment
+import Dataminer.Dataminer as Dataminer
+import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Downloader.Accessor as Accessor
 
 location_value_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (len(value) == 0 or value.endswith("/"), "location does not end in \"/\"")
@@ -28,18 +28,18 @@ class FileSet():
     def file_exists(self, file:str) -> bool:
         return file in self.file_set
 
-class FileDataMiner(DataMiner.DataMiner):
+class FileDataminer(Dataminer.Dataminer):
 
     serializer_names = {"main"}
 
-    def get_coverage(self, file_set:FileSet, environment:DataMinerEnvironment.DataMinerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileSet, environment:DataminerEnvironment.DataminerEnvironment) -> set[str]:
         '''
-        Must be overridden by subclasses of FileDataMiner.
-        Returns the set of file paths this DataMiner would return if it were
+        Must be overridden by subclasses of FileDataminer.
+        Returns the set of file paths this Dataminer would return if it were
         activated.
 
         :file_set: The set of all file paths.
-        :environment: The DataMinerEnvironment to use (for dependencies).
+        :environment: The DataminerEnvironment to use (for dependencies).
         '''
         ...
 

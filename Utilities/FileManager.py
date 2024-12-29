@@ -4,7 +4,9 @@ import uuid
 from pathlib import Path
 
 PARENT_DIRECTORY          = Path("./").absolute()
-FILE_STORAGE_DIRECTORY    = PARENT_DIRECTORY.joinpath("_assets", "file_storage")
+COMPARISONS_DIRECTORY     = PARENT_DIRECTORY.joinpath("_comparisons")
+DOMAINS_DIRECTORY         = PARENT_DIRECTORY.joinpath("_domains")
+FILE_STORAGE_DIRECTORY    = PARENT_DIRECTORY.joinpath("_file_storage")
 FILE_STORAGE_OBJECTS_DIRECTORY = FILE_STORAGE_DIRECTORY.joinpath("objects")
 FILE_STORAGE_INDEX_FILE   = FILE_STORAGE_DIRECTORY.joinpath("index.txt")
 LIB_DIRECTORY             = PARENT_DIRECTORY.joinpath("_lib")
@@ -15,6 +17,7 @@ LIB_EXIFTOOL_EXE_FILE     = LIB_EXIFTOOL_DIRECTORY.joinpath("exiftool.exe")
 LIB_MATERIAL_BIN_TOOL_DIRECTORY = LIB_DIRECTORY.joinpath("MaterialBinTool")
 OUTPUT_DIRECTORY          = PARENT_DIRECTORY.joinpath("_output")
 TEMP_DIRECTORY            = PARENT_DIRECTORY.joinpath("_temp")
+VERSIONS_DIRECTORY        = PARENT_DIRECTORY.joinpath("_versions")
 
 def get_temp_file_path() -> Path:
     '''Returns a path such as `./_temp/a6f780a3-83d0-4afd-a654-dc28df0b9831`.'''
