@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Union
+from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -45,7 +45,7 @@ class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
     def link_substructures(
         self,
         substructures:dict[type,Structure.Structure|None],
-        delegate:Union["Delegate.Delegate", None],
+        delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],

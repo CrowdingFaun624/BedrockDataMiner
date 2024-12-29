@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Union
+from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -29,12 +29,12 @@ class Structure[a]():
         self.children_has_normalizer = children_has_normalizer
         self.children_has_garbage_collection = children_has_garbage_collection
 
-        self.delegate:Union["Delegate.Delegate", None] = None
+        self.delegate:"Delegate.Delegate|None" = None
         self.children_tags:set[StructureTag.StructureTag]|None = None
 
     def link_substructures(
         self,
-        delegate:Union["Delegate.Delegate", None],
+        delegate:"Delegate.Delegate|None",
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
         self.delegate = delegate

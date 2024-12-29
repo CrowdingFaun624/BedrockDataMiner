@@ -1,5 +1,5 @@
 from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator,
-                    MutableMapping, Union)
+                    MutableMapping)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -67,7 +67,7 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
     def link_substructures(
             self,
             keys:dict[str,Structure.Structure|None],
-            delegate:Union["Delegate.Delegate", None],
+            delegate:"Delegate.Delegate|None",
             key_types:dict[str,tuple[type,...]],
             key_structure:Structure.Structure[str]|None,
             normalizer:list[Normalizer.Normalizer],

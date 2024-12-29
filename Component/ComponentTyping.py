@@ -1,5 +1,5 @@
 from typing import (TYPE_CHECKING, Any, Callable, Literal, NotRequired,
-                    Required, TypedDict, Union)
+                    Required, TypedDict)
 
 if TYPE_CHECKING:
     import Component.Component as Component
@@ -131,7 +131,7 @@ class KeymapKeyTypedDict(TypedDict):
     delegate_arguments: NotRequired[dict[str,Any]]
     max_similarity_descendent_depth: NotRequired[int|None]
     required: NotRequired[bool]
-    subcomponent: NotRequired[Union[str,None,"StructureTypedDicts"]]
+    subcomponent: NotRequired["str|None|StructureTypedDicts"]
     tags: NotRequired[str|list[str]]
     type: Required[str|list[str]]
     weight: NotRequired[int]
@@ -302,36 +302,36 @@ class VersionTypedDict(TypedDict):
     type: NotRequired[Literal["Version"]]
 
 type AutoAssignerTypedDicts = RangeVersionTagAutoAssignerTypedDict
-type ComponentTypedDicts = Union[
-    AccessorTypedDict,
-    AccessorTypeTypedDict,
-    BaseTypedDict,
-    CacheTypedDict,
-    CoverageDataMinerCollectionTypedDict,
-    DataMinerCollectionTypedDict,
-    DataMinerSettingsTypedDict,
-    DictTypedDict,
-    FileTypedDict,
-    GroupTypedDict,
-    KeymapTypedDict,
-    LatestSlotTypedDict,
-    ListTypedDict,
-    NormalizerTypedDict,
-    PrimitiveTypedDict,
-    RangeVersionTagAutoAssignerTypedDict,
-    SequenceTypedDict,
-    SerializerTypedDict,
-    SetTypedDict,
-    StringTypedDict,
-    StructureTagTypedDict,
-    TablifierTypedDict,
-    TypeAliasTypedDict,
-    VersionFileTypedDict,
-    VersionFileTypeTypedDict,
-    VersionTagOrderTypedDict,
-    VersionTagTypedDict,
-    VersionTypedDict,
-]
+type ComponentTypedDicts = \
+    AccessorTypedDict|\
+    AccessorTypeTypedDict|\
+    BaseTypedDict|\
+    CacheTypedDict|\
+    CoverageDataMinerCollectionTypedDict|\
+    DataMinerCollectionTypedDict|\
+    DataMinerSettingsTypedDict|\
+    DictTypedDict|\
+    FileTypedDict|\
+    GroupTypedDict|\
+    KeymapTypedDict|\
+    LatestSlotTypedDict|\
+    ListTypedDict|\
+    NormalizerTypedDict|\
+    PrimitiveTypedDict|\
+    RangeVersionTagAutoAssignerTypedDict|\
+    SequenceTypedDict|\
+    SerializerTypedDict|\
+    SetTypedDict|\
+    StringTypedDict|\
+    StructureTagTypedDict|\
+    TablifierTypedDict|\
+    TypeAliasTypedDict|\
+    VersionFileTypedDict|\
+    VersionFileTypeTypedDict|\
+    VersionTagOrderTypedDict|\
+    VersionTagTypedDict|\
+    VersionTypedDict
+
 type StructureTypedDicts = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|FileTypedDict|PrimitiveTypedDict|SequenceTypedDict|SetTypedDict|StringTypedDict
 
 type ComponentGroupFileType = dict[str,ComponentTypedDicts]

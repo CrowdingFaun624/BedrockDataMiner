@@ -1,7 +1,6 @@
 import datetime
 from pathlib import Path
-from typing import (TYPE_CHECKING, Any, Callable, Container, Literal, Optional,
-                    Union)
+from typing import TYPE_CHECKING, Any, Callable, Container, Literal, Optional
 
 if TYPE_CHECKING:
     import Component.Capabilities as Capabilities
@@ -349,7 +348,7 @@ class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
 class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
     "There is a gap in a Components's sub-Components' Versions."
 
-    def __init__(self, source:"Component.Component", new_version:Union["Version.Version",str], old_version:Union["Version.Version",str], message:Optional[str]=None) -> None:
+    def __init__(self, source:"Component.Component", new_version:"Version.Version|str", old_version:"Version.Version|str", message:Optional[str]=None) -> None:
         '''
         :source: The Component with invalid VersionRange.
         :new_version: The Version or the Version's name on the newer side of the gap.
@@ -478,7 +477,7 @@ class ComponentTypeMissingError(ComponentException):
 class ComponentTypeRequiresComponentError(ComponentException):
     "A Component has a type that requires a Component but has no Component."
 
-    def __init__(self, component:Union["Component.Component",str], accepted_type:type, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component.Component|str", accepted_type:type, message:Optional[str]=None) -> None:
         '''
         :component: The Component referencing the type or a string representing it.
         :accepted_type: The type requiring a Component.
@@ -1075,7 +1074,7 @@ class DataMinerUnregisteredDependencyError(DataMinerException):
 class MissingDataFileError(DataMinerException):
     "The data file for this DataMinerCollection is missing."
 
-    def __init__(self, dataminer:Union["DataMiner.DataMiner", "DataMinerSettings.DataMinerSettings", "AbstractDataMinerCollection.AbstractDataMinerCollection"], file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"DataMiner.DataMiner|DataMinerSettings.DataMinerSettings|AbstractDataMinerCollection.AbstractDataMinerCollection", file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
         '''
         :dataminer_collection: The DataMiner, DataMinerSettings, or DataMinerCollection that is missing its file.
         :file_name: The name of the file that's missing.
@@ -1153,8 +1152,8 @@ class InapplicableDelegateError(DelegateException):
     def __init__(
         self,
         delegate_type:type["Delegate.Delegate"],
-        structure:Union["Structure.Structure", "StructureBase.StructureBase"],
-        allowed_types:tuple[type[Union["Structure.Structure", "StructureBase.StructureBase", None]], ...],
+        structure:"Structure.Structure|StructureBase.StructureBase",
+        allowed_types:tuple[type["Structure.Structure|StructureBase.StructureBase|None"], ...],
         message:Optional[str]=None,
     ) -> None:
         '''
@@ -1445,7 +1444,7 @@ class StructureException(Exception):
 class CompareWithNoneError(StructureException):
     "A StructureSet attempted to compare data using None instead of a Structure."
 
-    def __init__(self, structure:Union["Structure.Structure", "StructureSet.StructureSet"], key:Union[int, None]=None, message:Optional[str]=None) -> None:
+    def __init__(self, structure:"Structure.Structure|StructureSet.StructureSet", key:int|None=None, message:Optional[str]=None) -> None:
         '''
         :structure_set: The Structure or StructureSet with a None substructure.
         :key: The key used to access the StructureSet if it is a StructureSet.
@@ -2094,9 +2093,9 @@ class VersionRangeOrderError(VersionException):
 
     def __init__(
         self,
-        version_range:Union["VersionRange.VersionRange", "VersionRangeField.VersionRangeField"],
-        start_version:Union["Version.Version", "VersionComponent.VersionComponent"],
-        stop_version:Union["Version.Version", "VersionComponent.VersionComponent"],
+        version_range:"VersionRange.VersionRange|VersionRangeField.VersionRangeField",
+        start_version:"Version.Version|VersionComponent.VersionComponent",
+        stop_version:"Version.Version|VersionComponent.VersionComponent",
         message:Optional[str]=None
     ) -> None:
         '''

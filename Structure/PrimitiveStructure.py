@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Union, cast
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -34,7 +34,7 @@ class PrimitiveStructure[d](Structure.Structure[d]):
 
     def link_substructures(
         self,
-        delegate:Union["Delegate.Delegate", None],
+        delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterator, Union
+from typing import TYPE_CHECKING, Any, Iterator
 
 import Structure.CacheStructure as CacheStructure
 import Structure.DataPath as DataPath
@@ -46,8 +46,8 @@ class StructureBase():
         self.structure:Structure.Structure|None = None
         self.types:tuple[type,...]|None = None
         self.pre_normalized_types:tuple[type,...]|None = None
-        self.delegate:Union["Delegate.Delegate[str,StructureBase,str]", None] = None
-        self.default_delegate:Union["Delegate.Delegate", None] = None
+        self.delegate:"Delegate.Delegate[str,StructureBase,str]|None" = None
+        self.default_delegate:"Delegate.Delegate|None" = None
         self.normalizer:list[Normalizer.Normalizer]|None = None
         self.post_normalizer:list[Normalizer.Normalizer]|None = None
         self.cache_substructures:list[CacheStructure.CacheStructure] = []
@@ -59,8 +59,8 @@ class StructureBase():
         structure:Structure.Structure,
         types:tuple[type,...],
         pre_normalized_types:tuple[type,...],
-        delegate:Union["Delegate.Delegate", None],
-        default_delegate:Union["Delegate.Delegate", None],
+        delegate:"Delegate.Delegate|None",
+        default_delegate:"Delegate.Delegate|None",
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],
         children_tags:set[StructureTag.StructureTag],
@@ -234,7 +234,7 @@ class StructureBase():
             self,
             data1:b,
             data2:b,
-            version1:Union["Version.Version",None],
+            version1:"Version.Version|None",
             version2:"Version.Version",
             versions_between:list["Version.Version"],
             environment:StructureEnvironment.StructureEnvironment,

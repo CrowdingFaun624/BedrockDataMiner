@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable, Union
+from typing import TYPE_CHECKING, Any, Callable
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
@@ -47,7 +47,7 @@ class OptionalDelegateField(Field.Field):
             raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_delegate_type, self)
         return self.delegate_type
 
-    def create_delegate(self, structure:Union["Structure.Structure", "StructureBase.StructureBase", None], keys:dict[str,Any]|None=None, exceptions:list[Exception]|None=None) -> Delegate.Delegate|None:
+    def create_delegate(self, structure:"Structure.Structure|StructureBase.StructureBase|None", keys:dict[str,Any]|None=None, exceptions:list[Exception]|None=None) -> Delegate.Delegate|None:
         '''
         Returns a Delegate or None.
         :structure: The parent Structure of this Delegate.

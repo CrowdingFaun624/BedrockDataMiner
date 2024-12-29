@@ -1,5 +1,4 @@
-from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator, Union,
-                    cast)
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -51,7 +50,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
     def link_substructures(
         self,
         structure:Structure.Structure[a]|None,
-        delegate:Union["Delegate.Delegate", None],
+        delegate:"Delegate.Delegate|None",
         file_types:tuple[type,...],
         content_types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],

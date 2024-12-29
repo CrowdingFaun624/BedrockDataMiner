@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
@@ -73,7 +73,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         '''Return the list of types that this key can be.'''
         return self.types_field.get_types()
 
-    def get_subcomponent(self) -> Union["Structure.Structure", None]:
+    def get_subcomponent(self) -> "Structure.Structure|None":
         '''Return the Structure that this KeymapKeyField refers to.'''
         return self.subcomponent_field.get_final()
 

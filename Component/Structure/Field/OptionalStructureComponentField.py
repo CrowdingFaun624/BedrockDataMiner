@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
@@ -25,7 +25,7 @@ class OptionalStructureComponentField(OptionalComponentField.OptionalComponentFi
         '''
         super().__init__(subcomponent_data, pattern, path, allow_inline=allow_inline)
 
-    def get_final(self) -> Union["Structure.Structure", None]:
+    def get_final(self) -> "Structure.Structure|None":
         '''
         Returns the final Structure that this Field refers to.
         Can only be called after `set_field`.

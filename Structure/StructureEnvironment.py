@@ -1,5 +1,5 @@
 import enum
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import Utilities.Exceptions as Exceptions
 
@@ -41,8 +41,8 @@ class PrinterEnvironment():
     def __init__(
         self,
         structure_environment:StructureEnvironment,
-        default_delegate:Union["Delegate.Delegate", None],
-        version:Union["Version.Version", None],
+        default_delegate:"Delegate.Delegate|None",
+        version:"Version.Version|None",
         branch:int,
     ) -> None:
         self.structure_environment = structure_environment
@@ -73,8 +73,8 @@ class ComparisonEnvironment():
     def __init__(
         self,
         structure_environment:StructureEnvironment,
-        default_delegate:Union["Delegate.Delegate", None],
-        versions:list[Union["Version.Version", None]]|list["Version.Version"],
+        default_delegate:"Delegate.Delegate|None",
+        versions:list["Version.Version|None"]|list["Version.Version"],
         versions_between:list[list["Version.Version"]], # has a length of len(versions) - 1
         is_multi_diff:bool
     ) -> None:

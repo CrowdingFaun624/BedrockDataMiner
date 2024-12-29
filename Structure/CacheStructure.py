@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterator, Union
+from typing import TYPE_CHECKING, Any, Iterator
 
 import Component.Types as Types
 import Structure.DataPath as DataPath
@@ -64,7 +64,7 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
     def link_substructures(
         self,
         structure:Structure.Structure[d]|None,
-        delegate:Union["Delegate.Delegate", None],
+        delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
@@ -287,7 +287,7 @@ class CacheItem[d]():
         "retrieve_index",
     )
 
-    def __init__(self, delegate:Union["Delegate.Delegate", None], creation_index:int) -> None:
+    def __init__(self, delegate:"Delegate.Delegate|None", creation_index:int) -> None:
         self.cache_store = delegate.cache_store if delegate is not None else lambda data, environment: data
         self.cache_retrieve = delegate.cache_retrieve if delegate is not None else lambda data, environment: data
         self.retrieve_index = creation_index

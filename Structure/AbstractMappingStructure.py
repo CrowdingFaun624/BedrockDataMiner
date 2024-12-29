@@ -1,6 +1,5 @@
 from types import EllipsisType
-from typing import (TYPE_CHECKING, Any, Callable, Mapping, MutableMapping,
-                    Union, cast)
+from typing import TYPE_CHECKING, Any, Callable, Mapping, MutableMapping, cast
 
 import Component.Types as Types
 import Structure.Difference as D
@@ -73,7 +72,7 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
 
     def link_substructures(
         self,
-        delegate:Union["Delegate.Delegate", None],
+        delegate:"Delegate.Delegate|None",
         key_structure:Structure.Structure[str]|None,
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],

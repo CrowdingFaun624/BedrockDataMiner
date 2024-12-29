@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Literal, Union, overload
+from typing import TYPE_CHECKING, Literal, overload
 
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
@@ -12,7 +12,7 @@ class VersionFile():
 
     def __init__(self) -> None:
         self.name:str|None = None
-        self.version:Union["Version.Version", None] = None
+        self.version:"Version.Version|None" = None
         self.version_file_type:VersionFileType.VersionFileType|None = None
         self.accessors:list["AccessorComponent.AccessorCreator"]|None = None
 

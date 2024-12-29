@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import Utilities.Exceptions as Exceptions
 
@@ -10,7 +10,7 @@ class VersionRange():
     Use None to represent not stopping, or continuing on to the end of the list.
     By default, checks if the version is in [start, stop). If start and stop are the same, it checks for equality.'''
 
-    def __init__(self, start:Union["Version.Version",None], stop:Union["Version.Version",None]) -> None:
+    def __init__(self, start:"Version.Version|None", stop:"Version.Version|None") -> None:
         self.start = start if start is not None else None
         self.stop = stop if stop is not None else None
         self.equals = self.start == self.stop and self.start is not None

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Any
 
 import Structure.Difference as D
 import Structure.Trace as Trace
@@ -18,7 +18,7 @@ class StructureSet[d]():
         "structures",
     )
 
-    def __init__(self, structures:dict[tuple[int,...]|None,Union["Structure.Structure[d]",None]]) -> None:
+    def __init__(self, structures:dict[tuple[int,...]|None,"Structure.Structure[d]|None"]) -> None:
         '''
         :structures: The dict of Structures to store in this StructureSet.
         '''
@@ -42,7 +42,7 @@ class StructureSet[d]():
         else:
             return item in self.branches
 
-    def __getitem__(self, key:int|tuple[int,...]|None) -> Union["Structure.Structure[d]",None]:
+    def __getitem__(self, key:int|tuple[int,...]|None) -> "Structure.Structure[d]|None":
         '''
         Returns a Structure or None.
 
@@ -53,7 +53,7 @@ class StructureSet[d]():
         else:
             return self.structures[self.branches[key]]
 
-    def get(self, key:int|tuple[int,...]|None) -> Union["Structure.Structure[d]",None]:
+    def get(self, key:int|tuple[int,...]|None) -> "Structure.Structure[d]|None":
         '''
         Returns a Structure or None. If it does not exist, returns None.
 

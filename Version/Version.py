@@ -1,6 +1,6 @@
 import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
@@ -31,7 +31,7 @@ class Version():
 
     def link_finals(
         self,
-        parent:Union["Version", None],
+        parent:"Version|None",
         tags:list[VersionTag.VersionTag],
         version_files:list[VersionFile.VersionFile],
     ) -> None:

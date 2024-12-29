@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence, Union
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence
 
 import Structure.DataPath as DataPath
 import Structure.Normalizer as Normalizer
@@ -52,7 +52,7 @@ class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]])
     def link_substructures(
         self,
         structure:Structure.Structure[d]|None,
-        delegate:Union["Delegate.Delegate", None],
+        delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
         post_normalizer:list[Normalizer.Normalizer],

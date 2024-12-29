@@ -1,4 +1,4 @@
-from typing import Any, Iterable, NoReturn, Union, cast
+from typing import Any, Iterable, NoReturn, cast
 
 import Component.Types as Types
 import Utilities.Exceptions as Exceptions
@@ -99,7 +99,7 @@ class Diff[Dt1]():
         return Diff(self.length, items_copy)
 
 
-    def with_last_as(self, new_branch:int, new_value:Union[Dt1,"Diff[Dt1]"]) -> "Diff[Dt1]":
+    def with_last_as(self, new_branch:int, new_value:"Dt1|Diff[Dt1]") -> "Diff[Dt1]":
         '''
         Returns a new Diff with the new value added onto the current items.
         

@@ -1,4 +1,4 @@
-from typing import Callable, Union, cast
+from typing import Callable, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -30,7 +30,7 @@ class ComponentField[a: Component.Component](Field.Field):
         '''
         super().__init__(path)
         self.subcomponent_data = subcomponent_data
-        self.subcomponent:Union[a,None] = None
+        self.subcomponent:a|None = None
         self.pattern = pattern
         self.allow_inline = allow_inline
         self.has_reference_components = False

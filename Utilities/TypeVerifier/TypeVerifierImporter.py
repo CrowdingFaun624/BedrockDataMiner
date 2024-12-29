@@ -1,6 +1,6 @@
 import traceback
-from typing import (Any, Literal, NotRequired, Required, TypedDict, Union,
-                    cast, overload)
+from typing import (Any, Literal, NotRequired, Required, TypedDict, cast,
+                    overload)
 
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -10,15 +10,15 @@ class DictTypedDict(TypedDict):
     type: Required[Literal["Dict"]]
     data_type: Required[str|list[str]]
     data_type_str: Required[str]
-    key_type: Required[Union[str, list[str], "TypedVerifierTypedDicts"]]
+    key_type: Required["str|list[str]|TypedVerifierTypedDicts"]
     key_type_str: Required[str]
-    value_type: Required[Union[str, list[str], "TypedVerifierTypedDicts"]]
+    value_type: Required["str|list[str]|TypedVerifierTypedDicts"]
     value_type_str: Required[str]
 
 class TypedDictKeyTypedDict(TypedDict):
     required: Required[bool]
     value_str: Required[str]
-    value_type: Required[Union[str, list[str], "TypedVerifierTypedDicts"]]
+    value_type: Required["str|list[str]|TypedVerifierTypedDicts"]
 
 class TypedDictTypedDict(TypedDict):
     type: Required[Literal["TypedDict"]]
@@ -31,11 +31,11 @@ class ListTypedDict(TypedDict):
     type: Required[Literal["List"]]
     data_type: Required[str|list[str]]
     data_type_str: Required[str]
-    item_type: Required[Union[str, list[str], "TypedVerifierTypedDicts"]]
+    item_type: Required["str|list[str]|TypedVerifierTypedDicts"]
     item_type_str: Required[str]
 
 class TupleItemTypedDict(TypedDict):
-    item_type: Required[Union[str, list[str], "TypedVerifierTypedDicts"]]
+    item_type: Required["str|list[str]|TypedVerifierTypedDicts"]
     item_type_str: Required[str]
 
 class TupleTypedDict(TypedDict):
@@ -51,7 +51,7 @@ class EnumTypedDict(TypedDict):
 class UnionTypedDict(TypedDict):
     type: Required[Literal["Union"]]
     type_str: Required[str]
-    types: Required[list[Union[str, "TypedVerifierTypedDicts"]]]
+    types: Required[list["str|TypedVerifierTypedDicts"]]
 
 type TypedVerifierTypedDicts = DictTypedDict|TypedDictTypedDict|ListTypedDict|TupleTypedDict|EnumTypedDict|UnionTypedDict
 

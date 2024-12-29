@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
@@ -8,6 +8,7 @@ import Component.Structure.Field.TypeField as TypeField
 
 if TYPE_CHECKING:
     import Component.Structure.StructureComponent as StructureComponent
+
 
 class GroupItemField(FieldContainer.FieldContainer):
 
@@ -31,5 +32,5 @@ class GroupItemField(FieldContainer.FieldContainer):
     def get_types(self) -> tuple[type,...]:
         return self.type_field.get_types()
 
-    def get_component(self) -> Union["StructureComponent.StructureComponent",None]:
+    def get_component(self) -> "StructureComponent.StructureComponent|None":
         return self.subcomponent_field.get_component()
