@@ -40,9 +40,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         "top_level_tag_field",
     )
 
-    def __init__(self, data: ComponentTyping.VersionTagOrderTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.VersionTagOrderTypedDict) -> list[Field.Field]:
         self.order_field = FieldListField.FieldListField([
             ComponentListField.ComponentListField(tags, VERSION_TAG_PATTERN, ["order", index], allow_inline=Field.InlinePermissions.reference)
             for index, tags in enumerate(data["order"])
@@ -54,7 +52,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         self.top_level_tag_field = ComponentField.ComponentField(data["top_level_tag"], VERSION_TAG_PATTERN, ["top_level_tag"], allow_inline=Field.InlinePermissions.reference)
         self.tags_before_top_level_tag = ComponentListField.ComponentListField(data["tags_before_top_level_tag"], VERSION_TAG_PATTERN, ["tags_before_top_level_tag"], allow_inline=Field.InlinePermissions.reference)
         self.tags_after_top_level_tag = ComponentListField.ComponentListField(data["tags_after_top_level_tag"], VERSION_TAG_PATTERN, ["tags_after_top_level_tag"], allow_inline=Field.InlinePermissions.reference)
-        self.fields.extend([self.order_field, self.allowed_children_field, self.top_level_tag_field, self.tags_before_top_level_tag, self.tags_after_top_level_tag])
+        return [self.order_field, self.allowed_children_field, self.top_level_tag_field, self.tags_before_top_level_tag, self.tags_after_top_level_tag]
 
     def create_final(self) -> None:
         super().create_final()

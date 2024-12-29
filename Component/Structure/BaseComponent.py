@@ -1,6 +1,7 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
@@ -45,9 +46,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         "types_field",
     )
 
-    def __init__(self, data:ComponentTyping.BaseTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.BaseTypedDict) -> list[Field.Field]:
         self.imports = data.get("imports", None)
 
         self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
@@ -58,7 +57,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.types_field.verify_with(self.subcomponent_field)
-        self.fields.extend([self.subcomponent_field, self.delegate_field, self.default_delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.types_field])
+        return [self.subcomponent_field, self.delegate_field, self.default_delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.types_field]
 
     def create_final(self) -> None:
         super().create_final()

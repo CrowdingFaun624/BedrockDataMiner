@@ -2,6 +2,7 @@ import enum
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Structure.Field.KeymapImportField as KeymapImportField
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
@@ -82,9 +83,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         "value_weight",
     )
 
-    def __init__(self, data:ComponentTyping.KeymapTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.KeymapTypedDict) -> list[Field.Field]:
         self.detect_key_moves = data.get("detect_key_moves", False)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", KeymapStructure.MIN_KEY_SIMILARITY_THRESHOLD)
         self.min_value_similarity_threshold = data.get("min_value_similarity_threshold", KeymapStructure.MIN_VALUE_SIMILARITY_THRESHOLD)
@@ -110,7 +109,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.keys.for_each(lambda key: key.add_tag_fields(self.tags_for_all_field))
         self.import_field.import_into(self.keys)
         self.this_type_field.must_be(Types.mapping_types)
-        self.fields.extend([self.import_field, self.delegate_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field])
+        return [self.import_field, self.delegate_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field]
 
     def create_final(self) -> None:
         super().create_final()

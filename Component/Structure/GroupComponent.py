@@ -1,5 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Structure.Field.GroupItemField as GroupItemField
 import Component.Structure.Field.NormalizerListField as NormalizerListField
@@ -39,9 +40,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         "subcomponents_field",
     )
 
-    def __init__(self, data:ComponentTyping.GroupTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.GroupTypedDict) -> list[Field.Field]:
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
@@ -53,7 +52,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        self.fields.extend([self.subcomponents_field, self.delegate_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field])
+        return [self.subcomponents_field, self.delegate_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field]
 
     def create_final(self) -> None:
         super().create_final()

@@ -50,9 +50,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         "serializer_field",
     )
 
-    def __init__(self, data:ComponentTyping.DataMinerSettingsTypedDict, name: str, component_group: str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.DataMinerSettingsTypedDict) -> list[Field.Field]:
         self.files_field_exists = "files" in data
         self.arguments = data.get("arguments", {})
 
@@ -60,7 +58,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
         self.old_field = OptionalVersionField.OptionalVersionField(data["old"], ["old"])
         self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference)
         self.serializer_field = SerializerDictField.SerializerDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, ["serializer"])
-        self.dataminer_field = OptionalDataMinerTypeField.OptionalDataMinerTypeField(data["name"], ["name"])
+        self.dataminer_field = OptionalDataMinerTypeField.OptionalDataMinerTypeField(data["name"], self.domain, ["name"])
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dependency_name,
@@ -69,7 +67,7 @@ class DataMinerSettingsComponent(Component.Component[DataMinerSettings.DataMiner
                 allow_inline=Field.InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", []))
         ], ["dependencies"])
-        self.fields.extend([self.new_field, self.old_field, self.files_field, self.serializer_field, self.dataminer_field, self.dependencies_field])
+        return [self.new_field, self.old_field, self.files_field, self.serializer_field, self.dataminer_field, self.dependencies_field]
 
     def create_final(self) -> None:
         super().create_final()

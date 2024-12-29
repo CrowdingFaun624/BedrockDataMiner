@@ -1,5 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
@@ -45,9 +46,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         "types_field",
     )
 
-    def __init__(self, data:ComponentTyping.CacheTypedDict, name: str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.CacheTypedDict) -> list[Field.Field]:
         self.remove_threshold = data.get("remove_threshold", 10)
         self.cache_check_all_types = data.get("cache_check_all_types", True)
         self.cache_normalize = data.get("cache_normalize", True)
@@ -62,7 +61,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.types_field.verify_with(self.subcomponent_field)
-        self.fields.extend([self.subcomponent_field, self.delegate_field, self.types_field])
+        return [self.subcomponent_field, self.delegate_field, self.types_field]
 
     def create_final(self) -> None:
         super().create_final()

@@ -36,9 +36,7 @@ class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.Abstract
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
-    def __init__(self, data: ComponentTyping.DataMinerCollectionTypedDict, name: str, component_group: str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.DataMinerCollectionTypedDict) -> list[Field.Field]:
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
@@ -53,7 +51,7 @@ class DataMinerCollectionComponent(AbstractDataMinerCollectionComponent.Abstract
                 assume_type=DataMinerSettingsComponent.DataMinerSettingsComponent.class_name
             ) for index, dataminer_settings_data in enumerate(data["dataminers"])
         ], ["dataminers"])
-        self.fields.extend([self.structure_field, self.dataminer_settings_field])
+        return [self.structure_field, self.dataminer_settings_field]
 
     def create_final(self) -> None:
         super().create_final()

@@ -42,9 +42,7 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
         "must_exist",
     )
 
-    def __init__(self, data: ComponentTyping.VersionFileTypeTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.VersionFileTypeTypedDict) -> list[Field.Field]:
         self.install_location = data["install_location"]
         self.must_exist = data["must_exist"]
         self.available_when_unreleased = data["available_when_unreleased"]
@@ -54,7 +52,7 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
 
         self.allowed_accessor_types_field = ComponentListField.ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ["allowed_accessor_types"], allow_inline=Field.InlinePermissions.reference)
         self.auto_assign_accessor_type = OptionalComponentField.OptionalComponentField(data["auto_assign"]["accessor_type"] if "auto_assign" in data else None, ACCESSOR_TYPE_PATTERN, ["auto_assign", "accessor_type"], allow_inline=Field.InlinePermissions.reference)
-        self.fields.extend([self.allowed_accessor_types_field, self.auto_assign_accessor_type])
+        return [self.allowed_accessor_types_field, self.auto_assign_accessor_type]
 
     def create_final(self) -> None:
         super().create_final()

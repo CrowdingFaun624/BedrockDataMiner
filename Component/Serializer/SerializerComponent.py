@@ -1,6 +1,7 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Serializer.Field.SerializerTypeField as SerializerTypeField
 import Serializer.Serializer as Serializer
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -22,13 +23,11 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
         "serializer_class_field",
     )
 
-    def __init__(self, data:ComponentTyping.SerializerTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.SerializerTypedDict) -> list[Field.Field]:
         self.arguments = data.get("arguments", {})
         
         self.serializer_class_field = SerializerTypeField.SerializerTypeField(data["serializer_class"], ["serializer_class"])
-        self.fields.extend([self.serializer_class_field])
+        return [self.serializer_class_field]
 
     def link_finals(self) -> list[Exception]:
         return super().link_finals()

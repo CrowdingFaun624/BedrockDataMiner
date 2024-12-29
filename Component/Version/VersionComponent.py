@@ -4,6 +4,7 @@ from typing import Any
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Version.Field.OptionalVersionField as OptionalVersionField
 import Component.Version.Field.VersionFileListField as VersionFileListField
 import Component.Version.Field.VersionTagListField as VersionTagListField
@@ -43,15 +44,13 @@ class VersionComponent(Component.Component[Version.Version]):
         "time",
     )
 
-    def __init__(self, data:ComponentTyping.VersionTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data:ComponentTyping.VersionTypedDict) -> list[Field.Field]:
         self.time = datetime.date.fromisoformat(data["time"]) if data["time"] is not None else None
 
         self.parent_field = OptionalVersionField.OptionalVersionField(data["parent"], ["parent"])
         self.tags_field = VersionTagListField.VersionTagListField(data["tags"], ["tags"], self)
         self.files_field = VersionFileListField.VersionFileListField(self.normalize_files(data["files"]), ["files"])
-        self.fields.extend([self.parent_field, self.tags_field, self.files_field])
+        return [self.parent_field, self.tags_field, self.files_field]
 
     def create_final(self) -> None:
         super().create_final()

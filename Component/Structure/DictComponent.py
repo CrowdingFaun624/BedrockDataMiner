@@ -2,6 +2,7 @@ import enum
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
@@ -71,9 +72,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         "value_weight",
     )
 
-    def __init__(self, data:ComponentTyping.DictTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.DictTypedDict) -> list[Field.Field]:
         self.detect_key_moves = data.get("detect_key_moves", True)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", DictStructure.MIN_KEY_SIMILARITY_THRESHOLD)
         self.min_value_similarity_threshold = data.get("min_value_similarity_threshold", DictStructure.MIN_VALUE_SIMILARITY_THRESHOLD)
@@ -99,7 +98,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(Types.mapping_types)
-        self.fields.extend([self.subcomponent_field, self.delegate_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field])
+        return [self.subcomponent_field, self.delegate_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field]
 
     def create_final(self) -> None:
         super().create_final()

@@ -45,9 +45,7 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
         "latest_slot_field",
     )
 
-    def __init__(self, data: ComponentTyping.VersionTagTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.VersionTagTypedDict) -> list[Field.Field]:
         self.is_development_tag = data.get("is_development_tag", False)
         self.development_name = data.get("development_name", "dev")
         self.is_fork_tag = data.get("is_fork_tag", False)
@@ -57,7 +55,7 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
 
         self.auto_assigner_field = ComponentListField.ComponentListField(data.get("auto_assign", []), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ["auto_assign"], allow_inline=Field.InlinePermissions.mixed)
         self.latest_slot_field = OptionalComponentField.OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ["latest_slot"], allow_inline=Field.InlinePermissions.reference)
-        self.fields.extend([self.auto_assigner_field, self.latest_slot_field])
+        return [self.auto_assigner_field, self.latest_slot_field]
 
     def create_final(self) -> None:
         super().create_final()

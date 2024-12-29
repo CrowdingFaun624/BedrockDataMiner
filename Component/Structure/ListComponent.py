@@ -1,5 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
@@ -45,9 +46,7 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         "types_field",
     )
 
-    def __init__(self, data:ComponentTyping.ListTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.ListTypedDict) -> list[Field.Field]:
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
@@ -63,7 +62,7 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(Types.iterable_types)
         self.this_type_field.contained_by(self.types_field)
-        self.fields.extend([self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field])
+        return [self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field]
 
     def create_final(self) -> None:
         super().create_final()

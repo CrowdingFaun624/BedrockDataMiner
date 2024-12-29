@@ -1,6 +1,7 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Structure.StructureTag as StructureTag
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -20,10 +21,9 @@ class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
         "is_file",
     )
 
-    def __init__(self, data: ComponentTyping.StructureTagTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.StructureTagTypedDict) -> list[Field.Field]:
         self.is_file = data.get("is_file", False)
+        return []
 
     def create_final(self) -> None:
         super().create_final()

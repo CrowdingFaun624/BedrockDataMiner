@@ -1,6 +1,7 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -20,13 +21,11 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
         "types_strs",
     )
 
-    def __init__(self, data:ComponentTyping.TypeAliasTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
-        if name in Types.default_types:
+    def initialize_fields(self, data: ComponentTyping.TypeAliasTypedDict) -> list[Field.Field]:
+        if self.name in Types.default_types:
             raise Exceptions.ComponentInvalidNameError(self, list(Types.default_types.keys()))
-
         self.types_strs = data["types"]
+        return []
 
     def create_final(self) -> None:
         super().create_final()

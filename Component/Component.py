@@ -51,6 +51,11 @@ class Component[a]():
         self.inline_component_count = 0
         self.inline_parent:Component|None = None
 
+        self.fields.extend(self.initialize_fields(data))
+
+    def initialize_fields(self, data:Any) -> list["Field.Field"]:
+        return []
+
     def get_index(self) -> int:
         "Returns the index of this Component in the Component group. Raises an error if it doesn't have an index."
         if self.index is None:

@@ -4,6 +4,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.Field.DataMinerCollectionField as DataMinerCollectionField
 import Component.Structure.Field.StructureField as StructureField
 import Component.Version.Field.VersionProviderField as VersionProviderField
+import Component.Field.Field as Field
 import Tablifier.Tablifier as Tablifier
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -28,15 +29,13 @@ class TablifierComponent(Component.Component[Tablifier.Tablifier]):
         "version_provider_field",
     )
 
-    def __init__(self, data: ComponentTyping.TablifierTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.TablifierTypedDict) -> list[Field.Field]:
         self.file_name = data["file_name"]
 
         self.dataminer_collection_field = DataMinerCollectionField.DataMinerCollectionField(data["dataminer_collection"], ["dataminer_collection"])
         self.structure_field = StructureField.StructureField(data["structure"], ["structure"])
-        self.version_provider_field = VersionProviderField.VersionProviderField(data["version_provider"], ["version_provider"])
-        self.fields.extend([self.dataminer_collection_field, self.structure_field, self.version_provider_field])
+        self.version_provider_field = VersionProviderField.VersionProviderField(data["version_provider"], self.domain, ["version_provider"])
+        return [self.dataminer_collection_field, self.structure_field, self.version_provider_field]
 
     def create_final(self) -> None:
         super().create_final()

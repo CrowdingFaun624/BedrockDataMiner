@@ -26,14 +26,12 @@ class LogComponent(Component.Component[Log.Log]):
         "reset_on_reload",
     )
 
-    def __init__(self, data: ComponentTyping.LogTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.LogTypedDict) -> list[Field.Field]:
         self.file_name = data["file_name"]
         self.log_type = Log.LogType[data["log_type"]]
         self.reset_on_reload = data["reset_on_reload"]
-
         self.file = FileManager.LOG_DIRECTORY.joinpath(self.file_name)
+        return []
 
     def create_final(self) -> None:
         super().create_final()

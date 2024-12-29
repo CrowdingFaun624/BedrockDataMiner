@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Version.Field.VersionRangeField as VersionRangeField
 import Component.VersionTag.VersionTagAutoAssignerComponent as VersionTagAutoAssignerComponent
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -22,11 +23,9 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.Versi
         "version_range_field",
     )
 
-    def __init__(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict) -> list[Field.Field]:
         self.version_range_field = VersionRangeField.VersionRangeField(data["oldest"], data["newest"], [])
-        self.fields.extend([self.version_range_field])
+        return [self.version_range_field]
 
     def contains_version(self, version: "VersionComponent.VersionComponent") -> bool:
         return version in self.version_range_field

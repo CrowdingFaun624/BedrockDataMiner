@@ -1,5 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
@@ -51,9 +52,7 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
         "types_field",
     )
 
-    def __init__(self, data:ComponentTyping.SequenceTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.SequenceTypedDict) -> list[Field.Field]:
         self.addition_cost = data.get("addition_cost", 1)
         self.deletion_cost = data.get("deletion_cost", 1)
         self.substitution_cost = data.get("substitution_cost", 4)
@@ -72,7 +71,7 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
         self.tags_field.add_to_tag_set(self.children_tags)
         self.this_type_field.must_be(Types.iterable_types)
         self.this_type_field.contained_by(self.types_field)
-        self.fields.extend([self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field])
+        return [self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field]
 
     def create_final(self) -> None:
         super().create_final()

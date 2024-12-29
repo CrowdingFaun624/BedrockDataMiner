@@ -1,5 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
@@ -43,9 +44,7 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         "subcomponent_field",
     )
 
-    def __init__(self, data:ComponentTyping.FileTypedDict, name:str, component_group:str, index:int|None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.FileTypedDict) -> list[Field.Field]:
         self.children_has_garbage_collection = data.get("garbage_collect", False)
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
@@ -59,7 +58,7 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.content_types_field.verify_with(self.subcomponent_field)
         self.file_types_field.must_be(Types.file_types)
-        self.fields.extend([self.subcomponent_field, self.file_types_field, self.content_types_field, self.delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.file_types_field])
+        return [self.subcomponent_field, self.file_types_field, self.content_types_field, self.delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.file_types_field]
 
     def create_final(self) -> None:
         super().create_final()

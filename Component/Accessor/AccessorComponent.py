@@ -71,13 +71,10 @@ class AccessorComponent(Component.Component[AccessorCreator]):
         "accessor_type_field",
     )
 
-    def __init__(self, data: ComponentTyping.AccessorTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.AccessorTypedDict) -> list[Field.Field]:
         self.arguments = data["arguments"]
-
         self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference)
-        self.fields.extend([self.accessor_type_field])
+        return [self.accessor_type_field]
 
     def create_final(self) -> None:
         super().create_final()

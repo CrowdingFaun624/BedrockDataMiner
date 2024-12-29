@@ -1,5 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.TagListField as TagListField
@@ -33,16 +34,14 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
         "types_field",
     )
 
-    def __init__(self, data:ComponentTyping.PrimitiveTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.PrimitiveTypedDict) -> list[Field.Field]:
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), ["delegate"])
         self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
         self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.tags_field.add_to_tag_set(self.children_tags)
-        self.fields.extend([self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field])
+        return [self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field]
 
     def create_final(self) -> None:
         super().create_final()

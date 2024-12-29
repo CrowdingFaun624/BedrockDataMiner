@@ -3,6 +3,7 @@ import re
 import Component.ComponentTyping as ComponentTyping
 import Component.DataMiner.AbstractDataMinerCollectionComponent as AbstractDataMinerCollectionComponent
 import Component.DataMiner.Field.DataMinerCollectionField as DataMinerCollectionField
+import Component.Field.Field as Field
 import Component.Structure.Field.StructureField as StructureField
 import DataMiner.CoverageDataMiner as CoverageDataMiner
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -37,9 +38,7 @@ class CoverageDataMinerCollectionComponent(AbstractDataMinerCollectionComponent.
         "structure_field",
     )
 
-    def __init__(self, data: ComponentTyping.CoverageDataMinerCollectionTypedDict, name: str, component_group: str, index: int | None) -> None:
-        super().__init__(data, name, component_group, index)
-
+    def initialize_fields(self, data: ComponentTyping.CoverageDataMinerCollectionTypedDict) -> list[Field.Field]:
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
@@ -50,7 +49,7 @@ class CoverageDataMinerCollectionComponent(AbstractDataMinerCollectionComponent.
 
         self.file_list_dataminer_field = DataMinerCollectionField.DataMinerCollectionField(data["file_list_dataminer"], ["file_list_dataminer"])
         self.structure_field = StructureField.StructureField(data["structure"], ["structure"])
-        self.fields.extend([self.file_list_dataminer_field, self.structure_field])
+        return [self.file_list_dataminer_field, self.structure_field]
 
     def create_final(self) -> None:
         super().create_final()
