@@ -27,7 +27,7 @@ class SoundFilesExtractionError(Exceptions.DataminerException):
 class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
 
     def __init__(self, domain:"Domain.Domain") -> None:
-        super().__init__(domain.fsb_cache_file)
+        super().__init__(domain.data_directory.joinpath("fsb_cache.json"))
 
     def get_default_content(self) -> dict[str, str] | None:
         return {}
@@ -39,6 +39,7 @@ class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
 fsb_cache = FsbCache(Domains.get_domain_from_module(__name__))
 
 def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
+    domain = Domains.get_domain_from_module(__name__)
     fsb_file_hash = FileManager.get_hash_hexdigest(input_file)
     cache_data = fsb_cache.get().get(fsb_file_hash)
     if cache_data is not None:
@@ -52,7 +53,7 @@ def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
     with open(temp_file, "wb") as dest:
         dest.write(input_file)
     # run fsb extractor on fsb file.
-    exe_return = subprocess.run([FileManager.LIB_FSB_EXE_FILE, temp_file], shell=True, cwd=temp_directory, capture_output=True)
+    exe_return = subprocess.run([domain.lib_files["fsb/fsb_aud_extr.exe"], temp_file], shell=True, cwd=temp_directory, capture_output=True)
     if exe_return.returncode != 0:
         raise SoundFilesExtractionError(exe_return.returncode)
 

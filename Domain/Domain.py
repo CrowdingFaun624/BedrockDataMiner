@@ -28,6 +28,7 @@ import Structure.Delegate.Delegate as Delegate
 import Structure.Delegate.LongStringDelegate as LongStringDelegate
 import Utilities.CustomJson as CustomJson
 import Utilities.DataFile as DataFile
+import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.Scripts as Scripts
 import Version.VersionProvider.LatestVersionProvider as LatestVersionProvider
@@ -88,7 +89,33 @@ BUILT_IN_VERSION_PROVIDER_CLASSES:dict[str,type[VersionProvider.VersionProvider]
     LatestVersionProvider.LatestVersionProvider,
 ]}
 
-# imports are at the bottom.
+class LibFiles():
+
+    def __init__(self, domain:"Domain") -> None:
+        self.domain = domain
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} of {self.domain.name}>"
+
+    def __getitem__(self, name:str) -> Path:
+        path = self.domain.lib_directory.joinpath(name)
+        if not path.exists():
+            raise Exceptions.LibFileNotFoundError(name, path)
+        elif self.domain.lib_directory not in path.parents:
+            raise Exceptions.LibFileWrongDirectoryError(name, path, self.domain.lib_directory)
+        else:
+            return path
+
+    def get[A](self, name:str, default:A=None, wrong_directory_okay:bool=False) -> Path|A:
+        path = self.domain.lib_directory.joinpath(name)
+        if not path.exists():
+            return default
+        elif (wrong_directory := self.domain.lib_directory not in path.parents) and wrong_directory_okay:
+            return default
+        elif wrong_directory and not wrong_directory_okay:
+            raise Exceptions.LibFileWrongDirectoryError(name, path, self.domain.lib_directory)
+        else:
+            return path
 
 class Domain():
 
@@ -96,15 +123,13 @@ class Domain():
         self.name = name
         self.assets_directory           = FileManager.DOMAINS_DIRECTORY.joinpath(name)
         self.data_directory             = self.assets_directory.joinpath("data")
+        self.lib_directory              = self.assets_directory.joinpath("lib")
         self.log_directory              = self.assets_directory.joinpath("log")
         self.logs_file                  = self.assets_directory.joinpath("logs.json")
         self.scripts_directory          = self.assets_directory.joinpath("scripts")
         self.structures_directory       = self.assets_directory.joinpath("structures")
         self.accessor_types_file        = self.assets_directory.joinpath("accessor_types.json")
         self.dataminer_collections_file = self.assets_directory.joinpath("dataminer_collections.json")
-        self.exiftool_cache_file        = self.assets_directory.joinpath("exiftool_cache.txt")
-        self.fsb_cache_file             = self.assets_directory.joinpath("fsb_cache.json")
-        self.material_bin_cache_file    = self.assets_directory.joinpath("material_bin_cache.txt")
         self.serializers_file           = self.assets_directory.joinpath("serializers.json")
         self.structure_tags_file        = self.assets_directory.joinpath("structure_tags.json")
         self.tablifiers_file            = self.assets_directory.joinpath("tablifiers.json")
@@ -145,6 +170,8 @@ class Domain():
         self._manager_classes:          ScriptImporter.ScriptSet[type[Manager.Manager]]|None = None
         self._serializer_classes:       ScriptImporter.ScriptSet[type[Serializer.Serializer]]|None = None
         self._version_provider_classes: ScriptImporter.ScriptSet[type[VersionProvider.VersionProvider]]|None = None
+
+        self.lib_files = LibFiles(self)
 
     def import_components(self) -> None:
         self._scripts = Scripts.Scripts(self)

@@ -35,7 +35,7 @@ __all__ = ["MediaSerializer"]
 class MediaSerializerCache(Cache.LinesCache[dict[str,OutputTypedDict], tuple[str, OutputTypedDict]]):
 
     def __init__(self, domain:Domain.Domain) -> None:
-        super().__init__(domain.exiftool_cache_file)
+        super().__init__(domain.data_directory.joinpath("exiftool_cache.txt"))
         self.domain = domain
 
     def deserialize(self, data:bytes) -> dict[str,OutputTypedDict]:
@@ -93,7 +93,7 @@ class MediaSerializer(Serializer.Serializer):
         temp_file_path = FileManager.get_temp_file_path()
         with open(temp_file_path, "wb") as f:
             f.write(data)
-        process = subprocess.Popen([FileManager.LIB_EXIFTOOL_EXE_FILE, temp_file_path, "-j", "-b"], stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
+        process = subprocess.Popen([self.domain.lib_files["exiftool-12.93_64/exiftool.exe"], temp_file_path, "-j", "-b"], stderr=subprocess.STDOUT, stdout=subprocess.PIPE)
         stdout, stderr = process.communicate()
         if stderr is not None:
             print(stderr)

@@ -1266,6 +1266,45 @@ class UnrecognizedManagerError(DataminerException):
     def __str__(self) -> str:
         return f"Manager \"{self.manager_str}\"{message(self.source, "", ", as referenced by %s,")} does note exist{message(self.message)}"
 
+class DomainException(Exception):
+    "Abstract Exception class for errors relating to Domains."
+
+class LibFileNotFoundError(DomainException):
+    "A lib file does not exist."
+    
+    def __init__(self, name:str, path:Path, message:Optional[str]=None) -> None:
+        '''
+        :name: The file name used to access the LibFiles.
+        :path: The Path that was found using `name`.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(name, path, message)
+        self.name = name
+        self.path = path
+        self.message = message
+    
+    def __str__(self) -> str:
+        return f"Path \"{self.path.as_posix()}\", derived from \"{self.name}\", does not exist{message(self.message)}"
+
+class LibFileWrongDirectoryError(DomainException):
+    "Attempted to access a lib file that is not in the correct directory."
+    
+    def __init__(self, name:str, path:Path, correct_directory:Path, message:Optional[str]=None) -> None:
+        '''
+        :name: The file name used to access the LibFiles.
+        :path: The Path that was found using `name`.
+        :correct_directory: The Path that `path` should be a descendent of.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(name, path, message)
+        self.name = name
+        self.path = path
+        self.correct_directory = correct_directory
+        self.message = message
+    
+    def __str__(self) -> str:
+        return f"Path derived from {self.name} should be a descendent of {self.correct_directory.as_posix()}, not {self.path.as_posix()}{message(self.message)}"
+
 class ScriptException(Exception):
     "Abstract Exception class for errors relating to Scripts."
 

@@ -31,7 +31,7 @@ class SerializerNamesTypedDict(TypedDict):
 class MaterialBinCache(Cache.LinesCache[dict[str,dict[str,str]], tuple[str,str,str]]):
 
     def __init__(self, domain:Domain.Domain) -> None:
-        super().__init__(domain.material_bin_cache_file)
+        super().__init__(domain.data_directory.joinpath("material_bin_cache.txt"))
 
     def get_default_content(self) -> dict[str, dict[str, str]] | None:
         return defaultdict(lambda: {})
@@ -122,10 +122,10 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         input_file = temporary_directory.joinpath("data.material.bin")
         with open(input_file, "wb") as f:
             f.write(data)
-        jar_directory = FileManager.LIB_MATERIAL_BIN_TOOL_DIRECTORY.joinpath(f"MaterialBinTool-{self.version}-all.jar")
+        jar_file = self.domain.lib_files[f"MaterialBinTool/MaterialBinTool-{self.version}-all.jar"]
         command = [
             "java",
-            "-jar", jar_directory,
+            "-jar", jar_file,
             "-u", input_file,
             "-o", temporary_directory,
         ]
