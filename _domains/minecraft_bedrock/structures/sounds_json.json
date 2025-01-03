@@ -103,7 +103,14 @@
     "collection": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "normalizer": {
+            "function_name": "delete_key_if_empty",
+            "arguments": {
+                "key": "base"
+            }
+        },
         "keys": {
+            "base": {"type": "dict", "subcomponent": "packs_base"},
             "volume": {"type": "dict", "subcomponent": "packs_volume"},
             "pitch": {"type": "dict", "subcomponent": "packs_pitch"},
             "events": {"type": "dict", "subcomponent": "events"}
@@ -111,24 +118,49 @@
     },
     "flat_collection": {
         "type": "Keymap",
-        "normalizer": {
-            "function_name": "delete_required_keys",
-            "arguments": {
-                "keys": ["volume", "pitch"]
+        "normalizer": [
+            {
+                "function_name": "delete_required_keys",
+                "arguments": {
+                    "keys": ["volume", "pitch"]
+                }
+            },
+            {
+                "function_name": "delete_key_if_empty",
+                "arguments": {
+                    "key": "base"
+                }
             }
-        },
+        ],
         "keys": {
+            "base": {"type": "dict", "subcomponent": "packs_base"},
             "events": {"type": "dict", "subcomponent": "events"}
         }
     },
     "interactive_collection": {
         "type": "Keymap",
         "sort": "by_component_order",
+        "normalizer": {
+            "function_name": "delete_key_if_empty",
+            "arguments": {
+                "key": "base"
+            }
+        },
         "keys": {
+            "base": {"type": "dict", "subcomponent": "packs_base"},
             "volume": {"type": "dict", "subcomponent": "packs_volume"},
             "pitch": {"type": "dict", "subcomponent": "packs_pitch"},
             "events": {"type": "dict", "subcomponent": "interactive_events"}
         }
+    },
+    "packs_base": {
+        "type": "Dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "types": "str",
+        "subcomponent": null
     },
     "packs_volume": {
         "type": "Dict",

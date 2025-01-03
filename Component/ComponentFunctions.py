@@ -1,5 +1,5 @@
 import json
-from typing import Any, Callable
+from typing import Any, Callable, Sized
 
 import Utilities.File as File
 
@@ -16,6 +16,10 @@ def delete_required_keys(data:dict[str,Any], keys:list[str]) -> None:
 
 def delete_optional_keys(data:dict[str,Any], keys:list[str]) -> None:
     for key in keys:
+        data.pop(key, None)
+
+def delete_key_if_empty(data:dict[str,Sized], key:str) -> None:
+    if (value := data.get(key)) is not None and len(value) == 0:
         data.pop(key, None)
 
 def load_json(data:str) -> dict[str,str]:
@@ -74,6 +78,7 @@ def get_file_stem(data:str) -> str:
     return data.split("/")[-1].split(".", 1)[0]
 
 functions:dict[str,Callable] = {
+    "delete_key_if_empty": delete_key_if_empty,
     "delete_optional_key": delete_optional_key,
     "delete_optional_keys": delete_optional_keys,
     "delete_required_key": delete_required_key,

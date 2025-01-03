@@ -17,6 +17,7 @@ type SoundType = str|SoundTypedDict|dict[str,str|SoundTypedDict]
 # represents the possibility of being a regular collection or an interactive collection
 
 class CollectionTypedDict(TypedDict):
+    base: NotRequired[str]
     volume: NotRequired[float|list[float]]
     pitch: NotRequired[float|list[float]]
     events: NotRequired[dict[str, SoundType]]
@@ -38,7 +39,8 @@ class SoundsJsonTypedDict(TypedDict):
 # output
 
 class MyCollectionTypedDict(TypedDict):
-    # volume and pitch are each wrapped with a resource pack dict
+    # base, volume, and pitch are each wrapped with a resource pack dict
+    base: dict[str,str]
     volume: dict[str,float|list[float]]
     pitch: dict[str,float|list[float]]
     # each event is wrapped with a resource pack dict
@@ -59,6 +61,9 @@ class MySoundsJsonTypedDict(TypedDict):
     interactive_sounds: MyInteractiveSoundsTypedDict
 
 def merge_collection(pack_name:str, destination:MyCollectionTypedDict, source:CollectionTypedDict) -> None:
+    assert set(source.keys()).issubset({"base", "volume", "pitch", "events"})
+    if "base" in source:
+        destination["base"][pack_name] = source["base"]
     if "volume" in source:
         destination["volume"][pack_name] = source["volume"]
     if "pitch" in source:
@@ -73,6 +78,7 @@ def merge_collections(pack_name:str, destination:dict[str,MyCollectionTypedDict]
     for collection_name, source_collection_data in source.items():
         if collection_name not in destination:
             destination[collection_name] = {
+                "base": {},
                 "volume": {},
                 "pitch": {},
                 "events": {},
@@ -97,6 +103,7 @@ def trace_exists(object:Mapping[str,Any], trace:tuple[str,...]) -> bool:
 def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> File.FakeFile[MySoundsJsonTypedDict]:
     output:MySoundsJsonTypedDict = {
         "individual_event_sounds": {
+            "base": {},
             "volume": {}, # must exist to appease pylance
             "pitch": {},
             "events": {},
@@ -104,6 +111,7 @@ def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> File
         "block_sounds": {},
         "entity_sounds": {
             "defaults": {
+                "base": {},
                 "events": {},
                 "volume": {},
                 "pitch": {},
@@ -114,6 +122,7 @@ def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> File
             "block_sounds": {},
             "entity_sounds": {
                 "defaults": {
+                    "base": {},
                     "events": {},
                     "volume": {},
                     "pitch": {},
