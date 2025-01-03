@@ -2,9 +2,9 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Dataminer.Field.DataminerCollectionField as DataminerCollectionField
+import Component.Field.Field as Field
 import Component.Structure.Field.StructureField as StructureField
 import Component.Version.Field.VersionProviderField as VersionProviderField
-import Component.Field.Field as Field
 import Tablifier.Tablifier as Tablifier
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 

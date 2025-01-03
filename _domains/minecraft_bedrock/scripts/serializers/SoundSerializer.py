@@ -4,7 +4,6 @@ from typing import Any, Iterator, Optional, TypedDict
 import _domains.minecraft_bedrock.scripts.serializers.EvilFSBExtractor as EvilFSBExtractor
 import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
-import Utilities.File as File
 import Utilities.FileManager as FileManager
 
 __all__ = ["SoundSerializer"]
