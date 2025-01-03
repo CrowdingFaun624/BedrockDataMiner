@@ -1,7 +1,8 @@
 from collections import defaultdict
-from typing import Any, Callable, Iterable, Iterator, Mapping
+from typing import Any, Callable
 
 import Utilities.CustomJson as CustomJson
+import Utilities.TypeUtilities as TypeUtilities
 
 
 class NoCoder():
@@ -13,116 +14,17 @@ class NoCoder():
 
 no_coder = NoCoder()
 
-class TypeSet[T]():
-
-    __slots__ = (
-        "not_types",
-        "types",
-    )
-
-    def __init__(self, types:Iterable[type[T]]|None=None) -> None:
-        self.types:set[type[T]] = set(types) if types is not None else set()
-        self.not_types:set[type] = set()
-
-    def __iter__(self) -> Iterator[type[T]]:
-        return iter(self.types)
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {{{", ".join(contained_type.__name__ for contained_type in self.types)}}}>"
-
-    def __contains__(self, _type:type[T]) -> bool:
-        if _type in self.types: return True
-        elif _type in self.not_types: return False
-        else:
-            for other_type in self.types:
-                if issubclass(_type, other_type):
-                    self.types.add(_type)
-                    return True
-            else:
-                self.not_types.add(_type)
-                return False
-
-    def add(self, _type:type[T]) -> None:
-        self.types.add(_type)
-        self.not_types.discard(_type)
-
-    def add_not(self, _type:type[T]) -> None:
-        self.not_types.add(_type)
-        self.types.discard(_type)
-
-class TypeDict[T, A]():
-
-    __slots__ = (
-        "not_types",
-        "types",
-    )
-
-    def __init__(self, types:Mapping[type[T], A]|None=None) -> None:
-        self.types:dict[type[T],A] = dict(types) if types is not None else {}
-        self.not_types:set[type] = set()
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {{{", ".join(f"{contained_type.__name__}: {value}" for contained_type, value in self.types.items())}}}>"
-
-    def __contains__(self, _type:type[T]) -> bool:
-        if _type in self.types: return True
-        elif _type in self.not_types: return False
-        else:
-            for other_type, value in self.types.items():
-                if issubclass(_type, other_type):
-                    self.types[_type] = value
-                    return True
-            else:
-                self.not_types.add(_type)
-                return False
-
-    def __setitem__(self, _type:type[T], value:A) -> None:
-        self.types[_type] = value
-        self.not_types.discard(_type)
-
-    def add_not(self, _type:type[T]) -> None:
-        self.types.pop(_type, None)
-        self.not_types.add(_type)
-
-    def __getitem__(self, _type:type[T]) -> A:
-        if (output := self.types.get(_type, ...)) is not ...:
-            return output
-        elif _type in self.not_types:
-            raise KeyError(_type)
-        else:
-            for other_type, value in self.types.items():
-                if issubclass(_type, other_type):
-                    self.types[_type] = value
-                    return value
-            else:
-                self.not_types.add(_type)
-                raise KeyError(_type)
-
-    def get[B](self, _type:type[T], default:B=None) -> A|B:
-        if (output := self.types.get(_type, ...)) is not ...:
-            return output
-        elif _type in self.not_types:
-            return default
-        else:
-            for other_type, value in self.types.items():
-                if issubclass(_type, other_type):
-                    self.types[_type] = value
-                    return value
-            else:
-                self.not_types.add(_type)
-                return default
-
 default_types:dict[str,type] = {}
-requires_subcomponent_types = TypeSet()
-sortable_types = TypeSet()
-mutually_sortable:defaultdict[str,TypeSet] = defaultdict(lambda: TypeSet())
-file_types = TypeSet()
-iterable_types = TypeSet()
-mapping_types = TypeSet()
-string_types = TypeSet()
-containment_types:TypeDict[object, TypeSet] = TypeDict()
-hash_type_table:TypeDict[Any,Callable[[Any],int]] = TypeDict()
-json_encoders:TypeDict[object, type[CustomJson.Coder]] = TypeDict()
+requires_subcomponent_types = TypeUtilities.TypeSet()
+sortable_types = TypeUtilities.TypeSet()
+mutually_sortable:defaultdict[str,TypeUtilities.TypeSet] = defaultdict(lambda: TypeUtilities.TypeSet())
+file_types = TypeUtilities.TypeSet()
+iterable_types = TypeUtilities.TypeSet()
+mapping_types = TypeUtilities.TypeSet()
+string_types = TypeUtilities.TypeSet()
+containment_types:TypeUtilities.TypeDict[object, TypeUtilities.TypeSet] = TypeUtilities.TypeDict()
+hash_type_table:TypeUtilities.TypeDict[Any,Callable[[Any],int]] = TypeUtilities.TypeDict()
+json_encoders:TypeUtilities.TypeDict[object, type[CustomJson.Coder]] = TypeUtilities.TypeDict()
 json_decoders:dict[str,type[CustomJson.Coder]] = {}
 
 def hash_data(data:Any) -> int:
@@ -217,7 +119,7 @@ def register_type[T](
     if is_string:
         string_types.add(_type)
     if can_contain is not None:
-        containment_types[_type] = TypeSet(can_contain)
+        containment_types[_type] = TypeUtilities.TypeSet(can_contain)
     if isinstance(json_coder, NoCoder):
         json_encoders.add_not(_type)
     elif json_coder is not None:

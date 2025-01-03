@@ -4,6 +4,7 @@ import Component.Structure.Field.OptionalStructureComponentField as OptionalStru
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Types as Types
 import Utilities.Exceptions as Exceptions
+import Utilities.TypeUtilities as TypeUtilities
 
 type VerifyComponentType = StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
 
@@ -19,7 +20,7 @@ class AbstractTypeField(Field.Field):
     def __init__(self, path: list[str | int]) -> None:
         super().__init__(path)
         self.verify_with_component:VerifyComponentType|None=None
-        self.must_be_types:Types.TypeSet|None = None
+        self.must_be_types:TypeUtilities.TypeSet|None = None
         self.must_be_fail_message:str|None = None
         self.contained_by_field:AbstractTypeField|None = None
 
@@ -68,7 +69,7 @@ class AbstractTypeField(Field.Field):
         '''
         self.verify_with_component = component_field
 
-    def must_be(self, types:Types.TypeSet, *, fail_message:str|None=None) -> None:
+    def must_be(self, types:TypeUtilities.TypeSet, *, fail_message:str|None=None) -> None:
         '''
         Makes this TypeField check that all of its types are a member of `types`.
         :types: The tuple of types that this TypeField must be.

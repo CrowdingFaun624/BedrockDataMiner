@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     import Component.ImporterEnvironment as ImporterEnvironment
     import Component.Pattern as Pattern
     import Component.Structure.BaseComponent as BaseComponent
-    import Component.Types as Types
     import Component.Version.Field.VersionRangeField as VersionRangeField
     import Component.Version.VersionComponent as VersionComponent
     import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
@@ -36,6 +35,7 @@ if TYPE_CHECKING:
     import Utilities.File as File
     import Utilities.Log as Log
     import Utilities.Scripts as Scripts
+    import Utilities.TypeUtilities as TypeUtilities
     import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
     import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
     import Version.Version as Version
@@ -441,7 +441,7 @@ class ComponentTypeContainmentError(ComponentException):
 class ComponentTypeInvalidTypeError(ComponentException):
     "A Component has a value in a TypeField that is not allowed."
 
-    def __init__(self, source_component:"Component.Component", observed_type:type, allowed_types:"Types.TypeSet", message:Optional[str]=None) -> None:
+    def __init__(self, source_component:"Component.Component", observed_type:type, allowed_types:"TypeUtilities.TypeSet", message:Optional[str]=None) -> None:
         '''
         :source_component: The Component with the disallowed type.
         :observed_type: The type that is not allowed.
