@@ -45,7 +45,7 @@ class VersionComponent(Component.Component[Version.Version]):
     )
 
     def initialize_fields(self, data:ComponentTyping.VersionTypedDict) -> list[Field.Field]:
-        self.time = datetime.date.fromisoformat(data["time"]) if data["time"] is not None else None
+        self.time = datetime.datetime.fromisoformat(data["time"]) if data["time"] is not None else None
 
         self.parent_field = OptionalVersionField.OptionalVersionField(data["parent"], ["parent"])
         self.tags_field = VersionTagListField.VersionTagListField(data["tags"], ["tags"], self)
@@ -75,7 +75,7 @@ class VersionComponent(Component.Component[Version.Version]):
         parent_component = self.parent_field.get_component()
         if parent_component is not None and parent_component is self:
             exceptions.append(Exceptions.InvalidParentVersionError(self.get_final(), parent_component.get_final()))
-        if self.time is not None and self.time > datetime.date.today():
+        if self.time is not None and self.time > datetime.datetime.now():
             exceptions.append(Exceptions.InvalidVersionTimeError(self.get_final(), self.time, "time is after today"))
         return exceptions
 

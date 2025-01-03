@@ -2174,7 +2174,7 @@ class VersionTagExclusivePropertyError(VersionException):
 class VersionTimeTravelError(VersionException):
     "A Version's children are not in order chronologically."
 
-    def __init__(self, previous_child:"Version.Version", previous_time:datetime.date|datetime.datetime, current_child:"Version.Version", current_time:datetime.date|datetime.datetime, parent:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(self, previous_child:"Version.Version", previous_time:datetime.datetime, current_child:"Version.Version", current_time:datetime.datetime, parent:"Version.Version", message:Optional[str]=None) -> None:
         '''
         :previous_child: The child earlier in the children but chronologically after the current child.
         :previous_time: The time of the previous child.

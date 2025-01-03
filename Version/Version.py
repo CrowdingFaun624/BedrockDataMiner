@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 class Version():
 
-    def __init__(self, name:str, domain:"Domain.Domain", time:datetime.date|None, index:int) -> None:
+    def __init__(self, name:str, domain:"Domain.Domain", time:datetime.datetime|None, index:int) -> None:
         self.name = name
         self.time = time
         self.index = index
