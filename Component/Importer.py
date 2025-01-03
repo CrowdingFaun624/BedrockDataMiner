@@ -76,9 +76,14 @@ def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, imp
         components[component_name] = component
     return components
 
-def get_file(path:Path) -> ComponentTyping.ComponentGroupFileType:
-    with open(path, "rt") as f:
-        return json.decode_io(f) # type: ignore[reportArgumentType] # stupid types are almost the same but not quite
+def get_file(path:Path, importer_environment:ImporterEnvironment.ImporterEnvironment) -> ComponentTyping.ComponentGroupFileType:
+    if path.exists():
+        with open(path, "rt") as f:
+            return json.decode_io(f) # type: ignore[reportArgumentType] # stupid types are almost the same but not quite
+    elif (default_content := importer_environment.get_default_contents()) is not None:
+        return default_content
+    else:
+        raise Exceptions.ImporterEnvironmentFileNotFoundError(path, importer_environment)
 
 def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) -> None:
     all_components_flat:list[Component.Component] = []
@@ -112,7 +117,7 @@ def create_all_components(domain:"Domain.Domain") -> tuple[dict[str,dict[str,Com
                 raise Exceptions.ImporterEnvironmentNameCollisionError(name, importer_environment, importer_environments[name])
             importer_environments[name] = importer_environment
             already_paths[file_path] = importer_environment
-            components_data = get_file(file_path)
+            components_data = get_file(file_path, importer_environment)
             if importer_environment.single_component:
                 components_data = cast(ComponentTyping.ComponentGroupFileType, {"": components_data})
             component_group_type_verifier.base_verify(components_data, [name])

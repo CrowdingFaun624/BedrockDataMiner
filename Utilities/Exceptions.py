@@ -578,6 +578,20 @@ class ImporterEnvironmentNameCollisionError(ComponentException):
     def __str__(self) -> str:
         return f"ImporterEnvironments {self.importer_environment1} and {self.importer_environment2} both attempted to create a Component group with the name \"{self.name}\"{message(self.message)}"
 
+class ImporterEnvironmentFileNotFoundError(ComponentException):
+    "An ImporterEnvironment refers to a file that does not exist and has no default content"
+
+    def __init__(self, path:Path, importer_environment:"ImporterEnvironment.ImporterEnvironment", message:Optional[str]=None) -> None:
+        '''
+        :path: The Path the ImporterEnvironment refers to that does not exist.
+        :importer_environment: The ImporterEnvironment that refers to the Path.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(path, importer_environment, message)
+        self.path = path
+        self.importer_environment = importer_environment
+        self.message = message
+
 class ImporterEnvironmentPathCollisionError(ComponentException):
     "Two Component groups come from the same file."
 

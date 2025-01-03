@@ -21,6 +21,14 @@ class ImporterEnvironment[a]():
     def __init__(self, domain:"Domain.Domain") -> None:
         self.domain = domain
 
+    def get_default_contents(self) -> Any|None:
+        '''
+        If this ImporterEnvironment refers to a file that does not exist, this
+        method will be called in place of the file. By default, returns an
+        empty dict
+        '''
+        return None if self.single_component else {}
+
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
         '''
         Given the current Component group and all other Component groups.
