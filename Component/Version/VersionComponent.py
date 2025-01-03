@@ -79,6 +79,7 @@ class VersionComponent(Component.Component[Version.Version]):
             exceptions.append(Exceptions.InvalidVersionTimeError(self.get_final(), self.time, "time is after today"))
         return exceptions
 
-    def finalize(self) -> None:
-        super().finalize()
+    def finalize(self) -> list[Exception]:
+        exceptions = super().finalize()
         self.get_final().finalize()
+        return exceptions

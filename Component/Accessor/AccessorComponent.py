@@ -92,8 +92,9 @@ class AccessorComponent(Component.Component[AccessorCreator]):
         exceptions.extend(self.accessor_type_field.get_component().get_final().get_parameters().verify(self.arguments, trace))
         return exceptions
 
-    def finalize(self) -> None:
-        super().finalize()
+    def finalize(self) -> list[Exception]:
+        exceptions = super().finalize()
         final = self.get_final()
         final.create_accessor()
         final.clear_variables()
+        return exceptions

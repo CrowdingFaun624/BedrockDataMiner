@@ -10,8 +10,9 @@ class StructureComponent[a: Structure.Structure](Component.Component[a]):
 
     __slots__ = ()
 
-    def finalize(self) -> None:
-        super().finalize()
+    def finalize(self) -> list[Exception]:
+        exceptions = super().finalize()
         delegate = self.get_final().delegate
         if delegate is not None:
             delegate.finalize()
+        return exceptions

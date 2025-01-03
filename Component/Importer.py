@@ -164,9 +164,17 @@ def check_components(all_components:dict[str,dict[str,Component.Component]]) -> 
         raise Exceptions.ComponentParseError(sorted(failed_component_groups))
 
 def finalize_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
+    exceptions:list[Exception] = []
+    failed_component_groups:set[str] = set()
     for components in all_components.values():
         for component in components.values():
-            component.finalize()
+            if len(new_exceptions := component.finalize()) > 0:
+                failed_component_groups.add(component.component_group)
+                exceptions.extend(new_exceptions)
+    if len(exceptions) > 0:
+        for exception in exceptions:
+            traceback.print_exception(exception)
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups))
 
 def get_outputs(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,Any]:
     return {name: importer_environments[name].get_output(components, name) for name, components in all_components.items()}

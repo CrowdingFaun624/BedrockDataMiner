@@ -81,6 +81,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         )
         return exceptions
 
-    def finalize(self) -> None:
-        super().finalize()
+    def finalize(self) -> list[Exception]:
+        exceptions = super().finalize()
         self.get_final().finalize()
+        return exceptions

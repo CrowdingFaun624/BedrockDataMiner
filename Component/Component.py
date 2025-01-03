@@ -1,3 +1,4 @@
+from itertools import chain
 from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence
 
 import Component.Capabilities as Capabilities
@@ -143,12 +144,11 @@ class Component[a]():
             exceptions.extend(inline_component.check())
         return exceptions
 
-    def finalize(self) -> None:
+    def finalize(self) -> list[Exception]:
         '''Used to call on the structure once all structures and components are guaranteed to be linked.'''
         if self.inline_components is None:
             raise Exceptions.AttributeNoneError("inline_components", self)
-        for inline_component in self.inline_components:
-            inline_component.finalize()
+        return list(chain.from_iterable(inline_component.finalize() for inline_component in self.inline_components))
 
     def propagate_variables(self) -> bool:
         has_changed = False
