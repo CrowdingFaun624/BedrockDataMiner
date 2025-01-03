@@ -92,37 +92,6 @@ class Version():
     def get_accessor[a: Accessor.Accessor](self, file_type:str, required_type:type[a]) -> a|None:
         return self.get_version_files_dict()[file_type].get_accessor(True, required_type=required_type)
 
-    # this will be needed when I actually finish redoing the wiki page thing
-    # def assign_wiki_page(self, version_tags:VersionTags.VersionTags) -> None:
-    #     '''Sets this Version's `wiki_page` attribute.'''
-    #     alpha = ""
-    #     if version_tags["pocket_edition"] not in self.tags:
-    #         edition = "Bedrock Edition"
-    #         alpha_positioned_before = True
-    #         if self.ordering_tag is version_tags["beta"]:
-    #             alpha = " beta"
-    #         development_category_suffix = " betas"
-    #     else:
-    #         edition = "Pocket Edition"
-    #         alpha_positioned_before = version_tags["pocket_edition_alpha_before"] in self.tags
-    #         if version_tags["alpha"] in self.tags or self.ordering_tag is version_tags["beta"]:
-    #             alpha = " alpha"
-    #         elif self.ordering_tag is version_tags["beta"]:
-    #             alpha = " beta"
-    #         development_category_suffix = " builds"
-
-    #     if "_build" in self.name:
-    #         build = " build " + self.name.split("_build")[1]
-    #     else: build = ""
-    #     trimmed_name = "".join(char for char in self.name.split("_")[0].split("-")[0] if char in "0123456789.")
-    #     if alpha_positioned_before:
-    #         page_name = edition + alpha + " " + trimmed_name + build
-    #     else:
-    #         page_name = edition + " v" + trimmed_name + alpha + build
-    #     if self.wiki_page is None: self.wiki_page = page_name
-    #     development_category_name = "Category:" + self.wiki_page + development_category_suffix
-    #     if self.development_category_names is None: self.development_category_names = [development_category_name]
-
     def has_tag(self, search_tag:VersionTag.VersionTag|str) -> bool:
         '''
         Returns True if this Version has the given VersionTag.
