@@ -219,6 +219,7 @@ class SequenceTypedDict(TypedDict):
 
 class SerializerTypedDict(TypedDict):
     arguments: NotRequired[dict[str,Any]]
+    linked_serializers: NotRequired[dict[str,str]]
     serializer_class: Required[str]
     type: NotRequired[Literal["Serializer"]]
 

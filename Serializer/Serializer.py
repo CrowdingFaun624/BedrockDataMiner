@@ -31,9 +31,18 @@ class Serializer[a, b]():
     If True, will call get_referenced_files during garbage collection.
     '''
 
+    linked_serializers:dict[str,type["Serializer"]] = {}
+
     def __init__(self, name:str, domain:"Domain.Domain", **kwargs:Any) -> None:
         self.name = name
         self.domain = domain
+
+    def link_finals(self, linked_serializers:dict[str,"Serializer"]) -> None:
+        self.get_linked_serializers(linked_serializers)
+
+    def get_linked_serializers(self, linked_serializers:dict[str,"Serializer"]) -> None:
+        # Serializers override this to let themselves reference other Serializers.
+        ...
 
     def finalize(self) -> None:
         ...

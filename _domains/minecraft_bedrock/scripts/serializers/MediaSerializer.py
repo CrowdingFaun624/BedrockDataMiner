@@ -10,7 +10,6 @@ import Utilities.Cache as Cache
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 
 class OutputTypedDict(TypedDict):
@@ -59,30 +58,17 @@ class MediaSerializer(Serializer.Serializer):
 
     empty_okay = False
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("metadata_serializer_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_serializer_names", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, str, "a dict", "a str", "a str")),
-    )
-
     can_contain_subfiles = True
 
-    def __init__(self, name: str, domain:Domain.Domain, metadata_serializer_name:str, file_serializer_names:dict[str,str]) -> None:
+    linked_serializers = {key: Serializer.Serializer for key in ("metadata", "file_unknown", "file_CUR", "file_GIF", "file_JPEG", "file_M4A", "file_MP3", "file_MP4", "file_OTF", "file_PNG", "file_SVG", "file_TTC", "file_TTF", "file_WEBM")}
+
+    def __init__(self, name: str, domain:Domain.Domain) -> None:
         super().__init__(name, domain)
         self.cached_data:dict[str,OutputTypedDict]|None = None
-        self.metadata_serializer_name = metadata_serializer_name
-        self.metadata_serializer:Serializer.Serializer|None = None
-        self.file_serializer_names = file_serializer_names
-        self.file_serializers:dict[str,Serializer.Serializer]|None = None
 
-    def get_metadata_serializer(self) -> Serializer.Serializer:
-        if self.metadata_serializer is None:
-            self.metadata_serializer = self.domain.serializers[self.metadata_serializer_name]
-        return self.metadata_serializer
-
-    def get_file_type_serializer(self, file_type:str) -> Serializer.Serializer:
-        if self.file_serializers is None:
-            self.file_serializers = {file_type: self.domain.serializers[serializer_name] for file_type, serializer_name in self.file_serializer_names.items()}
-        return self.file_serializers[file_type]
+    def get_linked_serializers(self, linked_serializers: dict[str, Serializer.Serializer]) -> None:
+        self.metadata_serializer = linked_serializers["metadata"]
+        self.file_serializers = {key.replace("file_", ""): serializer for key, serializer in linked_serializers.items() if key.startswith("file_")}
 
     def deserialize(self, data: bytes) -> OutputTypedDict:
         data_hash = FileManager.get_hash_hexdigest(data)
@@ -104,7 +90,7 @@ class MediaSerializer(Serializer.Serializer):
 
         exiftool_output:list[dict[str,Any]] = json.loads(stdout.decode())
         assert len(exiftool_output) == 1
-        file_type:Literal["CUR", "GIF", "JPEG", "M4A", "MP3", "MP4", "OTF", "PNG", "SVG", "TTC", "TTF", "WEBM"] = exiftool_output[0].pop("FileType", "unknown_file_type")
+        file_type:Literal["CUR", "GIF", "JPEG", "M4A", "MP3", "MP4", "OTF", "PNG", "SVG", "TTC", "TTF", "WEBM"] = exiftool_output[0].pop("FileType", "unknown")
         metadata = exiftool_output[0]
         metadata.pop("ExifToolVersion", None)
         metadata.pop("SourceFile", None)
@@ -116,9 +102,9 @@ class MediaSerializer(Serializer.Serializer):
         metadata.pop("FilePermissions", None)
         output:OutputTypedDict = {
             "sha1_hash": data_hash,
-            "metadata": File.new_file(json.dumps(metadata).encode(), f"metadata_of_{data_hash}.json", self.get_metadata_serializer()),
+            "metadata": File.new_file(json.dumps(metadata).encode(), f"metadata_of_{data_hash}.json", self.metadata_serializer),
         }
-        output[file_type] = File.new_file(data, f"media_{data_hash}.{file_type}", self.get_file_type_serializer(file_type))
+        output[file_type] = File.new_file(data, f"media_{data_hash}.{file_type}", self.file_serializers[file_type])
 
         media_serializer_cache.write_new_line((data_hash, output))
         return output

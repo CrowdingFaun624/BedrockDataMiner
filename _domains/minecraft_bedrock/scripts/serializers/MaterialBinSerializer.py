@@ -22,12 +22,6 @@ class OutputTypedDict(TypedDict):
     data: File.File[Any]
     passes: dict[str,PassTypedDict]
 
-class SerializerNamesTypedDict(TypedDict):
-    data: str
-    main: str
-    pass_info: str
-    glsl: str
-
 class MaterialBinCache(Cache.LinesCache[dict[str,dict[str,str]], tuple[str,str,str]]):
 
     def __init__(self, domain:Domain.Domain) -> None:
@@ -63,52 +57,26 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("version", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("subserializer_names", "a dict", True, TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("data", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("main", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("pass_info", "a str", True, str),
-            TypeVerifier.TypedDictKeyTypeVerifier("glsl", "a str", True, str),
-        )),
     )
 
     can_contain_subfiles = True
 
-    def __init__(self, name: str, domain:Domain.Domain, version:str, subserializer_names:SerializerNamesTypedDict) -> None:
+    linked_serializers = {key: Serializer.Serializer for key in ("data", "main", "pass_info", "glsl")}
+
+    def __init__(self, name: str, domain:Domain.Domain, version:str) -> None:
         super().__init__(name, domain)
         # self.cached_data:dict[str,str]|None = None
         self.version = version
         assert not any(char in self.version for char in "\\/:*?\"<>|")
-        self.data_serializer_name = subserializer_names["data"]
-        self.data_serializer:Serializer.Serializer|None = None
-        self.main_serializer_name = subserializer_names["main"]
-        self.main_serializer:Serializer.Serializer|None = None
-        self.pass_info_serializer_name = subserializer_names["pass_info"]
-        self.pass_info_serializer:Serializer.Serializer|None = None
-        self.glsl_serializer_name = subserializer_names["glsl"]
-        self.glsl_serializer:Serializer.Serializer|None = None
-
-    def get_data_serializer(self) -> Serializer.Serializer:
-        if self.data_serializer is None:
-            self.data_serializer = self.domain.serializers[self.data_serializer_name]
-        return self.data_serializer
-
-    def get_main_serializer(self) -> Serializer.Serializer:
-        if self.main_serializer is None:
-            self.main_serializer = self.domain.serializers[self.main_serializer_name]
-        return self.main_serializer
-
-    def get_pass_info_serializer(self) -> Serializer.Serializer:
-        if self.pass_info_serializer is None:
-            self.pass_info_serializer = self.domain.serializers[self.pass_info_serializer_name]
-        return self.pass_info_serializer
-
-    def get_glsl_serializer(self) -> Serializer.Serializer:
-        if self.glsl_serializer is None:
-            self.glsl_serializer = self.domain.serializers[self.glsl_serializer_name]
-        return self.glsl_serializer
+    
+    def get_linked_serializers(self, linked_serializers: dict[str, Serializer.Serializer]) -> None:
+        self.data_serializer = linked_serializers["data"]
+        self.main_serializer = linked_serializers["main"]
+        self.pass_info_serializer = linked_serializers["pass_info"]
+        self.glsl_serializer = linked_serializers["glsl"]
 
     def write_cache(self, source_hash:str, output:OutputTypedDict) -> File.File[OutputTypedDict]:
-        output_file = File.new_file(json.dumps(output, separators=(",", ":"), cls=self.domain.json_encoder).encode(), f"material_bin_data_of_{source_hash}", self.get_data_serializer())
+        output_file = File.new_file(json.dumps(output, separators=(",", ":"), cls=self.domain.json_encoder).encode(), f"material_bin_data_of_{source_hash}", self.data_serializer)
         output_str = json.dumps(output_file, separators=(",", ":"), cls=self.domain.json_encoder)
         material_bin_cache.append_new_line((self.version, source_hash, output_str))
         return output_file
@@ -150,7 +118,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         main_data_path = output_directory.joinpath("data.json")
         with open(main_data_path, "rb") as f:
             main_data_bytes = f.read()
-            main_data_file = File.new_file(main_data_bytes, file_name, self.get_main_serializer())
+            main_data_file = File.new_file(main_data_bytes, file_name, self.main_serializer)
         main_data = json.loads(main_data_bytes.decode())
         main_data_path.unlink()
         pass_names:list[str] = main_data["passes"]
@@ -162,7 +130,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
             pass_directory = output_directory.joinpath(pass_name)
             pass_info_path = pass_directory.joinpath(pass_name + ".json")
             with open(pass_info_path, "rb") as f:
-                pass_info_file = File.new_file(f.read(), f"pass_info_in_{pass_name}_of_{data_hash}", self.get_pass_info_serializer())
+                pass_info_file = File.new_file(f.read(), f"pass_info_in_{pass_name}_of_{data_hash}", self.pass_info_serializer)
             pass_info_path.unlink()
             glsl_files = self.get_glsl_files(pass_directory, data_hash)
             pass_directory.rmdir()
@@ -173,7 +141,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         glsl_files:dict[str,File.File[str]] = {}
         for glsl_file_path in pass_directory.iterdir():
             with open(glsl_file_path, "rb") as f:
-                glsl_file = File.new_file(f.read(), f"glsl_file_{glsl_file_path.name}_in_{pass_directory.name}_of_{data_hash}", self.get_glsl_serializer())
+                glsl_file = File.new_file(f.read(), f"glsl_file_{glsl_file_path.name}_in_{pass_directory.name}_of_{data_hash}", self.glsl_serializer)
             glsl_file_path.unlink()
             glsl_files[glsl_file_path.name] = glsl_file
         return glsl_files

@@ -651,6 +651,84 @@ class InvalidComponentError(ComponentException):
     def __str__(self) -> str:
         return f"{self.component}, as referenced by {self.source}, is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}"
 
+class LinkedComponentExtraError(ComponentException):
+    "An extra linked Component is present."
+
+    def __init__(self, component:"Component.Component", key:str, linked_object:Any, message:Optional[str]=None) -> None:
+        '''
+        :component: The Component with an extra linked Component.
+        :key: The key of the extra linked Component.
+        :linked_object: The object of the linked Component.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, key, linked_object, message)
+        self.component = component
+        self.key = key
+        self.linked_object = linked_object
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.component} has an extra linked Component \"{self.key}\": {self.linked_object}{message(self.message)}"
+
+class LinkedComponentMissingError(ComponentException):
+    "A linked Component is missing."
+
+    def __init__(self, component:"Component.Component", key:str, linked_type:type, message:Optional[str]=None) -> None:
+        '''
+        :component: The Component missing a linked Component.
+        :key: The key of the missing Component.
+        :linked_type: The type of the linked object.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, key, linked_type, message)
+        self.component = component
+        self.key = key
+        self.linked_type = linked_type
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.component} is missing linked Component \"{self.key}\" of type \"{self.linked_type.__name__}\"{message(self.message)}"
+
+class LinkedComponentOverlapError(ComponentException):
+    "A linked Component has the same key as another linked Component."
+
+    def __init__(self, key:str, component:"Component.Component", overlapping_objects:list[Any], message:Optional[str]=None) -> None:
+        '''
+        :key: The key that overlaps.
+        :overlapping_components: The Component with overlapping keys.
+        :overlapping_objects: The objects with the same key.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(key, component, overlapping_objects, message)
+        self.key = key
+        self.component = component
+        self.overlapping_objects = overlapping_objects
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.component}'s linked object at \"{self.key}\" has multiple overlapping objects [{", ".join(repr(object) for object in self.overlapping_objects)}]{message(self.message)}"
+
+class LinkedComponentTypeError(ComponentException):
+    "A linked Component's object is the wrong type."
+
+    def __init__(self, component:"Component.Component", key:str, required_type:type, observed_object:Any, message:Optional[str]=None) -> None:
+        '''
+        :component: The Component with the wrong type of linked object.
+        :key: The key of the linked Component.
+        :required_type: The type the linked object should have.
+        :observed_object: The linked object.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, key, required_type, observed_object, message)
+        self.component = component
+        self.key = key
+        self.required_type = required_type
+        self.observed_object = observed_object
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.component}'s linked object \"{self.key}\": {self.observed_object} should be type \"{self.required_type.__name__}\"{message(self.message)}"
+
 class NoComponentMatchError(ComponentException):
     "No Components match the Pattern."
 
