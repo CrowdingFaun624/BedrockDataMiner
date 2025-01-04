@@ -1,3 +1,4 @@
+import datetime
 from collections import defaultdict
 from pathlib import Path
 from typing import Any, Iterable, cast
@@ -107,25 +108,37 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                     order_index += 1
                     if order_index >= len(ORDER):
                         exceptions.append(Exceptions.VersionChildOrderError(version, [child.get_order_tag() for child in version.children], child))
+                        break
+                if order_index >= len(ORDER): break
                 # after this while loop, `order_index` must be a value such that child.ordering_tag == or in ORDER[order_index].
+        versions_without_timezone:dict[Version.Version, datetime.datetime] = {}
+        any_versions_with_timezone:bool = False
         for version in output.values():
-            previous_time = None
-            previous_child = None # for error messages
-            for child in version.children:
-                if child.get_order_tag() in BEFORE_TAGS:
-                    if version.time is not None and child.time is not None and child.time > version.time:
-                        exceptions.append(Exceptions.VersionOrderSequenceError(version, version.get_order_tag(), child, child.get_order_tag(), "after"))
-                elif child.get_order_tag() in AFTER_TAGS:
-                    if version.time is not None and child.time is not None and child.time < version.time:
-                        exceptions.append(Exceptions.VersionOrderSequenceError(version, version.get_order_tag(), child, child.get_order_tag(), "before"))
-                if previous_time is not None:
-                    if previous_child is None:
-                        exceptions.append(Exceptions.InvalidStateError("previous_child is None but previous_time is not None!"))
-                        continue
-                    if child.time is not None and child.time < previous_time:
-                        exceptions.append(Exceptions.VersionTimeTravelError(previous_child, previous_time, child, child.time, version))
-                previous_time = child.time
-                previous_child = child
+            if version.time is not None and version.time.tzinfo is None:
+                versions_without_timezone[version] = version.time
+            else:
+                any_versions_with_timezone = True
+        if any_versions_with_timezone:
+            exceptions.extend(Exceptions.VersionTimezoneError(version, time) for version, time in versions_without_timezone.items())
+        else:
+            for version in output.values():
+                previous_time = None
+                previous_child = None # for error messages
+                for child in version.children:
+                    if child.get_order_tag() in BEFORE_TAGS:
+                        if version.time is not None and child.time is not None and child.time > version.time:
+                            exceptions.append(Exceptions.VersionOrderSequenceError(version, version.get_order_tag(), child, child.get_order_tag(), "after"))
+                    elif child.get_order_tag() in AFTER_TAGS:
+                        if version.time is not None and child.time is not None and child.time < version.time:
+                            exceptions.append(Exceptions.VersionOrderSequenceError(version, version.get_order_tag(), child, child.get_order_tag(), "before"))
+                    if previous_time is not None:
+                        if previous_child is None:
+                            exceptions.append(Exceptions.InvalidStateError("previous_child is None but previous_time is not None!"))
+                            continue
+                        if child.time is not None and child.time < previous_time:
+                            exceptions.append(Exceptions.VersionTimeTravelError(previous_child, previous_time, child, child.time, version))
+                    previous_time = child.time
+                    previous_child = child
 
         # some VersionFiles cannot exist if an unreleased VersionTag exists on the Version.
         # some VersionFileTypes require a VersionFile to exist on every Version.

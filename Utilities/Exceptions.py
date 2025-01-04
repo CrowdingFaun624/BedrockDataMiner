@@ -2230,6 +2230,23 @@ class VersionTimeTravelError(VersionException):
     def __str__(self) -> str:
         return f"Date of child {self.previous_child} ({self.previous_time}) comes after date of child {self.current_child} ({self.current_time}) despite being before it in the children of {self.parent}{message(self.message)}"
 
+class VersionTimezoneError(VersionException):
+    "A Version has no timezone in its time but should."
+
+    def __init__(self, version:"Version.Version", time:datetime.datetime, message:Optional[str]=None) -> None:
+        '''
+        :version: The Version without timezone info.
+        :time: The time of the Version.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(version, time, message)
+        self.version = version
+        self.time = time
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.version}'s time, {self.time.isoformat()} does not have a timezone but should{message(self.message)}"
+
 class VersionTopLevelError(VersionException):
     "A Version is a top-level Version but has no top-level VersionTag."
 

@@ -12,6 +12,14 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
+def compare_to_now(time:datetime.datetime) -> bool:
+    # this is only for making sure the time isn't significantly ahead of now,
+    # so it doesn't need to be that accurate
+    if time.tzinfo is None:
+        return time > datetime.datetime.now()
+    else:
+        # pretends user is in UTC and adds 1 day.
+        return time > datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)+datetime.timedelta(days=1)
 
 class VersionComponent(Component.Component[Version.Version]):
 
@@ -75,7 +83,7 @@ class VersionComponent(Component.Component[Version.Version]):
         parent_component = self.parent_field.get_component()
         if parent_component is not None and parent_component is self:
             exceptions.append(Exceptions.InvalidParentVersionError(self.get_final(), parent_component.get_final()))
-        if self.time is not None and self.time > datetime.datetime.now():
+        if self.time is not None and compare_to_now(self.time):
             exceptions.append(Exceptions.InvalidVersionTimeError(self.get_final(), self.time, "time is after today"))
         return exceptions
 

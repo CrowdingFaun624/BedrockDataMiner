@@ -23,4 +23,4 @@ class VersionTagImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict
         return "version_tags"
 
     def get_assumed_used_components(self, components: dict[str, VersionTagComponent.VersionTagComponent], name: str) -> Iterable[Component.Component]:
-        return (component for component in components.values() if len(component.auto_assigner_field) > 0)
+        return (component for component in components.values() if len(component.auto_assigner_field) > 0 or component.is_unreleased_tag)
