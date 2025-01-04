@@ -6,7 +6,7 @@ import Component.Field.LinkedObjectsField as LinkedObjectsField
 import Component.Pattern as Pattern
 import Component.Serializer.Field.SerializerTypeField as SerializerTypeField
 import Serializer.Serializer as Serializer
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 SERIALIZER_PATTERN:Pattern.Pattern["SerializerComponent"] = Pattern.Pattern([{"is_serializer": True}])
 

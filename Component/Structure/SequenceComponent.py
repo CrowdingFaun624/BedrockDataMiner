@@ -9,7 +9,7 @@ import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Component.Types as Types
 import Structure.SequenceStructure as SequenceStructure
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.SequenceStructure]):

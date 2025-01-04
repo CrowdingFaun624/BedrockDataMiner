@@ -5,7 +5,7 @@ import Component.Field.Field as Field
 import Component.Field.FunctionField as FunctionField
 import Component.Version.Field.VersionRangeField as VersionRangeField
 import Structure.Normalizer as Normalizer
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class NormalizerComponent(Component.Component[Normalizer.Normalizer]):

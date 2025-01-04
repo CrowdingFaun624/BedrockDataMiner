@@ -6,7 +6,7 @@ from typing import IO, Any, Callable, Iterable, Self
 
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 import Utilities.UserInput as UserInput
 
 

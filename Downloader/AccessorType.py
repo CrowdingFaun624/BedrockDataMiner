@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, Any
 import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFileType as VersionFileType
 
 if TYPE_CHECKING:

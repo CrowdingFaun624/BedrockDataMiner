@@ -3,7 +3,7 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Structure.StructureTag as StructureTag
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class StructureTagComponent(Component.Component[StructureTag.StructureTag]):

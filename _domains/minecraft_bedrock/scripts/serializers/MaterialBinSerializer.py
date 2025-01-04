@@ -10,7 +10,7 @@ import Serializer.Serializer as Serializer
 import Utilities.Cache as Cache
 import Utilities.File as File
 import Utilities.FileManager as FileManager
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ["MaterialBinSerializer"]
 

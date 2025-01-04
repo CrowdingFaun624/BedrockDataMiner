@@ -9,7 +9,7 @@ import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFile as VersionFile
 
 if TYPE_CHECKING:

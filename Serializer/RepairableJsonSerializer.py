@@ -2,7 +2,7 @@ from typing import Any, NotRequired, Required, TypedDict
 
 import Domain.Domain as Domain
 import Serializer.JsonSerializer as JsonSerializer
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class Condition():

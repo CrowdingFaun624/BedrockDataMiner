@@ -5,7 +5,7 @@ import Structure.Difference as D
 import Structure.PrimitiveStructure as PrimitiveStructure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ["PrimitiveDelegate"]
 

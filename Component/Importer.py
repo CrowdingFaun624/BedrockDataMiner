@@ -24,7 +24,7 @@ import Component.VersionTag.VersionTagImporterEnvironment as VersionTagImporterE
 import Component.VersionTag.VersionTagOrderImporterEnvironment as VersionTagOrderImporterEnvironment
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] = [
     AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,

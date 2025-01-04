@@ -4,7 +4,7 @@ import Structure.Delegate.Delegate as Delegate
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 FOOTER = '''
 <noinclude>

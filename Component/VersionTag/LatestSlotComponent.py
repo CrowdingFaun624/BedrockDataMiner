@@ -1,6 +1,6 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class LatestSlotComponent(Component.Component[str]):

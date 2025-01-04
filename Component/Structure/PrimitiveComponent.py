@@ -7,7 +7,7 @@ import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.PrimitiveStructure as PrimitiveStructure
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructure.PrimitiveStructure]):

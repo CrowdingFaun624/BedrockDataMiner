@@ -9,7 +9,7 @@ import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Structure.DataPath as DataPath
 import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 TAG_CHARACTERS = re.compile(r"[^\s\\\+\*\?\[\]\(\)\{\}\=\!\<\>\|\-\/\~]") # using exclusive because of multitudinous language characters
 # valid tag characters are a-zA-Z0-9, _, ., and non-ascii not-whitespace characters

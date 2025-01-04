@@ -5,7 +5,7 @@ import Dataminer.Dataminer as Dataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ["PacksDataminer"]
 

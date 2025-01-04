@@ -6,7 +6,7 @@ import Component.Dataminer.Field.DataminerCollectionField as DataminerCollection
 import Component.Field.Field as Field
 import Component.Structure.Field.StructureField as StructureField
 import Dataminer.CoverageDataminer as CoverageDataminer
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent[CoverageDataminer.CoverageDataminer]):

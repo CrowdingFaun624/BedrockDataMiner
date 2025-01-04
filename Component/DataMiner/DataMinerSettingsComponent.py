@@ -13,7 +13,7 @@ import Component.Serializer.Field.SerializerDictField as SerializerDictField
 import Component.Version.Field.OptionalVersionField as OptionalVersionField
 import Dataminer.DataminerSettings as DataminerSettings
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent

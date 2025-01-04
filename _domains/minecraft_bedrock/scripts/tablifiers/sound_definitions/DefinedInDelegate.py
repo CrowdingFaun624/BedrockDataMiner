@@ -3,7 +3,7 @@ import Structure.Delegate.Delegate as Delegate
 import Structure.Difference as D
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ["DefinedInDelegate"]
 

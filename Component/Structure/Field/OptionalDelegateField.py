@@ -6,7 +6,7 @@ import Component.FunctionChecker as FunctionChecker
 import Domain.Domain as Domain
 import Structure.Delegate.Delegate as Delegate
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Component.Component as Component

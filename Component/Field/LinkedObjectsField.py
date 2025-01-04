@@ -12,7 +12,7 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
     '''A link to multiple other Components.'''
 
 
-    def __init__(self, subcomponents_data:dict[str,str|ComponentTyping.ComponentTypedDicts], pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.reference, assume_type:str|None=None) -> None:
+    def __init__(self, subcomponents_data:dict[str,str|ComponentTyping.ComponentTypedDicts]|dict[str,str]|dict[str,ComponentTyping.ComponentTypedDicts], pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.reference, assume_type:str|None=None) -> None:
         '''
         :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.
         :pattern: The Pattern used to search for Components.

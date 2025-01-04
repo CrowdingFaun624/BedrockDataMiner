@@ -9,7 +9,7 @@ import Component.Version.Field.OptionalVersionField as OptionalVersionField
 import Component.Version.Field.VersionFileListField as VersionFileListField
 import Component.Version.Field.VersionTagListField as VersionTagListField
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
 

@@ -7,7 +7,7 @@ import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Structure.StructureBase as StructureBase
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class BaseComponent(Component.Component[StructureBase.StructureBase]):

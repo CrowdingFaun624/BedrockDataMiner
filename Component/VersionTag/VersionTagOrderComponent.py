@@ -10,7 +10,7 @@ import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
 import Component.VersionTag.Field.VersionTagOrderAllowedChildrenField as VersionTagOrderAllowedChildrenField
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTag.VersionTagOrder as VersionTagOrder
 
 if TYPE_CHECKING:

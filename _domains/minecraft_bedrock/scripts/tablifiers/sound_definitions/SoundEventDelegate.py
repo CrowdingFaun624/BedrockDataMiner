@@ -6,7 +6,7 @@ import Structure.KeymapStructure as KeymapStructure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ["SoundEventDelegate"]
 

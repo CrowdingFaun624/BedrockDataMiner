@@ -4,7 +4,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Types as Types
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class TypeAliasComponent(Component.Component[tuple[type,...]]):

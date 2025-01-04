@@ -8,7 +8,7 @@ import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent

@@ -6,7 +6,7 @@ import Component.Field.Field as Field
 import Component.Structure.Field.StructureField as StructureField
 import Component.Version.Field.VersionProviderField as VersionProviderField
 import Tablifier.Tablifier as Tablifier
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class TablifierComponent(Component.Component[Tablifier.Tablifier]):

@@ -35,8 +35,7 @@ if TYPE_CHECKING:
     import Utilities.Log as Log
     import Utilities.Scripts as Scripts
     import Utilities.TypeUtilities as TypeUtilities
-    import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
-    import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
+    import Utilities.TypeVerifier as TypeVerifier
     import Version.Version as Version
     import Version.VersionFile as VersionFile
     import Version.VersionFileType as VersionFileType
@@ -1852,21 +1851,6 @@ class TypeVerificationFailedError(TypeVerifierException):
     def __str__(self) -> str:
         return f"{self.type_verifier} failed verification{message(self.message)}"
 
-class TypeVerifierDisallowedError(TypeVerifierException):
-    "A TypeVerifier appears in an invalid spot in a JSON TypeVerifier."
-
-    def __init__(self, data:"TypeVerifierImporter.TypedVerifierTypedDicts", message:Optional[str]=None) -> None:
-        '''
-        :data: The type field that contains a disallowed TypeVerifier.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(data, message)
-        self.data = data
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Type field {self.data} contains a TypeVerifier and should not{message(self.message)}"
-
 class TypeVerificationTypeException(TypeVerifierException):
     "Abstract Exception class for errors that are passed around by TypeVerifiers."
 
@@ -1912,7 +1896,7 @@ class TypeVerificationTypeError(TypeVerificationTypeException):
         self.observed_type = observed_type
 
     def __str__(self) -> str:
-        return f"{self.trace.to_str() is not {self.expected_type}}, but instead {self.observed_type.__name__}"
+        return f"{self.trace.to_str()} is not {self.expected_type}, but instead {self.observed_type.__name__}"
 
 class TypeVerificationUnionError(TypeVerificationTypeException):
 

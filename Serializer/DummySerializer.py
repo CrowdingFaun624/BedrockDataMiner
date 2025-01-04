@@ -1,6 +1,6 @@
 import Domain.Domain as Domain
 import Serializer.Serializer as Serializer
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class DummySerializer(Serializer.Serializer):

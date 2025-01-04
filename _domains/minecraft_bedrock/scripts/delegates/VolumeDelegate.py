@@ -11,7 +11,7 @@ import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class VolumeStructureAdditionalDataError(Exceptions.StructureException):

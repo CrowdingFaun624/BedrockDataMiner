@@ -4,7 +4,7 @@ from typing import Any, Iterable, Literal, Optional, TypedDict
 
 import Domain.Domains as Domains
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class UnrecognizedPackError(Exceptions.DataminerException):

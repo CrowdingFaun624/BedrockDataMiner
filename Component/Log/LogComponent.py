@@ -4,7 +4,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Utilities.Exceptions as Exceptions
 import Utilities.Log as Log
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class LogComponent(Component.Component[Log.Log]):

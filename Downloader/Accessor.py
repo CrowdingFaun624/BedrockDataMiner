@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Any
 
 import Domain.Domain as Domain
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Version.Version as Version

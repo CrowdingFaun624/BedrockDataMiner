@@ -9,7 +9,7 @@ import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.GroupStructure as GroupStructure
 import Structure.Structure as Structure
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupStructure]):

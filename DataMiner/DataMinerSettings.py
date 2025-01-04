@@ -4,7 +4,7 @@ import Domain.Domain as Domain
 import Serializer.Serializer as Serializer
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 import Version.VersionFileType as VersionFileType
 import Version.VersionRange as VersionRange

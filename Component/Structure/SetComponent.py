@@ -9,7 +9,7 @@ import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Component.Types as Types
 import Structure.SetStructure as SetStructure
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructure]):

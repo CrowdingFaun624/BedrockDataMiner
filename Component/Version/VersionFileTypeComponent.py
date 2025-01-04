@@ -7,7 +7,7 @@ import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Pattern as Pattern
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFileType as VersionFileType
 
 if TYPE_CHECKING:

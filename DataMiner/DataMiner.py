@@ -8,7 +8,7 @@ import Downloader.Accessor as Accessor
 import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
 

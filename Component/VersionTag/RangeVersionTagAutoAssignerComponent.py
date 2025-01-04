@@ -4,7 +4,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Version.Field.VersionRangeField as VersionRangeField
 import Component.VersionTag.VersionTagAutoAssignerComponent as VersionTagAutoAssignerComponent
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Component.Version.VersionComponent as VersionComponent

@@ -12,7 +12,7 @@ import Component.Structure.StructureComponent as StructureComponent
 import Component.Types as Types
 import Structure.DictStructure as DictStructure
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class DictSorting(enum.Enum):

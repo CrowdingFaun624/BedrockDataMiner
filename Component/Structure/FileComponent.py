@@ -8,7 +8,7 @@ import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Component.Types as Types
 import Structure.FileStructure as FileStructure
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStructure]):

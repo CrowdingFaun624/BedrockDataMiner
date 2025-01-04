@@ -16,7 +16,7 @@ import Component.Types as Types
 import Structure.Difference as D
 import Structure.KeymapStructure as KeymapStructure
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class KeymapSorting(enum.Enum):

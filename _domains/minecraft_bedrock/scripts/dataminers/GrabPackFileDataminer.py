@@ -7,7 +7,7 @@ import Dataminer.FileDataminer as FileDataminer
 import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ["GrabPackFileDataminer"]
 

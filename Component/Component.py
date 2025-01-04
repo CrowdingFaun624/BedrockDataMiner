@@ -5,7 +5,7 @@ import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Component.Field.Field as Field

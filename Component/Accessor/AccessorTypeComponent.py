@@ -8,7 +8,7 @@ import Component.Pattern as Pattern
 import Downloader.Accessor as Accessor
 import Downloader.AccessorType as AccessorType
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent"] = Pattern.Pattern([{"is_accessor_type": True}])
 

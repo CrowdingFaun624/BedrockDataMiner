@@ -3,7 +3,7 @@ from typing import Any
 import Dataminer.BuiltIns.GrabSingleFileDataminer as GrabSingleFileDataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Utilities.File as File
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ["MyGrabSingleFileDataminer"]
 

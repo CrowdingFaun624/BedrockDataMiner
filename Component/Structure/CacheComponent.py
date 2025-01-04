@@ -6,7 +6,7 @@ import Component.Structure.Field.StructureComponentField as StructureComponentFi
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.CacheStructure as CacheStructure
-import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
+import Utilities.TypeVerifier as TypeVerifier
 
 
 class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheStructure]):
