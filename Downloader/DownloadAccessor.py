@@ -1,5 +1,4 @@
 import datetime
-import time
 from typing import Any, BinaryIO, TypedDict
 
 import requests
@@ -62,19 +61,8 @@ class DownloadAccessor(FileAccessor.FileAccessor):
 
     def install(self) -> None:
         if not self.installed:
-            response_supposed_length = None
-            response_length = 0
-            tries = 0
-            while response_supposed_length is None or response_supposed_length != response_length:
-                with open(self.location, "wb") as f, requests.get(self.url) as response:
-                    response_length = len(response.content)
-                    response_supposed_length = int(response.headers.get("Content-Length", "0"))
-                    f.write(self.log(response).content)
-                tries += 1
-                if tries >= 5:
-                    raise Exceptions.DownloadAccessorFailError(self, self.url)
-                if response_supposed_length != response_length:
-                    time.sleep(1)
+            with open(self.location, "wb") as f, requests.get(self.url) as response:
+                f.write(self.log(response).content)
             self._installed = True
 
     def all_done(self) -> None:

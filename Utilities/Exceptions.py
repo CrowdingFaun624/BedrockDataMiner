@@ -124,25 +124,6 @@ class InvalidStateError(Exception):
 class AccessorException(Exception):
     "Abstract Exception class for errors relating to Accessors."
 
-class DownloadAccessorFailError(AccessorException):
-    "A DownloadAccessor failed to download a file."
-
-    def __init__(self, accessor:"Accessor.Accessor", url:str, file:Optional[str]=None, message:Optional[str]=None) -> None:
-        '''
-        :accessor: The Accessor that failed to download a file.
-        :url: The url from which the file comes from.
-        :file: The name of the file that could not be downloaded.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(accessor, url, file, message)
-        self.accessor = accessor
-        self.url = url
-        self.file = file
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.accessor} failed to download file{message(self.file, "", " \"%s\"")} from \"{self.url}\"{message(self.message)}"
-
 class UnrecognizedAccessorClassError(AccessorException):
     "An AccessorType is not recognized."
 
