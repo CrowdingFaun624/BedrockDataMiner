@@ -27,7 +27,6 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
             TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", True, dict),
         )),
         TypeVerifier.TypedDictKeyTypeVerifier("available_when_unreleased", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("install_location", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("must_exist", "a bool", True, bool),
     )
 
@@ -38,12 +37,10 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
         "auto_assign_dict",
         "available_when_unreleased",
         "has_auto_assign",
-        "install_location",
         "must_exist",
     )
 
     def initialize_fields(self, data: ComponentTyping.VersionFileTypeTypedDict) -> list[Field.Field]:
-        self.install_location = data["install_location"]
         self.must_exist = data["must_exist"]
         self.available_when_unreleased = data["available_when_unreleased"]
         self.has_auto_assign = "auto_assign" in data
@@ -58,7 +55,6 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
         super().create_final()
         self.final = VersionFileType.VersionFileType(
             name=self.name,
-            install_location=self.install_location,
             must_exist=self.must_exist,
             available_when_unreleased=self.available_when_unreleased,
             has_auto_assign=self.has_auto_assign,
