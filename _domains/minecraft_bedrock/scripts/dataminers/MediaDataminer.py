@@ -56,7 +56,7 @@ class MediaDataminer(FileDataminer.FileDataminer):
         return output
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
+        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
         files = self.get_files(self.location, accessor, environment)
         output = self.get_output(files, accessor, environment)
         return output

@@ -921,6 +921,23 @@ class DataminerAdditionalSerializerError(DataminerException):
     def __str__(self) -> str:
         return f"{self.dataminer_settings} provided additional Serializer key \"{self.key}\": {self.serializer} to Dataminer class \"{self.dataminer_class}\", which only supports keys [{", ".join(self.allowed_keys)}]{message(self.message)}"
 
+class DataminerCannotKnowFileTypeError(DataminerException):
+    "Attempted to access a Dataminer's VersionFileTypes with no key, but there are too many VersionFileTypes."
+
+    def __init__(self, dataminer:"Dataminer.Dataminer", count:int, message:Optional[str]=None) -> None:
+        '''
+        :dataminer: The Dataminer with too many VersionFileTypes.
+        :count: The number of VersionFileTypes.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer, count, message)
+        self.dataminer = dataminer
+        self.count = count
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Cannot know which VersionFileType {self.dataminer}.get_accessor is referring to, since there are more than 1 ({self.count}) VersionFileTypes{message(self.message)}"
+
 class DataminerCollectionFileError(DataminerException):
     "The \"files\" key in a DataminerCollection is improperly specified."
 
@@ -1005,6 +1022,21 @@ class DataminerLacksActivateError(DataminerException):
 
     def __str__(self) -> str:
         return f"{self.dataminer} is missing its activate function{message(self.message)}"
+
+class DataminerNoFileTypeError(DataminerException):
+    "A Dataminer has no linked VersionFileTypes and should."
+
+    def __init__(self, dataminer:"Dataminer.Dataminer", message:Optional[str]=None) -> None:
+        '''
+        :dataminer: The Dataminer with no VersionFileTypes specified.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(dataminer, message)
+        self.dataminer = dataminer
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.dataminer} has no VersionFileTypes; cannot access one{message(self.message)}"
 
 class DataminerNothingFoundError(DataminerException):
     "This Dataminer found nothing."

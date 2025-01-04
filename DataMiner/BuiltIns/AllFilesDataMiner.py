@@ -7,5 +7,5 @@ import Utilities.FileManager as FileManager
 class AllFilesDataminer(Dataminer.Dataminer):
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,str]:
-        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
+        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
         return {file: FileManager.get_hash_hexdigest(accessor.read(file)) for file in accessor.file_list}

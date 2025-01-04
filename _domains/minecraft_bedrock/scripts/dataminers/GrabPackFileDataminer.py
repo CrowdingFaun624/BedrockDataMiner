@@ -64,7 +64,7 @@ class GrabPackFileDataminer(FileDataminer.FileDataminer):
             return {self.insert_file_name: {pack_name: self.export_file(file_content, file_name) for (pack_name, file_name), file_content in files.items()}}
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
+        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
         packs = self.get_packs(environment)
         files = self.get_files(packs, accessor, environment)
         output = self.get_output(files, environment)

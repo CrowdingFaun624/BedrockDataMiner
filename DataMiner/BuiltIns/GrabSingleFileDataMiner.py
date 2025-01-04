@@ -32,7 +32,7 @@ class GrabSingleFileDataminer(FileDataminer.FileDataminer):
         return self.export_file(file, file_name)
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
+        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
         file, file_name = self.get_file(accessor, environment)
         file_data = self.get_output(file, file_name, environment)
         return file_data

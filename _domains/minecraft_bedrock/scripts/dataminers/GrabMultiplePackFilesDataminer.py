@@ -130,7 +130,7 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
         packs = environment.dependency_data.get(self.pack_type, self)
-        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
+        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
         files = self.get_files(packs, accessor, environment)
         output = self.get_output(files, environment)
         return output

@@ -94,7 +94,7 @@ class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
         return {relative_name: self.export_file(file_bytes, file_name) for (relative_name, file_name), file_bytes in files.items()}
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
+        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
         files = self.get_files(self.location, accessor, environment)
         output = self.get_output(files, accessor, environment)
         return output
