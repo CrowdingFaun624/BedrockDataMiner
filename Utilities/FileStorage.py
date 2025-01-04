@@ -28,10 +28,10 @@ class FileStorageIndex(Cache.LinesCache[dict[str,bool], tuple[str,bool]]):
         return {line[:40]: bool(int(line[41])) for line in data.decode("UTF8").splitlines()}
 
     def serialize(self, data: dict[str, bool]) -> bytes:
-        return ("\n".join(f"{key} {value}" for key, value in index.get().items()) + "\n").encode("UTF8")
+        return ("\n".join(f"{key} {int(value)}" for key, value in index.get().items()) + "\n").encode("UTF8")
 
     def serialize_line(self, data: tuple[str, bool]) -> str:
-        return f"{data[0]} {data[1]}\n"
+        return f"{data[0]} {int(data[1])}\n"
 
     def append_new_line(self, data: tuple[str, bool]) -> None:
         key, value = data
