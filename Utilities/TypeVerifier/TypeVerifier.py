@@ -5,7 +5,6 @@ from typing import (Any, Callable, Container, Hashable, Iterable, Mapping,
 
 import Utilities.Exceptions as Exceptions
 
-TYPE_CHECK_TYPE_VERIFIERS = False
 
 class TraceItemType(enum.Enum):
     KEY = 0
@@ -93,20 +92,7 @@ class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
             key_function:Callable[[K, V],tuple[bool,str|None]]|None=None,
             value_function:Callable[[K, V],tuple[bool,str|None]]|None=None,
             additional_function:Callable[[Mapping[K, V]],tuple[bool,str|None]]|None=None,
-            type_check:bool=True,
         ) -> None:
-        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
-            private__dict_type_verifier.base_verify({
-                "data_type": data_type,
-                "key_type": key_type,
-                "value_type": value_type,
-                "data_type_str": data_type_str,
-                "key_type_str": key_type_str,
-                "value_type_str": value_type_str,
-                "key_function": key_function,
-                "value_function": value_function,
-                "additional_function": additional_function,
-            }, ["DictTypeVerifier"])
         self.key_type = key_type
         self.key_type_is_verifier = isinstance(key_type, TypeVerifier)
         self.value_type = value_type
@@ -182,16 +168,7 @@ class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
             required:bool,
             value_type:type[V]|tuple[type[V],...]|TypeVerifier[V],
             function:Callable[[K, V],tuple[bool,str|None]]|None=None,
-            type_check:bool=True,
         ) -> None:
-        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
-            private__typed_dict_key_type_verifier.base_verify({
-                "key": key,
-                "value_str": value_str,
-                "required": required,
-                "value_type": value_type,
-                "function": function,
-            }, ["TypedDictKeyTypeVerifier"])
         self.key = key
         self.value_type = value_type
         self.value_type_is_verifier = isinstance(value_type, TypeVerifier)
@@ -239,16 +216,7 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
             data_type_str:str="a dict",
             function:Callable[[Mapping[K, V]],tuple[bool,str|None]]|None=None,
             loose:bool=False,
-            type_check:bool=True,
         ) -> None:
-        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
-            private__typed_dict_type_verifier.base_verify({
-                "keys": keys,
-                "data_type": data_type,
-                "data_type_str": data_type_str,
-                "function": function,
-                "loose": loose,
-            }, ["TypedDictTypeVerifier"])
         self.keys_dict = {key.key: key for key in keys}
         self.data_type = data_type
         self.data_type_str = data_type_str
@@ -307,17 +275,7 @@ class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
             data_type_str:str,
             item_function:Callable[[I],tuple[bool,str|None]]|None=None,
             additional_function:Callable[[Sequence[I]],tuple[bool,str|None]]|None=None,
-            type_check:bool=True,
         ) -> None:
-        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
-            private__list_type_verifier.base_verify({
-                "item_type": item_type,
-                "data_type": data_type,
-                "item_type_str": item_type_str,
-                "data_type_str": data_type_str,
-                "item_function": item_function,
-                "additional_function": additional_function,
-            }, ["ListTypeVerifier"])
         self.item_type = item_type
         self.item_type_is_verifier = isinstance(item_type, TypeVerifier)
         self.data_type = data_type
@@ -368,9 +326,8 @@ class IterableTypeVerifier[I](ListTypeVerifier):
             data_type_str:str,
             item_function:Callable[[I],tuple[bool,str|None]]|None=None,
             additional_function:Callable[[Iterable[I]],tuple[bool,str|None]]|None=None,
-            type_check:bool=True,
         ) -> None:
-        return super().__init__(item_type, cast(type[Sequence]|tuple[type[Sequence],...], data_type), item_type_str, data_type_str, item_function, additional_function, type_check)
+        return super().__init__(item_type, cast(type[Sequence]|tuple[type[Sequence],...], data_type), item_type_str, data_type_str, item_function, additional_function)
 
     def verify(self, data: Iterable[I], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
         return super().verify(cast(Sequence[I], data), trace)
@@ -387,13 +344,7 @@ class TupleItemTypeVerifier[I](TypeVerifier[tuple[int,I]]):
             self,
             item_type:type[I]|tuple[type[I],...]|TypeVerifier[I],
             item_type_str:str,
-            type_check:bool=True,
         ) -> None:
-        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
-            private__tuple_item_type_verifier.base_verify({
-                "item_type": item_type,
-                "item_type_str": item_type_str,
-            }, ["TupleItemTypeVerifier"])
         self.item_type = item_type
         self.item_type_is_verifier = isinstance(item_type, TypeVerifier)
         self.item_type_str = item_type_str
@@ -426,15 +377,7 @@ class TupleTypeVerifier[I](TypeVerifier[Sequence[I]]):
             data_type:type[Sequence]|tuple[type[Sequence],...]=tuple,
             data_type_str:str="a tuple",
             function:Callable[[Sequence[I]],tuple[bool,str|None]]|None=None,
-            type_check:bool=True,
         ) -> None:
-        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
-            private__tuple_type_verifier.base_verify({
-                "data_type": data_type,
-                "data_type_str": data_type_str,
-                "items": items,
-                "function": function
-            }, ["TupleTypeVerifier"])
         self.items = items
         self.data_type = data_type
         self.data_type_str = data_type_str
@@ -470,9 +413,7 @@ class EnumTypeVerifier[I](TypeVerifier[I]):
         "options",
     )
 
-    def __init__(self, options:Container[I], type_check:bool=True) -> None:
-        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
-            private__enum_type_verifier.base_verify({"options": options}, ["EnumTypeVerifier"])
+    def __init__(self, options:Container[I]) -> None:
         self.options = options
 
     def verify(self, data: I, trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
@@ -492,12 +433,7 @@ class UnionTypeVerifier[I](TypeVerifier[I]):
         "types_are_type_verifiers",
     )
 
-    def __init__(self, type_str:str, *types:type[I]|TypeVerifier[I]|Any, type_check:bool=True) -> None:
-        if TYPE_CHECK_TYPE_VERIFIERS and type_check:
-            private__union_type_verifier.base_verify({
-                "type_str": type_str,
-                "types": types,
-            }, ["UnionTypeVerifier"])
+    def __init__(self, type_str:str, *types:type[I]|TypeVerifier[I]|Any) -> None:
         self.types = types
         self.types_are_type_verifiers = [isinstance(type, TypeVerifier) for type in types]
         self.type_str = type_str
@@ -519,74 +455,3 @@ class UnionTypeVerifier[I](TypeVerifier[I]):
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} \"{self.type_str}\">"
-
-NoneType = type(None)
-special_type:type = type(Callable).mro()[2]|NoneType # type: ignore # you can't stop me, Python!
-cannot_be_none_function = lambda data: (data is not None, "data cannot be None!")
-cannot_be_none_key_function = lambda key, value: (value is not None, "value cannot be None!")
-
-private__dict_type_verifier = TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("data_type", "a type or tuple", True, UnionTypeVerifier("a type or tuple of types", (type, special_type), ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("key_type", "a type, tuple, or TypeVerifier", True, UnionTypeVerifier("a type, tuple of types, or TypeVerifier", (type, special_type), TypeVerifier, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("value_type", "a type, tuple, or TypeVerifier", True, UnionTypeVerifier("a type, tuple of types, or TypeVerifier", (type, special_type), TypeVerifier, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("data_type_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("key_type_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("value_type_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("key_function", "a Callable or None", True, (Callable, NoneType), type_check=False),
-    TypedDictKeyTypeVerifier("value_function", "a Callable or None", True, (Callable, NoneType), type_check=False),
-    TypedDictKeyTypeVerifier("additional_function", "a Callable or None", True, (Callable, NoneType), type_check=False),
-    type_check=False,
-)
-
-private__typed_dict_key_type_verifier = TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("key", "an object", True, object, type_check=False),
-    TypedDictKeyTypeVerifier("value_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("required", "a bool", True, bool, type_check=False),
-    TypedDictKeyTypeVerifier("value_type", "a type, tuple, or TypeVerifier", True, UnionTypeVerifier("a type, tuple of types, or TypeVerifier", type, special_type, TypeVerifier, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("function", "a Callable or None", True, (Callable, NoneType), type_check=False),
-    type_check=False,
-)
-
-private__typed_dict_type_verifier = TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("keys", "a tuple", True, ListTypeVerifier(TypedDictKeyTypeVerifier, tuple, "a TypedDictKeyTypeVerifier", "a tuple", type_check=False), type_check=False),
-    TypedDictKeyTypeVerifier("data_type", "a type or tuple", True, UnionTypeVerifier("a type or tuple of types", type, special_type, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("data_type_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("function", "a Callable or None", True, (Callable, NoneType), type_check=False),
-    TypedDictKeyTypeVerifier("loose", "a bool", True, bool),
-    type_check=False,
-)
-
-private__list_type_verifier = TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("item_type", "a type, tuple, or TypeVerifier", True, UnionTypeVerifier("a type, tuple of types, or TypeVerifier", type, special_type, TypeVerifier, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("data_type", "a type or tuple", True, UnionTypeVerifier("a type or tuple of types", type, special_type, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("item_type_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("data_type_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("item_function", "a Callable or None", True, (Callable, NoneType), type_check=False),
-    TypedDictKeyTypeVerifier("additional_function", "a Callable or None", True, (Callable, NoneType), type_check=False),
-    type_check=False,
-)
-
-private__tuple_item_type_verifier = TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("item_type", "a type, tuple, or TypeVerifier", True, UnionTypeVerifier("a type, tuple of types, or TypeVerifier", type, special_type, TypeVerifier, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("item_type_str", "a str", True, str, type_check=False),
-    type_check=False,
-)
-
-private__tuple_type_verifier = TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("data_type", "a type, tuple, or tuple", True, UnionTypeVerifier("a type, tuple of types, or TypeVerifier", type, special_type, TypeVerifier, ListTypeVerifier((type, special_type), tuple, "a type", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False), function=cannot_be_none_key_function, type_check=False),
-    TypedDictKeyTypeVerifier("data_type_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("items", "a tuple", True, ListTypeVerifier(TupleItemTypeVerifier, tuple, "a TupleItemTypeVerifier", "a tuple", type_check=False), type_check=False),
-    TypedDictKeyTypeVerifier("function", "a Callable or None", True, (Callable, NoneType), type_check=False),
-    type_check=False,
-)
-
-private__enum_type_verifier = TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("options", "a Container", True, Container, type_check=False),
-    type_check=False
-)
-
-private__union_type_verifier = TypedDictTypeVerifier(
-    TypedDictKeyTypeVerifier("type_str", "a str", True, str, type_check=False),
-    TypedDictKeyTypeVerifier("types", "a tuple", True, ListTypeVerifier((type, special_type, TypeVerifier), tuple, "a type or TypeVerifier", "a tuple", item_function=cannot_be_none_function, type_check=False), type_check=False),
-    type_check=False
-)
