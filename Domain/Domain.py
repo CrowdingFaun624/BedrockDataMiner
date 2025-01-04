@@ -8,11 +8,13 @@ import Dataminer.BuiltIns.AllFilesDataminer as AllFilesDataminer
 import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
 import Dataminer.BuiltIns.GrabReFilesDataminer as GrabReFilesDataminer
 import Dataminer.BuiltIns.GrabSingleFileDataminer as GrabSingleFileDataminer
+import Dataminer.BuiltIns.SingleFileDataminer as SingleFileDataminer
 import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
 import Dataminer.Dataminer as Dataminer
 import Downloader.Accessor as Accessor
 import Downloader.DownloadAccessor as DownloadAccessor
 import Downloader.DummyAccessor as DummyAccessor
+import Downloader.SingleDirectoryFileAccessor as SingleDirectoryFileAccessor
 import Downloader.StoredAccessor as StoredAccessor
 import Downloader.ZipAccessor as ZipAccessor
 import Serializer.CustomJsonSerializer as CustomJsonSerializer
@@ -50,6 +52,7 @@ if TYPE_CHECKING:
 BUILT_IN_ACCESSOR_CLASSES:dict[str,type[Accessor.Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
     DownloadAccessor.DownloadAccessor,
     DummyAccessor.DummyAccessor,
+    SingleDirectoryFileAccessor.SingleDirectoryFileAccessor,
     StoredAccessor.StoredAccessor,
     ZipAccessor.ZipAccessor,
 ]}
@@ -60,6 +63,7 @@ BUILT_IN_DATAMINER_CLASSES:dict[str,type[Dataminer.Dataminer]] = {dataminer_clas
     GrabMultipleFilesDataminer.GrabMultipleFilesDataminer,
     GrabReFilesDataminer.GrabReFilesDataminer,
     GrabSingleFileDataminer.GrabSingleFileDataminer,
+    SingleFileDataminer.SingleFileDataminer,
     TagSearcherDataminer.TagSearcherDataminer,
 ]}
 
