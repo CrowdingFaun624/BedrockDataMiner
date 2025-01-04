@@ -53,7 +53,7 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
     def initialize_fields(self, data: ComponentTyping.SetTypedDict) -> list[Field.Field]:
         self.sort = data.get("sort", False)
         self.min_similarity_threshold = data.get("min_similarity_threshold", SetStructure.MIN_SIMILARITY_THRESHOLD)
-        self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
+        self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 6)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
