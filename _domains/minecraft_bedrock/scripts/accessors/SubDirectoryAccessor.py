@@ -11,7 +11,7 @@ class SubDirectoryAccessor(DirectoryAccessor.DirectoryAccessor):
 
     linked_accessors = {"superdirectory": DirectoryAccessor.DirectoryAccessor}
 
-    def prepare_for_install(self, instance_arguments: dict[str, Any], class_arguments: dict[str, Any], linked_accessors: LinkedAccessorsTypedDict) -> None:
+    def prepare_for_install(self, instance_arguments: dict[str, Any], class_arguments: dict[str, Any], propagated_arguments:dict[str,Any], linked_accessors: LinkedAccessorsTypedDict) -> None:
         self.superdirectory_accessor = linked_accessors["superdirectory"]
         self.file_prepension:str
         if self.version.has_tag("ipa"):

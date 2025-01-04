@@ -1,6 +1,6 @@
 import datetime
 import time
-from typing import BinaryIO, TypedDict
+from typing import Any, BinaryIO, TypedDict
 
 import requests
 
@@ -13,12 +13,12 @@ import Utilities.TypeVerifier as TypeVerifier
 class InstanceArgumentsTypedDict(TypedDict):
     url: str
 
-class ClassArgumentsTypedDict(TypedDict):
+class PropagatedArgumentsTypedDict(TypedDict):
     location: str
 
 class DownloadAccessor(FileAccessor.FileAccessor):
 
-    class_parameters = TypeVerifier.TypedDictTypeVerifier(
+    propagated_parameters = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
     )
     
@@ -26,9 +26,9 @@ class DownloadAccessor(FileAccessor.FileAccessor):
         TypeVerifier.TypedDictKeyTypeVerifier("url", "a str", True, str),
     )
 
-    def prepare_for_install(self, instance_arguments:InstanceArgumentsTypedDict, class_arguments:ClassArgumentsTypedDict, linked_accessors:dict[str,Accessor.Accessor]) -> None:
+    def prepare_for_install(self, instance_arguments:InstanceArgumentsTypedDict, class_arguments:dict[str,Any], propagated_arguments:PropagatedArgumentsTypedDict, linked_accessors:dict[str,Accessor.Accessor]) -> None:
         version_directory = self.version.get_version_directory()
-        location = version_directory.joinpath(class_arguments["location"])
+        location = version_directory.joinpath(propagated_arguments["location"])
         if version_directory not in location.parents:
             raise Exceptions.InvalidFileLocationError(location, version_directory)
         self.location = location

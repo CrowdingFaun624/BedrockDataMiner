@@ -19,7 +19,7 @@ class StoredIndex(Cache.LinesCache[dict[str,tuple[str,bool]],None]):
 
 class StoredAccessor(DirectoryAccessor.DirectoryAccessor):
 
-    def prepare_for_install(self, instance_arguments:dict[str,Any], class_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor.Accessor"]) -> None:
+    def prepare_for_install(self, instance_arguments:dict[str,Any], class_arguments:dict[str,Any], propagated_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor.Accessor"]) -> None:
         self._file_list:list[str]|None = None
         self._file_set:set[str]|None = None
         self.index = StoredIndex(self.version)

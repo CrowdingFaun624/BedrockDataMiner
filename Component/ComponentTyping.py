@@ -13,6 +13,7 @@ class AccessorTypeTypedDict(TypedDict):
     accessor_class: Required[str]
     class_arguments: NotRequired[dict[str,Any]]
     linked_accessors: NotRequired[dict[str,"ComponentTypedDicts|str"]]
+    propagated_arguments: NotRequired[dict[str,Any]]
     type: NotRequired[Literal["AccessorType"]]
 
 ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
@@ -272,7 +273,6 @@ class VersionFileTypeTypedDict(TypedDict):
     allowed_accessor_types: Required[list[str]]
     auto_assign: NotRequired[AccessorTypedDict]
     available_when_unreleased: Required[bool]
-    install_location: Required[str]
     must_exist: Required[bool]
 
 class VersionTagOrderTypedDict(TypedDict):

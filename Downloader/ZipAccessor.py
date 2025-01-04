@@ -12,7 +12,7 @@ class ZipAccessor(DirectoryAccessor.DirectoryAccessor):
 
     linked_accessors = {"file": FileAccessor.FileAccessor}
 
-    def prepare_for_install(self, instance_arguments: dict[str, Any], class_arguments: dict[str, Any], linked_accessors:LinkedAccessorsTypedDict) -> None:
+    def prepare_for_install(self, instance_arguments: dict[str, Any], class_arguments: dict[str, Any], propagated_arguments:dict[str,Any], linked_accessors:LinkedAccessorsTypedDict) -> None:
         self.file_accessor = linked_accessors["file"]
 
         self._zip_file:zipfile.ZipFile|None = None

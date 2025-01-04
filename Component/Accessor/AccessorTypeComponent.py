@@ -5,9 +5,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.LinkedObjectsField as LinkedObjectsField
 import Component.Pattern as Pattern
-import Downloader.Accessor as Accessor
 import Downloader.AccessorType as AccessorType
-import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
 ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent"] = Pattern.Pattern([{"is_accessor_type": True}])
@@ -18,19 +16,22 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
     class_name_article = "an AccessorType"
     my_capabilities = Capabilities.Capabilities(is_accessor_type=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
+        TypeVerifier.TypedDictKeyTypeVerifier("accessor_class", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("class_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("linked_accessors", "a dict", False, TypeVerifier.DictTypeVerifier(dict, str, (str, dict), "a dict", "a str", "a str or dict")),
-        TypeVerifier.TypedDictKeyTypeVerifier("accessor_class", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("propagated_arguments", "a dict", False, dict),
     )
 
     __slots__ = (
         "accessor_class_field",
         "class_arguments",
         "linked_accessor_types_field",
+        "propagated_arguments",
     )
 
     def initialize_fields(self, data: ComponentTyping.AccessorTypeTypedDict) -> list[Field.Field]:
         self.class_arguments = data.get("class_arguments", {})
+        self.propagated_arguments = data.get("propagated_arguments", {})
 
         self.accessor_class_field = AccessorClassField.AccessorClassField(data["accessor_class"], self.domain, ["accessor_class"])
         self.linked_accessor_types_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ["linked_accessors"], allow_inline=Field.InlinePermissions.mixed, assume_type=self.class_name)
@@ -42,6 +43,7 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
         self.final = AccessorType.AccessorType(
             name=self.name,
             class_arguments=self.class_arguments,
+            propagated_arguments=self.propagated_arguments,
         )
 
     def link_finals(self) -> list[Exception]:
