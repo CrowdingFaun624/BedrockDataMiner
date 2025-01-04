@@ -1,4 +1,5 @@
-from typing import Any
+import io
+from typing import Any, BinaryIO
 
 import Downloader.Accessor as Accessor
 import Downloader.DirectoryAccessor as DirectoryAccessor
@@ -35,6 +36,9 @@ class StoredAccessor(DirectoryAccessor.DirectoryAccessor):
 
     def read(self, file_name:str) -> bytes:
         return FileStorage.read_archived(self.index.get()[file_name][0])
+
+    def open(self, file_name:str) -> BinaryIO:
+        return io.BytesIO(self.read(file_name))
 
     def all_done(self) -> None:
         self.index.forget()

@@ -1,4 +1,5 @@
 import bisect
+from typing import BinaryIO
 
 import Downloader.Accessor as Accessor
 
@@ -15,6 +16,8 @@ class DirectoryAccessor(Accessor.Accessor):
     def file_exists(self, file_name:str) -> bool: ...
 
     def read(self, file_name:str) -> bytes: ...
+
+    def open(self, file_name:str) -> BinaryIO: ...
 
     def get_files_in(self, parent:str) -> list[str]:
         '''Returns a list of all files that are within the given directory.'''

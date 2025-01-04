@@ -1,5 +1,5 @@
 import zipfile
-from typing import Any, TypedDict
+from typing import Any, BinaryIO, TypedDict
 
 import Downloader.DirectoryAccessor as DirectoryAccessor
 import Downloader.FileAccessor as FileAccessor
@@ -42,3 +42,6 @@ class ZipAccessor(DirectoryAccessor.DirectoryAccessor):
 
     def read(self, file_name:str) -> bytes:
         return self.zip_file.read(file_name)
+
+    def open(self, file_name: str) -> BinaryIO:
+        return self.zip_file.open(file_name) # type: ignore ; why is IO[bytes] not assignable to BinaryIO?????

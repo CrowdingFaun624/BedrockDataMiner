@@ -1,4 +1,4 @@
-from typing import Any, TypedDict
+from typing import Any, BinaryIO, TypedDict
 
 import Downloader.DirectoryAccessor as DirectoryAccessor
 
@@ -43,3 +43,6 @@ class SubDirectoryAccessor(DirectoryAccessor.DirectoryAccessor):
 
     def read(self, file_name:str) -> bytes:
         return self.superdirectory_accessor.read(self.modify_file_name(file_name))
+
+    def open(self, file_name) -> BinaryIO:
+        return self.superdirectory_accessor.open(self.modify_file_name(file_name))
