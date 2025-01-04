@@ -42,12 +42,3 @@ class FileDataminer(Dataminer.Dataminer):
         :environment: The DataminerEnvironment to use (for dependencies).
         '''
         ...
-
-    def get_files_in(self, accessor:DirectoryAccessor.DirectoryAccessor, parent:str) -> list[str]:
-        return accessor.get_files_in(parent)
-
-    def get_file_list(self, accessor:DirectoryAccessor.DirectoryAccessor) -> list[str]:
-        return accessor.file_list
-
-    def file_exists(self, accessor:DirectoryAccessor.DirectoryAccessor, file_name:str) -> bool:
-        return accessor.file_exists(file_name)
