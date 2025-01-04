@@ -2246,19 +2246,23 @@ class VersionTimeTravelError(VersionException):
 class VersionTimezoneError(VersionException):
     "A Version has no timezone in its time but should."
 
-    def __init__(self, version:"Version.Version", time:datetime.datetime, message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version.Version", time:datetime.datetime, version_with_timezone:"Version.Version", timezone_time:datetime.datetime, message:Optional[str]=None) -> None:
         '''
         :version: The Version without timezone info.
         :time: The time of the Version.
+        :version_with_timezone: The Version with a timezone
+        :timezone_time: The time with a timezone.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(version, time, message)
+        super().__init__(version, time, version_with_timezone, timezone_time, message)
         self.version = version
         self.time = time
+        self.version_with_timezone = version_with_timezone
+        self.timezone_time = timezone_time
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.version}'s time, {self.time.isoformat()} does not have a timezone but should{message(self.message)}"
+        return f"{self.version}'s time, {self.time.isoformat()} does not have a timezone but should because {self.version_with_timezone}'s time, {self.timezone_time.isoformat()}, does have a timezone {message(self.message)}"
 
 class VersionTopLevelError(VersionException):
     "A Version is a top-level Version but has no top-level VersionTag."

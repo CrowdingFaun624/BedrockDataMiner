@@ -112,14 +112,15 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                 if order_index >= len(ORDER): break
                 # after this while loop, `order_index` must be a value such that child.ordering_tag == or in ORDER[order_index].
         versions_without_timezone:dict[Version.Version, datetime.datetime] = {}
-        any_versions_with_timezone:bool = False
+        version_with_timezone:tuple[Version.Version, datetime.datetime]|None = None
         for version in output.values():
-            if version.time is not None and version.time.tzinfo is None:
-                versions_without_timezone[version] = version.time
-            else:
-                any_versions_with_timezone = True
-        if any_versions_with_timezone:
-            exceptions.extend(Exceptions.VersionTimezoneError(version, time) for version, time in versions_without_timezone.items())
+            if version.time is not None:
+                if version.time.tzinfo is None:
+                    versions_without_timezone[version] = version.time
+                else:
+                    version_with_timezone = (version, version.time)
+        if version_with_timezone is not None:
+            exceptions.extend(Exceptions.VersionTimezoneError(version, time, version_with_timezone[0], version_with_timezone[1]) for version, time in versions_without_timezone.items())
         else:
             for version in output.values():
                 previous_time = None
