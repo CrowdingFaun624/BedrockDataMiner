@@ -3,7 +3,7 @@ from typing import Any
 import _domains.minecraft_bedrock.scripts.dataminers.ImageDataminer as ImageDataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -34,14 +34,14 @@ class MediaDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return output
 
-    def get_files(self, path_base: str, accessor: Accessor.DirectoryAccessor, environment: DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str, str], ImageDataminer.ImageTypedDict]:
+    def get_files(self, path_base: str, accessor: DirectoryAccessor.DirectoryAccessor, environment: DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str, str], ImageDataminer.ImageTypedDict]:
         ignore_directories = [self.location + subdirectory for subdirectory in self.ignore_subdirectories] if self.ignore_subdirectories is not None else None
         files:dict[tuple[str,str],ImageDataminer.ImageTypedDict] = {(file_name.removeprefix(path_base), file_name): file_data for file_name, file_data in ImageDataminer.get_in_directory(path_base, accessor, ignore_directories).items()}
         if len(files) == 0 and not self.find_none_okay:
             raise Exceptions.DataminerNothingFoundError(self)
         return files
 
-    def get_output(self, files: dict[tuple[str, str], ImageDataminer.ImageTypedDict], accessor: Accessor.DirectoryAccessor, environment: DataminerEnvironment.DataminerEnvironment) -> dict[str, Any]:
+    def get_output(self, files: dict[tuple[str, str], ImageDataminer.ImageTypedDict], accessor: DirectoryAccessor.DirectoryAccessor, environment: DataminerEnvironment.DataminerEnvironment) -> dict[str, Any]:
         output:dict[str,Any] = {}
         for (relative_name, file_name), files_bytes in files.items():
             files_files:dict[str,File.File|Any] = {
@@ -56,7 +56,7 @@ class MediaDataminer(FileDataminer.FileDataminer):
         return output
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
         files = self.get_files(self.location, accessor, environment)
         output = self.get_output(files, accessor, environment)
         return output

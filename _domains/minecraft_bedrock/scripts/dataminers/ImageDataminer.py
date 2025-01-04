@@ -1,7 +1,7 @@
 from typing import NotRequired, TypedDict
 
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 
 
 class ImageTypedDict(TypedDict):
@@ -30,7 +30,7 @@ def coverage_in_directory(directory:str, file_set:FileDataminer.FileSet, ignore_
             output.add(json_file_path)
     return output
 
-def get_in_directory(directory:str, accessor:Accessor.DirectoryAccessor, ignore_directories:list[str]|None=None) -> dict[str,ImageTypedDict]:
+def get_in_directory(directory:str, accessor:DirectoryAccessor.DirectoryAccessor, ignore_directories:list[str]|None=None) -> dict[str,ImageTypedDict]:
     '''
     Returns dict {full_file_name: {"image": image_metadata, "json_metadata": json_metadata}}
     '''

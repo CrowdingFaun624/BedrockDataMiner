@@ -43,17 +43,17 @@ class AccessorCreator():
         self.arguments = arguments
         self.accessor:Accessor.Accessor|None = None
 
-    def create_accessor(self) -> Accessor.Accessor:
+    def create_accessor(self) -> tuple[Accessor.Accessor|None, list[Exception]]:
         if self.accessor is None:
-            self.accessor = self.accessor_type_field.get_component().get_final().create_accessor(
+            self.accessor, exceptions = self.accessor_type_field.get_component().get_final().create_accessor(
                 version=self.version_component.get_final(),
                 domain=self.domain,
                 file_type=self.version_file_component.version_file_type_field.get_component().get_final(),
-                accessor_arguments=self.arguments,
+                instance_arguments=self.arguments
             )
-            self.accessor.initialize()
-        return self.accessor
-    
+        else: exceptions = []
+        return self.accessor, exceptions
+
     def clear_variables(self) -> None:
         '''Required step for being able to remove all Components after importing is finished.'''
         del self.version_file_component
@@ -86,15 +86,10 @@ class AccessorComponent(Component.Component[AccessorCreator]):
         version_file = self.get_inline_parent()
         self.final = AccessorCreator(self.domain, cast("VersionFileComponent.VersionFileComponent", self.get_inline_parent()), cast("VersionComponent.VersionComponent", version_file.get_inline_parent()), self.accessor_type_field, self.arguments)
 
-    def check(self) -> list[Exception]:
-        exceptions = super().check()
-        trace = TypeVerifier.make_trace([self.name, self.component_group])
-        exceptions.extend(self.accessor_type_field.get_component().get_final().get_parameters().verify(self.arguments, trace))
-        return exceptions
-
     def finalize(self) -> list[Exception]:
         exceptions = super().finalize()
         final = self.get_final()
-        final.create_accessor()
+        _, new_exceptions = final.create_accessor()
+        exceptions.extend(new_exceptions)
         final.clear_variables()
         return exceptions

@@ -4,7 +4,7 @@ from typing import Any
 import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -31,7 +31,7 @@ class GrabReFilesDataminer(GrabMultipleFilesDataminer.GrabMultipleFilesDataminer
             raise Exceptions.DataminerNothingFoundError(self)
         return output
 
-    def get_files(self, accessor:Accessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
+    def get_files(self, accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
         output:dict[tuple[str,str],bytes] = {}
         for file_name in accessor.get_files_in(self.directory):
             if self.pattern.fullmatch(file_name, len(self.directory)):
@@ -42,7 +42,7 @@ class GrabReFilesDataminer(GrabMultipleFilesDataminer.GrabMultipleFilesDataminer
         return output
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
         files = self.get_files(accessor, environment)
         output = self.get_output(files, accessor, environment)
         return output

@@ -4,7 +4,7 @@ from typing import Any, Literal
 import _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer as PacksDataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -42,7 +42,7 @@ class GrabPackFileDataminer(FileDataminer.FileDataminer):
     def get_packs(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[PacksDataminer.PackTypedDict]:
         return environment.dependency_data.get(self.pack_type, self)
 
-    def get_files(self, packs:list[PacksDataminer.PackTypedDict], accessor:Accessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
+    def get_files(self, packs:list[PacksDataminer.PackTypedDict], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
         '''
         Returns a dictionary of the pack the the files are in and the file's name to the file's contents.
         '''
@@ -64,7 +64,7 @@ class GrabPackFileDataminer(FileDataminer.FileDataminer):
             return {self.insert_file_name: {pack_name: self.export_file(file_content, file_name) for (pack_name, file_name), file_content in files.items()}}
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
         packs = self.get_packs(environment)
         files = self.get_files(packs, accessor, environment)
         output = self.get_output(files, environment)

@@ -18,7 +18,6 @@ if TYPE_CHECKING:
     import Dataminer.DataminerEnvironment as DataminerEnvironment
     import Dataminer.DataminerSettings as DataminerSettings
     import Downloader.Accessor as Accessor
-    import Downloader.Manager as Manager
     import Serializer.Serializer as Serializer
     import Structure.DataPath as DataPath
     import Structure.Delegate.Delegate as Delegate
@@ -100,22 +99,22 @@ class EmptyFileError(Exception):
     def __str__(self) -> str:
         return f"A file has no bytes{message(self.message)}"
 
-class InvalidFileNameError(Exception):
-    "A string cannot be used as a file name due to invalid characters."
+class InvalidFileLocationError(Exception):
+    "A file is not in the correct directory."
 
-    def __init__(self, file_name:str, file_label:str="File", message:Optional[str]=None) -> None:
+    def __init__(self, file_location:Path, required_directory:Path, message:Optional[str]=None) -> None:
         '''
-        :file_name: The name of the file that is invalid.
-        :file_label: A string to label the file type/location with.
+        :file_location: The Path that is not in the correct directory.
+        :required_directory: The directory `file_location` must be a descendent of.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(file_name, file_label, message)
-        self.file_name = file_name
-        self.file_label = file_label
+        super().__init__(file_location, required_directory, message)
+        self.file_location = file_location
+        self.required_directory = required_directory
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.file_label} \"{self.file_name}\" cannot be created due to invalid characters{message(self.message)}"
+        return f"Path \"{self.file_location.as_posix()}\" is not in directory \"{self.required_directory}\"{message(self.message)}"
 
 class InvalidStateError(Exception):
     "The program has reached an assumedly unreachable part of the code."
@@ -125,6 +124,25 @@ class InvalidStateError(Exception):
 
 class AccessorException(Exception):
     "Abstract Exception class for errors relating to Accessors."
+
+class DownloadAccessorFailError(AccessorException):
+    "A DownloadAccessor failed to download a file."
+
+    def __init__(self, accessor:"Accessor.Accessor", url:str, file:Optional[str]=None, message:Optional[str]=None) -> None:
+        '''
+        :accessor: The Accessor that failed to download a file.
+        :url: The url from which the file comes from.
+        :file: The name of the file that could not be downloaded.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(accessor, url, file, message)
+        self.accessor = accessor
+        self.url = url
+        self.file = file
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.accessor} failed to download file{message(self.file, "", " \"%s\"")} from \"{self.url}\"{message(self.message)}"
 
 class UnrecognizedAccessorClassError(AccessorException):
     "An AccessorType is not recognized."
@@ -145,12 +163,29 @@ class UnrecognizedAccessorClassError(AccessorException):
     def __str__(self) -> str:
         return f"Accessor class \"{self.accessor_class_str}\"{f", as referenced by {self.source if self.source_str is None else self.source_str}," if not (self.source is None and self.source_str is None) else ""} does not exist{message(self.message)}"
 
+class UnrecognizedAccessorError(AccessorException):
+    "The Accessor string is not recognized."
+
+    def __init__(self, accessor_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
+        '''
+        :accessor_str: The Accessor string that does not correspond to any Accessor.
+        :source: The object attempting to reference this Accessor.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(accessor_str, source, message)
+        self.source = source
+        self.accessor_str = accessor_str
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Accessor \"{self.accessor_str}\"{message(self.source, "", ", as referenced by %s,")} does note exist{message(self.message)}"
+
 class CacheException(Exception):
     "Abstract Exception class for errors relating to Caches."
 
 class CacheCannotWriteError(CacheException):
     "Attempted to write to a Cache that cannot be written to."
-    
+
     def __init__(self, cache:"Cache.Cache", message:Optional[str]=None) -> None:
         '''
         :cache: The Cache that cannot be written to.
@@ -159,7 +194,7 @@ class CacheCannotWriteError(CacheException):
         super().__init__(cache, message)
         self.cache = cache
         self.message = message
-    
+
     def __str__(self) -> str:
         return f"{self.cache} cannot be written to{message(self.message)}"
 
@@ -180,7 +215,7 @@ class CacheDeserializeError(CacheException):
 
 class CacheFileNotFoundError(CacheException):
     "Attempted to open a Cache that has no `get_default_content` method and no existing file."
-    
+
     def __init__(self, cache:"Cache.Cache", message:Optional[str]=None) -> None:
         '''
         :cache: The Cache with no `get_default_content` method.
@@ -189,7 +224,7 @@ class CacheFileNotFoundError(CacheException):
         super().__init__(cache, message)
         self.cache = cache
         self.message = message
-    
+
     def __str__(self) -> str:
         return f"{self.cache} has no get_default_content method and its file does not exist{message(self.message)}"
 
@@ -688,25 +723,6 @@ class LinkedComponentMissingError(ComponentException):
 
     def __str__(self) -> str:
         return f"{self.component} is missing linked Component \"{self.key}\" of type \"{self.linked_type.__name__}\"{message(self.message)}"
-
-class LinkedComponentOverlapError(ComponentException):
-    "A linked Component has the same key as another linked Component."
-
-    def __init__(self, key:str, component:"Component.Component", overlapping_objects:list[Any], message:Optional[str]=None) -> None:
-        '''
-        :key: The key that overlaps.
-        :overlapping_components: The Component with overlapping keys.
-        :overlapping_objects: The objects with the same key.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(key, component, overlapping_objects, message)
-        self.key = key
-        self.component = component
-        self.overlapping_objects = overlapping_objects
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.component}'s linked object at \"{self.key}\" has multiple overlapping objects [{", ".join(repr(object) for object in self.overlapping_objects)}]{message(self.message)}"
 
 class LinkedComponentTypeError(ComponentException):
     "A linked Component's object is the wrong type."
@@ -1268,7 +1284,7 @@ class LogException(Exception):
 
 class LogInvalidFileError(LogException):
     "Attempted to create a Log with an invalid file path."
-    
+
     def __init__(self, log:"Log.Log", path:Path, message:Optional[str]=None) -> None:
         '''
         :log: The Log with the invalid file path.
@@ -1285,7 +1301,7 @@ class LogInvalidFileError(LogException):
 
 class LogWriteTypeError(LogException):
     "Attempted to write to a Log with an invalid type for the Log's LogType."
-    
+
     def __init__(self, log:"Log.Log", write_type:type, allowed_types:tuple[type,...], message:Optional[str]=None) -> None:
         '''
         :log: The Log that attempted to write to.
@@ -1298,72 +1314,16 @@ class LogWriteTypeError(LogException):
         self.write_type = write_type
         self.allowed_types = allowed_types
         self.message = message
-    
+
     def __str__(self) -> str:
         return f"Attempted to write to {self.log} using type \"{self.write_type.__name__}\" instead of types [{", ".join(f"\"{allowed_type.__name__}\"" for allowed_type in self.allowed_types)}]{message(self.message)}"
-
-class ManagerException(Exception):
-    "Abstract Exception class for errors relating to Managers."
-
-class DownloadManagerFailError(ManagerException):
-    "A DownloadManager failed to download a file."
-
-    def __init__(self, manager:"Manager.Manager", url:str, file:Optional[str]=None, message:Optional[str]=None) -> None:
-        '''
-        :manager: The Manager that failed to download a file.
-        :url: The url from which the file comes from.
-        :file: The name of the file that could not be downloaded.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(manager, url, file, message)
-        self.manager = manager
-        self.url = url
-        self.file = file
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.manager} failed to download file{message(self.file, "", " \"%s\"")} from \"{self.url}\"{message(self.message)}"
-
-class ManagerUndefinedMethodError(ManagerException):
-    "A Manager has a method that is not overridden by a subclass."
-
-    def __init__(self, manager:"Manager.Manager", function:Callable, message:Optional[str]=None) -> None:
-        '''
-        :manager: The Manager that has a method that is not overridden.
-        :function: The function that was not overridden.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(manager, function, message)
-        self.manager = manager
-        self.function = function
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Method {self.function.__name__} of {self.manager} was not overridden{message(self.message)}"
-
-class UnrecognizedManagerError(DataminerException):
-    "The Manager string is not recognized."
-
-    def __init__(self, manager_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :manager_str: The Manager string that does not correspond to any Manager.
-        :source: The object attempting to reference this Manager.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(manager_str, source, message)
-        self.source = source
-        self.manager_str = manager_str
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Manager \"{self.manager_str}\"{message(self.source, "", ", as referenced by %s,")} does note exist{message(self.message)}"
 
 class DomainException(Exception):
     "Abstract Exception class for errors relating to Domains."
 
 class LibFileNotFoundError(DomainException):
     "A lib file does not exist."
-    
+
     def __init__(self, name:str, path:Path, message:Optional[str]=None) -> None:
         '''
         :name: The file name used to access the LibFiles.
@@ -1374,13 +1334,13 @@ class LibFileNotFoundError(DomainException):
         self.name = name
         self.path = path
         self.message = message
-    
+
     def __str__(self) -> str:
         return f"Path \"{self.path.as_posix()}\", derived from \"{self.name}\", does not exist{message(self.message)}"
 
 class LibFileWrongDirectoryError(DomainException):
     "Attempted to access a lib file that is not in the correct directory."
-    
+
     def __init__(self, name:str, path:Path, correct_directory:Path, message:Optional[str]=None) -> None:
         '''
         :name: The file name used to access the LibFiles.
@@ -1393,7 +1353,7 @@ class LibFileWrongDirectoryError(DomainException):
         self.path = path
         self.correct_directory = correct_directory
         self.message = message
-    
+
     def __str__(self) -> str:
         return f"Path derived from {self.name} should be a descendent of {self.correct_directory.as_posix()}, not {self.path.as_posix()}{message(self.message)}"
 

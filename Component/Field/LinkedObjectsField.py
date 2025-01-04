@@ -11,16 +11,23 @@ import Utilities.Exceptions as Exceptions
 class LinkedObjectsField[a:Component.Component](Field.Field):
     '''A link to multiple other Components.'''
 
-    def __init__(self, subcomponents_data:dict[str,str], pattern:Pattern.Pattern[a], path:list[str|int]) -> None:
+
+    def __init__(self, subcomponents_data:dict[str,str|ComponentTyping.ComponentTypedDicts], pattern:Pattern.Pattern[a], path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.reference, assume_type:str|None=None) -> None:
         '''
-        :subcomponents_data: The names of the reference Components this Field refers to.
+        :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.
         :pattern: The Pattern used to search for Components.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
+        :assume_type: String to use as the type of an inline Component if the type key is missing from it.
         '''
         super().__init__(path)
         self.subcomponents_data = subcomponents_data
         self.subcomponents:dict[str,a]|None = None
         self.pattern = pattern
+        self.allow_inline = allow_inline
+        self.has_reference_components = False
+        self.has_inline_components = False
+        self.assume_type = assume_type
 
     def set_field(
         self,
@@ -30,11 +37,24 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         functions:dict[str,Callable],
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list[a],list[a]]:
-        self.subcomponents = {
-            key: Field.choose_component(subcomponent_data, source_component, self.pattern, components, imported_components, self.error_path, create_component_function, None)[0]
-            for key, subcomponent_data in self.subcomponents_data.items()
-        }
-        return list(self.subcomponents.values()), []
+        self.subcomponents = {}
+        inline_components:list[a] = []
+        for key, subcomponent_data in self.subcomponents_data.items():
+            subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, self.pattern, components, imported_components, self.error_path, create_component_function, self.assume_type)
+            self.has_reference_components = self.has_reference_components or not is_inline
+            self.has_inline_components = self.has_inline_components or is_inline
+            self.subcomponents[key] = subcomponent
+            if is_inline:
+                inline_components.append(subcomponent)
+        return list(self.subcomponents.values()), inline_components
+
+    def check(self, source_component:"Component.Component") -> list[Exception]:
+        exceptions:list[Exception] = super().check(source_component)
+        if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
+            exceptions.append(Exceptions.ReferenceComponentError(source_component, self))
+        if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
+            exceptions.append(Exceptions.InlineComponentError(source_component, self))
+        return exceptions
 
     def for_each[b](self, function:Callable[[str, a],b]) -> None:
         '''

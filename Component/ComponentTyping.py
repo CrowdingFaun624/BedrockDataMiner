@@ -3,7 +3,6 @@ from typing import (TYPE_CHECKING, Any, Callable, Literal, NotRequired,
 
 if TYPE_CHECKING:
     import Component.Component as Component
-    import Utilities.TypeVerifier.TypeVerifierImporter as TypeVerifierImporter
 
 class AccessorTypedDict(TypedDict):
     accessor_type: Required[str]
@@ -12,8 +11,8 @@ class AccessorTypedDict(TypedDict):
 
 class AccessorTypeTypedDict(TypedDict):
     accessor_class: Required[str]
-    manager_class: Required[str]
-    parameters: Required["TypeVerifierImporter.TypedVerifierTypedDicts"]
+    class_arguments: NotRequired[dict[str,Any]]
+    linked_accessors: NotRequired[dict[str,"ComponentTypedDicts|str"]]
     type: NotRequired[Literal["AccessorType"]]
 
 ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})

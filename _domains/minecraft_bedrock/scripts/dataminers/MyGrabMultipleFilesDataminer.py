@@ -3,7 +3,7 @@ from typing import Any
 import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.File as File
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -39,7 +39,7 @@ class MyGrabMultipleFilesDataminer(GrabMultipleFilesDataminer.GrabMultipleFilesD
         self.insert_pack = insert_pack
         self.reverse = reverse
 
-    def get_output(self, files: dict[str, bytes], accessor: Accessor.DirectoryAccessor, environment: DataminerEnvironment.DataminerEnvironment) -> dict[str, File.File|Any]:
+    def get_output(self, files: dict[str, bytes], accessor: DirectoryAccessor.DirectoryAccessor, environment: DataminerEnvironment.DataminerEnvironment) -> dict[str, File.File|Any]:
         output:dict[str,Any] = {}
         for (relative_name, file_name), file_bytes in files.items():
             file_data = self.export_file(file_bytes, file_name)

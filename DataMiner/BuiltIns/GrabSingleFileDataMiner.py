@@ -2,7 +2,7 @@ from typing import Any
 
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -23,7 +23,7 @@ class GrabSingleFileDataminer(FileDataminer.FileDataminer):
         else:
             raise Exceptions.DataminerNothingFoundError(self)
 
-    def get_file(self, accessor:Accessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> tuple[bytes, str]:
+    def get_file(self, accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> tuple[bytes, str]:
         if not accessor.file_exists(self.location):
             raise Exceptions.DataminerNothingFoundError(self)
         return accessor.read(self.location), self.location
@@ -32,7 +32,7 @@ class GrabSingleFileDataminer(FileDataminer.FileDataminer):
         return self.export_file(file, file_name)
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
         file, file_name = self.get_file(accessor, environment)
         file_data = self.get_output(file, file_name, environment)
         return file_data

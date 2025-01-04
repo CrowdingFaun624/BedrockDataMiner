@@ -11,10 +11,10 @@ import Dataminer.BuiltIns.GrabSingleFileDataminer as GrabSingleFileDataminer
 import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
 import Dataminer.Dataminer as Dataminer
 import Downloader.Accessor as Accessor
-import Downloader.DownloadManager as DownloadManager
-import Downloader.DummyManager as DummyManager
-import Downloader.Manager as Manager
-import Downloader.StoredManager as StoredManager
+import Downloader.DownloadAccessor as DownloadAccessor
+import Downloader.DummyAccessor as DummyAccessor
+import Downloader.StoredAccessor as StoredAccessor
+import Downloader.ZipAccessor as ZipAccessor
 import Serializer.CustomJsonSerializer as CustomJsonSerializer
 import Serializer.DummySerializer as DummySerializer
 import Serializer.JsonSerializer as JsonSerializer
@@ -48,9 +48,10 @@ if TYPE_CHECKING:
     import Version.VersionTag.VersionTagOrder as VersionTagOrder
 
 BUILT_IN_ACCESSOR_CLASSES:dict[str,type[Accessor.Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
-    Accessor.Accessor,
-    Accessor.DummyAccessor,
-    Accessor.SubDirectoryAccessor,
+    DownloadAccessor.DownloadAccessor,
+    DummyAccessor.DummyAccessor,
+    StoredAccessor.StoredAccessor,
+    ZipAccessor.ZipAccessor,
 ]}
 
 BUILT_IN_DATAMINER_CLASSES:dict[str,type[Dataminer.Dataminer]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
@@ -67,12 +68,6 @@ BUILT_IN_DELEGATE_CLASSES:dict[str,type[Delegate.Delegate]] = {delegate_type.__n
     DefaultDelegate.DefaultDelegate,
     DefaultBaseDelegate.DefaultBaseDelegate,
     LongStringDelegate.LongStringDelegate,
-]}
-
-BUILT_IN_MANAGER_CLASSES:dict[str,type[Manager.Manager]] = {manager_class.__name__: manager_class for manager_class in [
-    DownloadManager.DownloadManager,
-    DummyManager.DummyManager,
-    StoredManager.StoredManager,
 ]}
 
 BUILT_IN_SERIALIZER_CLASSES:dict[str,type[Serializer.Serializer]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
@@ -141,6 +136,13 @@ class Domain():
         self.versions_file              = self.assets_directory.joinpath("versions.json")
         self.versions_directory         = FileManager.VERSIONS_DIRECTORY.joinpath(name)
         self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
+        self.assets_directory.mkdir(exist_ok=True)
+        self.data_directory.mkdir(exist_ok=True)
+        self.lib_directory.mkdir(exist_ok=True)
+        self.log_directory.mkdir(exist_ok=True)
+        self.scripts_directory.mkdir(exist_ok=True)
+        self.structures_directory.mkdir(exist_ok=True)
+        self.version_tags_directory.mkdir(exist_ok=True)
         self.versions_directory.mkdir(exist_ok=True)
         self.comparisons_directory.mkdir(exist_ok=True)
 
@@ -167,7 +169,6 @@ class Domain():
         self._accessor_classes:         ScriptImporter.ScriptSet[type[Accessor.Accessor]]|None = None
         self._dataminer_classes:        ScriptImporter.ScriptSet[type[Dataminer.Dataminer]]|None = None
         self._delegate_classes:         ScriptImporter.ScriptSet[type[Delegate.Delegate]]|None = None
-        self._manager_classes:          ScriptImporter.ScriptSet[type[Manager.Manager]]|None = None
         self._serializer_classes:       ScriptImporter.ScriptSet[type[Serializer.Serializer]]|None = None
         self._version_provider_classes: ScriptImporter.ScriptSet[type[VersionProvider.VersionProvider]]|None = None
 
@@ -181,7 +182,6 @@ class Domain():
         self._accessor_classes = ScriptImporter.import_scripted_types("accessors/", self, BUILT_IN_ACCESSOR_CLASSES, Accessor.Accessor)
         self._dataminer_classes = ScriptImporter.import_scripted_types("dataminers/", self, BUILT_IN_DATAMINER_CLASSES, Dataminer.Dataminer)
         self._delegate_classes = ScriptImporter.import_scripted_types("delegates", self, BUILT_IN_DELEGATE_CLASSES, Delegate.Delegate)
-        self._manager_classes = ScriptImporter.import_scripted_types("managers/", self, BUILT_IN_MANAGER_CLASSES, Manager.Manager)
         self._serializer_classes = ScriptImporter.import_scripted_types("serializers/", self, BUILT_IN_SERIALIZER_CLASSES, Serializer.Serializer)
         self._version_provider_classes = ScriptImporter.import_scripted_types("version_providers", self, BUILT_IN_VERSION_PROVIDER_CLASSES, VersionProvider.VersionProvider)
 
@@ -245,13 +245,6 @@ class Domain():
             self.import_components()
         assert self._delegate_classes is not None
         return self._delegate_classes
-
-    @property
-    def manager_classes(self) -> ScriptImporter.ScriptSet[type[Manager.Manager]]:
-        if self._manager_classes is None:
-            self.import_components()
-        assert self._manager_classes is not None
-        return self._manager_classes
 
     @property
     def serializer_classes(self) -> ScriptImporter.ScriptSet[type[Serializer.Serializer]]:

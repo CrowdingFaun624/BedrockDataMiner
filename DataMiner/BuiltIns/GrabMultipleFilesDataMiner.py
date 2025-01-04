@@ -2,7 +2,7 @@ from typing import Any
 
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
@@ -58,7 +58,7 @@ class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return output
 
-    def get_files(self, path_base:str, accessor:Accessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
+    def get_files(self, path_base:str, accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
         files:dict[tuple[str,str],bytes] = {}
         for file_name in accessor.get_files_in(path_base):
             should_store_file = True
@@ -90,11 +90,11 @@ class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return files
 
-    def get_output(self, files:dict[tuple[str,str],bytes], accessor:Accessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,File.File|Any]:
+    def get_output(self, files:dict[tuple[str,str],bytes], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,File.File|Any]:
         return {relative_name: self.export_file(file_bytes, file_name) for (relative_name, file_name), file_bytes in files.items()}
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
         files = self.get_files(self.location, accessor, environment)
         output = self.get_output(files, accessor, environment)
         return output

@@ -1,79 +1,33 @@
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-import Downloader.Manager as Manager
+import Domain.Domain as Domain
+import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
 if TYPE_CHECKING:
     import Version.Version as Version
 
 class Accessor():
-    '''
-    Base accessor class
-    '''
 
-    def __init__(self, name:str, manager:Manager.Manager, version:"Version.Version", arguments:Any) -> None:
-        self.name = name
-        self.manager = manager
+    linked_accessors:dict[str, type["Accessor"]] = {}
+    instance_parameters:TypeVerifier.TypedDictTypeVerifier = TypeVerifier.TypedDictTypeVerifier()
+    class_parameters:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
+
+    def __init__(self, version:"Version.Version", domain:"Domain.Domain", instance_arguments:dict[str,Any], class_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
+        '''
+        :version: Version object this accessor is based on.
+        :location: File location to the directory containing extracted files.
+        '''
         self.version = version
-        self.arguments = arguments
+        self.domain = domain
+        self.prepare_for_install(instance_arguments, class_arguments, linked_accessors)
 
-    def initialize(self) -> None:
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} for {self.version.name}>"
+
+    def prepare_for_install(self, instance_arguments:dict[str,Any], class_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
+        '''Any actions that can take place before grabbing files can happen.'''
         ...
 
     def all_done(self) -> None:
-        return self.manager.all_done()
-
-class DummyAccessor(Accessor):
-    "Accessor that does nothing."
-
-    def all_done(self) -> None:
-        pass
-
-class DirectoryAccessor(Accessor):
-
-    def modify_file_name(self, file_name:str="") -> str:
-        return file_name
-
-    def trim_file_name(self, file_name:str) -> str:
-        return file_name
-
-    def install_all(self, destination:Path|None) -> None:
-        return self.manager.install_all(destination)
-
-    def file_exists(self, file_name:str) -> bool:
-        return self.manager.file_exists(self.modify_file_name(file_name))
-
-    def get_files_in(self, parent:str) -> list[str]:
-        return [self.trim_file_name(file) for file in self.manager.get_files_in(self.modify_file_name(parent)) if file[-1] != "/"]
-
-    def get_file_list(self) -> list[str]:
-        return [self.trim_file_name(file) for file in self.manager.get_files_in(self.modify_file_name()) if file[-1] != "/"]
-
-    def get_full_file_list(self) -> list[str]:
-        return self.manager.get_file_list()
-
-    def read(self, file_name:str) -> bytes:
-        return self.manager.read(self.modify_file_name(file_name))
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} id {id(self)}>"
-
-class SubDirectoryAccessor(DirectoryAccessor):
-    '''
-    Accessor for directory access that automatically adds a certain string to the beginning of all paths.
-    '''
-
-    file_prepension:str
-    '''
-    The string to prepend to incoming file names and remove from outgoing file names.
-    '''
-
-    def initialize(self) -> None:
-        super().initialize()
-        self.file_prepension = ""
-
-    def modify_file_name(self, file_name:str="") -> str:
-        return self.file_prepension + file_name
-
-    def trim_file_name(self, file_name:str) -> str:
-        return file_name[len(self.file_prepension):]
+        '''Removes all files that were created as part of the installation of this version.'''
+        ...

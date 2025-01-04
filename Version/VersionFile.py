@@ -45,7 +45,9 @@ class VersionFile():
     def get_accessors(self) -> list[Accessor.Accessor]:
         if self.accessors is None:
             raise Exceptions.AttributeNoneError("accessors", self)
-        return [accessor_creator.create_accessor() for accessor_creator in self.accessors]
+        # has potential to be None due to errors. These errors are handled
+        # elsewhere
+        return [accessor for accessor_creator in self.accessors if (accessor := accessor_creator.create_accessor()[0]) is not None]
 
     def __repr__(self) -> str:
         return f"<VersionFile {self.get_version_file_type().name} of {self.get_version().name}>"

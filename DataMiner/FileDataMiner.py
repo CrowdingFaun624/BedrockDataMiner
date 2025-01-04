@@ -3,7 +3,7 @@ from typing import Callable, Iterable
 
 import Dataminer.Dataminer as Dataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 
 location_value_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (len(value) == 0 or value.endswith("/"), "location does not end in \"/\"")
 location_item_function:Callable[[str],tuple[bool,str]] = lambda item: (len(item) == 0 or item.endswith("/"), "location does not end in \"/\"")
@@ -43,11 +43,11 @@ class FileDataminer(Dataminer.Dataminer):
         '''
         ...
 
-    def get_files_in(self, accessor:Accessor.DirectoryAccessor, parent:str) -> list[str]:
+    def get_files_in(self, accessor:DirectoryAccessor.DirectoryAccessor, parent:str) -> list[str]:
         return accessor.get_files_in(parent)
 
-    def get_file_list(self, accessor:Accessor.DirectoryAccessor) -> list[str]:
-        return accessor.get_file_list()
+    def get_file_list(self, accessor:DirectoryAccessor.DirectoryAccessor) -> list[str]:
+        return accessor.file_list
 
-    def file_exists(self, accessor:Accessor.DirectoryAccessor, file_name:str) -> bool:
+    def file_exists(self, accessor:DirectoryAccessor.DirectoryAccessor, file_name:str) -> bool:
         return accessor.file_exists(file_name)

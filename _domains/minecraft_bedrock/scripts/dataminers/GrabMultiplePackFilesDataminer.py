@@ -4,7 +4,7 @@ from typing import Any, Literal
 import _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer as PacksDataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.Accessor as Accessor
+import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier.TypeVerifier as TypeVerifier
 
@@ -75,7 +75,7 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return output
 
-    def get_files(self, packs:list[PacksDataminer.PackTypedDict], accessor:Accessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str,str],bytes]:
+    def get_files(self, packs:list[PacksDataminer.PackTypedDict], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str,str],bytes]:
         '''
         Returns a dict with of pack name, path relative to base, file name to the file's contents.
         '''
@@ -130,7 +130,7 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
         packs = environment.dependency_data.get(self.pack_type, self)
-        accessor = self.get_accessor("client", Accessor.DirectoryAccessor)
+        accessor = self.get_accessor("client", DirectoryAccessor.DirectoryAccessor)
         files = self.get_files(packs, accessor, environment)
         output = self.get_output(files, environment)
         return output
