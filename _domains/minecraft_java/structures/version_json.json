@@ -1,0 +1,273 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "file",
+        "delegate_arguments": {
+            "name": "version_json"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "id": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "time": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "releaseTime": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "minecraftArguments": {"type": "str"},
+            "minimumLauncherVersion": {"type": "int"},
+            "mainClass": {"type": "str"},
+            "complianceLevel": {"type": "int"},
+            "assets": {"type": "str"},
+            "assetIndex": {"type": "dict", "subcomponent": "asset_index"},
+            "downloads": {"type": "dict", "subcomponent": "downloads"},
+            "javaVersion": {"type": "dict", "subcomponent": "java_version"},
+            "logging": {"type": "dict", "subcomponent": "logging"},
+            "arguments": {"type": "dict", "subcomponent": "arguments"},
+            "libraries": {"type": "list", "subcomponent": "libraries"}
+        }
+    },
+    "asset_index": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "id": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "sha1": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "size": {"type": "int"},
+            "totalSize": {"type": "int"},
+            "url": {"type": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "downloads": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "delegate_arguments": {
+            "print_all": true,
+            "field": "file"
+        },
+        "keys": {
+            "client": {"type": "dict", "subcomponent": "downloads.file"},
+            "client_mappings": {"type": "dict", "subcomponent": "downloads.file"},
+            "server": {"type": "dict", "subcomponent": "downloads.file"},
+            "server_mappings": {"type": "dict", "subcomponent": "downloads.file"},
+            "windows_server": {"type": "dict", "subcomponent": "downloads.file"}
+        }
+    },
+    "downloads.file": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "url": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "sha1": {"type": "str"},
+            "size": {"type": "int"}
+        }
+    },
+    "java_version": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "component": {"type": "str"},
+            "majorVersion": {"type": "int"}
+        }
+    },
+    "logging": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "client": {"type": "dict", "subcomponent": "logging.client"}
+        }
+    },
+    "logging.client": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str"},
+            "argument": {"type": "str"},
+            "file": {"type": "dict", "subcomponent": "logging.client.file"}
+        }
+    },
+    "logging.client.file": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "id": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "url": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "sha1": {"type": "str"},
+            "size": {"type": "int"}
+        }
+    },
+    "arguments": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "game": {"type": "list", "subcomponent": "arguments.environment"},
+            "jvm": {"type": "list", "subcomponent": "arguments.environment"}
+        }
+    },
+    "arguments.environment": {
+        "type": "Sequence",
+        "types": ["str", "dict"],
+        "delegate_arguments": {
+            "field": "argument",
+            "measure_length": true
+        },
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "str": {"type": "String"},
+                "dict": "argument"
+            }
+        }
+    },
+    "argument": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "value": {"type": ["str", "list"], "subcomponent": "argument.value"},
+            "rules": {"type": "list", "subcomponent": "rules"}
+        }
+    },
+    "argument.value": {
+        "type": "Group",
+        "subcomponents": {
+            "str": {"type": "String"},
+            "list": {
+                "type": "Sequence",
+                "types": "str",
+                "delegate_arguments": {
+                    "print_flat": true,
+                    "print_all": true
+                },
+                "subcomponent": {"type": "String"}
+            }
+        }
+    },
+    "rules": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "rule",
+            "measure_length": true
+        },
+        "subcomponent": "rule"
+    },
+    "rule": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "action": {"type": "str"},
+            "features": {"type": "dict", "subcomponent": "rule.features"},
+            "os": {"type": "dict", "subcomponent": "rule.os"}
+        }
+    },
+    "rule.features": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "delegate_arguments": {
+            "field": "feature",
+            "measure_length": true
+        },
+        "keys": {
+            "is_demo_user": {"type": "bool"},
+            "has_custom_resolution": {"type": "bool"},
+            "has_quick_plays_support": {"type": "bool"},
+            "is_quick_play_singleplayer": {"type": "bool"},
+            "is_quick_play_multiplayer": {"type": "bool"},
+            "is_quick_play_realms": {"type": "bool"}
+        }
+    },
+    "rule.os": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "version": {"type": "str", "subcomponent": {"type": "String"}},
+            "arch": {"type": "str"}
+        }
+    },
+    "libraries": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "library",
+            "measure_length": true
+        },
+        "max_similarity_descendent_depth": 8,
+        "subcomponent": "library"
+    },
+    "library": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
+            "url": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
+            "downloads": {"type": "dict", "subcomponent": "library.downloads"},
+            "natives": {"type": "dict", "subcomponent": "library.natives"},
+            "extract": {"type": "dict", "subcomponent": "library.extract"},
+            "rules": {"type": "list", "subcomponent": "rules"}
+        }
+    },
+    "library.downloads": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "artifact": {"type": "dict", "subcomponent": "artifact"},
+            "classifiers": {"type": "dict", "subcomponent": "library.downloads.classifiers"}
+        }
+    },
+    "library.downloads.classifiers": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "classifier",
+            "measure_length": true
+        },
+        "subcomponent": "artifact"
+    },
+    "artifact": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "url": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
+            "path": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
+            "sha1": {"type": "str", "weight": 0},
+            "size": {"type": "int", "weight": 0}
+        }
+    },
+    "library.natives": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "windows": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
+            "osx": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
+            "linux": {"type": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}}
+        }
+    },
+    "library.extract": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "exclude": {"type": "list", "subcomponent": "library.extract.exclude"}
+        }
+    },
+    "library.extract.exclude": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "path",
+            "measure_length": true
+        },
+        "subcomponent": {"type": "String"}
+    }
+}
