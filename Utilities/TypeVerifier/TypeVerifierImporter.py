@@ -34,16 +34,6 @@ class ListTypedDict(TypedDict):
     item_type: Required["str|list[str]|TypedVerifierTypedDicts"]
     item_type_str: Required[str]
 
-class TupleItemTypedDict(TypedDict):
-    item_type: Required["str|list[str]|TypedVerifierTypedDicts"]
-    item_type_str: Required[str]
-
-class TupleTypedDict(TypedDict):
-    type: Required[Literal["Tuple"]]
-    data_type: Required[str|list[str]]
-    data_type_str: Required[str]
-    items: Required[list[TupleItemTypedDict]]
-
 class EnumTypedDict(TypedDict):
     type: Required[Literal["Enum"]]
     options: Required[list[Any]]
@@ -53,7 +43,7 @@ class UnionTypedDict(TypedDict):
     type_str: Required[str]
     types: Required[list["str|TypedVerifierTypedDicts"]]
 
-type TypedVerifierTypedDicts = DictTypedDict|TypedDictTypedDict|ListTypedDict|TupleTypedDict|EnumTypedDict|UnionTypedDict
+type TypedVerifierTypedDicts = DictTypedDict|TypedDictTypedDict|ListTypedDict|EnumTypedDict|UnionTypedDict
 
 allowed_types = {
     "bool": bool,
@@ -80,8 +70,6 @@ def type_verify_type_verifier(key:str, value:TypedVerifierTypedDicts) -> tuple[b
             exceptions = enum_type_verifier.verify(value, trace)
         case "List":
             exceptions = list_type_verifier.verify(value, trace)
-        case "Tuple":
-            exceptions = tuple_type_verifier.verify(value, trace)
         case "TypedDict":
             exceptions = typed_dict_type_verifier.verify(value, trace)
         case "Union":
@@ -182,16 +170,6 @@ def parse_list(data:ListTypedDict) -> TypeVerifier.ListTypeVerifier:
         data_type_str=data["data_type_str"],
     )
 
-def parse_tuple(data:TupleTypedDict) -> TypeVerifier.TupleTypeVerifier:
-    return TypeVerifier.TupleTypeVerifier(
-        *(TypeVerifier.TupleItemTypeVerifier(
-            item_type=parse_type_field(item["item_type"], allow_type_verifier=True),
-            item_type_str=item["item_type_str"],
-        ) for item in data["items"]),
-        data_type=parse_type_field(data["data_type"], allow_type_verifier=False),
-        data_type_str=data["data_type_str"],
-    )
-
 def parse_typed_dict(data:TypedDictTypedDict) -> TypeVerifier.TypedDictTypeVerifier:
     return TypeVerifier.TypedDictTypeVerifier(
         *(TypeVerifier.TypedDictKeyTypeVerifier(
@@ -219,8 +197,6 @@ def parse_type_verifier(data:TypedVerifierTypedDicts) -> TypeVerifier.TypeVerifi
             return parse_enum(data)
         case "List":
             return parse_list(data)
-        case "Tuple":
-            return parse_tuple(data)
         case "TypedDict":
             return parse_typed_dict(data)
         case "Union":
