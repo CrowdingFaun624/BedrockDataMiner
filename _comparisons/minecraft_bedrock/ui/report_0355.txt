@@ -682,29 +682,19 @@ Changed namespace "play":
 	Changed element "realms_world_item":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
-			Total control: 4 (+1, -1)
-			Removed control:
-				element "feed_panel_with_unread_count":
-					field "type": "panel"
-					field "size": ["100%y", "100%"]
-					field "controls":
-						control:
-							element "feed_panel":
-								field "type": "panel"
-								field "size": ["100%c - 1px", "100% + 1px"]
-								field "controls": control: element "realms_feed_button@play.realms_feed_button": field "layer": 1
-						control: element "unread_story_count@play.unread_story_count_panel": field "offset": [0, 1.5]
-			Added control:
-				element "feed_panel_with_unread_count":
-					field "type": "panel"
-					field "size": ["100%y - 1px", "100% + 1px"]
-					field "controls":
-						control:
-							element "feed_panel":
-								field "type": "panel"
-								field "size": ["100%y", "100%"]
-								field "controls": control: element "realms_feed_button@play.realms_feed_button": field "layer": 1
-						control: element "unread_story_count@play.unread_story_count_panel": field "offset": [0, 1.5]
+			Changed control:
+				Changed element "feed_panel_with_unread_count":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "feed_panel":
+								Unchanged field "type": "panel"
+								Changed field "size":
+									Changed item 0 from "100%c - 1px" to "100%y".
+									Changed item 1 from "100% + 1px" to "100%".
+					Changed field "size":
+						Changed item 0 from "100%y" to "100%y - 1px".
+						Changed item 1 from "100%" to "100% + 1px".
 	Changed element "servers_content_panel":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
@@ -742,7 +732,7 @@ Changed namespace "play":
 	Changed element "worlds_stack_panel":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
-			Total control: 24 (+4, -4)
+			Total control: 24 (+2, -2)
 			Changed control:
 				Changed element "realms_panel":
 					Unchanged field "type": "stack_panel"
@@ -757,19 +747,25 @@ Changed namespace "play":
 												binding:
 													field "binding_name": "#free_preview_realm_new_button_visible"
 													field "binding_name_override": "#visible"
-			Removed control:
-				element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
-					field "variables":
+			Changed control:
+				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
+					Changed field "$variables":
+						Total variable: 2 (+0, -0)
+						Changed variable "$label_text" from "#upgrade_legacy_text" to "playscreen.upgradeLegacyWorlds".
+					Changed field "variables":
+						Total variable: 2 (+1, -0)
+						Added variable:
+							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
+							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
+			Changed control:
+				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
+					Changed field "$variables":
+						Total variable: 1 (+0, -0)
+						Changed variable "$label_text" from "#upgrade_legacy_text" to "playscreen.upgradeLegacyWorlds".
+					Added field "variables":
 						variable:
-							field "requires": "$pre_release"
-							field "$variables": variable "$label_text": "playscreen.beta_legacy_worlds"
-					field "bindings":
-						binding:
-							field "binding_name": "#legacy_worlds_visible"
-							field "binding_name_override": "#visible"
-					field "$variables":
-						variable "$label_text": "#upgrade_legacy_text"
-						variable "$square_color": "$world_diskspace_editions_fill"
+							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
+							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
 			Removed control:
 				element "legacy_world_item_grid@play.legacy_world_item_grid":
 					field "variables":
@@ -777,30 +773,7 @@ Changed namespace "play":
 							field "requires": "$pre_release"
 							field "$variables": variable "$tts_section_header": "playscreen.beta_legacy_worlds"
 					field "$variables": variable "$tts_section_header": "#upgrade_legacy_text"
-			Removed control:
-				element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
-					field "bindings":
-						binding:
-							field "binding_name": "#beta_retail_legacy_worlds_visible"
-							field "binding_name_override": "#visible"
-					field "$variables": variable "$label_text": "#upgrade_legacy_text"
 			Removed control element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid": field "$variables": variable "$tts_section_header": "#upgrade_legacy_text".
-			Added control:
-				element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
-					field "variables":
-						variable:
-							field "requires": "$pre_release"
-							field "$variables": variable "$label_text": "playscreen.beta_legacy_worlds"
-						variable:
-							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
-							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
-					field "bindings":
-						binding:
-							field "binding_name": "#legacy_worlds_visible"
-							field "binding_name_override": "#visible"
-					field "$variables":
-						variable "$label_text": "playscreen.upgradeLegacyWorlds"
-						variable "$square_color": "$world_diskspace_editions_fill"
 			Added control:
 				element "legacy_world_item_grid@play.legacy_world_item_grid":
 					field "variables":
@@ -811,17 +784,6 @@ Changed namespace "play":
 							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
 							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
 					field "$variables": variable "$tts_section_header": "playscreen.upgradeLegacyWorlds"
-			Added control:
-				element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
-					field "variables":
-						variable:
-							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
-							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
-					field "bindings":
-						binding:
-							field "binding_name": "#beta_retail_legacy_worlds_visible"
-							field "binding_name_override": "#visible"
-					field "$variables": variable "$label_text": "playscreen.upgradeLegacyWorlds"
 			Added control:
 				element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid":
 					field "variables":
@@ -951,38 +913,21 @@ Changed namespace "realms_invite_link_settings":
 	Changed element "general_content":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
-			Total control: 18 (+1, -1)
 			Changed control:
 				Changed element "share_link_button@settings_common.action_button":
 					Changed field "$variables":
 						Total variable: 3 (+1, -0)
 						Added variable "$button_tts_name" of "realmsSettingsScreen.inviteLinkShareButtonTTS".
 			Changed control:
+				Changed element "activate_link_toggle@settings_common.option_toggle":
+					Changed field "$variables":
+						Total variable: 8 (+1, -0)
+						Added variable "$toggle_tts_header" of "realmsSettingsScreen.inviteLinkActivateTTS".
+			Changed control:
 				Changed element "remove_invite_link_button@settings_common.action_button":
 					Changed field "$variables":
 						Total variable: 3 (+1, -0)
 						Added variable "$button_tts_name" of "realmsSettingsScreen.inviteLinkRemoveButtonTTS".
-			Removed control:
-				element "activate_link_toggle@settings_common.option_toggle":
-					field "$variables":
-						variable "$tts_section_header": ""
-						variable "$option_label": "realmsSettingsScreen.inviteLinkActivate"
-						variable "$option_binding_name": "#activate_link"
-						variable "$option_enabled_binding_name": "#activate_link_enabled"
-						variable "$toggle_name": "activate_link_toggle"
-						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
-						variable "$toggle_binding_condition": "always_when_visible"
-			Added control:
-				element "activate_link_toggle@settings_common.option_toggle":
-					field "$variables":
-						variable "$tts_section_header": ""
-						variable "$option_label": "realmsSettingsScreen.inviteLinkActivate"
-						variable "$toggle_tts_header": "realmsSettingsScreen.inviteLinkActivateTTS"
-						variable "$option_binding_name": "#activate_link"
-						variable "$option_enabled_binding_name": "#activate_link_enabled"
-						variable "$toggle_name": "activate_link_toggle"
-						variable "$focus_override_right": "FOCUS_OVERRIDE_STOP"
-						variable "$toggle_binding_condition": "always_when_visible"
 	Added element "invite_link_expiration@realms_settings.label_text":
 		field "text": "#invite_link_expiration_time"
 		field "tts_override_control_value": "#invite_link_expiration_time_TTS"
@@ -1027,7 +972,6 @@ Changed namespace "realms_settings":
 	Changed element "invite_link_item_content":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
-			Total control: 3 (+1, -1)
 			Changed control:
 				Changed element "invite_link_item_state_text":
 					Unchanged field "type": "panel"
@@ -1035,74 +979,31 @@ Changed namespace "realms_settings":
 						Changed control:
 							Changed element "state_text@realms_settings.label_text":
 								Added field "tts_override_control_value" of " ".
-			Removed control:
-				element "invite_link_item_name_and_expiry_text":
-					field "type": "stack_panel"
-					field "size": ["60%", "100%"]
-					field "controls":
-						control:
-							element "name_text@realms_settings.label_text":
-								field "text": "#link_name"
-								field "size": ["100% - 8px", 10]
-								field "color": "$text_color"
-								field "bindings":
-									binding:
-										field "binding_name": "#link_name"
-										field "binding_type": "collection"
-										field "binding_collection_name": "$collection_binding_name"
-						control:
-							element "spacing_gap":
-								field "type": "panel"
-								field "size": ["100%", 2]
-						control:
-							element "expiry_text@realms_settings.label_text":
-								field "text": "#link_expiry"
-								field "size": ["100% - 8px", 10]
-								field "color": "$light_button_secondary_default_text_color"
-								field "bindings":
-									binding:
-										field "binding_name": "#link_expiry"
-										field "binding_type": "collection"
-										field "binding_collection_name": "$collection_binding_name"
-			Added control:
-				element "invite_link_item_name_and_expiry_text":
-					field "type": "stack_panel"
-					field "size": ["75%", "100%"]
-					field "controls":
-						control:
-							element "name_text@realms_settings.label_text":
-								field "text": "#link_name"
-								field "size": ["100% - 8px", 10]
-								field "color": "$text_color"
-								field "tts_override_control_value": "#link_name_TTS"
-								field "bindings":
-									binding:
-										field "binding_name": "#link_name"
-										field "binding_type": "collection"
-										field "binding_collection_name": "$collection_binding_name"
-									binding:
-										field "binding_name": "#link_name_TTS"
-										field "binding_type": "collection"
-										field "binding_collection_name": "$collection_binding_name"
-						control:
-							element "spacing_gap":
-								field "type": "panel"
-								field "size": ["100%", 2]
-						control:
-							element "expiry_text@realms_settings.label_text":
-								field "text": "#link_expiry"
-								field "size": ["100% - 8px", 10]
-								field "color": "$light_button_secondary_default_text_color"
-								field "tts_override_control_value": "#link_expiry_TTS"
-								field "bindings":
-									binding:
-										field "binding_name": "#link_expiry"
-										field "binding_type": "collection"
-										field "binding_collection_name": "$collection_binding_name"
-									binding:
+			Changed control:
+				Changed element "invite_link_item_name_and_expiry_text":
+					Unchanged field "type": "stack_panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "expiry_text@realms_settings.label_text":
+								Changed field "bindings":
+									Total binding: 2 (+1, -0)
+									Added binding:
 										field "binding_name": "#link_expiry_TTS"
 										field "binding_type": "collection"
 										field "binding_collection_name": "$collection_binding_name"
+								Added field "tts_override_control_value" of "#link_expiry_TTS".
+						Changed control:
+							Changed element "name_text@realms_settings.label_text":
+								Changed field "bindings":
+									Total binding: 2 (+1, -0)
+									Added binding:
+										field "binding_name": "#link_name_TTS"
+										field "binding_type": "collection"
+										field "binding_collection_name": "$collection_binding_name"
+								Added field "tts_override_control_value" of "#link_name_TTS".
+					Changed field "size":
+						Changed item 0 from "60%" to "75%".
+						Unchanged item 1: "100%"
 	Changed element "invite_links_section":
 		Unchanged field "type": "panel"
 		Changed field "controls":
@@ -1110,24 +1011,11 @@ Changed namespace "realms_settings":
 				Changed element "loaded_view":
 					Unchanged field "type": "stack_panel"
 					Changed field "controls":
-						Total control: 5 (+1, -1)
-						Removed control:
-							element "invite_links_info@settings_common.option_info_label":
-								field "$variables":
-									variable "$option_label": "realmsSettingsScreen.inviteLinkLabel"
-									variable "$container_size":
-										item 0: "100%"
-										item 1: "30px"
-									variable "$container_text_binding_name": "#realm_invite_links_description"
-						Added control:
-							element "invite_links_info@settings_common.option_info_label":
-								field "$variables":
-									variable "$option_label": "realmsSettingsScreen.inviteLinkLabel"
-									variable "$button_tts_header": "realmsSettingsScreen.inviteLinkLabelTTS"
-									variable "$container_size":
-										item 0: "100%"
-										item 1: "30px"
-									variable "$container_text_binding_name": "#realm_invite_links_description"
+						Changed control:
+							Changed element "invite_links_info@settings_common.option_info_label":
+								Changed field "$variables":
+									Total variable: 4 (+1, -0)
+									Added variable "$button_tts_header" of "realmsSettingsScreen.inviteLinkLabelTTS".
 Changed namespace "realms_slots":
 	Changed element "realms_stories_icon_glyph":
 		Unchanged field "type": "image"
@@ -1942,21 +1830,12 @@ Changed namespace "world_section":
 	Changed element "edu_cloud_section":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
-			Total control: 5 (+1, -1)
-			Removed control:
-				element "cloud_upload_toggle@settings_common.option_toggle":
-					field "$variables":
-						variable "$option_label": "options.cloudToggleCloudSave"
-						variable "$option_binding_name": "#cloud_upload"
-						variable "$option_enabled_binding_name": "#cloud_upload_enabled"
-						variable "$toggle_name": "cloud_upload"
-			Added control:
-				element "cloud_upload_toggle@settings_common.option_toggle":
-					field "$variables":
-						variable "$option_label": "options.cloudToggleCloudSave"
-						variable "$option_binding_name": "#edu_cloud_upload"
-						variable "$option_enabled_binding_name": "#edu_cloud_upload_enabled"
-						variable "$toggle_name": "cloud_upload"
+			Changed control:
+				Changed element "cloud_upload_toggle@settings_common.option_toggle":
+					Changed field "$variables":
+						Total variable: 4 (+0, -0)
+						Changed variable "$option_enabled_binding_name" from "#cloud_upload_enabled" to "#edu_cloud_upload_enabled".
+						Changed variable "$option_binding_name" from "#cloud_upload" to "#edu_cloud_upload".
 	Changed element "selector_pane_content":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":

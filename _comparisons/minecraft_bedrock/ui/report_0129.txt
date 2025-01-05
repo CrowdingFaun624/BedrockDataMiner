@@ -488,6 +488,9 @@ Changed namespace "chat":
 					field "color": "$title_text_color"
 					field "layer": 2
 	Changed element "text_edit_box@common.text_edit_box":
+		Changed field "$variables":
+			Total variable: 7 (+0, -0)
+			Changed variable "$focus_override_left" from "host_main_button_focus_id" to "chat_settings_button_focus_id".
 		Changed field "button_mappings":
 			Total button mapping: 17 (+0, -2)
 			Removed button mapping:
@@ -504,9 +507,6 @@ Changed namespace "chat":
 				field "handle_deselect": false
 				field "mapping_type": "global"
 				field "ignored": "(not $is_publish)"
-		Changed field "$variables":
-			Total variable: 7 (+0, -0)
-			Changed variable "$focus_override_left" from "host_main_button_focus_id" to "chat_settings_button_focus_id".
 	Changed element "title_text":
 		Unchanged field "type": "panel"
 		Changed field "controls":
@@ -1343,23 +1343,20 @@ Changed namespace "chat_settings":
 	Moved element "typeface_dropdown@settings_common.option_dropdown" to "typeface_dropdown@settings_common.option_dropdown_no_scroll".
 	Changed element "typeface_dropdown@settings_common.option_dropdown_no_scroll":
 		Changed field "$variables":
-			Total variable: 10 (+2, -3)
+			Total variable: 10 (+1, -2)
 			Changed variable "$options_dropdown_label_bindings":
 				Changed item 1:
 					Changed field "binding_name" from "#chat_font_type" to "$options_dropdown_toggle_label_font_type".
 			Changed variable "$options_dropdown_toggle_label_binding" from "#chat_typeface_dropdown_toggle_label" to "#chat_typeface_dropdown_label".
+			Moved variable "$dropdown_scroll_content_size" to "$options_dropdown_toggle_button_state_content".
+			Changed variable "$options_dropdown_toggle_button_state_content":
+				Changed item 1 from "145%" to "100%".
 			Changed variable "$dropdown_area" from "font_content" to "chat_settings_content_area".
-			Removed variable "$dropdown_scroll_content_size":
-				item 0: "100%"
-				item 1: "145%"
 			Removed variable "$focus_override_right" of "FOCUS_OVERRIDE_STOP".
 			Removed variable "$focus_override_left" of "FOCUS_OVERRIDE_STOP".
 			Added variable "$option_dropdown_size":
 				item 0: "100%"
 				item 1: 22
-			Added variable "$options_dropdown_toggle_button_state_content":
-				item 0: "100%"
-				item 1: "100%"
 	Added element "typeface_dropdown_content":
 		field "type": "stack_panel"
 		field "size": ["100%", "100%c"]
@@ -2298,7 +2295,6 @@ Changed namespace "course":
 			control: element "active_lesson_link_to_more_panel@course.active_lesson_link_to_more_panel": empty
 	Changed element "active_lesson_not_started_panel@course.active_lesson_button_panel":
 		Changed field "controls":
-			Total control: 8 (+1, -1)
 			Changed control:
 				Changed element "start_button@course.active_lesson_button":
 					Changed field "bindings":
@@ -2306,27 +2302,16 @@ Changed namespace "course":
 						Added binding:
 							field "binding_name": "#is_active_lesson_enabled"
 							field "binding_name_override": "#enabled"
-			Removed control:
-				element "host_button@course.active_lesson_button":
-					field "bindings":
-						binding:
-							field "binding_name": "#is_active_lesson_multiplayer"
-							field "binding_name_override": "#visible"
-					field "$variables":
-						variable "$pressed_button_name": "button.active_lesson.start"
-						variable "$button_text": "course.edu.hostButton"
-			Added control:
-				element "host_button@course.active_lesson_button":
-					field "bindings":
-						binding:
-							field "binding_name": "#is_active_lesson_multiplayer"
-							field "binding_name_override": "#visible"
-						binding:
+			Changed control:
+				Changed element "host_button@course.active_lesson_button":
+					Changed field "$variables":
+						Total variable: 2 (+0, -0)
+						Changed variable "$pressed_button_name" from "button.active_lesson.start" to "button.active_lesson.host".
+					Changed field "bindings":
+						Total binding: 2 (+1, -0)
+						Added binding:
 							field "binding_name": "#is_active_lesson_enabled"
 							field "binding_name_override": "#enabled"
-					field "$variables":
-						variable "$pressed_button_name": "button.active_lesson.host"
-						variable "$button_text": "course.edu.hostButton"
 		Changed field "$variables":
 			Changed variable "$visibility_condition":
 				Changed item 1:
@@ -4887,59 +4872,20 @@ Changed namespace "game_tip":
 	Changed element "inventory_tip_horizontal_panel":
 		Unchanged field "type": "panel"
 		Changed field "controls":
-			Total control: 1 (+1, -1)
-			Removed control:
-				element "inventory_tip@game_tip.game_tip_item_background":
-					field "variables":
-						variable:
-							field "requires": "($left_enabled)"
-							field "$variables":
-								variable "$offset":
-									item 0: 50
-									item 1: 0
-						variable:
-							field "requires": "($right_enabled)"
-							field "$variables":
-								variable "$offset":
-									item 0: -50
-									item 1: 0
-						variable:
+			Changed control:
+				Changed element "inventory_tip@game_tip.game_tip_item_background":
+					Changed field "$variables":
+						Total variable: 8 (+1, -0)
+						Added variable "$is_hotbar_tip|default" of false.
+					Changed field "variables":
+						Total variable: 7 (+2, -2)
+						Removed variable:
 							field "requires": "($is_recipe and $pocket_screen)"
 							field "$variables":
 								variable "$offset":
 									item 0: 55
 									item 1: 0
-						variable:
-							field "requires": "($is_recipe_book_tip)"
-							field "$variables":
-								variable "$tip_max_size":
-									item 0: 106
-									item 1: "default"
-								variable "$tip_min_size":
-									item 0: 106
-									item 1: "default"
-								variable "$offset":
-									item 0: 54
-									item 1: 0
-						variable:
-							field "requires": "($is_recipe_book_tip and $pocket_screen)"
-							field "$variables":
-								variable "$tip_max_size":
-									item 0: 76
-									item 1: "default"
-								variable "$tip_min_size":
-									item 0: 76
-									item 1: "default"
-								variable "$offset":
-									item 0: 50
-									item 1: 0
-						variable:
-							field "requires": "$is_close"
-							field "$variables":
-								variable "$tip_max_size":
-									item 0: 155
-									item 1: "default"
-						variable:
+						Removed variable:
 							field "requires": "(($is_close or $is_recipe) and $pocket_screen)"
 							field "$variables":
 								variable "$tip_max_size":
@@ -4948,71 +4894,13 @@ Changed namespace "game_tip":
 								variable "$tip_min_size":
 									item 0: 110
 									item 1: "default"
-					field "offset": "$offset"
-					field "$variables":
-						variable "$fill_alpha": 1.0
-						variable "$left_enabled|default": false
-						variable "$right_enabled|default": false
-						variable "$is_close|default": false
-						variable "$is_recipe|default": false
-						variable "$tip_min_size":
-							item 0: 110
-							item 1: "default"
-						variable "$offset|default":
-							item 0: 0
-							item 1: 0
-			Added control:
-				element "inventory_tip@game_tip.game_tip_item_background":
-					field "variables":
-						variable:
-							field "requires": "($left_enabled)"
-							field "$variables":
-								variable "$offset":
-									item 0: 50
-									item 1: 0
-						variable:
-							field "requires": "($right_enabled)"
-							field "$variables":
-								variable "$offset":
-									item 0: -50
-									item 1: 0
-						variable:
+						Added variable:
 							field "requires": "(($is_recipe or $is_equipment_tab_tip) and $pocket_screen)"
 							field "$variables":
 								variable "$offset":
 									item 0: 55
 									item 1: 0
-						variable:
-							field "requires": "($is_recipe_book_tip)"
-							field "$variables":
-								variable "$tip_max_size":
-									item 0: 106
-									item 1: "default"
-								variable "$tip_min_size":
-									item 0: 106
-									item 1: "default"
-								variable "$offset":
-									item 0: 54
-									item 1: 0
-						variable:
-							field "requires": "($is_recipe_book_tip and $pocket_screen)"
-							field "$variables":
-								variable "$tip_max_size":
-									item 0: 76
-									item 1: "default"
-								variable "$tip_min_size":
-									item 0: 76
-									item 1: "default"
-								variable "$offset":
-									item 0: 50
-									item 1: 0
-						variable:
-							field "requires": "$is_close"
-							field "$variables":
-								variable "$tip_max_size":
-									item 0: 155
-									item 1: "default"
-						variable:
+						Added variable:
 							field "requires": "(($is_close or $is_recipe or $is_equipment_tab_tip) and $pocket_screen)"
 							field "$variables":
 								variable "$tip_max_size":
@@ -5021,20 +4909,6 @@ Changed namespace "game_tip":
 								variable "$tip_min_size":
 									item 0: 110
 									item 1: "default"
-					field "offset": "$offset"
-					field "$variables":
-						variable "$fill_alpha": 1.0
-						variable "$left_enabled|default": false
-						variable "$right_enabled|default": false
-						variable "$is_close|default": false
-						variable "$is_recipe|default": false
-						variable "$is_hotbar_tip|default": false
-						variable "$tip_min_size":
-							item 0: 110
-							item 1: "default"
-						variable "$offset|default":
-							item 0: 0
-							item 1: 0
 	Added element "open_search_tab_factory":
 		field "type": "panel"
 		field "factory":
@@ -6561,15 +6435,22 @@ Changed namespace "play":
 					Unchanged field "type": "stack_panel"
 					Changed field "controls":
 						Changed control:
-							Changed element "switch_find_cross_platform_friend_button@play.add_friend_button":
-								Changed field "ignored" from "(not $nx_os)" to "(not $nx_os and not $is_berwick)".
-						Changed control:
 							Changed element "no_friends_grid_message@play.label_content_template":
 								Changed field "variables":
 									Total variable: 2 (+1, -0)
 									Added variable:
 										field "requires": "$is_berwick"
 										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
+						Changed control:
+							Changed element "friends_grid@play.label_content_template":
+								Changed field "variables":
+									Total variable: 2 (+1, -0)
+									Added variable:
+										field "requires": "$is_berwick"
+										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
+						Changed control:
+							Changed element "switch_find_cross_platform_friend_button@play.add_friend_button":
+								Changed field "ignored" from "(not $nx_os)" to "(not $nx_os and not $is_berwick)".
 						Changed control:
 							Changed element "no_cross_platform_friends_grid_message@play.label_content_template":
 								Changed field "ignored" from "(not $nx_os)" to "(not $nx_os and not $is_berwick)".
@@ -6580,13 +6461,6 @@ Changed namespace "play":
 							Changed element "add_friend_button_padding":
 								Unchanged field "type": "panel"
 								Changed field "ignored" from "(not $nx_os)" to "(not $nx_os and not $is_berwick)".
-						Changed control:
-							Changed element "friends_grid@play.label_content_template":
-								Changed field "variables":
-									Total variable: 2 (+1, -0)
-									Added variable:
-										field "requires": "$is_berwick"
-										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
 	Changed element "play_screen_panel@play.common_play_screen_panel":
 		Changed field "controls":
 			Total control: 6 (+1, -1)

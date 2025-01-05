@@ -1307,9 +1307,6 @@ Changed namespace "play":
 					Unchanged field "type": "stack_panel"
 					Changed field "controls":
 						Changed control:
-							Changed element "switch_find_cross_platform_friend_button@play.add_friend_button":
-								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
-						Changed control:
 							Changed element "no_friends_grid_message@play.label_content_template":
 								Changed field "variables":
 									Total variable: 2 (+1, -1)
@@ -1320,16 +1317,6 @@ Changed namespace "play":
 										field "requires": "$is_ps4"
 										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
 						Changed control:
-							Changed element "no_cross_platform_friends_grid_message@play.label_content_template":
-								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
-						Changed control:
-							Changed element "cross_platform_friends_grid@play.label_content_template":
-								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
-						Changed control:
-							Changed element "add_friend_button_padding":
-								Unchanged field "type": "panel"
-								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
-						Changed control:
 							Changed element "friends_grid@play.label_content_template":
 								Changed field "variables":
 									Total variable: 2 (+1, -1)
@@ -1339,6 +1326,19 @@ Changed namespace "play":
 									Added variable:
 										field "requires": "$is_ps4"
 										field "$variables": variable "$label_content_label": "networkWorld.joinable_berwick_friends_label"
+						Changed control:
+							Changed element "switch_find_cross_platform_friend_button@play.add_friend_button":
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+						Changed control:
+							Changed element "no_cross_platform_friends_grid_message@play.label_content_template":
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+						Changed control:
+							Changed element "cross_platform_friends_grid@play.label_content_template":
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
+						Changed control:
+							Changed element "add_friend_button_padding":
+								Unchanged field "type": "panel"
+								Changed field "ignored" from "(not $nx_os and not $is_berwick)" to "(not $nx_os and not $is_ps4)".
 	Added element "games_factory_object":
 		field "type": "stack_panel"
 		field "orientation": "vertical"
@@ -2115,53 +2115,60 @@ Changed namespace "play":
 		Added field "size" of ["100% - 4px", "100% - 4px"].
 	Changed element "server_scroll_panel@play.common_scroll_pane":
 		Changed field "controls":
-			Total control: 1 (+1, -1)
-			Removed control:
-				element "stack_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["100%", "100%c + 1px"]
-					field "controls":
-						control:
-							element "padding_0":
-								field "ignored": "$ignore_add_servers"
-								field "visible": "(not $is_console)"
-								field "type": "panel"
-								field "size": ["100%", 2]
-						control:
-							element "add_server_button@play.add_server_button":
-								field "ignored": "$ignore_add_servers"
-								field "visible": "(not $is_console)"
-								field "size": ["100%", 30]
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-						control:
-							element "padding_1":
-								field "type": "panel"
-								field "size": ["100%", 2]
-								field "ignored": "$education_edition"
-						control: element "servers_crossplatform_disabled_panel@play.crossplatform_disabled_panel": field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.servers"
-						control: element "servers_crossplatform_disable_spacer@play.crossplatform_disable_spacer": empty
-						control:
-							element "featured_servers_panel":
-								field "type": "stack_panel"
-								field "size": ["100%", "100%c"]
-								field "controls":
-									control:
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel"
+					Changed field "size":
+						Changed item 0 from "100%" to "100%- 3px".
+						Unchanged item 1: "100%c + 1px"
+					Changed field "controls":
+						Total control: 9 (+5, -6)
+						Changed control:
+							Changed element "more_servers_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Total control: 6 (+4, -1)
+									Changed control:
+										Changed element "padding_3":
+											Unchanged field "type": "panel"
+											Changed field "size":
+												Unchanged item 0: "100%"
+												Changed item 1 from 2 to 4.
+									Removed control:
+										element "more_servers_label@play.world_list_label_panel":
+											field "bindings":
+												binding:
+													field "binding_name": "#servers_grid_visible"
+													field "binding_name_override": "#visible"
+											field "$variables": variable "$label_text": "$tts_section_header"
+									Added control element "more_servers_divider@common.horizontal_divider": empty.
+									Added control:
+										element "padding_0":
+											field "type": "panel"
+											field "size": ["100%", 2]
+									Added control:
+										element "more_servers_label@common.minecraftTenLabel":
+											field "size": ["default", "default"]
+											field "text": "thirdPartyWorld.Additional"
+											field "color": "$dark_button_default_text_color"
+											field "bindings":
+												binding:
+													field "binding_name": "#is_additional_server_label_visible"
+													field "binding_name_override": "#visible"
+									Added control:
+										element "padding_1":
+											field "type": "panel"
+											field "size": ["100%", 2]
+						Changed control:
+							Changed element "featured_servers_panel":
+								Unchanged field "type": "stack_panel"
+								Changed field "controls":
+									Total control: 4 (+1, -2)
+									Removed control:
 										element "third_party_featured_label@play.world_list_label_panel":
 											field "ignored": "$education_edition"
 											field "$variables": variable "$label_text": "$third_party_featured_servers"
-									control:
-										element "loading_featured_panel@play.label_background":
-											field "size": ["100%", 40]
-											field "controls":
-												control: element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
-												control: element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
-											field "bindings":
-												binding:
-													field "binding_name": "#loading_servers_progress_visible"
-													field "binding_name_override": "#visible"
-									control:
+									Removed control:
 										element "featured_server_message_panel@play.label_background":
 											field "size": ["100%", "100%c + 4px"]
 											field "controls":
@@ -2173,17 +2180,41 @@ Changed namespace "play":
 												binding:
 													field "binding_name": "#feature_server_message_visible"
 													field "binding_name_override": "#visible"
-									control: element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
-									control:
-										element "padding_2":
+									Added control:
+										element "padding_1":
 											field "type": "panel"
 											field "size": ["100%", 2]
-								field "bindings":
-									binding:
+								Changed field "bindings":
+									Total binding: 1 (+1, -1)
+									Removed binding:
 										field "binding_name": "(#is_network_available_and_multiplayer_visible or $ignore_3rd_party_servers)"
 										field "binding_name_override": "#visible"
-								field "$variables": variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
-						control:
+									Added binding:
+										field "binding_name": "#featured_servers_visible_and_available"
+										field "binding_name_override": "#visible"
+								Added field "ignored" of "$ignore_3rd_party_servers".
+						Changed control:
+							Changed element "padding_1":
+								Unchanged field "type": "panel"
+								Changed field "size":
+									Unchanged item 0: "100%"
+									Changed item 1 from 2 to 3.
+								Removed field "ignored" of "$education_edition".
+						Removed control:
+							element "padding_0":
+								field "ignored": "$ignore_add_servers"
+								field "visible": "(not $is_console)"
+								field "type": "panel"
+								field "size": ["100%", 2]
+						Removed control:
+							element "add_server_button@play.add_server_button":
+								field "ignored": "$ignore_add_servers"
+								field "visible": "(not $is_console)"
+								field "size": ["100%", 30]
+								field "anchor_from": "top_left"
+								field "anchor_to": "top_left"
+						Removed control element "servers_crossplatform_disable_spacer@play.crossplatform_disable_spacer": empty.
+						Removed control:
 							element "no_featured_server_connection@play.label_content_template":
 								field "ignored": "(not $is_berwick)"
 								field "bindings":
@@ -2197,7 +2228,7 @@ Changed namespace "play":
 									variable "$information_panel_label_text_binding_type": "global"
 									variable "$information_panel_label_text_binding_condition": "always_when_visible"
 									variable "$tts_section_header": "$label_content_label"
-						control:
+						Removed control:
 							element "featured_server_multiplayer_blocked_panel@play.label_content_template":
 								field "visible": false
 								field "ignored": "$ignore_3rd_party_servers"
@@ -2212,34 +2243,7 @@ Changed namespace "play":
 									variable "$information_panel_label_text_binding_type": "global"
 									variable "$information_panel_label_text_binding_condition": "always_when_visible"
 									variable "$tts_section_header": "$label_content_label"
-						control:
-							element "more_servers_panel":
-								field "type": "stack_panel"
-								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
-								field "size": ["100%", "100%c"]
-								field "bindings":
-									binding:
-										field "binding_name": "#is_network_available_and_multiplayer_visible"
-										field "binding_name_override": "#visible"
-								field "controls":
-									control:
-										element "more_servers_label@play.world_list_label_panel":
-											field "bindings":
-												binding:
-													field "binding_name": "#servers_grid_visible"
-													field "binding_name_override": "#visible"
-											field "$variables": variable "$label_text": "$tts_section_header"
-									control: element "more_servers_grid@play.more_servers_grid": empty
-									control:
-										element "padding_3":
-											field "type": "panel"
-											field "size": ["100%", 2]
-											field "bindings":
-												binding:
-													field "binding_name": "#servers_grid_visible"
-													field "binding_name_override": "#visible"
-								field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
-						control:
+						Removed control:
 							element "server_multiplayer_privileges_blocked@play.label_content_template":
 								field "visible": false
 								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
@@ -2254,20 +2258,11 @@ Changed namespace "play":
 									variable "$information_panel_label_text_binding_type": "global"
 									variable "$information_panel_label_text_binding_condition": "always_when_visible"
 									variable "$tts_section_header": "$label_content_label"
-			Added control:
-				element "stack_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["100%- 3px", "100%c + 1px"]
-					field "anchor_from": "top_right"
-					field "anchor_to": "top_right"
-					field "controls":
-						control:
+						Added control:
 							element "padding_0":
 								field "type": "panel"
 								field "size": ["100%", 3]
-						control: element "servers_crossplatform_disabled_panel@play.crossplatform_disabled_panel": field "$variables": variable "$cross_platform_information_text": "crossPlatformToggle.crossPlatformDisabled.servers"
-						control:
+						Added control:
 							element "no_featured_server_connection@play.information_panel":
 								field "ignored": "(not $is_ps4)"
 								field "bindings":
@@ -2279,7 +2274,7 @@ Changed namespace "play":
 									variable "$information_panel_label_text": "#internet_connection_text"
 									variable "$information_panel_label_text_binding_type": "global"
 									variable "$information_panel_label_text_binding_condition": "always_when_visible"
-						control:
+						Added control:
 							element "server_multiplayer_privileges_blocked@play.information_panel":
 								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
 								field "bindings":
@@ -2291,84 +2286,14 @@ Changed namespace "play":
 									variable "$information_panel_label_text": "#multiplayer_blocked_text"
 									variable "$information_panel_label_text_binding_type": "global"
 									variable "$information_panel_label_text_binding_condition": "always_when_visible"
-						control:
-							element "padding_1":
-								field "type": "panel"
-								field "size": ["100%", 3]
-						control:
-							element "featured_servers_panel":
-								field "type": "stack_panel"
-								field "size": ["100%", "100%c"]
-								field "ignored": "$ignore_3rd_party_servers"
-								field "controls":
-									control:
-										element "loading_featured_panel@play.label_background":
-											field "size": ["100%", 40]
-											field "controls":
-												control: element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
-												control: element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
-											field "bindings":
-												binding:
-													field "binding_name": "#loading_servers_progress_visible"
-													field "binding_name_override": "#visible"
-									control:
-										element "padding_1":
-											field "type": "panel"
-											field "size": ["100%", 2]
-									control: element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
-									control:
-										element "padding_2":
-											field "type": "panel"
-											field "size": ["100%", 2]
-								field "bindings":
-									binding:
-										field "binding_name": "#featured_servers_visible_and_available"
-										field "binding_name_override": "#visible"
-								field "$variables": variable "$third_party_featured_servers": "thirdPartyWorld.Featured"
-						control:
-							element "more_servers_panel":
-								field "type": "stack_panel"
-								field "ignored": "($ignore_add_servers or $ignore_3rd_party_servers)"
-								field "size": ["100%", "100%c"]
-								field "bindings":
-									binding:
-										field "binding_name": "#is_network_available_and_multiplayer_visible"
-										field "binding_name_override": "#visible"
-								field "controls":
-									control: element "more_servers_divider@common.horizontal_divider": empty
-									control:
-										element "padding_0":
-											field "type": "panel"
-											field "size": ["100%", 2]
-									control:
-										element "more_servers_label@common.minecraftTenLabel":
-											field "size": ["default", "default"]
-											field "text": "thirdPartyWorld.Additional"
-											field "color": "$dark_button_default_text_color"
-											field "bindings":
-												binding:
-													field "binding_name": "#is_additional_server_label_visible"
-													field "binding_name_override": "#visible"
-									control:
-										element "padding_1":
-											field "type": "panel"
-											field "size": ["100%", 2]
-									control: element "more_servers_grid@play.more_servers_grid": empty
-									control:
-										element "padding_3":
-											field "type": "panel"
-											field "size": ["100%", 4]
-											field "bindings":
-												binding:
-													field "binding_name": "#servers_grid_visible"
-													field "binding_name_override": "#visible"
-								field "$variables": variable "$tts_section_header": "networkWorld.more_servers"
-						control: element "add_server_button@play.add_server_toggle_button": empty
-						control:
+						Added control element "add_server_button@play.add_server_toggle_button": empty.
+						Added control:
 							element "focus_reset_input_panel":
 								field "type": "input_panel"
 								field "focus_enabled": true
 								field "size": ["100%", 4]
+					Added field "anchor_from" of "top_right".
+					Added field "anchor_to" of "top_right".
 	Added element "small_progress_panel@progress.progress_loading_bars":
 		field "size": [20, 10]
 		field "layer": 5

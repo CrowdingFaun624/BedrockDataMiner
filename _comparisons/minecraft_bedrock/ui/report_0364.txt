@@ -387,21 +387,20 @@ Changed namespace "play":
 	Changed element "realms_world_content_status_area_panel":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
-			Total control: 3 (+2, -1)
-			Removed control:
-				element "world_player_count_text_panel":
-					field "type": "panel"
-					field "size": ["100%c", "100%"]
-					field "controls":
-						control:
+			Total control: 3 (+1, -0)
+			Changed control:
+				Changed element "world_player_count_text_panel":
+					Unchanged field "type": "panel"
+					Changed field "size":
+						Unchanged item 0: "100%c"
+						Changed item 1 from "100%" to "100%c".
+					Changed field "controls":
+						Total control: 1 (+1, -1)
+						Removed control:
 							element "realms_world_player_count@play.realms_world_player_count":
 								field "anchor_from": "left_middle"
 								field "anchor_to": "left_middle"
-			Added control:
-				element "world_player_count_text_panel":
-					field "type": "panel"
-					field "size": ["100%c", "100%c"]
-					field "controls": control: element "realms_world_player_count@play.realms_world_player_count": empty
+						Added control element "realms_world_player_count@play.realms_world_player_count": empty.
 			Added control:
 				element "padding":
 					field "type": "panel"
@@ -436,29 +435,19 @@ Changed namespace "play":
 	Changed element "realms_world_item":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
-			Total control: 4 (+1, -1)
-			Removed control:
-				element "feed_panel_with_unread_count":
-					field "type": "panel"
-					field "size": ["100%y", "100%"]
-					field "controls":
-						control:
-							element "feed_panel":
-								field "type": "panel"
-								field "size": ["100%c - 1px", "100% + 1px"]
-								field "controls": control: element "realms_feed_button@play.realms_feed_button": field "layer": 1
-						control: element "unread_story_count@play.unread_story_count_panel": field "offset": [0, 1.5]
-			Added control:
-				element "feed_panel_with_unread_count":
-					field "type": "panel"
-					field "size": ["100%y - 1px", "100% + 1px"]
-					field "controls":
-						control:
-							element "feed_panel":
-								field "type": "panel"
-								field "size": ["100%y", "100%"]
-								field "controls": control: element "realms_feed_button@play.realms_feed_button": field "layer": 1
-						control: element "unread_story_count@play.unread_story_count_panel": field "offset": [0, 1.5]
+			Changed control:
+				Changed element "feed_panel_with_unread_count":
+					Unchanged field "type": "panel"
+					Changed field "controls":
+						Changed control:
+							Changed element "feed_panel":
+								Unchanged field "type": "panel"
+								Changed field "size":
+									Changed item 0 from "100%c - 1px" to "100%y".
+									Changed item 1 from "100% + 1px" to "100%".
+					Changed field "size":
+						Changed item 0 from "100%y" to "100%y - 1px".
+						Changed item 1 from "100%" to "100% + 1px".
 	Changed element "realms_world_player_count@play.world_list_text":
 		Changed field "size":
 			Unchanged item 0: "default"
@@ -510,7 +499,7 @@ Changed namespace "play":
 	Changed element "worlds_stack_panel":
 		Unchanged field "type": "stack_panel"
 		Changed field "controls":
-			Total control: 24 (+4, -4)
+			Total control: 24 (+2, -2)
 			Changed control:
 				Changed element "realms_panel":
 					Unchanged field "type": "stack_panel"
@@ -525,19 +514,25 @@ Changed namespace "play":
 												binding:
 													field "binding_name": "#free_preview_realm_new_button_visible"
 													field "binding_name_override": "#visible"
-			Removed control:
-				element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
-					field "variables":
+			Changed control:
+				Changed element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
+					Changed field "$variables":
+						Total variable: 2 (+0, -0)
+						Changed variable "$label_text" from "#upgrade_legacy_text" to "playscreen.upgradeLegacyWorlds".
+					Changed field "variables":
+						Total variable: 2 (+1, -0)
+						Added variable:
+							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
+							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
+			Changed control:
+				Changed element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
+					Changed field "$variables":
+						Total variable: 1 (+0, -0)
+						Changed variable "$label_text" from "#upgrade_legacy_text" to "playscreen.upgradeLegacyWorlds".
+					Added field "variables":
 						variable:
-							field "requires": "$pre_release"
-							field "$variables": variable "$label_text": "playscreen.beta_legacy_worlds"
-					field "bindings":
-						binding:
-							field "binding_name": "#legacy_worlds_visible"
-							field "binding_name_override": "#visible"
-					field "$variables":
-						variable "$label_text": "#upgrade_legacy_text"
-						variable "$square_color": "$world_diskspace_editions_fill"
+							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
+							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
 			Removed control:
 				element "legacy_world_item_grid@play.legacy_world_item_grid":
 					field "variables":
@@ -545,30 +540,7 @@ Changed namespace "play":
 							field "requires": "$pre_release"
 							field "$variables": variable "$tts_section_header": "playscreen.beta_legacy_worlds"
 					field "$variables": variable "$tts_section_header": "#upgrade_legacy_text"
-			Removed control:
-				element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
-					field "bindings":
-						binding:
-							field "binding_name": "#beta_retail_legacy_worlds_visible"
-							field "binding_name_override": "#visible"
-					field "$variables": variable "$label_text": "#upgrade_legacy_text"
 			Removed control element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid": field "$variables": variable "$tts_section_header": "#upgrade_legacy_text".
-			Added control:
-				element "upgrade_legacy_worlds_label@play.world_list_label_with_color_panel":
-					field "variables":
-						variable:
-							field "requires": "$pre_release"
-							field "$variables": variable "$label_text": "playscreen.beta_legacy_worlds"
-						variable:
-							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
-							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
-					field "bindings":
-						binding:
-							field "binding_name": "#legacy_worlds_visible"
-							field "binding_name_override": "#visible"
-					field "$variables":
-						variable "$label_text": "playscreen.upgradeLegacyWorlds"
-						variable "$square_color": "$world_diskspace_editions_fill"
 			Added control:
 				element "legacy_world_item_grid@play.legacy_world_item_grid":
 					field "variables":
@@ -579,17 +551,6 @@ Changed namespace "play":
 							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
 							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
 					field "$variables": variable "$tts_section_header": "playscreen.upgradeLegacyWorlds"
-			Added control:
-				element "beta_retail_legacy_worlds_label@play.world_list_label_panel":
-					field "variables":
-						variable:
-							field "requires": "($is_preview_app and (not $legacy_worlds_supports_migration))"
-							field "$variables": variable "$label_text": "playscreen.upgradeRetailWorlds"
-					field "bindings":
-						binding:
-							field "binding_name": "#beta_retail_legacy_worlds_visible"
-							field "binding_name_override": "#visible"
-					field "$variables": variable "$label_text": "playscreen.upgradeLegacyWorlds"
 			Added control:
 				element "beta_retail_legacy_grid@play.beta_retail_legacy_world_item_grid":
 					field "variables":
