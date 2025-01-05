@@ -96,9 +96,8 @@ def delete_item(hex_string:str) -> None:
     Deletes the item from the index and objects.
     Must save the index for changes to be saved.
     '''
-    del index.get()[hex_string]
-    path = get_file_path(hex_string)
-    path.unlink()
+    index.get().pop(hex_string, None)
+    get_file_path(hex_string).unlink(missing_ok=True)
 
 def remove_index_values_without_associated_file() -> None:
     '''
@@ -134,7 +133,7 @@ def create_archive(domain:"Domain.Domain") -> None:
     index = {key: value for key, value in sorted(index.items(), key=lambda item: item[0])}
     archive_path = FileManager.OUTPUT_DIRECTORY.joinpath(file.name + "_archived.txt")
     with open(archive_path, "wt") as f:
-        f.write("\n".join(f"{file_hash} {is_zipped} {file_name}" for file_name, (file_hash, is_zipped) in index.items()))
+        f.write("\n".join(f"{file_hash} {int(is_zipped)} {file_name}" for file_name, (file_hash, is_zipped) in index.items()))
     print(f"Archived version. Index is at \"{archive_path.name}\".")
 
 def version_summary(domain:"Domain.Domain") -> None:

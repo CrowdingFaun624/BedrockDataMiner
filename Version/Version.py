@@ -1,6 +1,5 @@
 import datetime
-from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterator
 
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
@@ -95,3 +94,8 @@ class Version():
 
     def __ge__(self, other:"Version") -> bool:
         return self.index >= other.index
+
+    def get_referenced_files(self) -> Iterator[int]:
+        for version_file in self.version_files:
+            for accessor in version_file.accessors:
+                yield from accessor.get_referenced_files()

@@ -1,9 +1,10 @@
 import io
-from typing import Any, BinaryIO
+from typing import Any, BinaryIO, Iterator
 
 import Downloader.Accessor as Accessor
 import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Cache as Cache
+import Utilities.File as File
 import Utilities.FileStorage as FileStorage
 import Version.Version as Version
 
@@ -44,3 +45,6 @@ class StoredAccessor(DirectoryAccessor.DirectoryAccessor):
         self.index.forget()
         self._file_list = None
         self._file_set = None
+
+    def get_referenced_files(self) -> Iterator[int]:
+        yield from (File.hash_str_to_int(item[0]) for item in self.index.get().values())
