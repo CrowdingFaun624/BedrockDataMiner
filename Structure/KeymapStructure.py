@@ -58,11 +58,11 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         self.default_max_similarity_descendent_depth = default_max_similarity_descendent_depth
         self.keys_max_similarity_descendent_depth = keys_max_similarity_descendent_depth
 
-        self.keys:dict[str,Structure.Structure[d]|None]|None = None
-        self.tags:dict[str,set[StructureTag.StructureTag]]|None = None
-        self.key_types:dict[str,tuple[type,...]]|None = None
-        self.pre_normalized_types:tuple[type,...]|None = None
-        self.keys_with_normalizers:list[str]|None = None
+        self.keys:dict[str,Structure.Structure[d]|None]
+        self.tags:dict[str,set[StructureTag.StructureTag]]
+        self.key_types:dict[str,tuple[type,...]]
+        self.pre_normalized_types:tuple[type,...]
+        self.keys_with_normalizers:list[str]
 
     def link_substructures(
             self,
@@ -89,8 +89,6 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         return self.unweighted_keys
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        if self.keys is None:
-            raise Exceptions.AttributeNoneError("keys", self)
         return (substructure for substructure in self.keys.values() if substructure is not None)
 
     def allow_key_move(self, key1: str, value1: d, key2: str, value2: d, exceptions:list[Trace.ErrorTrace]) -> bool:
@@ -108,29 +106,21 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         return output
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
-        if self.key_types is None:
-            raise Exceptions.AttributeNoneError("key_types", self)
         if key not in self.key_types:
             return Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value)
         if not isinstance(value, self.key_types[key]):
             return Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.key_types[key]), type(value), "Value"), self.name, key, value)
 
     def get_structure(self, key: str, value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        if self.keys is None:
-            raise Exceptions.AttributeNoneError("keys", self)
         output = self.keys.get(key, ...)
         if output is ...:
             return None, [Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value)]
         return output, []
 
     def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
-        if self.children_tags is None:
-            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
-        if self.tags is None:
-            raise Exceptions.AttributeNoneError("tags", self)
         for key, value in data.items():
             key_tags = self.tags.get(key)
             if key_tags is None:
@@ -162,14 +152,6 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
-        if self.normalizer is None:
-            raise Exceptions.AttributeNoneError("normalizer", self)
-        if self.post_normalizer is None:
-            raise Exceptions.AttributeNoneError("post_normalizer", self)
-        if self.keys_with_normalizers is None:
-            raise Exceptions.AttributeNoneError("keys_with_normalizers", self)
-        if self.pre_normalized_types is None:
-            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -214,8 +196,6 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
             return None, exceptions
 
     def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet[d], list[Trace.ErrorTrace]]:
-        if self.keys is None:
-            raise Exceptions.AttributeNoneError("keys", self)
         output:dict[tuple[int,...]|None,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
         for branches, key_iter, value_iter in D.double_iter_diff(key, value):

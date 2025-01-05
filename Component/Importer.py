@@ -139,7 +139,7 @@ def set_components(all_components:dict[str,dict[str,Component.Component]], compo
 def create_finals(all_components:dict[str,dict[str,Component.Component]]) -> None:
     for components in all_components.values():
         for component in components.values():
-            component.create_final()
+            component.final = component.create_final_component()
 
 def link_finals(all_components:dict[str,dict[str,Component.Component]]) -> list[Exception]:
     exceptions:list[Exception] = []

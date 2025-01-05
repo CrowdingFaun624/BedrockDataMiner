@@ -25,9 +25,8 @@ class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
         self.is_file = data.get("is_file", False)
         return []
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = StructureTag.StructureTag(
+    def create_final(self) -> StructureTag.StructureTag:
+        return StructureTag.StructureTag(
             name=self.name,
             is_file=self.is_file,
         )

@@ -1,13 +1,12 @@
 import datetime
-from typing import Any, BinaryIO, TypedDict
-
-import requests
+from typing import TYPE_CHECKING, Any, BinaryIO, TypedDict
 
 import Downloader.Accessor as Accessor
 import Downloader.FileAccessor as FileAccessor
-import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
+if TYPE_CHECKING:
+    import requests
 
 class InstanceArgumentsTypedDict(TypedDict):
     url: str
@@ -26,10 +25,8 @@ class DownloadAccessor(FileAccessor.FileAccessor):
     )
 
     def prepare_for_install(self, instance_arguments:InstanceArgumentsTypedDict, class_arguments:dict[str,Any], propagated_arguments:PropagatedArgumentsTypedDict, linked_accessors:dict[str,Accessor.Accessor]) -> None:
-        version_directory = self.version.get_version_directory()
+        version_directory = self.version.version_directory
         location = version_directory.joinpath(propagated_arguments["location"])
-        if version_directory not in location.parents:
-            raise Exceptions.InvalidFileLocationError(location, version_directory)
         self.location = location
         self._installed:bool|None = None
 
@@ -41,7 +38,7 @@ class DownloadAccessor(FileAccessor.FileAccessor):
             self._installed = self.location.exists()
         return self._installed
 
-    def log(self, response:requests.Response) -> requests.Response:
+    def log(self, response:"requests.Response") -> "requests.Response":
         if (log := self.domain.logs.get("download_log")) is not None and log.supports_type(log, dict):
             log.write({
                 "version": self.version.name,
@@ -61,6 +58,7 @@ class DownloadAccessor(FileAccessor.FileAccessor):
 
     def install(self) -> None:
         if not self.installed:
+            import requests
             with open(self.location, "wb") as f, requests.get(self.url) as response:
                 f.write(self.log(response).content)
             self._installed = True

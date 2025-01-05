@@ -1,7 +1,7 @@
 import enum
 import traceback
 from typing import (Any, Callable, Container, Hashable, Iterable, Mapping,
-                    Sequence, cast)
+                    Self, Sequence, cast)
 
 import Utilities.Exceptions as Exceptions
 
@@ -12,7 +12,7 @@ class TraceItemType(enum.Enum):
     VALUE = 2
     OTHER = 3
 
-class Trace():
+class StackTrace():
 
     __slots__ = (
         "trace",
@@ -21,10 +21,18 @@ class Trace():
     def __init__(self, trace:list[tuple[object, TraceItemType]]|None=None) -> None:
         self.trace = [] if trace is None else trace
 
-    def copy(self, index:object, index_type:TraceItemType) -> "Trace":
-        new_trace = self.trace.copy()
-        new_trace.append((index, index_type))
-        return Trace(new_trace)
+    def enter(self, index:object, index_type:TraceItemType) -> Self:
+        self.trace.append((index, index_type))
+        return self
+
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, *exc) -> None:
+        self.trace.pop()
+
+    def copy(self, index:object, index_type:TraceItemType) -> "StackTrace":
+        return StackTrace(self.trace.copy()).enter(index, index_type)
 
     def to_str(self, capitalize:bool=True) -> str:
         result:list[str] = []
@@ -46,14 +54,14 @@ class Trace():
         return f"<{self.__class__.__name__} len {len(self.trace)}>"
 
 
-def make_trace(trace_items:list[Any]|None) -> Trace:
+def make_trace(trace_items:list[Any]|None) -> StackTrace:
     trace_items_final:list[tuple[object,TraceItemType]]|None = [(trace_item, TraceItemType.OTHER) for trace_item in trace_items] if trace_items is not None else None
-    return Trace(trace_items_final)
+    return StackTrace(trace_items_final)
 
 class TypeVerifier[A]():
     '''Use `base_verify` to check the types of data.'''
 
-    def verify(self, data:A, trace:Trace) -> list[Exceptions.TypeVerificationTypeException]: ...
+    def verify(self, data:A, trace:StackTrace) -> list[Exceptions.TypeVerificationTypeException]: ...
 
     def base_verify(self, data:A, trace_items:list[Any]|None=None) -> None:
         exceptions = self.verify(data, make_trace(trace_items))
@@ -105,15 +113,16 @@ class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
         self.value_function = value_function
         self.additional_function = additional_function
 
-    def verify(self, data: Mapping[K, V], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: Mapping[K, V], trace:StackTrace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if not isinstance(data, self.data_type):
             exceptions.append(Exceptions.TypeVerificationTypeError(trace, self.data_type_str, type(data)))
             return exceptions
         for index, (key, value) in enumerate(data.items()):
             if self.key_type_is_verifier:
-                new_exceptions = cast(TypeVerifier, self.key_type).verify(key, trace.copy(key, TraceItemType.KEY))
-                if len(new_exceptions) > 0:
+                with trace.enter(key, TraceItemType.KEY) as subtrace:
+                    new_exceptions = cast(TypeVerifier, self.key_type).verify(key, subtrace)
+                if new_exceptions:
                     exceptions.extend(new_exceptions)
                     continue
             else:
@@ -121,8 +130,9 @@ class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
                     exceptions.append(Exceptions.TypeVerificationTypeError(trace.copy(index, TraceItemType.ITEM), self.key_type_str, type(key)))
                     continue
             if self.value_type_is_verifier:
-                new_exceptions = cast(TypeVerifier, self.value_type).verify(value, trace.copy(key, TraceItemType.VALUE))
-                if len(new_exceptions) > 0:
+                with trace.enter(key, TraceItemType.VALUE) as subtrace:
+                    new_exceptions = cast(TypeVerifier, self.value_type).verify(value, subtrace)
+                if new_exceptions:
                     exceptions.extend(new_exceptions)
                     continue
             else:
@@ -139,7 +149,7 @@ class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
                 if not value_function_success:
                     exceptions.append(Exceptions.TypeVerificationFunctionError(trace.copy(key, TraceItemType.VALUE), value_function_message, data=value))
                     continue
-        if len(exceptions) > 0:
+        if exceptions:
             return exceptions
         if self.additional_function is not None:
             additional_function_success, additional_function_message = self.additional_function(data)
@@ -176,12 +186,13 @@ class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
         self.required = required
         self.function = function
 
-    def verify(self, data:tuple[K, V], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data:tuple[K, V], trace:StackTrace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         key, value = data
         if self.value_type_is_verifier:
-            new_exceptions = cast(TypeVerifier, self.value_type).verify(value, trace.copy(key, TraceItemType.VALUE))
-            if len(new_exceptions) > 0:
+            with trace.enter(key, TraceItemType.VALUE) as subtrace:
+                new_exceptions = cast(TypeVerifier, self.value_type).verify(value, subtrace)
+            if new_exceptions:
                 exceptions.extend(new_exceptions)
                 return exceptions
         else:
@@ -225,7 +236,7 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
 
         self.required_keys = [key.key for key in keys if key.required]
 
-    def verify(self, data: Mapping[Any, Any], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: Mapping[Any, Any], trace:StackTrace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if not isinstance(data, self.data_type):
             exceptions.append(Exceptions.TypeVerificationTypeError(trace, self.data_type_str, type(data)))
@@ -237,14 +248,14 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
                     exceptions.append(Exceptions.TypeVerificationUnrecognizedKeyError(trace.copy(key, TraceItemType.KEY)))
                 continue
             new_exceptions = type_verifier.verify((key, value), trace)
-            if len(new_exceptions) > 0:
+            if new_exceptions:
                 exceptions.extend(new_exceptions)
                 continue
         for required_key in self.required_keys:
             if required_key not in data:
                 exceptions.append(Exceptions.TypeVerificationMissingKeyError(trace.copy(required_key, TraceItemType.KEY)))
                 continue
-        if len(exceptions) > 0:
+        if exceptions:
             return exceptions
         if self.function is not None:
             function_success, function_message = self.function(data)
@@ -284,15 +295,16 @@ class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
         self.item_function = item_function
         self.additional_function = additional_function
 
-    def verify(self, data: Sequence[I], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: Sequence[I], trace:StackTrace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if not isinstance(data, self.data_type):
             exceptions.append(Exceptions.TypeVerificationTypeError(trace, self.data_type_str, type(data)))
             return exceptions
         for index, item in enumerate(data):
             if self.item_type_is_verifier:
-                new_exceptions = cast(TypeVerifier, self.item_type).verify(item, trace.copy(index, TraceItemType.ITEM))
-                if len(new_exceptions) > 0:
+                with trace.enter(index, TraceItemType.ITEM) as subtrace:
+                    new_exceptions = cast(TypeVerifier, self.item_type).verify(item, subtrace)
+                if new_exceptions:
                     exceptions.extend(new_exceptions)
                     continue
             else:
@@ -303,7 +315,7 @@ class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
                 item_function_success, item_function_message = self.item_function(item)
                 if not item_function_success:
                     exceptions.append(Exceptions.TypeVerificationFunctionError(trace.copy(index, TraceItemType.ITEM), item_function_message, item))
-        if len(exceptions) > 0:
+        if exceptions:
             return exceptions
         if self.additional_function is not None:
             additional_function_success, additional_function_message = self.additional_function(data)
@@ -329,7 +341,7 @@ class IterableTypeVerifier[I](ListTypeVerifier):
         ) -> None:
         return super().__init__(item_type, cast(type[Sequence]|tuple[type[Sequence],...], data_type), item_type_str, data_type_str, item_function, additional_function)
 
-    def verify(self, data: Iterable[I], trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: Iterable[I], trace:StackTrace) -> list[Exceptions.TypeVerificationTypeException]:
         return super().verify(cast(Sequence[I], data), trace)
 
 class EnumTypeVerifier[I](TypeVerifier[I]):
@@ -341,7 +353,7 @@ class EnumTypeVerifier[I](TypeVerifier[I]):
     def __init__(self, options:Container[I]) -> None:
         self.options = options
 
-    def verify(self, data: I, trace:Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: I, trace:StackTrace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         if data not in self.options:
             exceptions.append(Exceptions.TypeVerificationEnumError(trace, self.options, data))
@@ -363,13 +375,13 @@ class UnionTypeVerifier[I](TypeVerifier[I]):
         self.types_are_type_verifiers = [isinstance(type, TypeVerifier) for type in types]
         self.type_str = type_str
 
-    def verify(self, data: I, trace: Trace) -> list[Exceptions.TypeVerificationTypeException]:
+    def verify(self, data: I, trace: StackTrace) -> list[Exceptions.TypeVerificationTypeException]:
         exceptions:list[Exceptions.TypeVerificationTypeException] = []
         union_exceptions:list[list[Exceptions.TypeVerificationTypeException]] = []
         for type_verifier, is_type_verifier in zip(self.types, self.types_are_type_verifiers):
             if is_type_verifier:
                 new_exceptions = cast(TypeVerifier, type_verifier).verify(data, trace)
-                if len(new_exceptions) == 0: return []
+                if not new_exceptions: return []
                 else: union_exceptions.append(new_exceptions)
             else:
                 if isinstance(data, type_verifier): # type: ignore

@@ -14,6 +14,12 @@ class Cache[T]():
 
     can_be_written:bool = True
 
+    __slots__ = (
+        "data",
+        "has_opened",
+        "path",
+    )
+
     def __init__(self, path:Path) -> None:
         self.path = path
         self.has_opened = False

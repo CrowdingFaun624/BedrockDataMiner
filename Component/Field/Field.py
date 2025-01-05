@@ -49,14 +49,7 @@ def choose_component[a: Component.Component](
     :create_component_function: The function used to create new inline Components.
     :assume_type: What to use as the type key of an inline Component if it is missing.
     '''
-    if component_data is None:
-        is_inline = False
-        for component in components.values():
-            if component.my_capabilities in required_properties:
-                break
-        else:
-            raise Exceptions.NoComponentMatchError(required_properties)
-    elif isinstance(component_data, str):
+    if isinstance(component_data, str):
         is_inline = False
         component = components.get(component_data, None)
         if component is None:
@@ -66,9 +59,16 @@ def choose_component[a: Component.Component](
                     break
         if component is None:
             raise Exceptions.UnrecognizedComponentError(component_data, f"{get_keys_strs(False, keys)}{source_component}", f"(should have {required_properties})")
-    else:
+    elif isinstance(component_data, dict):
         is_inline = True
         component = create_component_function(component_data, source_component, assume_type)
+    else:
+        is_inline = False
+        for component in components.values():
+            if component.my_capabilities in required_properties:
+                break
+        else:
+            raise Exceptions.NoComponentMatchError(required_properties)
     if component.my_capabilities not in required_properties:
         raise Exceptions.InvalidComponentError(component, source_component, required_properties, component.my_capabilities)
     return cast(a, component), is_inline

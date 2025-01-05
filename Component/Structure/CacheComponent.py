@@ -63,9 +63,8 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.types_field.verify_with(self.subcomponent_field)
         return [self.subcomponent_field, self.delegate_field, self.types_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = CacheStructure.CacheStructure(
+    def create_final(self) -> CacheStructure.CacheStructure:
+        return CacheStructure.CacheStructure(
             name=self.name,
             cache_remove_threshold=self.remove_threshold,
             cache_check_all_types=self.cache_check_all_types,
@@ -82,12 +81,12 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        types = self.types_field.get_types()
+        types = self.types_field.types
         self.my_type = set(types)
-        self.get_final().link_substructures(
-            structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
+        self.final.link_substructures(
+            structure=self.subcomponent_field.subcomponent.final,
+            delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             types=types,
-            children_tags={tag.get_final() for tag in self.children_tags},
+            children_tags={tag.final for tag in self.children_tags},
         )
         return exceptions

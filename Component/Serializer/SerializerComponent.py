@@ -8,7 +8,7 @@ import Component.Serializer.Field.SerializerTypeField as SerializerTypeField
 import Serializer.Serializer as Serializer
 import Utilities.TypeVerifier as TypeVerifier
 
-SERIALIZER_PATTERN:Pattern.Pattern["SerializerComponent"] = Pattern.Pattern([{"is_serializer": True}])
+SERIALIZER_PATTERN:Pattern.Pattern["SerializerComponent"] = Pattern.Pattern("is_serializer")
 
 class SerializerComponent(Component.Component[Serializer.Serializer]):
 
@@ -38,24 +38,23 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        exceptions.extend(self.linked_serializers_field.check_coverage(lambda component: component.get_final(), self.get_final().linked_serializers, self))
-        linked_serializers = dict(self.linked_serializers_field.map(lambda key, component: component.get_final()))
-        self.get_final().link_finals(
+        exceptions.extend(self.linked_serializers_field.check_coverage(lambda component: component.final, self.final.linked_serializers, self))
+        linked_serializers = dict(self.linked_serializers_field.map(lambda key, component: component.final))
+        self.final.link_finals(
             linked_serializers=linked_serializers,
         )
         return exceptions
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = self.serializer_class_field.get_final()(self.name, self.domain, **self.arguments)
+    def create_final(self) -> Serializer.Serializer:
+        return self.serializer_class_field.serializer_type(self.name, self.domain, **self.arguments)
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
         trace = TypeVerifier.make_trace([self.name, self.component_group])
-        exceptions.extend(self.serializer_class_field.get_final().type_verifier.verify(self.arguments, trace))
+        exceptions.extend(self.serializer_class_field.serializer_type.type_verifier.verify(self.arguments, trace))
         return exceptions
 
     def finalize(self) -> list[Exception]:
         exceptions = super().finalize()
-        self.get_final().finalize()
+        self.final.finalize()
         return exceptions

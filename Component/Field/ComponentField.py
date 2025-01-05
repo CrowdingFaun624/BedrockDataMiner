@@ -30,7 +30,7 @@ class ComponentField[a: Component.Component](Field.Field):
         '''
         super().__init__(path)
         self.subcomponent_data = subcomponent_data
-        self.subcomponent:a|None = None
+        self.subcomponent:a # can only be accessed after the set_field stage
         self.pattern = pattern
         self.allow_inline = allow_inline
         self.has_reference_components = False
@@ -57,12 +57,3 @@ class ComponentField[a: Component.Component](Field.Field):
         if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
             exceptions.append(Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.ComponentTypedDicts, self.subcomponent_data)))
         return exceptions
-
-    def get_component(self) -> a:
-        '''
-        Returns the Component that this Field refers to.
-        Can only be called after `set_field`.
-        '''
-        if self.subcomponent is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_component, self)
-        return self.subcomponent

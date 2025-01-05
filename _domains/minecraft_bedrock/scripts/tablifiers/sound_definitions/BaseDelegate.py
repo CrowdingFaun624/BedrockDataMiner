@@ -26,7 +26,7 @@ class BaseDelegate(Delegate.Delegate[str,StructureBase.StructureBase,str]):
     applies_to = (StructureBase.StructureBase,)
     
     def compare_text(self, data: Any, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
-        comparison, has_changes, exceptions = self.get_structure().get_structure().compare_text(data, environment)
+        comparison, has_changes, exceptions = self.get_structure().structure.compare_text(data, environment)
         comparison += FOOTER
         return comparison, has_changes, exceptions
     

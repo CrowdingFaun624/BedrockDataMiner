@@ -555,25 +555,6 @@ class EmptyCapabilitiesError(ComponentException):
     def __str__(self) -> str:
         return f"{self.capabilities} is empty{message(self.message)}"
 
-class FieldSequenceBreakError(ComponentException):
-    "A Field's methods were called in the wrong order."
-
-    def __init__(self, first_method:Callable, second_method:Callable, source:object, message:Optional[str]=None) -> None:
-        '''
-        :first_method: The method that should be called first.
-        :second_method: The method that should be called second.
-        :source: The object whose methods were called out of order.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(first_method, second_method, source, message)
-        self.first_method = first_method
-        self.second_method = second_method
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Cannot call \"{self.second_method.__name__}\" before \"{self.first_method.__name__}\" on {self.source}{message(self.message)}"
-
 class ImporterEnvironmentNameCollisionError(ComponentException):
     "Two Component groups have the same name."
 
@@ -1867,15 +1848,15 @@ class TypeVerificationFailedError(TypeVerifierException):
 class TypeVerificationTypeException(TypeVerifierException):
     "Abstract Exception class for errors that are passed around by TypeVerifiers."
 
-    trace: "TypeVerifier.Trace"
+    trace: "TypeVerifier.StackTrace"
 
-    def __init__(self, trace:"TypeVerifier.Trace", *args: object) -> None:
+    def __init__(self, trace:"TypeVerifier.StackTrace", *args: object) -> None:
         self.trace = trace
         super().__init__(trace, *args)
 
 class TypeVerificationEnumError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.Trace", options:Container, value:Any) -> None:
+    def __init__(self, trace:"TypeVerifier.StackTrace", options:Container, value:Any) -> None:
         super().__init__(trace, options, value)
         self.options = options
         self.value = value
@@ -1885,7 +1866,7 @@ class TypeVerificationEnumError(TypeVerificationTypeException):
 
 class TypeVerificationFunctionError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.Trace", message:str|None, data:Any|None=None) -> None:
+    def __init__(self, trace:"TypeVerifier.StackTrace", message:str|None, data:Any|None=None) -> None:
         super().__init__(trace, message, data)
         self.message = message
         self.data = data
@@ -1895,7 +1876,7 @@ class TypeVerificationFunctionError(TypeVerificationTypeException):
 
 class TypeVerificationMissingKeyError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.Trace") -> None:
+    def __init__(self, trace:"TypeVerifier.StackTrace") -> None:
         super().__init__(trace)
 
     def __str__(self) -> str:
@@ -1903,7 +1884,7 @@ class TypeVerificationMissingKeyError(TypeVerificationTypeException):
 
 class TypeVerificationTypeError(TypeVerificationTypeException):
 
-    def __init__(self, trace: "TypeVerifier.Trace", expected_type:str, observed_type:type) -> None:
+    def __init__(self, trace: "TypeVerifier.StackTrace", expected_type:str, observed_type:type) -> None:
         super().__init__(trace, expected_type, observed_type)
         self.expected_type = expected_type
         self.observed_type = observed_type
@@ -1913,7 +1894,7 @@ class TypeVerificationTypeError(TypeVerificationTypeException):
 
 class TypeVerificationUnionError(TypeVerificationTypeException):
 
-    def __init__(self, trace: "TypeVerifier.Trace", expected_type:str, observed_type:type, causes:list[list[TypeVerificationTypeException]]) -> None:
+    def __init__(self, trace: "TypeVerifier.StackTrace", expected_type:str, observed_type:type, causes:list[list[TypeVerificationTypeException]]) -> None:
         super().__init__(trace, expected_type, observed_type, causes)
         self.expected_type = expected_type
         self.observed_type = observed_type
@@ -1924,7 +1905,7 @@ class TypeVerificationUnionError(TypeVerificationTypeException):
 
 class TypeVerificationUnrecognizedKeyError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.Trace") -> None:
+    def __init__(self, trace:"TypeVerifier.StackTrace") -> None:
         super().__init__(trace)
 
     def __str__(self) -> str:
@@ -1932,7 +1913,7 @@ class TypeVerificationUnrecognizedKeyError(TypeVerificationTypeException):
 
 class TypeVerificationWrongLengthError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.Trace", expected_length:int, observed_length:int) -> None:
+    def __init__(self, trace:"TypeVerifier.StackTrace", expected_length:int, observed_length:int) -> None:
         super().__init__(trace, expected_length, observed_length)
         self.expected_length = expected_length
         self.observed_length = observed_length
@@ -2331,7 +2312,7 @@ class VersionFileNoAccessorsError(VersionFileException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.version_file} has no available Accessors{message_bool(self.version_file.has_accessors(), "", lambda: f" from [{", ".join(repr(accessor) for accessor in self.version_file.get_accessors())}]")}{message(self.message)}"
+        return f"{self.version_file} has no available Accessors{message_bool(self.version_file.has_accessors(), "", lambda: f" from [{", ".join(repr(accessor) for accessor in self.version_file.accessors)}]")}{message(self.message)}"
 
 class VersionFileTypeNotAutoAssigning(VersionFileException):
     "The VersionFileType does not auto assign."

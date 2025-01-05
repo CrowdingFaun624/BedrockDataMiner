@@ -22,7 +22,7 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         '''
         super().__init__(path)
         self.subcomponents_data = subcomponents_data
-        self.subcomponents:dict[str,a]|None = None
+        self.subcomponents:dict[str,a]
         self.pattern = pattern
         self.allow_inline = allow_inline
         self.has_reference_components = False
@@ -61,8 +61,6 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         Calls the given function on each Component in this Field.
         :function: The function to use.
         '''
-        if self.subcomponents is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.for_each, self)
         for key, subcomponent in self.subcomponents.items():
             function(key, subcomponent)
 
@@ -71,21 +69,10 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         Calls the given function on each Component in this Field, and returns the results in the same order.
         :function: The function to use.
         '''
-        if self.subcomponents is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.map, self)
         return zip(self.subcomponents.keys(), starmap(function, self.subcomponents.items()))
 
-    def get_components(self) -> dict[str,a]:
-        '''
-        Returns the Components that this Field refers to.
-        Can only be called after `set_field`.
-        '''
-        if self.subcomponents is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_components, self)
-        return self.subcomponents
-
     def check_coverage[b](self, get_final_function:Callable[[a],b], linked_requirements:dict[str,type[b]], component:"Component.Component") -> Iterator[Exception]:
-        linked_objects:dict[str,b] = {key: get_final_function(linked_component) for key, linked_component in self.get_components().items()}
+        linked_objects:dict[str,b] = {key: get_final_function(linked_component) for key, linked_component in self.subcomponents.items()}
         yield from (
             Exceptions.LinkedComponentMissingError(component, key, linked_type)
             for key, linked_type in linked_requirements.items()
@@ -103,7 +90,7 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         )
 
     def check_coverage_types[b](self, get_final_function:Callable[[a],type[b]], linked_requirements:dict[str,type[b]], component:"Component.Component") -> Iterator[Exception]:
-        linked_objects:dict[str,type[b]] = {key: get_final_function(linked_component) for key, linked_component in self.get_components().items()}
+        linked_objects:dict[str,type[b]] = {key: get_final_function(linked_component) for key, linked_component in self.subcomponents.items()}
         yield from (
             Exceptions.LinkedComponentMissingError(component, key, linked_type)
             for key, linked_type in linked_requirements.items()

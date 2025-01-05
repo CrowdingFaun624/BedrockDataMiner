@@ -1,8 +1,6 @@
 from itertools import count, takewhile
 from typing import TYPE_CHECKING, Callable, Sequence, cast
 
-import numpy
-
 import Component.Types as Types
 import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.Difference as D
@@ -46,6 +44,7 @@ class SequenceStructure[d](AbstractIterableStructure.AbstractIterableStructure[d
         self.substitution_cost = substitution_cost
 
     def get_similarity(self, data1: Sequence[d|D.Diff[d]], data2: Sequence[d], depth:int, max_depth:int|None, environment: StructureEnvironment.ComparisonEnvironment, exceptions: list[Trace.ErrorTrace], branch:int) -> float:
+        import numpy
         if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth):
             if branch == 0:
                 return float(data1 == data2)
@@ -111,6 +110,7 @@ class SequenceStructure[d](AbstractIterableStructure.AbstractIterableStructure[d
         branch:int,
         branches:int,
     ) -> tuple[Sequence[d|D.Diff], bool, list[Trace.ErrorTrace]]:
+        import numpy
         if not environment.is_multi_diff and (data1 is data2 or data1 == data2):
             return data1, False, []
         exceptions:list[Trace.ErrorTrace] = []

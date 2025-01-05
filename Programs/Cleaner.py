@@ -16,7 +16,7 @@ def get_files(versions:list[Version.Version], dataminer_collections:list[Abstrac
     return [
         path
         for version, dataminer_collection in product(versions, dataminer_collections)
-        if (path := version.get_version_directory().joinpath("data", dataminer_collection.file_name)).exists()]
+        if (path := version.version_directory.joinpath("data", dataminer_collection.file_name)).exists()]
 
 def main(domain:Domain.Domain) -> None:
     versions = UserInput.input_multi(domain.versions, "version", allow_select_all=True)

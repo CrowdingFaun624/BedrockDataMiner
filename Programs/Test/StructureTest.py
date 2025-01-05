@@ -22,7 +22,7 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
         structures:defaultdict[StructureBase.StructureBase,set[AbstractDataminerCollection.AbstractDataminerCollection]] = defaultdict(lambda: set())
         for dataminer_collection in all_dataminer_collections:
             if dataminer_collection.supports_version(version):
-                structures[dataminer_collection.get_structure()].add(dataminer_collection)
+                structures[dataminer_collection.structure].add(dataminer_collection)
         self.structures = {structure: sorted(dataminer_collections, key=lambda item: item.name) for structure, dataminer_collections in structures.items()}
 
     def test(self) -> list[StructureBase.StructureBase]:
@@ -41,7 +41,7 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
         printer_environment = StructureEnvironment.PrinterEnvironment(structure_environment, None, version, 0)
         failed_structures:list[StructureBase.StructureBase] = []
         for dataminer_collection in dataminer_collections:
-            structure = dataminer_collection.get_structure()
+            structure = dataminer_collection.structure
             try:
                 data_file = dataminer_collection.get_data_file(version, non_exist_ok=True)
             except Exception as e:
@@ -65,12 +65,12 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
             print(f"{dataminer_collection} on {structure} on {version} (file was just datamined)")
             if exception is not None:
                 traceback.print_exception(exception)
-            failed_structures.append(failed_dataminer.get_structure())
+            failed_structures.append(failed_dataminer.structure)
         return failed_structures
 
     @classmethod
     def get_obj(cls, dataminer_collection: AbstractDataminerCollection.AbstractDataminerCollection, version: Version.Version) -> StructureBase.StructureBase:
-        return dataminer_collection.get_structure()
+        return dataminer_collection.structure
 
     @classmethod
     def sort(cls, item: StructureBase.StructureBase) -> "SupportsRichComparison":

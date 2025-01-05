@@ -13,7 +13,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
-DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataminerSettingsComponent.DataminerSettingsComponent] = Pattern.Pattern([{"is_dataminer_settings": True}])
+DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataminerSettingsComponent.DataminerSettingsComponent] = Pattern.Pattern("is_dataminer_settings")
 
 class DataminerCollectionComponent(AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent[DataminerCollection.DataminerCollection]):
 
@@ -53,9 +53,8 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
         ], ["dataminers"])
         return [self.structure_field, self.dataminer_settings_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = DataminerCollection.DataminerCollection(
+    def create_final(self) -> DataminerCollection.DataminerCollection:
+        return DataminerCollection.DataminerCollection(
             file_name=self.file_name,
             name=self.name,
             domain=self.domain,
@@ -64,21 +63,21 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_subcomponents(
-            structure=self.structure_field.get_final(),
-            dataminer_settings=list(self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.get_component().get_final()))
+        self.final.link_subcomponents(
+            structure=self.structure_field.subcomponent.final,
+            dataminer_settings=list(self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.subcomponent.final))
         )
         return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
-        dataminer_settings_components = self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.get_component())
+        dataminer_settings_components = self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.subcomponent)
 
         # ending DataminerSettings must have null versions on corresponding versions; middle ones cannot be null.
         used_versions:list[Version.Version] = []
         for index, dataminer_settings_component in enumerate(dataminer_settings_components):
-            new_version = dataminer_settings_component.new_field.get_final()
-            old_version = dataminer_settings_component.old_field.get_final()
+            new_version = dataminer_settings_component.new_field.final
+            old_version = dataminer_settings_component.old_field.final
             if index == 0:
                 if new_version is not None:
                     exceptions.append(Exceptions.ComponentVersionRangeExists(self, new_version, True))

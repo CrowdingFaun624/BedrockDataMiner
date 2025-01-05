@@ -17,9 +17,7 @@ class OptionalDataminerTypeField(Field.Field):
         super().__init__(path)
         self.dataminer = domain.dataminer_classes[dataminer_name] if dataminer_name is not None else Dataminer.NullDataminer
 
-    def get_final(self) -> type[Dataminer.Dataminer]|type[Dataminer.NullDataminer]:
-        return self.dataminer
-
+    @property
     def exists(self) -> bool:
         "Returns True if this Field was initialized with a str, and False if it was initialized with None"
         return self.dataminer is not Dataminer.NullDataminer

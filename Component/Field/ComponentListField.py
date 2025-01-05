@@ -30,7 +30,7 @@ class ComponentListField[a:Component.Component](Field.Field):
         '''
         super().__init__(path)
         self.subcomponents_data = cast(Sequence[str|ComponentTyping.ComponentTypedDicts], [subcomponents_data]) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
-        self.subcomponents:list[a]|None = None
+        self.subcomponents:list[a]
         self.pattern = pattern
         self.allow_inline = allow_inline
         self.has_reference_components = False
@@ -69,8 +69,6 @@ class ComponentListField[a:Component.Component](Field.Field):
         Adds new components to this Field.
         :new_components: The sequence of Components to add.
         '''
-        if self.subcomponents is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.extend, self)
         self.subcomponents.extend(new_components)
 
     def for_each[b](self, function:Callable[[a],b]) -> None:
@@ -78,8 +76,6 @@ class ComponentListField[a:Component.Component](Field.Field):
         Calls the given function on each Component in this Field.
         :function: The function to use.
         '''
-        if self.subcomponents is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.for_each, self)
         for subcomponent in self.subcomponents:
             function(subcomponent)
 
@@ -88,18 +84,7 @@ class ComponentListField[a:Component.Component](Field.Field):
         Calls the given function on each Component in this Field, and returns the results in the same order.
         :function: The function to use.
         '''
-        if self.subcomponents is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.map, self)
         return map(function, self.subcomponents)
-
-    def get_components(self) -> list[a]:
-        '''
-        Returns the Components that this Field refers to.
-        Can only be called after `set_field`.
-        '''
-        if self.subcomponents is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_components, self)
-        return self.subcomponents # type: ignore
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} len {len(self)} id {id(self)}>"

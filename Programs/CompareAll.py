@@ -66,13 +66,13 @@ def main(domain:Domain.Domain) -> None:
     version_tags = domain.version_tags
     version_tags_order = domain.version_tags_order
     major_tags = {tag for tag in version_tags.values() if tag.is_major_tag}
-    minor_tags_before = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.get_tags_before_top_level_tag()}
-    minor_tags_after  = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.get_tags_after_top_level_tag()}
-    major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions.values() if version.get_order_tag() in major_tags}
+    minor_tags_before = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.tags_before_top_level_tag}
+    minor_tags_after  = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.tags_after_top_level_tag}
+    major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions.values() if version.order_tag in major_tags}
     for major_version, child_versions in major_versions.items():
-        child_versions.extend(child for child in major_version.children if child.get_order_tag() in minor_tags_before)
+        child_versions.extend(child for child in major_version.children if child.order_tag in minor_tags_before)
         child_versions.append(major_version)
-        child_versions.extend(child for child in major_version.children if child.get_order_tag() in minor_tags_after)
+        child_versions.extend(child for child in major_version.children if child.order_tag in minor_tags_after)
 
     sorted_versions = list(chain.from_iterable(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Version.Version|None,Version.Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}

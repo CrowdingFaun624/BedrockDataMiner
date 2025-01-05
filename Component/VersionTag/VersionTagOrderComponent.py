@@ -16,7 +16,7 @@ import Version.VersionTag.VersionTagOrder as VersionTagOrder
 if TYPE_CHECKING:
     import Component.VersionTag.VersionTagComponent as VersionTagComponent
 
-VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern([{"is_version_tag": True}])
+VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern("is_version_tag")
 
 class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrder]):
 
@@ -54,18 +54,22 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         self.tags_after_top_level_tag = ComponentListField.ComponentListField(data["tags_after_top_level_tag"], VERSION_TAG_PATTERN, ["tags_after_top_level_tag"], allow_inline=Field.InlinePermissions.reference)
         return [self.order_field, self.allowed_children_field, self.top_level_tag_field, self.tags_before_top_level_tag, self.tags_after_top_level_tag]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = VersionTagOrder.VersionTagOrder()
+    def create_final(self) -> VersionTagOrder.VersionTagOrder:
+        return VersionTagOrder.VersionTagOrder()
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_finals(
-            order=list(self.order_field.map(lambda component_list_field: set(component_list_field.map(lambda version_tag_component: version_tag_component.get_final())))),
-            allowed_children={version_tag_order_allowed_children_field.get_key().get_final(): list(version_tag_component.get_final() for version_tag_component in version_tag_order_allowed_children_field.get_children()) for version_tag_order_allowed_children_field in self.allowed_children_field},
-            top_level_tag=self.top_level_tag_field.get_component().get_final(),
-            tags_before_top_level_tag=list(self.tags_before_top_level_tag.map(lambda version_tag_component: version_tag_component.get_final())),
-            tags_after_top_level_tag=list(self.tags_after_top_level_tag.map(lambda version_tag_component: version_tag_component.get_final())),
+        self.final.link_finals(
+            order=list(self.order_field.map(lambda component_list_field: set(component_list_field.map(lambda version_tag_component: version_tag_component.final)))),
+            allowed_children={
+                version_tag_order_allowed_children_field.key_field.subcomponent.final: list(
+                    version_tag_component.final
+                    for version_tag_component in version_tag_order_allowed_children_field.children_field.subcomponents
+                ) for version_tag_order_allowed_children_field in self.allowed_children_field
+            },
+            top_level_tag=self.top_level_tag_field.subcomponent.final,
+            tags_before_top_level_tag=list(self.tags_before_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
+            tags_after_top_level_tag=list(self.tags_after_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
         )
         return exceptions
 
@@ -73,15 +77,15 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         exceptions = super().check()
         used_version_tag_components:set["VersionTagComponent.VersionTagComponent"] = set()
         for order_set in self.order_field:
-            used_version_tag_components.update(order_set.get_components())
+            used_version_tag_components.update(order_set.subcomponents)
         for allowed_children_subfield in self.allowed_children_field:
-            used_version_tag_components.add(allowed_children_subfield.get_key())
-            used_version_tag_components.update(allowed_children_subfield.get_children())
-        used_version_tag_components.add(self.top_level_tag_field.get_component())
-        used_version_tag_components.update(self.tags_before_top_level_tag.get_components())
-        used_version_tag_components.update(self.tags_after_top_level_tag.get_components())
+            used_version_tag_components.add(allowed_children_subfield.key_field.subcomponent)
+            used_version_tag_components.update(allowed_children_subfield.children_field.subcomponents)
+        used_version_tag_components.add(self.top_level_tag_field.subcomponent)
+        used_version_tag_components.update(self.tags_before_top_level_tag.subcomponents)
+        used_version_tag_components.update(self.tags_after_top_level_tag.subcomponents)
         for used_version_tag_component in used_version_tag_components:
             if not used_version_tag_component.is_order_tag:
-                exceptions.append(Exceptions.NotAnOrderTagError(used_version_tag_component.get_final()))
+                exceptions.append(Exceptions.NotAnOrderTagError(used_version_tag_component.final))
         # rest of checking is in the ImporterEnvironment
         return exceptions

@@ -10,11 +10,12 @@ import Structure.StructureTag as StructureTag
 if TYPE_CHECKING:
     import Component.Structure.StructureTagComponent as StructureTagComponent
 
-TAG_PATTERN:Pattern.Pattern["StructureTagComponent.StructureTagComponent"] = Pattern.Pattern([{"is_structure_tag": True}])
+TAG_PATTERN:Pattern.Pattern["StructureTagComponent.StructureTagComponent"] = Pattern.Pattern("is_structure_tag")
 
 class TagListField(ComponentListField.ComponentListField["StructureTagComponent.StructureTagComponent"]):
 
     __slots__ = (
+        "_finals",
         "import_from_field",
         "tag_sets",
     )
@@ -27,6 +28,7 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
         self.tag_sets:list[set["StructureTagComponent.StructureTagComponent"]] = []
         self.import_from_field:TagListField|None = None
+        self._finals:set[StructureTag.StructureTag]|None = None
 
     def set_field(
         self,
@@ -39,9 +41,9 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
         if self.import_from_field is not None:
             self.import_from_field.set_field(source_component, components, imported_components, functions, create_component_function)
-            self.extend(self.import_from_field.get_components())
+            self.extend(self.import_from_field.subcomponents)
         for tag_set in self.tag_sets:
-            tag_set.update(self.get_components())
+            tag_set.update(self.subcomponents)
         return subcomponents, inline_components
 
     def import_from(self, tag_list_field:"TagListField") -> None:
@@ -58,9 +60,12 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         '''
         self.tag_sets.append(tag_set)
 
-    def get_finals(self) -> set[StructureTag.StructureTag]:
+    @property
+    def finals(self) -> set[StructureTag.StructureTag]:
         '''
         Returns the `final` attribute of all tags in this TagListField.
         Can only be called after `set_field`.
         '''
-        return {tag.get_final() for tag in self.get_components()}
+        if self._finals is None:
+            self._finals = {tag.final for tag in self.subcomponents}
+        return self._finals

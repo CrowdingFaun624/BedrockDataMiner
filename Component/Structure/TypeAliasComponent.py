@@ -27,8 +27,7 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
         self.types_strs = data["types"]
         return []
 
-    def create_final(self) -> None:
-        super().create_final()
+    def create_final(self) -> tuple[type,...]:
         final:list[type] = []
         already_types:set[str] = set()
         for type_str in self.types_strs:
@@ -39,4 +38,4 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
                 final.append(Types.default_types[type_str])
             else:
                 raise Exceptions.ComponentUnrecognizedTypeError(type_str, self)
-        self.final = tuple(final)
+        return tuple(final)

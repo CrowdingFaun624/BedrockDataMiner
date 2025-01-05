@@ -5,13 +5,12 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
-import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Component.Version.VersionComponent as VersionComponent
     import Component.VersionTag.VersionTagComponent as VersionTagComponent
 
-VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern([{"is_version_tag": True}])
+VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern("is_version_tag")
 
 class VersionTagListField(ComponentListField.ComponentListField["VersionTagComponent.VersionTagComponent"]):
 
@@ -28,14 +27,14 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         '''
         super().__init__(subcomponents_data, VERSION_TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
         self.version_component = version_component
-        self.version_tag_components:Iterable["VersionTagComponent.VersionTagComponent"]|None = None
+        self.version_tag_components:Iterable["VersionTagComponent.VersionTagComponent"]
 
     def auto_assign(self, version_tag_components:Iterable["VersionTagComponent.VersionTagComponent"], version_component:"VersionComponent.VersionComponent") -> None:
         '''
         Adds auto-assigning VersionTags to this VersionTagListField.
         :version_component: The VersionComponent to test for inclusion.
         '''
-        already_names = {linked_component.name for linked_component in self.get_components()}
+        already_names = {linked_component.name for linked_component in self.subcomponents}
         subcomponents = cast(list["VersionTagComponent.VersionTagComponent"], self.subcomponents)
         subcomponents.extend(
             version_tag_component
@@ -43,13 +42,11 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
             if version_tag_component.name not in already_names
             if any(
                 auto_assigner_component.contains_version(version_component)
-                for auto_assigner_component in version_tag_component.auto_assigner_field.get_components()
+                for auto_assigner_component in version_tag_component.auto_assigner_field.subcomponents
             )
         )
 
     def resolve_create_finals(self) -> None:
-        if self.version_tag_components is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve_create_finals, self)
         if self.version_component is not None:
             self.auto_assign(self.version_tag_components, self.version_component)
 

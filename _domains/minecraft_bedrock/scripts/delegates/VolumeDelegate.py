@@ -66,8 +66,6 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
         self.layer_characters = layer_characters
         self.print_additional_data = print_additional_data
 
-        self.substructure:AbstractMappingStructure.AbstractMappingStructure[Any]|None = None
-
     def finalize(self) -> None:
         super().finalize()
         structure, new_exceptions = cast(tuple[DictStructure.DictStructure, list[Trace.ErrorTrace]], cast(KeymapStructure.KeymapStructure, self.get_structure()).get_structure("data", None))
@@ -212,8 +210,6 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             any_changes = True
             exceptions.extend(exception.add(self.get_structure().name, position) for exception in new_exceptions)
         else:
-            if self.substructure is None:
-                raise Exceptions.AttributeNoneError("structure", self)
             substructure_output:list[DefaultDelegate.LineType]
             substructure_output, has_changes, new_exceptions = self.substructure.compare_text(block_data, environment)
             exceptions.extend(exception.add(self.get_structure().name, position) for exception in new_exceptions)
@@ -257,8 +253,6 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
 
             block_data = additional_data.get(position)
             if block_data is not None:
-                if self.substructure is None:
-                    raise Exceptions.AttributeNoneError("structure", self)
                 block_data_comparison, block_data_has_changes, new_exceptions = self.compare_text_block(position, block_data, environment)
                 if block_data_has_changes:
                     block_data_comparisons[position[1]].append(block_data_comparison)

@@ -48,8 +48,8 @@ class DataminerSettingsPlan(TestUtil.Plan[DataminerSettings.DataminerSettings]):
 
     @classmethod
     def sort(cls, item: DataminerSettings.DataminerSettings) -> "SupportsRichComparison":
-        return item.get_name()
+        return item.name
 
     @classmethod
     def get_name(cls, item: DataminerSettings.DataminerSettings) -> str:
-        return f"{item.get_name()} on {item.version_range}"
+        return f"{item.name} on {item.version_range}"

@@ -52,9 +52,8 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         self.similarity_function_field = OptionalFunctionField.OptionalFunctionField(data.get("similarity_function", None), ["similarity_function"], {"data"})
         return [self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field, self.similarity_function_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = StringStructure.StringStructure(
+    def create_final(self) -> StringStructure.StringStructure:
+        return StringStructure.StringStructure(
             name=self.name,
             max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
             children_has_normalizer=self.children_has_normalizer,
@@ -62,14 +61,14 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_substructures(
-            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
-            types=self.types_field.get_types(),
-            normalizer=self.normalizer_field.get_finals(),
-            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.types_field.get_types(),
-            tags=self.tags_field.get_finals(),
-            similarity_function=self.similarity_function_field.get_function(),
-            children_tags={tag.get_final() for tag in self.children_tags},
+        self.final.link_substructures(
+            delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
+            types=self.types_field.types,
+            normalizer=self.normalizer_field.finals,
+            pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.types_field.types,
+            tags=self.tags_field.finals,
+            similarity_function=self.similarity_function_field.function,
+            children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.types_field.get_types())
+        self.my_type = set(self.types_field.types)
         return exceptions

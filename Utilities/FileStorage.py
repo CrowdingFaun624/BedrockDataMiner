@@ -139,8 +139,8 @@ def create_archive(domain:"Domain.Domain") -> None:
 
 def version_summary(domain:"Domain.Domain") -> None:
     version = UserInput.input_single(domain.versions, "version")
-    version_file_type = UserInput.input_single(version.get_version_files_dict(), "version file type", show_options=True, close_enough=True)
-    files = version_file_type.get_accessor(required_type=DirectoryAccessor.DirectoryAccessor).file_list
+    version_file_type = UserInput.input_single(version.version_files_dict, "version file type", show_options=True, close_enough=True)
+    files = version_file_type.get_accessor(DirectoryAccessor.DirectoryAccessor).file_list
     file_extensions:dict[str,int] = {}
     for file in files:
         file_name = file.split("/")[-1]
@@ -160,10 +160,10 @@ def version_summary(domain:"Domain.Domain") -> None:
 def get_file(domain:"Domain.Domain") -> None:
     version = UserInput.input_single(domain.versions, "version")
     file = input("File: ")
-    version_file_type = UserInput.input_single(version.get_version_files_dict(), "version file type", show_options=True, close_enough=True)
-    install_accessor = version_file_type.get_accessor(required_type=DirectoryAccessor.DirectoryAccessor)
+    version_file_type = UserInput.input_single(version.version_files_dict, "version file type", show_options=True, close_enough=True)
+    install_accessor = version_file_type.get_accessor(DirectoryAccessor.DirectoryAccessor)
     if install_accessor is not None:
-        destination = version.get_version_directory().joinpath(file)
+        destination = version.version_directory.joinpath(file)
         file_data = install_accessor.read(file)
         with open(destination, "wb") as destination_file:
             destination_file.write(file_data)

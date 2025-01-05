@@ -16,7 +16,7 @@ class LatestSlotImporterEnvironment(ImporterEnvironment.ImporterEnvironment[list
         return [self.domain.latest_slots_file]
 
     def get_output(self, components: dict[str, Component.Component], name: str) -> list[str]:
-        return [component.get_final() for component in components.values()]
+        return [component.final for component in components.values()]
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "latest_slots"

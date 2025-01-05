@@ -64,9 +64,8 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         self.this_type_field.contained_by(self.types_field)
         return [self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = ListStructure.ListStructure(
+    def create_final(self) -> ListStructure.ListStructure:
+        return ListStructure.ListStructure(
             name=self.name,
             max_similarity_descendent_depth=self.max_similarity_descendent_depth,
             max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
@@ -76,15 +75,15 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_substructures(
-            structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
-            types=self.types_field.get_types(),
-            normalizer=self.normalizer_field.get_finals(),
-            post_normalizer=self.post_normalizer_field.get_finals(),
-            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
-            tags=self.tags_field.get_finals(),
-            children_tags={tag.get_final() for tag in self.children_tags},
+        self.final.link_substructures(
+            structure=self.subcomponent_field.final,
+            delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
+            types=self.types_field.types,
+            normalizer=self.normalizer_field.finals,
+            post_normalizer=self.post_normalizer_field.finals,
+            pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.this_type_field.types,
+            tags=self.tags_field.finals,
+            children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.this_type_field.get_types())
+        self.my_type = set(self.this_type_field.types)
         return exceptions

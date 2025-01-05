@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, Any, Callable
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
-import Component.FunctionChecker as FunctionChecker
 import Domain.Domain as Domain
 import Structure.Delegate.Delegate as Delegate
 import Utilities.Exceptions as Exceptions
@@ -20,7 +19,6 @@ class OptionalDelegateField(Field.Field):
         "delegate_name",
         "delegate_type",
         "domain",
-        "has_set_delegate",
     )
 
     def __init__(self, delegate_name:str|None, arguments:dict[str,Any], domain:"Domain.Domain", path: list[str | int]) -> None:
@@ -29,13 +27,7 @@ class OptionalDelegateField(Field.Field):
         self.arguments = arguments
         self.domain = domain
 
-        self.delegate_type:type[Delegate.Delegate]|None = None
-        self.has_set_delegate = False
-
-    def get_delegate_type(self) -> type[Delegate.Delegate]|None:
-        if not self.has_set_delegate:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_delegate_type, self)
-        return self.delegate_type
+        self.delegate_type:type[Delegate.Delegate]|None
 
     def create_delegate(self, structure:"Structure.Structure|StructureBase.StructureBase|None", keys:dict[str,Any]|None=None, exceptions:list[Exception]|None=None) -> Delegate.Delegate|None:
         '''
@@ -46,14 +38,14 @@ class OptionalDelegateField(Field.Field):
         '''
         if (exceptions_missing := exceptions is None):
             exceptions = []
-        delegate_type = self.get_delegate_type()
+        delegate_type = self.delegate_type
         if delegate_type is None:
             return None
         if delegate_type.type_verifier is not None:
-            exceptions.extend(delegate_type.type_verifier.verify(self.arguments, TypeVerifier.Trace([(structure, TypeVerifier.TraceItemType.OTHER)])))
+            exceptions.extend(delegate_type.type_verifier.verify(self.arguments, TypeVerifier.StackTrace([(structure, TypeVerifier.TraceItemType.OTHER)])))
         if keys is not None and delegate_type.key_type_verifier is not None:
             for key, key_arguments in keys.items():
-                exceptions.extend(delegate_type.key_type_verifier.verify(key_arguments, TypeVerifier.Trace([(structure, TypeVerifier.TraceItemType.OTHER), (key, TypeVerifier.TraceItemType.KEY)])))
+                exceptions.extend(delegate_type.key_type_verifier.verify(key_arguments, TypeVerifier.StackTrace([(structure, TypeVerifier.TraceItemType.OTHER), (key, TypeVerifier.TraceItemType.KEY)])))
         if keys is None:
             keys = {}
         if not isinstance(structure, delegate_type.applies_to):
@@ -79,15 +71,9 @@ class OptionalDelegateField(Field.Field):
         functions:dict[str,Callable],
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["Component.Component"],list["Component.Component"]]:
-        self.has_set_delegate = True
         if self.delegate_name is None:
             self.delegate_type = None
         else:
             delegate_type = self.domain.delegate_classes.get(self.delegate_name, message=f"(referenced by {source_component})")
             self.delegate_type = delegate_type
         return [], []
-
-    def check(self, source_component: "Component.Component") -> list[Exception]:
-        exceptions = super().check(source_component)
-        exceptions.extend(FunctionChecker.check(self.delegate_type.__init__, self.arguments, {"self", "structure", "keys"}, source_component))
-        return exceptions

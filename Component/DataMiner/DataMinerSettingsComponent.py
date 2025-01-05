@@ -20,8 +20,8 @@ if TYPE_CHECKING:
     import Component.Dataminer.DataminerCollectionComponent as DataminerCollectionComponent
     import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 
-DEPENDENCY_PATTERN:Pattern.Pattern["AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent"] = Pattern.Pattern([{"is_dataminer_collection": True}])
-VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern([{"is_version_file_type": True}])
+DEPENDENCY_PATTERN:Pattern.Pattern["AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent"] = Pattern.Pattern("is_dataminer_collection")
+VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern("is_version_file_type")
 
 class DataminerSettingsComponent(Component.Component[DataminerSettings.DataminerSettings]):
 
@@ -69,9 +69,8 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
         ], ["dependencies"])
         return [self.new_field, self.old_field, self.files_field, self.serializer_field, self.dataminer_field, self.dependencies_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = DataminerSettings.DataminerSettings(
+    def create_final(self) -> DataminerSettings.DataminerSettings:
+        return DataminerSettings.DataminerSettings(
             kwargs=self.arguments,
             domain=self.domain
         )
@@ -79,22 +78,22 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         parent = cast("DataminerCollectionComponent.DataminerCollectionComponent", self.get_inline_parent())
-        exceptions.extend(self.get_final().link_subcomponents(
+        exceptions.extend(self.final.link_subcomponents(
             file_name=parent.file_name,
             name=parent.name,
-            structure=parent.structure_field.get_final(),
-            dataminer_class=self.dataminer_field.get_final(),
-            serializers=self.serializer_field.get_final(),
-            dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.get_component().get_final())),
-            start_version=self.old_field.get_final(),
-            end_version=self.new_field.get_final(),
-            version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.get_final()))
+            structure=parent.structure_field.subcomponent.final,
+            dataminer_class=self.dataminer_field.dataminer,
+            serializers=self.serializer_field.final,
+            dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.subcomponent.final)),
+            start_version=self.old_field.final,
+            end_version=self.new_field.final,
+            version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.final))
         ))
         return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
-        if self.dataminer_field.exists():
+        if self.dataminer_field.exists:
             if not self.files_field_exists:
                 exceptions.append(Exceptions.DataminerCollectionFileError(False, self, "when \"name\" is not null"))
         else:

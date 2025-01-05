@@ -54,9 +54,8 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         return [self.subcomponents_field, self.delegate_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = GroupStructure.GroupStructure(
+    def create_final(self) -> GroupStructure.GroupStructure:
+        return GroupStructure.GroupStructure(
             name=self.name,
             max_similarity_descendent_depth=self.max_similarity_descendent_depth,
             max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
@@ -69,17 +68,17 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         substructures:dict[type,Structure.Structure|None] = {}
         all_types:set[type] = set()
         for group_field in self.subcomponents_field:
-            valid_types = group_field.get_types()
+            valid_types = group_field.type_field.types
             all_types.update(valid_types)
-            substructures.update((valid_type, group_field.subcomponent_field.get_final()) for valid_type in valid_types)
+            substructures.update((valid_type, group_field.subcomponent_field.final) for valid_type in valid_types)
         self.my_type = all_types
-        self.get_final().link_substructures(
+        self.final.link_substructures(
             substructures=substructures,
-            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
+            delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             types=tuple(self.my_type),
-            normalizer=self.normalizer_field.get_finals(),
-            post_normalizer=self.post_normalizer_field.get_finals(),
-            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else tuple(all_types),
-            children_tags={tag.get_final() for tag in self.children_tags},
+            normalizer=self.normalizer_field.finals,
+            post_normalizer=self.post_normalizer_field.finals,
+            pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else tuple(all_types),
+            children_tags={tag.final for tag in self.children_tags},
         )
         return exceptions

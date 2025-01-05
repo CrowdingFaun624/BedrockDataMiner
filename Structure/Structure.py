@@ -29,8 +29,8 @@ class Structure[a]():
         self.children_has_normalizer = children_has_normalizer
         self.children_has_garbage_collection = children_has_garbage_collection
 
-        self.delegate:"Delegate.Delegate|None" = None
-        self.children_tags:set[StructureTag.StructureTag]|None = None
+        self.delegate:"Delegate.Delegate|None"
+        self.children_tags:set[StructureTag.StructureTag]
 
     def link_substructures(
         self,

@@ -21,15 +21,8 @@ class AbstractDataminerCollection():
         self.domain = domain
         self.comparing_disabled = comparing_disabled
 
-        self.structure:StructureBase.StructureBase|None = None
-
     def link_subcomponents(self, structure:StructureBase.StructureBase) -> None:
-        self.structure = structure
-
-    def get_structure(self) -> StructureBase.StructureBase:
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
-        return self.structure
+        self.structure:StructureBase.StructureBase = structure
 
     def datamine(self, version:Version.Version, environment:DataminerEnvironment.DataminerEnvironment) -> Any: ...
 
@@ -38,6 +31,7 @@ class AbstractDataminerCollection():
         data = self.datamine(version, environment)
         if data is None:
             raise Exceptions.DataminerNullReturnError(self)
+        version.data_directory.mkdir(exist_ok=True)
         with open(self.get_data_file_path(version), "wt") as f:
             json.dump(data, f, separators=(",", ":"), cls=self.domain.json_encoder)
 
@@ -51,7 +45,7 @@ class AbstractDataminerCollection():
 
     def get_data_file(self, version:Version.Version, non_exist_ok:bool=False) -> Any:
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
-        data_path = version.get_data_directory().joinpath(self.file_name)
+        data_path = version.data_directory.joinpath(self.file_name)
         if not data_path.exists():
             if non_exist_ok:
                 return None
@@ -61,7 +55,7 @@ class AbstractDataminerCollection():
             return json.load(f, cls=self.domain.json_decoder)
 
     def remove_data_file(self, version:Version.Version) -> None:
-        data_path = version.get_data_directory().joinpath(self.file_name)
+        data_path = version.data_directory.joinpath(self.file_name)
         if data_path.exists():
             data_path.unlink()
 
@@ -70,14 +64,14 @@ class AbstractDataminerCollection():
         Returns True if the given tag could potentially be in this Version.
         :tag: The tag to test for.
         '''
-        return self.get_structure().has_tag(tag)
+        return self.structure.has_tag(tag)
 
     def get_tag_paths(self, version:Version.Version, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment, *, data:Any|None=None, normalized_data:Any|None=None) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
         if not self.supports_version(version):
             return {tag: [] for tag in tags}
         if data is None:
             data = self.get_data_file(version)
-        return self.get_structure().get_tag_paths(data, tags, environment, normalized_data=normalized_data)
+        return self.structure.get_tag_paths(data, tags, environment, normalized_data=normalized_data)
 
     def compare(
             self,
@@ -99,16 +93,16 @@ class AbstractDataminerCollection():
         else:
             version1_data = self.get_data_file(version1)
             version2_data = self.get_data_file(version2)
-        report, had_changes = self.get_structure().comparison_report(version1_data, version2_data, version1, version2, versions_between, environment)
+        report, had_changes = self.structure.comparison_report(version1_data, version2_data, version1, version2, versions_between, environment)
         if store and had_changes:
-            self.get_structure().store(report, self.name)
+            self.structure.store(report, self.name)
         return report
 
     def check_types(self, version:Version.Version, environment:StructureEnvironment.PrinterEnvironment) -> None:
         if not self.supports_version(version):
             return
         data = self.get_data_file(version)
-        structure = self.get_structure()
+        structure = self.structure
         normalized_data = structure.normalize(data, environment)
         structure.check_types(normalized_data, environment.structure_environment, (version,))
 
@@ -120,24 +114,24 @@ class AbstractDataminerCollection():
 
     def clear_caches(self) -> None:
         '''Clears all caches of this DataminerCollection's Structure.'''
-        self.get_structure().clear_caches()
+        self.structure.clear_caches()
 
     def clear_some_caches(self) -> None:
         '''Clears items from caches of this DataminerCollection's Structure and all of its children that are too old.'''
-        self.get_structure().clear_some_caches()
+        self.structure.clear_some_caches()
 
     def supports_version(self, version:Version.Version) -> bool:
         return True
 
     def get_data_file_path(self, version:Version.Version) -> Path:
-        return version.get_data_directory().joinpath(self.file_name)
+        return version.data_directory.joinpath(self.file_name)
 
     def get_referenced_files(self, version:Version.Version, structure_tags:dict[str,StructureTag.StructureTag]) -> Iterator[int]:
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.garbage_collection)
         data_file = self.get_data_file(version, non_exist_ok=True)
         if data_file is None: return
         yield from File.recursive_examine_data_for_files(data_file) # this is necessary just in case there's a file that's ignored by the structure.
-        structure = self.get_structure()
+        structure = self.structure
         file_tags = [structure_tag for structure_tag in structure_tags.values() if structure_tag.is_file]
         if structure.children_has_garbage_collection or structure.has_tags(file_tags):
             environment = StructureEnvironment.PrinterEnvironment(structure_environment, None, version, 0)

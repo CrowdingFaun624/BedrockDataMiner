@@ -12,7 +12,7 @@ class StructureComponent[a: Structure.Structure](Component.Component[a]):
 
     def finalize(self) -> list[Exception]:
         exceptions = super().finalize()
-        delegate = self.get_final().delegate
+        delegate = self.final.delegate
         if delegate is not None:
             delegate.finalize()
         return exceptions

@@ -41,11 +41,11 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
 
         self.structure:Structure.Structure[a]|None = None
-        self.file_types:tuple[type,...]|None = None
-        self.content_types:tuple[type,...]|None = None
-        self.normalizer:list[Normalizer.Normalizer]|None = None
-        self.post_normalizer:list[Normalizer.Normalizer]|None = None
-        self.pre_normalized_types:tuple[type,...]|None = None
+        self.file_types:tuple[type,...]
+        self.content_types:tuple[type,...]
+        self.normalizer:list[Normalizer.Normalizer]
+        self.post_normalizer:list[Normalizer.Normalizer]
+        self.pre_normalized_types:tuple[type,...]
 
     def link_substructures(
         self,
@@ -75,10 +75,6 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
 
     def check_all_types(self, data:File.AbstractFile[a], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         output:list[Trace.ErrorTrace] = []
-        if self.file_types is None:
-            raise Exceptions.AttributeNoneError("file_types", self)
-        if self.content_types is None:
-            raise Exceptions.AttributeNoneError("content_types", self)
         if not isinstance(data, self.file_types):
             output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.file_types, type(data), "Data", "(file)"), self.name, None, data))
             return output
@@ -90,14 +86,6 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
 
     def normalize(self, data:File.AbstractFile[a], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None, list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
-        if self.normalizer is None:
-            raise Exceptions.AttributeNoneError("normalizer", self)
-        if self.post_normalizer is None:
-            raise Exceptions.AttributeNoneError("post_normalizer", self)
-        if self.pre_normalized_types is None:
-            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
-        if self.file_types is None:
-            raise Exceptions.AttributeNoneError("file_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -148,8 +136,6 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
             return None, exceptions
 
     def get_tag_paths(self, data:File.AbstractFile[a], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
-        if self.children_tags is None:
-            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:
@@ -228,7 +214,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         elif environment.default_delegate is not None:
             printer = environment.default_delegate
         else:
-            raise Exceptions.AttributeNoneError("delegate", self)
+            raise Exceptions.InvalidStateError(self)
         output, new_exceptions = printer.print_text(data.data, environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
@@ -246,7 +232,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         elif environment.default_delegate is not None:
             comparer = environment.default_delegate.compare_text
         else:
-            raise Exceptions.AttributeNoneError("delegate", self)
+            raise Exceptions.InvalidStateError(self)
         output, has_changes, new_exceptions = comparer(data_extracted, environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions

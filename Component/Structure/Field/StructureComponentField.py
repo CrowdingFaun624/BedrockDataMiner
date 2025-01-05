@@ -7,9 +7,8 @@ import Component.Pattern as Pattern
 
 if TYPE_CHECKING:
     import Component.Structure.StructureComponent as StructureComponent
-    import Structure.Structure as Structure
 
-STRUCTURE_COMPONENT_PATTERN = Pattern.Pattern([{"is_structure": True}])
+STRUCTURE_COMPONENT_PATTERN = Pattern.Pattern("is_structure")
 
 class StructureComponentField(ComponentField.ComponentField["StructureComponent.StructureComponent"]):
     '''A Field that refers to a StructureComponent (but not a GroupComponent).'''
@@ -24,10 +23,3 @@ class StructureComponentField(ComponentField.ComponentField["StructureComponent.
         :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         '''
         super().__init__(subcomponent_data, pattern, path, allow_inline=allow_inline)
-
-    def get_final(self) -> "Structure.Structure":
-        '''
-        Returns the final Structure that this Field refers to.
-        Can only be called after `set_field`.
-        '''
-        return self.get_component().get_final()

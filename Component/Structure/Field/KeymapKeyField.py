@@ -10,7 +10,6 @@ import Component.Structure.Field.TypeListField as TypeListField
 if TYPE_CHECKING:
     import Component.Component as Component
     import Component.Structure.StructureTagComponent as StructureTagComponent
-    import Structure.Structure as Structure
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 
@@ -68,14 +67,6 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         :tag_set: The set of strings to add to.
         '''
         self.tags_field.add_to_tag_set(tag_set)
-
-    def get_types(self) -> tuple[type,...]:
-        '''Return the list of types that this key can be.'''
-        return self.types_field.get_types()
-
-    def get_subcomponent(self) -> "Structure.Structure|None":
-        '''Return the Structure that this KeymapKeyField refers to.'''
-        return self.subcomponent_field.get_final()
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.key} id {id(self)}>"

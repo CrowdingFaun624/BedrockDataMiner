@@ -27,10 +27,10 @@ class PrimitiveStructure[d](Structure.Structure[d]):
     def __init__(self, name: str, children_has_normalizer: bool) -> None:
         super().__init__(name, children_has_normalizer, False)
 
-        self.types:tuple[type,...]|None = None
-        self.normalizer:list[Normalizer.Normalizer]|None = None
-        self.pre_normalized_types:tuple[type,...]|None = None
-        self.tags:set[StructureTag.StructureTag]|None = None
+        self.types:tuple[type,...]
+        self.normalizer:list[Normalizer.Normalizer]
+        self.pre_normalized_types:tuple[type,...]
+        self.tags:set[StructureTag.StructureTag]
 
     def link_substructures(
         self,
@@ -51,8 +51,6 @@ class PrimitiveStructure[d](Structure.Structure[d]):
         return []
 
     def check_all_types(self, data:d, environment: StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
-        if self.types is None:
-            raise Exceptions.AttributeNoneError("types", self)
         if not isinstance(data, self.types):
             return [Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data)]
         else:
@@ -61,7 +59,7 @@ class PrimitiveStructure[d](Structure.Structure[d]):
     def compare_text(self, data: d|D.Diff[d], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
         if self.delegate is None:
             if environment.default_delegate is None:
-                raise Exceptions.AttributeNoneError("delegate", self)
+                raise Exceptions.InvalidStateError(self)
             else:
                 return environment.default_delegate.compare_text(data, environment)
         else:
@@ -74,10 +72,6 @@ class PrimitiveStructure[d](Structure.Structure[d]):
             return self.delegate.print_text(data, environment)
 
     def normalize(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
-        if self.normalizer is None:
-            raise Exceptions.AttributeNoneError("normalizer", self)
-        if self.pre_normalized_types is None:
-            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -94,11 +88,6 @@ class PrimitiveStructure[d](Structure.Structure[d]):
         return data, exceptions
 
     def get_tag_paths(self, data: d, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment: StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
-        if self.children_tags is None:
-            raise Exceptions.AttributeNoneError("children_tags", self)
-        if tag not in self.children_tags: return [], []
-        if self.tags is None:
-            raise Exceptions.AttributeNoneError("tags", self)
         if tag in self.tags:
             return [data_path.copy().embed(data)], []
         else:

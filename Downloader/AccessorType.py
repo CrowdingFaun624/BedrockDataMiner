@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING, Any
 
 import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
-import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFileType as VersionFileType
 
@@ -15,8 +14,8 @@ class AccessorType():
         self.name = name
         self.class_arguments = class_arguments
         self.propagated_arguments = propagated_arguments
-        self.accessor_class:type[Accessor.Accessor]|None = None
-        self.linked_accessor_types:dict[str,AccessorType]|None = None
+        self.accessor_class:type[Accessor.Accessor]
+        self.linked_accessor_types:dict[str,AccessorType]
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.name}>"
@@ -28,16 +27,6 @@ class AccessorType():
     ) -> None:
         self.accessor_class = accessor_class
         self.linked_accessor_types = get_linked_accessor_types
-
-    def get_accessor_class(self) -> type[Accessor.Accessor]:
-        if self.accessor_class is None:
-            raise Exceptions.AttributeNoneError("accessor_class", self)
-        return self.accessor_class
-
-    def get_linked_accessor_types(self) -> dict[str,"AccessorType"]:
-        if self.linked_accessor_types is None:
-            raise Exceptions.AttributeNoneError("linked_accessor_types", self)
-        return self.linked_accessor_types
 
     def create_accessor(
         self,
@@ -54,18 +43,18 @@ class AccessorType():
 
         linked_accessors:dict[str,Accessor.Accessor] = {}
         exceptions:list[Exception] = []
-        for key, accessor_type in self.get_linked_accessor_types().items():
+        for key, accessor_type in self.linked_accessor_types.items():
             subaccessor, new_exceptions = accessor_type.create_accessor(version, domain, file_type, instance_arguments, propagated_arguments)
             if subaccessor is not None:
                 linked_accessors[key] = subaccessor
             exceptions.extend(new_exceptions)
 
-        accessor_type = self.get_accessor_class()
+        accessor_type = self.accessor_class
         accessor_instance_keys = accessor_type.instance_parameters.keys_dict.keys()
         accessor_propagated_keys = accessor_type.propagated_parameters.keys_dict.keys()
         local_instance_arguments = {key: value for key, value in instance_arguments.items() if key in accessor_instance_keys}
         local_propagated_arguments = {key: value for key, value in propagated_arguments.items() if key in accessor_propagated_keys}
-        trace = TypeVerifier.Trace([(self, TypeVerifier.TraceItemType.OTHER), (version, TypeVerifier.TraceItemType.OTHER)])
+        trace = TypeVerifier.StackTrace([(self, TypeVerifier.TraceItemType.OTHER), (version, TypeVerifier.TraceItemType.OTHER)])
         exceptions.extend(accessor_type.instance_parameters.verify(local_instance_arguments, trace))
         exceptions.extend(accessor_type.propagated_parameters.verify(local_propagated_arguments, trace))
 

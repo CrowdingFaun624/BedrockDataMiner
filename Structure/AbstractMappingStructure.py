@@ -65,10 +65,10 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
         self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
         # get_max_similarity_descendent_depth is defined by each subclass
 
-        self.key_structure:Structure.Structure[str]|None = None
-        self.normalizer:list[Normalizer.Normalizer]|None = None
-        self.post_normalizer:list[Normalizer.Normalizer]|None = None
-        self.required_keys:list[str]|None = None
+        self.key_structure:Structure.Structure[str]|None
+        self.normalizer:list[Normalizer.Normalizer]
+        self.post_normalizer:list[Normalizer.Normalizer]
+        self.required_keys:list[str]
 
     def link_substructures(
         self,
@@ -110,7 +110,6 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
             output.extend(exception.add(self.name, key) for exception in new_exceptions)
             if structure is not None:
                 output.extend(exception.add(self.name, key) for exception in structure.check_all_types(value, environment))
-        assert self.required_keys is not None
         for key in self.required_keys:
             if key not in data:
                 output.append(Trace.ErrorTrace(Exceptions.StructureRequiredKeyMissingError(self, key), self.name, None, data))

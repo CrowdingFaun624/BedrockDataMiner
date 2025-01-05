@@ -31,8 +31,8 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
         header:list[str] = []
         beta_texts:list[str] = ["", ""]
         for index, version in enumerate((version1, version2)):
-            if version is not None and version.get_order_tag().is_development_tag and version.parent is not None:
-                beta_texts[index] = f" ({version.get_order_tag().development_name} of \"{version.parent.name}\")"
+            if version is not None and version.order_tag.is_development_tag and version.parent is not None:
+                beta_texts[index] = f" ({version.order_tag.development_name} of \"{version.parent.name}\")"
         if version1 is None:
             header.append(f"Addition of \"{self.structure_name}\"{beta_texts[0]} at \"{version2.name}\"{beta_texts[1]}.")
         else:
@@ -47,7 +47,7 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
         header.append("")
 
         lines:list[DefaultDelegate.LineType]
-        lines, any_changes, new_exceptions = self.get_structure().get_structure().compare_text(data, environment)
+        lines, any_changes, new_exceptions = self.get_structure().structure.compare_text(data, environment)
         exceptions.extend(new_exceptions)
 
         final = header

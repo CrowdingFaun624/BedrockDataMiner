@@ -12,22 +12,34 @@ if TYPE_CHECKING:
 
 class Version():
 
+    __slots__ = (
+        "name",
+        "time",
+        "index",
+        "latest",
+        "released",
+        "version_directory",
+        "data_directory",
+        "version_directory",
+        "children",
+        "parent",
+        "tags",
+        "tags_dict",
+        "version_files",
+        "version_files_dict",
+        "order_tag",
+    )
+
     def __init__(self, name:str, domain:"Domain.Domain", time:datetime.datetime|None, index:int) -> None:
         self.name = name
         self.time = time
         self.index = index
 
-        self.parent:Version|None = None
-        self.tags:list[VersionTag.VersionTag]|None = None
-        self.tags_str:list[str]|None = None
-        self.version_files:list[VersionFile.VersionFile]|None = None
         self.latest = False
         self.released = True
-        self.order_tag:VersionTag.VersionTag|None = None
 
         self.version_directory = domain.versions_directory.joinpath(self.name)
         self.data_directory = self.version_directory.joinpath("data")
-        self.version_directory.mkdir(exist_ok=True)
         self.children:list[Version] = []
 
     def link_finals(
@@ -38,93 +50,30 @@ class Version():
     ) -> None:
         self.parent = parent
         self.tags = tags
-        self.tags_str = [tag.name for tag in self.tags]
         self.version_files = version_files
-
+        self.version_files_dict = {version_file.name: version_file for version_file in self.version_files}
         if self.parent is not None:
-            self.parent.add_child(self)
+            self.parent.children.append(self)
 
-    def assign_latest(self) -> None:
-        "Makes this Version be a latest one."
-        self.latest = True
-
-    def finalize(self) -> None:
-        self.tags_dict = {tag.name: tag for tag in self.get_tags()}
-        self.version_files_dict = {version_file.get_version_file_type().name: version_file for version_file in self.get_version_files()}
-        for tag in self.get_tags():
-            if self.order_tag is None and tag.is_order_tag:
-                self.order_tag = tag
-            if tag.is_unreleased_tag:
-                self.released = False
-        if self.order_tag is None:
-            raise Exceptions.NoOrderVersionTagsFoundError(self, self.get_tags())
-
-    def get_tags(self) -> list[VersionTag.VersionTag]:
-        if self.tags is None:
-            raise Exceptions.AttributeNoneError("tags", self)
-        return self.tags
-
-    def get_tags_str(self) -> list[str]:
-        if self.tags_str is None:
-            raise Exceptions.AttributeNoneError("tags_str", self)
-        return self.tags_str
-
-    def get_order_tag(self) -> VersionTag.VersionTag:
-        if self.order_tag is None:
-            raise Exceptions.AttributeNoneError("order_tag", self)
-        return self.order_tag
-
-    def get_tags_dict(self) -> dict[str,VersionTag.VersionTag]:
-        if self.tags_dict is None:
-            raise Exceptions.AttributeNoneError("tags_dict", self)
-        return self.tags_dict
-
-    def get_version_files(self) -> list[VersionFile.VersionFile]:
-        if self.version_files is None:
-            raise Exceptions.AttributeNoneError("files", self)
-        return self.version_files
-
-    def get_version_files_dict(self) -> dict[str,VersionFile.VersionFile]:
-        if self.version_files_dict is None:
-            raise Exceptions.AttributeNoneError("version_files_dict", self)
-        return self.version_files_dict
+        self.tags_dict:dict[str,VersionTag.VersionTag] = {}
+        order_tag:VersionTag.VersionTag|None = None
+        for tag in self.tags:
+            self.tags_dict[tag.name] = tag
+            if order_tag is None and tag.is_order_tag:
+                order_tag = tag
+            self.released = self.released and not tag.is_unreleased_tag
+        if order_tag is None:
+            raise Exceptions.NoOrderVersionTagsFoundError(self, self.tags)
+        self.order_tag = order_tag
 
     def get_accessor[a: Accessor.Accessor](self, file_type:str, required_type:type[a]) -> a|None:
-        return self.get_version_files_dict()[file_type].get_accessor(True, required_type=required_type)
-
-    def has_tag(self, search_tag:VersionTag.VersionTag|str) -> bool:
-        '''
-        Returns True if this Version has the given VersionTag.
-        :search_tag: The VersionTag (or name of the VersionTag) to search this Version for.
-        '''
-        if isinstance(search_tag, str):
-            return search_tag in self.get_tags_str()
-        else:
-            return search_tag in self.get_tags()
-
-    def add_tag(self, tag:VersionTag.VersionTag) -> None:
-        '''Adds a tag to the Version.'''
-        tags_list, tags_dict = self.get_tags(), self.get_tags_dict()
-        if tag not in tags_dict:
-            tags_list.append(tag)
-            tags_dict[tag.name] = tag
+        return self.version_files_dict[file_type].get_accessor(required_type, True)
 
     def get_children_recursive(self) -> list["Version"]:
         children = self.children[:]
         for child in self.children:
             children.extend(child.children)
         return children
-
-    def add_child(self, child:"Version") -> None:
-        self.children.append(child)
-
-    def get_version_directory(self) -> Path:
-        self.version_directory.mkdir(exist_ok=True)
-        return self.version_directory
-
-    def get_data_directory(self) -> Path:
-        self.data_directory.mkdir(exist_ok=True)
-        return self.data_directory
 
     def __str__(self) -> str:
         return self.name

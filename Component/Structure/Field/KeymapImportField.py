@@ -8,9 +8,8 @@ import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
 import Component.Structure.KeymapComponent as KeymapComponent
-import Utilities.Exceptions as Exceptions
 
-IMPORTABLE_KEYS_PATTERN:Pattern.Pattern["KeymapComponent.KeymapComponent"] = Pattern.Pattern([{"has_importable_keys": True}])
+IMPORTABLE_KEYS_PATTERN:Pattern.Pattern["KeymapComponent.KeymapComponent"] = Pattern.Pattern("has_importable_keys")
 
 class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.KeymapComponent"]):
 
@@ -24,7 +23,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(subcomponents_data, IMPORTABLE_KEYS_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
-        self.import_into_keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]|None = None
+        self.import_into_keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]
 
     def set_field(
         self,
@@ -35,8 +34,6 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["KeymapComponent.KeymapComponent"],list["KeymapComponent.KeymapComponent"]]:
         subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
-        if self.import_into_keys is None:
-            raise Exceptions.FieldSequenceBreakError(self.import_into, self.set_field, self)
         self.import_into_keys.extend(
             key
             for component in subcomponents

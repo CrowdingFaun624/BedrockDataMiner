@@ -20,7 +20,7 @@ class ComponentGroupField[a: Component.Component](Field.Field):
         '''
         super().__init__(path)
         self.component_group_name = component_group_name
-        self.component_group:dict[str,a]|None = None
+        self.component_group:dict[str,a]
 
     def set_field(
         self,
@@ -35,8 +35,3 @@ class ComponentGroupField[a: Component.Component](Field.Field):
             raise Exceptions.UnrecognizedComponentGroupError(self.component_group_name, repr(self))
         self.component_group = component_group
         return [], []
-
-    def get_component_group(self) -> dict[str,a]:
-        if self.component_group is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_component_group, self)
-        return self.component_group

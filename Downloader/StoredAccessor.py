@@ -13,7 +13,7 @@ class StoredIndex(Cache.LinesCache[dict[str,tuple[str,bool]],None]):
     can_be_written = False
 
     def __init__(self, version:Version.Version) -> None:
-        super().__init__(version.get_version_directory().joinpath("index.txt"))
+        super().__init__(version.version_directory.joinpath("index.txt"))
 
     def deserialize(self, data: bytes) -> dict[str,tuple[str,bool]]:
         return {line[43:]: (line[:40], bool(int(line[41]))) for line in data.decode("UTF8").split("\n")}

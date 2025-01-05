@@ -11,7 +11,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Component.Component as Component
 
-TYPE_ALIAS_PATTERN:Pattern.Pattern[TypeAliasComponent.TypeAliasComponent] = Pattern.Pattern([{"is_type_alias": True}])
+TYPE_ALIAS_PATTERN:Pattern.Pattern[TypeAliasComponent.TypeAliasComponent] = Pattern.Pattern("is_type_alias")
 
 class TypeListField(AbstractTypeField.AbstractTypeField):
     '''A link to multiple TypeAliasComponents and/or types.'''
@@ -30,9 +30,8 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         '''
         super().__init__(path)
         self.subcomponents_strs = [subcomponents_strs] if isinstance(subcomponents_strs, str) else subcomponents_strs
-        self.primitive_types:list[type]|None = None
-        self.type_aliases:list[TypeAliasComponent.TypeAliasComponent]|None = None
-        self.types:tuple[type,...]|None = None
+        self.primitive_types:list[type]
+        self.type_aliases:list[TypeAliasComponent.TypeAliasComponent]
 
     def set_field(
         self,
@@ -62,20 +61,11 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         return components_used, []
 
     def resolve_link_finals(self) -> None:
-        if self.primitive_types is None or self.type_aliases is None:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.resolve_link_finals, self)
         types:list[type] = []
         types.extend(self.primitive_types)
         for type_alias_component in self.type_aliases:
-            types.extend(type_alias_component.get_final())
+            types.extend(type_alias_component.final)
         self.types = tuple(types)
 
-    def get_types(self) -> tuple[type,...]:
-        if self.types is None:
-            raise Exceptions.FieldSequenceBreakError(self.resolve_link_finals, self.get_types, self)
-        return self.types
-
     def __len__(self) -> int:
-        if self.types is None:
-            raise Exceptions.FieldSequenceBreakError(self.resolve_link_finals, self.__len__, self)
         return len(self.types)

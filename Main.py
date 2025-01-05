@@ -1,22 +1,23 @@
 # import cProfile
 # import pstats
-
 # from pathlib import Path
 
 # profile = cProfile.Profile()
 # profile.run('''
-# import Dataminer.Dataminers as Dataminers
-# import Programs.AllVersions as AllVersions
-# import Programs.Cleaner as Cleaner
-# import Programs.CompareAll as CompareAll
-# import Programs.Test.Tests as Tests
-# import Utilities.FileManager as FileManager
-# import Utilities.FileStorageManager as FileStorageManager
-# import Utilities.Scripts as Scripts
+# import Domain.Domains as Domains
+# Domains.domains["minecraft_java"].import_components()
 # ''')
 # with open(Path("./time_report.txt"), "wt") as stream:
 #     stats = pstats.Stats(profile, stream=stream)
 #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
+
+# import pprofile
+
+# profile = pprofile.Profile()
+# with profile():
+#     import Domain.Domains as Domains
+#     Domains.domains["minecraft_bedrock"].import_components()
+# profile.dump_stats("./time_report.txt")
 
 import threading
 from typing import Any, Callable
@@ -71,20 +72,6 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[Domain.Domain],None]] = {
 def main() -> None:
     with user_input_lock:
         if user_input[0] is not None and user_input[1] is not None:
-            # import pprofile
-            # profile = pprofile.Profile()
-            # with profile():
-            #     PROGRAM_FUNCTIONS[user_input[0]]()
-            # profile.dump_stats("./time_report.txt")
-
-            # import cProfile
-            # from pathlib import Path
-            # import pstats
-            # profile = cProfile.Profile()
-            # profile.run("PROGRAM_FUNCTIONS[user_input[0]]()")
-            # with open(Path("./time_report.txt"), "wt") as stream:
-            #     stats = pstats.Stats(profile, stream=stream)
-            #     stats.sort_stats(pstats.SortKey.CUMULATIVE).print_stats()
             if isinstance(user_input[1], Exception):
                 raise user_input[1]
             PROGRAM_FUNCTIONS[user_input[1]](user_input[0])

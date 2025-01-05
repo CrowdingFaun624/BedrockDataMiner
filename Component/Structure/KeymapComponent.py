@@ -111,8 +111,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.this_type_field.must_be(Types.mapping_types)
         return [self.import_field, self.delegate_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field]
 
-    def create_final(self) -> None:
-        super().create_final()
+    def create_final(self) -> KeymapStructure.KeymapStructure:
         match self.sort:
             case KeymapSorting.none:
                 sorting_function = None
@@ -123,7 +122,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             case KeymapSorting.by_component_order:
                 key_order = {key.key: index for index, key in enumerate(self.keys)}
                 sorting_function = lambda item: key_order[key.last_value] if isinstance((key := item[0]), D.Diff) else key_order[key]
-        self.final = KeymapStructure.KeymapStructure(
+        return KeymapStructure.KeymapStructure(
             name=self.name,
             sorting_function=sorting_function,
             detect_key_moves=self.detect_key_moves,
@@ -143,20 +142,20 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         delegate_keys_arguments = {key.key: key.delegate_arguments for key in self.keys}
-        self.get_final().link_substructures(
-            keys={key.key: key.get_subcomponent() for key in self.keys},
-            delegate=self.delegate_field.create_delegate(self.get_final(), delegate_keys_arguments, exceptions=exceptions),
-            key_types={key.key: key.get_types() for key in self.keys},
-            key_structure=self.key_structure_field.get_final(),
-            normalizer=self.normalizer_field.get_finals(),
-            post_normalizer=self.post_normalizer_field.get_finals(),
-            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
-            tags={keymap_field.key: keymap_field.tags_field.get_finals() for keymap_field in self.keys},
-            keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.get_subcomponent()) is not None and subcomponent.children_has_normalizer] if self.children_has_normalizer else [],
+        self.final.link_substructures(
+            keys={key.key: key.subcomponent_field.final for key in self.keys},
+            delegate=self.delegate_field.create_delegate(self.final, delegate_keys_arguments, exceptions=exceptions),
+            key_types={key.key: key.types_field.types for key in self.keys},
+            key_structure=self.key_structure_field.final,
+            normalizer=self.normalizer_field.finals,
+            post_normalizer=self.post_normalizer_field.finals,
+            pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.this_type_field.types,
+            tags={keymap_field.key: keymap_field.tags_field.finals for keymap_field in self.keys},
+            keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.subcomponent_field.final) is not None and subcomponent.children_has_normalizer] if self.children_has_normalizer else [],
             required_keys=[key.key for key in self.keys if key.required],
-            children_tags={tag.get_final() for tag in self.children_tags},
+            children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.this_type_field.get_types())
+        self.my_type = set(self.this_type_field.types)
         return exceptions
 
     def check(self) -> list[Exception]:
@@ -165,7 +164,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             types_set:set[type] = set()
             types_list:list[type] = []
             for key in self.keys:
-                for key_type in key.get_types():
+                for key_type in key.types:
                     if key_type in types_set: continue
                     types_set.add(key_type)
                     types_list.append(key_type)

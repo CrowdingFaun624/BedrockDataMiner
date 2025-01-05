@@ -100,8 +100,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.this_type_field.must_be(Types.mapping_types)
         return [self.subcomponent_field, self.delegate_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field]
 
-    def create_final(self) -> None:
-        super().create_final()
+    def create_final(self) -> DictStructure.DictStructure:
         match self.sort:
             case DictSorting.none:
                 sorting_function = None
@@ -109,7 +108,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
                 sorting_function = lambda item: item[0]
             case DictSorting.by_value:
                 sorting_function = lambda item: item[1]
-        self.final = DictStructure.DictStructure(
+        return DictStructure.DictStructure(
             name=self.name,
             detect_key_moves=self.detect_key_moves,
             sorting_function=sorting_function,
@@ -126,30 +125,30 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_substructures(
-            structure=self.subcomponent_field.get_final(),
-            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
-            key_structure=self.key_structure_field.get_final(),
-            types=self.types_field.get_types(),
-            normalizer=self.normalizer_field.get_finals(),
-            post_normalizer=self.post_normalizer_field.get_finals(),
-            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.this_type_field.get_types(),
-            tags=self.tags_field.get_finals(),
+        self.final.link_substructures(
+            structure=self.subcomponent_field.final,
+            delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
+            key_structure=self.key_structure_field.final,
+            types=self.types_field.types,
+            normalizer=self.normalizer_field.finals,
+            post_normalizer=self.post_normalizer_field.finals,
+            pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.this_type_field.types,
+            tags=self.tags_field.finals,
             required_keys=self.required_keys,
-            children_tags={tag.get_final() for tag in self.children_tags},
+            children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.this_type_field.get_types())
+        self.my_type = set(self.this_type_field.types)
         return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
         if self.sort == DictSorting.by_value and len(self.types_field) > 0:
-            first_type = self.types_field.get_types()[0]
+            first_type = self.types_field.types[0]
             for category_name, category_types in Types.mutually_sortable.items():
                 if first_type not in category_types: continue
                 exceptions.extend(
                     Exceptions.ComponentTypeInvalidTypeError(self, type, category_types, message=f"(in sortable category \"{category_name}\")")
-                    for type in self.types_field.get_types()
+                    for type in self.types_field.types
                     if type not in category_types
                 )
                 break

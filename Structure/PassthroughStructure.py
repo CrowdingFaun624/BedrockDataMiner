@@ -43,10 +43,10 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         self.max_similarity_descendent_depth = max_similarity_descendent_depth
 
         self.structure:Structure.Structure[a]|None = None
-        self.types:tuple[type,...]|None = None
-        self.normalizer:list[Normalizer.Normalizer]|None = None
-        self.post_normalizer:list[Normalizer.Normalizer]|None = None
-        self.pre_normalized_types:tuple[type,...]|None = None
+        self.types:tuple[type,...]
+        self.normalizer:list[Normalizer.Normalizer]
+        self.post_normalizer:list[Normalizer.Normalizer]
+        self.pre_normalized_types:tuple[type,...]
 
     def link_substructures(
         self,
@@ -74,8 +74,6 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
 
     def check_all_types(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         output:list[Trace.ErrorTrace] = []
-        if self.types is None:
-            raise Exceptions.AttributeNoneError("types", self)
         if not isinstance(data, self.types):
             output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data))
             return output
@@ -85,12 +83,6 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
 
     def normalize(self, data:a, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None, list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
-        if self.normalizer is None:
-            raise Exceptions.AttributeNoneError("normalizer", self)
-        if self.post_normalizer is None:
-            raise Exceptions.AttributeNoneError("post_normalizer", self)
-        if self.pre_normalized_types is None:
-            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -131,8 +123,6 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
             return None, exceptions
 
     def get_tag_paths(self, data:a, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
-        if self.children_tags is None:
-            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:
@@ -178,7 +168,7 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         elif environment.default_delegate is not None:
             printer = environment.default_delegate
         else:
-            raise Exceptions.AttributeNoneError("delegate", self)
+            raise Exceptions.InvalidStateError(self)
         output, new_exceptions = printer.print_text(data, environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
@@ -195,7 +185,7 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         elif environment.default_delegate is not None:
             comparer = environment.default_delegate.compare_text
         else:
-            raise Exceptions.AttributeNoneError("delegate", self)
+            raise Exceptions.InvalidStateError(self)
         output, has_changes, new_exceptions = comparer(data, environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions

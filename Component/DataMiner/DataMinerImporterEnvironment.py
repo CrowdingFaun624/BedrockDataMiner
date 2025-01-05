@@ -30,17 +30,17 @@ class DataminerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
         return "dataminer_collections"
 
     def get_output(self, components: dict[str, AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent], name: str) -> dict[str, AbstractDataminerCollection.AbstractDataminerCollection]:
-        return {component_name: component.get_final() for component_name, component in components.items() if not component.disabled}
+        return {component_name: component.final for component_name, component in components.items() if not component.disabled}
 
     def get_assumed_used_components(self, components: dict[str, Component.Component], name:str) -> Iterable[Component.Component]:
         return components.values()
 
     def get_dependencies(self, dataminer_settings:DataminerSettings.DataminerSettings, dataminer_settings_dict:dict[DataminerCollection.DataminerCollection,DataminerSettings.DataminerSettings], already:set[str]) -> list[str]:
-        if dataminer_settings.get_name() in already:
-            return [dataminer_settings.get_name()]
-        already.add(dataminer_settings.get_name())
+        if dataminer_settings.name in already:
+            return [dataminer_settings.name]
+        already.add(dataminer_settings.name)
         duplicated_dataminer_settings:list[str] = []
-        for dependency in dataminer_settings.get_dependencies():
+        for dependency in dataminer_settings.dependencies:
             if not isinstance(dependency, DataminerCollection.DataminerCollection):
                 # if it's not a DataminerCollection, its dependencies cannot vary on version.
                 continue
@@ -82,9 +82,9 @@ class DataminerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
         for dataminer_collection in output.values():
             if not isinstance(dataminer_collection, DataminerCollection.DataminerCollection):
                 continue
-            for dataminer_settings in dataminer_collection.get_all_dataminer_settings():
-                start_version = dataminer_settings.get_version_range().start
-                stop_version = dataminer_settings.get_version_range().stop
+            for dataminer_settings in dataminer_collection.dataminer_settings:
+                start_version = dataminer_settings.version_range.start
+                stop_version = dataminer_settings.version_range.stop
                 if start_version is not None:
                     used_versions.add(start_version)
                 if stop_version is not None:

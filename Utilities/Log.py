@@ -17,6 +17,13 @@ ALLOWED_TYPES:dict[LogType, tuple[type,...]] = {
 
 class Log[T]():
 
+    __slots__ = (
+        "file",
+        "log_type",
+        "name",
+        "reset_on_reload",
+    )
+
     def __init__(self, name:str, file:Path, log_type:LogType, reset_on_reload:bool) -> None:
         self.name:str = name
         self.file:Path = file

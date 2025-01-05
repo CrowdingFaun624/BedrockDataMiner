@@ -27,8 +27,8 @@ def datamine_version(version:Version.Version, domain:Domain.Domain, print_messag
         print()
         raise Exceptions.DataminersFailureError(version, [dataminer_tuple[0] for dataminer_tuple in failure_dataminers])
     if not version.latest:
-        for version_file in version.get_version_files():
-            for accessor in version_file.get_accessors():
+        for version_file in version.version_files:
+            for accessor in version_file.accessors:
                 accessor.all_done() # remove all of the installed client files from the version directory so I don't have to clog my storage
 
 def main(domain:Domain.Domain) -> None:

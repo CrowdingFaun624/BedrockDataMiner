@@ -45,16 +45,16 @@ class StructureBase():
         self.domain = domain
         self.children_has_garbage_collection = children_has_garbage_collection
 
-        self.structure:Structure.Structure|None = None
-        self.types:tuple[type,...]|None = None
-        self.pre_normalized_types:tuple[type,...]|None = None
-        self.delegate:"Delegate.Delegate[str,StructureBase,str]|None" = None
-        self.default_delegate:"Delegate.Delegate|None" = None
-        self.normalizer:list[Normalizer.Normalizer]|None = None
-        self.post_normalizer:list[Normalizer.Normalizer]|None = None
+        self.structure:Structure.Structure
+        self.types:tuple[type,...]
+        self.pre_normalized_types:tuple[type,...]
+        self.delegate:"Delegate.Delegate[str,StructureBase,str]|None"
+        self.default_delegate:"Delegate.Delegate|None"
+        self.normalizer:list[Normalizer.Normalizer]
+        self.post_normalizer:list[Normalizer.Normalizer]
         self.cache_substructures:list[CacheStructure.CacheStructure] = []
         '''List of all descendants that are CacheStructures.'''
-        self.children_tags:set[StructureTag.StructureTag]|None = None
+        self.children_tags:set[StructureTag.StructureTag]
 
     def link_substructures(
         self,
@@ -82,13 +82,8 @@ class StructureBase():
     def __hash__(self) -> int:
         return hash(self.name)
 
-    def get_structure(self) -> Structure.Structure:
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
-        return self.structure
-
     def finalize(self) -> None:
-        self.cache_substructures = [structure for structure in self.get_structure().get_descendants(set()) if isinstance(structure, CacheStructure.CacheStructure)]
+        self.cache_substructures = [structure for structure in self.structure.get_descendants(set()) if isinstance(structure, CacheStructure.CacheStructure)]
 
     def normalize(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> Any:
         '''
@@ -99,13 +94,9 @@ class StructureBase():
         version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
         # base normalizer
         exceptions:list[Trace.ErrorTrace] = []
-        if self.pre_normalized_types is None:
-            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
         self.print_exception_list(exceptions, version_tuple)
-        if self.normalizer is None:
-            raise Exceptions.AttributeNoneError("normalizer", self)
         output = data
         for normalizer_index, normalizer in enumerate(self.normalizer):
             if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
@@ -121,16 +112,12 @@ class StructureBase():
         self.print_exception_list(exceptions, version_tuple)
 
         # other normalizers
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
         normalizer_output, new_exceptions = self.structure.normalize(output, environment)
         exceptions.extend(new_exceptions)
         if normalizer_output is not None:
             output = normalizer_output
         self.print_exception_list(exceptions, version_tuple)
 
-        if self.post_normalizer is None:
-            raise Exceptions.AttributeNoneError("post_normalizer", self)
         for normalizer_index, normalizer in enumerate(self.post_normalizer):
             if normalizer.version_range is not None and environment.get_version() not in normalizer.version_range: continue
             try:
@@ -142,8 +129,6 @@ class StructureBase():
             else:
                 if normalizer_output is not None:
                     output = normalizer_output
-        if self.types is None:
-            raise Exceptions.AttributeNoneError("types", self)
         if not isinstance(output, self.types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(output), "Data"), self.name, None, output))
         self.print_exception_list(exceptions, version_tuple)
@@ -165,8 +150,6 @@ class StructureBase():
         Returns if the tag can be found in the Structure.
         :tag: The name of the tag.
         '''
-        if self.children_tags is None:
-            raise Exceptions.AttributeNoneError("children_tags", self)
         return tag in self.children_tags
 
     def has_tags(self, tags:list[StructureTag.StructureTag]) -> bool:
@@ -174,8 +157,6 @@ class StructureBase():
         Returns if any tag can be found in the Structure.
         :tags: The name of the tags.
         '''
-        if self.children_tags is None:
-            raise Exceptions.AttributeNoneError("children_tags", self)
         for tag in tags:
             if tag in self.children_tags:
                 return True
@@ -198,8 +179,6 @@ class StructureBase():
         for tag in tags:
             if not self.has_tag(tag):
                 output[tag] = []
-            if self.structure is None:
-                raise Exceptions.AttributeNoneError("structure", self)
             paths, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), environment.structure_environment)
             self.print_exception_list(new_exceptions, version_tuple)
             output[tag] = paths
@@ -213,7 +192,7 @@ class StructureBase():
         '''
         if self.children_has_garbage_collection:
             normalized_data = self.normalize(data, environment)
-            yield from self.get_structure().get_referenced_files(normalized_data, environment)
+            yield from self.structure.get_referenced_files(normalized_data, environment)
 
     def store(self, report:str, name:str) -> None:
         '''
@@ -273,8 +252,6 @@ class StructureBase():
         :data: The data to check.
         :environment: The StructureEnvironment to use.
         '''
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
         traces = self.structure.check_all_types(data, environment)
         self.print_exception_list(traces, versions)
 
@@ -300,8 +277,6 @@ class StructureBase():
         :data: The normalized data in order from oldest to newest.
         :environment: The StructureEnvironment to use.
         '''
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
         output = data[0]
         has_changes = False
         for index, item in enumerate(data[1:]):
@@ -318,8 +293,6 @@ class StructureBase():
         :data2: The normalized data from the newest Version.
         :environment: The StructureEnvironment to use.
         '''
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
         output, has_changes, traces = self.structure.compare(data1, data2, environment, 0, 2)
         self.print_exception_list(traces, environment.get_non_none_versions())
         return output, has_changes
@@ -332,7 +305,7 @@ class StructureBase():
         :environment: The StructureEnvironment to use.
         '''
         if self.delegate is None:
-            output, has_changes, traces = self.get_structure().compare_text(data, environment)
+            output, has_changes, traces = self.structure.compare_text(data, environment)
         else:
             output, has_changes, traces = self.delegate.compare_text(data, environment)
         self.print_exception_list(traces, environment.get_non_none_versions())
@@ -346,7 +319,7 @@ class StructureBase():
         '''
         version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
         if self.delegate is None:
-            output, traces = self.get_structure().print_text(data, environment)
+            output, traces = self.structure.print_text(data, environment)
         else:
             output, traces = self.delegate.print_text(data, environment)
         self.print_exception_list(traces, version_tuple)

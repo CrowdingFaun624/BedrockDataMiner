@@ -3,7 +3,6 @@ import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TypeField as TypeField
-import Component.Structure.StructureComponent as StructureComponent
 
 
 class GroupItemField(FieldContainer.FieldContainer):
@@ -24,9 +23,3 @@ class GroupItemField(FieldContainer.FieldContainer):
         self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(value, path, allow_inline=allow_inline)
         self.type_field.verify_with(self.subcomponent_field)
         super().__init__([self.type_field, self.subcomponent_field], path)
-
-    def get_types(self) -> tuple[type,...]:
-        return self.type_field.get_types()
-
-    def get_component(self) -> "StructureComponent.StructureComponent|None":
-        return self.subcomponent_field.get_component()

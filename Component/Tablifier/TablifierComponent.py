@@ -37,18 +37,17 @@ class TablifierComponent(Component.Component[Tablifier.Tablifier]):
         self.version_provider_field = VersionProviderField.VersionProviderField(data["version_provider"], self.domain, ["version_provider"])
         return [self.dataminer_collection_field, self.structure_field, self.version_provider_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = Tablifier.Tablifier(
+    def create_final(self) -> Tablifier.Tablifier:
+        return Tablifier.Tablifier(
             name=self.name,
             file_name=self.file_name,
         )
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_finals(
-            structure=self.structure_field.get_final(),
-            dataminer_collection=self.dataminer_collection_field.get_final(),
-            version_provider=self.version_provider_field.get_final()(self.domain),
+        self.final.link_finals(
+            structure=self.structure_field.subcomponent.final,
+            dataminer_collection=self.dataminer_collection_field.subcomponent.final,
+            version_provider=self.version_provider_field.version_provider(self.domain),
         )
         return exceptions

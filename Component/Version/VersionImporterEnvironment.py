@@ -40,35 +40,40 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
 
         for latest_slot_tags in latest_tags.values():
             for version in reversed(output.values()):
-                if version.released and version.get_order_tag() in latest_slot_tags:
-                    version.assign_latest()
+                if version.released and version.order_tag in latest_slot_tags:
+                    version.latest = True
                     if version.parent is not None:
-                        version.parent.assign_latest()
+                        version.parent.latest = True
                     break
 
+        versions_without_directory:list[bool] = [False] * len(output)
         for version_directory in self.domain.versions_directory.iterdir():
-            if not version_directory.is_dir(): continue
-            if version_directory.name not in output:
+            if (version_directory_name := version_directory.name) in output:
+                versions_without_directory[output[version_directory_name].index] = True
+            else:
                 try:
                     version_directory.rmdir()
                 except OSError:
-                    print(f"Version directory \"{version_directory.name}\" does not exists in versions.json and contains files!")
+                    print(f"Version directory \"{version_directory_name}\" does not exists in versions.json and contains files!")
+        for version, has_directory in zip(output.values(), versions_without_directory):
+            if has_directory: continue
+            version.version_directory.mkdir()
 
     def check(self, output: dict[str, Version.Version], other_outputs: dict[str, Any]) -> list[Exception]:
         exceptions = super().check(output, other_outputs)
         version_tag_ordering:VersionTagOrder.VersionTagOrder = other_outputs["version_tags_order"]
         version_tags:dict[str,VersionTag.VersionTag] = other_outputs["version_tags"]
         ORDERING_TAGS = [version_tag for version_tag in version_tags.values() if version_tag.is_order_tag]
-        ORDER = version_tag_ordering.get_order()
-        ALLOWED_CHILDREN = version_tag_ordering.get_allowed_children()
-        TOP_LEVEL_TAG = version_tag_ordering.get_top_level_tag()
-        BEFORE_TAGS = version_tag_ordering.get_tags_before_top_level_tag()
-        AFTER_TAGS = version_tag_ordering.get_tags_after_top_level_tag()
+        ORDER = version_tag_ordering.order
+        ALLOWED_CHILDREN = version_tag_ordering.allowed_children
+        TOP_LEVEL_TAG = version_tag_ordering.top_level_tag
+        BEFORE_TAGS = version_tag_ordering.tags_before_top_level_tag
+        AFTER_TAGS = version_tag_ordering.tags_after_top_level_tag
 
         top_level_versions:list[Version.Version] = [] # versions with no parents
         for version in output.values():
-            if (order_tag_count := sum(order_tag in version.get_tags() for order_tag in ORDERING_TAGS)) != 1:
-                exceptions.append(Exceptions.VersionOrderingTagsError(version, order_tag_count, version.get_tags()))
+            if (order_tag_count := sum(order_tag in version.tags for order_tag in ORDERING_TAGS)) != 1:
+                exceptions.append(Exceptions.VersionOrderingTagsError(version, order_tag_count, version.tags))
             if version.parent is None:
                 top_level_versions.append(version)
 
@@ -85,13 +90,13 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
         exceptions.extend(
             Exceptions.VersionTopLevelError(version, TOP_LEVEL_TAG)
             for version in top_level_versions
-            if TOP_LEVEL_TAG not in version.get_tags()
+            if TOP_LEVEL_TAG not in version.tags
         )
         exceptions.extend(
-            Exceptions.VersionChildError(version, version.get_order_tag(), child, child.get_order_tag())
+            Exceptions.VersionChildError(version, version.order_tag, child, child.order_tag)
             for version in output.values()
             for child in version.children
-            if child.get_order_tag() not in ALLOWED_CHILDREN[version.get_order_tag()]
+            if child.order_tag not in ALLOWED_CHILDREN[version.order_tag]
         )
 
         def order_contains_at_index(ordering_tag:VersionTag.VersionTag) -> bool:
@@ -104,10 +109,10 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
         for version in output.values():
             order_index = 0
             for child in version.children:
-                while not order_contains_at_index(child.get_order_tag()):
+                while not order_contains_at_index(child.order_tag):
                     order_index += 1
                     if order_index >= len(ORDER):
-                        exceptions.append(Exceptions.VersionChildOrderError(version, [child.get_order_tag() for child in version.children], child))
+                        exceptions.append(Exceptions.VersionChildOrderError(version, [child.order_tag for child in version.children], child))
                         break
                 if order_index >= len(ORDER): break
                 # after this while loop, `order_index` must be a value such that child.ordering_tag == or in ORDER[order_index].
@@ -126,12 +131,12 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                 previous_time = None
                 previous_child = None # for error messages
                 for child in version.children:
-                    if child.get_order_tag() in BEFORE_TAGS:
+                    if child.order_tag in BEFORE_TAGS:
                         if version.time is not None and child.time is not None and child.time > version.time:
-                            exceptions.append(Exceptions.VersionOrderSequenceError(version, version.get_order_tag(), child, child.get_order_tag(), "after"))
-                    elif child.get_order_tag() in AFTER_TAGS:
+                            exceptions.append(Exceptions.VersionOrderSequenceError(version, version.order_tag, child, child.order_tag, "after"))
+                    elif child.order_tag in AFTER_TAGS:
                         if version.time is not None and child.time is not None and child.time < version.time:
-                            exceptions.append(Exceptions.VersionOrderSequenceError(version, version.get_order_tag(), child, child.get_order_tag(), "before"))
+                            exceptions.append(Exceptions.VersionOrderSequenceError(version, version.order_tag, child, child.order_tag, "before"))
                     if previous_time is not None:
                         if previous_child is None:
                             exceptions.append(Exceptions.InvalidStateError("previous_child is None but previous_time is not None!"))
@@ -149,11 +154,11 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
             Exceptions.UnreleasedDownloadableVersionError(version, version_file)
             for version in output.values()
             if not version.released
-            for version_file in version.get_version_files()
-            if version_file.has_accessors() and not version_file.get_version_file_type().available_when_unreleased
+            for version_file in version.version_files
+            if version_file.has_accessors() and not version_file.version_file_type.available_when_unreleased
         )
         for version in output.values():
-            version_files = version.get_version_files_dict()
+            version_files = version.version_files_dict
             exceptions.extend(
                 Exceptions.RequiredVersionFileTypeMissingError(required_version_file_type, version)
                 for required_version_file_type_name, required_version_file_type in required_version_file_types.items()

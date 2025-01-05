@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     import Component.Version.VersionComponent as VersionComponent
     import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 
-ACCESSOR_PATTERN:Pattern.Pattern[AccessorComponent.AccessorComponent] = Pattern.Pattern([{"is_accessor": True}])
-VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern([{"is_version_file_type": True}])
+ACCESSOR_PATTERN:Pattern.Pattern[AccessorComponent.AccessorComponent] = Pattern.Pattern("is_accessor")
+VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern("is_version_file_type")
 
 class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
 
@@ -40,26 +40,25 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
         self.accessors_field = ComponentListField.ComponentListField(data["accessors"], ACCESSOR_PATTERN, ["accessors"], allow_inline=Field.InlinePermissions.inline, assume_type=AccessorComponent.AccessorComponent.class_name)
         return [self.version_file_type_field, self.accessors_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = VersionFile.VersionFile()
+    def create_final(self) -> VersionFile.VersionFile:
+        return VersionFile.VersionFile()
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        version = cast("VersionComponent.VersionComponent", self.get_inline_parent()).get_final()
-        self.get_final().link_finals(
+        version = cast("VersionComponent.VersionComponent", self.get_inline_parent()).final
+        self.final.link_finals(
             version=version,
-            version_file_type=self.version_file_type_field.get_component().get_final(),
-            accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.get_final())),
+            version_file_type=self.version_file_type_field.subcomponent.final,
+            accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.final)),
         )
         return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
-        allowed_accessors = set(self.version_file_type_field.get_component().allowed_accessor_types_field.get_components())
+        allowed_accessors = set(self.version_file_type_field.subcomponent.allowed_accessor_types_field.subcomponents)
         exceptions.extend(
-            Exceptions.VersionFileInvalidAccessorError(self.get_final(), accessor.name)
-            for accessor in self.accessors_field.get_components()
-            if accessor.accessor_type_field.get_component() not in allowed_accessors
+            Exceptions.VersionFileInvalidAccessorError(self.final, accessor.name)
+            for accessor in self.accessors_field.subcomponents
+            if accessor.accessor_type_field.subcomponent not in allowed_accessors
         )
         return exceptions

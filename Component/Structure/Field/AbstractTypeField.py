@@ -17,6 +17,8 @@ class AbstractTypeField(Field.Field):
         "verify_with_component",
     )
 
+    types: tuple[type,...]
+
     def __init__(self, path: list[str | int]) -> None:
         super().__init__(path)
         self.verify_with_component:VerifyComponentType|None=None
@@ -27,8 +29,8 @@ class AbstractTypeField(Field.Field):
     def check(self, source_component:"Component.Component") -> list[Exception]:
         exceptions = super().check(source_component)
         if self.verify_with_component is not None:
-            subcomponent = self.verify_with_component.get_component()
-            component_types = self.get_types()
+            subcomponent = self.verify_with_component.subcomponent
+            component_types = self.types
             if subcomponent is None:
                 exceptions.extend(
                     Exceptions.ComponentTypeRequiresComponentError(source_component, value_type)
@@ -41,14 +43,14 @@ class AbstractTypeField(Field.Field):
         if self.must_be_types is not None:
             exceptions.extend(
                 Exceptions.ComponentTypeInvalidTypeError(source_component, type, self.must_be_types, message=self.must_be_fail_message)
-                for type in self.get_types()
+                for type in self.types
                 if type not in self.must_be_types
             )
         if self.contained_by_field is not None:
             exceptions.extend(
                 Exceptions.ComponentTypeContainmentError(source_component, supercomponent_type, component_type)
-                for component_type in self.get_types()
-                for supercomponent_type in self.contained_by_field.get_types()
+                for component_type in self.types
+                for supercomponent_type in self.contained_by_field.types
                 if (containment_types := Types.containment_types.get(supercomponent_type)) is not None
                 if component_type not in containment_types
             )
@@ -83,10 +85,3 @@ class AbstractTypeField(Field.Field):
         :type_field: The TypeField of types that contain this TypeField's types.
         '''
         self.contained_by_field = type_field
-
-    def get_types(self) -> tuple[type,...]:
-        '''
-        Returns a list of types that this TypeField references.
-        Can only be called after `set_field`.
-        '''
-        ...

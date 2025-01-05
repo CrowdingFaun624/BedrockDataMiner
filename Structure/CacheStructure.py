@@ -8,7 +8,6 @@ import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureTag as StructureTag
 import Structure.Trace as Trace
-import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
@@ -60,6 +59,8 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
         self.cache_print_text = cache_print_text
         self.cache_get_similarity = cache_get_similarity
         self.cache_compare = cache_compare
+        
+        self.structure:Structure.Structure
 
     def link_substructures(
         self,
@@ -70,15 +71,9 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
     ) -> None:
         super().link_substructures(structure, delegate, types, [], [], types, children_tags)
 
-    def get_structure(self) -> Structure.Structure[d]:
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
-        return self.structure
-
     def check_all_types(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
-        structure = self.get_structure()
         if not environment.should_cache or not self.cache_check_all_types:
-            return structure.check_all_types(data, environment)
+            return self.structure.check_all_types(data, environment)
         data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -91,14 +86,13 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.check_all_types(data, environment)
+        output = self.structure.check_all_types(data, environment)
         cache_item.set_check_all_types(output)
         return output
 
     def normalize(self, data:d, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
-        structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_normalize:
-            return structure.normalize(data, environment)
+            return self.structure.normalize(data, environment)
         data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -111,7 +105,7 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.normalize(data, environment)
+        output = self.structure.normalize(data, environment)
         cache_item.set_normalize((data, output[1]) if output[0] is None else output)
         # the data must be stored in the cache item because when the data is
         # being retrieved later, the substructure may have just returned None,
@@ -120,9 +114,8 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
         return output
 
     def get_tag_paths(self, data:d, tag:StructureTag.StructureTag, data_path:DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
-        structure = self.get_structure()
         if not environment.should_cache or not self.cache_get_tag_paths:
-            return structure.get_tag_paths(data, tag, data_path, environment)
+            return self.structure.get_tag_paths(data, tag, data_path, environment)
         data_hash = Types.hash_data((data, tag))
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -135,16 +128,15 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.get_tag_paths(data, tag, data_path, environment)
+        output = self.structure.get_tag_paths(data, tag, data_path, environment)
         cache_item.set_get_tag_paths(output)
         return output
 
     def get_referenced_files(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
         if not self.children_has_garbage_collection:
             return; yield
-        structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_get_referenced_files:
-            yield from structure.get_referenced_files(data, environment)
+            yield from self.structure.get_referenced_files(data, environment)
         data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -157,14 +149,13 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.get_referenced_files(data, environment)
+        output = self.structure.get_referenced_files(data, environment)
         cache_item.set_get_referenced_files(output)
         yield from output
 
     def compare_text(self, data: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
-        structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_compare_text:
-            return structure.compare_text(data, environment)
+            return self.structure.compare_text(data, environment)
         data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -177,14 +168,13 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.compare_text(data, environment)
+        output = self.structure.compare_text(data, environment)
         cache_item.set_compare_text(output, environment)
         return output
 
     def print_text(self, data: d, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
-        structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_print_text:
-            return structure.print_text(data, environment)
+            return self.structure.print_text(data, environment)
         data_hash = Types.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -197,14 +187,13 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.print_text(data, environment)
+        output = self.structure.print_text(data, environment)
         cache_item.set_print_text(output, environment)
         return output
 
     def get_similarity(self, data1: d, data2: d, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
-        structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_get_similarity:
-            return structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
+            return self.structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
         data_hash = hash((Types.hash_data(data1), Types.hash_data(data2), depth, max_depth))
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -217,14 +206,13 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
+        output = self.structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
         cache_item.set_get_similarity(output)
         return output
 
     def compare(self, data1: d, data2: d, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]:
-        structure = self.get_structure()
         if not environment.structure_environment.should_cache or not self.cache_compare:
-            return structure.compare(data1, data2, environment, branch, branches)
+            return self.structure.compare(data1, data2, environment, branch, branches)
         data_hash = hash((Types.hash_data(data1), Types.hash_data(data2)))
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
@@ -237,7 +225,7 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = structure.compare(data1, data2, environment, branch, branches)
+        output = self.structure.compare(data1, data2, environment, branch, branches)
         cache_item.set_compare(output)
         return output
 
@@ -293,25 +281,23 @@ class CacheItem[d]():
         self.retrieve_index = creation_index
 
         self.check_all_types = False
-        self.check_all_types_data:list[Trace.ErrorTrace]|None = None
+        self.check_all_types_data:list[Trace.ErrorTrace]
         self.normalize = False
-        self.normalize_data:tuple[Any|None,list[Trace.ErrorTrace]]|None = None
+        self.normalize_data:tuple[Any|None,list[Trace.ErrorTrace]]
         self.get_tag_paths = False
-        self.get_tag_paths_data:tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]|None = None
+        self.get_tag_paths_data:tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]
         self.get_referenced_files = False
-        self.get_referenced_files_data:list[int]|None = None
+        self.get_referenced_files_data:list[int]
         self.compare_text = False
-        self.compare_text_data:tuple[Any,bool,list[Trace.ErrorTrace]]|None = None
+        self.compare_text_data:tuple[Any,bool,list[Trace.ErrorTrace]]
         self.print_text = False
-        self.print_text_data:tuple[Any, list[Trace.ErrorTrace]]|None = None
+        self.print_text_data:tuple[Any, list[Trace.ErrorTrace]]
         self.get_similarity = False
-        self.get_similarity_data:float|None = None
+        self.get_similarity_data:float
         self.compare = False
-        self.compare_data:tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]|None = None
+        self.compare_data:tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]
 
     def get_check_all_types_data(self) -> list[Trace.ErrorTrace]:
-        if self.check_all_types_data is None:
-            raise Exceptions.AttributeNoneError("check_all_types_data", self)
         return [trace.copy() for trace in self.check_all_types_data]
 
     def set_check_all_types(self, data:list[Trace.ErrorTrace]) -> None:
@@ -319,8 +305,6 @@ class CacheItem[d]():
         self.check_all_types_data = [trace.copy() for trace in data]
 
     def get_normalize_data(self) -> tuple[Any|None,list[Trace.ErrorTrace]]:
-        if self.normalize_data is None:
-            raise Exceptions.AttributeNoneError("normalize_data", self)
         return self.normalize_data[0], [trace.copy() for trace in self.normalize_data[1]]
 
     def set_normalize(self, data:tuple[Any|None,list[Trace.ErrorTrace]]) -> None:
@@ -328,8 +312,6 @@ class CacheItem[d]():
         self.normalize_data = (data[0], [trace.copy() for trace in data[1]])
 
     def get_get_tag_paths_data(self) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
-        if self.get_tag_paths_data is None:
-            raise Exceptions.AttributeNoneError("get_tag_paths_data", self)
         return self.get_tag_paths_data[0], [trace.copy() for trace in self.get_tag_paths_data[1]]
 
     def set_get_tag_paths(self, data:tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]) -> None:
@@ -337,8 +319,6 @@ class CacheItem[d]():
         self.get_tag_paths_data = (data[0], [trace.copy() for trace in data[1]])
 
     def get_get_referenced_files_data(self) -> Iterator[int]:
-        if self.get_referenced_files_data is None:
-            raise Exceptions.AttributeNoneError("get_referenced_files_data", self)
         yield from self.get_referenced_files_data
 
     def set_get_referenced_files(self, data:Iterator[int]) -> None:
@@ -346,8 +326,6 @@ class CacheItem[d]():
         self.get_referenced_files_data = list(set(data)) # remove duplicates, but keep fast iter speed.
 
     def get_get_similarity_data(self) -> float:
-        if self.get_similarity_data is None:
-            raise Exceptions.AttributeNoneError("get_similarity_data", self)
         return self.get_similarity_data
 
     def set_get_similarity(self, data:float) -> None:
@@ -355,8 +333,6 @@ class CacheItem[d]():
         self.get_similarity_data = data
 
     def get_compare_text_data(self, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any,bool,list[Trace.ErrorTrace]]:
-        if self.compare_text_data is None:
-            raise Exceptions.AttributeNoneError("compare_text_data", self)
         return self.cache_retrieve(self.compare_text_data[0], environment), self.compare_text_data[1], [trace.copy() for trace in self.compare_text_data[2]]
 
     def set_compare_text(self, data:tuple[Any,bool,list[Trace.ErrorTrace]], environment:StructureEnvironment.ComparisonEnvironment) -> None:
@@ -364,8 +340,6 @@ class CacheItem[d]():
         self.compare_text_data = (self.cache_store(data[0], environment), data[1], [trace.copy() for trace in data[2]])
 
     def get_print_text_data(self, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
-        if self.print_text_data is None:
-            raise Exceptions.AttributeNoneError("print_text_data", self)
         return self.cache_retrieve(self.print_text_data[0], environment), [trace.copy() for trace in self.print_text_data[1]]
 
     def set_print_text(self, data:tuple[Any, list[Trace.ErrorTrace]], environment:StructureEnvironment.PrinterEnvironment) -> None:
@@ -373,8 +347,6 @@ class CacheItem[d]():
         self.print_text_data = (self.cache_store(data[0], environment), [trace.copy() for trace in data[1]])
 
     def get_compare_data(self) -> tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]:
-        if self.compare_data is None:
-            raise Exceptions.AttributeNoneError("compare_data", self)
         return self.compare_data[0], self.compare_data[1], [trace.copy() for trace in self.compare_data[2]]
 
     def set_compare(self, data:tuple[d|D.Diff[d], bool, list[Trace.ErrorTrace]]) -> None:

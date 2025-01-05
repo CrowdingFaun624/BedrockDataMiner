@@ -10,7 +10,7 @@ import Component.Version.VersionFileComponent as VersionFileComponent
 if TYPE_CHECKING:
     import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 
-VERSION_FILE_PATTERN:Pattern.Pattern[VersionFileComponent.VersionFileComponent] = Pattern.Pattern([{"is_version_file": True}])
+VERSION_FILE_PATTERN:Pattern.Pattern[VersionFileComponent.VersionFileComponent] = Pattern.Pattern("is_version_file")
 
 class VersionFileListField(ComponentListField.ComponentListField[VersionFileComponent.VersionFileComponent]):
 

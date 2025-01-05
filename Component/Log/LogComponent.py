@@ -33,9 +33,8 @@ class LogComponent(Component.Component[Log.Log]):
         self.file = self.domain.log_directory.joinpath(self.file_name)
         return []
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = Log.Log(
+    def create_final(self) -> Log.Log:
+        return Log.Log(
             name=self.name,
             file=self.file,
             log_type=self.log_type,
@@ -45,5 +44,5 @@ class LogComponent(Component.Component[Log.Log]):
     def check(self) -> list[Exception]:
         exceptions = super().check()
         if self.domain.log_directory not in self.file.parents:
-            exceptions.append(Exceptions.LogInvalidFileError(self.get_final(), self.file))
+            exceptions.append(Exceptions.LogInvalidFileError(self.final, self.file))
         return exceptions

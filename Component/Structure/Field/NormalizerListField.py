@@ -7,11 +7,13 @@ import Component.Pattern as Pattern
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Structure.Normalizer as Normalizer
 
-NORMALIZER_PATTERN:Pattern.Pattern[NormalizerComponent.NormalizerComponent] = Pattern.Pattern([{"is_normalizer": True}])
+NORMALIZER_PATTERN:Pattern.Pattern[NormalizerComponent.NormalizerComponent] = Pattern.Pattern("is_normalizer")
 
 class NormalizerListField(ComponentListField.ComponentListField[NormalizerComponent.NormalizerComponent]):
 
-    __slots__ = ()
+    __slots__ = (
+        "_finals",
+    )
 
     def __init__(self, subcomponents_data:Sequence[str|ComponentTyping.NormalizerTypedDict]|str|ComponentTyping.NormalizerTypedDict, path:list[str|int], *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
@@ -20,10 +22,14 @@ class NormalizerListField(ComponentListField.ComponentListField[NormalizerCompon
         :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
         '''
         super().__init__(subcomponents_data, NORMALIZER_PATTERN, path, allow_inline=allow_inline, assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self._finals:list[Normalizer.Normalizer]|None = None
 
-    def get_finals(self) -> list[Normalizer.Normalizer]:
+    @property
+    def finals(self) -> list[Normalizer.Normalizer]:
         '''
         Returns the Normalizers that corresponds to this Field's NormalizerComponents..
         Can only be called after `set_field`.
         '''
-        return [component.get_final() for component in self.get_components()]
+        if self._finals is None:
+            self._finals = [component.final for component in self.subcomponents]
+        return self._finals

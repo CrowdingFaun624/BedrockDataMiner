@@ -46,12 +46,12 @@ class Component[a]():
 
         self.links_to_other_components:list[Component] = []
         self.parents:list[Component] = []
-        self.final:a|None = None
+        self.final:a
         self.children_has_normalizer = self.children_has_normalizer_default
         self.children_has_garbage_collection = False
         self.children_tags:set[StructureTagComponent.StructureTagComponent] = set()
         self.fields:list["Field.Field"] = []
-        self.inline_components:list[Component]|None = None
+        self.inline_components:list[Component]
         self.inline_component_count = 0
         self.inline_parent:Component|None = None
 
@@ -90,11 +90,6 @@ class Component[a]():
                 result.extend(child.get_all_descendants(memo))
         return result
 
-    def get_final(self) -> a:
-        if self.final is None:
-            raise Exceptions.AttributeNoneError("final", self)
-        return self.final
-
     def link_components(self, components:Sequence["Component"]) -> None:
         self.links_to_other_components.extend(components)
         for component in components:
@@ -113,22 +108,23 @@ class Component[a]():
         for inline_component in self.inline_components:
             inline_component.set_component(components, imported_components, functions, create_component_function)
 
-    def create_final(self) -> None:
+    def create_final_component(self) -> a:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''
         for field in self.fields:
             field.resolve_create_finals()
-        if self.inline_components is None:
-            raise Exceptions.AttributeNoneError("inline_components", self)
         for inline_component in self.inline_components:
-            inline_component.create_final()
+            inline_component.final = inline_component.create_final_component()
+        return self.create_final()
+
+    def create_final(self) -> a:
+        '''Method overridden by subclasses. Returns the Component's object.'''
+        ...
 
     def link_finals(self) -> list[Exception]:
         '''Links this Component's final object to other final objects.'''
         exceptions:list[Exception] = []
         for field in self.fields:
             field.resolve_link_finals()
-        if self.inline_components is None:
-            raise Exceptions.AttributeNoneError("inline_components", self)
         for inline_component in self.inline_components:
             exceptions.extend(inline_component.link_finals())
         return exceptions
@@ -138,16 +134,12 @@ class Component[a]():
         exceptions:list[Exception] = []
         for field in self.fields:
             exceptions.extend(field.check(self))
-        if self.inline_components is None:
-            raise Exceptions.AttributeNoneError("inline_components", self)
         for inline_component in self.inline_components:
             exceptions.extend(inline_component.check())
         return exceptions
 
     def finalize(self) -> list[Exception]:
         '''Used to call on the structure once all structures and components are guaranteed to be linked.'''
-        if self.inline_components is None:
-            raise Exceptions.AttributeNoneError("inline_components", self)
         return list(chain.from_iterable(inline_component.finalize() for inline_component in self.inline_components))
 
     def propagate_variables(self) -> bool:

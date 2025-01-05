@@ -12,6 +12,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
+
 def compare_to_now(time:datetime.datetime) -> bool:
     # this is only for making sure the time isn't significantly ahead of now,
     # so it doesn't need to be that accurate
@@ -60,9 +61,8 @@ class VersionComponent(Component.Component[Version.Version]):
         self.files_field = VersionFileListField.VersionFileListField(self.normalize_files(data["files"]), ["files"])
         return [self.parent_field, self.tags_field, self.files_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = Version.Version(
+    def create_final(self) -> Version.Version:
+        return Version.Version(
             name=self.name,
             domain=self.domain,
             time=self.time,
@@ -71,23 +71,18 @@ class VersionComponent(Component.Component[Version.Version]):
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_finals(
-            parent=self.parent_field.get_final(),
-            tags=list(self.tags_field.map(lambda version_tag_component: version_tag_component.get_final())),
-            version_files=list(self.files_field.map(lambda version_file_component: version_file_component.get_final())),
+        self.final.link_finals(
+            parent=self.parent_field.final,
+            tags=list(self.tags_field.map(lambda version_tag_component: version_tag_component.final)),
+            version_files=list(self.files_field.map(lambda version_file_component: version_file_component.final)),
         )
         return exceptions
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
-        parent_component = self.parent_field.get_component()
+        parent_component = self.parent_field.subcomponent
         if parent_component is not None and parent_component is self:
-            exceptions.append(Exceptions.InvalidParentVersionError(self.get_final(), parent_component.get_final()))
+            exceptions.append(Exceptions.InvalidParentVersionError(self.final, parent_component.final))
         if self.time is not None and compare_to_now(self.time):
-            exceptions.append(Exceptions.InvalidVersionTimeError(self.get_final(), self.time, "time is after today"))
-        return exceptions
-
-    def finalize(self) -> list[Exception]:
-        exceptions = super().finalize()
-        self.get_final().finalize()
+            exceptions.append(Exceptions.InvalidVersionTimeError(self.final, self.time, "time is after today"))
         return exceptions

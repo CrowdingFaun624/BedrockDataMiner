@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     import Component.Version.VersionComponent as VersionComponent
     import Component.Version.VersionFileComponent as VersionFileComponent
 
-ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent.AccessorTypeComponent"] = Pattern.Pattern([{"is_accessor_type": True}])
+ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent.AccessorTypeComponent"] = Pattern.Pattern("is_accessor_type")
 
 class AccessorCreator():
 
@@ -45,10 +45,10 @@ class AccessorCreator():
 
     def create_accessor(self) -> tuple[Accessor.Accessor|None, list[Exception]]:
         if self.accessor is None:
-            self.accessor, exceptions = self.accessor_type_field.get_component().get_final().create_accessor(
-                version=self.version_component.get_final(),
+            self.accessor, exceptions = self.accessor_type_field.subcomponent.final.create_accessor(
+                version=self.version_component.final,
                 domain=self.domain,
-                file_type=self.version_file_component.version_file_type_field.get_component().get_final(),
+                file_type=self.version_file_component.version_file_type_field.subcomponent.final,
                 instance_arguments=self.arguments
             )
         else: exceptions = []
@@ -81,15 +81,16 @@ class AccessorComponent(Component.Component[AccessorCreator]):
         self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference)
         return [self.accessor_type_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        version_file = self.get_inline_parent()
-        self.final = AccessorCreator(self.domain, cast("VersionFileComponent.VersionFileComponent", self.get_inline_parent()), cast("VersionComponent.VersionComponent", version_file.get_inline_parent()), self.accessor_type_field, self.arguments)
+    def create_final(self) -> AccessorCreator:
+        return AccessorCreator(
+            self.domain,
+            cast("VersionFileComponent.VersionFileComponent", self.get_inline_parent()), cast("VersionComponent.VersionComponent", self.get_inline_parent().get_inline_parent()),
+            self.accessor_type_field, self.arguments
+        )
 
     def finalize(self) -> list[Exception]:
         exceptions = super().finalize()
-        final = self.get_final()
-        _, new_exceptions = final.create_accessor()
+        _, new_exceptions = self.final.create_accessor()
         exceptions.extend(new_exceptions)
-        final.clear_variables()
+        self.final.clear_variables()
         return exceptions

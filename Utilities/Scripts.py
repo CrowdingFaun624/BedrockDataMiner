@@ -76,6 +76,11 @@ class Script[a]():
 class Scripts():
     '''Collection of scripts.'''
 
+    __slots__ = (
+        "domain",
+        "scripts",
+    )
+
     def get_script_type(self, suffix:str, name:str) -> type[Script]:
         match suffix:
             case ".py":

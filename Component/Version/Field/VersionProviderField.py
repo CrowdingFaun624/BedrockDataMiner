@@ -1,6 +1,5 @@
 import Component.Field.Field as Field
 import Domain.Domain as Domain
-import Version.VersionProvider.VersionProvider as VersionProvider
 
 
 class VersionProviderField(Field.Field):
@@ -16,6 +15,3 @@ class VersionProviderField(Field.Field):
         '''
         super().__init__(path)
         self.version_provider = domain.version_provider_classes[version_provider_name]
-
-    def get_final(self) -> type[VersionProvider.VersionProvider]:
-        return self.version_provider

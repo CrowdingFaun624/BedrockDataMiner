@@ -45,7 +45,7 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
         return next(iter(base_components.values()))
 
     def get_output(self, components: dict[str,Component.Component], name: str) -> StructureBase.StructureBase:
-        return self.get_base_component(components, name).get_final()
+        return self.get_base_component(components, name).final
 
     def get_assumed_used_components(self, components: dict[str, Component.Component], name:str) -> Iterable[Component.Component]:
         return [self.get_base_component(components, name)]

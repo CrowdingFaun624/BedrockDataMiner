@@ -14,6 +14,5 @@ class LatestSlotComponent(Component.Component[str]):
 
     __slots__ = ()
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = self.name
+    def create_final(self) -> str:
+        return self.name

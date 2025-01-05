@@ -51,9 +51,8 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
         self.structure_field = StructureField.StructureField(data["structure"], ["structure"])
         return [self.file_list_dataminer_field, self.structure_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = CoverageDataminer.CoverageDataminer(
+    def create_final(self) -> CoverageDataminer.CoverageDataminer:
+        return CoverageDataminer.CoverageDataminer(
             file_name=self.file_name,
             name=self.name,
             domain=self.domain,
@@ -66,8 +65,8 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_subcomponents(
-            file_list_dataminer=self.file_list_dataminer_field.get_final(),
-            structure=self.structure_field.get_final(),
+        self.final.link_subcomponents(
+            file_list_dataminer=self.file_list_dataminer_field.subcomponent.final,
+            structure=self.structure_field.subcomponent.final,
         )
         return exceptions

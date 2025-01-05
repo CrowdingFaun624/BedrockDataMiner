@@ -49,10 +49,10 @@ class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
 
         self.max_similarity_descendent_depth = max_similarity_descendent_depth
 
-        self.structure:Structure.Structure[d]|None = None
-        self.types:tuple[type,...]|None = None
-        self.pre_normalized_types:tuple[type,...]|None = None
-        self.tags:set[StructureTag.StructureTag]|None = None
+        self.structure:Structure.Structure[d]|None
+        self.types:tuple[type,...]
+        self.pre_normalized_types:tuple[type,...]
+        self.tags:set[StructureTag.StructureTag]
 
     def link_substructures(
         self,
@@ -78,19 +78,13 @@ class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         else: return [self.structure]
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
-        if self.types is None:
-            raise Exceptions.AttributeNoneError("types", self)
         if not isinstance(value, self.types):
             return Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(value), "Value"), self.name, key, value)
 
     def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
-        if self.children_tags is None:
-            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
-        if self.tags is None:
-            raise Exceptions.AttributeNoneError("tags", self)
         if tag in self.tags:
             output.extend(data_path.copy(key).embed(value) for key, value in data.items())
         for key, value in data.items():
@@ -109,12 +103,6 @@ class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
-        if self.normalizer is None:
-            raise Exceptions.AttributeNoneError("normalizer", self)
-        if self.post_normalizer is None:
-            raise Exceptions.AttributeNoneError("post_normalizer", self)
-        if self.pre_normalized_types is None:
-            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))

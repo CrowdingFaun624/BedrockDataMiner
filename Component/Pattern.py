@@ -9,32 +9,21 @@ if TYPE_CHECKING:
 class Pattern[a: "Component.Component"]():
 
     __slots__ = (
-        "capabilities",
+        "capability",
         "matching_components",
     )
 
-    def __init__(self, capabilities:list[dict[str,bool]]) -> None:
+    def __init__(self, capability:str) -> None:
         '''
-        For a Pattern to match any Capabilities, it must match one of the Pattern's capability sets (one of the dicts).
-        To match a capability set, the Capability must match all existing keys in the capability set.
-        Keys that are in the Capabilities but not the capability set do not count for or against it.
-        :capabilities: The set of Capabilities that are matched.
+        :capabilities: The capability that is matched.
         '''
-        for capability_set in capabilities:
-            for key in capability_set.keys():
-                if key not in Capabilties.ALLOWED_CAPABILITIES:
-                    raise Exceptions.UnrecognizedCapabilityError(key)
-        self.capabilities = capabilities
+        if capability not in Capabilties.ALLOWED_CAPABILITIES:
+            raise Exceptions.UnrecognizedCapabilityError(capability)
+        self.capability = capability
         self.matching_components:set[int]|None = None
 
     def matches_capabilities(self, capabilities:Capabilties.Capabilities) -> bool:
-        return any(
-            all(
-                self_capability_set[capability] == capabilities.capabilities.get(capability, None)
-                for capability in self_capability_set
-            )
-            for self_capability_set in self.capabilities
-        )
+        return capabilities.capabilities.get(self.capability, False)
 
     def __contains__(self, capabilities:Capabilties.Capabilities) -> bool:
         if self.matching_components is None:
@@ -47,4 +36,4 @@ class Pattern[a: "Component.Component"]():
         return id(capabilities) in self.matching_components
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {", ".join(f"({", ".join(f"{capability}: {value}" for capability, value in capability_set.items())})" for capability_set in self.capabilities)}>"
+        return f"<{self.__class__.__name__} {self.capability}>"

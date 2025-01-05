@@ -14,9 +14,9 @@ class SubDirectoryAccessor(DirectoryAccessor.DirectoryAccessor):
     def prepare_for_install(self, instance_arguments: dict[str, Any], class_arguments: dict[str, Any], propagated_arguments:dict[str,Any], linked_accessors: LinkedAccessorsTypedDict) -> None:
         self.superdirectory_accessor = linked_accessors["superdirectory"]
         self.file_prepension:str
-        if self.version.has_tag("ipa"):
+        if "ipa" in self.version.tags_dict:
             self.file_prepension = "Payload/minecraftpe.app/data/"
-        elif self.version.has_tag("double_assets"):
+        elif "double_assets" in self.version.tags_dict:
             self.file_prepension = "assets/assets/"
         else:
             self.file_prepension = "assets/"

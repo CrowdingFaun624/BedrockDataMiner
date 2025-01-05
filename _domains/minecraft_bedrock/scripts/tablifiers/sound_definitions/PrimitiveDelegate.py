@@ -12,7 +12,7 @@ __all__ = ["PrimitiveDelegate"]
 def get_version(branch:int, get_parent:bool, environment:StructureEnvironment.ComparisonEnvironment) -> str:
     version = environment.versions[branch]
     assert version is not None
-    if get_parent and version.get_order_tag().is_development_tag:
+    if get_parent and version.order_tag.is_development_tag:
         version = version.parent
         assert version is not None
     return version.name

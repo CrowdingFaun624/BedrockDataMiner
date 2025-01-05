@@ -46,7 +46,7 @@ class ImporterEnvironment[a]():
         :components: The Components in the current Component group.
         :name: The name of the current Component group.
         '''
-        output = {component_name: component.get_final() for component_name, component in components.items()}
+        output = {component_name: component.final for component_name, component in components.items()}
         if self.single_component:
             return output[""]
         else:

@@ -23,14 +23,14 @@ class Dataminer():
         self.version = version
         self.settings = settings
         self.domain = self.settings.domain
-        self.file_name = self.settings.get_file_name()
-        self.name = self.settings.get_name()
+        self.file_name = self.settings.file_name
+        self.name = self.settings.name
         self.serializers = self.settings.serializers
-        self.files = set(self.settings.get_version_file_types())
+        self.files = set(self.settings.version_file_types)
         self.files_str = {version_file_type.name for version_file_type in self.files}
-        self.dependencies = self.settings.get_dependencies()
+        self.dependencies = self.settings.dependencies
         self.dependencies_str = [dependency.name for dependency in self.dependencies]
-        if not isinstance(self, NullDataminer) and self.version not in self.settings.get_version_range():
+        if not isinstance(self, NullDataminer) and self.version not in self.settings.version_range:
             raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, f"in Dataminer {self}")
 
         self.initialize(**settings.arguments)
@@ -52,7 +52,7 @@ class Dataminer():
         raise Exceptions.DataminerLacksActivateError(self)
 
     def get_data_file_path(self) -> Path:
-        return self.version.get_data_directory().joinpath(self.file_name)
+        return self.version.data_directory.joinpath(self.file_name)
 
     def get_data_file(self) -> Any:
         with open(self.get_data_file_path(), "rt") as f:
@@ -73,8 +73,6 @@ class Dataminer():
         return accessor
 
     def get_serializer(self, serializer_key:str) -> Serializer.Serializer:
-        if self.serializers is None:
-            raise Exceptions.AttributeNoneError("serializers", self)
         serializer = self.serializers.get(serializer_key)
         if serializer is None:
             raise Exceptions.DataminerUnrecognizedSerializerError(self, serializer_key)

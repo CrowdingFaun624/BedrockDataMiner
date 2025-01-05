@@ -1,6 +1,5 @@
 import Component.Field.Field as Field
 import Domain.Domain as Domain
-import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
 
 
@@ -20,6 +19,3 @@ class AccessorClassField(Field.Field):
         if accessor_class is None:
             raise Exceptions.UnrecognizedAccessorClassError(accessor_class_str)
         self.accessor_class = accessor_class
-
-    def get_final(self) -> type[Accessor.Accessor]:
-        return self.accessor_class

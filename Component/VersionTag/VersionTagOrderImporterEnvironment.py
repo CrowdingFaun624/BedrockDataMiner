@@ -36,7 +36,7 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
 
         order_tags_used:Counter[VersionTag.VersionTag] = Counter(
             order_tag
-            for order_set in output.get_order()
+            for order_set in output.order
             for order_tag in order_set
         )
         exceptions.extend(
@@ -46,7 +46,7 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
             if (times_used := order_tags_used[order_tag]) != 1
         )
 
-        allowed_children = output.get_allowed_children()
+        allowed_children = output.allowed_children
         exceptions.extend(
             Exceptions.NotAllOrderTagsUsedError(order_tag, "allowed_children")
             for order_tag in order_version_tags
@@ -59,11 +59,11 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
                     exceptions.append(Exceptions.DuplicateVersionTagOrderError(child, ("allowed_children", key_tag.name)))
                 already_children.add(child)
 
-        top_level_tags_used:Counter[VersionTag.VersionTag] = Counter(chain([output.get_top_level_tag()], output.get_tags_before_top_level_tag(), output.get_tags_after_top_level_tag()))
+        top_level_tags_used:Counter[VersionTag.VersionTag] = Counter(chain([output.top_level_tag], output.tags_before_top_level_tag, output.tags_after_top_level_tag))
         exceptions.extend(
             Exceptions.NotAllOrderTagsUsedError(tag, "order") if times_used == 0
             else Exceptions.DuplicateVersionTagOrderError(tag, "order")
-            for tag in chain([output.get_top_level_tag()], output.get_tags_before_top_level_tag(), output.get_tags_after_top_level_tag())
+            for tag in chain([output.top_level_tag], output.tags_before_top_level_tag, output.tags_after_top_level_tag)
             if (times_used := top_level_tags_used[tag]) != 1
         )
 

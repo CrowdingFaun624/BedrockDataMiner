@@ -33,21 +33,19 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
         self.arguments = data.get("arguments", {})
 
         self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
-        self.function_field.check_arguments(self.arguments, ignore_parameters={"data"})
         self.version_range_field = VersionRangeField.VersionRangeField(data["version_range"][0], data["version_range"][1], ["version_range"]) if "version_range" in data else VersionRangeField.VersionRangeField(None, None, ["version_range"])
         return [self.function_field, self.version_range_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = Normalizer.Normalizer(
+    def create_final(self) -> Normalizer.Normalizer:
+        return Normalizer.Normalizer(
             name=self.name,
-            function=self.function_field.get_function(),
+            function=self.function_field.function,
             arguments=self.arguments,
         )
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_subcomponents(
-            version_range=self.version_range_field.get_final(),
+        self.final.link_subcomponents(
+            version_range=self.version_range_field.final,
         )
         return exceptions

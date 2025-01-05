@@ -9,7 +9,7 @@ import Component.Pattern as Pattern
 if TYPE_CHECKING:
     import Component.VersionTag.VersionTagComponent as VersionTagComponent
 
-VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern([{"is_version_tag": True}])
+VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern("is_version_tag")
 
 class VersionTagOrderAllowedChildrenField(FieldContainer.FieldContainer[Field.Field]):
 
@@ -27,9 +27,3 @@ class VersionTagOrderAllowedChildrenField(FieldContainer.FieldContainer[Field.Fi
         self.key_field = ComponentField.ComponentField(key, VERSION_TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
         self.children_field = ComponentListField.ComponentListField(children, VERSION_TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
         super().__init__([self.key_field, self.children_field], path)
-
-    def get_key(self) -> "VersionTagComponent.VersionTagComponent":
-        return self.key_field.get_component()
-
-    def get_children(self) -> list["VersionTagComponent.VersionTagComponent"]:
-        return self.children_field.get_components()

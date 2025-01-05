@@ -59,9 +59,8 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         self.types_field.verify_with(self.subcomponent_field)
         return [self.subcomponent_field, self.delegate_field, self.default_delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.types_field]
 
-    def create_final(self) -> None:
-        super().create_final()
-        self.final = StructureBase.StructureBase(
+    def create_final(self) -> StructureBase.StructureBase:
+        return StructureBase.StructureBase(
             name=self.component_group,
             domain=self.domain,
             children_has_garbage_collection=self.children_has_garbage_collection,
@@ -69,19 +68,19 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        self.get_final().link_substructures(
-            structure=self.subcomponent_field.get_final(),
-            types=self.types_field.get_types(),
-            pre_normalized_types=self.pre_normalized_types_field.get_types() if len(self.pre_normalized_types_field.get_types()) != 0 else self.types_field.get_types(),
-            delegate=self.delegate_field.create_delegate(self.get_final(), exceptions=exceptions),
+        self.final.link_substructures(
+            structure=self.subcomponent_field.subcomponent.final,
+            types=self.types_field.types,
+            pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.types_field.types,
+            delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             default_delegate=self.default_delegate_field.create_delegate(None, exceptions=exceptions),
-            normalizer=self.normalizer_field.get_finals(),
-            post_normalizer=self.post_normalizer_field.get_finals(),
-            children_tags={tag.get_final() for tag in self.children_tags},
+            normalizer=self.normalizer_field.finals,
+            post_normalizer=self.post_normalizer_field.finals,
+            children_tags={tag.final for tag in self.children_tags},
         )
         return exceptions
 
     def finalize(self) -> list[Exception]:
         exceptions = super().finalize()
-        self.get_final().finalize()
+        self.final.finalize()
         return exceptions

@@ -15,7 +15,6 @@ class OptionalComponentField[a: Component.Component](Field.Field):
         "assume_type",
         "has_inline_components",
         "has_reference_components",
-        "has_set_component",
         "pattern",
         "subcomponent",
         "subcomponent_data",
@@ -33,7 +32,6 @@ class OptionalComponentField[a: Component.Component](Field.Field):
         self.subcomponent_data = subcomponent_data
         self.subcomponent:a|None = None
         self.pattern = pattern
-        self.has_set_component = False
         self.allow_inline = allow_inline
         self.has_reference_components = False
         self.has_inline_components = False
@@ -47,7 +45,6 @@ class OptionalComponentField[a: Component.Component](Field.Field):
         functions:dict[str,Callable],
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list[a],list[a]]:
-        self.has_set_component = True
         if self.subcomponent_data is None:
             self.subcomponent = None
             return [], []
@@ -64,12 +61,3 @@ class OptionalComponentField[a: Component.Component](Field.Field):
         if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
             exceptions.append(Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.ComponentTypedDicts, self.subcomponent_data)))
         return exceptions
-
-    def get_component(self) -> a|None:
-        '''
-        Returns the Component that this Field refers to.
-        Can only be called after `set_field`.
-        '''
-        if not self.has_set_component:
-            raise Exceptions.FieldSequenceBreakError(self.set_field, self.get_component, self)
-        return self.subcomponent

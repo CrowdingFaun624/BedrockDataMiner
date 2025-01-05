@@ -30,17 +30,7 @@ class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
     ) -> None:
         super().__init__(name, max_similarity_ancestor_depth, max_similarity_descendent_depth, children_has_normalizer, children_has_garbage_collection)
 
-        self.substructures:dict[type,Structure.Structure|None]|None = None
-
-    def get_substructures(self) -> dict[type,Structure.Structure|None]:
-        if self.substructures is None:
-            raise Exceptions.AttributeNoneError("substructures", self)
-        return self.substructures
-
-    def get_types(self) -> tuple[type,...]:
-        if self.types is None:
-            raise Exceptions.AttributeNoneError("types", self)
-        return self.types
+        self.substructures:dict[type,Structure.Structure|None]
 
     def link_substructures(
         self,
@@ -56,11 +46,11 @@ class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
         self.substructures = substructures
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        yield from (substructure for substructure in self.get_substructures().values() if substructure is not None)
+        yield from (substructure for substructure in self.substructures.values() if substructure is not None)
 
     def check_all_types(self, data: a, environment: StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
-        if not isinstance(data, self.get_types()):
-            return [Trace.ErrorTrace(Exceptions.StructureTypeError(self.get_types(), type(data), "Data"), self.name, None, data)]
+        if not isinstance(data, self.types):
+            return [Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data)]
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.get_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
@@ -69,20 +59,14 @@ class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
         return exceptions
 
     def get_structure(self, key:None, value: a) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        output = self.get_substructures().get(type(value), ...)
+        output = self.substructures.get(type(value), ...)
         if output is ...:
-            return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.get_types()), type(value), "Data"), self.name, None, value)]
+            return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.types), type(value), "Data"), self.name, None, value)]
         else:
             return output, []
 
     def normalize(self, data: a, environment: StructureEnvironment.PrinterEnvironment) -> tuple[Any | None, list[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, []
-        if self.normalizer is None:
-            raise Exceptions.AttributeNoneError("normalizer", self)
-        if self.post_normalizer is None:
-            raise Exceptions.AttributeNoneError("post_normalizer", self)
-        if self.pre_normalized_types is None:
-            raise Exceptions.AttributeNoneError("pre_normalized_types", self)
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -125,8 +109,6 @@ class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
             return None, exceptions
 
     def get_tag_paths(self, data:a, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
-        if self.children_tags is None:
-            raise Exceptions.AttributeNoneError("children_tags", self)
         if tag not in self.children_tags: return [], []
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
@@ -154,9 +136,9 @@ class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
         output:dict[tuple[int,...]|None,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
         for branch, item_iter in D.iter_diff(value):
-            structure = self.get_substructures().get(type(item_iter), ...)
+            structure = self.substructures.get(type(item_iter), ...)
             if structure is ...:
-                exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.get_types(), type(value), "Data"), self.name, None, value))
+                exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(value), "Data"), self.name, None, value))
                 continue
             output[branch] = structure
         return StructureSet.StructureSet(output), exceptions

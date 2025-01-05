@@ -15,7 +15,7 @@ class LatestVersionProvider(VersionProvider.VersionProvider):
             elif len(major_versions) == 0:
                 # the last version in the version list should be a major version.
                 major_versions.append(version)
-            elif not has_selected_release_major_version and not version.get_order_tag().is_development_tag:
+            elif not has_selected_release_major_version and not version.order_tag.is_development_tag:
                 # select the latest major release
                 major_versions.append(version)
                 has_selected_release_major_version = True
@@ -29,7 +29,7 @@ class LatestVersionProvider(VersionProvider.VersionProvider):
                 output.append(major_version)
             else:
                 parent_version = major_version
-                while not any(child_tag.is_development_tag for child_tag in version_tags_order.get_allowed_children()[parent_version.get_order_tag()]):
+                while not any(child_tag.is_development_tag for child_tag in version_tags_order.allowed_children[parent_version.order_tag]):
                     parent_version = major_version.parent
                     assert parent_version is not None
                 if parent_version is not major_version and supports_dataminer_collection.supports_version(parent_version):
@@ -37,7 +37,7 @@ class LatestVersionProvider(VersionProvider.VersionProvider):
                     continue
                 # get the latest dev version of the major version.
                 for child in reversed(parent_version.children):
-                    if child.get_order_tag().is_development_tag and supports_dataminer_collection.supports_version(child):
+                    if child.order_tag.is_development_tag and supports_dataminer_collection.supports_version(child):
                         output.append(child)
                         break
                 else:
