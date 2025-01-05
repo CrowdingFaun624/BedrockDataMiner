@@ -82,8 +82,6 @@ if __name__ == "__main__":
 
 pass
 # TODO: make logging of errors slightly better.
-# TODO: Make a module specifically for getting user input.
 # TODO: create a DynamicGroupStructure class that uses a function to decide which branch to use instead of the type of the data.
 
-# TODO: make more domains
 # TODO: make comparisons out of HTML and fancy and collapsible and stuff.
