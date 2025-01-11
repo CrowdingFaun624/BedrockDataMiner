@@ -24,7 +24,7 @@ Changed namespace "common":
 			Removed variable "$single_line_label_binding_condition|default" of "once".
 			Removed variable "$text|default" of "$single_line_label_binding".
 Changed namespace "game_tip":
-	Total element: 17 (+2, -5)
+	Total element: 17 (+1, -4)
 	Removed element "anim_game_tip_alpha":
 		field "anim_type": "alpha"
 		field "easing": "in_sine"
@@ -40,22 +40,23 @@ Changed namespace "game_tip":
 				Removed control id "visual_tip_item_3" of "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
 				Added control id "visual_tip_item" of "visual_tip_item@game_tip.cell_image_hint_tip".
 			Changed field "max_children_size" from 5 to 3.
-	Added element "cell_image_hint_tip":
-		field "layer": 14
-		field "type": "image"
-		field "variables":
-			variable:
-				field "requires": "($desktop_screen and $is_recipe_book_tip)"
-				field "$variables":
-					variable "$hint_texture": "textures/ui/hint_burst_small"
-					variable "$hint_frame_count": 4
-		field "texture": "$hint_texture"
-		field "size": [37, 37]
-		field "uv_size": [37, 37]
-		field "uv": "@game_tip.hint_tip_animation"
-		field "$variables":
-			variable "$hint_texture|default": "textures/ui/hint_burst"
-			variable "$hint_frame_count|default": 5
+	Moved element "cell_image_hint_tips_3@common.cell_image" to "cell_image_hint_tip".
+	Changed element "cell_image_hint_tip":
+		Unchanged field "type": "image"
+		Changed field "variables":
+			Changed variable:
+				Changed field "$variables":
+					Total variable: 2 (+1, -0)
+					Changed variable "$hint_texture" from "textures/ui/hint_small_3" to "textures/ui/hint_burst_small".
+					Added variable "$hint_frame_count" of 4.
+		Changed field "$variables":
+			Total variable: 2 (+1, -1)
+			Changed variable "$hint_texture|default" from "textures/ui/hint_3" to "textures/ui/hint_burst".
+			Removed variable "$wait_time" of 0.6.
+			Added variable "$hint_frame_count|default" of 5.
+		Removed field "anims" of animation: "@game_tip.game_tip_size_animation_wait".
+		Added field "uv_size" of [37, 37].
+		Added field "uv" of "@game_tip.hint_tip_animation".
 	Removed element "cell_image_hint_tips@common.cell_image":
 		field "layer": 14
 		field "type": "image"
@@ -82,19 +83,6 @@ Changed namespace "game_tip":
 		field "$variables":
 			variable "$hint_texture|default": "textures/ui/hint_2"
 			variable "$wait_time": 0.4
-	Removed element "cell_image_hint_tips_3@common.cell_image":
-		field "layer": 14
-		field "type": "image"
-		field "variables":
-			variable:
-				field "requires": "($desktop_screen and $is_recipe_book_tip)"
-				field "$variables": variable "$hint_texture": "textures/ui/hint_small_3"
-		field "texture": "$hint_texture"
-		field "size": [37, 37]
-		field "anims": animation: "@game_tip.game_tip_size_animation_wait"
-		field "$variables":
-			variable "$hint_texture|default": "textures/ui/hint_3"
-			variable "$wait_time": 0.6
 	Changed element "close_inventory_factory":
 		Unchanged field "type": "panel"
 		Changed field "factory":
