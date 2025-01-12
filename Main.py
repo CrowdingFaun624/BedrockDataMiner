@@ -26,18 +26,15 @@ import Domain.Domains as Domains
 
 PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Dataminers", "FileStorage", "GarbageCollector", "Scripts", "Tablifiers", "Tests"]
 
-user_input_lock = threading.Lock()
+lock1 = threading.Lock() # domain input
+lock2 = threading.Lock() # program input
 
 def get_user_input() -> None:
     import Utilities.UserInput as UserInput
-    with user_input_lock:
-        user_input[0] = domain = UserInput.input_single(Domains.domains, "domain", show_options=True, close_enough=True, close_enough_threshold=5, enter_can_pick_only=True)
-        try:
-            domain.import_components()
-        except Exception as e:
-            user_input[1] = e
-        else:
-            user_input[1] = UserInput.input_single({name: name for name in PROGRAM_NAMES}, "program", show_options=True, close_enough=True, behavior_on_eof=exit)
+    with lock2:
+        with lock1:
+            user_input[0] = UserInput.input_single(Domains.domains, "domain", show_options=True, close_enough=True, close_enough_threshold=5, enter_can_pick_only=True, behavior_on_eof=exit)
+        user_input[1] = UserInput.input_single({name: name for name in PROGRAM_NAMES}, "program", show_options=True, close_enough=True, behavior_on_eof=exit)
 
 user_input:list[Any] = [None, None]
 if __name__ == "__main__":
@@ -70,11 +67,12 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[Domain.Domain],None]] = {
 }
 
 def main() -> None:
-    with user_input_lock:
-        if user_input[0] is not None and user_input[1] is not None:
-            if isinstance(user_input[1], Exception):
-                raise user_input[1]
-            PROGRAM_FUNCTIONS[user_input[1]](user_input[0])
+    with lock1:
+        domain:"Domain.Domain" = user_input[0]
+    if domain is not None:
+        domain.import_components()
+        with lock2:
+            PROGRAM_FUNCTIONS[user_input[1]](domain)
     FileManager.clear_temp()
 
 if __name__ == "__main__":
