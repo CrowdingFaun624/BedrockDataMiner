@@ -12,6 +12,7 @@ import Dataminer.BuiltIns.GrabSingleFileDataminer as GrabSingleFileDataminer
 import Dataminer.BuiltIns.SingleFileDataminer as SingleFileDataminer
 import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
 import Dataminer.Dataminer as Dataminer
+import Domain.LibFiles as LibFiles
 import Downloader.Accessor as Accessor
 import Downloader.DownloadAccessor as DownloadAccessor
 import Downloader.DummyAccessor as DummyAccessor
@@ -31,7 +32,6 @@ import Structure.Delegate.Delegate as Delegate
 import Structure.Delegate.LongStringDelegate as LongStringDelegate
 import Utilities.CustomJson as CustomJson
 import Utilities.DataFile as DataFile
-import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.Scripts as Scripts
 import Version.VersionProvider.LatestVersionProvider as LatestVersionProvider
@@ -88,34 +88,6 @@ BUILT_IN_SERIALIZER_CLASSES:dict[str,type[Serializer.Serializer]] = {dataminer_c
 BUILT_IN_VERSION_PROVIDER_CLASSES:dict[str,type[VersionProvider.VersionProvider]] = {version_provider_class.__name__: version_provider_class for version_provider_class in [
     LatestVersionProvider.LatestVersionProvider,
 ]}
-
-class LibFiles():
-
-    def __init__(self, domain:"Domain") -> None:
-        self.domain = domain
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} of {self.domain.name}>"
-
-    def __getitem__(self, name:str) -> Path:
-        path = self.domain.lib_directory.joinpath(name)
-        if not path.exists():
-            raise Exceptions.LibFileNotFoundError(name, path)
-        elif self.domain.lib_directory not in path.parents:
-            raise Exceptions.LibFileWrongDirectoryError(name, path, self.domain.lib_directory)
-        else:
-            return path
-
-    def get[A](self, name:str, default:A=None, wrong_directory_okay:bool=False) -> Path|A:
-        path = self.domain.lib_directory.joinpath(name)
-        if not path.exists():
-            return default
-        elif (wrong_directory := self.domain.lib_directory not in path.parents) and wrong_directory_okay:
-            return default
-        elif wrong_directory and not wrong_directory_okay:
-            raise Exceptions.LibFileWrongDirectoryError(name, path, self.domain.lib_directory)
-        else:
-            return path
 
 class Domain():
 
@@ -177,7 +149,7 @@ class Domain():
         self._serializer_classes:       ScriptImporter.ScriptSet[type[Serializer.Serializer]]|None = None
         self._version_provider_classes: ScriptImporter.ScriptSet[type[VersionProvider.VersionProvider]]|None = None
 
-        self.lib_files = LibFiles(self)
+        self.lib_files = LibFiles.LibFiles(self)
         self._type_stuff:Types.TypeStuff|None = None
 
     def import_components(self) -> None:
