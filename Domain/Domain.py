@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import Component.Importer as Importer
 import Component.ScriptImporter as ScriptImporter
+import Component.Types as Types
 import Dataminer.BuiltIns.AllFilesDataminer as AllFilesDataminer
 import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
 import Dataminer.BuiltIns.GrabReFilesDataminer as GrabReFilesDataminer
@@ -177,8 +178,11 @@ class Domain():
         self._version_provider_classes: ScriptImporter.ScriptSet[type[VersionProvider.VersionProvider]]|None = None
 
         self.lib_files = LibFiles(self)
+        self._type_stuff:Types.TypeStuff|None = None
 
     def import_components(self) -> None:
+        self._type_stuff = Types.TypeStuff()
+        self._type_stuff.extend(Types.primary_type_stuff)
         self._scripts = Scripts.Scripts(self)
 
         self._json_decoder = CustomJson.get_special_decoder(self)
@@ -207,6 +211,13 @@ class Domain():
         comparison_subdirectory = self.comparisons_directory.joinpath(name)
         comparison_subdirectory.mkdir(exist_ok=True)
         return comparison_subdirectory.joinpath(f"report_{str(number).zfill(4)}.txt")
+
+    @property
+    def type_stuff(self) -> Types.TypeStuff:
+        if self._type_stuff is None:
+            self.import_components()
+        assert self._type_stuff is not None
+        return self._type_stuff
 
     @property
     def scripts(self) -> "Scripts.Scripts":

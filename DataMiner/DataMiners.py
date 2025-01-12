@@ -8,8 +8,6 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Utilities.UserInput as UserInput
 import Version.Version as Version
 
-SINGLE_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining)
-MANY_VERSION_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining)
 
 def get_dataminable_dataminers(version:Version.Version, domain:Domain.Domain) -> list[AbstractDataminerCollection.AbstractDataminerCollection]:
     '''
@@ -112,9 +110,9 @@ def user_interface(domain:Domain.Domain) -> None:
     dataminer_collections = UserInput.input_multi(selectable_dataminer_collections, "dataminer collection", allow_select_all=True, show_options_first_time=True, close_enough=True)
 
     if len(versions) > 1:
-        structure_environment = MANY_VERSION_ENVIRONMENT
+        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining, domain)
     else:
-        structure_environment = SINGLE_VERSION_ENVIRONMENT
+        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining, domain)
     recalculate_everything = False # if all dependencies should be recalculated too
     cannot_datamine:list[Version.Version] = []
     for version in versions:

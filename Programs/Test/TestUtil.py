@@ -48,7 +48,7 @@ class Plan[a: Hashable]():
     Plural string labeling this Plan's object.
     '''
 
-    def __init__(self, versions:list[Version.Version], all_dataminer_collections:list[AbstractDataminerCollection.AbstractDataminerCollection], version_objects:dict[Version.Version,set[a]]) -> None:
+    def __init__(self, versions:list[Version.Version], all_dataminer_collections:list[AbstractDataminerCollection.AbstractDataminerCollection], version_objects:dict[Version.Version,set[a]], domain:"Domain.Domain") -> None:
         '''
         :versions: The Versions which support all of the same objects.
         :all_dataminer_collections: A list of every DataminerCollection.
@@ -56,6 +56,7 @@ class Plan[a: Hashable]():
         '''
         self.versions = versions
         self.items_to_test:list[a] = []
+        self.domain = domain
 
     def add_item(self, item:a) -> None:
         '''
@@ -128,7 +129,7 @@ def test[a: Hashable](plan_type:type[Plan[a]], domain:Domain.Domain) -> None:
         unique_versions[bits].append(version)
 
     plans:dict[int, Plan] = {
-        bits: plan_type(versions, dataminer_collections, version_objects)
+        bits: plan_type(versions, dataminer_collections, version_objects, domain)
         for bits, versions in unique_versions.items()
     }
     all_bits = list(unique_versions.keys())

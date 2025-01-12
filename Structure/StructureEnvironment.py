@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
+    import Domain.Domain as Domain
     import Structure.Delegate.Delegate as Delegate
     import Version.Version as Version
 
@@ -18,13 +19,15 @@ class EnvironmentType(enum.Enum):
 class StructureEnvironment():
 
     __slots__ = (
+        "domain",
         "environment",
         "should_cache",
     )
 
-    def __init__(self, environment:EnvironmentType) -> None:
+    def __init__(self, environment:EnvironmentType, domain:"Domain.Domain") -> None:
         self.environment = environment
         self.should_cache = environment in (EnvironmentType.comparing, EnvironmentType.garbage_collection, EnvironmentType.checking_all_types)
+        self.domain = domain
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.environment.name} {"caching" if self.should_cache else "uncaching"}>"
@@ -32,6 +35,7 @@ class StructureEnvironment():
 class PrinterEnvironment():
 
     __slots__ = (
+        "domain",
         "structure_environment",
         "default_delegate",
         "version",
@@ -46,6 +50,7 @@ class PrinterEnvironment():
         branch:int,
     ) -> None:
         self.structure_environment = structure_environment
+        self.domain = self.structure_environment.domain
         self.default_delegate = default_delegate
         self.version = version
         self.branch = branch
@@ -63,6 +68,7 @@ class ComparisonEnvironment():
 
     __slots__ = (
         "default_delegate",
+        "domain",
         "is_multi_diff",
         "printer_environments",
         "structure_environment",
@@ -79,6 +85,7 @@ class ComparisonEnvironment():
         is_multi_diff:bool
     ) -> None:
         self.structure_environment = structure_environment
+        self.domain = self.structure_environment.domain
         self.default_delegate = default_delegate
         self.versions = versions
         self.versions_between = versions_between

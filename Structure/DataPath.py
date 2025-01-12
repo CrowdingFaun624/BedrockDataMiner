@@ -17,7 +17,7 @@ class DataPathCoder(CustomJson.Coder[DataPathJsonTypedDict, "DataPath"]):
     def encode(cls, data:"DataPath") -> DataPathJsonTypedDict:
         return {"$special_type": "data_path", "path_items": data.path_items, "root": data.root, "embedded_data": data.embedded_data}
 
-@Types.register_decorator(None, hashing_method=hash, json_coder=DataPathCoder)
+@Types.register_decorator(None, ..., json_coder=DataPathCoder)
 class DataPath():
 
     __slots__ = (

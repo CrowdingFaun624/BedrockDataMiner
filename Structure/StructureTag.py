@@ -1,7 +1,7 @@
 import Component.Types as Types
 
 
-@Types.register_decorator(None, hashing_method=hash)
+@Types.register_decorator(None, ...)
 class StructureTag():
 
     __slots__ = (

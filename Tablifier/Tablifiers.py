@@ -10,4 +10,4 @@ def main(domain:Domain.Domain) -> None:
     tablifiers = domain.tablifiers
     selected_tablifier = select_tablifier(tablifiers)
     versions = list(domain.versions.values())
-    selected_tablifier.tablify(versions)
+    selected_tablifier.tablify(versions, domain)

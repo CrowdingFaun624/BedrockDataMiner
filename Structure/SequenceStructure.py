@@ -1,7 +1,6 @@
 from itertools import count, takewhile
 from typing import TYPE_CHECKING, Callable, Sequence, cast
 
-import Component.Types as Types
 import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.Difference as D
 import Structure.Structure as Structure
@@ -51,8 +50,9 @@ class SequenceStructure[d](AbstractIterableStructure.AbstractIterableStructure[d
             else:
                 return float(Structure.get_data_at_branch(data1, branch) == data2)
 
-        data1_hashes:list[int] = [Types.hash_data(D.last_value(item)) for item in data1]
-        data2_hashes:list[int] = [Types.hash_data(item) for item in data2]
+        type_stuff = environment.domain.type_stuff
+        data1_hashes:list[int] = [type_stuff.hash_data(D.last_value(item)) for item in data1]
+        data2_hashes:list[int] = [type_stuff.hash_data(item) for item in data2]
         prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1_hashes, data2_hashes))) # number of items at start that are the same
         shorter_length = min(len(data1), len(data2))
         suffix_len = sum(1 for i in takewhile(lambda a: a[0] < shorter_length - prefix_len and a[1] == a[2], zip(count(), reversed(data1_hashes), reversed(data2_hashes)))) # number of items at end that are the same unless that line is included in prefix_len.
@@ -117,8 +117,9 @@ class SequenceStructure[d](AbstractIterableStructure.AbstractIterableStructure[d
         similarity_function:Callable[[d,d,int,int|None,StructureEnvironment.ComparisonEnvironment,list[Trace.ErrorTrace],int],float] =\
             self.structure.get_similarity if self.structure is not None else lambda data1, data2, depth, max_depth, environment, exceptions, branch: float(data1 == data2)
 
-        data1_hashes:list[int] = [Types.hash_data(D.last_value(item)) for item in data1]
-        data2_hashes:list[int] = [Types.hash_data(item) for item in data2]
+        type_stuff = environment.domain.type_stuff
+        data1_hashes:list[int] = [type_stuff.hash_data(D.last_value(item)) for item in data1]
+        data2_hashes:list[int] = [type_stuff.hash_data(item) for item in data2]
 
         prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1_hashes, data2_hashes))) # number of items at start that are the same
         shorter_length = min(len(data1), len(data2))

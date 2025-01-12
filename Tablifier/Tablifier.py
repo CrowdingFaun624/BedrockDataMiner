@@ -2,6 +2,7 @@ from functools import cache
 from typing import Any, Callable
 
 import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
+import Domain.Domain as Domain
 import Structure.Difference as D
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
@@ -274,9 +275,9 @@ class Tablifier():
                 between_versions.append(version)
         return output
 
-    def tablify(self, all_versions:list[Version.Version]) -> None:
+    def tablify(self, all_versions:list[Version.Version], domain:"Domain.Domain") -> None:
         versions = self.version_provider.get_versions(all_versions, supports_dataminer_collection=self.dataminer_collection)
-        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing)
+        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing, domain)
         between_versions = self._get_versions_between(all_versions, versions)
         comparison_environment = StructureEnvironment.ComparisonEnvironment(structure_environment, None, versions, between_versions, True)
         tests = get_tests()

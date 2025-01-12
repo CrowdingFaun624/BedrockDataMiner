@@ -98,6 +98,21 @@ class EmptyFileError(Exception):
     def __str__(self) -> str:
         return f"A file has no bytes{message(self.message)}"
 
+class ImportOrderError(Exception):
+    "A module has been imported at the wrong time."
+
+    def __init__(self, module_name:str, message:Optional[str]=None) -> None:
+        '''
+        :module_name: The name of the Module that was imported too early.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(module_name, message)
+        self.module_name = module_name
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Module {self.module_name} was imported too early{message(self.message)}"
+
 class InvalidFileLocationError(Exception):
     "A file is not in the correct directory."
 

@@ -8,15 +8,16 @@ import Utilities.Exceptions as Exceptions
 import Utilities.UserInput as UserInput
 import Version.Version as Version
 
-COMPARING_ENVIRONMENT = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing)
 
 def compare(
         version1:Version.Version|None,
         version2:Version.Version,
         dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
         undataminable_versions_between:list[Version.Version],
+        domain:"Domain.Domain",
     ) -> None:
-    dataminer_collection.compare(version1, version2, undataminable_versions_between, COMPARING_ENVIRONMENT)
+    comparing_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing, domain)
+    dataminer_collection.compare(version1, version2, undataminable_versions_between, comparing_environment)
 
 def compare_all_of(
         domain:Domain.Domain,
@@ -37,9 +38,9 @@ def compare_all_of(
         for version in versions:
             if dataminer_collection.supports_version(version):
                 if previous_successful_version is not None:
-                    compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between)
+                    compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between, domain)
                 else: # First version that has this file.
-                    compare(None, version, dataminer_collection, undataminable_versions_between)
+                    compare(None, version, dataminer_collection, undataminable_versions_between, domain)
                 undataminable_versions_between = []
                 previous_successful_version = version
                 dataminer_collection.clear_some_caches()

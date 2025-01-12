@@ -6,6 +6,7 @@ import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Dataminer.Dataminer as Dataminer
 import Dataminer.DataminerCollection as DataminerCollection
 import Dataminer.Dataminers as Dataminers
+import Domain.Domain as Domain
 import Programs.Test.TestUtil as TestUtil
 import Structure.StructureEnvironment as StructureEnvironment
 import Version.Version as Version
@@ -19,8 +20,14 @@ class DataminerClassPlan(TestUtil.Plan[DataminerClass]):
 
     label = "Dataminer classes"
 
-    def __init__(self, versions: list[Version.Version], all_dataminer_collections: list[AbstractDataminerCollection.AbstractDataminerCollection], version_objects: dict[Version.Version, set[DataminerClass]]) -> None:
-        super().__init__(versions, all_dataminer_collections, version_objects)
+    def __init__(
+        self,
+        versions: list[Version.Version],
+        all_dataminer_collections: list[AbstractDataminerCollection.AbstractDataminerCollection],
+        version_objects: dict[Version.Version, set[DataminerClass]],
+        domain:"Domain.Domain",
+    ) -> None:
+        super().__init__(versions, all_dataminer_collections, version_objects, domain)
         dataminer_classes:defaultdict[DataminerClass,set[AbstractDataminerCollection.AbstractDataminerCollection]] = defaultdict(lambda: set())
         version = versions[-1]
         for dataminer_collection in all_dataminer_collections:
@@ -39,7 +46,7 @@ class DataminerClassPlan(TestUtil.Plan[DataminerClass]):
             else:
                 assert False
         print(f"Scanning {len(dataminer_collections)} DataminerCollections in {version}")
-        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types)
+        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types, self.domain)
         failed_dataminer_classes:list[DataminerClass] = []
         for dataminer_collection, exception in Dataminers.run(version, dataminer_collections, structure_environment, recalculate_everything=True, print_messages=False):
             print(f"{dataminer_collection} on {version}")

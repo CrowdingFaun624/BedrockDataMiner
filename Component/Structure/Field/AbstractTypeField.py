@@ -2,7 +2,6 @@ import Component.Component as Component
 import Component.Field.Field as Field
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
-import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeUtilities as TypeUtilities
 
@@ -35,7 +34,7 @@ class AbstractTypeField(Field.Field):
                 exceptions.extend(
                     Exceptions.ComponentTypeRequiresComponentError(source_component, value_type)
                     for value_type in component_types
-                    if value_type in Types.requires_subcomponent_types
+                    if value_type in self.domain.type_stuff.requires_subcomponent_types
                 )
             else:
                 if set(component_types) != subcomponent.my_type:
@@ -51,7 +50,7 @@ class AbstractTypeField(Field.Field):
                 Exceptions.ComponentTypeContainmentError(source_component, supercomponent_type, component_type)
                 for component_type in self.types
                 for supercomponent_type in self.contained_by_field.types
-                if (containment_types := Types.containment_types.get(supercomponent_type)) is not None
+                if (containment_types := self.domain.type_stuff.containment_types.get(supercomponent_type)) is not None
                 if component_type not in containment_types
             )
         return exceptions

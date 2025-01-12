@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Dataminer.Dataminers as Dataminers
+import Domain.Domain as Domain
 import Programs.Test.TestUtil as TestUtil
 import Structure.StructureEnvironment as StructureEnvironment
 import Version.Version as Version
@@ -14,14 +15,20 @@ class DataminerCollectionPlan(TestUtil.Plan[AbstractDataminerCollection.Abstract
 
     label = "DataminerCollections"
 
-    def __init__(self, versions: list[Version.Version], all_dataminer_collections: list[AbstractDataminerCollection.AbstractDataminerCollection], version_objects: dict[Version.Version, set[AbstractDataminerCollection.AbstractDataminerCollection]]) -> None:
-        super().__init__(versions, all_dataminer_collections, version_objects)
+    def __init__(
+        self,
+        versions:list[Version.Version],
+        all_dataminer_collections: list[AbstractDataminerCollection.AbstractDataminerCollection],
+        version_objects: dict[Version.Version, set[AbstractDataminerCollection.AbstractDataminerCollection]],
+        domain:"Domain.Domain",
+    ) -> None:
+        super().__init__(versions, all_dataminer_collections, version_objects, domain)
         self.dataminer_collections = version_objects[versions[-1]]
 
     def test(self) -> list[AbstractDataminerCollection.AbstractDataminerCollection]:
         version = self.versions[-1]
         print(f"Scanning {len(self.items_to_test)} DataminerCollections in {version}")
-        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types)
+        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types, self.domain)
         failures = Dataminers.run(version, self.items_to_test, structure_environment, recalculate_everything=True, print_messages=False)
         failed_dataminer_collections:list[AbstractDataminerCollection.AbstractDataminerCollection] = []
         for dataminer_collection, exception in failures:

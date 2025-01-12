@@ -4,7 +4,6 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.Structure.Field.AbstractTypeField as AbstractTypeField
-import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
@@ -39,8 +38,8 @@ class TypeField(AbstractTypeField.AbstractTypeField):
         functions:dict[str,Callable],
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["TypeAliasComponent.TypeAliasComponent"],list["TypeAliasComponent.TypeAliasComponent"]]:
-        if self.subcomponent_data in Types.default_types:
-            self.subcomponent = Types.default_types[self.subcomponent_data]
+        if self.subcomponent_data in self.domain.type_stuff.default_types:
+            self.subcomponent = self.domain.type_stuff.default_types[self.subcomponent_data]
             return [], []
         else:
             component, is_inline = Field.choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, imported_components, self.error_path, create_component_function, None)

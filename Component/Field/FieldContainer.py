@@ -3,6 +3,7 @@ from typing import Callable, MutableSequence
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
+import Domain.Domain as Domain
 
 
 class FieldContainer[a: Field.Field](Field.Field):
@@ -17,6 +18,11 @@ class FieldContainer[a: Field.Field](Field.Field):
     def __init__(self, fields:MutableSequence[a], path: list[str | int]) -> None:
         super().__init__(path)
         self.fields = fields
+
+    def set_domain(self, domain: "Domain.Domain") -> None:
+        super().set_domain(domain)
+        for field in self.fields:
+            field.set_domain(domain)
 
     def set_field(
         self,

@@ -1,7 +1,6 @@
 from types import EllipsisType
 from typing import TYPE_CHECKING, Any, Callable, Mapping, MutableMapping, cast
 
-import Component.Types as Types
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
 import Structure.ObjectStructure as ObjectStructure
@@ -129,8 +128,9 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
                 return float(data1 == data2)
             else:
                 return float(Structure.get_data_at_branch(data1, branch) == data2)
-        data1_hashes:dict[int,tuple[str,d]] = {Types.hash_data((key_last:=D.last_value(key), value_last:=D.last_value(value))): (key_last, value_last) for key, value in data1.items()}
-        data2_hashes:dict[int,tuple[str,d]] = {Types.hash_data((key, value)): (key, value) for key, value in data2.items()}
+        type_stuff = environment.domain.type_stuff
+        data1_hashes:dict[int,tuple[str,d]] = {type_stuff.hash_data((key_last:=D.last_value(key), value_last:=D.last_value(value))): (key_last, value_last) for key, value in data1.items()}
+        data2_hashes:dict[int,tuple[str,d]] = {type_stuff.hash_data((key, value)): (key, value) for key, value in data2.items()}
 
         data1_keys = {D.last_value(key) for key in data1.keys()}
         same_keys = data1_keys & data2.keys() # keys present in both old and new data.
@@ -279,8 +279,9 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
             return data1, False, []
         exceptions:list[Trace.ErrorTrace] = []
 
-        data1_hashes:dict[int,tuple[str|D.Diff[str],d|D.Diff[d]]] = {Types.hash_data((D.last_value(key), D.last_value(value))): (key, value) for key, value in data1.items()}
-        data2_hashes:dict[int,tuple[str,d]] = {Types.hash_data((key, value)): (key, value) for key, value in data2.items()}
+        type_stuff = environment.domain.type_stuff
+        data1_hashes:dict[int,tuple[str|D.Diff[str],d|D.Diff[d]]] = {type_stuff.hash_data((D.last_value(key), D.last_value(value))): (key, value) for key, value in data1.items()}
+        data2_hashes:dict[int,tuple[str,d]] = {type_stuff.hash_data((key, value)): (key, value) for key, value in data2.items()}
 
         same_keys = {D.last_value(key) for key in data1.keys()} & data2.keys() # keys that existed both before and after.
         same_hashes = [hash for hash in data1_hashes.keys() if hash in data2_hashes] # retain order

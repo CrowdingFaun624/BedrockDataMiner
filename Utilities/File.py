@@ -41,7 +41,7 @@ def hash_int_to_str(hash_int:int) -> str:
 def hash_str_to_int(hash_str:str) -> int:
     return int(hash_str, base=16)
 
-@Types.register_decorator("abstract_file", hashing_method=hash, is_file=True)
+@Types.register_decorator("abstract_file", ..., is_file=True)
 class AbstractFile[a]():
 
     data:a
@@ -79,7 +79,7 @@ class AbstractFile[a]():
         '''
         ...
 
-@Types.register_decorator("file", json_coder=FileCoder)
+@Types.register_decorator("file", None, json_coder=FileCoder)
 class File[a](AbstractFile[a]):
 
     __slots__ = (
@@ -124,7 +124,7 @@ class File[a](AbstractFile[a]):
             file_bytes = FileStorage.read_archived(hash_int_to_str(self.hash))
             yield from self.serializer.get_referenced_files(file_bytes)
 
-@Types.register_decorator(None, json_coder=Types.no_coder)
+@Types.register_decorator(None, None, json_coder=Types.no_coder)
 class EmptyFile[a](File[a]):
 
     __slots__ = ()
@@ -160,7 +160,7 @@ class EmptyFile[a](File[a]):
     def __copy_empty__(self) -> AbstractFile[a]:
         return self
 
-@Types.register_decorator("fake_file")
+@Types.register_decorator("fake_file", None)
 class FakeFile[a](AbstractFile[a]):
     '''Similar to a File, but it can be created anywhere and using any hash/data.'''
 
@@ -176,7 +176,7 @@ class FakeFile[a](AbstractFile[a]):
         return FakeFile("empty_file", type(self.data)(), 0) # FakeFile does not need data_hash.
         # the `hash` attribute must be different for caching reasons, so it's just 0.
 
-@Types.register_decorator(None, hashing_method=hash, is_file=True)
+@Types.register_decorator(None, ..., is_file=True)
 class FileDiff[a]():
     '''
     Similar to a FakeFile, but contains the data from multiple files.

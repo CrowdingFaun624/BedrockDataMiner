@@ -9,7 +9,6 @@ import Component.Structure.Field.OptionalStructureComponentField as OptionalStru
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
-import Component.Types as Types
 import Structure.DictStructure as DictStructure
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
@@ -94,10 +93,10 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
         self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
         if self.sort == DictSorting.by_value:
-            self.types_field.must_be(Types.sortable_types)
+            self.types_field.must_be(self.domain.type_stuff.sortable_types)
         self.types_field.verify_with(self.subcomponent_field)
         self.tags_field.add_to_tag_set(self.children_tags)
-        self.this_type_field.must_be(Types.mapping_types)
+        self.this_type_field.must_be(self.domain.type_stuff.mapping_types)
         return [self.subcomponent_field, self.delegate_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field]
 
     def create_final(self) -> DictStructure.DictStructure:
@@ -144,7 +143,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         exceptions = super().check()
         if self.sort == DictSorting.by_value and len(self.types_field) > 0:
             first_type = self.types_field.types[0]
-            for category_name, category_types in Types.mutually_sortable.items():
+            for category_name, category_types in self.domain.type_stuff.mutually_sortable.items():
                 if first_type not in category_types: continue
                 exceptions.extend(
                     Exceptions.ComponentTypeInvalidTypeError(self, type, category_types, message=f"(in sortable category \"{category_name}\")")

@@ -1,7 +1,6 @@
 import json
 from typing import Any
 
-import Component.Types as Types
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 
@@ -21,7 +20,7 @@ def get_special_encoder(domain:"Domain.Domain") -> type[json.JSONEncoder]:
     class SpecialEncoder(json.JSONEncoder):
 
         def default(self, data:Any) -> Any:
-            if (coder := Types.json_encoders.get(type(data))) is not None:
+            if (coder := domain.type_stuff.json_encoders.get(type(data))) is not None:
                 return coder.encode(data, domain)
             else:
                 raise Exceptions.CannotEncodeToJsonError(data)
@@ -33,7 +32,7 @@ def get_special_decoder(domain:"Domain.Domain") -> type[json.JSONDecoder]:
     def decoder_function(data:dict[str,Any]|Any) -> Any:
         if "$special_type" not in data:
             return data
-        elif (coder := Types.json_decoders.get(data["$special_type"])) is not None:
+        elif (coder := domain.type_stuff.json_decoders.get(data["$special_type"])) is not None:
             return coder.decode(data, domain)
         else:
             raise Exceptions.InvalidSpecialTypeError(data["$special_type"])

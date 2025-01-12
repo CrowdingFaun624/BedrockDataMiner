@@ -70,7 +70,7 @@ class TAG_End(TAG):
     def __deepcopy__(self, memo) -> TAG:
         return self
 
-@Types.register_decorator("TAG_Byte", json_coder=NbtCoder)
+@Types.register_decorator("TAG_Byte", None, json_coder=NbtCoder)
 class TAG_Byte(int, TAG):
 
     @classmethod
@@ -80,7 +80,7 @@ class TAG_Byte(int, TAG):
     def __str__(self) -> str:
         return f"{self:d}b"
 
-@Types.register_decorator("TAG_Short", json_coder=NbtCoder)
+@Types.register_decorator("TAG_Short", None, json_coder=NbtCoder)
 class TAG_Short(int, TAG):
 
     @classmethod
@@ -90,7 +90,7 @@ class TAG_Short(int, TAG):
     def __str__(self) -> str:
         return f"{self:d}s"
 
-@Types.register_decorator("TAG_Int", json_coder=NbtCoder)
+@Types.register_decorator("TAG_Int", None, json_coder=NbtCoder)
 class TAG_Int(int, TAG):
 
     @classmethod
@@ -100,7 +100,7 @@ class TAG_Int(int, TAG):
     def __str__(self) -> str:
         return f"{self:d}"
 
-@Types.register_decorator("TAG_Long", json_coder=NbtCoder)
+@Types.register_decorator("TAG_Long", None, json_coder=NbtCoder)
 class TAG_Long(int, TAG):
 
     @classmethod
@@ -110,7 +110,7 @@ class TAG_Long(int, TAG):
     def __str__(self) -> str:
         return f"{self:d}l"
 
-@Types.register_decorator("TAG_Float", json_coder=NbtCoder)
+@Types.register_decorator("TAG_Float", None, json_coder=NbtCoder)
 class TAG_Float(float, TAG):
 
     @classmethod
@@ -123,7 +123,7 @@ class TAG_Float(float, TAG):
         else:
             return f"{self:f}f"
 
-@Types.register_decorator("TAG_Double", json_coder=NbtCoder)
+@Types.register_decorator("TAG_Double", None, json_coder=NbtCoder)
 class TAG_Double(float, TAG):
 
     @classmethod
@@ -136,7 +136,7 @@ class TAG_Double(float, TAG):
         else:
             return f"{self:f}"
 
-@Types.register_decorator("TAG_Byte_Array", requires_subcomponent=False, can_contain={TAG_Byte}, json_coder=NbtCoder)
+@Types.register_decorator("TAG_Byte_Array", None, requires_subcomponent=False, can_contain={TAG_Byte}, json_coder=NbtCoder)
 class TAG_Byte_Array(list[TAG_Byte], TAG):
 
     @classmethod
@@ -147,7 +147,7 @@ class TAG_Byte_Array(list[TAG_Byte], TAG):
     def __str__(self) -> str:
         return f"[B;{", ".join(str(item) for item in self)}]"
 
-@Types.register_decorator("TAG_String", json_coder=NbtCoder)
+@Types.register_decorator("TAG_String", None, json_coder=NbtCoder)
 class TAG_String(str, TAG):
 
     @classmethod
@@ -166,7 +166,7 @@ class TAG_String(str, TAG):
         # for DefaultDelegate
         return str(self)
 
-@Types.register_decorator("TAG_List", json_coder=NbtCoder)
+@Types.register_decorator("TAG_List", None, json_coder=NbtCoder)
 class TAG_List[b: TAG](list[b], TAG):
 
     @classmethod
@@ -178,7 +178,7 @@ class TAG_List[b: TAG](list[b], TAG):
     def __str__(self) -> str:
         return f"[{", ".join(str(item) for item in self)}]"
 
-@Types.register_decorator("TAG_Compound", json_coder=NbtCoder)
+@Types.register_decorator("TAG_Compound", None, json_coder=NbtCoder)
 class TAG_Compound[b: TAG](dict[str,b], TAG):
 
     @classmethod
@@ -212,7 +212,7 @@ class TAG_Compound[b: TAG](dict[str,b], TAG):
         if len(key) == 0: return True
         return bool(pattern(key))
 
-@Types.register_decorator("TAG_Int_Array", requires_subcomponent=False, can_contain={TAG_Int}, json_coder=NbtCoder)
+@Types.register_decorator("TAG_Int_Array", None, requires_subcomponent=False, can_contain={TAG_Int}, json_coder=NbtCoder)
 class TAG_Int_Array(list[TAG_Int], TAG):
 
     @classmethod
@@ -223,7 +223,7 @@ class TAG_Int_Array(list[TAG_Int], TAG):
     def __str__(self) -> str:
         return f"[I;{", ".join(str(item) for item in self)}]"
 
-@Types.register_decorator("TAG_Long_Array", requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
+@Types.register_decorator("TAG_Long_Array", None, requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
 class TAG_Long_Array(list[TAG_Long], TAG):
 
     @classmethod

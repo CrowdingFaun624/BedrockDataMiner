@@ -1,6 +1,5 @@
 from typing import TYPE_CHECKING, Sequence, cast
 
-import Component.Types as Types
 import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.Difference as D
 import Structure.Structure as Structure
@@ -45,8 +44,10 @@ class SetStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
                 return float(data1 == data2)
             else:
                 return float(Structure.get_data_at_branch(data1, branch) == data2)
-        data1_hashes:dict[int,tuple[int,d|D.Diff[d]]] = {Types.hash_data(item): (index, item) for index, item in enumerate(data1)}
-        data2_hashes:dict[int,tuple[int,d]] = {Types.hash_data(item): (index, item) for index, item in enumerate(data2)}
+        
+        type_stuff = environment.domain.type_stuff
+        data1_hashes:dict[int,tuple[int,d|D.Diff[d]]] = {type_stuff.hash_data(item): (index, item) for index, item in enumerate(data1)}
+        data2_hashes:dict[int,tuple[int,d]] = {type_stuff.hash_data(item): (index, item) for index, item in enumerate(data2)}
 
         same_hashes = data1_hashes.keys() & data2_hashes.keys()
         data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes.keys() - data2_hashes.keys()}
@@ -100,8 +101,9 @@ class SetStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
             return data1, False, []
         exceptions:list[Trace.ErrorTrace] = []
 
-        data1_hashes:dict[int,tuple[int,d|D.Diff[d]]] = {Types.hash_data(D.last_value(item)): (index, item) for index, item in enumerate(data1)}
-        data2_hashes:dict[int,tuple[int,d]] = {Types.hash_data(item): (index, item) for index, item in enumerate(data2)}
+        type_stuff = environment.domain.type_stuff
+        data1_hashes:dict[int,tuple[int,d|D.Diff[d]]] = {type_stuff.hash_data(D.last_value(item)): (index, item) for index, item in enumerate(data1)}
+        data2_hashes:dict[int,tuple[int,d]] = {type_stuff.hash_data(item): (index, item) for index, item in enumerate(data2)}
 
         same_hashes = [hash for hash in data1_hashes.keys() if hash in data2_hashes] # retain order
         data1_exclusive_items = {exclusive_hash: data1_hashes[exclusive_hash] for exclusive_hash in data1_hashes if exclusive_hash not in data2_hashes}

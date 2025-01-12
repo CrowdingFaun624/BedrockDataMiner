@@ -38,6 +38,15 @@ class TypeSet[T]():
         self.not_types.add(_type)
         self.types.discard(_type)
 
+    def copy(self) -> "TypeSet[T]":
+        output = TypeSet(self.types.copy())
+        output.not_types = self.not_types.copy()
+        return output
+
+    def update(self, other:"TypeSet[T]") -> None:
+        self.types.update(other.types)
+        self.not_types.update(other.not_types)
+
 class TypeDict[T, A]():
 
     __slots__ = (
@@ -99,3 +108,12 @@ class TypeDict[T, A]():
             else:
                 self.not_types.add(_type)
                 return default
+
+    def copy(self) -> "TypeDict[T, A]":
+        output = TypeDict(self.types.copy())
+        output.not_types = self.not_types.copy()
+        return output
+
+    def update(self, other:"TypeDict[T, A]") -> None:
+        self.types.update(other.types)
+        self.not_types.update(other.not_types)

@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Dataminer.Dataminers as Dataminers
+import Domain.Domain as Domain
 import Programs.Test.TestUtil as TestUtil
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
@@ -16,8 +17,14 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
 
     label = "Structures"
 
-    def __init__(self, versions: list[Version.Version], all_dataminer_collections: list[AbstractDataminerCollection.AbstractDataminerCollection], version_objects: dict[Version.Version, set[StructureBase.StructureBase]]) -> None:
-        super().__init__(versions, all_dataminer_collections, version_objects)
+    def __init__(
+        self,
+        versions: list[Version.Version],
+        all_dataminer_collections: list[AbstractDataminerCollection.AbstractDataminerCollection],
+        version_objects: dict[Version.Version, set[StructureBase.StructureBase]],
+        domain:"Domain.Domain",
+    ) -> None:
+        super().__init__(versions, all_dataminer_collections, version_objects, domain)
         version = versions[-1]
         structures:defaultdict[StructureBase.StructureBase,set[AbstractDataminerCollection.AbstractDataminerCollection]] = defaultdict(lambda: set())
         for dataminer_collection in all_dataminer_collections:
@@ -37,7 +44,7 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
                 assert False
         print(f"Scanning {len(dataminer_collections)} DataminerCollections in {version}")
         dataminers_without_file:list[AbstractDataminerCollection.AbstractDataminerCollection] = []
-        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types)
+        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types, self.domain)
         printer_environment = StructureEnvironment.PrinterEnvironment(structure_environment, None, version, 0)
         failed_structures:list[StructureBase.StructureBase] = []
         for dataminer_collection in dataminer_collections:

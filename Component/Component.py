@@ -56,6 +56,8 @@ class Component[a]():
         self.inline_parent:Component|None = None
 
         self.fields.extend(self.initialize_fields(data))
+        for field in self.fields:
+            field.set_domain(self.domain)
 
     def initialize_fields(self, data:Any) -> list["Field.Field"]:
         return []

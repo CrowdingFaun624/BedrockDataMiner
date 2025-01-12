@@ -7,7 +7,6 @@ import Component.Structure.Field.OptionalStructureComponentField as OptionalStru
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
-import Component.Types as Types
 import Structure.SetStructure as SetStructure
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -66,9 +65,9 @@ class SetComponent(StructureComponent.StructureComponent[SetStructure.SetStructu
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ["this_type"])
         self.types_field.verify_with(self.subcomponent_field)
         if self.sort:
-            self.types_field.must_be(Types.sortable_types, fail_message="(due to being sorted)")
+            self.types_field.must_be(self.domain.type_stuff.sortable_types, fail_message="(due to being sorted)")
         self.tags_field.add_to_tag_set(self.children_tags)
-        self.this_type_field.must_be(Types.iterable_types)
+        self.this_type_field.must_be(self.domain.type_stuff.iterable_types)
         self.this_type_field.contained_by(self.types_field)
         return [self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field]
 

@@ -4,7 +4,7 @@ import Component.Types as Types
 import Utilities.Exceptions as Exceptions
 
 
-@Types.register_decorator(None, hashing_method=hash)
+@Types.register_decorator(None, ...)
 class _NoExistType():
     "Class that is different from None."
 
@@ -19,7 +19,7 @@ class _NoExistType():
 
 NoExist = _NoExistType()
 
-@Types.register_decorator(None, hashing_method=lambda data: hash(tuple(Types.hash_data(item) for item in cast(Diff, data).items.items())))
+@Types.register_decorator(None, hashing_method=lambda data, type_stuff: hash(tuple(type_stuff.hash_data(item) for item in cast(Diff, data).items.items())))
 class Diff[Dt1]():
     '''
     An immutable object containing a difference in data from version to version.

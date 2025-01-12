@@ -10,6 +10,20 @@ import Utilities.TypeVerifier as TypeVerifier
 import Utilities.UserInput as UserInput
 
 
+class HasImportedScripts():
+    
+    __slots__ = (
+        "has_imported_scripts",
+    )
+    
+    def __init__(self) -> None:
+        self.has_imported_scripts:bool = False
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} {self.has_imported_scripts}>"
+
+has_imported_scripts = HasImportedScripts()
+
 def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
     already_stems:dict[str,Path] = {}
     for subpath in path.iterdir():
@@ -92,6 +106,7 @@ class Scripts():
         return suffix == ".pyc"
 
     def __init__(self, domain:"Domain.Domain") -> None:
+        has_imported_scripts.has_imported_scripts = True
         self.domain = domain
         self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, domain) for file, relative_name in iter_dir(domain.scripts_directory) if not self.should_skip_script(file.suffix, relative_name, file)}
         for script in self.scripts.values():

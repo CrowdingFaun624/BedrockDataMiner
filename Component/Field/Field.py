@@ -4,6 +4,7 @@ from typing import Callable, Mapping, cast
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Pattern as Pattern
+import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 
 
@@ -77,6 +78,7 @@ class Field():
     '''Abstract class of Fields. Fields are a modular way to manage the data of Components.'''
 
     __slots__ = (
+        "domain",
         "error_path",
     )
 
@@ -85,6 +87,9 @@ class Field():
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         self.error_path = path
+
+    def set_domain(self, domain:"Domain.Domain") -> None:
+        self.domain = domain
 
     def set_field(
         self,
