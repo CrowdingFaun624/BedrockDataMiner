@@ -1,5 +1,6 @@
+from itertools import chain
 from types import EllipsisType
-from typing import Callable, NoReturn
+from typing import Callable, Iterable, Mapping, NoReturn
 
 
 def get_levenshtein_distance(data1:str, data2:str) -> int:
@@ -19,12 +20,12 @@ def get_levenshtein_distance(data1:str, data2:str) -> int:
     return distance
     # return 1 - (distance / max(len(data1), len(data2)))
 
-def guess_intent(user_input:str, options:list[str], threshold:int) -> str|None:
+def guess_intent(user_input:str, items:list[str], threshold:int) -> str|None:
     '''
     Returns what the user probably wants based on their input, or returns None
     if it cannot be guessed.
     '''
-    similarities:dict[str,int] = {option: get_levenshtein_distance(user_input, option) for option in options}
+    similarities:dict[str,int] = {option: get_levenshtein_distance(user_input, option) for option in items}
     min_option, min_distance = None, None
     for option, distance in similarities.items():
         if distance > threshold: continue
@@ -32,6 +33,17 @@ def guess_intent(user_input:str, options:list[str], threshold:int) -> str|None:
             min_option = option
             min_distance = distance
     return min_option
+
+def deduplicate_aliases[a](aliases:Mapping[str,Iterable[str]], items:dict[str,a]) -> dict[str,a]:
+    aliases2 = {target: list(shortcuts) for target, shortcuts in aliases.items()}
+    already_aliases:set[str] = set()
+    duplicate_aliases:set[str] = set()
+    for alias in chain.from_iterable(aliases2.values()):
+        (duplicate_aliases if alias in already_aliases or alias in items else already_aliases).add(alias)
+    aliases3:dict[str,list[str]] = {target: [shortcut for shortcut in shortcuts if shortcut not in duplicate_aliases] for target, shortcuts in aliases2.items()}
+    output = {shortcut: items[target] for target, shortcuts in aliases3.items() for shortcut in shortcuts}
+    output.update(items)
+    return output
 
 def default_prompt_single(label:str, options:list[str]|None) -> str:
     if options is None:
@@ -55,12 +67,13 @@ def input_single[a](
     close_enough_threshold:int=3,
     prompt_function:Callable[[str, list[str]|None],str]=default_prompt_single,
     behavior_on_eof:Callable[[],NoReturn]|None=None,
+    aliases:Mapping[str,Iterable[str]]|None=None,
     enter_can_pick_only:bool=False
 ) -> a:
     '''
     Returns one item from `items`.
 
-    By default, uses the prompt "Choose a \\<label\\>: "
+    By default, uses the prompt "Choose a &lt;label&gt;: "
 
     :items: The items the user can choose from.
     :label: The simple label to be given to the prompt function.
@@ -70,10 +83,12 @@ def input_single[a](
     :close_enough_threshold: The maximum distance the guesses can have.
     :prompt_function: Can be overridden to create a custom prompt.
     :behavior_on_eof: Function that is called when input() raises an EOFError.
+    :aliases: Hidden shortcuts to another action.
     :enter_can_pick_only: If True, entering no input will pick the only option if there is only one option.
     '''
     user_input:str|EllipsisType = ...
     options:list[str] = list(items.keys())
+    items = deduplicate_aliases({} if aliases is None else aliases, items)
     tries:int = 0
     while user_input not in items:
         should_show_options = tries == 0 and show_options_first_time or show_options
@@ -104,12 +119,13 @@ def input_multi[a](
     close_enough:bool=False,
     close_enough_threshold:int=3,
     prompt_function:Callable[[str, list[str]|None],str]=default_prompt_multi,
+    aliases:Mapping[str,Iterable[str]]|None=None,
     behavior_on_eof:Callable[[],NoReturn]|None=None,
 ) -> list[a]:
     '''
     Returns one or multiple items from `items`.
 
-    By default, uses the prompt "Choose a/some \\<label\\> (space-delimited): "
+    By default, uses the prompt "Choose a/some &lt;label&gt; (space-delimited): "
 
     :items: The items the user can choose from.
     :label: The simple label to be given to the prompt function.
@@ -119,10 +135,12 @@ def input_multi[a](
     :close_enough: If True, will attempt to guess the user's intent.
     :close_enough_threshold: The maximum distance the guesses can have.
     :prompt_function: Can be overridden to create a custom prompt.
+    :aliases: Hidden shortcuts to another action.
     :behavior_on_eof: Function that is called when input() raises an EOFError.
     '''
     user_inputs:list[str] = []
     options:list[str] = list(items.keys())
+    items = deduplicate_aliases({} if aliases is None else aliases, items)
     tries:int = 0
     successful_inputs:list[str] = []
     successful_set:set[str] = set()

@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NotRequired, TypedDict
 
 import Component.Importer as Importer
 import Component.ScriptImporter as ScriptImporter
@@ -34,6 +34,7 @@ import Utilities.CustomJson as CustomJson
 import Utilities.DataFile as DataFile
 import Utilities.FileManager as FileManager
 import Utilities.Scripts as Scripts
+import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionProvider.LatestVersionProvider as LatestVersionProvider
 import Version.VersionProvider.VersionProvider as VersionProvider
 
@@ -89,6 +90,10 @@ BUILT_IN_VERSION_PROVIDER_CLASSES:dict[str,type[VersionProvider.VersionProvider]
     LatestVersionProvider.LatestVersionProvider,
 ]}
 
+class DomainManifestTypedDict(TypedDict):
+    aliases: NotRequired[list[str]]
+    is_library: NotRequired[bool]
+
 class Domain():
 
     def __init__(self, name:str) -> None:
@@ -102,6 +107,7 @@ class Domain():
         self.structures_directory       = self.assets_directory.joinpath("structures")
         self.accessor_types_file        = self.assets_directory.joinpath("accessor_types.json")
         self.dataminer_collections_file = self.assets_directory.joinpath("dataminer_collections.json")
+        self.domain_file                = self.assets_directory.joinpath("domain.json")
         self.serializers_file           = self.assets_directory.joinpath("serializers.json")
         self.structure_tags_file        = self.assets_directory.joinpath("structure_tags.json")
         self.tablifiers_file            = self.assets_directory.joinpath("tablifiers.json")
@@ -113,6 +119,8 @@ class Domain():
         self.versions_file              = self.assets_directory.joinpath("versions.json")
         self.versions_directory         = FileManager.VERSIONS_DIRECTORY.joinpath(name)
         self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
+
+        self.read_manifest()
 
         self._accessor_types:dict[str,"AccessorType.AccessorType"]|None = None
         self._dataminer_collections:dict[str,"AbstractDataminerCollection.AbstractDataminerCollection"]|None = None
@@ -142,6 +150,16 @@ class Domain():
 
         self.lib_files = LibFiles.LibFiles(self)
         self._type_stuff:Types.TypeStuff|None = None
+
+    def read_manifest(self) -> None:
+        with open(self.domain_file, "rt") as f:
+            file:DomainManifestTypedDict = json.load(f)
+        TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("aliases", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+            TypeVerifier.TypedDictKeyTypeVerifier("is_library", "a bool", False, bool),
+        ).base_verify(file, [self])
+        self.is_library:bool = file.get("is_library", False)
+        self.aliases:list[str] = file.get("aliases", [])
 
     def import_components(self) -> None:
         self._type_stuff = Types.TypeStuff()

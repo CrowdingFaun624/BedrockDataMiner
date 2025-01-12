@@ -33,7 +33,8 @@ def get_user_input() -> None:
     import Utilities.UserInput as UserInput
     with lock2:
         with lock1:
-            user_input[0] = UserInput.input_single(Domains.domains, "domain", show_options=True, close_enough=True, close_enough_threshold=5, enter_can_pick_only=True, behavior_on_eof=exit)
+            aliases = {domain_name: domain.aliases for domain_name, domain in Domains.domains.items()}
+            user_input[0] = UserInput.input_single(Domains.domains, "domain", show_options=True, close_enough=True, close_enough_threshold=5, enter_can_pick_only=True, aliases=aliases, behavior_on_eof=exit)
         user_input[1] = UserInput.input_single({name: name for name in PROGRAM_NAMES}, "program", show_options=True, close_enough=True, behavior_on_eof=exit)
 
 user_input:list[Any] = [None, None]

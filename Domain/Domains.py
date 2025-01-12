@@ -18,4 +18,4 @@ def get_domain_name_from_module(module_name:str) -> str|None:
 import Domain.Domain as Domain
 import Utilities.FileManager as FileManager
 
-domains:dict[str,Domain.Domain] = {directory.name: Domain.Domain(directory.name) for directory in FileManager.DOMAINS_DIRECTORY.iterdir()}
+domains:dict[str,Domain.Domain] = {directory.name: Domain.Domain(directory.name) for directory in FileManager.DOMAINS_DIRECTORY.iterdir() if directory.joinpath("domain.json").exists()}
