@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -25,6 +25,7 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
         "cache_print_text",
         "cache_remove_threshold",
         "searches",
+        "structure",
     )
 
     def __init__(
@@ -61,14 +62,21 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
         
         self.structure:Structure.Structure
 
+    def get_structure(self, key: None, value: d) -> tuple[Structure.Structure[d] | None, list[Trace.ErrorTrace]]:
+        return self.structure, []
+
+    def iter_structures(self) -> Iterable[Structure.Structure]:
+        return (self.structure,)
+
     def link_substructures(
         self,
-        structure:Structure.Structure[d]|None,
+        structure:Structure.Structure[d],
         delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
-        super().link_substructures(structure, delegate, types, [], [], types, children_tags)
+        super().link_substructures(delegate, types, [], [], types, children_tags)
+        self.structure = structure
 
     def check_all_types(self, data: d, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         if not environment.should_cache or not self.cache_check_all_types:

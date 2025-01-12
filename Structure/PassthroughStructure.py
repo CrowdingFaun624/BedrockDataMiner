@@ -22,7 +22,6 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
     __slots__ = (
         "max_similarity_ancestor_depth",
         "max_similarity_descendent_depth",
-        "structure",
         "types",
         "normalizer",
         "post_normalizer",
@@ -42,7 +41,6 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         self.max_similarity_ancestor_depth = max_similarity_ancestor_depth
         self.max_similarity_descendent_depth = max_similarity_descendent_depth
 
-        self.structure:Structure.Structure[a]|None = None
         self.types:tuple[type,...]
         self.normalizer:list[Normalizer.Normalizer]
         self.post_normalizer:list[Normalizer.Normalizer]
@@ -50,7 +48,6 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
 
     def link_substructures(
         self,
-        structure:Structure.Structure[a]|None,
         delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
         normalizer:list[Normalizer.Normalizer],
@@ -59,26 +56,26 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         children_tags: set[StructureTag.StructureTag],
     ) -> None:
         super().link_substructures(delegate, children_tags)
-        self.structure = structure
         self.types = types
         self.normalizer = normalizer
         self.post_normalizer = post_normalizer
         self.pre_normalized_types = pre_normalized_types
 
     def get_structure(self, key:None, value:a) -> tuple[Structure.Structure[a]|None, list[Trace.ErrorTrace]]:
-        return self.structure, []
+        ...
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        if self.structure is None: return []
-        else: return [self.structure]
+        ...
 
     def check_all_types(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
         output:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.types):
             output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data))
             return output
-        if self.structure is not None:
-            output.extend(exception.add(self.name, None) for exception in self.structure.check_all_types(data, environment))
+        structure, new_exceptions = self.get_structure(None, data)
+        output.extend(exception.add(self.name, None) for exception in new_exceptions)
+        if structure is not None:
+            output.extend(exception.add(self.name, None) for exception in structure.check_all_types(data, environment))
         return output
 
     def normalize(self, data:a, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None, list[Trace.ErrorTrace]]:
@@ -99,8 +96,10 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
             except Exception as e:
                 exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
 
-        if self.structure is not None:
-            normalizer_output, new_exceptions = self.structure.normalize(data, environment)
+        structure, new_exceptions = self.get_structure(None, data)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+        if structure is not None:
+            normalizer_output, new_exceptions = structure.normalize(data, environment)
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
             if normalizer_output is not None:
                 data_identity_changed = True
@@ -125,35 +124,46 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
     def get_tag_paths(self, data:a, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
         if tag not in self.children_tags: return [], []
         exceptions:list[Trace.ErrorTrace] = []
-        if self.structure is None:
+        structure, new_exceptions = self.get_structure(None, data)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+        if structure is None:
             return [], exceptions
-        output, new_exceptions = self.structure.get_tag_paths(data, tag, data_path.copy(), environment)
+        output, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(), environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
     def get_referenced_files(self, data: a, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
-        if self.structure is not None and self.children_has_garbage_collection:
-            yield from self.structure.get_referenced_files(data, environment)
+        structure, _ = self.get_structure(None, data)
+        if structure is not None and self.children_has_garbage_collection:
+            yield from structure.get_referenced_files(data, environment)
 
     def get_similarity(self, data1: a, data2: a, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
-        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth) or self.structure is None:
+        structure1, exceptions1 = self.get_structure(None, data1)
+        structure2, exceptions2 = self.get_structure(None, data2)
+        if len(exceptions1) > 0 or len(exceptions2) > 0:
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureExceptionError(self, self.get_similarity, exceptions1 + exceptions2), self.name, None, (data1, data2)))
+        if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth) or structure1 is None or structure1 is not structure2:
             if branch == 0:
                 return float(data1 == data2)
             else:
                 return float(Structure.get_data_at_branch(data1, branch) == data2)
         else:
-            output = self.structure.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
+            output = structure1.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
             return output
 
     def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[a|D.Diff[a], bool, list[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
-        if self.structure is None:
+        structure1, new_exceptions = self.get_structure(None, data1)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+        structure2, new_exceptions = self.get_structure(None, data2)
+        exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
+        if structure1 is None or structure1 is not structure2:
             if data1 is data2 or data1 == data2:
                 output, has_changes = data1, False
             else:
                 output, has_changes = D.Diff(branches, {tuple(range(0,branch+1)): data1, (branch+1,): data2}), True
         else:
-            output, has_changes, new_exceptions = self.structure.compare(data1, data2, environment, branch, branches)
+            output, has_changes, new_exceptions = structure1.compare(data1, data2, environment, branch, branches)
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions
 
