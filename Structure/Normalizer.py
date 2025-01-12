@@ -43,7 +43,7 @@ class Normalizer[IN, OUT]():
         '''
         self.version_range = version_range if not version_range.is_all_versions() else None
 
-    def __call__(self, data:IN) -> OUT|None:
+    def __call__(self, data:IN) -> OUT:
         '''
         Calls the Normalizer's function.
         :data: The argument of the Normalizer's function.

@@ -1621,6 +1621,25 @@ class DiffKeyError(StructureException):
     def __str__(self) -> str:
         return f"{self.diff} does not have an item at index {self.index}{message(self.message)}"
 
+class SwitchStructureError(StructureException):
+    "A SwitchStructure's switch function returned a value that is not in its switches."
+
+    def __init__(self, return_value:str, possible_values:list[str], switch_structure:"Structure.Structure", message:Optional[str]=None) -> None:
+        '''
+        :return_value: The value that the SwitchStructure's switch function returned.
+        :possible_values: The values that the SwitchStructure expects the return value to be.
+        :switch_structure: The SwitchStructure.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(return_value, possible_values, switch_structure, message)
+        self.return_value = return_value
+        self.possible_values = possible_values
+        self.switch_structure = switch_structure
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.switch_structure}'s switch function returned \"{self.return_value}\", which is not in [{", ".join(f"\"{value}\"" for value in self.possible_values)}]{message(self.message)}"
+
 class InvalidFileHashType(StructureException):
     "An is_file StructureTag references data that cannot be interpreted as a file hash."
 

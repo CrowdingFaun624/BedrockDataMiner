@@ -19,6 +19,7 @@ import Component.Structure.SequenceComponent as SequenceComponent
 import Component.Structure.SetComponent as SetComponent
 import Component.Structure.StringComponent as StringComponent
 import Component.Structure.StructureTagComponent as StructureTagComponent
+import Component.Structure.SwitchComponent as SwitchComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Component.Tablifier.TablifierComponent as TablifierComponent
 import Component.Version.VersionComponent as VersionComponent
@@ -52,6 +53,7 @@ component_types:list[type[Component.Component]] = [
     StringComponent.StringComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
     StructureTagComponent.StructureTagComponent,
+    SwitchComponent.SwitchComponent,
     TablifierComponent.TablifierComponent,
     TypeAliasComponent.TypeAliasComponent,
     VersionComponent.VersionComponent,

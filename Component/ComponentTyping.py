@@ -253,6 +253,19 @@ class StructureTagTypedDict(TypedDict):
     is_file: NotRequired[bool]
     type: NotRequired[Literal["StructureTag"]]
 
+class SwitchTypedDict(TypedDict):
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
+    normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
+    pre_normalized_types: NotRequired[list[str]]
+    subcomponents: Required[dict[str,str|None]]
+    switch_function: Required["str|NormalizerTypedDict"]
+    type: NotRequired[Literal["Group"]]
+    types: Required[str|list[str]]
+
 class TablifierTypedDict(TypedDict):
     dataminer_collection: Required[str]
     file_name: Required[str]

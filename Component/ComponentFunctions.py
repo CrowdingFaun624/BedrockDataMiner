@@ -22,6 +22,9 @@ def delete_key_if_empty(data:dict[str,Sized], key:str) -> None:
     if (value := data.get(key)) is not None and len(value) == 0:
         data.pop(key, None)
 
+def get_key[A](data:dict[str,A], key:str) -> A:
+    return data[key]
+
 def load_json(data:str) -> dict[str,str]:
     return json.loads(data)
 
@@ -84,6 +87,7 @@ functions:dict[str,Callable] = {
     "delete_required_key": delete_required_key,
     "delete_required_keys": delete_required_keys,
     "get_file_stem": get_file_stem,
+    "get_key": get_key,
     "load_json": load_json,
     "move_key": move_key,
     "open_file": open_file,
