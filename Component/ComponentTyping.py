@@ -293,7 +293,7 @@ class VersionTagOrderTypedDict(TypedDict):
     order: Required[list[list[str]]]
     tags_after_top_level_tag: Required[list[str]]
     tags_before_top_level_tag: Required[list[str]]
-    top_level_tag: Required[str]
+    top_level_tag: Required[str|None]
     type: NotRequired[Literal["VersionTagOrder"]]
 
 class VersionTagTypedDict(TypedDict):

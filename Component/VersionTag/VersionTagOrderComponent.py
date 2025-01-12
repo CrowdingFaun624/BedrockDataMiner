@@ -3,12 +3,12 @@ from typing import TYPE_CHECKING
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
 import Component.VersionTag.Field.VersionTagOrderAllowedChildrenField as VersionTagOrderAllowedChildrenField
+import Component.VersionTag.Field.OptionalVersionTagField as OptionalVersionTagField
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTag.VersionTagOrder as VersionTagOrder
@@ -28,7 +28,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         TypeVerifier.TypedDictKeyTypeVerifier("order", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"), list, "a list", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("tags_after_top_level_tag", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("tags_before_top_level_tag", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("top_level_tag", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("top_level_tag", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
     )
 
@@ -49,7 +49,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
             VersionTagOrderAllowedChildrenField.VersionTagOrderAllowedChildrenField(key, children, ["allowed_children", key])
             for key, children in data["allowed_children"].items()
         ], ["allowed_children"])
-        self.top_level_tag_field = ComponentField.ComponentField(data["top_level_tag"], VERSION_TAG_PATTERN, ["top_level_tag"], allow_inline=Field.InlinePermissions.reference)
+        self.top_level_tag_field = OptionalVersionTagField.OptionalVersionTagField(data["top_level_tag"], ["top_level_tag"])
         self.tags_before_top_level_tag = ComponentListField.ComponentListField(data["tags_before_top_level_tag"], VERSION_TAG_PATTERN, ["tags_before_top_level_tag"], allow_inline=Field.InlinePermissions.reference)
         self.tags_after_top_level_tag = ComponentListField.ComponentListField(data["tags_after_top_level_tag"], VERSION_TAG_PATTERN, ["tags_after_top_level_tag"], allow_inline=Field.InlinePermissions.reference)
         return [self.order_field, self.allowed_children_field, self.top_level_tag_field, self.tags_before_top_level_tag, self.tags_after_top_level_tag]
@@ -67,7 +67,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
                     for version_tag_component in version_tag_order_allowed_children_field.children_field.subcomponents
                 ) for version_tag_order_allowed_children_field in self.allowed_children_field
             },
-            top_level_tag=self.top_level_tag_field.subcomponent.final,
+            top_level_tag=self.top_level_tag_field.final,
             tags_before_top_level_tag=list(self.tags_before_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
             tags_after_top_level_tag=list(self.tags_after_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
         )
@@ -81,7 +81,8 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
         for allowed_children_subfield in self.allowed_children_field:
             used_version_tag_components.add(allowed_children_subfield.key_field.subcomponent)
             used_version_tag_components.update(allowed_children_subfield.children_field.subcomponents)
-        used_version_tag_components.add(self.top_level_tag_field.subcomponent)
+        if self.top_level_tag_field.subcomponent is not None:
+            used_version_tag_components.add(self.top_level_tag_field.subcomponent)
         used_version_tag_components.update(self.tags_before_top_level_tag.subcomponents)
         used_version_tag_components.update(self.tags_after_top_level_tag.subcomponents)
         for used_version_tag_component in used_version_tag_components:

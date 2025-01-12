@@ -45,16 +45,20 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                     if version.parent is not None:
                         version.parent.latest = True
                     break
-
-        versions_without_directory:list[bool] = [False] * len(output)
-        for version_directory in self.domain.versions_directory.iterdir():
-            if (version_directory_name := version_directory.name) in output:
-                versions_without_directory[output[version_directory_name].index] = True
-            else:
-                try:
-                    version_directory.rmdir()
-                except OSError:
-                    print(f"Version directory \"{version_directory_name}\" does not exists in versions.json and contains files!")
+        if self.domain.versions_directory.exists():
+            versions_without_directory:list[bool] = [False] * len(output)
+            for version_directory in self.domain.versions_directory.iterdir():
+                if (version_directory_name := version_directory.name) in output:
+                    versions_without_directory[output[version_directory_name].index] = True
+                else:
+                    try:
+                        version_directory.rmdir()
+                    except OSError:
+                        print(f"Version directory \"{version_directory_name}\" does not exists in versions.json and contains files!")
+        else:
+            versions_without_directory:list[bool] = [True] * len(output)
+        if len(output) > 0:
+            self.domain.versions_directory.mkdir(exist_ok=True)
         for version, has_directory in zip(output.values(), versions_without_directory):
             if has_directory: continue
             version.version_directory.mkdir()

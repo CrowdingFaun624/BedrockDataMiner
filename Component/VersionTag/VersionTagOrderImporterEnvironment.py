@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 import Component.Component as Component
+import Component.ComponentTyping as ComponentTyping
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.VersionTag.VersionTagOrderComponent as VersionTagOrderComponent
 import Utilities.Exceptions as Exceptions
@@ -18,6 +19,15 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
     single_component = True
 
     __slots__ = ()
+
+    def get_default_contents(self) -> ComponentTyping.VersionTagOrderTypedDict:
+        return {
+            "allowed_children": {},
+            "order": [],
+            "tags_after_top_level_tag": [],
+            "tags_before_top_level_tag": [],
+            "top_level_tag": None,
+        }
 
     def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
         return {"version_tags": all_components["version_tags"]}
@@ -59,12 +69,13 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
                     exceptions.append(Exceptions.DuplicateVersionTagOrderError(child, ("allowed_children", key_tag.name)))
                 already_children.add(child)
 
-        top_level_tags_used:Counter[VersionTag.VersionTag] = Counter(chain([output.top_level_tag], output.tags_before_top_level_tag, output.tags_after_top_level_tag))
-        exceptions.extend(
-            Exceptions.NotAllOrderTagsUsedError(tag, "order") if times_used == 0
-            else Exceptions.DuplicateVersionTagOrderError(tag, "order")
-            for tag in chain([output.top_level_tag], output.tags_before_top_level_tag, output.tags_after_top_level_tag)
-            if (times_used := top_level_tags_used[tag]) != 1
-        )
+        if output.top_level_tag is not None:
+            top_level_tags_used:Counter[VersionTag.VersionTag] = Counter(chain([output.top_level_tag], output.tags_before_top_level_tag, output.tags_after_top_level_tag))
+            exceptions.extend(
+                Exceptions.NotAllOrderTagsUsedError(tag, "order") if times_used == 0
+                else Exceptions.DuplicateVersionTagOrderError(tag, "order")
+                for tag in chain([output.top_level_tag], output.tags_before_top_level_tag, output.tags_after_top_level_tag)
+                if (times_used := top_level_tags_used[tag]) != 1
+            )
 
         return exceptions

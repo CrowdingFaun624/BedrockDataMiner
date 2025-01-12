@@ -30,6 +30,7 @@ def compare_all_of(
         version = None
         previous_successful_version = None # The last Version that can be datamined for this file.
         undataminable_versions_between:list[Version.Version] = []
+        domain.comparisons_directory.mkdir(exist_ok=True)
         comparison_parent = domain.comparisons_directory.joinpath(dataminer_collection.name)
         if not comparison_parent.exists():
             comparison_parent.mkdir()

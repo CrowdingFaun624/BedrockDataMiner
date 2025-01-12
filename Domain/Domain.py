@@ -113,15 +113,6 @@ class Domain():
         self.versions_file              = self.assets_directory.joinpath("versions.json")
         self.versions_directory         = FileManager.VERSIONS_DIRECTORY.joinpath(name)
         self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
-        self.assets_directory.mkdir(exist_ok=True)
-        self.data_directory.mkdir(exist_ok=True)
-        self.lib_directory.mkdir(exist_ok=True)
-        self.log_directory.mkdir(exist_ok=True)
-        self.scripts_directory.mkdir(exist_ok=True)
-        self.structures_directory.mkdir(exist_ok=True)
-        self.version_tags_directory.mkdir(exist_ok=True)
-        self.versions_directory.mkdir(exist_ok=True)
-        self.comparisons_directory.mkdir(exist_ok=True)
 
         self._accessor_types:dict[str,"AccessorType.AccessorType"]|None = None
         self._dataminer_collections:dict[str,"AbstractDataminerCollection.AbstractDataminerCollection"]|None = None
@@ -136,7 +127,7 @@ class Domain():
         self._version_tags:dict[str,"VersionTag.VersionTag"]|None = None
         self._versions:dict[str,"Version.Version"]|None = None
 
-        self.data_files = {path.stem: DataFile.DataFile(path) for path in self.data_directory.iterdir()}
+        self.data_files = self._get_data_files()
         '''
         dictionary of files in the `./_assets/data` directory without the final suffix.
         '''
@@ -178,6 +169,12 @@ class Domain():
         self._version_tags_order = all_component_groups["version_tags_order"]
         self._version_tags = all_component_groups["version_tags"]
         self._versions = all_component_groups["versions"]
+
+    def _get_data_files(self) -> dict[str,DataFile.DataFile]:
+        if self.data_directory.exists():
+            return {path.stem: DataFile.DataFile(path) for path in self.data_directory.iterdir()}
+        else:
+            return {}
 
     def get_comparison_file_path(self, name:str, number:int) -> Path:
         comparison_subdirectory = self.comparisons_directory.joinpath(name)

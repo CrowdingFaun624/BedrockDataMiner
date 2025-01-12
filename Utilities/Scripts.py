@@ -25,6 +25,8 @@ class HasImportedScripts():
 has_imported_scripts = HasImportedScripts()
 
 def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
+    if not path.exists():
+        return
     already_stems:dict[str,Path] = {}
     for subpath in path.iterdir():
         if subpath.is_file():

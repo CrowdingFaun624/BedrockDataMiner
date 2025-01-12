@@ -58,7 +58,8 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
                 yield from self.get_from_directory(subpath)
 
     def get_component_files(self) -> Iterable[Path]:
-        yield from self.get_from_directory(self.domain.structures_directory)
+        if self.domain.structures_directory.exists():
+            yield from self.get_from_directory(self.domain.structures_directory)
 
     def get_component_group_name(self, file_path:Path) -> str:
         return "structures/" + file_path.relative_to(self.domain.structures_directory).as_posix().removesuffix(file_path.suffix)

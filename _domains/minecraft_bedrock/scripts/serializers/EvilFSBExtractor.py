@@ -27,6 +27,7 @@ class SoundFilesExtractionError(Exceptions.DataminerException):
 class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
 
     def __init__(self, domain:"Domain.Domain") -> None:
+        domain.data_directory.mkdir(exist_ok=True)
         super().__init__(domain.data_directory.joinpath("fsb_cache.json"))
 
     def get_default_content(self) -> dict[str, str] | None:

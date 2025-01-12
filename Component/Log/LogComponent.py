@@ -30,6 +30,7 @@ class LogComponent(Component.Component[Log.Log]):
         self.file_name = data["file_name"]
         self.log_type = Log.LogType[data["log_type"]]
         self.reset_on_reload = data["reset_on_reload"]
+        self.domain.log_directory.mkdir(exist_ok=True)
         self.file = self.domain.log_directory.joinpath(self.file_name)
         return []
 
