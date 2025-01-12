@@ -1,12 +1,10 @@
-from typing import TYPE_CHECKING, Callable
+from typing import Callable
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Utilities.Exceptions as Exceptions
 
-if TYPE_CHECKING:
-    import Component.Component as Component
 
 class FunctionField(Field.Field):
 

@@ -3,7 +3,6 @@ from typing import Callable, Iterable
 
 import Dataminer.Dataminer as Dataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
-import Downloader.DirectoryAccessor as DirectoryAccessor
 
 location_value_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (len(value) == 0 or value.endswith("/"), "location does not end in \"/\"")
 location_item_function:Callable[[str],tuple[bool,str]] = lambda item: (len(item) == 0 or item.endswith("/"), "location does not end in \"/\"")
