@@ -32,7 +32,19 @@ class AbstractDataminerCollection():
         if data is None:
             raise Exceptions.DataminerNullReturnError(self)
         version.data_directory.mkdir(exist_ok=True)
-        with open(self.get_data_file_path(version), "wt") as f:
+
+        data_file_path = self.get_data_file_path(version)
+        parents_to_create:list[Path] = []
+        for parent in data_file_path.parents:
+            if parent == version.data_directory or parent.exists(): break
+            parents_to_create.append(parent)
+        else:
+            raise Exceptions.InvalidFileLocationError(data_file_path, version.data_directory)
+        parents_to_create.reverse()
+        for parent in parents_to_create:
+            parent.mkdir()
+
+        with open(data_file_path, "wt") as f:
             json.dump(data, f, separators=(",", ":"), cls=self.domain.json_encoder)
 
         if self.structure is not None:
@@ -58,6 +70,14 @@ class AbstractDataminerCollection():
         data_path = version.data_directory.joinpath(self.file_name)
         if data_path.exists():
             data_path.unlink()
+        for parent in data_path.parents:
+            if parent == version.data_directory:
+                break
+            if parent.exists():
+                try:
+                    parent.rmdir()
+                except OSError:
+                    break
 
     def has_tag(self, tag:StructureTag.StructureTag) -> bool:
         '''
