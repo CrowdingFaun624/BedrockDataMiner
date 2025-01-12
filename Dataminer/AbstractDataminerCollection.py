@@ -32,19 +32,7 @@ class AbstractDataminerCollection():
         if data is None:
             raise Exceptions.DataminerNullReturnError(self)
         version.data_directory.mkdir(exist_ok=True)
-
-        data_file_path = self.get_data_file_path(version)
-        parents_to_create:list[Path] = []
-        for parent in data_file_path.parents:
-            if parent == version.data_directory or parent.exists(): break
-            parents_to_create.append(parent)
-        else:
-            raise Exceptions.InvalidFileLocationError(data_file_path, version.data_directory)
-        parents_to_create.reverse()
-        for parent in parents_to_create:
-            parent.mkdir()
-
-        with open(data_file_path, "wt") as f:
+        with open(self.get_data_file_path(version), "wt") as f:
             json.dump(data, f, separators=(",", ":"), cls=self.domain.json_encoder)
 
         if self.structure is not None:
@@ -70,14 +58,6 @@ class AbstractDataminerCollection():
         data_path = version.data_directory.joinpath(self.file_name)
         if data_path.exists():
             data_path.unlink()
-        for parent in data_path.parents:
-            if parent == version.data_directory:
-                break
-            if parent.exists():
-                try:
-                    parent.rmdir()
-                except OSError:
-                    break
 
     def has_tag(self, tag:StructureTag.StructureTag) -> bool:
         '''
@@ -147,7 +127,7 @@ class AbstractDataminerCollection():
         return version.data_directory.joinpath(self.file_name)
 
     def get_referenced_files(self, version:Version.Version, structure_tags:dict[str,StructureTag.StructureTag]) -> Iterator[int]:
-        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.garbage_collection, self.domain)
+        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.garbage_collection)
         data_file = self.get_data_file(version, non_exist_ok=True)
         if data_file is None: return
         yield from File.recursive_examine_data_for_files(data_file) # this is necessary just in case there's a file that's ignored by the structure.
