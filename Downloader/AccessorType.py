@@ -61,4 +61,4 @@ class AccessorType():
         if len(exceptions) > 0:
             return None, exceptions
         else:
-            return accessor_type(version, domain, local_instance_arguments, self.class_arguments, propagated_arguments, linked_accessors), exceptions
+            return accessor_type(self.name, version, domain, local_instance_arguments, self.class_arguments, propagated_arguments, linked_accessors), exceptions
