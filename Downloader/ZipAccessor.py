@@ -12,6 +12,13 @@ class ZipAccessor(DirectoryAccessor.DirectoryAccessor):
 
     linked_accessors = {"file": FileAccessor.FileAccessor}
 
+    __slots__ = (
+        "_file_list",
+        "_file_set",
+        "_zip_file",
+        "file_accessor",
+    )
+
     def prepare_for_install(self, instance_arguments: dict[str, Any], class_arguments: dict[str, Any], propagated_arguments:dict[str,Any], linked_accessors:LinkedAccessorsTypedDict) -> None:
         self.file_accessor = linked_accessors["file"]
 

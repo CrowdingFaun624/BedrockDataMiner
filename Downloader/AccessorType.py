@@ -10,6 +10,14 @@ if TYPE_CHECKING:
 
 class AccessorType():
 
+    __slots__ = (
+        "accessor_class",
+        "class_arguments",
+        "linked_accessor_types",
+        "name",
+        "propagated_arguments",
+    )
+
     def __init__(self, name:str, class_arguments:dict[str,Any], propagated_arguments:dict[str,Any]) -> None:
         self.name = name
         self.class_arguments = class_arguments

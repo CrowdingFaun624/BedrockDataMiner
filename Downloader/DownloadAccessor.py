@@ -24,6 +24,12 @@ class DownloadAccessor(FileAccessor.FileAccessor):
         TypeVerifier.TypedDictKeyTypeVerifier("url", "a str", True, str),
     )
 
+    __slots__ = (
+        "_installed",
+        "location",
+        "url",
+    )
+
     def prepare_for_install(self, instance_arguments:InstanceArgumentsTypedDict, class_arguments:dict[str,Any], propagated_arguments:PropagatedArgumentsTypedDict, linked_accessors:dict[str,Accessor.Accessor]) -> None:
         version_directory = self.version.version_directory
         location = version_directory.joinpath(propagated_arguments["location"])

@@ -6,6 +6,8 @@ import Downloader.Accessor as Accessor
 
 class DirectoryAccessor(Accessor.Accessor):
 
+    __slots__ = ()
+
     @property
     def file_list(self) -> list[str]: ...
 

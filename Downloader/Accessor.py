@@ -13,6 +13,12 @@ class Accessor():
     propagated_parameters:TypeVerifier.TypedDictTypeVerifier = TypeVerifier.TypedDictTypeVerifier()
     class_parameters:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
 
+    __slots__ = (
+        "accessor_type_name",
+        "domain",
+        "version",
+    )
+
     def __init__(self, name:str, version:"Version.Version", domain:"Domain.Domain", instance_arguments:dict[str,Any], class_arguments:dict[str,Any], propagated_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
         '''
         :version: Version object this accessor is based on.

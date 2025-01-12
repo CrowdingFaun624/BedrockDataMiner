@@ -18,6 +18,11 @@ class SingleDirectoryFileAccessor(FileAccessor.FileAccessor):
     )
     linked_accessors = {"directory": DirectoryAccessor.DirectoryAccessor}
 
+    __slots__ = (
+        "directory_accessor",
+        "file_name",
+    )
+
     def prepare_for_install(self, instance_arguments: InstanceArgumentsTypedDict, class_arguments: dict[str, Any], propagated_arguments: dict[str, Any], linked_accessors: LinkedAccessorsTypedDict) -> None:
         self.file_name = instance_arguments["file_name"]
         self.directory_accessor = linked_accessors["directory"]
