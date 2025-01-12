@@ -1,0 +1,34 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "file",
+        "delegate_arguments": {
+            "name": "text_packs"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "list",
+            "subcomponent": "lines"
+        }
+    },
+    "lines": {
+        "type": "Sequence",
+        "pre_normalized_types": "str",
+        "normalizer": {
+            "function_name": "split_lines"
+        },
+        "max_similarity_ancestor_depth": 0,
+        "types": "str",
+        "delegate": "LongStringDelegate",
+        "delegate_arguments": {
+            "measure_length": true
+        },
+        "subcomponent": null
+    }
+}

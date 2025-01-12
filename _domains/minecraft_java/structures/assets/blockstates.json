@@ -1,0 +1,143 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "blockstates"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "blockstate_condition": {
+        "type": "Dict",
+        "types": ["str", "list"],
+        "delegate_arguments": {
+            "field": "state",
+            "measure_length": true
+        },
+        "key_component": "string",
+        "subcomponent": {
+            "type": "Group",
+            "subcomponents": {
+                "str": "string",
+                "list": "blockstate_conditions"
+            }
+        }
+    },
+    "blockstate_conditions": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "condition",
+            "measure_length": true
+        },
+        "subcomponent": "blockstate_condition"
+    },
+    "string": {
+        "type": "String"
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "multipart": {"type": "list", "subcomponent": "multipart"},
+            "variants": {"type": "dict", "subcomponent": "variants"}
+        }
+    },
+    "multipart": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "rule",
+            "measure_length": true
+        },
+        "subcomponent": "rule"
+    },
+    "rule": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "apply": {"type": ["dict", "list"], "subcomponent": {
+                "type": "Group",
+                "subcomponents": {
+                    "dict": "variant",
+                    "list": "variants_list"
+                }
+            }},
+            "when": {"type": "dict", "subcomponent": "blockstate_condition"}
+        }
+    },
+    "variants": {
+        "type": "Dict",
+        "types": ["dict", "list"],
+        "delegate_arguments": {
+            "field": "variant",
+            "measure_length": true
+        },
+        "key_component": "string",
+        "subcomponent": "variants_group"
+    },
+    "variants_list": {
+        "type": "Set",
+        "types": ["dict", "list"],
+        "delegate_arguments": {
+            "field": "variant",
+            "measure_length": true
+        },
+        "subcomponent": "variants_group"
+    },
+    "variants_group": {
+        "type": "Group",
+        "subcomponents": {
+            "dict": "variant",
+            "list": "subvariants"
+        }
+    },
+    "subvariants": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "subvariant",
+            "measure_length": true
+        },
+        "subcomponent": "variant"
+    },
+    "variant": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "model": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "x": {"type": "int"},
+            "y": {"type": "int"},
+            "uvlock": {"type": "bool"},
+            "weight": {"type": "int"}
+        }
+    }
+}

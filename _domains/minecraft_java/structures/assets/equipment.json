@@ -1,0 +1,89 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "equipment"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "string": {
+        "type": "String"
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "layers": {"type": "dict", "subcomponent": "layers"}
+        }
+    },
+    "layers": {
+        "type": "Keymap",
+        "sort": "by_key",
+        "delegate_arguments": {
+            "field": "body type",
+            "measure_length": true
+        },
+        "keys": {
+            "horse_body": {"type": "list", "subcomponent": "textures"},
+            "humanoid": {"type": "list", "subcomponent": "textures"},
+            "humanoid_leggings": {"type": "list", "subcomponent": "textures"},
+            "llama_body": {"type": "list", "subcomponent": "textures"},
+            "wings": {"type": "list", "subcomponent": "textures"},
+            "wolf_body": {"type": "list", "subcomponent": "textures"}
+        }
+    },
+    "textures": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "texture",
+            "measure_length": true
+        },
+        "subcomponent": "texture"
+    },
+    "texture": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "texture": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "dyeable": {"type": "dict", "subcomponent": "dyeable"},
+            "use_player_texture": {"type": "bool"}
+        }
+    },
+    "dyeable": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "color_when_undyed": {"type": "int"}
+        }
+    }
+}

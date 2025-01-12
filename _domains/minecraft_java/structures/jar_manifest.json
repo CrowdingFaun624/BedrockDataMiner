@@ -1,0 +1,47 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "file",
+        "delegate_arguments": {
+            "name": "jar_manifest"
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "manifest"
+        }
+    },
+    "manifest": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            // MOJANGCS.SF
+            "Signature-Version": {"type": "str"},
+            "Created-By": {"type": "str"},
+            "SHA-384-Digest-Manifest": {"type": "str"},
+            "SHA-384-Digest-Manifest-Main-Attributes": {"type": "str"},
+            // MANIFEST.MF
+            "Manifest-Version": {"type": "str"},
+            "Main-Class": {"type": "str"},
+            // generic
+            "files": {"type": "dict", "subcomponent": "files"}
+        }
+    },
+    "files": {
+        "type": "Dict",
+        "sort": "by_key",
+        "types": "str",
+        "delegate_arguments": {
+            "measure_length": true,
+            "field": "file"
+        },
+        "key_component": {"type": "String"},
+        "subcomponent": null
+    }
+}

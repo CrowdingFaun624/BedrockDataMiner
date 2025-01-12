@@ -1,0 +1,37 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "text_packs"
+        },
+        "imports": [
+            {
+                "from": "structures/text_file",
+                "components": [
+                    {"component": "lines"}
+                ]
+            }
+        ],
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "list",
+            "subcomponent": "lines"
+        }
+    }
+}

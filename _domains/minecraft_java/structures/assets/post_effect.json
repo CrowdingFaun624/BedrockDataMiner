@@ -1,0 +1,161 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "post_effect"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "string": {
+        "type": "String"
+    },
+    "vector_decimal": {
+        "type": "List",
+        "types": "decimal",
+        "delegate_arguments": {
+            "print_all": true,
+            "print_flat": true,
+            "field": "component"
+        },
+        "subcomponent": null
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "targets": {"type": "dict", "subcomponent": "targets"},
+            "passes": {"type": "list", "subcomponent": "passes"}
+        }
+    },
+    "targets": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "target",
+            "measure_length": true
+        },
+        "key_component": "string",
+        "subcomponent": "target"
+    },
+    "target": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "width": {"type": "int"},
+            "height": {"type": "int"}
+        }
+    },
+    "passes": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "pass",
+            "measure_length": true
+        },
+        "subcomponent": "pass"
+    },
+    "pass": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "program": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "inputs": {"type": "list", "subcomponent": "inputs"},
+            "output": {"type": "str", "subcomponent": "string"},
+            "uniforms": {"type": "list", "subcomponent": "uniforms"}
+        }
+    },
+    "inputs": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "input",
+            "measure_length": true
+        },
+        "subcomponent": "input"
+    },
+    "input": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "sampler_name": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "bilinear": {"type": "bool"},
+            "target": {"type" :"str"},
+            "use_depth_buffer": {"type": "bool"},
+            "location": {"type": "str", "subcomponent": "string"},
+            "width": {"type": "int"},
+            "height": {"type": "int"}
+        }
+    },
+    "uniforms": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "uniform",
+            "measure_length": true
+        },
+        "subcomponent": "uniform"
+    },
+    "uniform": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "normalizers/post_effect_switch"
+        },
+        "subcomponents": {
+            "number": "uniform.number",
+            "matrix": "uniform.matrix"
+        }
+    },
+    "uniform.number": {
+        "type": "Dict",
+        "types": "decimal",
+        "delegate_arguments": {
+            "field": "value",
+            "measure_length": true
+        },
+        "key_component": "string",
+        "subcomponent": null
+    },
+    "uniform.matrix": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "values": {"type": "list", "subcomponent": "vector_decimal"},
+            "RadiusMultiplier": {"type": "decimal"}
+        }
+    }
+}

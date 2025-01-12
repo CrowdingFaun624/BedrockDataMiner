@@ -1,0 +1,218 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "font_providers"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "string": {
+        "type": "String"
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "providers": {"type": "list", "subcomponent": "providers"}
+        }
+    },
+    "providers": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "provider",
+            "measure_length": true
+        },
+        "subcomponent": "provider_switch"
+    },
+    "provider_switch": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "subcomponents": {
+            "bitmap": "provider.bitmap",
+            "legacy_unicode": "provider.legacy_unicode",
+            "reference": "provider.reference",
+            "space": "provider.space",
+            "ttf": "provider.ttf",
+            "unihex": "provider.unihex"
+        }
+    },
+    "provider_common": {
+        "type": "Keymap",
+        "keys": {
+            "filter": {"type": "dict", "subcomponent": "filter"}
+        }
+    },
+    "filter": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "delegate_arguments": {
+            "field": "option"
+        },
+        "keys": {
+            "uniform": {"type": "bool"},
+            "jp": {"type": "bool"}
+        }
+    },
+    "provider.bitmap": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["provider_common"],
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "ascent": {"type": "int"},
+            "chars": {"type": "list", "subcomponent": "provider.bitmap:chars"},
+            "file": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "height": {"type": "int"}
+        }
+    },
+    "provider.bitmap:chars": {
+        "type": "List",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "line",
+            "measure_length": true
+        },
+        "subcomponent": "string"
+    },
+    "provider.legacy_unicode": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["provider_common"],
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "template": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "sizes": {"type": "str", "subcomponent": "string"}
+        }
+    },
+    "provider.reference": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["provider_common"],
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "id": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "provider.space": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["provider_common"],
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "advances": {"type": "dict", "subcomponent": "provider.space:advances"}
+        }
+    },
+    "provider.space:advances": {
+        "type": "Dict",
+        "types": "int",
+        "sort": "by_key",
+        "delegate_arguments": {
+            "field": "character",
+            "measure_length": true
+        },
+        "subcomponent": null
+    },
+    "provider.ttf": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["provider_common"],
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "file": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "shift": {"type": "list", "subcomponent": "provider.ttf:shift"},
+            "scale": {"type": "int"},
+            "oversample": {"type": "int"},
+            "skip": {"type": "list", "subcomponent": "provider.ttf:skip"}
+        }
+    },
+    "provider.ttf:shift": {
+        "type": "List",
+        "types": "int",
+        "delegate_arguments": {
+            "field": "shift",
+            "print_flat": true
+        },
+        "subcomponent": null
+    },
+    "provider.ttf:skip": {
+        "type": "Set",
+        "types": "str",
+        "pre_normalized_types": ["list", "str"],
+        "normalizer": {
+            "function_name": "normalizers/font_providers_normalize_skip"
+        },
+        "delegate_arguments": {
+            "field": "character",
+            "measure_length": true
+        },
+        "subcomponent": null
+    },
+    "provider.unihex": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["provider_common"],
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "hex_file": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "size_overrides": {"type": "list", "subcomponent": "provider.unihex:size_overrides"}
+        }
+    },
+    "provider.unihex:size_overrides": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "range",
+            "measure_length": true
+        },
+        "subcomponent": "provider.unihex:size_overrides.item"
+    },
+    "provider.unihex:size_overrides.item": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "delegate_arguments": {
+            "print_all": true
+        },
+        "keys": {
+            "from": {"type": "str"},
+            "to": {"type": "str"},
+            "left": {"type": "int"},
+            "right": {"type": "int"}
+        }
+    }
+}

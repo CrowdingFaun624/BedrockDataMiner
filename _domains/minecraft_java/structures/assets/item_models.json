@@ -1,0 +1,89 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "item_models"
+        },
+        "imports": [
+            {
+                "from": "structures/assets/block_models",
+                "components": [
+                    {"component": "display"},
+                    {"component": "textures"},
+                    {"component": "elements"}
+                ]
+            }
+        ],
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "string": {
+        "type": "String"
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "parent": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "display": {"type": "dict", "subcomponent": "display"},
+            "textures": {"type": "dict", "subcomponent": "textures"},
+            "gui_light": {"type": "str"},
+            "elements": {"type": "list", "subcomponent": "elements"},
+            "overrides": {"type": "list", "subcomponent": "overrides", "tags": ["outdated"]}
+        }
+    },
+    "overrides": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "case",
+            "measure_length": true
+        },
+        "subcomponent": "override"
+    },
+    "override": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "predicate": {"type": "dict", "subcomponent": "predicate"},
+            "model": {"type": "str", "subcomponent": "string"}
+        }
+    },
+    "predicate": {
+        "type": "Dict",
+        "types": "int",
+        "delegate_arguments": {
+            "field": "predicate",
+            "measure_length": true
+        },
+        "subcomponent": null
+    }
+}

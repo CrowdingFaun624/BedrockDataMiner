@@ -1,0 +1,60 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "regional_compliancies"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "regions"
+        }
+    },
+    "regions": {
+        "type": "Dict",
+        "types": "list",
+        "delegate_arguments": {
+            "field": "region",
+            "measure_length": true
+        },
+        "subcomponent": "warnings"
+    },
+    "warnings": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "warning",
+            "measure_length": true
+        },
+        "subcomponent": "warning"
+    },
+    "warning": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "delay": {"type": "int"},
+            "period": {"type": "int"},
+            "title": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "message": {"type": "str", "subcomponent": "string"}
+        }
+    },
+    "string": {
+        "type": "String"
+    }
+}

@@ -1,0 +1,61 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "language"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "removed": {"type": "list", "subcomponent": "removed"},
+            "renamed": {"type": "dict", "subcomponent": "renamed"}
+        }
+    },
+    "removed": {
+        "type": "Set",
+        "sort": true,
+        "types": "str",
+        "delegate_arguments": {
+            "field": "key",
+            "measure_length": true
+        },
+        "subcomponent": "string"
+    },
+    "renamed": {
+        "type": "Dict",
+        "sort": "by_key",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "key",
+            "measure_length": true
+        },
+        "key_component": "string",
+        "subcomponent": "string"
+    },
+    "string": {
+        "type": "String"
+    }
+}

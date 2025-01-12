@@ -1,0 +1,689 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "item_model_definitions"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["int", "float"]
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "model": {"type": "dict", "subcomponent": "model"}
+        }
+    },
+    "color": {
+        "type": "Group",
+        "subcomponents": {
+            "int": null,
+            "list": {
+                "type": "List",
+                "types": "int",
+                "delegate_arguments": {
+                    "field": "channel",
+                    "print_flat": true,
+                    "print_all": true
+                },
+                "subcomponent": null
+            }
+        }
+    },
+    "model_list": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "model",
+            "measure_length": true
+        },
+        "subcomponent": "model"
+    },
+    "string": {
+        "type": "String"
+    },
+    "tints": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "tint",
+            "measure_length": true
+        },
+        "subcomponent": "tint"
+    },
+    "tint": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "subcomponents": {
+            "minecraft:constant": "tint.constant",
+            "minecraft:custom_model_data": "tint.custom_model_data",
+            "minecraft:dye": "tint.dye",
+            "minecraft:firework": "tint.firework",
+            "minecraft:grass": "tint.grass",
+            "minecraft:map_color": "tint.map_color",
+            "minecraft:potion": "tint.potion",
+            "minecaft:team": "tint.team"
+        }
+    },
+    "tint.constant": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "value": {"type": ["int", "list"], "subcomponent": "color"}
+        }
+    },
+    "tint.custom_model_data": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "index": {"type": "int"},
+            "default": {"type": ["int", "list"], "subcomponent": "color"}
+        }
+    },
+    "tint.dye": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "default": {"type": ["int", "list"], "subcomponent": "color"}
+        }
+    },
+    "tint.firework": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "default": {"type": ["int", "list"], "subcomponent": "color"}
+        }
+    },
+    "tint.grass": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "temperature": {"type": "decimal"},
+            "downfall": {"type": "decimal"}
+        }
+    },
+    "tint.map_color": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "default": {"type": ["int", "list"], "subcomponent": "color"}
+        }
+    },
+    "tint.potion": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "default": {"type": ["int", "list"], "subcomponent": "color"}
+        }
+    },
+    "tint.team": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "default": {"type": ["int", "list"], "subcomponent": "color"}
+        }
+    },
+    "model": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "subcomponents": {
+            "minecraft:bundle/selected_item": "model.bundle_selected_item",
+            "minecraft:composite": "model.composite",
+            "minecraft:condition": "model.condition",
+            "minecraft:empty": "model.empty",
+            "minecraft:model": "model.model",
+            "minecraft:range_dispatch": "model.range_dispatch",
+            "minecraft:select": "model.select",
+            "minecraft:special": "model.special"
+        }
+    },
+    "model.bundle_selected_item": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "model.composite": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "models": {"type": "list", "subcomponent": "model_list"}
+        }
+    },
+    "model.condition": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "property"
+            }
+        },
+        "subcomponents": {
+            "minecraft:broken": "model.condition.broken",
+            "minecraft:bundle/has_selected_item": "model.condition.bundle_has_selected_item",
+            "minecraft:carried": "model.condition.carried",
+            "minecraft:custom_model_data": "model.condition.custom_model_data",
+            "minecraft:damaged": "model.condition.damaged",
+            "minecraft:extended_view": "model.condition.extended_view",
+            "minecraft:fishing_rod/cast": "model.condition.fishing_rod_cast",
+            "minecraft:has_component": "model.condition.has_component",
+            "minecraft:keybind_down": "model.condition.keybind_down",
+            "minecraft:selected": "model.condition.selected",
+            "minecraft:using_item": "model.condition.using_item",
+            "minecraft:view_entity": "model.condition.view_entity"
+        }
+    },
+    "model.condition:common": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "property": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "on_true": {"type": "dict", "subcomponent": "model"},
+            "on_false": {"type": "dict", "subcomponent": "model"}
+        }
+    },
+    "model.condition.broken": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.condition.bundle_has_selected_item": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.condition.carried": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.condition.custom_model_data": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"],
+        "keys": {
+            "index": {"type": "int"}
+        }
+    },
+    "model.condition.damaged": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.condition.extended_view": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.condition.fishing_rod_cast": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.condition.has_component": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"],
+        "keys": {
+            "component": {"type": "str"},
+            "ignore_default": {"type": "str"}
+        }
+    },
+    "model.condition.keybind_down": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"],
+        "keys": {
+            "keybind": {"type": "str"}
+        }
+    },
+    "model.condition.selected": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.condition.using_item": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.condition.view_entity": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.condition:common"]
+    },
+    "model.empty": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "model.model": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "model": {"type": "str", "subcomponent": "string"},
+            "tints": {"type": "list", "subcomponent": "tints"}
+        }
+    },
+    "model.range_dispatch": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "property"
+            }
+        },
+        "subcomponents": {
+            "minecraft:bundle/fullness": "model.range_dispatch.bundle_fullness",
+            "minecraft:compass": "model.range_dispatch.compass",
+            "minecraft:cooldown": "model.range_dispatch.cooldown",
+            "minecraft:count": "model.range_dispatch.count",
+            "minecraft:crossbow/pull": "model.range_dispatch.crossbow_pull",
+            "minecraft:custom_model_data": "model.range_dispatch.custom_model_data",
+            "minecraft:damage": "model.range_dispatch.damage",
+            "minecraft:time": "model.range_dispatch.time",
+            "minecraft:use_cycle": "model.range_dispatch.use_cycle",
+            "minecraft:use_duration": "model.range_dispatch.use_duration"
+        }
+    },
+    "model.range_dispatch:common": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "property": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "scale": {"type": "decimal"},
+            "entries": {"type": "list", "subcomponent": "model.range_dispatch:entries"},
+            "fallback": {"type": "dict", "subcomponent": "model"}
+        }
+    },
+    "model.range_dispatch:entries": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "entry",
+            "measure_length": true
+        },
+        "subcomponent": "model.range_dispatch:entry"
+    },
+    "model.range_dispatch:entry": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "threshold": {"type": "decimal"},
+            "model": {"type": "dict", "subcomponent": "model"}
+        }
+    },
+    "model.range_dispatch.bundle_fullness": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"]
+    },
+    "model.range_dispatch.compass": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"],
+        "keys": {
+            "target": {"type": "str"},
+            "wobble": {"type": "bool"}
+        }
+    },
+    "model.range_dispatch.cooldown": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"]
+    },
+    "model.range_dispatch.count": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"],
+        "keys": {
+            "normalize": {"type": "bool"}
+        }
+    },
+    "model.range_dispatch.crossbow_pull": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"]
+    },
+    "model.range_dispatch.custom_model_data": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"],
+        "keys": {
+            "index": {"type": "int"}
+        }
+    },
+    "model.range_dispatch.damage": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"],
+        "keys": {
+            "normalize": {"type": "bool"}
+        }
+    },
+    "model.range_dispatch.time": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"],
+        "keys": {
+            "source": {"type": "str"},
+            "wobble": {"type": "bool"}
+        }
+    },
+    "model.range_dispatch.use_cycle": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"],
+        "keys": {
+            "period": {"type": "decimal"}
+        }
+    },
+    "model.range_dispatch.use_duration": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.range_dispatch:common"],
+        "keys": {
+            "remaining": {"type": "bool"}
+        }
+    },
+    "model.select": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "property"
+            }
+        },
+        "subcomponents": {
+            "minecraft:block_state": "model.select.block_state",
+            "minecraft:charge_type": "model.select.charge_type",
+            "minecraft:context_dimension": "model.select.context_dimension",
+            "minecraft:context_entity_type": "model.select.context_entity_type",
+            "minecraft:custom_model_data": "model.select.custom_model_data",
+            "minecraft:display_context": "model.select.display_context",
+            "minecraft:local_time": "model.select.local_time",
+            "minecraft:main_hand": "model.select.main_hand",
+            "minecraft:trim_material": "model.select.trim_material"
+        }
+    },
+    "model.select:common": {
+        "type": "Keymap",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "property": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "cases": {"type": "list", "subcomponent": "model.select:cases"},
+            "fallback": {"type": "dict", "subcomponent": "model"}
+        }
+    },
+    "model.select:cases": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "case",
+            "measure_length": true
+        },
+        "subcomponent": "model.select:case"
+    },
+    "model.select:case": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "when": {"type": ["str", "list"], "subcomponent": "model.select:when"},
+            "model": {"type": "dict", "subcomponent": "model"}
+        }
+    },
+    "model.select:when": {
+        "type": "Group",
+        "subcomponents": {
+            "str": null,
+            "list": {
+                "type": "Set",
+                "types": "str",
+                "delegate_arguments": {
+                    "field": "condition",
+                    "measure_length": true
+                },
+                "subcomponent": "string"
+            }
+        }
+    },
+    "model.select.block_state": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"],
+        "keys": {
+            "block_state_property": {"type": "str"}
+        }
+    },
+    "model.select.charge_type": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"]
+    },
+    "model.select.context_dimension": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"]
+    },
+    "model.select.context_entity_type": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"]
+    },
+    "model.select.custom_model_data": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"],
+        "keys": {
+            "index": {"type": "int"}
+        }
+    },
+    "model.select.display_context": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"]
+    },
+    "model.select.local_time": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"],
+        "keys": {
+            "locale": {"type": "str", "subcomponent": "string"},
+            "time_zone": {"type": "str"},
+            "pattern": {"type": "str"}
+        }
+    },
+    "model.select.main_hand": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"]
+    },
+    "model.select.trim_material": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "imports": ["model.select:common"]
+    },
+    "model.special": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "base": {"type": "str", "subcomponent": "string"},
+            "model": {"type": "dict", "subcomponent": "model.special:model"}
+        }
+    },
+    "model.special:model": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "subcomponents": {
+            "minecraft:banner": "model.special.banner",
+            "minecraft:bed": "model.special.bed",
+            "minecraft:chest": "model.special.chest",
+            "minecraft:conduit": "model.special.conduit",
+            "minecraft:decorated_pot": "model.special.decorated_pot",
+            "minecraft:hanging_sign": "model.special.hanging_sign",
+            "minecraft:head": "model.special.head",
+            "minecraft:shield": "model.special.shield",
+            "minecraft:shulker_box": "model.special.shulker_box",
+            "minecraft:standing_sign": "model.special.standing_sign",
+            "minecraft:trident": "model.special.trident"
+        }
+    },
+    "model.special.bed": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "texture": {"type": "str", "subcomponent": "string"}
+        }
+    },
+    "model.special.banner": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "color": {"type": "str"}
+        }
+    },
+    "model.special.chest": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "texture": {"type": "str", "subcomponent": "string"},
+            "openness": {"type": "decimal"}
+        }
+    },
+    "model.special.conduit": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "model.special.decorated_pot": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "model.special.hanging_sign": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "wood_type": {"type": "str"},
+            "texture": {"type": "str", "subcomponent": "string"}
+        }
+    },
+    "model.special.head": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "kind": {"type": "str"},
+            "texture": {"type": "str", "subcomponent": "string"},
+            "animation": {"type": "decimal"}
+        }
+    },
+    "model.special.shield": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "model.special.shulker_box": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "texture": {"type": "str", "subcomponent": "string"},
+            "openness": {"type": "decimal"},
+            "orientation": {"type": "str"}
+        }
+    },
+    "model.special.standing_sign": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "wood_type": {"type": "str"},
+            "texture": {"type": "str", "subcomponent": "string"}
+        }
+    },
+    "model.special.trident": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}}
+        }
+    }
+}

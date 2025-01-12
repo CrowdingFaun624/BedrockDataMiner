@@ -1,0 +1,118 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "atlases"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "sources": {"type": "list", "subcomponent": "sources"}
+        }
+    },
+    "sources": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "source",
+            "measure_length": true
+        },
+        "subcomponent": "source_switch"
+    },
+    "source_switch": {
+        "type": "Switch",
+        "types": "dict",
+        "switch_function": {
+            "function_name": "get_key",
+            "arguments": {
+                "key": "type"
+            }
+        },
+        "subcomponents": {
+            "directory": "source.directory",
+            "paletted_permutations": "source.paletted_permutations",
+            "single": "source.single"
+        }
+    },
+    "string": {
+        "type": "String"
+    },
+    "texture_list": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "texture",
+            "measure_length": true
+        },
+        "subcomponent": "string"
+    },
+    "source.directory": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "source": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "prefix": {"type": "str", "subcomponent": "string"}
+        }
+    },
+    "source.paletted_permutations": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "textures": {"type": "list", "subcomponent": "texture_list"},
+            "palette_key": {"type": "str", "subcomponent": "string"},
+            "permutations": {"type": "dict", "subcomponent": "source.paletted_permutations:permutations"}
+        }
+    },
+    "source.paletted_permutations:permutations": {
+        "type": "Dict",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "permutation",
+            "measure_length": true
+        },
+        "key_component": "string",
+        "subcomponent": "string"
+    },
+    "source.single": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "resource": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}}
+        }
+    }
+}

@@ -1,0 +1,92 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "credits"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "list",
+            "subcomponent": "sections"
+        }
+    },
+    "string": {
+        "type": "String"
+    },
+    "sections": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "section",
+            "measure_length": true
+        },
+        "subcomponent": "section"
+    },
+    "section": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "section": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}, "weight": 2},
+            "disciplines": {"type": "list", "subcomponent": "disciplines"}
+        }
+    },
+    "disciplines": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "discipline",
+            "measure_length": true
+        },
+        "subcomponent": "discipline"
+    },
+    "discipline": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "discipline": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}, "weight": 2},
+            "titles": {"type": "list", "subcomponent": "titles"}
+        }
+    },
+    "titles": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "title",
+            "measure_length": true
+        },
+        "subcomponent": "title"
+    },
+    "title": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "title": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}, "weight": 2},
+            "names": {"type": "list", "subcomponent": "names"}
+        }
+    },
+    "names": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "name",
+            "measure_length": true
+        },
+        "subcomponent": "string"
+    }
+}

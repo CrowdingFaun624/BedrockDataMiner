@@ -1,0 +1,138 @@
+{
+    "base": {
+        "type": "Base",
+        "types": "dict",
+        "delegate_arguments": {
+            "name": "configuration"
+        },
+        "subcomponent": "resource_packs"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "subcomponent": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "types": "file",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "subcomponent": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "types": "file",
+        "subcomponent": {
+            "type": "File",
+            "file_types": "file",
+            "content_types": "dict",
+            "subcomponent": "root"
+        }
+    },
+    "string": {
+        "type": "String"
+    },
+    "vector_decimal": {
+        "type": "List",
+        "types": "decimal",
+        "delegate_arguments": {
+            "print_all": true,
+            "print_flat": true,
+            "field": "component"
+        },
+        "subcomponent": null
+    },
+    "root": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "vertex": {"type": "str", "subcomponent": "string"},
+            "fragment": {"type": "str", "subcomponent": "string"},
+            "blend": {"type": "dict", "subcomponent": "blend"},
+            "defines": {"type": "dict", "subcomponent": "defines"},
+            "samplers": {"type": "list", "subcomponent": "samplers"},
+            "uniforms": {"type": "list", "subcomponent": "uniforms"}
+        }
+    },
+    "blend": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "func": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "srcrgb": {"type": "str"},
+            "dstrgb": {"type": "str"}
+        }
+    },
+    "defines": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "values": {"type": "dict", "subcomponent": "values"},
+            "flags": {"type": "list", "subcomponent": "flags"}
+        }
+    },
+    "values": {
+        "type": "Dict",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "value",
+            "measure_length": true
+        },
+        "key_component": "string",
+        "subcomponent": "string"
+    },
+    "flags": {
+        "type": "Set",
+        "types": "str",
+        "delegate_arguments": {
+            "field": "flag",
+            "measure_length": true
+        },
+        "subcomponent": "string"
+    },
+    "samplers": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "sampler",
+            "measure_length": true
+        },
+        "subcomponent": "sampler"
+    },
+    "sampler": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "uniforms": {
+        "type": "Set",
+        "types": "dict",
+        "delegate_arguments": {
+            "field": "uniform",
+            "measure_length": true
+        },
+        "subcomponent": "uniform"
+    },
+    "uniform": {
+        "type": "Keymap",
+        "sort": "by_component_order",
+        "keys": {
+            "name": {"type": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "type": {"type": "str", "delegate_arguments": {"always_print": true}},
+            "count": {"type": "int"},
+            "values": {"type": "list", "subcomponent": "vector_decimal"}
+        }
+    }
+}
