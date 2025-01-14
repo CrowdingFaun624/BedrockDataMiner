@@ -44,7 +44,7 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
     )
 
     def initialize_fields(self, data: ComponentTyping.FileTypedDict) -> list[Field.Field]:
-        self.children_has_garbage_collection = data.get("garbage_collect", False)
+        self.variable_bools["children_has_garbage_collection"] = data.get("garbage_collect", False)
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
@@ -64,8 +64,8 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
             name=self.name,
             max_similarity_descendent_depth=self.max_similarity_descendent_depth,
             max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
-            children_has_normalizer=self.children_has_normalizer,
-            children_has_garbage_collection=self.children_has_garbage_collection,
+            children_has_normalizer=self.variable_bools["children_has_normalizer"],
+            children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
         )
 
     def link_finals(self) -> list[Exception]:

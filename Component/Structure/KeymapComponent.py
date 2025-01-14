@@ -134,8 +134,8 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             default_max_similarity_descendent_depth=self.default_max_similarity_descendent_depth,
             max_key_similarity_descendent_depth=self.max_key_similarity_descendent_depth,
             keys_max_similarity_descendent_depth={key.key: key.max_similarity_descendent_depth for key in self.keys if key.max_similarity_descendent_depth is not ...},
-            children_has_normalizer=self.children_has_normalizer,
-            children_has_garbage_collection=self.children_has_garbage_collection,
+            children_has_normalizer=self.variable_bools["children_has_normalizer"],
+            children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
         )
 
     def link_finals(self) -> list[Exception]:
@@ -150,7 +150,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             post_normalizer=self.post_normalizer_field.finals,
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.this_type_field.types,
             tags={keymap_field.key: keymap_field.tags_field.finals for keymap_field in self.keys},
-            keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.subcomponent_field.final) is not None and subcomponent.children_has_normalizer] if self.children_has_normalizer else [],
+            keys_with_normalizers=[key.key for key in self.keys if (subcomponent := key.subcomponent_field.final) is not None and subcomponent.children_has_normalizer] if self.variable_bools["children_has_normalizer"] else [],
             required_keys=[key.key for key in self.keys if key.required],
             children_tags={tag.final for tag in self.children_tags},
         )

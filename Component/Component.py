@@ -14,19 +14,16 @@ if TYPE_CHECKING:
     import Component.Structure.StructureTagComponent as StructureTagComponent
 
 INVALID_NAME_REGEXP = re.compile(r"[\@\\\/\s\{\}\[\]\(\)\"\!]")
+NoneType = type(None)
 
 class Component[a]():
 
     class_name_article = "a Component"
     class_name = "Component"
     my_capabilities:Capabilities.Capabilities
-    children_has_normalizer_default = False
     type_verifier:TypeVerifier.TypeVerifier
 
     __slots__ = (
-        "children_has_garbage_collection",
-        "children_has_normalizer",
-        "children_tags",
         "component_group",
         "domain",
         "fields",
@@ -38,6 +35,8 @@ class Component[a]():
         "links_to_other_components",
         "name",
         "parents",
+        "variable_bools",
+        "variable_sets",
     )
 
     def __init__(self, data:Any, name:str, domain:"Domain.Domain", component_group:str, index:int|None) -> None:
@@ -53,13 +52,11 @@ class Component[a]():
         self.links_to_other_components:list[Component] = []
         self.parents:list[Component] = []
         self.final:a
-        self.children_has_normalizer = self.children_has_normalizer_default
-        self.children_has_garbage_collection = False
-        self.children_tags:set[StructureTagComponent.StructureTagComponent] = set()
         self.fields:list["Field.Field"] = []
         self.inline_components:list[Component]
         self.inline_component_count = 0
         self.inline_parent:Component|None = None
+        self.variable_bools, self.variable_sets = self.get_propagated_variables()
 
         self.fields.extend(self.initialize_fields(data))
         for field in self.fields:
@@ -150,20 +147,29 @@ class Component[a]():
         '''Used to call on the structure once all structures and components are guaranteed to be linked.'''
         return list(chain.from_iterable(inline_component.finalize() for inline_component in self.inline_components))
 
+    def get_propagated_variables(self) -> tuple[dict[str,bool], dict[str,set]]:
+        return {}, {}
+
     def propagate_variables(self) -> bool:
         has_changed = False
-        for child in self.links_to_other_components:
-            if child.children_has_normalizer and not self.children_has_normalizer:
-                self.children_has_normalizer = True
-                has_changed = True
-            if child.children_has_garbage_collection and not self.children_has_garbage_collection:
-                self.children_has_garbage_collection = True
-                has_changed = True
-                print(self)
-            if self.children_tags is not None and child.children_tags is not None:
-                tags_length_before = len(self.children_tags)
-                self.children_tags.update(child.children_tags)
-                has_changed = has_changed or len(self.children_tags) != tags_length_before
+        # bools
+        for variable_name, variable_value in self.variable_bools.items():
+            for child in self.links_to_other_components:
+                other_value = child.variable_bools.get(variable_name)
+                if other_value is None:
+                    continue
+                if other_value and not variable_value:
+                    self.variable_bools[variable_name] = other_value
+                    has_changed = True
+        # sets
+        for variable_name, variable_value in self.variable_sets.items():
+            for child in self.links_to_other_components:
+                other_value = child.variable_sets.get(variable_name)
+                if other_value is None:
+                    continue
+                length_before = len(variable_value)
+                variable_value.update(other_value)
+                has_changed = has_changed or len(variable_value) != length_before
         return has_changed
 
     def __hash__(self) -> int:

@@ -80,8 +80,8 @@ class SequenceComponent(StructureComponent.StructureComponent[SequenceStructure.
             substitution_cost=self.substitution_cost,
             max_similarity_descendent_depth=self.max_similarity_descendent_depth,
             max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
-            children_has_normalizer=self.children_has_normalizer,
-            children_has_garbage_collection=self.children_has_garbage_collection,
+            children_has_normalizer=self.variable_bools["children_has_normalizer"],
+            children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
         )
 
     def link_finals(self) -> list[Exception]:

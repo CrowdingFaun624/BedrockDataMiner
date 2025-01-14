@@ -12,7 +12,6 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
 
     class_name_article = "a Normalizer"
     class_name = "Normalizer"
-    children_has_normalizer_default = True
     my_capabilities = Capabilities.Capabilities(is_function=True, is_normalizer=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -30,11 +29,15 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
     )
 
     def initialize_fields(self, data: ComponentTyping.NormalizerTypedDict) -> list[Field.Field]:
+        self.variable_bools["children_has_normalizer"] = True
         self.arguments = data.get("arguments", {})
 
         self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
         self.version_range_field = VersionRangeField.VersionRangeField(data["version_range"][0], data["version_range"][1], ["version_range"]) if "version_range" in data else VersionRangeField.VersionRangeField(None, None, ["version_range"])
         return [self.function_field, self.version_range_field]
+
+    def get_propagated_variables(self) -> tuple[dict[str, bool], dict[str, set]]:
+        return {"children_has_normalizer": False}, {}
 
     def create_final(self) -> Normalizer.Normalizer:
         return Normalizer.Normalizer(

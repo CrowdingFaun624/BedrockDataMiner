@@ -75,8 +75,8 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
             cache_print_text=self.cache_print_text,
             cache_get_similarity=self.cache_get_similarity,
             cache_compare=self.cache_compare,
-            children_has_normalizer=self.children_has_normalizer,
-            children_has_garbage_collection=self.children_has_garbage_collection,
+            children_has_normalizer=self.variable_bools["children_has_normalizer"],
+            children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
         )
 
     def link_finals(self) -> list[Exception]:

@@ -46,7 +46,7 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
     def create_final(self) -> PrimitiveStructure.PrimitiveStructure:
         return PrimitiveStructure.PrimitiveStructure(
             name=self.name,
-            children_has_normalizer=self.children_has_normalizer,
+            children_has_normalizer=self.variable_bools["children_has_normalizer"],
         )
 
     def link_finals(self) -> list[Exception]:

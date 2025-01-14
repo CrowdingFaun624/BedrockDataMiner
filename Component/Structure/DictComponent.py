@@ -118,8 +118,8 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             min_value_similarity_threshold=self.min_value_similarity_threshold,
             key_weight=self.key_weight,
             value_weight=self.value_weight,
-            children_has_normalizer=self.children_has_normalizer,
-            children_has_garbage_collection=self.children_has_garbage_collection,
+            children_has_normalizer=self.variable_bools["children_has_normalizer"],
+            children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
         )
 
     def link_finals(self) -> list[Exception]:

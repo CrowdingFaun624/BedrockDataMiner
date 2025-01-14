@@ -55,7 +55,7 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         return StringStructure.StringStructure(
             name=self.name,
             max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,
-            children_has_normalizer=self.children_has_normalizer,
+            children_has_normalizer=self.variable_bools["children_has_normalizer"],
         )
 
     def link_finals(self) -> list[Exception]:

@@ -6,6 +6,7 @@ import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
 import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
+import Component.Structure.StructureTagComponent as StructureTagComponent
 import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -29,6 +30,7 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
     )
 
     __slots__ = (
+        "children_tags",
         "default_delegate_field",
         "delegate_field",
         "normalizer_field",
@@ -49,11 +51,15 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         self.types_field.verify_with(self.subcomponent_field)
         return [self.subcomponent_field, self.delegate_field, self.default_delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.types_field]
 
+    def get_propagated_variables(self) -> tuple[dict[str, bool], dict[str, set]]:
+        self.children_tags:set[StructureTagComponent.StructureTagComponent] = set()
+        return {"children_has_garbage_collection": False}, {"children_tags": self.children_tags}
+
     def create_final(self) -> StructureBase.StructureBase:
         return StructureBase.StructureBase(
             name=self.component_group,
             domain=self.domain,
-            children_has_garbage_collection=self.children_has_garbage_collection,
+            children_has_garbage_collection=self.variable_bools["children_has_garbage_collection"],
         )
 
     def link_finals(self) -> list[Exception]:
