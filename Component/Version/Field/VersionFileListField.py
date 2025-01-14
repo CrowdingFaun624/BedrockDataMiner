@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Sequence, cast
+from typing import Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -7,9 +7,7 @@ import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Component.Version.VersionFileComponent as VersionFileComponent
-
-if TYPE_CHECKING:
-    import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
+import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 
 VERSION_FILE_PATTERN:Pattern.Pattern[VersionFileComponent.VersionFileComponent] = Pattern.Pattern("is_version_file")
 

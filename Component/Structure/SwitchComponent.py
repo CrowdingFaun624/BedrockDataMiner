@@ -1,18 +1,18 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
+import Component.Structure.Field.NormalizerField as NormalizerField
 import Component.Structure.Field.NormalizerListField as NormalizerListField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
-import Component.Structure.Field.NormalizerField as NormalizerField
-import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Structure.SwitchStructure as SwitchStructure
 import Utilities.TypeVerifier as TypeVerifier
 
 
 class SwitchComponent(StructureComponent.StructureComponent[SwitchStructure.SwitchStructure]):
-    
+
     class_name = "Switch"
     class_name_article = "a Switch"
     my_capabilities = Capabilities.Capabilities(is_structure=True)

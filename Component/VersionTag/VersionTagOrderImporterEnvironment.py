@@ -3,7 +3,6 @@ from itertools import chain
 from pathlib import Path
 from typing import Any, Iterable
 
-import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.VersionTag.VersionTagOrderComponent as VersionTagOrderComponent

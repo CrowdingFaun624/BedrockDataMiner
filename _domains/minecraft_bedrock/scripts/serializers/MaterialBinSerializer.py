@@ -69,7 +69,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         # self.cached_data:dict[str,str]|None = None
         self.version = version
         assert not any(char in self.version for char in "\\/:*?\"<>|")
-    
+
     def get_linked_serializers(self, linked_serializers: dict[str, Serializer.Serializer]) -> None:
         self.data_serializer = linked_serializers["data"]
         self.main_serializer = linked_serializers["main"]

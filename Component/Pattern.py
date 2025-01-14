@@ -1,10 +1,9 @@
-from typing import TYPE_CHECKING, TypeIs
+from typing import TypeIs
 
 import Component.Capabilities as Capabilties
+import Component.Component as Component
 import Utilities.Exceptions as Exceptions
 
-if TYPE_CHECKING:
-    import Component.Component as Component
 
 class Pattern[a: "Component.Component"]():
 

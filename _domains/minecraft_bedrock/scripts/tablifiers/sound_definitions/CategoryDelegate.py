@@ -7,7 +7,7 @@ __all__ = ["CategoryDelegate"]
 normal_categories = {"weather", "block", "bucket", "bottle", "ui", "player", "hostile", "music", "record", "neutral", "ambient"} # https://wiki.bedrock.dev/concepts/sounds#top-level-keys
 
 class CategoryDelegate(PrimitiveDelegate.PrimitiveDelegate):
-    
+
     def print_text(self, data: str, environment: StructureEnvironment.PrinterEnvironment) -> tuple[str, list[Trace.ErrorTrace]]:
         is_valid = data in normal_categories
         output, exceptions = super().print_text(data, environment)

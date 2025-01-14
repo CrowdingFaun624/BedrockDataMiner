@@ -13,7 +13,7 @@ class VersionRange():
     __slots__ = (
         "equals",
         "start",
-        "stop", 
+        "stop",
     )
 
     def __init__(self, start:"Version.Version|None", stop:"Version.Version|None") -> None:

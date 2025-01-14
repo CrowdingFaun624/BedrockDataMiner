@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import Component.Accessor.AccessorComponent as AccessorComponent
 import Component.Capabilities as Capabilities
@@ -8,15 +8,13 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Component.Version.VersionComponent as VersionComponent
+import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFile as VersionFile
 
-if TYPE_CHECKING:
-    import Component.Version.VersionComponent as VersionComponent
-    import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
-
-ACCESSOR_PATTERN:Pattern.Pattern[AccessorComponent.AccessorComponent] = Pattern.Pattern("is_accessor")
+ACCESSOR_PATTERN:Pattern.Pattern["AccessorComponent.AccessorComponent"] = Pattern.Pattern("is_accessor")
 VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern("is_version_file_type")
 
 class VersionFileComponent(Component.Component[VersionFile.VersionFile]):

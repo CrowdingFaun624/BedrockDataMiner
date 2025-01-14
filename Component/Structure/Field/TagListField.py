@@ -1,15 +1,11 @@
-from typing import TYPE_CHECKING
-
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
+import Component.Structure.StructureTagComponent as StructureTagComponent
 import Structure.StructureTag as StructureTag
-
-if TYPE_CHECKING:
-    import Component.Structure.StructureTagComponent as StructureTagComponent
 
 TAG_PATTERN:Pattern.Pattern["StructureTagComponent.StructureTagComponent"] = Pattern.Pattern("is_structure_tag")
 

@@ -47,7 +47,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         TypeVerifier.TypedDictKeyTypeVerifier("types", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("value_weight", "a float", False, float, lambda key, value: (value >= 0.0 and value <= 1.0, "must be in the range [0.0,1.0]")),
     )
-    
+
     __slots__ = (
         "delegate_field",
         "detect_key_moves",

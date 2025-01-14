@@ -59,7 +59,7 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
         self.cache_print_text = cache_print_text
         self.cache_get_similarity = cache_get_similarity
         self.cache_compare = cache_compare
-        
+
         self.structure:Structure.Structure
 
     def get_structure(self, key: None, value: d) -> tuple[Structure.Structure[d] | None, list[Trace.ErrorTrace]]:

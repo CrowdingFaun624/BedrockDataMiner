@@ -15,7 +15,7 @@ def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:
         capitalize_function(f"key \"{key}\" of " if isinstance(key, str) else f"item {key} of ", index == 0 and is_capital)
         for index, key in enumerate(reversed(keys))
     )
-    
+
 def get_source_str(keys:list[str|int], source_component:"Component.Component") -> str:
     return f"{get_keys_strs(False, keys)}{source_component}"
 

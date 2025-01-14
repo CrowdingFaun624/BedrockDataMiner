@@ -1,8 +1,10 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
+import Component.Dataminer.DataminerCollectionComponent as DataminerCollectionComponent
 import Component.Dataminer.Field.OptionalDataminerTypeField as OptionalDataminerTypeField
 import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
@@ -11,14 +13,10 @@ import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
 import Component.Serializer.Field.SerializerDictField as SerializerDictField
 import Component.Version.Field.OptionalVersionField as OptionalVersionField
+import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 import Dataminer.DataminerSettings as DataminerSettings
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
-
-if TYPE_CHECKING:
-    import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
-    import Component.Dataminer.DataminerCollectionComponent as DataminerCollectionComponent
-    import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 
 DEPENDENCY_PATTERN:Pattern.Pattern["AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent"] = Pattern.Pattern("is_dataminer_collection")
 VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern("is_version_file_type")

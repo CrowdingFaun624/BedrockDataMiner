@@ -1,20 +1,16 @@
 import re
 from itertools import chain
-from typing import TYPE_CHECKING, Any, Mapping, Sequence
+from typing import Any, Mapping, Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.Field as Field
 import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
-if TYPE_CHECKING:
-    import Component.Field.Field as Field
-    import Component.Structure.StructureTagComponent as StructureTagComponent
-
 INVALID_NAME_REGEXP = re.compile(r"[\@\\\/\s\{\}\[\]\(\)\"\!]")
-NoneType = type(None)
 
 class Component[a]():
 

@@ -1,8 +1,7 @@
-from typing import (TYPE_CHECKING, Any, Callable, Literal, NotRequired,
-                    Required, TypedDict)
+from typing import Any, Callable, Literal, NotRequired, Required, TypedDict
 
-if TYPE_CHECKING:
-    import Component.Component as Component
+import Component.Component as Component
+
 
 class AccessorTypedDict(TypedDict):
     accessor_type: Required[str]

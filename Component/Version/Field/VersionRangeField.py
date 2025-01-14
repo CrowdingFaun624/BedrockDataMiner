@@ -1,13 +1,10 @@
-from typing import TYPE_CHECKING
-
 import Component.Component as Component
 import Component.Field.FieldContainer as FieldContainer
 import Component.Version.Field.OptionalVersionField as OptionalVersionField
+import Component.Version.VersionComponent as VersionComponent
 import Utilities.Exceptions as Exceptions
 import Version.VersionRange as VersionRange
 
-if TYPE_CHECKING:
-    import Component.Version.VersionComponent as VersionComponent
 
 class VersionRangeField(FieldContainer.FieldContainer[OptionalVersionField.OptionalVersionField]):
 

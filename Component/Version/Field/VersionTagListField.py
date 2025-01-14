@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Iterable, Optional, cast
+from typing import Iterable, Optional, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -6,10 +6,8 @@ import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
-
-if TYPE_CHECKING:
-    import Component.Version.VersionComponent as VersionComponent
-    import Component.VersionTag.VersionTagComponent as VersionTagComponent
+import Component.Version.VersionComponent as VersionComponent
+import Component.VersionTag.VersionTagComponent as VersionTagComponent
 
 VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern("is_version_tag")
 

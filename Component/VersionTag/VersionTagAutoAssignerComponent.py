@@ -1,10 +1,7 @@
-from typing import TYPE_CHECKING
-
 import Component.Capabilities as Capabilities
 import Component.Component as Component
+import Component.Version.VersionComponent as VersionComponent
 
-if TYPE_CHECKING:
-    import Component.Version.VersionComponent as VersionComponent
 
 class VersionTagAutoAssignerComponent(Component.Component[None]):
 

@@ -3,7 +3,6 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.Structure.NormalizerComponent as NormalizerComponent
-import Domain.Domain as Domain
 import Structure.Normalizer as Normalizer
 
 NORMALIZER_PATTERN:Pattern.Pattern[NormalizerComponent.NormalizerComponent] = Pattern.Pattern("is_normalizer")

@@ -5,11 +5,11 @@ import Serializer.Serializer as Serializer
 __all__ = ["ManifestSerializer"]
 
 class LineReader():
-    
+
     def __init__(self, lines:list[str]) -> None:
         self.lines = lines
         self.offset = 0
-    
+
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} len {len(self.lines)} at {self.offset}>"
 
@@ -22,7 +22,7 @@ class LineReader():
         return self.offset < len(self.lines)
 
 class ManifestSerializer(Serializer.Serializer):
-    
+
     def parse_clump(self, line_reader:LineReader) -> dict[str,str]:
         lines:list[str] = []
         while line_reader:
@@ -41,7 +41,7 @@ class ManifestSerializer(Serializer.Serializer):
             key, value = combined_line.split(": ", maxsplit=1)
             output[key] = value
         return output
-    
+
     def deserialize(self, data: bytes) -> dict[str,Any]:
         lines = data.decode("UTF8").splitlines()
         line_reader = LineReader(lines)

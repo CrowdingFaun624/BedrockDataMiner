@@ -44,7 +44,7 @@ class SetStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
                 return float(data1 == data2)
             else:
                 return float(Structure.get_data_at_branch(data1, branch) == data2)
-        
+
         type_stuff = environment.domain.type_stuff
         data1_hashes:dict[int,tuple[int,d|D.Diff[d]]] = {type_stuff.hash_data(item): (index, item) for index, item in enumerate(data1)}
         data2_hashes:dict[int,tuple[int,d]] = {type_stuff.hash_data(item): (index, item) for index, item in enumerate(data2)}

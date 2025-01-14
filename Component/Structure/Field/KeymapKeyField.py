@@ -1,15 +1,12 @@
-from typing import TYPE_CHECKING
-
+import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
 import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
+import Component.Structure.StructureTagComponent as StructureTagComponent
 
-if TYPE_CHECKING:
-    import Component.Component as Component
-    import Component.Structure.StructureTagComponent as StructureTagComponent
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
 

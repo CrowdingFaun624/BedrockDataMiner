@@ -30,7 +30,7 @@ def fix_indent(line:str) -> str:
     return line
 
 class CssSerializer(Serializer.Serializer):
-    
+
     def deserialize(self, data: bytes) -> str:
         beautified_css = beautifier.beautify(data.decode())
         lines = beautified_css.split("\n")

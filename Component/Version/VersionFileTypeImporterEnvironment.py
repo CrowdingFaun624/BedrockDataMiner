@@ -1,7 +1,6 @@
 from pathlib import Path
 from typing import Iterable
 
-import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 import Version.VersionFileType as VersionFileType

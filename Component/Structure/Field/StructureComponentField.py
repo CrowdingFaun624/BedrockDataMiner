@@ -1,12 +1,8 @@
-from typing import TYPE_CHECKING
-
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
-
-if TYPE_CHECKING:
-    import Component.Structure.StructureComponent as StructureComponent
+import Component.Structure.StructureComponent as StructureComponent
 
 STRUCTURE_COMPONENT_PATTERN = Pattern.Pattern("is_structure")
 

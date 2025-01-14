@@ -1,5 +1,4 @@
-from typing import TYPE_CHECKING
-
+import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -9,9 +8,6 @@ import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Pattern as Pattern
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFileType as VersionFileType
-
-if TYPE_CHECKING:
-    import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 
 ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent.AccessorTypeComponent"] = Pattern.Pattern("is_accessor_type")
 

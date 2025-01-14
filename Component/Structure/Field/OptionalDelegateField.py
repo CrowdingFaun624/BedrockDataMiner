@@ -1,17 +1,16 @@
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
+import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
 import Structure.Delegate.Delegate as Delegate
+import Structure.Structure as Structure
+import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
-if TYPE_CHECKING:
-    import Component.Component as Component
-    import Structure.Structure as Structure
-    import Structure.StructureBase as StructureBase
 
 class OptionalDelegateField(Field.Field):
 

@@ -25,7 +25,7 @@ class ComponentField[a: Component.Component](Field.Field):
     def __init__(
         self,
         subcomponent_data:str|ComponentTyping.ComponentTypedDicts,
-        pattern:Pattern.Pattern[a], 
+        pattern:Pattern.Pattern[a],
         path:list[str|int],
         *,
         allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,

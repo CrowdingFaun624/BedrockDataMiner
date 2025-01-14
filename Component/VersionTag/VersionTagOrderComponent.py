@@ -1,5 +1,3 @@
-from typing import TYPE_CHECKING
-
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -7,14 +5,12 @@ import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
-import Component.VersionTag.Field.VersionTagOrderAllowedChildrenField as VersionTagOrderAllowedChildrenField
 import Component.VersionTag.Field.OptionalVersionTagField as OptionalVersionTagField
+import Component.VersionTag.Field.VersionTagOrderAllowedChildrenField as VersionTagOrderAllowedChildrenField
+import Component.VersionTag.VersionTagComponent as VersionTagComponent
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTag.VersionTagOrder as VersionTagOrder
-
-if TYPE_CHECKING:
-    import Component.VersionTag.VersionTagComponent as VersionTagComponent
 
 VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern("is_version_tag")
 

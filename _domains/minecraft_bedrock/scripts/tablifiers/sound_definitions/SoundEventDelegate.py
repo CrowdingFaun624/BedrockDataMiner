@@ -81,6 +81,6 @@ class SoundEventDelegate(Delegate.Delegate[str, KeymapStructure.KeymapStructure,
         # if defined_in_comparison is not None:
         #     sound_event_column.append(defined_in_comparison)
         sound_event_column.extend(other_comparisons.values())
-        
+
         output = f"| {"<br>".join(sound_event_column)} || {sounds_comparison} || {category_comparison}"
         return output, has_changes, exceptions

@@ -1,15 +1,13 @@
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
+import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Component.Structure.Field.AbstractTypeField as AbstractTypeField
+import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Utilities.Exceptions as Exceptions
-
-if TYPE_CHECKING:
-    import Component.Component as Component
-    import Component.Structure.TypeAliasComponent as TypeAliasComponent
 
 TYPE_ALIAS_PATTERN:Pattern.Pattern["TypeAliasComponent.TypeAliasComponent"] = Pattern.Pattern("is_type_alias")
 

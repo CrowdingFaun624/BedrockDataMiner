@@ -88,7 +88,7 @@ class Diff[Dt1]():
     def append(self, new_branch:int, new_value:Dt1) -> "Diff[Dt1]":
         '''
         Returns a new Diff with the new value added onto the current items.
-        
+
         :new_branch: The branch that the value is from.
         :new_value: The new value.
         '''
@@ -102,11 +102,11 @@ class Diff[Dt1]():
     def with_last_as(self, new_branch:int, new_value:"Dt1|Diff[Dt1]") -> "Diff[Dt1]":
         '''
         Returns a new Diff with the new value added onto the current items.
-        
+
         If `new_value` is not a Diff, then it modifies the last branches to include `new_branch`.
-        
+
         If `new_value` is a Diff, then it adds a new branches with the `new_value`'s last value.
-        
+
         :new_branch: The branch that the value or the newer part of the value is from.
         :new_value: The new value.
         '''
@@ -134,7 +134,7 @@ class Diff[Dt1]():
         # is the same as
         diff.extend(new_branch)
         ```
-        
+
         :new_branch: The branch that the latest value is also a part of.
         '''
         if new_branch in self.branches:
@@ -179,7 +179,7 @@ class Diff[Dt1]():
     def get_change_branches(self, include_zero:bool=True) -> list[int]:
         '''
         Returns the branch at the start of each change, including empty areas.
-        
+
         :include_zero: Whether to include zero if it is not NoExist.
         '''
         output:list[int] = []
@@ -269,7 +269,7 @@ def last_value_with_branch[a, b](item:a|Diff[b]) -> tuple[a|b,int]:
     '''
     Returns the last value if the item is a Diff, and just the item otherwise.
     Also returns the branch (-1 if not a Diff).
-    
+
     :item: The Diff or non-Diff.
     '''
     if isinstance(item, Diff):

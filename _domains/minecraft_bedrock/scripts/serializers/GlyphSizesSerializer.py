@@ -10,7 +10,7 @@ class RangeTypedDict(TypedDict):
     right: int
 
 class GlyphSizesSerializer(Serializer.Serializer[dict[str,RangeTypedDict], dict[str,RangeTypedDict]]):
-    
+
     def deserialize(self, data: bytes) -> dict[str,RangeTypedDict]:
         output:dict[str,RangeTypedDict] = {}
         for index, byte in enumerate(bytearray(data)):
@@ -27,4 +27,3 @@ class GlyphSizesSerializer(Serializer.Serializer[dict[str,RangeTypedDict], dict[
                 character_dict["character"] = character
             output[hex(index)[2:].upper().zfill(4)] = character_dict
         return output
-            

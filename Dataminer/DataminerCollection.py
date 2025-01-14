@@ -9,7 +9,6 @@ import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
 import Version.Version as Version
 
-NoneType = type(None)
 
 class DataminerCollection(AbstractDataminerCollection.AbstractDataminerCollection):
 

@@ -8,8 +8,6 @@ import Utilities.Exceptions as Exceptions
 import Utilities.Scripts as Scripts
 
 
-
-
 class ScriptSet[a]():
 
     __slots__ = (
@@ -103,7 +101,7 @@ class ScriptSetSet[a]():
     def __init__(self, domain:"Domain.Domain", script_sets:dict[str,ScriptSet[a]]) -> None:
         self.domain = domain
         self.script_sets = script_sets
-    
+
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} of {self.domain.name} in \"{next(iter(self.script_sets.values())).folder}\">"
 
@@ -120,7 +118,7 @@ class ScriptSetSet[a]():
             return self.script_sets[self.domain.name].get(key, key, source, path)
 
 class ScriptSetSetSet():
-    
+
     # yup I need this one too.
 
     __slots__ = (

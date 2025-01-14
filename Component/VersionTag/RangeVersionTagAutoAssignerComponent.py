@@ -1,13 +1,10 @@
-from typing import TYPE_CHECKING
-
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Version.Field.VersionRangeField as VersionRangeField
+import Component.Version.VersionComponent as VersionComponent
 import Component.VersionTag.VersionTagAutoAssignerComponent as VersionTagAutoAssignerComponent
 import Utilities.TypeVerifier as TypeVerifier
 
-if TYPE_CHECKING:
-    import Component.Version.VersionComponent as VersionComponent
 
 class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.VersionTagAutoAssignerComponent):
 

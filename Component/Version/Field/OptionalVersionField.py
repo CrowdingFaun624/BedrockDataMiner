@@ -1,12 +1,8 @@
-from typing import TYPE_CHECKING
-
 import Component.Field.Field as Field
 import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Pattern as Pattern
+import Component.Version.VersionComponent as VersionComponent
 import Version.Version as Version
-
-if TYPE_CHECKING:
-    import Component.Version.VersionComponent as VersionComponent
 
 VERSION_PATTERN:Pattern.Pattern["VersionComponent.VersionComponent"] = Pattern.Pattern("is_version")
 

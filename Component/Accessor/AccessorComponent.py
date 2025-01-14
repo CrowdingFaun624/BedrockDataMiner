@@ -1,19 +1,17 @@
-from typing import TYPE_CHECKING, Any, cast
+from typing import Any, cast
 
+import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Component.Version.VersionComponent as VersionComponent
+import Component.Version.VersionFileComponent as VersionFileComponent
 import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
 import Utilities.TypeVerifier as TypeVerifier
-
-if TYPE_CHECKING:
-    import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
-    import Component.Version.VersionComponent as VersionComponent
-    import Component.Version.VersionFileComponent as VersionFileComponent
 
 ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent.AccessorTypeComponent"] = Pattern.Pattern("is_accessor_type")
 

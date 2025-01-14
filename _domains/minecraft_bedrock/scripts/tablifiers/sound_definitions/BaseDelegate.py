@@ -24,9 +24,8 @@ class BaseDelegate(Delegate.Delegate[str,StructureBase.StructureBase,str]):
     type_verifier = TypeVerifier.TypedDictTypeVerifier()
 
     applies_to = (StructureBase.StructureBase,)
-    
+
     def compare_text(self, data: Any, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
         comparison, has_changes, exceptions = self.get_structure().structure.compare_text(data, environment)
         comparison += FOOTER
         return comparison, has_changes, exceptions
-    

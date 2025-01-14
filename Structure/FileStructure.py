@@ -107,7 +107,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
                         data = normalizer_output
             except Exception as e:
                 exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
-        
+
         if not isinstance(data, self.file_types): # quite often are there bugs that cause data not to be a file.
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.file_types, type(data), "Data"), self.name, None, data))
             return None, exceptions

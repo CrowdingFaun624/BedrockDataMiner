@@ -8,7 +8,7 @@ import Utilities.Log as Log
 
 
 class LogImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,Log.Log]]):
-    
+
     assume_type = LogComponent.LogComponent.class_name
 
     __slots__ = ()

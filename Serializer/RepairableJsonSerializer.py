@@ -168,16 +168,16 @@ class PrependAction(ContentAction):
         return self.content + data
 
 class RemoveSuffixAction(ContentAction):
-    
+
     name = "remove_suffix"
-    
+
     def do(self, data: bytes) -> bytes:
         return data.removesuffix(self.content)
 
 class RemovePrefixAction(ContentAction):
-    
+
     name = "remove_prefix"
-    
+
     def do(self, data: bytes) -> bytes:
         return data.removeprefix(self.content)
 
@@ -187,20 +187,20 @@ class ReplaceSomeActionTypedDict(TypedDict):
     new_content: Required[str]
 
 class ReplaceSomeAction(Action):
-    
+
     name = "replace_some"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("count", "an int", False, int),
         TypeVerifier.TypedDictKeyTypeVerifier("new_content", "a str", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("old_content", "a str", True, str),
     )
-    
+
     def __init__(self, data: ReplaceSomeActionTypedDict, trace: list[str | int] | None = None) -> None:
         super().__init__(data, trace)
         self.old_content = data["old_content"].encode()
         self.new_content = data["new_content"].encode()
         self.count = data.get("count", -1)
-    
+
     def do(self, data: bytes) -> bytes:
         return data.replace(self.old_content, self.new_content, self.count)
 

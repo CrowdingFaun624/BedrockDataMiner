@@ -1,5 +1,3 @@
-from typing import TYPE_CHECKING
-
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -7,13 +5,11 @@ import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Pattern as Pattern
+import Component.VersionTag.LatestSlotComponent as LatestSlotComponent
+import Component.VersionTag.VersionTagAutoAssignerComponent as VersionTagAutoAssignerComponent
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTag.VersionTag as VersionTag
-
-if TYPE_CHECKING:
-    import Component.VersionTag.LatestSlotComponent as LatestSlotComponent
-    import Component.VersionTag.VersionTagAutoAssignerComponent as VersionTagAutoAssignerComponent
 
 VERSION_TAG_AUTO_ASSIGNER_PATTERN:Pattern.Pattern["VersionTagAutoAssignerComponent.VersionTagAutoAssignerComponent"] = Pattern.Pattern("is_version_tag_auto_assigner")
 LATEST_SLOT_PATTERN:Pattern.Pattern["LatestSlotComponent.LatestSlotComponent"] = Pattern.Pattern("is_latest_slot")

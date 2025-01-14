@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Iterable
 
 import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Structure.BaseComponent as BaseComponent
 import Structure.StructureBase as StructureBase
