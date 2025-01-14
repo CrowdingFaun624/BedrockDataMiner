@@ -1,11 +1,11 @@
 from typing import Literal
 
-import _domains.minecraft_bedrock.scripts.Nbt.NbtReader as NbtReader
-import _domains.minecraft_bedrock.scripts.Nbt.NbtTypes as NbtTypes
+import _domains.minecraft_common.scripts.Nbt.NbtReader as NbtReader
+import _domains.minecraft_common.scripts.Nbt.NbtTypes as NbtTypes
 import Domain.Domain as Domain
 import Serializer.Serializer as Serializer
 import Utilities.TypeVerifier as TypeVerifier
-from _domains.minecraft_bedrock.scripts.Nbt.Endianness import End
+from _domains.minecraft_common.scripts.Nbt.Endianness import End
 
 __all__ = ["NbtSerializer"]
 

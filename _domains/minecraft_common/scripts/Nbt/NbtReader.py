@@ -2,11 +2,11 @@ import gzip
 import traceback
 from typing import BinaryIO
 
-import _domains.minecraft_bedrock.scripts.Nbt.DataReader as DataReader
-import _domains.minecraft_bedrock.scripts.Nbt.Endianness as Endianness
-import _domains.minecraft_bedrock.scripts.Nbt.NbtExceptions as NbtExceptions
-import _domains.minecraft_bedrock.scripts.Nbt.NbtTypes as NbtTypes
-import _domains.minecraft_bedrock.scripts.Nbt.SnbtParser as SnbtParser
+import _domains.minecraft_common.scripts.Nbt.DataReader as DataReader
+import _domains.minecraft_common.scripts.Nbt.Endianness as Endianness
+import _domains.minecraft_common.scripts.Nbt.NbtExceptions as NbtExceptions
+import _domains.minecraft_common.scripts.Nbt.NbtTypes as NbtTypes
+import _domains.minecraft_common.scripts.Nbt.SnbtParser as SnbtParser
 import Utilities.UserInput as UserInput
 
 

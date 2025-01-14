@@ -1,7 +1,7 @@
 from typing import Callable, cast
 
-import _domains.minecraft_bedrock.scripts.Nbt.NbtExceptions as NbtExceptions
-import _domains.minecraft_bedrock.scripts.Nbt.NbtTypes as NbtTypes
+import _domains.minecraft_common.scripts.Nbt.NbtExceptions as NbtExceptions
+import _domains.minecraft_common.scripts.Nbt.NbtTypes as NbtTypes
 
 
 class Reader():

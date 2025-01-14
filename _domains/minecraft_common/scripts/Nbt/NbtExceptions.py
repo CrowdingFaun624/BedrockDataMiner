@@ -1,6 +1,6 @@
 from typing import Optional
 
-import _domains.minecraft_bedrock.scripts.Nbt.SnbtParser as SnbtParser
+import _domains.minecraft_common.scripts.Nbt.SnbtParser as SnbtParser
 import Utilities.Exceptions as Exceptions
 
 

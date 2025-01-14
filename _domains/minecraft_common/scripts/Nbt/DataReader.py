@@ -1,7 +1,7 @@
 import struct
 from typing import Any, BinaryIO
 
-import _domains.minecraft_bedrock.scripts.Nbt.Endianness as Endianness
+import _domains.minecraft_common.scripts.Nbt.Endianness as Endianness
 
 
 class DataReader():

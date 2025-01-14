@@ -1,6 +1,6 @@
 from typing import Iterable, Literal, TypedDict
 
-import _domains.minecraft_bedrock.scripts.normalizers.collapse_resource_packs.util as collapse_resource_packs
+import _domains.minecraft_bedrock.scripts.normalizers.collapse_resource_packs as collapse_resource_packs
 import Dataminer.Dataminer as Dataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer

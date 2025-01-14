@@ -5,22 +5,7 @@
             "name": "trade_tables"
         },
         "types": "dict",
-        "subcomponent": "trade_tables",
-        "imports": [
-            {
-                "from": "structures/entities",
-                "components": [
-                    {"component": "filter"}
-                ]
-            },
-            {
-                "from": "structures/loot_tables",
-                "components": [
-                    {"component": "range_int_or_int"},
-                    {"component": "functions"}
-                ]
-            }
-        ]
+        "subcomponent": "trade_tables"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -43,7 +28,7 @@
             "field": "behavior pack"
         },
         "post_normalizer": {
-            "function_name": "normalizers/collapse_resource_packs/flat"
+            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
         "sort": "by_key",
         "subcomponent": "cache"
@@ -168,11 +153,11 @@
                 "type": "String",
                 "max_similarity_ancestor_depth": 5
             }, "weight": 12, "delegate_arguments": {"always_print": true}},
-            "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "quantity": {"type": ["dict", "int"], "subcomponent": "structures/loot_tables/range_int_or_int"},
             "biomes": {"type": "list", "subcomponent": "biome_list"},
             "choice": {"type": "list", "subcomponent": "trade:gives.item.choice"},
-            "filters": {"type": "dict", "subcomponent": "filter"},
-            "functions": {"type": "dict", "subcomponent": "functions"}
+            "filters": {"type": "dict", "subcomponent": "structures/entities/filter"},
+            "functions": {"type": "dict", "subcomponent": "structures/loot_tables/functions"}
         }
     },
     "trade:gives.item.choice": {
@@ -192,11 +177,11 @@
                 "type": "String",
                 "max_similarity_ancestor_depth": 5
             }, "weight": 12, "delegate_arguments": {"always_print": true}},
-            "quantity": {"type": ["dict", "int"], "subcomponent": "range_int_or_int"},
+            "quantity": {"type": ["dict", "int"], "subcomponent": "structures/loot_tables/range_int_or_int"},
             "choice": {"type": "list", "subcomponent": "trade:wants.item.choice"},
             "biomes": {"type": "list", "subcomponent": "biome_list", "tags": ["outdated"]},
-            "filters": {"type": "dict", "subcomponent": "filter"},
-            "functions": {"type": "dict", "subcomponent": "functions", "tags": ["outdated"]},
+            "filters": {"type": "dict", "subcomponent": "structures/entities/filter"},
+            "functions": {"type": "dict", "subcomponent": "structures/loot_tables/functions", "tags": ["outdated"]},
             "price_multiplier": {"type": "decimal"}
         }
     },

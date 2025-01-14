@@ -5,9 +5,9 @@ from typing import Literal, Protocol, TypedDict, cast
 
 import mutf8
 
-import _domains.minecraft_bedrock.scripts.Nbt.DataReader as DataReader
-import _domains.minecraft_bedrock.scripts.Nbt.Endianness as Endianness
-import _domains.minecraft_bedrock.scripts.Nbt.NbtExceptions as NbtExceptions
+import _domains.minecraft_common.scripts.Nbt.DataReader as DataReader
+import _domains.minecraft_common.scripts.Nbt.Endianness as Endianness
+import _domains.minecraft_common.scripts.Nbt.NbtExceptions as NbtExceptions
 import Component.Types as Types
 import Structure.Difference as D
 import Utilities.CustomJson as CustomJson
@@ -20,7 +20,7 @@ class NbtCoder(CustomJson.Coder[NbtJsonTypedDict, "TAG"]):
 
     @classmethod
     def decode(cls, data: NbtJsonTypedDict) -> "TAG":
-        import _domains.minecraft_bedrock.scripts.Nbt.NbtReader as NbtReader
+        import _domains.minecraft_common.scripts.Nbt.NbtReader as NbtReader
         return NbtReader.unpack_snbt(data["data"])
 
     @classmethod
