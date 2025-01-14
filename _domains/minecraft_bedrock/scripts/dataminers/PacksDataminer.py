@@ -18,12 +18,12 @@ pack_order = collapse_resource_packs.resource_pack_order
 class PacksDataminer(Dataminer.Dataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("directory", "a str or list", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
-        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier({"resource", "behavior", "skin", "emote", "piece"})),
-        TypeVerifier.TypedDictKeyTypeVerifier("subdirectory", "a str", False, str, function=FileDataminer.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("require_subdirectory", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("name_starts_with", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("care_about_packs_existing", "a bool", False, bool)
+        TypeVerifier.TypedDictKeyTypeVerifier("directory", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
+        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", True, TypeVerifier.EnumTypeVerifier({"resource", "behavior", "skin", "emote", "piece"})),
+        TypeVerifier.TypedDictKeyTypeVerifier("subdirectory", False, str, function=FileDataminer.location_value_function),
+        TypeVerifier.TypedDictKeyTypeVerifier("require_subdirectory", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("name_starts_with", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("care_about_packs_existing", False, bool)
     )
 
     def initialize(

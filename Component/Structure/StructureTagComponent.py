@@ -11,8 +11,8 @@ class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
     class_name = "StructureTag"
     my_capabilities = Capabilities.Capabilities(is_structure_tag=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("is_file", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("is_file", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (

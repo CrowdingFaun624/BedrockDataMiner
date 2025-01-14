@@ -57,7 +57,7 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
     store_as_file_default = True
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("version", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("version", True, str),
     )
 
     can_contain_subfiles = True

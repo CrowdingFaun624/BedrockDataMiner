@@ -27,12 +27,12 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
 
     class_name = "DataminerCollection"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("dataminers", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("dataminers", True, TypeVerifier.ListTypeVerifier(dict, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("disabled", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("structure", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     def initialize_fields(self, data: ComponentTyping.DataminerCollectionTypedDict) -> list[Field.Field]:

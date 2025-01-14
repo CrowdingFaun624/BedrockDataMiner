@@ -144,9 +144,9 @@ def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]],
 class TagSearcherDataminer(Dataminer.Dataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("sort_output", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("none_okay", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("tags", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("sort_output", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("none_okay", False, bool),
     )
 
     @classmethod

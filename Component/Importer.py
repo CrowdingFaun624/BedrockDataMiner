@@ -44,9 +44,9 @@ importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] =
 component_types_dict:dict[str,type[Component.Component]] = {component_type.class_name: component_type for component_type in ComponentTypes.component_types}
 
 component_group_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
-    TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     loose=True
-), "a dict", "a str", "a dict")
+))
 
 def get_inline_component_function(domain:"Domain.Domain") -> Callable[[ComponentTyping.ComponentTypedDicts, Component.Component, str|None], Component.Component]:
     def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component, assume_type:str|None) -> Component.Component:

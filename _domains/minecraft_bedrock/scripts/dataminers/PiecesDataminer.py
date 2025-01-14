@@ -11,9 +11,9 @@ __all__ = ["PiecesDataminer"]
 class PiecesDataminer(Dataminer.Dataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("base_directory", "a str", True, str, function=FileDataminer.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("subdirectories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.location_item_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_directories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.location_item_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("base_directory", True, str, function=FileDataminer.location_value_function),
+        TypeVerifier.TypedDictKeyTypeVerifier("subdirectories", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_directories", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
     )
 
     def initialize(self, base_directory:str, subdirectories:list[str]|None=None, ignore_directories:list[str]|None=None) -> None:

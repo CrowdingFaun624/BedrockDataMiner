@@ -15,7 +15,7 @@ class PackTypedDict(TypedDict):
 class PacksDataminer(Dataminer.Dataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, FileDataminer.location_value_function),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", True, str, FileDataminer.location_value_function),
     )
 
     def initialize(

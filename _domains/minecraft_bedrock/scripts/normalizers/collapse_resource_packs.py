@@ -48,9 +48,9 @@ class ResourcePackTag(enum.Enum):
     vanity = "vanity"
 
 type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-    TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
-    TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.EnumTypeVerifier(set(tag.name for tag in ResourcePackTag)), list, "a str", "a list"))
-), list, "a dict", "a list")
+    TypeVerifier.TypedDictKeyTypeVerifier("name", True, str),
+    TypeVerifier.TypedDictKeyTypeVerifier("tags", True, TypeVerifier.ListTypeVerifier(TypeVerifier.EnumTypeVerifier(set(tag.name for tag in ResourcePackTag)), list))
+), list)
 
 def get_resource_pack_order() -> list[ResourcePackTypedDict]:
     data = Domains.get_domain_from_module(__name__).data_files["resource_pack_data"].contents

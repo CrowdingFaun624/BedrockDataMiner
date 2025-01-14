@@ -9,7 +9,7 @@ import Utilities.TypeVerifier as TypeVerifier
 class SingleFileDataminer(FileDataminer.FileDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
     )
 
     def initialize(self, file_name:str) -> None:

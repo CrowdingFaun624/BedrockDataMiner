@@ -11,8 +11,8 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
     class_name = "TypeAlias"
     my_capabilities = Capabilities.Capabilities(is_type_alias=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("types", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("types", True, TypeVerifier.ListTypeVerifier(str, list)),
     )
 
     __slots__ = (

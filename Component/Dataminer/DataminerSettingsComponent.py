@@ -30,14 +30,14 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
     class_name = "DataminerSettings"
     my_capabilities = Capabilities.Capabilities(is_dataminer_settings=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", False, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("new", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("old", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("serializer", "a str or dict", False, TypeVerifier.UnionTypeVerifier("a str or dict", str, TypeVerifier.DictTypeVerifier(dict, str, str, "a dict", "a str", "a str"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("arguments", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", False, TypeVerifier.ListTypeVerifier(str, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("files", False, TypeVerifier.ListTypeVerifier(str, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("new", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("old", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("serializer", False, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.DictTypeVerifier(dict, str, str))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (

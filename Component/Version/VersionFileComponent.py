@@ -23,9 +23,9 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
     class_name = "VersionFile"
     my_capabilities = Capabilities.Capabilities(is_version_file=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("accessors", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("version_file_type", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("accessors", True, TypeVerifier.ListTypeVerifier(dict, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("version_file_type", True, str),
     )
 
     __slots__ = (

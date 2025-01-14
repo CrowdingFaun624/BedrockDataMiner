@@ -20,7 +20,7 @@ def get_version(branch:int, get_parent:bool, environment:StructureEnvironment.Co
 class PrimitiveDelegate(Delegate.Delegate[str,PrimitiveStructure.PrimitiveStructure,str]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("code", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("code", False, bool),
     )
 
     applies_to = (PrimitiveStructure.PrimitiveStructure,)

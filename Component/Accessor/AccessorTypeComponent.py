@@ -15,10 +15,10 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
     class_name = "AccessorType"
     my_capabilities = Capabilities.Capabilities(is_accessor_type=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("accessor_class", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("class_arguments", "a dict", False, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("linked_accessors", "a dict", False, TypeVerifier.DictTypeVerifier(dict, str, (str, dict), "a dict", "a str", "a str or dict")),
-        TypeVerifier.TypedDictKeyTypeVerifier("propagated_arguments", "a dict", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("accessor_class", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("class_arguments", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("linked_accessors", False, TypeVerifier.DictTypeVerifier(dict, str, (str, dict))),
+        TypeVerifier.TypedDictKeyTypeVerifier("propagated_arguments", False, dict),
     )
 
     __slots__ = (

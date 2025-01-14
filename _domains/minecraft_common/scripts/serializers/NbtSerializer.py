@@ -12,8 +12,8 @@ __all__ = ["NbtSerializer"]
 class NbtSerializer(Serializer.Serializer[NbtTypes.TAG, None]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("endianness", "a str", True, TypeVerifier.EnumTypeVerifier([endianness.name.lower() for endianness in NbtTypes.End])),
-        TypeVerifier.TypedDictKeyTypeVerifier("gzipped", "a bool", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("endianness", True, TypeVerifier.EnumTypeVerifier([endianness.name.lower() for endianness in NbtTypes.End])),
+        TypeVerifier.TypedDictKeyTypeVerifier("gzipped", True, bool),
     )
 
     store_as_file_default = True

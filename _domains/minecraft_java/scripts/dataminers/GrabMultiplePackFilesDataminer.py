@@ -13,14 +13,14 @@ __all__ = ["GrabMultiplePackFilesDataminer"]
 class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
-        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.location_item_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
+        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", False, TypeVerifier.ListTypeVerifier(str, list)),
     )
 
     def initialize(

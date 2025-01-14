@@ -12,8 +12,8 @@ import Utilities.TypeVerifier as TypeVerifier
 class GrabReFilesDataminer(GrabMultipleFilesDataminer.GrabMultipleFilesDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("directory", "a str", True, str, function=FileDataminer.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("pattern", "a str", True, str)
+        TypeVerifier.TypedDictKeyTypeVerifier("directory", True, str, function=FileDataminer.location_value_function),
+        TypeVerifier.TypedDictKeyTypeVerifier("pattern", True, str)
     )
 
     def initialize(self, directory:str, pattern:str) -> None:

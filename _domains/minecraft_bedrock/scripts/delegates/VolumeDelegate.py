@@ -46,9 +46,9 @@ class DataDiffTypedDict(TypedDict):
 class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("field", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("layer_characters", "a str", False, str, lambda key, value: (len(value) == len(set(value)), "all characters must be unique")),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", "a bool", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("field", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("layer_characters", False, str, lambda key, value: (len(value) == len(set(value)), "all characters must be unique")),
+        TypeVerifier.TypedDictKeyTypeVerifier("print_additional_data", False, bool),
     )
 
     applies_to = (KeymapStructure.KeymapStructure,)

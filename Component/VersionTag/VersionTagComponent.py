@@ -20,14 +20,14 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
     class_name = "VersionTag"
     my_capabilities = Capabilities.Capabilities(is_version_tag=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("auto_assign", "a dict", False, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("development_name", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("is_development_tag", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("is_fork_tag", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("is_major_tag", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("is_order_tag", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("is_unreleased_tag", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("latest_slot", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("auto_assign", False, TypeVerifier.ListTypeVerifier(dict, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("development_name", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("is_development_tag", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("is_fork_tag", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("is_major_tag", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("is_order_tag", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("is_unreleased_tag", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("latest_slot", False, str),
     )
 
     __slots__ = (

@@ -31,11 +31,11 @@ class VersionComponent(Component.Component[Version.Version]):
     class_name = "Version"
     my_capabilities = Capabilities.Capabilities(is_version=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("files", "a dict", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.DictTypeVerifier(dict, str, object, "a dict", "a str", "an object"), "a dict", "a str", "a dict"), "a dict", "a str", "a dict")),
-        TypeVerifier.TypedDictKeyTypeVerifier("parent", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", "a list", True, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("time", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("files", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.DictTypeVerifier(dict, str, object)))),
+        TypeVerifier.TypedDictKeyTypeVerifier("parent", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("tags", True, TypeVerifier.ListTypeVerifier(str, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("time", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     @classmethod

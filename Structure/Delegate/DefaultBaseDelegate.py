@@ -13,7 +13,7 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
     applies_to = (StructureBase.StructureBase,)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("name", True, str),
     )
 
     __slots__ = (

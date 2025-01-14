@@ -10,9 +10,9 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.Versi
 
     class_name = "RangeVersionTagAutoAssigner"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("newest", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("oldest", "a str or None", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("newest", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("oldest", True, (str, type(None))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (

@@ -15,10 +15,10 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
     class_name = "Serializer"
     my_capabilities = Capabilities.Capabilities(is_serializer=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", False, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("linked_serializers", "a dict of strs", False, TypeVerifier.DictTypeVerifier(dict, str, str, "a dict", "a str", "a str")),
-        TypeVerifier.TypedDictKeyTypeVerifier("serializer_class", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("arguments", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("linked_serializers", False, TypeVerifier.DictTypeVerifier(dict, str, str)),
+        TypeVerifier.TypedDictKeyTypeVerifier("serializer_class", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (

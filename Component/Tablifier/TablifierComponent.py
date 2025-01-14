@@ -15,11 +15,11 @@ class TablifierComponent(Component.Component[Tablifier.Tablifier]):
     class_name = "Tablifier"
     my_capabilities = Capabilities.Capabilities(is_tablifier=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("dataminer_collection", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("version_provider", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("dataminer_collection", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("structure", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("version_provider", True, str),
     )
 
     __slots__ = (

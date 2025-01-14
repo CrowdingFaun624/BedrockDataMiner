@@ -10,9 +10,9 @@ __all__ = ["MyGrabSingleFileDataminer"]
 class MyGrabSingleFileDataminer(GrabSingleFileDataminer.GrabSingleFileDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", "a str", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("insert_pack", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", False, str),
     )
 
     def initialize(self, location:str, insert_pack:str|None=None, insert_file_name:str|None=None) -> None:

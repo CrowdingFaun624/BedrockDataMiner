@@ -12,10 +12,10 @@ class LogComponent(Component.Component[Log.Log]):
     class_name = "Log"
     my_capabilities = Capabilities.Capabilities(is_log=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("log_type", "a str", True, TypeVerifier.EnumTypeVerifier({log_type.value for log_type in Log.LogType})),
-        TypeVerifier.TypedDictKeyTypeVerifier("reset_on_reload", "a bool", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("log_type", True, TypeVerifier.EnumTypeVerifier({log_type.value for log_type in Log.LogType})),
+        TypeVerifier.TypedDictKeyTypeVerifier("reset_on_reload", True, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (

@@ -17,11 +17,11 @@ class PropagatedArgumentsTypedDict(TypedDict):
 class DownloadAccessor(FileAccessor.FileAccessor):
 
     propagated_parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", True, str),
     )
     
     instance_parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("url", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("url", True, str),
     )
 
     __slots__ = (

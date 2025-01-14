@@ -8,7 +8,7 @@ class LatestSlotComponent(Component.Component[str]):
     class_name = "LatestSlot"
     my_capabilities = Capabilities.Capabilities(is_latest_slot=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = ()

@@ -14,10 +14,10 @@ __all__ = ["GrabPackFileDataminer"]
 class GrabPackFileDataminer(FileDataminer.FileDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
+        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", False, str),
     )
 
     def initialize(self, location:str|list[str], pack_type:str, find_none_okay:bool=False, insert_file_name:str|None=None) -> None:

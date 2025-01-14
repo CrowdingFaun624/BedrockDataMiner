@@ -11,7 +11,7 @@ import Utilities.TypeVerifier as TypeVerifier
 class GrabSingleFileDataminer(FileDataminer.FileDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", True, str),
     )
 
     def initialize(self, location:str) -> None:

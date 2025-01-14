@@ -62,7 +62,7 @@ class Script[a]():
 class Scripts():
     '''Collection of scripts.'''
 
-    all_type_verifier = TypeVerifier.ListTypeVerifier(str, (list, tuple), "a str", "a list or tuple")
+    all_type_verifier = TypeVerifier.ListTypeVerifier(str, (list, tuple))
 
     __slots__ = (
         "domain",

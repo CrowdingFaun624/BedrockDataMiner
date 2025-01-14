@@ -15,16 +15,16 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
     class_name = "CoverageDataminerCollection"
     my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_list_dataminer", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("remove_files", "a list of str", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("remove_regex", "a list of str", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("remove_prefixes", "a list of str", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("remove_suffixes", "a list of str", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("disabled", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_list_dataminer", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("remove_files", False, TypeVerifier.ListTypeVerifier(str, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("remove_regex", False, TypeVerifier.ListTypeVerifier(str, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("remove_prefixes", False, TypeVerifier.ListTypeVerifier(str, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("remove_suffixes", False, TypeVerifier.ListTypeVerifier(str, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("structure", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (

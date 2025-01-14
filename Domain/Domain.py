@@ -228,9 +228,9 @@ class Domain():
         with open(self.domain_file, "rt") as f:
             file:DomainManifestTypedDict = json.load(f)
         TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("aliases", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-            TypeVerifier.TypedDictKeyTypeVerifier("is_library", "a bool", False, bool),
-            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a Domain", "a list")),
+            TypeVerifier.TypedDictKeyTypeVerifier("aliases", False, TypeVerifier.ListTypeVerifier(str, list)),
+            TypeVerifier.TypedDictKeyTypeVerifier("is_library", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", False, TypeVerifier.ListTypeVerifier(str, list)),
         ).base_verify(file, [self])
         self.is_library = file.get("is_library", False)
         self.aliases = file.get("aliases", [])

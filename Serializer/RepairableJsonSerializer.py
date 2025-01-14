@@ -44,7 +44,7 @@ class ContentConditionTypedDict(TypedDict):
 class ContentCondition(Condition):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("content", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("content", True, str),
     )
 
     def __init__(self, data: ContentConditionTypedDict, trace:list[str|int]|None=None) -> None:
@@ -78,7 +78,7 @@ class MetaConditionTypedDict(TypedDict):
 class MetaCondition(Condition):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("conditions", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list"))
+        TypeVerifier.TypedDictKeyTypeVerifier("conditions", True, TypeVerifier.ListTypeVerifier(dict, list))
     )
 
     def __init__(self, data: MetaConditionTypedDict, trace:list[str|int]|None=None) -> None:
@@ -139,7 +139,7 @@ class ContentActionTypedDict(TypedDict):
 class ContentAction(Action):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("content", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("content", True, str),
     )
 
     def __init__(self, data: ContentActionTypedDict, trace: list[str | int] | None = None) -> None:
@@ -190,9 +190,9 @@ class ReplaceSomeAction(Action):
 
     name = "replace_some"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("count", "an int", False, int),
-        TypeVerifier.TypedDictKeyTypeVerifier("new_content", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("old_content", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("count", False, int),
+        TypeVerifier.TypedDictKeyTypeVerifier("new_content", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("old_content", True, str),
     )
 
     def __init__(self, data: ReplaceSomeActionTypedDict, trace: list[str | int] | None = None) -> None:
@@ -211,7 +211,7 @@ class SequenceAction(Action):
 
     name = "sequence"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("actions", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("actions", True, TypeVerifier.ListTypeVerifier(dict, list)),
     )
 
     def __init__(self, data: Any, trace: list[str | int] | None = None) -> None:
@@ -268,11 +268,11 @@ class Rule():
 class RepairableJsonSerializer(JsonSerializer.JsonSerializer):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("empty_okay", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("rules", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("condition", "a dict", True, dict),
-            TypeVerifier.TypedDictKeyTypeVerifier("action", "a dict", True, dict)
-        ), list, "a dict", "a list"))
+        TypeVerifier.TypedDictKeyTypeVerifier("empty_okay", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("rules", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
+            TypeVerifier.TypedDictKeyTypeVerifier("condition", True, dict),
+            TypeVerifier.TypedDictKeyTypeVerifier("action", True, dict)
+        ), list))
     )
 
     def __init__(self, name:str, domain:"Domain.Domain", rules:list[RulesTypedDict], empty_okay:bool=False) -> None:

@@ -14,7 +14,7 @@ class InstanceArgumentsTypedDict(TypedDict):
 class SingleDirectoryFileAccessor(FileAccessor.FileAccessor):
 
     instance_parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
     )
     linked_accessors = {"directory": DirectoryAccessor.DirectoryAccessor}
 

@@ -11,13 +11,13 @@ import Utilities.TypeVerifier as TypeVerifier
 class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, str, function=FileDataminer.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", item_function=FileDataminer.location_item_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", True, str, function=FileDataminer.location_value_function),
+        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", False, TypeVerifier.ListTypeVerifier(str, list)),
     )
 
     def initialize(

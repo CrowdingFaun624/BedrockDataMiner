@@ -61,9 +61,9 @@ class AccessorComponent(Component.Component[AccessorCreator]):
     class_name = "Accessor"
     my_capabilities = Capabilities.Capabilities(is_accessor=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("accessor_type", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", True, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("accessor_type", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("arguments", True, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (

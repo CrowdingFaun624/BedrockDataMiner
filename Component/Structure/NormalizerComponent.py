@@ -16,10 +16,10 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
     my_capabilities = Capabilities.Capabilities(is_function=True, is_normalizer=True)
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("arguments", "a dict", False, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("function_name", "a str", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("version_range", "a list", False, TypeVerifier.ListTypeVerifier((str, type(None)), list, "a str or None", "a list", additional_function=lambda data: (len(data) == 2, "must be length 2"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("arguments", False, dict),
+        TypeVerifier.TypedDictKeyTypeVerifier("function_name", True, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("version_range", False, TypeVerifier.ListTypeVerifier((str, type(None)), list, additional_function=lambda data: (len(data) == 2, "must be length 2"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (

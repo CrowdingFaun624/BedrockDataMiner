@@ -14,11 +14,11 @@ __all__ = ["GrabPackFileDataminer"]
 class GrabPackFileDataminer(FileDataminer.FileDataminer):
 
     parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", "a str", True, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", "a str", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_packs", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
-        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", "a bool", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", "a str", False, str),
+        TypeVerifier.TypedDictKeyTypeVerifier("location", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
+        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"))),
+        TypeVerifier.TypedDictKeyTypeVerifier("ignore_packs", False, TypeVerifier.ListTypeVerifier(str, list)),
+        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", False, bool),
+        TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", False, str),
     )
 
     def initialize(self, location:str|list[str], pack_type:Literal["resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"], find_none_okay:bool=False, ignore_packs:list[str]|None=None, insert_file_name:str|None=None) -> None:
