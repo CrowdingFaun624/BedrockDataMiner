@@ -1,7 +1,8 @@
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, NotRequired, TypedDict
+from typing import TYPE_CHECKING, Any, Callable, NotRequired, TypedDict
 
+import Component.ComponentFunctions as ComponentFunctions
 import Component.Importer as Importer
 import Component.ScriptImporter as ScriptImporter
 import Component.Types as Types
@@ -12,6 +13,7 @@ import Dataminer.BuiltIns.GrabSingleFileDataminer as GrabSingleFileDataminer
 import Dataminer.BuiltIns.SingleFileDataminer as SingleFileDataminer
 import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
 import Dataminer.Dataminer as Dataminer
+import Domain.Domains as Domains
 import Domain.LibFiles as LibFiles
 import Downloader.Accessor as Accessor
 import Downloader.DownloadAccessor as DownloadAccessor
@@ -92,9 +94,63 @@ BUILT_IN_VERSION_PROVIDER_CLASSES:dict[str,type[VersionProvider.VersionProvider]
 
 class DomainManifestTypedDict(TypedDict):
     aliases: NotRequired[list[str]]
+    dependencies: NotRequired[list[str]]
     is_library: NotRequired[bool]
 
 class Domain():
+
+    __slots__ = (
+        "all_serializers",
+        "accessor_types",
+        "dataminer_collections",
+        "latest_slots",
+        "logs",
+        "serializers",
+        "structures",
+        "structure_tags",
+        "tablifiers",
+        "version_file_types",
+        "version_tags_order",
+        "version_tags",
+        "versions",
+        "name",
+        "assets_directory",
+        "data_directory",
+        "lib_directory",
+        "log_directory",
+        "logs_file",
+        "scripts_directory",
+        "structures_directory",
+        "accessor_types_file",
+        "dataminer_collections_file",
+        "domain_file",
+        "serializers_file",
+        "structure_tags_file",
+        "tablifiers_file",
+        "version_file_types_file",
+        "version_tags_directory",
+        "latest_slots_file",
+        "version_tags_file",
+        "version_tags_order_file",
+        "versions_file",
+        "versions_directory",
+        "comparisons_directory",
+        "data_files",
+        "json_decoder",
+        "json_encoder",
+        "scripts",
+        "accessor_classes",
+        "dataminer_classes",
+        "delegate_classes",
+        "serializer_classes",
+        "version_provider_classes",
+        "lib_files",
+        "type_stuff",
+        "is_library",
+        "aliases",
+        "dependencies",
+        "callables",
+    )
 
     def __init__(self, name:str) -> None:
         self.name = name
@@ -120,36 +176,53 @@ class Domain():
         self.versions_directory         = FileManager.VERSIONS_DIRECTORY.joinpath(name)
         self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
 
+        self.is_library:bool
+        self.aliases:list[str]
+        self.dependencies:list[str]
         self.read_manifest()
 
-        self._accessor_types:dict[str,"AccessorType.AccessorType"]|None = None
-        self._dataminer_collections:dict[str,"AbstractDataminerCollection.AbstractDataminerCollection"]|None = None
-        self._latest_slots:list[str]|None = None
-        self._logs:dict[str,"Log.Log"]|None = None
-        self._serializers:dict[str,"Serializer.Serializer"]|None = None
-        self._structures:dict[str,"StructureBase.StructureBase"]|None = None
-        self._structure_tags:dict[str,"StructureTag.StructureTag"]|None = None
-        self._tablifiers:dict[str,"Tablifier.Tablifier"]|None = None
-        self._version_file_types:dict[str,"VersionFileType.VersionFileType"]|None = None
-        self._version_tags_order:"VersionTagOrder.VersionTagOrder|None" = None
-        self._version_tags:dict[str,"VersionTag.VersionTag"]|None = None
-        self._versions:dict[str,"Version.Version"]|None = None
+        self.accessor_types:dict[str,"AccessorType.AccessorType"]
+        self.dataminer_collections:dict[str,"AbstractDataminerCollection.AbstractDataminerCollection"]
+        self.latest_slots:list[str]
+        self.logs:dict[str,"Log.Log"]
+        self.serializers:dict[str,"Serializer.Serializer"]
+        self.structures:dict[str,"StructureBase.StructureBase"]
+        self.structure_tags:dict[str,"StructureTag.StructureTag"]
+        self.tablifiers:dict[str,"Tablifier.Tablifier"]
+        self.version_file_types:dict[str,"VersionFileType.VersionFileType"]
+        self.version_tags_order:"VersionTagOrder.VersionTagOrder"
+        self.version_tags:dict[str,"VersionTag.VersionTag"]
+        self.versions:dict[str,"Version.Version"]
 
         self.data_files = self._get_data_files()
         '''
         dictionary of files in the `./_assets/data` directory without the final suffix.
         '''
-        self._json_decoder:             type[json.JSONDecoder]|None = None
-        self._json_encoder:             type[json.JSONEncoder]|None = None
-        self._scripts:                  Scripts.Scripts|None = None
-        self._accessor_classes:         ScriptImporter.ScriptSet[type[Accessor.Accessor]]|None = None
-        self._dataminer_classes:        ScriptImporter.ScriptSet[type[Dataminer.Dataminer]]|None = None
-        self._delegate_classes:         ScriptImporter.ScriptSet[type[Delegate.Delegate]]|None = None
-        self._serializer_classes:       ScriptImporter.ScriptSet[type[Serializer.Serializer]]|None = None
-        self._version_provider_classes: ScriptImporter.ScriptSet[type[VersionProvider.VersionProvider]]|None = None
+        self.json_decoder:             type[json.JSONDecoder]
+        self.json_encoder:             type[json.JSONEncoder]
+        self.scripts:                  Scripts.Scripts
+        self.callables:                ScriptImporter.ScriptSet[Callable]
+        self.accessor_classes:         ScriptImporter.ScriptSet[type[Accessor.Accessor]]
+        self.dataminer_classes:        ScriptImporter.ScriptSet[type[Dataminer.Dataminer]]
+        self.delegate_classes:         ScriptImporter.ScriptSet[type[Delegate.Delegate]]
+        self.serializer_classes:       ScriptImporter.ScriptSet[type[Serializer.Serializer]]
+        self.version_provider_classes: ScriptImporter.ScriptSet[type[VersionProvider.VersionProvider]]
 
         self.lib_files = LibFiles.LibFiles(self)
-        self._type_stuff:Types.TypeStuff|None = None
+        self.type_stuff = Types.TypeStuff(self)
+        self.type_stuff.extend(Types.primary_type_stuff)
+
+    def get_cascading_dependencies(self, memo:set["Domain"]) -> list["Domain"]:
+        if self not in memo:
+            output:list[Domain] = []
+            memo.add(self)
+            for dependency_name in self.dependencies:
+                dependency = Domains.domains[dependency_name]
+                output.extend(dependency.get_cascading_dependencies(memo))
+            output.append(self)
+            return output
+        else:
+            return []
 
     def read_manifest(self) -> None:
         with open(self.domain_file, "rt") as f:
@@ -157,36 +230,54 @@ class Domain():
         TypeVerifier.TypedDictTypeVerifier(
             TypeVerifier.TypedDictKeyTypeVerifier("aliases", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list")),
             TypeVerifier.TypedDictKeyTypeVerifier("is_library", "a bool", False, bool),
+            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", "a list", False, TypeVerifier.ListTypeVerifier(str, list, "a Domain", "a list")),
         ).base_verify(file, [self])
-        self.is_library:bool = file.get("is_library", False)
-        self.aliases:list[str] = file.get("aliases", [])
+        self.is_library = file.get("is_library", False)
+        self.aliases = file.get("aliases", [])
+        self.dependencies = file.get("dependencies", [])
 
     def import_components(self) -> None:
-        self._type_stuff = Types.TypeStuff()
-        self._type_stuff.extend(Types.primary_type_stuff)
-        self._scripts = Scripts.Scripts(self)
+        all_domains = self.get_cascading_dependencies(set())
+        for domain in all_domains:
+            for dependency_name in domain.dependencies:
+                domain.type_stuff.link(Domains.domains[dependency_name].type_stuff)
+        for domain in all_domains:
+            domain.import_scripts()
+        all_component_groups = Importer.parse_all_component_groups(all_domains)
+        for domain in all_domains:
+            domain.set_values(all_component_groups[domain.name])
 
-        self._json_decoder = CustomJson.get_special_decoder(self)
-        self._json_encoder = CustomJson.get_special_encoder(self)
-        self._accessor_classes = ScriptImporter.import_scripted_types("accessors/", self, BUILT_IN_ACCESSOR_CLASSES, Accessor.Accessor)
-        self._dataminer_classes = ScriptImporter.import_scripted_types("dataminers/", self, BUILT_IN_DATAMINER_CLASSES, Dataminer.Dataminer)
-        self._delegate_classes = ScriptImporter.import_scripted_types("delegates", self, BUILT_IN_DELEGATE_CLASSES, Delegate.Delegate)
-        self._serializer_classes = ScriptImporter.import_scripted_types("serializers/", self, BUILT_IN_SERIALIZER_CLASSES, Serializer.Serializer)
-        self._version_provider_classes = ScriptImporter.import_scripted_types("version_providers", self, BUILT_IN_VERSION_PROVIDER_CLASSES, VersionProvider.VersionProvider)
+    def import_scripts(self) -> None:
+        # update TypeStuffs
+        self.scripts = Scripts.Scripts(self)
+        self.json_decoder = CustomJson.get_special_decoder(self)
+        self.json_encoder = CustomJson.get_special_encoder(self)
+        self.callables = ScriptImporter.import_scripted_objects("normalizers/", self, ComponentFunctions.functions, callable, "callable")
+        self.accessor_classes = ScriptImporter.import_scripted_types("accessors/", self, BUILT_IN_ACCESSOR_CLASSES, Accessor.Accessor)
+        self.dataminer_classes = ScriptImporter.import_scripted_types("dataminers/", self, BUILT_IN_DATAMINER_CLASSES, Dataminer.Dataminer)
+        self.delegate_classes = ScriptImporter.import_scripted_types("delegates", self, BUILT_IN_DELEGATE_CLASSES, Delegate.Delegate)
+        self.serializer_classes = ScriptImporter.import_scripted_types("serializers/", self, BUILT_IN_SERIALIZER_CLASSES, Serializer.Serializer)
+        self.version_provider_classes = ScriptImporter.import_scripted_types("version_providers", self, BUILT_IN_VERSION_PROVIDER_CLASSES, VersionProvider.VersionProvider)
 
-        all_component_groups = Importer.parse_all_component_groups(self)
-        self._accessor_types = all_component_groups["accessor_types"]
-        self._dataminer_collections = all_component_groups["dataminer_collections"]
-        self._latest_slots = all_component_groups["latest_slots"]
-        self._logs = all_component_groups["logs"]
-        self._serializers = all_component_groups["serializers"]
-        self._structures = {component_group_name: component_group for component_group_name, component_group in all_component_groups.items() if component_group_name.startswith("structure/")}
-        self._structure_tags = all_component_groups["structure_tags"]
-        self._tablifiers = all_component_groups["tablifiers"]
-        self._version_file_types = all_component_groups["version_file_types"]
-        self._version_tags_order = all_component_groups["version_tags_order"]
-        self._version_tags = all_component_groups["version_tags"]
-        self._versions = all_component_groups["versions"]
+    def set_values(self, component_groups:dict[str,Any]) -> None:
+        self.accessor_types = component_groups["accessor_types"]
+        self.dataminer_collections = component_groups["dataminer_collections"]
+        self.latest_slots = component_groups["latest_slots"]
+        self.logs = component_groups["logs"]
+        self.serializers = component_groups["serializers"]
+        self.structures = {component_group_name: component_group for component_group_name, component_group in component_groups.items() if component_group_name.startswith("structure/")}
+        self.structure_tags = component_groups["structure_tags"]
+        self.tablifiers = component_groups["tablifiers"]
+        self.version_file_types = component_groups["version_file_types"]
+        self.version_tags_order = component_groups["version_tags_order"]
+        self.version_tags = component_groups["version_tags"]
+        self.versions = component_groups["versions"]
+
+        self.all_serializers:dict[str, Serializer.Serializer] = {}
+        for dependency_name in self.dependencies:
+            dependency = Domains.domains[dependency_name]
+            self.all_serializers.update(dependency.serializers)
+        self.all_serializers.update(self.serializers)
 
     def _get_data_files(self) -> dict[str,DataFile.DataFile]:
         if self.data_directory.exists():
@@ -199,152 +290,8 @@ class Domain():
         comparison_subdirectory.mkdir(exist_ok=True)
         return comparison_subdirectory.joinpath(f"report_{str(number).zfill(4)}.txt")
 
-    @property
-    def type_stuff(self) -> Types.TypeStuff:
-        if self._type_stuff is None:
-            self.import_components()
-        assert self._type_stuff is not None
-        return self._type_stuff
-
-    @property
-    def scripts(self) -> "Scripts.Scripts":
-        if self._scripts is None:
-            self.import_components()
-        assert self._scripts is not None
-        return self._scripts
-
-    @property
-    def json_decoder(self) -> type[json.JSONDecoder]:
-        if self._json_decoder is None:
-            self.import_components()
-        assert self._json_decoder is not None
-        return self._json_decoder
-
-    @property
-    def json_encoder(self) -> type[json.JSONEncoder]:
-        if self._json_encoder is None:
-            self.import_components()
-        assert self._json_encoder is not None
-        return self._json_encoder
-
-    @property
-    def accessor_classes(self) -> ScriptImporter.ScriptSet[type[Accessor.Accessor]]:
-        if self._accessor_classes is None:
-            self.import_components()
-        assert self._accessor_classes is not None
-        return self._accessor_classes
-
-    @property
-    def dataminer_classes(self) -> ScriptImporter.ScriptSet[type[Dataminer.Dataminer]]:
-        if self._dataminer_classes is None:
-            self.import_components()
-        assert self._dataminer_classes is not None
-        return self._dataminer_classes
-
-    @property
-    def delegate_classes(self) -> ScriptImporter.ScriptSet[type[Delegate.Delegate]]:
-        if self._delegate_classes is None:
-            self.import_components()
-        assert self._delegate_classes is not None
-        return self._delegate_classes
-
-    @property
-    def serializer_classes(self) -> ScriptImporter.ScriptSet[type[Serializer.Serializer]]:
-        if self._serializer_classes is None:
-            self.import_components()
-        assert self._serializer_classes is not None
-        return self._serializer_classes
-
-    @property
-    def version_provider_classes(self) -> ScriptImporter.ScriptSet[type[VersionProvider.VersionProvider]]:
-        if self._version_provider_classes is None:
-            self.import_components()
-        assert self._version_provider_classes is not None
-        return self._version_provider_classes
-
-    @property
-    def accessor_types(self) -> dict[str,"AccessorType.AccessorType"]:
-        if self._accessor_types is None:
-            self.import_components()
-        assert self._accessor_types is not None
-        return self._accessor_types
-
-    @property
-    def dataminer_collections(self) -> dict[str,"AbstractDataminerCollection.AbstractDataminerCollection"]:
-        if self._dataminer_collections is None:
-            self.import_components()
-        assert self._dataminer_collections is not None
-        return self._dataminer_collections
-
-    @property
-    def latest_slots(self) -> list[str]:
-        if self._latest_slots is None:
-            self.import_components()
-        assert self._latest_slots is not None
-        return self._latest_slots
-
-    @property
-    def logs(self) -> dict[str,"Log.Log"]:
-        if self._logs is None:
-            self.import_components()
-        assert self._logs is not None
-        return self._logs
-
-    @property
-    def serializers(self) -> dict[str,"Serializer.Serializer"]:
-        if self._serializers is None:
-            self.import_components()
-        assert self._serializers is not None
-        return self._serializers
-
-    @property
-    def structures(self) -> dict[str,"StructureBase.StructureBase"]:
-        if self._structures is None:
-            self.import_components()
-        assert self._structures is not None
-        return self._structures
-
-    @property
-    def structure_tags(self) -> dict[str,"StructureTag.StructureTag"]:
-        if self._structure_tags is None:
-            self.import_components()
-        assert self._structure_tags is not None
-        return self._structure_tags
-
-    @property
-    def tablifiers(self) -> dict[str,"Tablifier.Tablifier"]:
-        if self._tablifiers is None:
-            self.import_components()
-        assert self._tablifiers is not None
-        return self._tablifiers
-
-    @property
-    def version_file_types(self) -> dict[str,"VersionFileType.VersionFileType"]:
-        if self._version_file_types is None:
-            self.import_components()
-        assert self._version_file_types is not None
-        return self._version_file_types
-
-    @property
-    def version_tags_order(self) -> "VersionTagOrder.VersionTagOrder":
-        if self._version_tags_order is None:
-            self.import_components()
-        assert self._version_tags_order is not None
-        return self._version_tags_order
-
-    @property
-    def version_tags(self) -> dict[str,"VersionTag.VersionTag"]:
-        if self._version_tags is None:
-            self.import_components()
-        assert self._version_tags is not None
-        return self._version_tags
-
-    @property
-    def versions(self) -> dict[str,"Version.Version"]:
-        if self._versions is None:
-            self.import_components()
-        assert self._versions is not None
-        return self._versions
-
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.name}>"
+
+    def __hash__(self) -> int:
+        return hash(self.name)

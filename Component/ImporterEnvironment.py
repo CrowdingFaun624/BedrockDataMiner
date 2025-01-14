@@ -29,16 +29,6 @@ class ImporterEnvironment[a]():
         '''
         return None if self.single_component else {}
 
-    def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
-        '''
-        Given the current Component group and all other Component groups.
-        Returns a dict with keys of the name of the Component group imported from and values of dictionaries of Components with their names.
-        :components: The Components in the current Component group.
-        :all_components: The Components in each Component Group.
-        :name: The name of the current Component group.
-        '''
-        return {}
-
     def get_output(self, components:dict[str,Component.Component], name:str) -> a:
         '''
         Given the Component group, return the intended output from the Component group.

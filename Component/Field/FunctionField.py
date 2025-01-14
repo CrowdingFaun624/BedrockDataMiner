@@ -3,6 +3,7 @@ from typing import Callable
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
+import Component.ScriptImporter as ScriptImporter
 import Utilities.Exceptions as Exceptions
 
 
@@ -26,11 +27,11 @@ class FunctionField(Field.Field):
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["Component.Component"],list["Component.Component"]]:
-        function = functions.get(self.function_name)
+        function = functions.callables.get(self.function_name, source_component, self.error_path)
         if function is None:
             raise Exceptions.ComponentUnrecognizedFunctionError(self.function_name, source_component)
         self.function = function

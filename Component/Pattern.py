@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeIs
 
 import Component.Capabilities as Capabilties
 import Utilities.Exceptions as Exceptions
@@ -25,7 +25,7 @@ class Pattern[a: "Component.Component"]():
     def matches_capabilities(self, capabilities:Capabilties.Capabilities) -> bool:
         return capabilities.capabilities.get(self.capability, False)
 
-    def __contains__(self, capabilities:Capabilties.Capabilities) -> bool:
+    def contains(self, component:"Component.Component") -> TypeIs[a]:
         if self.matching_components is None:
             import Component.ComponentTypes as ComponentTypes
             self.matching_components = set(
@@ -33,7 +33,7 @@ class Pattern[a: "Component.Component"]():
                 for component_type in ComponentTypes.component_types
                 if self.matches_capabilities(component_type.my_capabilities)
             )
-        return id(capabilities) in self.matching_components
+        return id(component.my_capabilities) in self.matching_components
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.capability}>"

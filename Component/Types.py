@@ -2,6 +2,7 @@ from collections import defaultdict
 from types import EllipsisType
 from typing import Any, Callable
 
+import Domain.Domain as Domain
 import Domain.Domains as Domains
 import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
@@ -27,11 +28,13 @@ class TypeStuff():
     __slots__ = (
         "containment_types",
         "default_types",
+        "domain",
         "file_types",
         "hash_type_table",
         "iterable_types",
         "json_decoders",
         "json_encoders",
+        "linked_type_stuffs",
         "mapping_types",
         "mutually_sortable",
         "requires_subcomponent_types",
@@ -41,6 +44,8 @@ class TypeStuff():
 
     def __init__(
         self,
+        domain:"Domain.Domain|None",
+        linked_type_stuffs:list["TypeStuff"]|None=None,
         default_types:dict[str,type]|None=None,
         requires_subcomponent_types:TypeUtilities.TypeSet|None=None,
         sortable_types:TypeUtilities.TypeSet|None=None,
@@ -54,6 +59,8 @@ class TypeStuff():
         json_encoders:TypeUtilities.TypeDict[object, type[CustomJson.Coder]]|None=None,
         json_decoders:dict[str,type[CustomJson.Coder]]|None=None,
     ) -> None:
+        self.domain = domain
+        self.linked_type_stuffs = [] if linked_type_stuffs is None else linked_type_stuffs
         self.default_types:dict[str,type] = {} if default_types is None else default_types
         self.requires_subcomponent_types = TypeUtilities.TypeSet() if requires_subcomponent_types is None else requires_subcomponent_types
         self.sortable_types = TypeUtilities.TypeSet() if sortable_types is None else sortable_types
@@ -67,8 +74,16 @@ class TypeStuff():
         self.json_encoders:TypeUtilities.TypeDict[object, type[CustomJson.Coder]] = TypeUtilities.TypeDict() if json_encoders is None else json_encoders
         self.json_decoders:dict[str,type[CustomJson.Coder]] = {} if json_decoders is None else json_decoders
 
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} {self.domain.name if self.domain is not None else "primary"}>"
+
+    def __hash__(self) -> int:
+        return hash(self.domain)
+
     def copy(self) -> "TypeStuff":
         return TypeStuff(
+            domain=self.domain,
+            linked_type_stuffs=self.linked_type_stuffs.copy(),
             default_types=self.default_types.copy(),
             requires_subcomponent_types=self.requires_subcomponent_types.copy(),
             sortable_types=self.sortable_types.copy(),
@@ -98,6 +113,23 @@ class TypeStuff():
         self.json_encoders.update(other.json_encoders)
         self.json_decoders.update(other.json_decoders)
 
+    def link(self, other:"TypeStuff") -> None:
+        '''
+        When adding to self, also add to `other`.
+        '''
+        other.linked_type_stuffs.append(self)
+
+    def get_cascading_dependencies(self, memo:set["TypeStuff"]) -> list["TypeStuff"]:
+        if self not in memo:
+            output:list[TypeStuff] = []
+            memo.add(self)
+            for child in self.linked_type_stuffs:
+                output.extend(child.get_cascading_dependencies(memo))
+            output.append(self)
+            return output
+        else:
+            return []
+
     def hash_data(self, data:Any) -> int:
         '''
         Tries its best to hash anything, including mutable objects.
@@ -105,7 +137,7 @@ class TypeStuff():
         '''
         return self.hash_type_table[type(data)](data, self)
 
-primary_type_stuff = TypeStuff()
+primary_type_stuff = TypeStuff(None)
 '''
 TypeStuff for non-Script types.
 '''
@@ -193,36 +225,38 @@ def register_type[T](
     if domain_name is None and Scripts.has_imported_scripts.has_imported_scripts:
         raise Exceptions.ImportOrderError(_type.__module__)
     type_stuff = primary_type_stuff if domain_name is None else Domains.domains[domain_name].type_stuff
-    if name is not None:
-        type_stuff.default_types[name] = _type
-    if hashing_method is not None:
-        type_stuff.hash_type_table[_type] = (lambda data, type_stuff: hash(data)) if hashing_method is ... else hashing_method
-    if requires_subcomponent is not None:
-        # This property only inherits if requires_subcomponent is None
-        if requires_subcomponent is True:
-            type_stuff.requires_subcomponent_types.add(_type)
-        else:
-            type_stuff.requires_subcomponent_types.add_not(_type)
-    if sortable is not None:
-        sortable = [sortable] if not isinstance(sortable, list) else sortable
-        type_stuff.sortable_types.add(_type)
-        for category in sortable:
-            type_stuff.mutually_sortable[category].add(_type)
-    if is_file:
-        type_stuff.file_types.add(_type)
-    if is_iterable:
-        type_stuff.iterable_types.add(_type)
-    if is_mapping:
-        type_stuff.mapping_types.add(_type)
-    if is_string:
-        type_stuff.string_types.add(_type)
-    if can_contain is not None:
-        type_stuff.containment_types[_type] = TypeUtilities.TypeSet(can_contain)
-    if isinstance(json_coder, NoCoder):
-        type_stuff.json_encoders.add_not(_type)
-    elif json_coder is not None:
-        type_stuff.json_encoders[_type] = json_coder
-        type_stuff.json_decoders[json_coder.special_type_name] = json_coder
+    type_stuffs = type_stuff.get_cascading_dependencies(set())
+    for type_stuff in type_stuffs:
+        if name is not None:
+            type_stuff.default_types[name] = _type
+        if hashing_method is not None:
+            type_stuff.hash_type_table[_type] = (lambda data, type_stuff: hash(data)) if hashing_method is ... else hashing_method
+        if requires_subcomponent is not None:
+            # This property only inherits if requires_subcomponent is None
+            if requires_subcomponent is True:
+                type_stuff.requires_subcomponent_types.add(_type)
+            else:
+                type_stuff.requires_subcomponent_types.add_not(_type)
+        if sortable is not None:
+            sortable = [sortable] if not isinstance(sortable, list) else sortable
+            type_stuff.sortable_types.add(_type)
+            for category in sortable:
+                type_stuff.mutually_sortable[category].add(_type)
+        if is_file:
+            type_stuff.file_types.add(_type)
+        if is_iterable:
+            type_stuff.iterable_types.add(_type)
+        if is_mapping:
+            type_stuff.mapping_types.add(_type)
+        if is_string:
+            type_stuff.string_types.add(_type)
+        if can_contain is not None:
+            type_stuff.containment_types[_type] = TypeUtilities.TypeSet(can_contain)
+        if isinstance(json_coder, NoCoder):
+            type_stuff.json_encoders.add_not(_type)
+        elif json_coder is not None:
+            type_stuff.json_encoders[_type] = json_coder
+            type_stuff.json_decoders[json_coder.special_type_name] = json_coder
 
 register_type(bool, "bool", ..., sortable="default")
 register_type(bytearray, None, lambda data, type_stuff: hash(tuple(item for item in data)), is_iterable=True)

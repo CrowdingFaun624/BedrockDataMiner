@@ -19,9 +19,6 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
 
     __slots__ = ()
 
-    def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
-        return {"accessor_types": all_components["accessor_types"], "version_file_types": all_components["version_file_types"], "version_tags": all_components["version_tags"]}
-
     def get_component_files(self) -> Iterable[Path]:
         return [self.domain.versions_file]
 
@@ -32,7 +29,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
         return components.values()
 
     def finalize(self, output:dict[str, Version.Version], other_outputs:dict[str,Any]) -> None:
-        version_tags:dict[str,VersionTag.VersionTag] = other_outputs["version_tags"]
+        version_tags:dict[str,VersionTag.VersionTag] = other_outputs[self.domain.name]["version_tags"]
         latest_tags:defaultdict[str,set[VersionTag.VersionTag]] = defaultdict(lambda: set())
         for version_tag in version_tags.values():
             if version_tag.latest_slot is not None:
@@ -65,8 +62,8 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
 
     def check(self, output: dict[str, Version.Version], other_outputs: dict[str, Any]) -> list[Exception]:
         exceptions = super().check(output, other_outputs)
-        version_tag_ordering:VersionTagOrder.VersionTagOrder = other_outputs["version_tags_order"]
-        version_tags:dict[str,VersionTag.VersionTag] = other_outputs["version_tags"]
+        version_tag_ordering:VersionTagOrder.VersionTagOrder = other_outputs[self.domain.name]["version_tags_order"]
+        version_tags:dict[str,VersionTag.VersionTag] = other_outputs[self.domain.name]["version_tags"]
         ORDERING_TAGS = [version_tag for version_tag in version_tags.values() if version_tag.is_order_tag]
         ORDER = version_tag_ordering.order
         ALLOWED_CHILDREN = version_tag_ordering.allowed_children
@@ -91,11 +88,12 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                 else: already_seen_versions.add(version)
             else: raise Exceptions.InvalidStateError("A duplicate version exists, but unable to find it!")
 
-        exceptions.extend(
-            Exceptions.VersionTopLevelError(version, TOP_LEVEL_TAG)
-            for version in top_level_versions
-            if TOP_LEVEL_TAG not in version.tags
-        )
+        if TOP_LEVEL_TAG is not None:
+            exceptions.extend(
+                Exceptions.VersionTopLevelError(version, TOP_LEVEL_TAG)
+                for version in top_level_versions
+                if TOP_LEVEL_TAG not in version.tags
+            )
         exceptions.extend(
             Exceptions.VersionChildError(version, version.order_tag, child, child.order_tag)
             for version in output.values()
@@ -152,7 +150,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
 
         # some VersionFiles cannot exist if an unreleased VersionTag exists on the Version.
         # some VersionFileTypes require a VersionFile to exist on every Version.
-        version_file_types = cast(dict[str,VersionFileType.VersionFileType], other_outputs["version_file_types"])
+        version_file_types = cast(dict[str,VersionFileType.VersionFileType], other_outputs[self.domain.name]["version_file_types"])
         required_version_file_types = {version_file_type_name: version_file_type for version_file_type_name, version_file_type in version_file_types.items() if version_file_type.must_exist}
         exceptions.extend(
             Exceptions.UnreleasedDownloadableVersionError(version, version_file)

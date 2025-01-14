@@ -29,9 +29,6 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
             "top_level_tag": None,
         }
 
-    def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
-        return {"version_tags": all_components["version_tags"]}
-
     def get_component_files(self) -> Iterable[Path]:
         return [self.domain.version_tags_order_file]
 
@@ -40,7 +37,7 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
 
     def check(self, output: VersionTagOrder.VersionTagOrder, other_outputs: dict[str, Any]) -> list[Exception]:
         exceptions:list[Exception] = []
-        version_tags:dict[str,VersionTag.VersionTag] = other_outputs["version_tags"]
+        version_tags:dict[str,VersionTag.VersionTag] = other_outputs[self.domain.name]["version_tags"]
         order_version_tags = [version_tag for version_tag in version_tags.values() if version_tag.is_order_tag]
         # all tags in output are guaranteed to be order tags because VersionTagOrderComponent made sure of it.
 

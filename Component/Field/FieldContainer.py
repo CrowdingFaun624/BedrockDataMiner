@@ -1,8 +1,9 @@
-from typing import Callable, MutableSequence
+from typing import MutableSequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
+import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
 
 
@@ -28,14 +29,14 @@ class FieldContainer[a: Field.Field](Field.Field):
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["Component.Component"],list["Component.Component"]]:
         linked_components:list["Component.Component"] = []
         inline_components:list["Component.Component"] = []
         for field in self.fields:
-            new_linked_components, new_inline_components = field.set_field(source_component, components, imported_components, functions, create_component_function)
+            new_linked_components, new_inline_components = field.set_field(source_component, components, global_components, functions, create_component_function)
             linked_components.extend(new_linked_components)
             inline_components.extend(new_inline_components)
         return linked_components, inline_components

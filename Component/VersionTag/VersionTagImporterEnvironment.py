@@ -13,9 +13,6 @@ class VersionTagImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict
 
     __slots__ = ()
 
-    def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str,Component.Component]]:
-        return {"versions": all_components["versions"], "latest_slots": all_components["latest_slots"]}
-
     def get_component_files(self) -> Iterable[Path]:
         return [self.domain.version_tags_file]
 

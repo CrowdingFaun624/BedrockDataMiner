@@ -14,4 +14,4 @@ class VersionField(ComponentField.ComponentField["VersionComponent.VersionCompon
     __slots__ = ()
 
     def __init__(self, subcomponent_data: str, path: list[str|int]) -> None:
-        super().__init__(subcomponent_data, VERSION_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
+        super().__init__(subcomponent_data, VERSION_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_component_group="versions/")

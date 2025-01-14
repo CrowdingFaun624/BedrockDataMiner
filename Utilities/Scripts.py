@@ -2,7 +2,8 @@ import importlib
 import importlib.machinery
 import importlib.util
 from pathlib import Path
-from typing import IO, Any, Callable, Iterable, Self
+from types import ModuleType
+from typing import Any, Callable, Iterable
 
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
@@ -11,11 +12,11 @@ import Utilities.UserInput as UserInput
 
 
 class HasImportedScripts():
-    
+
     __slots__ = (
         "has_imported_scripts",
     )
-    
+
     def __init__(self) -> None:
         self.has_imported_scripts:bool = False
 
@@ -39,116 +40,64 @@ def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
 
 class Script[a]():
 
-    all_type_verifier = TypeVerifier.ListTypeVerifier(str, list, "a str", "a list", additional_function=lambda data: (len(data) == 1, "Can only export a single object"))
-
     __slots__ = (
         "domain",
-        "has_all",
-        "module",
-        "name",
+        "file_name",
         "object",
-        "path",
+        "object_name",
     )
 
-    def __init__(self, path: Path, name: str, domain:"Domain.Domain") -> None:
-        self.name = name
-        self.path = path
-        self.domain = domain
-        module_name = f"_domains.{domain.name}.scripts.{name.replace("/", ".").removesuffix(".py")}"
-        self.module = importlib.import_module(module_name)
+    def __init__(self, file_name: str, object_name:str, object:a, domain:"Domain.Domain") -> None:
+        self.file_name:str = file_name
+        self.object_name:str = object_name
+        self.object:a = object
+        self.domain:"Domain.Domain" = domain
 
-        self.object:Any = None
-        self.has_all:bool = False
-
-    @property
-    def should_skip(self) -> bool:
-        return not self.has_all
-
-    def finalize(self) -> None:
-        self.has_all = hasattr(self.module, "__all__")
-        if not self.has_all:
-            return
-        self.all_type_verifier.base_verify(self.module.__all__, [self])
-        exported_object_name = self.module.__all__[0]
-        obj = getattr(self.module, exported_object_name, ...)
-        if obj is ...:
-            raise Exceptions.ScriptFailureError(self, "(name in __all__ does not exist in the module)")
-        if hasattr(self.module, "__call_object__"):
-            # __call_object__ can be placed in a Python script. If true, it will call the object referenced in `__all__`
-            # and use the return value as the object instead of the function itself.
-            if self.module.__call_object__ is True:
-                obj = obj()
-        self.object = obj
-
-    def __call__(self, *args, **kwargs) -> Any:
+    def __call__(self:"Script[Callable]", *args, **kwargs) -> Any:
         return self.object(*args, **kwargs)
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.name}>"
-
-    def open_file(self) -> IO[str]:
-        return open(self.path, "rt")
+        return f"<{self.__class__.__name__} {self.file_name} {self.object_name}>"
 
 class Scripts():
     '''Collection of scripts.'''
+
+    all_type_verifier = TypeVerifier.ListTypeVerifier(str, (list, tuple), "a str", "a list or tuple")
 
     __slots__ = (
         "domain",
         "scripts",
     )
 
-    def get_script_type(self, suffix:str, name:str) -> type[Script]:
-        match suffix:
-            case ".py":
-                return Script
-            case _:
-                raise Exceptions.InvalidScriptFileSuffix(suffix, name)
-
-    def should_skip_script(self, suffix:str, relative_name:str, path:Path) -> bool:
-        return suffix == ".pyc"
-
     def __init__(self, domain:"Domain.Domain") -> None:
-        has_imported_scripts.has_imported_scripts = True
         self.domain = domain
-        self.scripts = {relative_name: self.get_script_type(file.suffix, relative_name)(file, relative_name, domain) for file, relative_name in iter_dir(domain.scripts_directory) if not self.should_skip_script(file.suffix, relative_name, file)}
-        for script in self.scripts.values():
-            script.finalize()
-        self.scripts = {script_name: script for script_name, script in self.scripts.items() if not script.should_skip}
+        has_imported_scripts.has_imported_scripts = True
 
-    def __getitem__(self, name:str) -> Script:
-        output = self.scripts.get(name, None)
-        if output is None:
-            raise Exceptions.UnrecognizedScriptError(name)
-        return output
+        modules:dict[str,ModuleType] = {}
+        for file, relative_name in iter_dir(domain.scripts_directory):
+            if file.suffix != ".py": continue
+            module_name = f"_domains.{domain.name}.scripts.{relative_name.replace("/", ".").removesuffix(".py")}"
+            modules[relative_name] = importlib.import_module(module_name)
 
-    def get_all_in_directory(self, directory_name:str) -> dict[str,Script]:
-        '''
-        Returns all scripts whose full names start with `directory_name`.
-        :directory_name: The directory name, ending in "/", to select from.
-        '''
-        return {script_name: script for script_name, script in self.scripts.items() if script_name.startswith(directory_name)}
+        self.scripts:dict[tuple[str,str],Script] = {}
+        for relative_name, module in modules.items():
+            item_names:list[str]
+            if hasattr(module, "__all__"):
+                self.all_type_verifier.base_verify(module.__all__, [relative_name])
+                item_names = module.__all__
+            else:
+                item_names = dir(module)
+            for item_name in item_names:
+                self.scripts[relative_name, item_name] = Script(relative_name, item_name, getattr(module, item_name), domain)
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.scripts}>"
+        return f"<{self.__class__.__name__} of {self.domain.name} {self.scripts}>"
 
 def main(domain:"Domain.Domain") -> None:
     user_script:Script|None = None
-    print(domain.scripts)
-    user_script = UserInput.input_single(domain.scripts.scripts, "script from the scripts directory", show_options_first_time=True, close_enough=True)
+    script_files = {item: item for item in sorted(set(file_name for file_name, object_name in domain.scripts.scripts))}
+    user_file = UserInput.input_single(script_files, "file from the scripts directory", show_options_first_time=True, close_enough=True)
+    file_objects = {object_name: script for (file_name, object_name), script in domain.scripts.scripts.items() if file_name == user_file}
+    user_script = UserInput.input_single(file_objects, f"object from \"{user_file}\"", show_options_first_time=True, close_enough=True)
     output = user_script()
     print(output)
-
-class ScriptedObject():
-    '''
-    Subclasses of ScriptedObject will have all unbound functions be bound to them.
-    '''
-
-    def __new__(cls, *args, **kwargs) -> Self:
-        def make_the_function(self: Self, func:Callable) -> Callable:
-            return lambda *function_arguments, **function_keyword_arguments: func(self, *function_arguments, **function_keyword_arguments)
-        output = super().__new__(cls)
-        for attribute in cls.__dict__:
-            attr = getattr(output, attribute)
-            if not attribute.startswith("__") and callable(attr) and not isinstance(attr, type):
-                setattr(output, attribute, make_the_function(output, attr))
-        return output

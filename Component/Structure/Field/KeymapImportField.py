@@ -1,11 +1,10 @@
-from typing import Callable
-
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
+import Component.ScriptImporter as ScriptImporter
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
 import Component.Structure.KeymapComponent as KeymapComponent
 
@@ -29,11 +28,11 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["KeymapComponent.KeymapComponent"],list["KeymapComponent.KeymapComponent"]]:
-        subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
+        subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function)
         self.import_into_keys.extend(
             key
             for component in subcomponents

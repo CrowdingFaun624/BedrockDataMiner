@@ -54,6 +54,65 @@ def message_bool(display_switch:bool, false_message:str|Callable[[],str]="", tru
     else:
         return true_message() if callable(true_message) else true_message
 
+def get_nearest(_str:str, options:list[str]) -> str|None:
+    min_option:str|None = None
+    min_distance:float|None = None
+    second_min_distance:float|None = None
+    for option in options:
+        distances:list[list[int]] = [[0] * (len(_str) + 1) for y in range(len(option) + 1)]
+        path:list[list[int]] = [[0] * (len(_str) + 1) for y in range(len(option) + 1)]
+        for x in range(1, len(_str) + 1):
+            distances[0][x] = x
+        for y in range(1, len(option) + 1):
+            path[y][0] = 1
+            distances[y][0] = y
+        for y in range(len(option)):
+            for x in range(len(_str)):
+                addition_cost = distances[y+1][x] + 1
+                removal_cost = distances[y][x+1] + 1
+                substitution_cost = distances[y][x] + int(inequality := (_str[x] != option[y]))
+                if addition_cost < removal_cost and addition_cost < substitution_cost:
+                    path[y + 1][x + 1] = 0
+                    distances[y + 1][x + 1] = addition_cost
+                elif removal_cost < substitution_cost:
+                    path[y + 1][x + 1] = 1
+                    distances[y + 1][x + 1] = removal_cost
+                else:
+                    path[y + 1][x + 1] = 3 if inequality else 2
+                    distances[y + 1][x + 1] = substitution_cost
+
+        # weirdness is a measure of how many "turns" the path hash through the
+        # Levenshtein space.
+        x, y = len(_str), len(option)
+        weirdness = 0
+        previous = -1
+        while x > 0 or y > 0:
+            match (item := path[y][x]):
+                case 0:
+                    x -= 1
+                case 1:
+                    y -= 1
+                case 2 | 3:
+                    x -= 1; y -= 1
+            if item != previous:
+                previous = item
+                weirdness += 1
+
+        distance = distances[len(option)][len(_str)] * 0.2 + weirdness * 1
+        if min_distance is None or distance < min_distance:
+            second_min_distance = min_distance
+            min_option = option
+            min_distance = distance
+    if min_distance is not None and min_distance < 10 and (second_min_distance is None or second_min_distance - min_distance > 0.5):
+        return min_option
+
+def nearest_message(value:str, options:list[str]) -> str:
+    nearest = get_nearest(value, options)
+    if nearest is None:
+        return ""
+    else:
+        return f" Did you mean {nearest}?"
+
 # Within this file, an "Exception" is an abstract type and
 # an "Error" is a concrete type.
 # one-off exceptions related to the domain don't need a custom error type
@@ -135,45 +194,6 @@ class InvalidStateError(Exception):
 
     def __str__(self) -> str:
         return f"Invalid state{message(self.args, yes_message=": %s!")}"
-
-class AccessorException(Exception):
-    "Abstract Exception class for errors relating to Accessors."
-
-class UnrecognizedAccessorClassError(AccessorException):
-    "An AccessorType is not recognized."
-
-    def __init__(self, accessor_class_str:str, source:Optional[object]=None, source_str:Optional[str]=None, message:Optional[str]=None) -> None:
-        '''
-        :accessor_class_str: The name of the unrecognized Accessor class.
-        :source: The object that attempts to reference the unrecognized AccessorType; may be empty.
-        :source_str: A string describing the object that attempts to reference the unrecognized AccessorType; may be empty.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(accessor_class_str, source, source_str, message)
-        self.accessor_class_str = accessor_class_str
-        self.source = source
-        self.source_str = source_str
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Accessor class \"{self.accessor_class_str}\"{f", as referenced by {self.source if self.source_str is None else self.source_str}," if not (self.source is None and self.source_str is None) else ""} does not exist{message(self.message)}"
-
-class UnrecognizedAccessorError(AccessorException):
-    "The Accessor string is not recognized."
-
-    def __init__(self, accessor_str:str, source:Optional[object]=None, message:Optional[str]=None) -> None:
-        '''
-        :accessor_str: The Accessor string that does not correspond to any Accessor.
-        :source: The object attempting to reference this Accessor.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(accessor_str, source, message)
-        self.source = source
-        self.accessor_str = accessor_str
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Accessor \"{self.accessor_str}\"{message(self.source, "", ", as referenced by %s,")} does note exist{message(self.message)}"
 
 class CacheException(Exception):
     "Abstract Exception class for errors relating to Caches."
@@ -259,82 +279,6 @@ class ComponentDuplicateTypeError(ComponentException):
 
     def __str__(self) -> str:
         return f"Type \"{self.type_str}\", as referenced by {self.source}, is duplicate{message(self.message)}"
-
-class ComponentFunctionException(ComponentException):
-    "Abstract class for exceptions relating to Functions of Components"
-
-class ComponentFunctionMissingArgumentError(ComponentFunctionException):
-    "A required argument is missing."
-
-    def __init__(self, source:object, parameter:str, message:Optional[str]=None) -> None:
-        '''
-        :source: The object that has a missing argument.
-        :parameter: The parameter corresponding to the missing argument.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(source, parameter, message)
-        self.source = source
-        self.parameter = parameter
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Required parameter \"{self.parameter}\" is missing from {self.source}{message(self.message)}"
-
-class ComponentFunctionArgumentTypeError(ComponentException):
-    "An argument has the wrong type."
-
-    def __init__(self, source:object, parameter:str, argument:Any, argument_type:type, allowed_types:tuple[Any,...], message:Optional[str]=None) -> None:
-        '''
-        :source: The object that has an argument of the wrong type.
-        :parameter: The name of the argument with the wrong type.
-        :argument: The value of the argument with the wrong type.
-        :argument_type: The type of the value of the argument with the wrong type.
-        :allowed_types: The types and type-like objects that the
-        '''
-        super().__init__(source, parameter, argument, argument_type, allowed_types, message)
-        self.source = source
-        self.parameter = parameter
-        self.argument = argument
-        self.argument_type = argument_type
-        self.allowed_types = allowed_types
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Parameter \"{self.parameter}\" with value {self.argument} of {self.source} is of type \"{self.argument_type}\" instead of types [{", ".join(f"\"{item}\"" for item in self.allowed_types)}]{message(self.message)}"
-
-class ComponentFunctionUnrecognizedArgumentError(ComponentFunctionException):
-    "An argument exists that the function does not accept."
-
-    def __init__(self, source:object, parameter:str, argument:Any, message:Optional[str]=None) -> None:
-        '''
-        :source: The object that has an additional argument.
-        :parameter: The name of the additional argument.
-        :argument: The value of the additional argument.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(source, parameter, argument, message)
-        self.source = source
-        self.parameter = parameter
-        self.argument = argument
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.source} has an additional parameter \"{self.parameter}\" with value {self.argument}{message(self.message)}"
-
-class ComponentImporterCircularImportError(ComponentException):
-    "Components attempt to make a circular import."
-
-    def __init__(self, structure_names:list[str], message:Optional[str]=None) -> None:
-        '''
-        :structure_names: Names of Structures involved in the import loop.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(structure_names, message)
-        self.structure_names = structure_names
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Circular import: {self.structure_names}{message(self.message)}"
 
 class ComponentInvalidNameError(ComponentException):
     "A Component's name is invalid."
@@ -437,17 +381,19 @@ class ComponentMismatchedTypesError(ComponentException):
 class ComponentParseError(ComponentException):
     "Multiple Components failed to parse."
 
-    def __init__(self, failed_component_groups:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, failed_component_groups:list[str], exception_count:int, message:Optional[str]=None) -> None:
         '''
         :failed_component_groups: The Component groups that failed to parse.
+        :exception_count: The number of total Exceptions.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(failed_component_groups, message)
+        super().__init__(failed_component_groups, exception_count, message)
         self.failed_component_groups = failed_component_groups
+        self.exception_count = exception_count
         self.message = message
 
     def __str__(self) -> str:
-        return f"Failed to parse Component group(s) [{", ".join(self.failed_component_groups)}]{message(self.message)}"
+        return f"{self.exception_count} exceptions in {len(self.failed_component_groups)} Component groups: [{", ".join(self.failed_component_groups)}]{message(self.message)}"
 
 class ComponentTypeContainmentError(ComponentException):
     "A Component has a type that cannot be contained by its current container type."
@@ -644,23 +590,27 @@ class InlineComponentError(ComponentException):
 class InvalidComponentError(ComponentException):
     "The referenced Component has the wrong properties."
 
-    def __init__(self, component:"Component.Component", source:object|str, required_properties:"Pattern.Pattern", actual_capabilities:"Capabilities.Capabilities", message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component.Component", key:str|None, source:str, required_properties:"Pattern.Pattern", actual_capabilities:"Capabilities.Capabilities", options:list[str]|None, message:Optional[str]=None) -> None:
         '''
         :component: The Component that is being referenced.
+        :key: The key used to reference the Component.
         :source: The object or a string representing the object that is referencing the Component.
         :required_properties: The Pattern that the Component is expected to have.
         :actual_capabilities: The Capabilities that the Component actually has.
+        :Options: Values the Component reference could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component, source, required_properties, actual_capabilities, message)
+        super().__init__(component, key, source, required_properties, actual_capabilities, options, message)
         self.component = component
+        self.key = key
         self.source = source
         self.required_properties = required_properties
         self.actual_capabilities = actual_capabilities
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component}, as referenced by {self.source}, is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}"
+        return f"{self.component}, as referenced by {self.source}{f" using \"{self.key}\"" if self.key is not None else ""}, is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}{nearest_message(self.key, self.options) if self.key is not None and self.options is not None else None}"
 
 class LinkedComponentExtraError(ComponentException):
     "An extra linked Component is present."
@@ -721,20 +671,24 @@ class LinkedComponentTypeError(ComponentException):
     def __str__(self) -> str:
         return f"{self.component}'s linked object \"{self.key}\": {self.observed_object} should be type \"{self.required_type.__name__}\"{message(self.message)}"
 
-class NoComponentMatchError(ComponentException):
-    "No Components match the Pattern."
+class MalformedComponentReferenceError(ComponentException):
+    "A reference Component is invalid."
 
-    def __init__(self, pattern:"Pattern.Pattern", message:Optional[str]=None) -> None:
+    def __init__(self, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
         '''
-        :pattern: The Pattern that does not exist in the Components.
+        :key: The key used to reference the Component
+        :source: The object that refers to this reference.
+        :options: Values that `key` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(pattern, message)
-        self.pattern = pattern
+        super().__init__(key, source, options, message)
+        self.key = key
+        self.source = source
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Cannot find Components with {self.pattern}{message(self.message)}"
+        return f"Component reference \"{self.key}\", as referenced by {self.source}, is malformed{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class ReferenceComponentError(ComponentException):
     "A reference Component exists where it is not allowed."
@@ -773,36 +727,65 @@ class UnrecognizedCapabilityError(ComponentException):
 class UnrecognizedComponentError(ComponentException):
     "A Component is unrecognized."
 
-    def __init__(self, component_str:str, source_str:str, message:Optional[str]=None) -> None:
+    def __init__(self, component_str:str, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :component_str: The name of the unrecognized Component.
-        :source_str: The object that refers to this Component.
+        :key: The key used to reference the Component.
+        :source: The object that refers to this Component.
+        :options: Values the Component key could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component_str, message)
-        self.component_type_str = component_str
-        self.source_str = source_str
+        super().__init__(component_str, key, source, options, message)
+        self.component_str = component_str
+        self.key = key
+        self.source = source
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component at \"{self.component_type_str}\", as referenced by {self.source_str}, is unrecognized{message(self.message)}"
+        return f"Component \"{self.component_str}\", as referenced by {self.source}{f"using \"{self.key}\"" if self.key != self.component_str else ""}, is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+
+class UnrecognizedComponentDomainError(ComponentException):
+    "A Domain referenced by a Component is unrecognized."
+
+    def __init__(self, domain:str, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :domain: The name of the unrecognized Domain.
+        :key: The key used to reference the Component.
+        :source: The object that refers to this Domain.
+        :options: Values that `key` could be.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(domain, key, source, options, message)
+        self.domain = domain
+        self.key = key
+        self.source = source
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Domain \"{self.domain}\", as referenced by {self.source} using \"{self.key}\", is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedComponentGroupError(ComponentException):
     "A Component group is unrecognized"
 
-    def __init__(self, component_group_str:str, source_str:str, message:Optional[str]=None) -> None:
+    def __init__(self, component_group:str, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
         '''
-        :component_group_str: The name of the unrecognized Component group.
+        :component_group: The name of the unrecognized Component group.
+        :key: The key used to reference the Component.
         :source_str: The object that refers to this Component group.
+        :options: Values that `key` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component_group_str, source_str, message)
-        self.component_group_str = component_group_str
-        self.source_str = source_str
+        super().__init__(component_group, key, source, options, message)
+        self.component_group = component_group
+        self.key = key
+        self.source = source
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component group \"{self.component_group_str}\", as referenced by {self.source_str}, is unrecognized{message(self.message)}"
+        return f"Component group \"{self.component_group}\", as referenced by {self.source} using \"{self.key}\", is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedComponentTypeError(ComponentException):
     "A Component type is unrecognized."
@@ -1453,35 +1436,156 @@ class ScriptNameCollideError(ScriptException):
     def __str__(self) -> str:
         return f"Scripts on paths \"{self.script_path1}\" and \"{self.script_path2}\" have the same stem{message(self.message)}"
 
-class UnrecognizedScriptError(ScriptException):
-    "An unrecognized Script was referenced."
+class ScriptGeneralityError(ScriptException):
+    "Cannot use a Script key because it could refer to multiple objects"
 
-    def __init__(self, script_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, script_name:str, potential_meanings:list["Scripts.Script"], source:str, options:list[str], message:Optional[str]=None) -> None:
         '''
-        :script_name: The name of the unrecognized script.
+        :script_name: The key used to access the ScriptSet.
+        :potential_meanings: The Scripts that `script_name` could refer to.
+        :source: A string representing the object referencing this Script.
+        :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(script_name, message)
+        super().__init__(script_name, potential_meanings, source, options, message)
         self.script_name = script_name
+        self.potential_meanings = potential_meanings
+        self.source = source
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Unrecognized Script \"{self.script_name}\"{message(self.message)}"
+        return f"Script name \"{self.script_name}\", as referenced by {self.source}, could be referring to {self.potential_meanings}{message(self.message)}{nearest_message(self.script_name, self.options)}"
+
+class UnrecognizedScriptDomainError(ScriptException):
+    "An unrecognized Domain is referenced by a Script."
+
+    def __init__(self, domain_name:str, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :domain_name: The name of the unrecognized Domain.
+        :key: The key used to access the Script.
+        :source: A string representing the object referencing this Script.
+        :options: Values this Script could have.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(domain_name, key, source, options, message)
+        self.domain_name = domain_name
+        self.key = key
+        self.source = source
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Domain \"{self.domain_name}\" in key \"{self.key}\", as referenced by {self.source}, is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+
+class UnrecognizedScriptError(ScriptException):
+    "An unrecognized Script was referenced."
+
+    def __init__(self, script_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :script_name: The name of the unrecognized script.
+        :source: A string representing the object referencing this Script.
+        :options: Values this Script could have.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(script_name, source, options, message)
+        self.script_name = script_name
+        self.source = source
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Unrecognized Script \"{self.script_name}\" referenced by {self.source}{message(self.message)}{nearest_message(self.script_name, self.options)}"
+
+class UnrecognizedScriptFileNameError(ScriptException):
+    "A Script references a file that does not exist."
+
+    def __init__(self, key:str, file_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :key: The key used to access the Script.
+        :file_name: The unrecognized file name.
+        :source: A string representing the object referencing this Script.
+        :options: Values this Script could have.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(key, file_name, source, options, message)
+        self.key = key
+        self.file_name = file_name
+        self.source = source
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Script file name \"{self.file_name}\"{f" from key \"{self.key}\"" if self.key != self.file_name else ""}, as referenced by {self.source}, is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+
+class UnrecognizedScriptObjectNameError(ScriptException):
+    "A Script references an object that does not exist in a file that does exist."
+
+    def __init__(self, key:str, file_name:str, object_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :key: The key used to access the Script.
+        :file_name: The recognized file name.
+        :object_name: The unrecognized object name.
+        :source: A string representing the object referencing this Script.
+        :options: Values this Script could have.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(key, file_name, object_name, source, options, message)
+        self.key = key
+        self.file_name = file_name
+        self.object_name = object_name
+        self.source = source
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Scripted object \"{self.object_name}\", as referenced by {self.source}, is unrecognized in recognized file \"{self.file_name}\"{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class WrongScriptError(ScriptException):
     "Attempted to import a Script that exists, but cannot be used in this situation."
 
-    def __init__(self, script:"Scripts.Script", message:Optional[str]=None) -> None:
+    def __init__(self, key:str, script:"Scripts.Script", type_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
         '''
+        :key: The key used to access the Script.
         :script: The Script that cannot be used in this situation.
+        :type_name: A string representing the type the ScriptSet should be referencing.
+        :source: A string representing the object referencing this Script.
+        :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(script, message)
+        super().__init__(key, script, source, options, message)
+        self.key = key
         self.script = script
+        self.type_name = type_name
+        self.source = source
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Cannot load {self.script} in this situation{message(self.message)}"
+        return f"Cannot load {self.script} from \"{self.key}\", as referenced by {self.source}, in this situation; should be {self.type_name}{message(self.message)}{nearest_message(self.key, self.options)}"
+
+class WrongScriptFileError(ScriptException):
+    "Attempted to import a Script file that exists, but cannot be used in this situation."
+
+    def __init__(self, key:str, file_name:str, type_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :key: The key used to access the Script.
+        :file_name: The file name of the Script that cannot be used in this situation.
+        :type_name: A string representing the type the ScriptSet should be referencing.
+        :source: A string representing the object referencing this Script.
+        :options: Values this Script could have.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(key, file_name, source, options, message)
+        self.key = key
+        self.file_name = file_name
+        self.type_name = type_name
+        self.source = source
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Cannot load any Script in \"{self.file_name}\" from \"{self.key}\", as referenced by {self.source}, in this situation; should be {self.type_name}{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class SerializerException(Exception):
     "Abstract Exception class for errors relating to Serializers"

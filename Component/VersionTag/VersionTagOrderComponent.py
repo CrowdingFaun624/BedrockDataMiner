@@ -42,7 +42,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
 
     def initialize_fields(self, data: ComponentTyping.VersionTagOrderTypedDict) -> list[Field.Field]:
         self.order_field = FieldListField.FieldListField([
-            ComponentListField.ComponentListField(tags, VERSION_TAG_PATTERN, ["order", index], allow_inline=Field.InlinePermissions.reference)
+            ComponentListField.ComponentListField(tags, VERSION_TAG_PATTERN, ["order", index], allow_inline=Field.InlinePermissions.reference, assume_component_group="version_tags")
             for index, tags in enumerate(data["order"])
         ], ["order"])
         self.allowed_children_field = FieldListField.FieldListField([
@@ -50,8 +50,8 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
             for key, children in data["allowed_children"].items()
         ], ["allowed_children"])
         self.top_level_tag_field = OptionalVersionTagField.OptionalVersionTagField(data["top_level_tag"], ["top_level_tag"])
-        self.tags_before_top_level_tag = ComponentListField.ComponentListField(data["tags_before_top_level_tag"], VERSION_TAG_PATTERN, ["tags_before_top_level_tag"], allow_inline=Field.InlinePermissions.reference)
-        self.tags_after_top_level_tag = ComponentListField.ComponentListField(data["tags_after_top_level_tag"], VERSION_TAG_PATTERN, ["tags_after_top_level_tag"], allow_inline=Field.InlinePermissions.reference)
+        self.tags_before_top_level_tag = ComponentListField.ComponentListField(data["tags_before_top_level_tag"], VERSION_TAG_PATTERN, ["tags_before_top_level_tag"], allow_inline=Field.InlinePermissions.reference, assume_component_group="version_tags")
+        self.tags_after_top_level_tag = ComponentListField.ComponentListField(data["tags_after_top_level_tag"], VERSION_TAG_PATTERN, ["tags_after_top_level_tag"], allow_inline=Field.InlinePermissions.reference, assume_component_group="version_tags")
         return [self.order_field, self.allowed_children_field, self.top_level_tag_field, self.tags_before_top_level_tag, self.tags_after_top_level_tag]
 
     def create_final(self) -> VersionTagOrder.VersionTagOrder:

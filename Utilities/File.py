@@ -18,7 +18,7 @@ class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
 
     @classmethod
     def decode(cls, data: FileJsonTypedDict, domain:"Domain.Domain") -> "File":
-        serializer = domain.serializers.get(data["serializer"])
+        serializer = domain.all_serializers.get(data["serializer"])
         if serializer is None:
             raise Exceptions.UnrecognizedSerializerInFileError(data)
         return File(data["name"], serializer, data_hash=hash_str_to_int(data["hash"]))

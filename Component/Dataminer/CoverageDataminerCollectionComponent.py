@@ -4,7 +4,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
 import Component.Dataminer.Field.DataminerCollectionField as DataminerCollectionField
 import Component.Field.Field as Field
-import Component.Structure.Field.StructureField as StructureField
+import Component.Structure.Field.StructureBaseField as StructureBaseField
 import Dataminer.CoverageDataminer as CoverageDataminer
 import Utilities.TypeVerifier as TypeVerifier
 
@@ -48,7 +48,7 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
         self.remove_suffixes = data.get("remove_suffixes", [])
 
         self.file_list_dataminer_field = DataminerCollectionField.DataminerCollectionField(data["file_list_dataminer"], ["file_list_dataminer"])
-        self.structure_field = StructureField.StructureField(data["structure"], ["structure"])
+        self.structure_field = StructureBaseField.StructureBaseField(data["structure"], ["structure"])
         return [self.file_list_dataminer_field, self.structure_field]
 
     def create_final(self) -> CoverageDataminer.CoverageDataminer:

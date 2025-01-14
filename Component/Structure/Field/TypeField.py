@@ -1,8 +1,9 @@
-from typing import TYPE_CHECKING, Callable, cast
+from typing import TYPE_CHECKING, cast
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Component.ScriptImporter as ScriptImporter
 import Component.Structure.Field.AbstractTypeField as AbstractTypeField
 import Utilities.Exceptions as Exceptions
 
@@ -34,15 +35,15 @@ class TypeField(AbstractTypeField.AbstractTypeField):
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["TypeAliasComponent.TypeAliasComponent"],list["TypeAliasComponent.TypeAliasComponent"]]:
         if self.subcomponent_data in self.domain.type_stuff.default_types:
             self.subcomponent = self.domain.type_stuff.default_types[self.subcomponent_data]
             return [], []
         else:
-            component, is_inline = Field.choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, imported_components, self.error_path, create_component_function, None)
+            component, is_inline = Field.choose_component(self.subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, global_components, self.error_path, create_component_function, None, None)
             if is_inline:
                 raise Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.TypeAliasTypedDict, self.subcomponent_data))
             self.subcomponent = component

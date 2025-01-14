@@ -31,8 +31,8 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
     def initialize_fields(self, data: ComponentTyping.SerializerTypedDict) -> list[Field.Field]:
         self.arguments = data.get("arguments", {})
 
-        self.serializer_class_field = SerializerTypeField.SerializerTypeField(data["serializer_class"], self.domain, ["serializer_class"])
-        self.linked_serializers_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_serializers", {}), SERIALIZER_PATTERN, ["linked_serializers"])
+        self.serializer_class_field = SerializerTypeField.SerializerTypeField(data["serializer_class"], ["serializer_class"])
+        self.linked_serializers_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_serializers", {}), SERIALIZER_PATTERN, ["linked_serializers"], allow_inline=Field.InlinePermissions.reference, assume_component_group="serializers")
 
         return [self.serializer_class_field, self.linked_serializers_field]
 

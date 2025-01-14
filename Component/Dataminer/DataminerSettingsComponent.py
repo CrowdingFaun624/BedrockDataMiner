@@ -56,9 +56,9 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
 
         self.new_field = OptionalVersionField.OptionalVersionField(data["new"], ["new"])
         self.old_field = OptionalVersionField.OptionalVersionField(data["old"], ["old"])
-        self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference)
+        self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
         self.serializer_field = SerializerDictField.SerializerDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, ["serializer"])
-        self.dataminer_field = OptionalDataminerTypeField.OptionalDataminerTypeField(data["name"], self.domain, ["name"])
+        self.dataminer_field = OptionalDataminerTypeField.OptionalDataminerTypeField(data["name"], ["name"])
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dependency_name,

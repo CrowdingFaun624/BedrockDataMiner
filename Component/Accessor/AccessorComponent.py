@@ -78,7 +78,7 @@ class AccessorComponent(Component.Component[AccessorCreator]):
 
     def initialize_fields(self, data: ComponentTyping.AccessorTypedDict) -> list[Field.Field]:
         self.arguments = data["arguments"]
-        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference)
+        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
         return [self.accessor_type_field]
 
     def create_final(self) -> AccessorCreator:

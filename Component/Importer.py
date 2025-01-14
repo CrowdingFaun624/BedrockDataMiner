@@ -7,12 +7,12 @@ import pyjson5 as json
 
 import Component.Accessor.AccessorTypeImporterEnvironment as AccessorTypeImporterEnvironment
 import Component.Component as Component
-import Component.ComponentFunctions as ComponentFunctions
 import Component.ComponentTypes as ComponentTypes
 import Component.ComponentTyping as ComponentTyping
 import Component.Dataminer.DataminerImporterEnvironment as DataminerImporterEnvironment
 import Component.ImporterEnvironment as ImporterEnvironment
 import Component.Log.LogImporterEnvironment as LogImporterEnvironment
+import Component.ScriptImporter as ScriptImporter
 import Component.Serializer.SerializerImporterEnvironment as SerializerImporterEnvironment
 import Component.Structure.StructureImporterEnvironment as StructureImporterEnvironment
 import Component.Structure.StructureTagImporterEnvironment as StructureTagImporterEnvironment
@@ -85,12 +85,13 @@ def get_file(path:Path, importer_environment:ImporterEnvironment.ImporterEnviron
     else:
         raise Exceptions.ImporterEnvironmentFileNotFoundError(path, importer_environment)
 
-def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) -> None:
+def propagate_variables(all_components:dict[str,dict[str,dict[str,Component.Component]]]) -> None:
     all_components_flat:list[Component.Component] = []
     all_components_flat_memo:set[Component.Component] = set()
-    for components in all_components.values():
-        for component in components.values():
-            all_components_flat.extend(component.get_all_descendants(all_components_flat_memo))
+    for domain_components in all_components.values():
+        for components in domain_components.values():
+            for component in components.values():
+                all_components_flat.extend(component.get_all_descendants(all_components_flat_memo))
     components_queue = deque(all_components_flat) # components_queue and unvisited_components should mirror each other
     unvisited_components = all_components_flat_memo # the set of Components that need to be updated or re-updated.
     while len(components_queue) > 0:
@@ -103,92 +104,118 @@ def propagate_variables(all_components:dict[str,dict[str,Component.Component]]) 
                     unvisited_components.add(parent_component)
                     components_queue.append(parent_component)
 
-def create_all_components(domain:"Domain.Domain") -> tuple[dict[str,dict[str,Component.Component]], dict[str,ImporterEnvironment.ImporterEnvironment]]:
-    all_components:dict[str,dict[str,Component.Component]] = {}
+def create_all_components(domains:list["Domain.Domain"]) -> tuple[dict[str,dict[str,dict[str,Component.Component]]], dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]]]:
+    all_components:dict[str,dict[str,dict[str,Component.Component]]] = {}
     already_paths:dict[Path,ImporterEnvironment.ImporterEnvironment] = {}
-    importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment] = {}
-    for importer_environment_type in importer_environment_types:
-        importer_environment = importer_environment_type(domain)
-        for file_path in importer_environment.get_component_files():
-            name = importer_environment.get_component_group_name(file_path)
-            if file_path in already_paths:
-                raise Exceptions.ImporterEnvironmentPathCollisionError(file_path, importer_environment, already_paths[file_path])
-            if name in importer_environments:
-                raise Exceptions.ImporterEnvironmentNameCollisionError(name, importer_environment, importer_environments[name])
-            importer_environments[name] = importer_environment
-            already_paths[file_path] = importer_environment
-            components_data = get_file(file_path, importer_environment)
-            if importer_environment.single_component:
-                components_data = cast(ComponentTyping.ComponentGroupFileType, {"": components_data})
-            component_group_type_verifier.base_verify(components_data, [name])
-            all_components[name] = create_components(name, components_data, importer_environment, domain)
+    importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]] = {}
+    for domain in domains:
+        importer_environments[domain.name] = {}
+        all_components[domain.name] = {}
+        for importer_environment_type in importer_environment_types:
+            importer_environment = importer_environment_type(domain)
+            for file_path in importer_environment.get_component_files():
+                name = importer_environment.get_component_group_name(file_path)
+                if file_path in already_paths:
+                    raise Exceptions.ImporterEnvironmentPathCollisionError(file_path, importer_environment, already_paths[file_path])
+                if name in importer_environments:
+                    raise Exceptions.ImporterEnvironmentNameCollisionError(name, importer_environment, importer_environments[domain.name][name])
+                importer_environments[domain.name][name] = importer_environment
+                already_paths[file_path] = importer_environment
+                components_data = get_file(file_path, importer_environment)
+                if importer_environment.single_component:
+                    components_data = cast(ComponentTyping.ComponentGroupFileType, {"": components_data})
+                component_group_type_verifier.base_verify(components_data, [name])
+                all_components[domain.name][name] = create_components(name, components_data, importer_environment, domain)
     return all_components, importer_environments
 
-def get_imports(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,dict[str,dict[str,Component.Component]]]:
+def get_imports(domains:list["Domain.Domain"]) -> dict[str,list[str]]:
+    return {domain.name: domain.dependencies for domain in domains}
+
+def set_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain_imports:dict[str,list[str]], functions:dict[str,ScriptImporter.ScriptSetSetSet], domain_list:list["Domain.Domain"]) -> None:
+    domains:dict[str,Domain.Domain] = {domain.name: domain for domain in domain_list}
+    exceptions:list[Exception] = []
+    failed_component_groups:set[str] = set()
+    for domain_name, domain_components in all_components.items():
+        create_inline_component = get_inline_component_function(domains[domain_name])
+        script_set_set_set = functions[domain_name]
+        imported_set = set(domain_imports[domain_name])
+        imported_set.add(domain_name)
+        imports = {domain_name: domain_components for domain_name, domain_components in all_components.items() if domain_name in imported_set}
+        for name, components in domain_components.items():
+            for component in components.values():
+                try:
+                    component.set_component(components, imports, script_set_set_set, create_inline_component)
+                except Exception as e:
+                    failed_component_groups.add(f"{domain_name}:{name}")
+                    exceptions.append(e)
+    if len(exceptions) > 0:
+        for exception in exceptions:
+            traceback.print_exception(exception)
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups), len(exceptions))
+
+def create_finals(all_components:dict[str,dict[str,dict[str,Component.Component]]]) -> None:
+    for domain_components in all_components.values():
+        for components in domain_components.values():
+            for component in components.values():
+                component.final = component.create_final_component()
+
+def link_finals(all_components:dict[str,dict[str,dict[str,Component.Component]]]) -> None:
+    exceptions:list[Exception] = []
+    failed_component_groups:set[str] = set()
+    for domain_name, domain_components in all_components.items():
+        for components in domain_components.values():
+            for component in components.values():
+                if len(new_exceptions := component.link_finals()) > 0:
+                    failed_component_groups.add(f"{domain_name}:{component.component_group}")
+                    exceptions.extend(new_exceptions)
+    if len(exceptions) > 0:
+        for exception in exceptions:
+            traceback.print_exception(exception)
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups), len(exceptions))
+
+def check_components(all_components:dict[str,dict[str,dict[str,Component.Component]]]) -> None:
+    exceptions:list[Exception] = []
+    failed_component_groups:set[str] = set()
+    for domain_name, domain_components in all_components.items():
+        for components in domain_components.values():
+            for component in components.values():
+                if len(new_exceptions := component.check()) > 0:
+                    failed_component_groups.add(f"{domain_name}:{component.component_group}")
+                    exceptions.extend(new_exceptions)
+    if len(exceptions) > 0:
+        for exception in exceptions:
+            traceback.print_exception(exception)
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups), len(exceptions))
+
+def finalize_components(all_components:dict[str,dict[str,dict[str,Component.Component]]]) -> None:
+    exceptions:list[Exception] = []
+    failed_component_groups:set[str] = set()
+    for domain_name, domain_components in all_components.items():
+        for components in domain_components.values():
+            for component in components.values():
+                if len(new_exceptions := component.finalize()) > 0:
+                    failed_component_groups.add(f"{domain_name}:{component.component_group}")
+                    exceptions.extend(new_exceptions)
+    if len(exceptions) > 0:
+        for exception in exceptions:
+            traceback.print_exception(exception)
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups), len(exceptions))
+
+def get_outputs(all_components:dict[str,dict[str,dict[str,Component.Component]]], importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]]) -> dict[str,dict[str,Any]]:
     return {
-        name: importer_environments[name].get_imports(components, all_components, name)
-        for name, components in all_components.items()
+        domain_name: {
+            name: importer_environments[domain_name][name].get_output(components, name)
+            for name, components in domain_components.items()
+        }
+        for domain_name, domain_components in all_components.items()
     }
 
-def set_components(all_components:dict[str,dict[str,Component.Component]], component_imports:dict[str,dict[str,dict[str,Component.Component]]], functions:dict[str,Callable], domain:"Domain.Domain") -> None:
-    create_inline_component = get_inline_component_function(domain)
-    for name, components in all_components.items():
-        for component in components.values():
-            component.set_component(components, component_imports[name], functions, create_inline_component)
-
-def create_finals(all_components:dict[str,dict[str,Component.Component]]) -> None:
-    for components in all_components.values():
-        for component in components.values():
-            component.final = component.create_final_component()
-
-def link_finals(all_components:dict[str,dict[str,Component.Component]]) -> list[Exception]:
-    exceptions:list[Exception] = []
-    failed_component_groups:set[str] = set()
-    for components in all_components.values():
-        for component in components.values():
-            if len(new_exceptions := component.link_finals()) > 0:
-                failed_component_groups.add(component.component_group)
-                exceptions.extend(new_exceptions)
-    if len(exceptions) > 0:
-        for exception in exceptions:
-            traceback.print_exception(exception)
-        raise Exceptions.ComponentParseError(sorted(failed_component_groups))
-    return exceptions
-
-def check_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
-    exceptions:list[Exception] = []
-    failed_component_groups:set[str] = set()
-    for components in all_components.values():
-        for component in components.values():
-            if len(new_exceptions := component.check()) > 0:
-                failed_component_groups.add(component.component_group)
-                exceptions.extend(new_exceptions)
-    if len(exceptions) > 0:
-        for exception in exceptions:
-            traceback.print_exception(exception)
-        raise Exceptions.ComponentParseError(sorted(failed_component_groups))
-
-def finalize_components(all_components:dict[str,dict[str,Component.Component]]) -> None:
-    exceptions:list[Exception] = []
-    failed_component_groups:set[str] = set()
-    for components in all_components.values():
-        for component in components.values():
-            if len(new_exceptions := component.finalize()) > 0:
-                failed_component_groups.add(component.component_group)
-                exceptions.extend(new_exceptions)
-    if len(exceptions) > 0:
-        for exception in exceptions:
-            traceback.print_exception(exception)
-        raise Exceptions.ComponentParseError(sorted(failed_component_groups))
-
-def get_outputs(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> dict[str,Any]:
-    return {name: importer_environments[name].get_output(components, name) for name, components in all_components.items()}
-
-def check_for_unused_components(all_components:dict[str,dict[str,Component.Component]], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
+def check_for_unused_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]]) -> None:
     visited_nodes:set[Component.Component] = set()
     unvisited_nodes:list[Component.Component] = []
-    for name, components in all_components.items():
-        unvisited_nodes.extend(importer_environments[name].get_assumed_used_components(components, name))
+    for domain_name, domain_components in all_components.items():
+        for name, components in domain_components.items():
+            unvisited_nodes.extend(importer_environments[domain_name][name].get_assumed_used_components(components, name))
     while len(unvisited_nodes) > 0:
         unvisited_node = unvisited_nodes.pop()
         if unvisited_node in visited_nodes: continue
@@ -198,39 +225,47 @@ def check_for_unused_components(all_components:dict[str,dict[str,Component.Compo
             if neighbor not in visited_nodes
         )
         visited_nodes.add(unvisited_node)
-    unused_components:list[Component.Component] = []
-    for components in all_components.values():
-        unused_components.extend(component for component in components.values() if component not in visited_nodes)
+    unused_components:list[Component.Component] = [
+        component
+        for domain_components in all_components.values()
+        for components in domain_components.values()
+        for component in components.values()
+        if component not in visited_nodes
+    ]
     for unused_component in unused_components:
         print(f"Warning: Unused component: {unused_component}")
 
-def finalize_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
-    for name, component_group_output in output.items():
-        importer_environments[name].finalize(component_group_output, output)
+def finalize_importer_environments(output:dict[str,dict[str,Any]], importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]]) -> None:
+    for domain_name, domain_outputs in output.items():
+        for name, component_group_output in domain_outputs.items():
+            importer_environments[domain_name][name].finalize(component_group_output, output)
 
-def check_importer_environments(output:dict[str,Any], importer_environments:dict[str,ImporterEnvironment.ImporterEnvironment]) -> None:
+def check_importer_environments(output:dict[str,dict[str,Any]], importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]]) -> None:
     exceptions:list[Exception] = []
     failed_component_groups:set[str] = set()
-    for name, component_group_output in output.items():
-        if len(new_exceptions := importer_environments[name].check(component_group_output, output)) > 0:
-            failed_component_groups.add(name)
-            exceptions.extend(new_exceptions)
+    for domain_name, domain_outputs in output.items():
+        for name, component_group_output in domain_outputs.items():
+            if len(new_exceptions := importer_environments[domain_name][name].check(component_group_output, output)) > 0:
+                failed_component_groups.add(f"{domain_name}:{name}")
+                exceptions.extend(new_exceptions)
     if len(exceptions) > 0:
         for exception in exceptions:
             traceback.print_exception(exception)
-        raise Exceptions.ComponentParseError(sorted(failed_component_groups))
+        raise Exceptions.ComponentParseError(sorted(failed_component_groups), len(exceptions))
 
-def get_all_functions(domain:"Domain.Domain") -> dict[str,Callable]:
-    functions:dict[str,Callable] = {}
-    functions.update(ComponentFunctions.functions)
-    functions.update((name, script) for name, script in domain.scripts.scripts.items() if callable(script.object))
-    return functions
+def get_all_functions(domain_list:list["Domain.Domain"], domain_imports:dict[str,list[str]]) -> dict[str,ScriptImporter.ScriptSetSetSet]:
+    domains:dict[str,"Domain.Domain"] = {domain.name: domain for domain in domain_list}
+    domain_dependencies:list[tuple["Domain.Domain", list["Domain.Domain"]]] = [(domains[domain], [domains[dependency] for dependency in dependencies]) for domain, dependencies in domain_imports.items()]
+    return {domain.name: ScriptImporter.ScriptSetSetSet(domain, dependencies) for domain, dependencies in domain_dependencies}
 
-def parse_all_component_groups(domain:"Domain.Domain") -> dict[str,Any]:
-    functions = get_all_functions(domain)
-    all_components, importer_environments = create_all_components(domain)
-    component_imports = get_imports(all_components, importer_environments)
-    set_components(all_components, component_imports, functions, domain)
+def parse_all_component_groups(domains:list["Domain.Domain"]) -> dict[str,dict[str,Any]]:
+    '''
+    :domain: A Domain and its dependencies. The primary Domain goes last.
+    '''
+    all_components, importer_environments = create_all_components(domains)
+    domain_imports = get_imports(domains)
+    functions = get_all_functions(domains, domain_imports)
+    set_components(all_components, domain_imports, functions, domains)
     propagate_variables(all_components)
     create_finals(all_components)
     link_finals(all_components)

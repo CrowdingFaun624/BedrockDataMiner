@@ -21,8 +21,6 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
     )
 
     def initialize_fields(self, data: ComponentTyping.TypeAliasTypedDict) -> list[Field.Field]:
-        if self.name in self.domain.type_stuff.default_types:
-            raise Exceptions.ComponentInvalidNameError(self, list(self.domain.type_stuff.default_types.keys()))
         self.types_strs = data["types"]
         return []
 

@@ -1,10 +1,11 @@
-from typing import TYPE_CHECKING, Callable, Sequence, cast
+from typing import TYPE_CHECKING, Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Component.ScriptImporter as ScriptImporter
 import Component.Version.VersionFileComponent as VersionFileComponent
 
 if TYPE_CHECKING:
@@ -23,12 +24,12 @@ class VersionFileListField(ComponentListField.ComponentListField[VersionFileComp
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list[VersionFileComponent.VersionFileComponent],list[VersionFileComponent.VersionFileComponent]]:
         # adding the auto-assigning VersionFileTypes.
-        version_file_type_components = cast(dict[str,"VersionFileTypeComponent.VersionFileTypeComponent"], imported_components["version_file_types"])
+        version_file_type_components = cast(dict[str,"VersionFileTypeComponent.VersionFileTypeComponent"], global_components[self.domain.name]["version_file_types"])
         subcomponents_data = cast(list[ComponentTyping.VersionFileTypedDict], self.subcomponents_data)
         already_version_file_types = {version_file["version_file_type"] for version_file in subcomponents_data}
         subcomponents_data.extend(
@@ -36,4 +37,4 @@ class VersionFileListField(ComponentListField.ComponentListField[VersionFileComp
             for version_file_type_component in version_file_type_components.values()
             if version_file_type_component.auto_assign_dict is not None and version_file_type_component.name not in already_version_file_types
         )
-        return super().set_field(source_component, components, imported_components, functions, create_component_function)
+        return super().set_field(source_component, components, global_components, functions, create_component_function)

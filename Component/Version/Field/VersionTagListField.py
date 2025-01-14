@@ -1,10 +1,11 @@
-from typing import TYPE_CHECKING, Callable, Iterable, Optional, cast
+from typing import TYPE_CHECKING, Iterable, Optional, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Component.ScriptImporter as ScriptImporter
 
 if TYPE_CHECKING:
     import Component.Version.VersionComponent as VersionComponent
@@ -25,7 +26,7 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :version_component: The parent VersionComponent of this Field. If not given, will not auto-assign VersionTags to this Field.
         '''
-        super().__init__(subcomponents_data, VERSION_TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
+        super().__init__(subcomponents_data, VERSION_TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_component_group="version_tags")
         self.version_component = version_component
         self.version_tag_components:Iterable["VersionTagComponent.VersionTagComponent"]
 
@@ -54,10 +55,10 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["VersionTagComponent.VersionTagComponent"],list["VersionTagComponent.VersionTagComponent"]]:
-        linked_components, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
-        self.version_tag_components = cast(dict[str,"VersionTagComponent.VersionTagComponent"], imported_components["version_tags"]).values()
+        linked_components, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function)
+        self.version_tag_components = cast(dict[str,"VersionTagComponent.VersionTagComponent"], global_components[self.domain.name]["version_tags"]).values()
         return linked_components, inline_components

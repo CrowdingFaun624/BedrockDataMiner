@@ -20,13 +20,6 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
         TypeVerifier.TypedDictKeyTypeVerifier("default_delegate_arguments", "a dict", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", "a str or null", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", "a dict", False, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("imports", "a list", False, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("components", "a list", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-                TypeVerifier.TypedDictKeyTypeVerifier("as", "a str", False, str),
-                TypeVerifier.TypedDictKeyTypeVerifier("component", "a str", True, str),
-            ), list, "a dict", "a list")),
-            TypeVerifier.TypedDictKeyTypeVerifier("from", "a str", True, str),
-        ), list, "a dict", "a list")),
         TypeVerifier.TypedDictKeyTypeVerifier("normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("post_normalizer", "a str, NormalizerComponent, or list", False, TypeVerifier.UnionTypeVerifier("a str, NormalizerComponent, or list", str, dict, TypeVerifier.ListTypeVerifier((str, dict), list, "a str or NormalizerComponent", "a list"))),
         TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", "a str or list", False, TypeVerifier.UnionTypeVerifier("a str or list", str, TypeVerifier.ListTypeVerifier(str, list, "a str", "a list"))),
@@ -38,7 +31,6 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
     __slots__ = (
         "default_delegate_field",
         "delegate_field",
-        "imports",
         "normalizer_field",
         "post_normalizer_field",
         "pre_normalized_types_field",
@@ -47,8 +39,6 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
     )
 
     def initialize_fields(self, data: ComponentTyping.BaseTypedDict) -> list[Field.Field]:
-        self.imports = data.get("imports", None)
-
         self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultBaseDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
         self.default_delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("default_delegate", "DefaultDelegate"), data.get("default_delegate_arguments", {}), self.domain, ["default_delegate"])

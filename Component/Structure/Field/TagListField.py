@@ -1,10 +1,11 @@
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Component.ScriptImporter as ScriptImporter
 import Structure.StructureTag as StructureTag
 
 if TYPE_CHECKING:
@@ -25,7 +26,7 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         :subcomponents_strs: The names of the TagComponents this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
+        super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_component_group="structure_tags")
         self.tag_sets:list[set["StructureTagComponent.StructureTagComponent"]] = []
         self.import_from_field:TagListField|None = None
         self._finals:set[StructureTag.StructureTag]|None = None
@@ -34,13 +35,13 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["StructureTagComponent.StructureTagComponent"],list["StructureTagComponent.StructureTagComponent"]]:
-        subcomponents, inline_components = super().set_field(source_component, components, imported_components, functions, create_component_function)
+        subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function)
         if self.import_from_field is not None:
-            self.import_from_field.set_field(source_component, components, imported_components, functions, create_component_function)
+            self.import_from_field.set_field(source_component, components, global_components, functions, create_component_function)
             self.extend(self.import_from_field.subcomponents)
         for tag_set in self.tag_sets:
             tag_set.update(self.subcomponents)

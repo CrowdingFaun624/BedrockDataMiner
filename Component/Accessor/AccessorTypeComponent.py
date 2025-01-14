@@ -33,8 +33,8 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
         self.class_arguments = data.get("class_arguments", {})
         self.propagated_arguments = data.get("propagated_arguments", {})
 
-        self.accessor_class_field = AccessorClassField.AccessorClassField(data["accessor_class"], self.domain, ["accessor_class"])
-        self.linked_accessor_types_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ["linked_accessors"], allow_inline=Field.InlinePermissions.mixed, assume_type=self.class_name)
+        self.accessor_class_field = AccessorClassField.AccessorClassField(data["accessor_class"], ["accessor_class"])
+        self.linked_accessor_types_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ["linked_accessors"], assume_type=self.class_name, assume_component_group="accessor_types")
 
         return [self.accessor_class_field, self.linked_accessor_types_field]
 

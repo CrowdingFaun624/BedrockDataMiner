@@ -1,8 +1,10 @@
+import re
 from itertools import chain
-from typing import TYPE_CHECKING, Any, Callable, Mapping, Sequence
+from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
@@ -10,6 +12,8 @@ import Utilities.TypeVerifier as TypeVerifier
 if TYPE_CHECKING:
     import Component.Field.Field as Field
     import Component.Structure.StructureTagComponent as StructureTagComponent
+
+INVALID_NAME_REGEXP = re.compile(r"[\@\\\/\s\{\}\[\]\(\)\"\!]")
 
 class Component[a]():
 
@@ -41,6 +45,8 @@ class Component[a]():
         self.domain = domain
         self.component_group = component_group
         self.index = index
+        if INVALID_NAME_REGEXP.match(name):
+            raise Exceptions.ComponentInvalidNameError(self)
 
         self.verify_arguments(data)
 
@@ -100,15 +106,15 @@ class Component[a]():
     def verify_arguments(self, data:Mapping[str,Any]) -> None:
         self.type_verifier.base_verify(data, [repr(self)])
 
-    def set_component(self, components:dict[str,"Component"], imported_components:dict[str,dict[str,"Component"]], functions:dict[str,Callable], create_component_function:ComponentTyping.CreateComponentFunction) -> None:
+    def set_component(self, components:dict[str,"Component"], global_components:dict[str,dict[str,dict[str,"Component"]]], functions:ScriptImporter.ScriptSetSetSet, create_component_function:ComponentTyping.CreateComponentFunction) -> None:
         '''Links this Component to other Components'''
         self.inline_components = []
         for field in self.fields:
-            linked_components, new_inline_components = field.set_field(self, components, imported_components, functions, create_component_function)
+            linked_components, new_inline_components = field.set_field(self, components, global_components, functions, create_component_function)
             self.link_components(linked_components)
             self.inline_components.extend(new_inline_components)
         for inline_component in self.inline_components:
-            inline_component.set_component(components, imported_components, functions, create_component_function)
+            inline_component.set_component(components, global_components, functions, create_component_function)
 
     def create_final_component(self) -> a:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''

@@ -1,7 +1,8 @@
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
+import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
 import Structure.Delegate.Delegate as Delegate
 import Utilities.Exceptions as Exceptions
@@ -67,13 +68,13 @@ class OptionalDelegateField(Field.Field):
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["Component.Component"],list["Component.Component"]]:
         if self.delegate_name is None:
             self.delegate_type = None
         else:
-            delegate_type = self.domain.delegate_classes.get(self.delegate_name, message=f"(referenced by {source_component})")
+            delegate_type = functions.delegate_classes.get(self.delegate_name, source_component, self.error_path)
             self.delegate_type = delegate_type
         return [], []

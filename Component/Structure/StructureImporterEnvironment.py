@@ -13,27 +13,6 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
 
     __slots__ = ()
 
-    def get_imports(self, components:dict[str,Component.Component], all_components:dict[str,dict[str,Component.Component]], name:str) -> dict[str,dict[str, Component.Component]]:
-        output:dict[str,dict[str,Component.Component]] = {}
-        output["versions"] = all_components["versions"]
-        output["structure_tags"] = all_components["structure_tags"]
-        imports:list[ComponentTyping.ImportTypedDict]|None = None
-        for component in components.values():
-            if isinstance(component, BaseComponent.BaseComponent):
-                imports = component.imports
-                break
-        if imports is None: return output
-        for import_data in imports:
-            import_from = import_data["from"]
-            if import_from == name:
-                raise Exceptions.ComponentImporterCircularImportError([name], "(attempted to self-import)")
-            output[import_from] = {}
-            for import_component_data in import_data["components"]:
-                import_component_name = import_component_data["component"]
-                import_component_as = import_component_data.get("as", import_component_name)
-                output[import_from][import_component_as] = all_components[import_from][import_component_name]
-        return output
-
     def get_base_component(self, components:dict[str,Component.Component], name:str) -> BaseComponent.BaseComponent:
         base_components:dict[str,BaseComponent.BaseComponent] = {
             component_name: component

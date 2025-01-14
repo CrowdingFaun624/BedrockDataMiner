@@ -1,11 +1,11 @@
-from typing import TYPE_CHECKING, Callable, cast
+from typing import TYPE_CHECKING, cast
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
+import Component.ScriptImporter as ScriptImporter
 import Component.Structure.Field.AbstractTypeField as AbstractTypeField
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
-import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
@@ -37,8 +37,8 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         self,
         source_component:"Component.Component",
         components:dict[str,"Component.Component"],
-        imported_components:dict[str,dict[str,"Component.Component"]],
-        functions:dict[str,Callable],
+        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
+        functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
     ) -> tuple[list["TypeAliasComponent.TypeAliasComponent"],list["TypeAliasComponent.TypeAliasComponent"]]:
         components_used:list["TypeAliasComponent.TypeAliasComponent"] = []
@@ -53,7 +53,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
                 subcomponent_type = self.domain.type_stuff.default_types[subcomponent_data]
                 self.primitive_types.append(subcomponent_type)
             else:
-                subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, imported_components, self.error_path, create_component_function, None)
+                subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, global_components, self.error_path, create_component_function, None, None)
                 if is_inline:
                     raise Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.TypeAliasTypedDict, subcomponent_data))
                 components_used.append(subcomponent)

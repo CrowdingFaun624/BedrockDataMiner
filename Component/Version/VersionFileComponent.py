@@ -36,7 +36,7 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
     )
 
     def initialize_fields(self, data: ComponentTyping.VersionFileTypedDict) -> list[Field.Field]:
-        self.version_file_type_field = ComponentField.ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ["version_file_type"], allow_inline=Field.InlinePermissions.reference)
+        self.version_file_type_field = ComponentField.ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ["version_file_type"], allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
         self.accessors_field = ComponentListField.ComponentListField(data["accessors"], ACCESSOR_PATTERN, ["accessors"], allow_inline=Field.InlinePermissions.inline, assume_type=AccessorComponent.AccessorComponent.class_name)
         return [self.version_file_type_field, self.accessors_field]
 
