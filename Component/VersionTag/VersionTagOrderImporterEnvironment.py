@@ -29,7 +29,7 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
         }
 
     def get_component_files(self) -> Iterable[Path]:
-        return [self.domain.version_tags_order_file]
+        return (self.domain.version_tags_order_file,)
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "version_tags_order"

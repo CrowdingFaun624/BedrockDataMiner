@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Callable, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -75,3 +75,10 @@ class OptionalComponentField[a: Component.Component](Field.Field):
         if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
             exceptions.append(Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.ComponentTypedDicts, self.subcomponent_data)))
         return exceptions
+
+    def get_final[b](self, function:Callable[[a],b]=lambda component: component.final) -> b|None:
+        return None if self.subcomponent is None else function(self.subcomponent)
+
+    @property
+    def exists(self) -> bool:
+        return self.subcomponent_data is not None

@@ -14,7 +14,6 @@ INVALID_NAME_REGEXP = re.compile(r"[\@\\\/\s\{\}\[\]\(\)\"\!]")
 
 class Component[a]():
 
-    class_name_article = "a Component"
     class_name = "Component"
     my_capabilities:Capabilities.Capabilities
     type_verifier:TypeVerifier.TypeVerifier

@@ -16,11 +16,11 @@ import Version.VersionFile as VersionFile
 
 ACCESSOR_PATTERN:Pattern.Pattern["AccessorComponent.AccessorComponent"] = Pattern.Pattern("is_accessor")
 VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern("is_version_file_type")
+VERSION_FILE_PATTERN:Pattern.Pattern["VersionFileComponent"] = Pattern.Pattern("is_version_file")
 
 class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
 
     class_name = "VersionFile"
-    class_name_article = "a VersionFile"
     my_capabilities = Capabilities.Capabilities(is_version_file=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("accessors", "a list", True, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),

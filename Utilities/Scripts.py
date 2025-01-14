@@ -57,7 +57,7 @@ class Script[a]():
         return self.object(*args, **kwargs)
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.file_name} {self.object_name}>"
+        return f"<{self.__class__.__name__} {self.domain.name}!{self.file_name} {self.object_name}>"
 
 class Scripts():
     '''Collection of scripts.'''

@@ -9,7 +9,6 @@ import Utilities.TypeVerifier as TypeVerifier
 class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
 
     class_name = "StructureTag"
-    class_name_article = "a StructureTag"
     my_capabilities = Capabilities.Capabilities(is_structure_tag=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("is_file", "a bool", False, bool),

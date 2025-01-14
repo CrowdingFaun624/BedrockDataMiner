@@ -9,7 +9,6 @@ import Utilities.TypeVerifier as TypeVerifier
 class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.VersionTagAutoAssignerComponent):
 
     class_name = "RangeVersionTagAutoAssigner"
-    class_name_article = "a RangeVersionTagAutoAssigner"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("newest", "a str or None", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("oldest", "a str or None", True, (str, type(None))),

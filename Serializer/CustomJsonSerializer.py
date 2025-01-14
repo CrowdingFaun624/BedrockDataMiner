@@ -12,15 +12,6 @@ class CustomJsonSerializer(JsonSerializer.JsonSerializer):
 
     can_contain_subfiles = True
 
-    def serialize_json(self, data: Any) -> Any:
-        return data
-
-    def serialize(self, data: Any) -> bytes:
-        return json.dumps(data, cls=self.domain.json_encoder).encode()
-
-    def deserialize_json(self, data: Any) -> Any:
-        return data
-
     def deserialize(self, data: bytes) -> Any:
         return json.loads(data.decode(), cls=self.domain.json_decoder)
 

@@ -7,7 +7,7 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Pattern as Pattern
-import Component.Structure.Field.StructureBaseField as StructureBaseField
+import Component.Structure.BaseComponent as BaseComponent
 import Dataminer.DataminerCollection as DataminerCollection
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
@@ -25,7 +25,6 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
         "structure_field",
     )
 
-    class_name_article = "a DataminerCollection"
     class_name = "DataminerCollection"
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", "a bool", False, bool),
@@ -41,7 +40,7 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
 
-        self.structure_field = StructureBaseField.StructureBaseField(data["structure"], ["structure"])
+        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ["structure"], allow_inline=Field.InlinePermissions.reference)
         self.dataminer_settings_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dataminer_settings_data,
@@ -76,8 +75,8 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
         # ending DataminerSettings must have null versions on corresponding versions; middle ones cannot be null.
         used_versions:list[Version.Version] = []
         for index, dataminer_settings_component in enumerate(dataminer_settings_components):
-            new_version = dataminer_settings_component.new_field.final
-            old_version = dataminer_settings_component.old_field.final
+            new_version = dataminer_settings_component.new_field.get_final(lambda subcomponent: subcomponent.final)
+            old_version = dataminer_settings_component.old_field.get_final(lambda subcomponent: subcomponent.final)
             if index == 0:
                 if new_version is not None:
                     exceptions.append(Exceptions.ComponentVersionRangeExists(self, new_version, True))

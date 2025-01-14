@@ -1,8 +1,8 @@
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
-import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.CacheStructure as CacheStructure
@@ -11,7 +11,6 @@ import Utilities.TypeVerifier as TypeVerifier
 
 class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheStructure]):
 
-    class_name_article = "a Cache"
     class_name = "Cache"
     my_capabilities = Capabilities.Capabilities(is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -57,10 +56,9 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.cache_get_similarity = data.get("cache_get_similarity", True)
         self.cache_compare = data.get("cache_compare", True)
 
-        self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
+        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
-        self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.types_field.verify_with(self.subcomponent_field)
+        self.types_field = TypeListField.TypeListField(data["types"], ["types"]).verify_with(self.subcomponent_field)
         return [self.subcomponent_field, self.delegate_field, self.types_field]
 
     def create_final(self) -> CacheStructure.CacheStructure:

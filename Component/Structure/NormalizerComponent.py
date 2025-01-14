@@ -3,14 +3,15 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.FunctionField as FunctionField
+import Component.Pattern as Pattern
 import Component.Version.Field.VersionRangeField as VersionRangeField
 import Structure.Normalizer as Normalizer
 import Utilities.TypeVerifier as TypeVerifier
 
+NORMALIZER_PATTERN:Pattern.Pattern["NormalizerComponent"] = Pattern.Pattern("is_normalizer")
 
 class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
 
-    class_name_article = "a Normalizer"
     class_name = "Normalizer"
     my_capabilities = Capabilities.Capabilities(is_function=True, is_normalizer=True)
 

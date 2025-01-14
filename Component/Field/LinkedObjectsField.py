@@ -94,6 +94,11 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         return zip(self.subcomponents.keys(), starmap(function, self.subcomponents.items()))
 
     def check_coverage[b](self, get_final_function:Callable[[a],b], linked_requirements:dict[str,type[b]], component:"Component.Component") -> Iterator[Exception]:
+        '''
+        :get_final_function: A function that turns the Components referenced in this Field into their finals.
+        :linked_requirements: The dictionary that verifies the validity of this Field's Components.
+        :component: The Component that owns this Field.
+        '''
         linked_objects:dict[str,b] = {key: get_final_function(linked_component) for key, linked_component in self.subcomponents.items()}
         yield from (
             Exceptions.LinkedComponentMissingError(component, key, linked_type)
@@ -112,6 +117,11 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         )
 
     def check_coverage_types[b](self, get_final_function:Callable[[a],type[b]], linked_requirements:dict[str,type[b]], component:"Component.Component") -> Iterator[Exception]:
+        '''
+        :get_final_function: A function that turns the Components referenced in this Field into their finals.
+        :linked_requirements: The dictionary that verifies the validity of this Field's Components.
+        :component: The Component that owns this Field.
+        '''
         linked_objects:dict[str,type[b]] = {key: get_final_function(linked_component) for key, linked_component in self.subcomponents.items()}
         yield from (
             Exceptions.LinkedComponentMissingError(component, key, linked_type)

@@ -20,7 +20,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
     __slots__ = ()
 
     def get_component_files(self) -> Iterable[Path]:
-        return [self.domain.versions_file]
+        return (self.domain.versions_file,)
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "versions"

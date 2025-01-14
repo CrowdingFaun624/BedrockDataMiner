@@ -11,13 +11,13 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTag.VersionTag as VersionTag
 
+VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent"] = Pattern.Pattern("is_version_tag")
 VERSION_TAG_AUTO_ASSIGNER_PATTERN:Pattern.Pattern["VersionTagAutoAssignerComponent.VersionTagAutoAssignerComponent"] = Pattern.Pattern("is_version_tag_auto_assigner")
 LATEST_SLOT_PATTERN:Pattern.Pattern["LatestSlotComponent.LatestSlotComponent"] = Pattern.Pattern("is_latest_slot")
 
 class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
 
     class_name = "VersionTag"
-    class_name_article = "a VersionTag"
     my_capabilities = Capabilities.Capabilities(is_version_tag=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("auto_assign", "a dict", False, TypeVerifier.ListTypeVerifier(dict, list, "a dict", "a list")),

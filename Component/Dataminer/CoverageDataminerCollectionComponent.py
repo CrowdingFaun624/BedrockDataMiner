@@ -1,18 +1,19 @@
 import re
 
+import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
-import Component.Dataminer.Field.DataminerCollectionField as DataminerCollectionField
+import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
-import Component.Structure.Field.StructureBaseField as StructureBaseField
+import Component.Structure.BaseComponent as BaseComponent
 import Dataminer.CoverageDataminer as CoverageDataminer
 import Utilities.TypeVerifier as TypeVerifier
 
 
 class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent[CoverageDataminer.CoverageDataminer]):
 
-    class_name_article = "a CoverageDataminerCollection"
     class_name = "CoverageDataminerCollection"
+    my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", "a bool", False, bool),
         TypeVerifier.TypedDictKeyTypeVerifier("disabled", "a bool", False, bool),
@@ -47,8 +48,8 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
         self.remove_prefixes = data.get("remove_prefixes", [])
         self.remove_suffixes = data.get("remove_suffixes", [])
 
-        self.file_list_dataminer_field = DataminerCollectionField.DataminerCollectionField(data["file_list_dataminer"], ["file_list_dataminer"])
-        self.structure_field = StructureBaseField.StructureBaseField(data["structure"], ["structure"])
+        self.file_list_dataminer_field = ComponentField.ComponentField(data["file_list_dataminer"], AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN, ["file_list_dataminer"], allow_inline=Field.InlinePermissions.reference, assume_component_group="dataminer_collections")
+        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ["structure"], allow_inline=Field.InlinePermissions.reference)
         return [self.file_list_dataminer_field, self.structure_field]
 
     def create_final(self) -> CoverageDataminer.CoverageDataminer:

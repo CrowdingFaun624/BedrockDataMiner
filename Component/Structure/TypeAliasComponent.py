@@ -8,7 +8,6 @@ import Utilities.TypeVerifier as TypeVerifier
 
 class TypeAliasComponent(Component.Component[tuple[type,...]]):
 
-    class_name_article = "a TypeAlias"
     class_name = "TypeAlias"
     my_capabilities = Capabilities.Capabilities(is_type_alias=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(

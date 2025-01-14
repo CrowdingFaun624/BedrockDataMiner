@@ -2,12 +2,13 @@ import enum
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Structure.Field.NormalizerListField as NormalizerListField
+import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
-import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
+import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.DictStructure as DictStructure
 import Utilities.Exceptions as Exceptions
@@ -21,7 +22,6 @@ class DictSorting(enum.Enum):
 
 class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStructure]):
 
-    class_name_article = "a Dict"
     class_name = "Dict"
     my_capabilities = Capabilities.Capabilities(has_keys=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -83,20 +83,15 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 6)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
-        self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data["subcomponent"], ["subcomponent"])
+        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
-        self.key_structure_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("key_component", None), ["key_component"])
-        self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
-        self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
-        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"])
-        self.types_field = TypeListField.TypeListField(data["types"], ["types"])
+        self.key_structure_field = OptionalComponentField.OptionalComponentField(data.get("key_component", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["key_component"])
+        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["post_normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"]).must_be(self.domain.type_stuff.mapping_types)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"])
-        if self.sort == DictSorting.by_value:
-            self.types_field.must_be(self.domain.type_stuff.sortable_types)
-        self.types_field.verify_with(self.subcomponent_field)
-        self.tags_field.add_to_tag_set(self.children_tags)
-        self.this_type_field.must_be(self.domain.type_stuff.mapping_types)
+        self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"]).add_to_tag_set(self.children_tags)
+        self.types_field = TypeListField.TypeListField(data["types"], ["types"]).verify_with(self.subcomponent_field).conditional_must_be(self.sort == DictSorting.by_value, self.domain.type_stuff.sortable_types)
         return [self.subcomponent_field, self.delegate_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field]
 
     def create_final(self) -> DictStructure.DictStructure:
@@ -125,12 +120,12 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         self.final.link_substructures(
-            structure=self.subcomponent_field.final,
+            structure=self.subcomponent_field.get_final(lambda subcomponent: subcomponent.final),
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
-            key_structure=self.key_structure_field.final,
+            key_structure=self.key_structure_field.get_final(lambda subcomponent: subcomponent.final),
             types=self.types_field.types,
-            normalizer=self.normalizer_field.finals,
-            post_normalizer=self.post_normalizer_field.finals,
+            normalizer=list(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            post_normalizer=list(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.this_type_field.types,
             tags=self.tags_field.finals,
             required_keys=self.required_keys,

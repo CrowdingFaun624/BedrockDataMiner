@@ -44,9 +44,6 @@ class ScriptSet[a]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} \"{self.type_name}\" of {self.domain.name}>"
 
-    def __contains__(self, key:str) -> bool:
-        return key in self.built_in_objects or key in self.scripts_by_name or key in self.scripts_by_file
-
     def get_options(self, source:"Component.Component") -> list[str]:
         options:list[str] = []
         options.extend(self.built_in_objects.keys())
@@ -78,10 +75,10 @@ class ScriptSet[a]():
             raise Exceptions.WrongScriptError(full_key, script, self.type_name, Field.get_source_str(path, source), self.get_options(source))
         elif len(split_key) == 2 and script is None and not any(file_name == split_key[0] for (file_name, object_name) in self.all_scripts):
             raise Exceptions.UnrecognizedScriptFileNameError(full_key, split_key[0], Field.get_source_str(path, source), self.get_options(source))
-        elif len(split_key) == 2 and script is None and len(file_names := [file_name for (file_name, object_name), script in self.domain_scripts.items() if file_name == split_key[0]]) > 0:
-            raise Exceptions.WrongScriptFileError(full_key, file_names[0], self.type_name, Field.get_source_str(path, source), self.get_options(source))
         elif len(split_key) == 2 and script is None:
             raise Exceptions.UnrecognizedScriptObjectNameError(full_key, split_key[0], split_key[1], Field.get_source_str(path, source), self.get_options(source))
+        elif len(split_key) == 2 and script is None and len(file_names := [file_name for (file_name, object_name), script in self.domain_scripts.items() if file_name == split_key[0]]) > 0:
+            raise Exceptions.WrongScriptFileError(full_key, file_names[0], self.type_name, Field.get_source_str(path, source), self.get_options(source))
         elif len(duplications := [script for (file_name, object_name), script in self.all_scripts.items() if file_name == key or object_name == key]) > 0:
             raise Exceptions.ScriptGeneralityError(full_key, duplications, Field.get_source_str(path, source), self.get_options(source))
         elif len(scripts := [script for (file_name, object_name), script in self.domain_scripts.items() if file_name == key or object_name == key]) > 0:

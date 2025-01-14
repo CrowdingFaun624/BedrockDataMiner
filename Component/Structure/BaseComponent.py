@@ -1,19 +1,22 @@
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentField as ComponentField
+import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Structure.Field.NormalizerListField as NormalizerListField
+import Component.Pattern as Pattern
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
-import Component.Structure.Field.StructureComponentField as StructureComponentField
 import Component.Structure.Field.TypeListField as TypeListField
+import Component.Structure.NormalizerComponent as NormalizerComponent
+import Component.Structure.StructureComponent as StructureComponent
 import Component.Structure.StructureTagComponent as StructureTagComponent
 import Structure.StructureBase as StructureBase
 import Utilities.TypeVerifier as TypeVerifier
 
+STRUCTURE_BASE_PATTERN:Pattern.Pattern["BaseComponent"] = Pattern.Pattern("is_base")
 
 class BaseComponent(Component.Component[StructureBase.StructureBase]):
 
-    class_name_article = "a Base"
     class_name = "Base"
     my_capabilities = Capabilities.Capabilities(is_base=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -41,14 +44,13 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
     )
 
     def initialize_fields(self, data: ComponentTyping.BaseTypedDict) -> list[Field.Field]:
-        self.subcomponent_field = StructureComponentField.StructureComponentField(data["subcomponent"], ["subcomponent"])
+        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["subcomponent"])
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultBaseDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
         self.default_delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("default_delegate", "DefaultDelegate"), data.get("default_delegate_arguments", {}), self.domain, ["default_delegate"])
-        self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
-        self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
+        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["post_normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.types_field.verify_with(self.subcomponent_field)
+        self.types_field = TypeListField.TypeListField(data["types"], ["types"]).verify_with(self.subcomponent_field)
         return [self.subcomponent_field, self.delegate_field, self.default_delegate_field, self.normalizer_field, self.post_normalizer_field, self.pre_normalized_types_field, self.types_field]
 
     def get_propagated_variables(self) -> tuple[dict[str, bool], dict[str, set]]:
@@ -70,8 +72,8 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.types_field.types,
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             default_delegate=self.default_delegate_field.create_delegate(None, exceptions=exceptions),
-            normalizer=self.normalizer_field.finals,
-            post_normalizer=self.post_normalizer_field.finals,
+            normalizer=list(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            post_normalizer=list(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
             children_tags={tag.final for tag in self.children_tags},
         )
         return exceptions

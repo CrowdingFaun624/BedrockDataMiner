@@ -13,7 +13,7 @@ class LatestSlotImporterEnvironment(ImporterEnvironment.ImporterEnvironment[list
     __slots__ = ()
 
     def get_component_files(self) -> Iterable[Path]:
-        return [self.domain.latest_slots_file]
+        return (self.domain.latest_slots_file,)
 
     def get_output(self, components: dict[str, Component.Component], name: str) -> list[str]:
         return [component.final for component in components.values()]

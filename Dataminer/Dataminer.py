@@ -16,8 +16,8 @@ class Dataminer():
 
     parameters:TypeVerifier.TypeVerifier|None = TypeVerifier.TypedDictTypeVerifier()
     '''TypeVerifier for verifying the json arguments of this Dataminer'''
-    serializer_names:set[str] = set()
-    '''The keys of Serializers given to this Dataminer's settings must match `serializer_names`.'''
+    serializer_types:dict[str,type[Serializer.Serializer]] = {}
+    '''The keys of Serializers given to this Dataminer's settings must match `serializer_types`.'''
 
     def __init__(self, version:Version.Version, settings:DataminerSettings.DataminerSettings) -> None:
         self.version = version
@@ -50,13 +50,6 @@ class Dataminer():
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
         raise Exceptions.DataminerLacksActivateError(self)
-
-    def get_data_file_path(self) -> Path:
-        return self.version.data_directory.joinpath(self.file_name)
-
-    def get_data_file(self) -> Any:
-        with open(self.get_data_file_path(), "rt") as f:
-            return json.load(f, cls=self.domain.json_decoder)
 
     def get_accessor[a: Accessor.Accessor](self, accessor_type:type[a]=Accessor.Accessor, file_type:str|None=None) -> a:
         if file_type is not None and file_type not in self.files_str:

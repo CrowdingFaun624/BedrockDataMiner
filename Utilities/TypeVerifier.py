@@ -1,7 +1,7 @@
 import enum
 import traceback
-from typing import (Any, Callable, Container, Hashable, Iterable, Mapping,
-                    Self, Sequence, cast)
+from typing import (Any, Callable, Container, Hashable, Mapping, Self,
+                    Sequence, cast)
 
 import Utilities.Exceptions as Exceptions
 
@@ -325,24 +325,6 @@ class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} \"{self.item_type_str}\" \"{self.data_type_str}\">"
-
-class IterableTypeVerifier[I](ListTypeVerifier):
-
-    __slots__ = ()
-
-    def __init__(
-            self,
-            item_type:type[I]|tuple[type[I],...]|TypeVerifier[I],
-            data_type:type[Iterable]|tuple[type[Iterable],...],
-            item_type_str:str,
-            data_type_str:str,
-            item_function:Callable[[I],tuple[bool,str|None]]|None=None,
-            additional_function:Callable[[Iterable[I]],tuple[bool,str|None]]|None=None,
-        ) -> None:
-        return super().__init__(item_type, cast(type[Sequence]|tuple[type[Sequence],...], data_type), item_type_str, data_type_str, item_function, additional_function)
-
-    def verify(self, data: Iterable[I], trace:StackTrace) -> list[Exceptions.TypeVerificationTypeException]:
-        return super().verify(cast(Sequence[I], data), trace)
 
 class EnumTypeVerifier[I](TypeVerifier[I]):
 

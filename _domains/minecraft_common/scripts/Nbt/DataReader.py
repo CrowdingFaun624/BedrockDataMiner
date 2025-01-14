@@ -1,27 +1,11 @@
 import struct
-from typing import Any, BinaryIO
+from typing import Any, TYPE_CHECKING
 
-import _domains.minecraft_common.scripts.Nbt.Endianness as Endianness
+if TYPE_CHECKING:
+    import _domains.minecraft_common.scripts.Nbt.NbtTypes as NbtTypes
 
 
 class DataReader():
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}>"
-
-    def read(self, amount:int=1) -> bytes: ...
-
-    def unpack(self, format:str, amount:int, endianness:Endianness.End) -> tuple[Any,...]:
-        format = (endianness.value + format) if endianness is not None else format
-        return struct.unpack(format, self.read(amount))
-
-    def unpack_tuple(self, format:str, amount:int, endianness:Endianness.End) -> Any:
-        format = (endianness.value + format) if endianness is not None else format
-        # duplicated because this function is called a zillion times
-        # and we don't need the extra function slowing it down.
-        return struct.unpack(format, self.read(amount))[0]
-
-class DataBytesReader(DataReader):
 
     def __init__(self, data:bytes) -> None:
         self.data = data
@@ -35,20 +19,12 @@ class DataBytesReader(DataReader):
         self.position += amount
         return output
 
-class DataFileReader(DataReader):
+    def unpack(self, format:str, amount:int, endianness:"NbtTypes.End") -> tuple[Any,...]:
+        format = (endianness.value + format) if endianness is not None else format
+        return struct.unpack(format, self.read(amount))
 
-    def __init__(self, file:BinaryIO) -> None:
-        self.data = file
-
-    def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.data.name}>"
-
-    def read(self, amount:int=1) -> bytes:
-        return self.data.read(amount)
-
-    def __exit__(self, exception_type, exception_value, traceback) -> None:
-        print(exception_type, exception_value, traceback)
-        self.data.close()
-
-    def __enter__(self) -> "DataFileReader":
-        return self
+    def unpack_tuple(self, format:str, amount:int, endianness:"NbtTypes.End") -> Any:
+        format = (endianness.value + format) if endianness is not None else format
+        # duplicated because this function is called a zillion times
+        # and we don't need the extra function slowing it down.
+        return struct.unpack(format, self.read(amount))[0]

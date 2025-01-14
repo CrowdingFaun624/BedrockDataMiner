@@ -37,7 +37,7 @@ class Reader():
     def is_at_end(self) -> bool:
         return self.position == len(self.data)
 
-def parse_compound(reader:Reader) -> NbtTypes.TAG_Compound:
+def parse_compound(reader:Reader) -> "NbtTypes.TAG_Compound":
     parse_whitespace(reader)
     if reader.read() != "{":
         raise NbtExceptions.SnbtParseError("Expected \"{\"", reader)
@@ -67,7 +67,7 @@ def parse_compound(reader:Reader) -> NbtTypes.TAG_Compound:
                 raise NbtExceptions.SnbtParseError("Expected \",\" or \"}\"", reader)
     return NbtTypes.TAG_Compound(output)
 
-def parse_list(reader:Reader) -> NbtTypes.TAG_List:
+def parse_list(reader:Reader) -> "NbtTypes.TAG_List":
     parse_whitespace(reader)
     if reader.read() != "[":
         raise NbtExceptions.SnbtParseError("Expected \"[\"", reader)
@@ -100,7 +100,7 @@ def parse_list(reader:Reader) -> NbtTypes.TAG_List:
                 raise NbtExceptions.SnbtParseError("Expected \",\" or \"]\"", reader)
     return NbtTypes.TAG_List(output)
 
-def parse_byte_array(reader:Reader) -> NbtTypes.TAG_Byte_Array:
+def parse_byte_array(reader:Reader) -> "NbtTypes.TAG_Byte_Array":
     parse_whitespace(reader)
     if reader.read() != "[":
         raise NbtExceptions.SnbtParseError("Expected \"[\"", reader)
@@ -128,7 +128,7 @@ def parse_byte_array(reader:Reader) -> NbtTypes.TAG_Byte_Array:
                 raise NbtExceptions.SnbtParseError("Expected \",\" or \"]\"", reader)
     return NbtTypes.TAG_Byte_Array(output)
 
-def parse_int_array(reader:Reader) -> NbtTypes.TAG_Int_Array:
+def parse_int_array(reader:Reader) -> "NbtTypes.TAG_Int_Array":
     parse_whitespace(reader)
     if reader.read() != "[":
         raise NbtExceptions.SnbtParseError("Expected \"[\"", reader)
@@ -156,7 +156,7 @@ def parse_int_array(reader:Reader) -> NbtTypes.TAG_Int_Array:
                 raise NbtExceptions.SnbtParseError("Expected \",\" or \"]\"", reader)
     return NbtTypes.TAG_Int_Array(output)
 
-def parse_long_array(reader:Reader) -> NbtTypes.TAG_Long_Array:
+def parse_long_array(reader:Reader) -> "NbtTypes.TAG_Long_Array":
     parse_whitespace(reader)
     if reader.read() != "[":
         raise NbtExceptions.SnbtParseError("Expected \"[\"", reader)
@@ -184,7 +184,7 @@ def parse_long_array(reader:Reader) -> NbtTypes.TAG_Long_Array:
                 raise NbtExceptions.SnbtParseError("Expected \",\" or \"]\"", reader)
     return NbtTypes.TAG_Long_Array(output)
 
-def parse_byte(reader:Reader) -> NbtTypes.TAG_Byte:
+def parse_byte(reader:Reader) -> "NbtTypes.TAG_Byte":
     parse_whitespace(reader)
     if reader.read(4) == "true":
         return NbtTypes.TAG_Byte(1)
@@ -223,7 +223,7 @@ def parse_byte(reader:Reader) -> NbtTypes.TAG_Byte:
         raise NbtExceptions.SnbtParseError("Byte value is less than -128", reader)
     return NbtTypes.TAG_Byte(output)
 
-def parse_short(reader:Reader) -> NbtTypes.TAG_Short:
+def parse_short(reader:Reader) -> "NbtTypes.TAG_Short":
     parse_whitespace(reader)
     if reader.read() == "-":
         is_negative = True
@@ -254,7 +254,7 @@ def parse_short(reader:Reader) -> NbtTypes.TAG_Short:
         raise NbtExceptions.SnbtParseError("Short value is less than -32768", reader)
     return NbtTypes.TAG_Short(output)
 
-def parse_int(reader:Reader) -> NbtTypes.TAG_Int:
+def parse_int(reader:Reader) -> "NbtTypes.TAG_Int":
     parse_whitespace(reader)
     if reader.read() == "-":
         is_negative = True
@@ -281,7 +281,7 @@ def parse_int(reader:Reader) -> NbtTypes.TAG_Int:
         raise NbtExceptions.SnbtParseError("Int value is less than -2147483648", reader)
     return NbtTypes.TAG_Int(output)
 
-def parse_long(reader:Reader) -> NbtTypes.TAG_Long:
+def parse_long(reader:Reader) -> "NbtTypes.TAG_Long":
     parse_whitespace(reader)
     if reader.read() == "-":
         is_negative = True
@@ -310,7 +310,7 @@ def parse_long(reader:Reader) -> NbtTypes.TAG_Long:
         raise NbtExceptions.SnbtParseError("Long value is less than -9223372036854775808", reader)
     return NbtTypes.TAG_Long(output)
 
-def parse_float(reader:Reader) -> NbtTypes.TAG_Float:
+def parse_float(reader:Reader) -> "NbtTypes.TAG_Float":
     parse_whitespace(reader)
     if reader.read() == "-":
         is_negative = True
@@ -348,7 +348,7 @@ def parse_float(reader:Reader) -> NbtTypes.TAG_Float:
     if is_negative: output = -output
     return NbtTypes.TAG_Float(output)
 
-def parse_double(reader:Reader) -> NbtTypes.TAG_Double:
+def parse_double(reader:Reader) -> "NbtTypes.TAG_Double":
     parse_whitespace(reader)
     if reader.read() == "-":
         is_negative = True
@@ -385,7 +385,7 @@ def parse_double(reader:Reader) -> NbtTypes.TAG_Double:
     if is_negative: output = -output
     return NbtTypes.TAG_Double(output)
 
-def parse_string(reader:Reader, allow_unquoted_strings:bool=False) -> NbtTypes.TAG_String:
+def parse_string(reader:Reader, allow_unquoted_strings:bool=False) -> "NbtTypes.TAG_String":
     parse_whitespace(reader)
     character = reader.read()
     if character in "\"'":
@@ -430,7 +430,7 @@ def parse_whitespace(reader:Reader) -> None:
         pass
     reader.back() # since the last character it read is not whitespace
 
-def parse_thing(reader:Reader) -> NbtTypes.TAG:
+def parse_thing(reader:Reader) -> "NbtTypes.TAG":
     functions:list[Callable[[Reader],NbtTypes.TAG]] = [parse_compound, parse_byte_array, parse_int_array, parse_long_array, parse_list, parse_byte, parse_short, parse_long, parse_float, parse_double, parse_int, parse_string]
     exceptions:list[NbtExceptions.SnbtParseError] = []
     for function in functions:
@@ -447,7 +447,7 @@ def parse_thing(reader:Reader) -> NbtTypes.TAG:
     else:
         raise NbtExceptions.SnbtParseError("Unknown data", reader, exceptions)
 
-def parse(data:str) -> NbtTypes.TAG:
+def parse(data:str) -> "NbtTypes.TAG":
     reader = Reader(data)
     output = parse_thing(reader)
     if not reader.is_at_end():

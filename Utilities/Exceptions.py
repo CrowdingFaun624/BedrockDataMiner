@@ -172,23 +172,6 @@ class ImportOrderError(Exception):
     def __str__(self) -> str:
         return f"Module {self.module_name} was imported too early{message(self.message)}"
 
-class InvalidFileLocationError(Exception):
-    "A file is not in the correct directory."
-
-    def __init__(self, file_location:Path, required_directory:Path, message:Optional[str]=None) -> None:
-        '''
-        :file_location: The Path that is not in the correct directory.
-        :required_directory: The directory `file_location` must be a descendent of.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(file_location, required_directory, message)
-        self.file_location = file_location
-        self.required_directory = required_directory
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Path \"{self.file_location.as_posix()}\" is not in directory \"{self.required_directory}\"{message(self.message)}"
-
 class InvalidStateError(Exception):
     "The program has reached an assumedly unreachable part of the code."
 
@@ -298,7 +281,7 @@ class ComponentInvalidNameError(ComponentException):
         return f"The name of {self.component} {f"cannot be one of {self.invalid_names}" if self.invalid_names is not None else "is invalid"}{message(self.message)}"
 
 class ComponentInvalidVersionRangeException(ComponentException):
-    "Abstract exception class for errors relating to the Version ranges in a DataminerSettings being invalid."
+    "Abstract exception class for errors relating to invalid VersionRanges."
 
 class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
     "The new/old Version of the first/last sub-Component is not None."
@@ -466,23 +449,6 @@ class ComponentTypeRequiresComponentError(ComponentException):
 
     def __str__(self) -> str:
         return f"{self.component} accepts type \"{self.accepted_type.__name__}\", which requires a Component, but has no sub-Component{message(self.message)}"
-
-class ComponentUnrecognizedFunctionError(ComponentException):
-    "This Component references an unrecognized function."
-
-    def __init__(self, function_name:str, source:object|str, message:Optional[str]=None) -> None:
-        '''
-        :function_name: The name of the unrecognized function.
-        :source: The object or a string representing the object that references the function.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(function_name, source, message)
-        self.function_name = function_name
-        self.source = source
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Function \"{self.function_name}\", as referenced by {self.source}, is unrecognized{message(self.message)}"
 
 class ComponentUnrecognizedTypeError(ComponentException):
     "This Component references an unrecognized default type."
@@ -877,29 +843,6 @@ class DataminerAccessorWrongTypeError(DataminerException):
     def __str__(self) -> str:
         return f"VersionFile \"{self.file_type}\" from {self.dataminer} should have Accessor with type \"{self.accessor_type.__name__}\"{message(self.message)}"
 
-class DataminerAdditionalSerializerError(DataminerException):
-    "This Dataminer has been provided with an additional, unnecessary Serializer."
-
-    def __init__(self, dataminer_settings:"DataminerSettings.DataminerSettings", dataminer_class:type["Dataminer.Dataminer"], key:str, serializer:"Serializer.Serializer", allowed_keys:set[str], message:Optional[str]=None) -> None:
-        '''
-        :dataminer_settings: The DataminerSettings that provided the additional Serializer.
-        :dataminer_class: The class of Dataminer that the DataminerSettings has that does not support the key.
-        :key: The key of the additional Serializer.
-        :serializer: The additional Serializer.
-        :allowed_keys: The set of Serializer keys that are allowed in this Dataminer.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_settings, dataminer_class, key, serializer, allowed_keys, message)
-        self.dataminer_settings = dataminer_settings
-        self.dataminer_class = dataminer_class
-        self.key = key
-        self.serializer = serializer
-        self.allowed_keys = allowed_keys
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.dataminer_settings} provided additional Serializer key \"{self.key}\": {self.serializer} to Dataminer class \"{self.dataminer_class}\", which only supports keys [{", ".join(self.allowed_keys)}]{message(self.message)}"
-
 class DataminerCannotKnowFileTypeError(DataminerException):
     "Attempted to access a Dataminer's VersionFileTypes with no key, but there are too many VersionFileTypes."
 
@@ -1047,25 +990,6 @@ class DataminerNullReturnError(DataminerException):
     def __str__(self) -> str:
         return f"{self.dataminer} returned None upon being activated{message(self.message)}"
 
-class DataminerSerializerMissingError(DataminerException):
-    "A Dataminer class requires a Serializer and does not have one."
-
-    def __init__(self, dataminer_settings:"DataminerSettings.DataminerSettings", dataminer_type:type["Dataminer.Dataminer"], serializer_key:str, message:Optional[str]=None) -> None:
-        '''
-        :dataminer_settings: The DataminerSettings whose Dataminer type requires a Serializer.
-        :dataminer_type: The DataminerSettings' Dataminer type.
-        :serializer_key: The key of the missing Serializer.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer_settings, dataminer_type, serializer_key, message)
-        self.dataminer_settings = dataminer_settings
-        self.dataminer_type = dataminer_type
-        self.serializer_key = serializer_key
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Dataminer type \"{self.dataminer_type.__name__}\" from {self.dataminer_settings} is missing Serializer {self.serializer_key}{message(self.message)}"
-
 class DataminerSettingsImporterLoopError(DataminerException):
     "A DataminerSettings has an import loop."
 
@@ -1098,7 +1022,7 @@ class DataminersFailureError(DataminerException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Failed to datamine {self.version} on Dataminers [{", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections)}]{message(self.message)}"
+        return f"Failed to datamine {self.version} on {len(self.dataminer_collections)} Dataminers: [{", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections)}]{message(self.message)}"
 
 class DataminerUnrecognizedSerializerError(DataminerException):
     "Called `export_file` on a Dataminer with no Serializer"
@@ -1288,7 +1212,7 @@ class LogInvalidFileError(LogException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"The path of {self.log}, \"{self.path.as_posix()}, is invalid{message(self.message)}"
+        return f"The path of {self.log}, \"{self.path.as_posix()}\", is invalid{message(self.message)}"
 
 class LogWriteTypeError(LogException):
     "Attempted to write to a Log with an invalid type for the Log's LogType."
@@ -1350,74 +1274,6 @@ class LibFileWrongDirectoryError(DomainException):
 
 class ScriptException(Exception):
     "Abstract Exception class for errors relating to Scripts."
-
-class InvalidScriptFileSuffix(ScriptException):
-    "A Script file has an invalid suffix."
-
-    def __init__(self, suffix:str, name:str, message:Optional[str]=None) -> None:
-        '''
-        :suffix: The invalid suffix of the file.
-        :name: The name of the file.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(suffix, name, message)
-        self.suffix = suffix
-        self.name = name
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Invalid file suffix \"{self.suffix}\" on file \"{self.name}\"{message(self.message)}"
-
-class InvalidScriptObjectTypeError(ScriptException):
-    "An object in a Script has the wrong type."
-
-    def __init__(self, script:"Scripts.Script", object:Any, allowed_types:list[type], message:Optional[str]=None) -> None:
-        '''
-        :script: The script with the error.
-        :object: The object from the Script with the wrong type.
-        :allowed_types: The types this object should be.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(object, allowed_types, message)
-        self.script = script
-        self.object = object
-        self.allowed_types = allowed_types
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.object} in {self.script} should be one of types [{", ".join(f"\"{allowed_type.__name__}\"" for allowed_type in self.allowed_types)}] instead of type \"{self.object.__class__.__name__}\"{message(self.message)}"
-
-class ScriptedClassMissingInheritError(ScriptException):
-    "A scripted type failed to correctly inherit."
-
-    def __init__(self, class_name:str, should_inherit_from:type, message:Optional[str]=None) -> None:
-        '''
-        :class_name: The name of the type class that failed to inherit.
-        :should_inherit_from: the type the class should subclass.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(class_name, should_inherit_from, message)
-        self.class_name = class_name
-        self.should_inherit_from = should_inherit_from
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Scripted class \"{self.class_name} does not inherit from {self.should_inherit_from.__name__}{message(self.message)}"
-
-class ScriptFailureError(ScriptException):
-    "A Script has failed to load."
-
-    def __init__(self, script:"Scripts.Script", message:Optional[str]=None) -> None:
-        '''
-        :script: The Script that failed to load.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(script, message)
-        self.script = script
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.script} failed to load{message(self.message)}"
 
 class ScriptNameCollideError(ScriptException):
     "A Script has the same stem as another Script in the same folder."
@@ -1894,7 +1750,7 @@ class StructureRequiredKeyMissingError(StructureException):
         return f"Required key \"{self.key}\" from {self.structure} is missing{message(self.message)}"
 
 class StructureTypeError(StructureException):
-    "Data given to a Structure has the wrong type. This Error should only be used with ErrorTraces."
+    "Data given to a Structure has the wrong type."
 
     def __init__(self, required_types:tuple[type,...], actual_type:type, label:str, message:Optional[str]=None) -> None:
         '''
@@ -2381,7 +2237,7 @@ class VersionTimezoneError(VersionException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.version}'s time, {self.time.isoformat()} does not have a timezone but should because {self.version_with_timezone}'s time, {self.timezone_time.isoformat()}, does have a timezone {message(self.message)}"
+        return f"{self.version}'s time, {self.time.isoformat()} does not have a timezone but should because {self.version_with_timezone}'s time, {self.timezone_time.isoformat()}, does have a timezone{message(self.message)}"
 
 class VersionTopLevelError(VersionException):
     "A Version is a top-level Version but has no top-level VersionTag."

@@ -1,3 +1,5 @@
+from typing import Self
+
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
@@ -43,19 +45,21 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
             tag_set.update(self.subcomponents)
         return subcomponents, inline_components
 
-    def import_from(self, tag_list_field:"TagListField") -> None:
+    def import_from(self, tag_list_field:"TagListField") -> Self:
         '''
         Makes this TagListField import from another TagListField when `set_field` is called.
         :tag_list_field: The TagListField to import from.
         '''
         self.import_from_field = tag_list_field
+        return self
 
-    def add_to_tag_set(self, tag_set:set["StructureTagComponent.StructureTagComponent"]) -> None:
+    def add_to_tag_set(self, tag_set:set["StructureTagComponent.StructureTagComponent"]) -> Self:
         '''
         Makes this TagListField add its tags to the given tag set.
         :tag_set: The set of StructureTags to add to.
         '''
         self.tag_sets.append(tag_set)
+        return self
 
     @property
     def finals(self) -> set[StructureTag.StructureTag]:

@@ -6,14 +6,12 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
-import Component.Pattern as Pattern
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileComponent as VersionFileComponent
 import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
 import Utilities.TypeVerifier as TypeVerifier
 
-ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent.AccessorTypeComponent"] = Pattern.Pattern("is_accessor_type")
 
 class AccessorCreator():
 
@@ -61,7 +59,6 @@ class AccessorCreator():
 class AccessorComponent(Component.Component[AccessorCreator]):
 
     class_name = "Accessor"
-    class_name_article = "an Accessor"
     my_capabilities = Capabilities.Capabilities(is_accessor=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("accessor_type", "a str", True, str),
@@ -76,7 +73,7 @@ class AccessorComponent(Component.Component[AccessorCreator]):
 
     def initialize_fields(self, data: ComponentTyping.AccessorTypedDict) -> list[Field.Field]:
         self.arguments = data["arguments"]
-        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
+        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], AccessorTypeComponent.ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
         return [self.accessor_type_field]
 
     def create_final(self) -> AccessorCreator:

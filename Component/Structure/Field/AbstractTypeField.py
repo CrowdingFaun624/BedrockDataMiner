@@ -1,11 +1,14 @@
+from typing import Self
+
 import Component.Component as Component
+import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
-import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
-import Component.Structure.Field.StructureComponentField as StructureComponentField
+import Component.Field.OptionalComponentField as OptionalComponentField
+import Component.Structure.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeUtilities as TypeUtilities
 
-type VerifyComponentType = StructureComponentField.StructureComponentField|OptionalStructureComponentField.OptionalStructureComponentField
+type VerifyComponentType = ComponentField.ComponentField[StructureComponent.StructureComponent]|OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent]
 
 class AbstractTypeField(Field.Field):
 
@@ -63,24 +66,32 @@ class AbstractTypeField(Field.Field):
         '''
         super().resolve_link_finals()
 
-    def verify_with(self, component_field:VerifyComponentType) -> None:
+    def verify_with(self, component_field:VerifyComponentType) -> Self:
         '''
         Makes this TypeField verify using this component field when `check` is called.
         :component_field: The ComponentField or OptionalComponentField to check with.
         '''
         self.verify_with_component = component_field
+        return self
 
-    def must_be(self, types:TypeUtilities.TypeSet, *, fail_message:str|None=None) -> None:
+    def must_be(self, types:TypeUtilities.TypeSet, *, fail_message:str|None=None) -> Self:
         '''
         Makes this TypeField check that all of its types are a member of `types`.
         :types: The tuple of types that this TypeField must be.
         '''
         self.must_be_types = types
         self.must_be_fail_message = fail_message
+        return self
 
-    def contained_by(self, type_field:"AbstractTypeField") -> None:
+    def conditional_must_be(self, condition:bool, types:TypeUtilities.TypeSet, *, fail_message:str|None=None) -> Self:
+        if condition:
+            self.must_be(types, fail_message=fail_message)
+        return self
+
+    def contained_by(self, type_field:"AbstractTypeField") -> Self:
         '''
         Makes this TypeField check that its types are those that can be contained by the types in `type_field`.
         :type_field: The TypeField of types that contain this TypeField's types.
         '''
         self.contained_by_field = type_field
+        return self

@@ -1,11 +1,14 @@
+from itertools import chain
+
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Field.FieldListField as FieldListField
-import Component.Structure.Field.GroupItemField as GroupItemField
-import Component.Structure.Field.NormalizerListField as NormalizerListField
+import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Structure.Field.TypeField as TypeField
 import Component.Structure.Field.TypeListField as TypeListField
+import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.GroupStructure as GroupStructure
 import Structure.Structure as Structure
@@ -14,7 +17,6 @@ import Utilities.TypeVerifier as TypeVerifier
 
 class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupStructure]):
 
-    class_name_article = "a Group"
     class_name = "Group"
     my_capabilities = Capabilities.Capabilities(is_group=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
@@ -44,15 +46,20 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
-        self.subcomponents_field = FieldListField.FieldListField([
-            GroupItemField.GroupItemField(type_str, subcomponent_str, ["subcomponents", index])
-            for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())], ["subcomponents"]
-        )
+        self.subcomponents_field = [
+            (
+                (subcomponent_field := OptionalComponentField.OptionalComponentField(subcomponent_str, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["subcomponent", index])),
+                TypeField.TypeField(type_str, ["subcomponents", index]).verify_with(subcomponent_field),
+            )
+            for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())
+        ]
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ["delegate"])
-        self.normalizer_field = NormalizerListField.NormalizerListField(data.get("normalizer", []), ["normalizer"])
-        self.post_normalizer_field = NormalizerListField.NormalizerListField(data.get("post_normalizer", []), ["post_normalizer"])
+        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["post_normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        return [self.subcomponents_field, self.delegate_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field]
+        output:list[Field.Field] = [self.delegate_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field]
+        output.extend(chain.from_iterable(self.subcomponents_field))
+        return output
 
     def create_final(self) -> GroupStructure.GroupStructure:
         return GroupStructure.GroupStructure(
@@ -67,17 +74,17 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         exceptions = super().link_finals()
         substructures:dict[type,Structure.Structure|None] = {}
         all_types:set[type] = set()
-        for group_field in self.subcomponents_field:
-            valid_types = group_field.type_field.types
+        for (subcomponent_field, type_field) in self.subcomponents_field:
+            valid_types = type_field.types
             all_types.update(valid_types)
-            substructures.update((valid_type, group_field.subcomponent_field.final) for valid_type in valid_types)
+            substructures.update((valid_type, subcomponent_field.get_final(lambda subcomponent: subcomponent.final)) for valid_type in valid_types)
         self.my_type = all_types
         self.final.link_substructures(
             substructures=substructures,
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             types=tuple(self.my_type),
-            normalizer=self.normalizer_field.finals,
-            post_normalizer=self.post_normalizer_field.finals,
+            normalizer=list(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            post_normalizer=list(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else tuple(all_types),
             children_tags={tag.final for tag in self.children_tags},
         )

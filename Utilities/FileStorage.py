@@ -11,7 +11,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.UserInput as UserInput
 
-COMPRESSIBLE_FILES = ["json", "fsb", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"]
+COMPRESSIBLE_FILES = {"json", "fsb", "txt", "lang", "tga", "xml", "bin", "fragment", "h", "vertex", "properties", "material", "ttf", "otf", "fontdata", "css", "js", "html", "dat", "wlist", "pdn", "so", "dex", "sf", "mf"}
 
 class FileStorageIndex(Cache.LinesCache[dict[str,bool], tuple[str,bool]]):
     '''

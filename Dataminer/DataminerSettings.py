@@ -55,13 +55,6 @@ class DataminerSettings():
             trace = TypeVerifier.make_trace([self])
             exceptions.extend(dataminer_class.parameters.verify(self.arguments, trace))
         if dataminer_class is not None:
-            for key, serializer in serializers.items():
-                if key not in dataminer_class.serializer_names:
-                    exceptions.append(Exceptions.DataminerAdditionalSerializerError(self, dataminer_class, key, serializer, dataminer_class.serializer_names))
-            for required_key in dataminer_class.serializer_names:
-                if required_key not in serializers:
-                    exceptions.append(Exceptions.DataminerSerializerMissingError(self, dataminer_class, required_key))
-        if dataminer_class is not None:
             dataminer_class.manipulate_arguments(self.arguments)
         return exceptions
 

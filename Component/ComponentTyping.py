@@ -15,16 +15,11 @@ class AccessorTypeTypedDict(TypedDict):
     propagated_arguments: NotRequired[dict[str,Any]]
     type: NotRequired[Literal["AccessorType"]]
 
-ImportedComponentTypedDict = TypedDict("ImportedComponentTypedDict", {"as": NotRequired[str], "component": Required[str]})
-
-ImportTypedDict = TypedDict("ImportTypedDict", {"components": Required[list[ImportedComponentTypedDict]], "from": Required[str]})
-
 class BaseTypedDict(TypedDict):
     default_delegate: NotRequired[str]
     default_delegate_arguments: NotRequired[dict[str,Any]]
     delegate: NotRequired[str]
     delegate_arguments: NotRequired[dict[str,Any]]
-    imports: NotRequired[list[ImportTypedDict]]
     normalizer: NotRequired[str|list[str]]
     post_normalizer: NotRequired[str|list[str]]
     pre_normalized_types: NotRequired[str|list[str]]

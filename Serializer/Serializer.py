@@ -50,33 +50,10 @@ class Serializer[a, b]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.name}>"
 
-    def serialize_json(self, data:a) -> b:
-        '''
-        Converts an object into JSON. Will be called when storing data in a
-        version's data file, or when `serialize` is not overridden.
-        '''
-        raise Exceptions.SerializerMethodNonexistentError(self, self.serialize_json)
-
-    def serialize(self, data:a) -> bytes:
-        '''
-        Converts an object into a file. Will be called when storing the file in
-        file storage. By default, calls `serialize_json` and converts it to a
-        string.
-        '''
-        return json.dumps(self.serialize_json(data)).encode()
-
-    def deserialize_json(self, data:b) -> a:
-        '''
-        Converts JSON into an object. Will be called when retrieving data from
-        a version's data file, or when `deserialize` is not overridden.
-        '''
-        raise Exceptions.SerializerMethodNonexistentError(self, self.deserialize_json)
-
     def deserialize(self, data:bytes) -> a:
         '''
         Converts a file into an object. Will be called when retrieving the file
-        from file storage. By default, attempts to read the data as JSON, and
-        call `deserialize_json` on that.
+        from file storage.
         '''
         raise Exceptions.SerializerMethodNonexistentError(self, self.deserialize)
 

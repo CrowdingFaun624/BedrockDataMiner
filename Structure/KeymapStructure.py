@@ -74,7 +74,6 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
             post_normalizer:list[Normalizer.Normalizer],
             pre_normalized_types:tuple[type,...],
             tags:dict[str,set[StructureTag.StructureTag]],
-            keys_with_normalizers:list[str],
             required_keys:list[str],
             children_tags:set[StructureTag.StructureTag],
         ) -> None:
@@ -83,7 +82,7 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         self.key_types = key_types
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
-        self.keys_with_normalizers = keys_with_normalizers
+        self.keys_with_normalizers = [key for key, substructure in keys.items() if substructure is not None and substructure.children_has_normalizer]
 
     def get_unweighted_keys(self) -> set[str]:
         return self.unweighted_keys

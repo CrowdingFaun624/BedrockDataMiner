@@ -1,11 +1,12 @@
 import Component.Component as Component
+import Component.Pattern as Pattern
 import Component.Structure.StructureTagComponent as StructureTagComponent
 import Structure.Structure as Structure
 
+STRUCTURE_COMPONENT_PATTERN:Pattern.Pattern["StructureComponent[Structure.Structure]"] = Pattern.Pattern("is_structure")
 
 class StructureComponent[a: Structure.Structure](Component.Component[a]):
 
-    class_name_article = "a StructureComponent"
     class_name = "StructureComponent"
     my_type:set[type]
 

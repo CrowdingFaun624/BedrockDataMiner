@@ -1,9 +1,9 @@
-import Component.Accessor.Field.AccessorClassField as AccessorClassField
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.LinkedObjectsField as LinkedObjectsField
+import Component.Field.ScriptedClassField as ScriptedClassField
 import Component.Pattern as Pattern
 import Downloader.AccessorType as AccessorType
 import Utilities.TypeVerifier as TypeVerifier
@@ -13,7 +13,6 @@ ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent"] = Pattern.Pattern
 class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
 
     class_name = "AccessorType"
-    class_name_article = "an AccessorType"
     my_capabilities = Capabilities.Capabilities(is_accessor_type=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("accessor_class", "a str", True, str),
@@ -33,7 +32,7 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
         self.class_arguments = data.get("class_arguments", {})
         self.propagated_arguments = data.get("propagated_arguments", {})
 
-        self.accessor_class_field = AccessorClassField.AccessorClassField(data["accessor_class"], ["accessor_class"])
+        self.accessor_class_field = ScriptedClassField.ScriptedClassField(data["accessor_class"], lambda script_set_set_set: script_set_set_set.accessor_classes, ["accessor_class"])
         self.linked_accessor_types_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ["linked_accessors"], assume_type=self.class_name, assume_component_group="accessor_types")
 
         return [self.accessor_class_field, self.linked_accessor_types_field]
@@ -47,11 +46,11 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
-        exceptions.extend(self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.accessor_class, self.accessor_class_field.accessor_class.linked_accessors, self))
-        trace = TypeVerifier.StackTrace([(self.accessor_class_field.accessor_class, TypeVerifier.TraceItemType.OTHER)])
-        exceptions.extend(self.accessor_class_field.accessor_class.class_parameters.verify(self.class_arguments, trace))
+        exceptions.extend(self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.object_class, self.accessor_class_field.object_class.linked_accessors, self))
+        trace = TypeVerifier.StackTrace([(self.accessor_class_field.object_class, TypeVerifier.TraceItemType.OTHER)])
+        exceptions.extend(self.accessor_class_field.object_class.class_parameters.verify(self.class_arguments, trace))
         self.final.link_finals(
-            accessor_class=self.accessor_class_field.accessor_class,
+            accessor_class=self.accessor_class_field.object_class,
             get_linked_accessor_types=dict(self.linked_accessor_types_field.map(lambda key, component: component.final))
         )
         return exceptions

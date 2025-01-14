@@ -10,7 +10,7 @@ class SerializerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict
     __slots__ = ()
 
     def get_component_files(self) -> ImporterEnvironment.Iterable[ImporterEnvironment.Path]:
-        return [self.domain.serializers_file]
+        return (self.domain.serializers_file,)
 
     def get_output(self, components: dict[str, Component.Component], name: str) -> dict[str,Serializer.Serializer]:
         output = super().get_output(components, name)

@@ -13,15 +13,6 @@ class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject],dict[str
 
     empty_okay = True
 
-    def serialize_json(self, data: dict[str, LanguageObject]) -> dict[str, LanguageObject]:
-        return data # object is already in JSON-able form.
-
-    def serialize(self, data:dict[str,LanguageObject]) -> bytes:
-        return "\n".join(f"{key}={item["value"]}\t##{item["comment"]}" if "comment" in item else f"{key}={item["value"]}" for key, item in data.items()).encode()
-
-    def deserialize_json(self, data: dict[str, LanguageObject]) -> dict[str, LanguageObject]:
-        return data
-
     def combine_lines(self, lines:list[str]) -> Iterable[str]:
         current_str:str|None = None
         for line in lines:

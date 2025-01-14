@@ -11,7 +11,6 @@ __all__ = [
     "collapse_resource_packs_dict",
     "collapse_resource_packs_dict_file",
     "collapse_resource_packs_flat",
-    "collapse_resource_packs_list",
     "collapse_resource_packs_list_file",
     "collapse_resource_pack_names",
 ]
@@ -144,17 +143,6 @@ def collapse_resource_packs_list_file[a](data:dict[str,File.AbstractFile[list[a]
             output[tag_string].extend(file.data)
             file_hashes.append(hash(file))
     return File.FakeFile("combined_file", dict(output), hash(tuple(file_hashes)))
-
-def collapse_resource_packs_list[a](data:dict[str,list[a]]) -> dict[str,list[a]]:
-    '''
-    Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
-    '''
-    output:defaultdict[str,list[a]] = defaultdict(lambda: [])
-    for tag_string, resource_pack_list in get_resource_packs_by_tag(data):
-        resource_pack_list.sort(key=lambda item: resource_pack_order[item])
-        for resource_pack in resource_pack_list:
-            output[tag_string].extend(data[resource_pack])
-    return dict(output)
 
 def collapse_resource_pack_names(data:list[str]) -> list[str]:
     output:list[str] = []

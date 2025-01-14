@@ -18,7 +18,6 @@ def get_levenshtein_distance(data1:str, data2:str) -> int:
             )
     distance = distances[len(data2)][len(data1)]
     return distance
-    # return 1 - (distance / max(len(data1), len(data2)))
 
 def guess_intent(user_input:str, items:list[str], threshold:int) -> str|None:
     '''

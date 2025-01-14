@@ -1,11 +1,15 @@
+from typing import Self
+
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
-import Component.Structure.Field.OptionalStructureComponentField as OptionalStructureComponentField
+import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
+import Component.Structure.StructureComponent as StructureComponent
 import Component.Structure.StructureTagComponent as StructureTagComponent
+import Utilities.TypeUtilities as TypeUtilities
 
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
@@ -42,21 +46,20 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.required = data.get("required", False)
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", ...)
 
-        self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"])
-        self.subcomponent_field = OptionalStructureComponentField.OptionalStructureComponentField(data.get("subcomponent", None), ["keys", key, "subcomponent"], allow_inline=allow_inline)
-        self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["keys", key, "tags"])
-        self.tags_field.add_to_tag_set(tag_set)
-        self.types_field.verify_with(self.subcomponent_field)
+        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data.get("subcomponent", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["keys", key, "subcomponent"], allow_inline=allow_inline)
+        self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"]).verify_with(self.subcomponent_field)
+        self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["keys", key, "tags"]).add_to_tag_set(tag_set)
         self.tags_for_all_field:TagListField.TagListField|None = None
 
         self.fields.extend([self.types_field, self.subcomponent_field, self.tags_field])
 
-    def add_tag_fields(self, tag_fields:TagListField.TagListField) -> None:
+    def add_tag_fields(self, tag_fields:TagListField.TagListField) -> Self:
         '''
         Makes this KeymapKeyField extend its own tags_field when `set_field` is called.
         :tag_fields: The list of ComponentFields to add from.
         '''
         self.tags_field.import_from(tag_fields)
+        return self
 
     def add_to_tag_set(self, tag_set:set["StructureTagComponent.StructureTagComponent"]) -> None:
         '''
@@ -64,6 +67,11 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         :tag_set: The set of strings to add to.
         '''
         self.tags_field.add_to_tag_set(tag_set)
+
+    def conditional_must_be(self, condition:bool, types:TypeUtilities.TypeSet, *, fail_message:str|None=None) -> Self:
+        if condition:
+            self.types_field.must_be(types, fail_message=fail_message)
+        return self
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.key} id {id(self)}>"

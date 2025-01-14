@@ -1,12 +1,12 @@
 import Component.Component as Component
 import Component.Field.FieldContainer as FieldContainer
-import Component.Version.Field.OptionalVersionField as OptionalVersionField
+import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Version.VersionComponent as VersionComponent
 import Utilities.Exceptions as Exceptions
 import Version.VersionRange as VersionRange
 
 
-class VersionRangeField(FieldContainer.FieldContainer[OptionalVersionField.OptionalVersionField]):
+class VersionRangeField(FieldContainer.FieldContainer[OptionalComponentField.OptionalComponentField]):
 
     __slots__ = (
         "_final",
@@ -21,8 +21,8 @@ class VersionRangeField(FieldContainer.FieldContainer[OptionalVersionField.Optio
         :stop_version_str: The name of the newest Version (exclusive).
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        self.start_version_field = OptionalVersionField.OptionalVersionField(start_version_str, path)
-        self.stop_version_field = OptionalVersionField.OptionalVersionField(stop_version_str, path)
+        self.start_version_field = OptionalComponentField.OptionalComponentField(start_version_str, VersionComponent.VERSION_PATTERN, path, assume_component_group="versions")
+        self.stop_version_field = OptionalComponentField.OptionalComponentField(stop_version_str, VersionComponent.VERSION_PATTERN, path, assume_component_group="versions")
         self.equals = start_version_str == stop_version_str
         self._final:VersionRange.VersionRange|None = None
         super().__init__([self.start_version_field, self.stop_version_field], path)
@@ -57,5 +57,5 @@ class VersionRangeField(FieldContainer.FieldContainer[OptionalVersionField.Optio
     @property
     def final(self) -> VersionRange.VersionRange:
         if self._final is None:
-            self._final = VersionRange.VersionRange(self.start_version_field.final, self.stop_version_field.final)
+            self._final = VersionRange.VersionRange(self.start_version_field.get_final(lambda subcomponent: subcomponent.final), self.stop_version_field.get_final(lambda subcomponent: subcomponent.final))
         return self._final

@@ -13,7 +13,7 @@ class AccessorTypeImporterEnvironment(ImporterEnvironment.ImporterEnvironment[di
     __slots__ = ()
 
     def get_component_files(self) -> Iterable[Path]:
-        return [self.domain.accessor_types_file]
+        return (self.domain.accessor_types_file,)
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "accessor_types"

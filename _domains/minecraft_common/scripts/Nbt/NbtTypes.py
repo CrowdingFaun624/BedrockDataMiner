@@ -6,8 +6,8 @@ from typing import Literal, Protocol, TypedDict, cast
 import mutf8
 
 import _domains.minecraft_common.scripts.Nbt.DataReader as DataReader
-import _domains.minecraft_common.scripts.Nbt.Endianness as Endianness
 import _domains.minecraft_common.scripts.Nbt.NbtExceptions as NbtExceptions
+import _domains.minecraft_common.scripts.Nbt.SnbtParser as SnbtParser
 import Component.Types as Types
 import Structure.Difference as D
 import Utilities.CustomJson as CustomJson
@@ -20,12 +20,15 @@ class NbtCoder(CustomJson.Coder[NbtJsonTypedDict, "TAG"]):
 
     @classmethod
     def decode(cls, data: NbtJsonTypedDict) -> "TAG":
-        import _domains.minecraft_common.scripts.Nbt.NbtReader as NbtReader
-        return NbtReader.unpack_snbt(data["data"])
+        return SnbtParser.parse(data["data"])
 
     @classmethod
     def encode(cls, data: "TAG") -> NbtJsonTypedDict:
         return {"$special_type": "nbt", "data": str(data)}
+
+class End(enum.Enum):
+    BIG = ">"
+    LITTLE = "<"
 
 class IdEnum(enum.IntEnum):
     TAG_End = 0
@@ -45,7 +48,7 @@ class IdEnum(enum.IntEnum):
 class TAG(Protocol):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG": ...
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG": ...
 
     def __str__(self) -> str: ...
 
@@ -55,7 +58,7 @@ class TAG(Protocol):
 class TAG_End(TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_End":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_End":
         return cls()
 
     def __str__(self) -> str:
@@ -74,7 +77,7 @@ class TAG_End(TAG):
 class TAG_Byte(int, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Byte":
         return cls(data_reader.unpack_tuple("b", 1, endianness))
 
     def __str__(self) -> str:
@@ -84,7 +87,7 @@ class TAG_Byte(int, TAG):
 class TAG_Short(int, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Short":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Short":
         return cls(data_reader.unpack_tuple("h", 2, endianness))
 
     def __str__(self) -> str:
@@ -94,7 +97,7 @@ class TAG_Short(int, TAG):
 class TAG_Int(int, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Int":
         return cls(data_reader.unpack_tuple("i", 4, endianness))
 
     def __str__(self) -> str:
@@ -104,7 +107,7 @@ class TAG_Int(int, TAG):
 class TAG_Long(int, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Long":
         return cls(data_reader.unpack_tuple("q", 8, endianness))
 
     def __str__(self) -> str:
@@ -114,7 +117,7 @@ class TAG_Long(int, TAG):
 class TAG_Float(float, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Float":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Float":
         return cls(data_reader.unpack_tuple("f", 4, endianness))
 
     def __str__(self) -> str:
@@ -127,7 +130,7 @@ class TAG_Float(float, TAG):
 class TAG_Double(float, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Double":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Double":
         return cls(data_reader.unpack_tuple("d", 8, endianness))
 
     def __str__(self) -> str:
@@ -140,7 +143,7 @@ class TAG_Double(float, TAG):
 class TAG_Byte_Array(list[TAG_Byte], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Byte_Array":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Byte_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls([TAG_Byte.from_bytes(data_reader, endianness) for i in range(size)])
 
@@ -151,7 +154,7 @@ class TAG_Byte_Array(list[TAG_Byte], TAG):
 class TAG_String(str, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_String":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_String":
         size:int = data_reader.unpack_tuple("H", 2, endianness)
         output2:tuple[bytes] = data_reader.unpack("c" * size, size, endianness)
         try: # because of VibrationTests/event_splash_boat_on_bubble_column.mcstructure in 1.19.40.20
@@ -170,7 +173,7 @@ class TAG_String(str, TAG):
 class TAG_List[b: TAG](list[b], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_List":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_List":
         content_type:int = data_reader.unpack_tuple("b", 1, endianness)
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(cast(b, parse_object_from_bytes(data_reader, content_type, endianness)) for i in range(size))
@@ -182,7 +185,7 @@ class TAG_List[b: TAG](list[b], TAG):
 class TAG_Compound[b: TAG](dict[str,b], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Compound":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Compound":
         output:dict[str,b] = {}
         while True:
             key_name, value = parse_compound_item_from_bytes(data_reader, endianness)
@@ -216,7 +219,7 @@ class TAG_Compound[b: TAG](dict[str,b], TAG):
 class TAG_Int_Array(list[TAG_Int], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Int_Array":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Int_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls([TAG_Int.from_bytes(data_reader, endianness) for i in range(size)])
 
@@ -227,7 +230,7 @@ class TAG_Int_Array(list[TAG_Int], TAG):
 class TAG_Long_Array(list[TAG_Long], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:Endianness.End) -> "TAG_Long_Array":
+    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Long_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls([TAG_Long.from_bytes(data_reader, endianness) for i in range(size)])
 
@@ -243,7 +246,7 @@ def escape_string(string:str) -> str:
             case _: output.append(char)
     return "".join(output)
 
-def parse_compound_item_from_bytes[b:TAG=TAG](data_reader:DataReader.DataReader, endianness:Endianness.End) -> tuple[str|None,b]:
+def parse_compound_item_from_bytes[b:TAG=TAG](data_reader:DataReader.DataReader, endianness:End) -> tuple[str|None,b]:
     content_type:int = data_reader.unpack_tuple("b", 1, endianness)
     if content_type == IdEnum.TAG_End:
         return None, cast(b, TAG_End.from_bytes(data_reader, endianness)) # TAG_End has no name
@@ -251,7 +254,7 @@ def parse_compound_item_from_bytes[b:TAG=TAG](data_reader:DataReader.DataReader,
     value = parse_object_from_bytes(data_reader, content_type, endianness)
     return key_name, cast(b, value)
 
-def parse_object_from_bytes(data_reader:DataReader.DataReader, content_type:int, endianness:Endianness.End) -> TAG:
+def parse_object_from_bytes(data_reader:DataReader.DataReader, content_type:int, endianness:End) -> TAG:
     match content_type:
         case IdEnum.TAG_End:        return TAG_End.from_bytes(data_reader, endianness)
         case IdEnum.TAG_Byte:       return TAG_Byte.from_bytes(data_reader, endianness)

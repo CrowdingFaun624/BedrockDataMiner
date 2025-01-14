@@ -10,7 +10,6 @@ import Utilities.TypeVerifier as TypeVerifier
 class LogComponent(Component.Component[Log.Log]):
 
     class_name = "Log"
-    class_name_article = "a Log"
     my_capabilities = Capabilities.Capabilities(is_log=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("file_name", "a str", True, str),

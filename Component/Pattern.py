@@ -21,16 +21,13 @@ class Pattern[a: "Component.Component"]():
         self.capability = capability
         self.matching_components:set[int]|None = None
 
-    def matches_capabilities(self, capabilities:Capabilties.Capabilities) -> bool:
-        return capabilities.capabilities.get(self.capability, False)
-
     def contains(self, component:"Component.Component") -> TypeIs[a]:
         if self.matching_components is None:
             import Component.ComponentTypes as ComponentTypes
             self.matching_components = set(
                 id(component_type.my_capabilities)
                 for component_type in ComponentTypes.component_types
-                if self.matches_capabilities(component_type.my_capabilities)
+                if component_type.my_capabilities.capabilities.get(self.capability, False)
             )
         return id(component.my_capabilities) in self.matching_components
 

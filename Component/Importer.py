@@ -77,13 +77,14 @@ def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, imp
     return components
 
 def get_file(path:Path, importer_environment:ImporterEnvironment.ImporterEnvironment) -> ComponentTyping.ComponentGroupFileType:
-    if path.exists():
+    try:
         with open(path, "rt") as f:
             return json.decode_io(f) # type: ignore[reportArgumentType] # stupid types are almost the same but not quite
-    elif (default_content := importer_environment.get_default_contents()) is not None:
-        return default_content
-    else:
-        raise Exceptions.ImporterEnvironmentFileNotFoundError(path, importer_environment)
+    except FileNotFoundError:
+        if (default_content := importer_environment.get_default_contents()) is not None:
+            return default_content
+        else:
+            raise Exceptions.ImporterEnvironmentFileNotFoundError(path, importer_environment)
 
 def propagate_variables(all_components:dict[str,dict[str,dict[str,Component.Component]]]) -> None:
     all_components_flat:list[Component.Component] = []

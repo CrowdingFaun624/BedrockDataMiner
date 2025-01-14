@@ -1,3 +1,5 @@
+from typing import Self
+
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
@@ -41,10 +43,11 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         )
         return subcomponents, inline_components
 
-    def import_into(self, keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]) -> None:
+    def import_into(self, keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]) -> Self:
         '''
         Makes this KeymapImportField add keys from other KeymapComponents into the given FieldListField.
         Must call this function before `set_field`.
         :keys: The FieldListField of KeymapKeyFields to add into.
         '''
         self.import_into_keys = keys
+        return self

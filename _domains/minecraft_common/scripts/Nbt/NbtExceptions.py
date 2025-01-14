@@ -40,9 +40,6 @@ class InvalidNbtContentType(NbtParseException):
     def __str__(self) -> str:
         return f"Invalid NBT content type {self.content_type}{Exceptions.message(self.message)}"
 
-class NbtTestFailureError(NbtException):
-    "An NBT test has failed."
-
 class SnbtParseError(NbtException):
     def __init__(self, message:str, reader:"SnbtParser.Reader", other_exceptions:list["SnbtParseError"]|None=None) -> None:
         super().__init__(message, reader.position, reader.stack, other_exceptions)

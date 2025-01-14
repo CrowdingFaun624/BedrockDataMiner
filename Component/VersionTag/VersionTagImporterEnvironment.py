@@ -14,7 +14,7 @@ class VersionTagImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict
     __slots__ = ()
 
     def get_component_files(self) -> Iterable[Path]:
-        return [self.domain.version_tags_file]
+        return (self.domain.version_tags_file,)
 
     def get_component_group_name(self, file_path: Path) -> str:
         return "version_tags"

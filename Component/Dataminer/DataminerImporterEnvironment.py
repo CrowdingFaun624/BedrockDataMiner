@@ -19,7 +19,7 @@ class DataminerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
     __slots__ = ()
 
     def get_component_files(self) -> Iterable[Path]:
-        return [self.domain.dataminer_collections_file]
+        return (self.domain.dataminer_collections_file,)
 
     def get_component_group_name(self, file_path:Path) -> str:
         return "dataminer_collections"
