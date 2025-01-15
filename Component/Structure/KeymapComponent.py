@@ -43,7 +43,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             TypeVerifier.TypedDictKeyTypeVerifier("required", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("subcomponent", False, (str, dict, type(None))),
             TypeVerifier.TypedDictKeyTypeVerifier("tags", False, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
-            TypeVerifier.TypedDictKeyTypeVerifier("type", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
+            TypeVerifier.TypedDictKeyTypeVerifier("types", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
             TypeVerifier.TypedDictKeyTypeVerifier("weight", False, int, lambda key, value: (value >= 0, "must be at least 0")),
         ))),
         TypeVerifier.TypedDictKeyTypeVerifier("max_key_similarity_descendent_depth", False, (int, type(None))),

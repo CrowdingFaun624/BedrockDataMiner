@@ -35,7 +35,7 @@ class SwitchComponent(StructureComponent.StructureComponent[SwitchStructure.Swit
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
         self.subcomponents_field = {key: OptionalComponentField.OptionalComponentField(subdata, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["subcomponents", key]) for key, subdata in data["subcomponents"].items()}
-        self.switch_function_field = ComponentField.ComponentField(data["switch_function"], NormalizerComponent.NORMALIZER_PATTERN, ["switch_function"])
+        self.switch_function_field = ComponentField.ComponentField(data["switch_function"], NormalizerComponent.NORMALIZER_PATTERN, ["switch_function"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ["delegate"])
         self.types_field = TypeListField.TypeListField(data["types"], ["types"])
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)

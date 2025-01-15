@@ -47,7 +47,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", ...)
 
         self.subcomponent_field = OptionalComponentField.OptionalComponentField(data.get("subcomponent", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["keys", key, "subcomponent"], allow_inline=allow_inline)
-        self.types_field = TypeListField.TypeListField(data["type"] if isinstance(data["type"], list) else [data["type"]], ["keys", key, "type"]).verify_with(self.subcomponent_field)
+        self.types_field = TypeListField.TypeListField(data["types"] if isinstance(data["types"], list) else [data["types"]], ["keys", key, "type"]).verify_with(self.subcomponent_field)
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", []), ["keys", key, "tags"]).add_to_tag_set(tag_set)
         self.tags_for_all_field:TagListField.TagListField|None = None
 

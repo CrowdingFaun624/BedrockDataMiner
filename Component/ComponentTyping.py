@@ -127,7 +127,7 @@ class KeymapKeyTypedDict(TypedDict):
     required: NotRequired[bool]
     subcomponent: NotRequired["str|None|StructureTypedDicts"]
     tags: NotRequired[str|list[str]]
-    type: Required[str|list[str]]
+    types: Required[str|list[str]]
     weight: NotRequired[int]
 
 class KeymapTypedDict(TypedDict):
