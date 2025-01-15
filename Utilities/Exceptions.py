@@ -581,21 +581,23 @@ class InvalidComponentError(ComponentException):
 class LinkedComponentExtraError(ComponentException):
     "An extra linked Component is present."
 
-    def __init__(self, component:"Component.Component", key:str, linked_object:Any, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component.Component", key:str, linked_object:Any, options:list[str], message:Optional[str]=None) -> None:
         '''
         :component: The Component with an extra linked Component.
         :key: The key of the extra linked Component.
         :linked_object: The object of the linked Component.
+        :options: Values that `key` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component, key, linked_object, message)
+        super().__init__(component, key, linked_object, options, message)
         self.component = component
         self.key = key
         self.linked_object = linked_object
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component} has an extra linked Component \"{self.key}\": {self.linked_object}{message(self.message)}"
+        return f"{self.component} has an extra linked Component \"{self.key}\": {self.linked_object}{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class LinkedComponentMissingError(ComponentException):
     "A linked Component is missing."
@@ -756,19 +758,21 @@ class UnrecognizedComponentGroupError(ComponentException):
 class UnrecognizedComponentTypeError(ComponentException):
     "A Component type is unrecognized."
 
-    def __init__(self, component_type_str:str, source_str:str, message:Optional[str]=None) -> None:
+    def __init__(self, component_type:str, source:str, options:list[str], message:Optional[str]=None) -> None:
         '''
-        :component_type_str: The name of the unrecognized Component type.
-        :source_str: The object that refers to this Component type.
+        :component_type: The name of the unrecognized Component type.
+        :source: The object that refers to this Component type.
+        :options: Values that the Component type could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component_type_str, message)
-        self.component_type_str = component_type_str
-        self.source_str = source_str
+        super().__init__(component_type, source, options, message)
+        self.component_type = component_type
+        self.source = source
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component type \"{self.component_type_str}\", as referenced by {self.source_str}, is unrecognized{message(self.message)}"
+        return f"Component type \"{self.component_type}\", as referenced by {self.source}, is unrecognized{message(self.message)}{nearest_message(self.component_type, self.options)}"
 
 class CustomJsonException(Exception):
     "Abstract Exception class for errors relating to custom JSON encoders and decoders."
@@ -827,17 +831,19 @@ class DataminerException(Exception):
 class DataminerAccessorWrongTypeError(DataminerException):
     "The assumed type of an Accessor is not its actual type."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", file_type:str, accessor_type:type["Accessor.Accessor"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", file_type:str, accessor_type:type["Accessor.Accessor"], options:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer that attempted to access its Accessor.
         :file_type: The name of the VersionFile that has the wrong Accessor type.
         :accessor_type: The type that the Accessor should be.
+        :options: Values that `file_type` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(dataminer, file_type, accessor_type, message)
+        super().__init__(dataminer, file_type, accessor_type, options, message)
         self.dataminer = dataminer
         self.file_type = file_type
         self.accessor_type = accessor_type
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
@@ -912,23 +918,23 @@ class DataminerDuplicateFileNameError(DataminerException):
         return f"DataminerCollection [{", ".join(dataminer.name for dataminer in self.dataminers)}] all have the same file name \"{self.file_name}\"{message(self.message)}"
 
 class DataminerFileTypePermissionError(DataminerException):
-    "A Dataminer attempted to access an VersionFileType it has no permissions to use."
+    "A Dataminer attempted to access a VersionFileType it has no permissions to use."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", file_type_name:str, allowed_file_types:Optional[list[str]]=None, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", file_type_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer that attempted to access a VersionFileType without permission.
         :file_type_name: The name of the VersionFileType it attempted to access.
-        :allowed_file_types: A list of all VersionFileType names this Dataminer is allowed to access.
+        :options: Values that `file_type_name` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(dataminer, file_type_name, allowed_file_types, message)
+        super().__init__(dataminer, file_type_name, options, message)
         self.dataminer = dataminer
         self.file_type_name = file_type_name
-        self.allowed_file_types = allowed_file_types
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.dataminer} attempted to access VersionFileType {self.file_type_name}; permissions are lacking or it does not exist{message(self.message, "", " %s")}{message(self.allowed_file_types, yes_message=". It may only access %s!")}"
+        return f"{self.dataminer} attempted to access VersionFileType {self.file_type_name}; permissions are lacking or it does not exist{message(self.message, "", " %s")}{nearest_message(self.file_type_name, self.options)}"
 
 class DataminerLacksActivateError(DataminerException):
     "A Dataminer did not override the activate function."
@@ -1044,19 +1050,21 @@ class DataminerUnrecognizedSerializerError(DataminerException):
 class DataminerUnrecognizedDependencyError(DataminerException):
     "A dependency does not exist."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", dependency_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", dependency_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer attempting to access the dependency.
         :dependency_name: The name of the DataminerCollection that does not exist.
+        :options: Values that `dependency_name` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(dataminer, dependency_name, message)
+        super().__init__(dataminer, dependency_name, options, message)
         self.dataminer = dataminer
         self.dependency_name = dependency_name
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.dataminer} references dependency \"{self.dependency_name}\" that is non-existent for this Version{message(self.message)}"
+        return f"{self.dataminer} references dependency \"{self.dependency_name}\" that is non-existent for this Version{message(self.message)}{nearest_message(self.dependency_name, self.options)}"
 
 class DataminerUnrecognizedSuffixError(DataminerException):
     "A file suffix is unrecognized."
@@ -1080,19 +1088,21 @@ class DataminerUnrecognizedSuffixError(DataminerException):
 class DataminerUnregisteredDependencyError(DataminerException):
     "The dependency exists, but is not listed as a dependency by this Dataminer."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", dependency_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer.Dataminer", dependency_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer attempting to access the dependency.
         :dependency_name: The name of the DataminerCollection that is unregistered.
+        :options: Values that `dependency_name` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(dataminer, dependency_name, message)
+        super().__init__(dataminer, dependency_name, options, message)
         self.dataminer = dataminer
         self.dependency_name = dependency_name
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.dataminer} references unlisted dependency \"{self.dependency_name}\"{message(self.message)}"
+        return f"{self.dataminer} references unlisted dependency \"{self.dependency_name}\"{message(self.message)}{nearest_message(self.dependency_name, self.options)}"
 
 class MissingDataFileError(DataminerException):
     "The data file for this DataminerCollection is missing."
@@ -1239,38 +1249,42 @@ class DomainException(Exception):
 class LibFileNotFoundError(DomainException):
     "A lib file does not exist."
 
-    def __init__(self, name:str, path:Path, message:Optional[str]=None) -> None:
+    def __init__(self, name:str, path:Path, options:list[str], message:Optional[str]=None) -> None:
         '''
         :name: The file name used to access the LibFiles.
         :path: The Path that was found using `name`.
+        :options: Options that `name` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(name, path, message)
+        super().__init__(name, path, options, message)
         self.name = name
         self.path = path
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Path \"{self.path.as_posix()}\", derived from \"{self.name}\", does not exist{message(self.message)}"
+        return f"Path \"{self.path.as_posix()}\", derived from \"{self.name}\", does not exist{message(self.message)}{nearest_message(self.name, self.options)}"
 
 class LibFileWrongDirectoryError(DomainException):
     "Attempted to access a lib file that is not in the correct directory."
 
-    def __init__(self, name:str, path:Path, correct_directory:Path, message:Optional[str]=None) -> None:
+    def __init__(self, name:str, path:Path, correct_directory:Path, options:list[str], message:Optional[str]=None) -> None:
         '''
         :name: The file name used to access the LibFiles.
         :path: The Path that was found using `name`.
         :correct_directory: The Path that `path` should be a descendent of.
+        :options: Options that `name` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(name, path, message)
+        super().__init__(name, path, correct_directory, options, message)
         self.name = name
         self.path = path
         self.correct_directory = correct_directory
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Path derived from {self.name} should be a descendent of {self.correct_directory.as_posix()}, not {self.path.as_posix()}{message(self.message)}"
+        return f"Path derived from {self.name} should be a descendent of {self.correct_directory.as_posix()}, not {self.path.as_posix()}{message(self.message)}{nearest_message(self.name, self.options)}"
 
 class ScriptException(Exception):
     "Abstract Exception class for errors relating to Scripts."
@@ -1584,21 +1598,21 @@ class DiffKeyError(StructureException):
 class SwitchStructureError(StructureException):
     "A SwitchStructure's switch function returned a value that is not in its switches."
 
-    def __init__(self, return_value:str, possible_values:list[str], switch_structure:"Structure.Structure", message:Optional[str]=None) -> None:
+    def __init__(self, return_value:str, options:list[str], switch_structure:"Structure.Structure", message:Optional[str]=None) -> None:
         '''
         :return_value: The value that the SwitchStructure's switch function returned.
-        :possible_values: The values that the SwitchStructure expects the return value to be.
+        :options: The values that the SwitchStructure expects the return value to be.
         :switch_structure: The SwitchStructure.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(return_value, possible_values, switch_structure, message)
+        super().__init__(return_value, options, switch_structure, message)
         self.return_value = return_value
-        self.possible_values = possible_values
+        self.options = options
         self.switch_structure = switch_structure
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.switch_structure}'s switch function returned \"{self.return_value}\", which is not in [{", ".join(f"\"{value}\"" for value in self.possible_values)}]{message(self.message)}"
+        return f"{self.switch_structure}'s switch function returned \"{self.return_value}\", which is not in [{", ".join(f"\"{value}\"" for value in self.options)}]{message(self.message)}{nearest_message(self.return_value, self.options)}"
 
 class InvalidFileHashType(StructureException):
     "An is_file StructureTag references data that cannot be interpreted as a file hash."
@@ -1807,19 +1821,21 @@ class TraceError(StructureException):
 class UnrecognizedStructureTagError(StructureException):
     "A StructureTag referenced in a tag expression does not exist."
 
-    def __init__(self, expression:str, tag_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, expression:str, tag_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :expression: The tag expression containing the unrecognized StructureTag.
         :tag_name: The name of the unrecognized StructureTag.
+        :options: Values that `tag_name` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(expression, tag_name, message)
+        super().__init__(expression, tag_name, options, message)
         self.expression = expression
         self.tag_name = tag_name
+        self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Unrecognized tag \"{self.tag_name}\" referenced in expression \"{self.expression}{message(self.message)}"
+        return f"Unrecognized tag \"{self.tag_name}\" referenced in expression \"{self.expression}{message(self.message)}{nearest_message(self.tag_name, self.options)}"
 
 class TypeVerifierException(Exception):
     "Abstract Exception class for errors relating to TypeVerifiers."
@@ -1899,11 +1915,13 @@ class TypeVerificationUnionError(TypeVerificationTypeException):
 
 class TypeVerificationUnrecognizedKeyError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.StackTrace") -> None:
+    def __init__(self, trace:"TypeVerifier.StackTrace", key:str, options:list[str]) -> None:
         super().__init__(trace)
+        self.key = key
+        self.options = options
 
     def __str__(self) -> str:
-        return f"{self.trace.to_str()} is an unrecognized key!"
+        return f"{self.trace.to_str()} is an unrecognized key!{nearest_message(self.key, self.options)}"
 
 class TypeVerificationWrongLengthError(TypeVerificationTypeException):
 

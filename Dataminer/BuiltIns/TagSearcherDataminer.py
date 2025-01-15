@@ -167,7 +167,7 @@ class TagSearcherDataminer(Dataminer.Dataminer):
         tag_dataminer_collections:defaultdict[AbstractDataminerCollection.AbstractDataminerCollection,list[StructureTag.StructureTag]] = defaultdict(lambda: [])
         for tag in self.tag_names:
             if tag not in all_tags:
-                raise Exceptions.UnrecognizedStructureTagError(self.tags, tag)
+                raise Exceptions.UnrecognizedStructureTagError(self.tags, tag, list(all_tags.keys()))
             for dataminer_collection in self.domain.dataminer_collections.values():
                 if dataminer_collection.has_tag(all_tags[tag]):
                     if dataminer_collection not in dependencies:

@@ -260,7 +260,7 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
             type_verifier = self.keys_dict.get(key)
             if type_verifier is None:
                 if not self.loose:
-                    exceptions.append(Exceptions.TypeVerificationUnrecognizedKeyError(trace.copy(key, TraceItemType.KEY)))
+                    exceptions.append(Exceptions.TypeVerificationUnrecognizedKeyError(trace.copy(key, TraceItemType.KEY), key, list(self.keys_dict.keys())))
                 continue
             new_exceptions = type_verifier.verify((key, value), trace)
             if new_exceptions:

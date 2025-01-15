@@ -25,7 +25,7 @@ class DataminerDependencies():
         '''
         output = self.get_default(dataminer_name, dataminer, ...)
         if output is ...:
-            raise Exceptions.DataminerUnrecognizedDependencyError(dataminer, dataminer_name)
+            raise Exceptions.DataminerUnrecognizedDependencyError(dataminer, dataminer_name, list(self.data.keys()))
         return cast(Any, output)
 
     def get_default[a](self, dataminer_name:str, dataminer:"Dataminer.Dataminer", default:a) -> Any|a:
@@ -37,7 +37,7 @@ class DataminerDependencies():
         :default: The default value to return if the data does not exist for this Version.
         '''
         if dataminer_name not in dataminer.dependencies_str:
-            raise Exceptions.DataminerUnregisteredDependencyError(dataminer, dataminer_name)
+            raise Exceptions.DataminerUnregisteredDependencyError(dataminer, dataminer_name, dataminer.dependencies_str)
         output = self.data.get(dataminer_name, default) # Dataminers cannot output None
         return output
 

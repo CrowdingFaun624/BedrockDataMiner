@@ -56,7 +56,7 @@ def get_inline_component_function(domain:"Domain.Domain") -> Callable[[Component
             raise Exceptions.ComponentTypeMissingError(component_name, parent_component.component_group)
         component_type = component_types_dict.get(component_type_str)
         if component_type is None:
-            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {parent_component.component_group}", f"(Must be one of [{", ".join(component.class_name for component in ComponentTypes.component_types)}])")
+            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {parent_component.component_group}", list(component_types_dict.keys()))
         component = component_type(component_data, component_name, domain, parent_component.component_group, None)
         component.inline_parent = parent_component
         return component
@@ -71,7 +71,7 @@ def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, imp
             raise Exceptions.ComponentTypeMissingError(component_name, name)
         component_type = component_types_dict.get(component_type_str)
         if component_type is None:
-            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {name}", f"(Must be one of [{", ".join(component.class_name for component in ComponentTypes.component_types)}])")
+            raise Exceptions.UnrecognizedComponentTypeError(component_type_str, f"{component_name} in {name}", list(component_types_dict.keys()))
         component = component_type(component_data, component_name, domain, name, index)
         components[component_name] = component
     return components

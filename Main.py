@@ -81,6 +81,4 @@ if __name__ == "__main__":
     main()
 
 pass
-# TODO: make logging of errors slightly better.
-
 # TODO: make comparisons out of HTML and fancy and collapsible and stuff.

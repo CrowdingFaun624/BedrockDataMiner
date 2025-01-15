@@ -106,7 +106,7 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
             if key not in linked_objects
         )
         yield from (
-            Exceptions.LinkedComponentExtraError(component, key, linked_object)
+            Exceptions.LinkedComponentExtraError(component, key, linked_object, [key for key in linked_requirements if key not in linked_objects])
             for key, linked_object in linked_objects.items()
             if key not in linked_requirements
         )
@@ -129,7 +129,7 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
             if key not in linked_objects
         )
         yield from (
-            Exceptions.LinkedComponentExtraError(component, key, linked_object)
+            Exceptions.LinkedComponentExtraError(component, key, linked_object, [key for key in linked_requirements if key not in linked_objects])
             for key, linked_object in linked_objects.items()
             if key not in linked_requirements
         )

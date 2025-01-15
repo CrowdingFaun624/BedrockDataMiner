@@ -53,7 +53,8 @@ class Dataminer():
 
     def get_accessor[a: Accessor.Accessor](self, accessor_type:type[a]=Accessor.Accessor, file_type:str|None=None) -> a:
         if file_type is not None and file_type not in self.files_str:
-            raise Exceptions.DataminerFileTypePermissionError(self, file_type, sorted(self.files_str))
+            options:list[str] = [version_file_type.name for version_file_type in self.files if self.version.get_accessor(version_file_type.name, accessor_type) is not None]
+            raise Exceptions.DataminerFileTypePermissionError(self, file_type, options)
         if len(self.files_str) == 0:
             raise Exceptions.DataminerNoFileTypeError(self)
         elif len(self.files_str) > 1:
@@ -62,7 +63,8 @@ class Dataminer():
             file_type = next(iter(self.files_str))
         accessor = self.version.get_accessor(file_type, accessor_type)
         if accessor is None:
-            raise Exceptions.DataminerAccessorWrongTypeError(self, file_type, accessor_type)
+            options:list[str] = [version_file_type.name for version_file_type in self.files if self.version.get_accessor(version_file_type.name, accessor_type) is not None]
+            raise Exceptions.DataminerAccessorWrongTypeError(self, file_type, accessor_type, options)
         return accessor
 
     def get_serializer(self, serializer_key:str) -> Serializer.Serializer:
