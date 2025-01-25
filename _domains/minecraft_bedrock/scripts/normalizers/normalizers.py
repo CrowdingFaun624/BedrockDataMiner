@@ -389,6 +389,10 @@ def texture_list_normalize(data:dict[str,File.File[list[str]]]) -> File.FakeFile
             output[texture].append(resource_pack)
     return File.FakeFile("combined_texture_list_file", dict(output), hash(tuple(file_hashes)))
 
+def textures_split_lines(data:list[str]|str) -> list[str]|None:
+    if isinstance(data, str):
+        return data.splitlines()
+
 def ui_separate_variables(data:dict[str,Any]) -> None:
     variables:dict[str,Any] = {}
     for parameter_name, parameter_value in data.items():

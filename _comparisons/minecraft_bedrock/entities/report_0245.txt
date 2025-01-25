@@ -1,0 +1,45 @@
+Difference of "entities" between "1.21.60.25" (beta of "1.21.60") and "1.21.60.27" (beta of "1.21.60").
+
+Changed entity "enderman.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Total component group: 4 (+2, -0)
+				Added component group "minecraft:not_riding":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "filters":
+								filter property "test": "is_riding"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": true
+							field "event": "minecraft:started_riding"
+					component "minecraft:teleport":
+						field "random_teleports": true
+						field "max_random_teleport_time": 30
+						field "random_teleport_cube": [32, 32, 32]
+						field "target_distance": 16
+						field "target_teleport_chance": 0.05
+						field "light_teleport_chance": 0.05
+				Added component group "minecraft:riding":
+					component "minecraft:environment_sensor":
+						field "triggers":
+							field "filters":
+								filter property "test": "is_riding"
+								filter property "subject": "self"
+								filter property "operator": "=="
+								filter property "value": false
+							field "event": "minecraft:stopped_riding"
+			Changed field "events":
+				Total event: 5 (+2, -0)
+				Changed event "minecraft:entity_spawned":
+					Changed field "add":
+						Changed field "component_groups":
+							Total component group: 2 (+1, -0)
+							Added component group "minecraft:not_riding".
+				Added event "minecraft:started_riding":
+					field "add": field "component_groups": component group: "minecraft:riding"
+					field "remove": field "component_groups": component group: "minecraft:not_riding"
+				Added event "minecraft:stopped_riding":
+					field "add": field "component_groups": component group: "minecraft:not_riding"
+					field "remove": field "component_groups": component group: "minecraft:riding"
