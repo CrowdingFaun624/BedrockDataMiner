@@ -14,8 +14,6 @@ import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFile as VersionFile
 
-ACCESSOR_PATTERN:Pattern.Pattern["AccessorComponent.AccessorComponent"] = Pattern.Pattern("is_accessor")
-VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern("is_version_file_type")
 VERSION_FILE_PATTERN:Pattern.Pattern["VersionFileComponent"] = Pattern.Pattern("is_version_file")
 
 class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
@@ -34,8 +32,8 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
     )
 
     def initialize_fields(self, data: ComponentTyping.VersionFileTypedDict) -> Sequence[Field.Field]:
-        self.version_file_type_field = ComponentField.ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ("version_file_type",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
-        self.accessors_field = ComponentListField.ComponentListField(data["accessors"], ACCESSOR_PATTERN, ("accessors",), allow_inline=Field.InlinePermissions.inline, assume_type=AccessorComponent.AccessorComponent.class_name)
+        self.version_file_type_field = ComponentField.ComponentField(data["version_file_type"], VersionFileTypeComponent.VERSION_FILE_TYPE_PATTERN, ("version_file_type",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
+        self.accessors_field = ComponentListField.ComponentListField(data["accessors"], AccessorComponent.ACCESSOR_PATTERN, ("accessors",), allow_inline=Field.InlinePermissions.inline, assume_type=AccessorComponent.AccessorComponent.class_name)
         return (self.version_file_type_field, self.accessors_field)
 
     def create_final(self) -> VersionFile.VersionFile:

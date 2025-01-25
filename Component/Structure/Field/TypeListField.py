@@ -3,13 +3,11 @@ from typing import Sequence, cast
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
-import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Component.Structure.Field.AbstractTypeField as AbstractTypeField
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
 import Utilities.Exceptions as Exceptions
 
-TYPE_ALIAS_PATTERN:Pattern.Pattern[TypeAliasComponent.TypeAliasComponent] = Pattern.Pattern("is_type_alias")
 
 class TypeListField(AbstractTypeField.AbstractTypeField):
     '''A link to multiple TypeAliasComponents and/or types.'''
@@ -51,7 +49,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
                 subcomponent_type = self.domain.type_stuff.default_types[subcomponent_data]
                 self.primitive_types.append(subcomponent_type)
             else:
-                subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, TYPE_ALIAS_PATTERN, components, global_components, self.error_path, create_component_function, None, None)
+                subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, TypeAliasComponent.TYPE_ALIAS_PATTERN, components, global_components, self.error_path, create_component_function, None, None)
                 if is_inline:
                     raise Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.TypeAliasTypedDict, subcomponent_data))
                 components_used.append(subcomponent)

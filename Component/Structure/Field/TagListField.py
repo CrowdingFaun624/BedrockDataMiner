@@ -4,12 +4,10 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Component.Structure.StructureTagComponent as StructureTagComponent
 import Structure.StructureTag as StructureTag
 
-TAG_PATTERN:Pattern.Pattern["StructureTagComponent.StructureTagComponent"] = Pattern.Pattern("is_structure_tag")
 
 class TagListField(ComponentListField.ComponentListField["StructureTagComponent.StructureTagComponent"]):
 
@@ -24,7 +22,7 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         :subcomponents_strs: The names of the TagComponents this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_component_group="structure_tags")
+        super().__init__(subcomponents_strs, StructureTagComponent.TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_component_group="structure_tags")
         self.tag_sets:list[set["StructureTagComponent.StructureTagComponent"]] = []
         self.import_from_field:TagListField|None = None
         self._finals:set[StructureTag.StructureTag]|None = None

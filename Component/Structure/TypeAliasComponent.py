@@ -4,9 +4,11 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
+import Component.Pattern as Pattern
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
+TYPE_ALIAS_PATTERN:Pattern.Pattern["TypeAliasComponent"] = Pattern.Pattern("is_type_alias")
 
 class TypeAliasComponent(Component.Component[tuple[type,...]]):
 

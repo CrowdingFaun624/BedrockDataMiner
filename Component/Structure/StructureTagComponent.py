@@ -4,9 +4,11 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
+import Component.Pattern as Pattern
 import Structure.StructureTag as StructureTag
 import Utilities.TypeVerifier as TypeVerifier
 
+TAG_PATTERN:Pattern.Pattern["StructureTagComponent"] = Pattern.Pattern("is_structure_tag")
 
 class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
 

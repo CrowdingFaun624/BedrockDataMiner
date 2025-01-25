@@ -6,12 +6,14 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
+import Component.Pattern as Pattern
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileComponent as VersionFileComponent
 import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
 import Utilities.TypeVerifier as TypeVerifier
 
+ACCESSOR_PATTERN:Pattern.Pattern["AccessorComponent"] = Pattern.Pattern("is_accessor")
 
 class AccessorCreator():
 

@@ -4,12 +4,10 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Component.Version.VersionComponent as VersionComponent
 import Component.VersionTag.VersionTagComponent as VersionTagComponent
 
-VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent.VersionTagComponent"] = Pattern.Pattern("is_version_tag")
 
 class VersionTagListField(ComponentListField.ComponentListField["VersionTagComponent.VersionTagComponent"]):
 
@@ -24,7 +22,7 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         :version_component: The parent VersionComponent of this Field. If not given, will not auto-assign VersionTags to this Field.
         '''
-        super().__init__(subcomponents_data, VERSION_TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_component_group="version_tags")
+        super().__init__(subcomponents_data, VersionTagComponent.VERSION_TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_component_group="version_tags")
         self.version_component = version_component
         self.version_tag_components:Iterable["VersionTagComponent.VersionTagComponent"]
 

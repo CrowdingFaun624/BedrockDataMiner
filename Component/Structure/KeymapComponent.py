@@ -7,6 +7,7 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
+import Component.Pattern as Pattern
 import Component.Structure.Field.KeymapImportField as KeymapImportField
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
 import Component.Structure.Field.DelegateField as DelegateField
@@ -19,6 +20,7 @@ import Structure.KeymapStructure as KeymapStructure
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
+IMPORTABLE_KEYS_PATTERN:Pattern.Pattern["KeymapComponent"] = Pattern.Pattern("has_importable_keys")
 
 class KeymapSorting(enum.Enum):
     none = "none"

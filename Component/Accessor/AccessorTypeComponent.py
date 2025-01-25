@@ -3,8 +3,8 @@ from typing import Sequence
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
 import Component.Field.ComponentDictField as ComponentDictField
+import Component.Field.Field as Field
 import Component.Field.ScriptedClassField as ScriptedClassField
 import Component.Pattern as Pattern
 import Downloader.AccessorType as AccessorType

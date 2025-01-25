@@ -14,8 +14,6 @@ import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTag.VersionTag as VersionTag
 
 VERSION_TAG_PATTERN:Pattern.Pattern["VersionTagComponent"] = Pattern.Pattern("is_version_tag")
-VERSION_TAG_AUTO_ASSIGNER_PATTERN:Pattern.Pattern["VersionTagAutoAssignerComponent.VersionTagAutoAssignerComponent"] = Pattern.Pattern("is_version_tag_auto_assigner")
-LATEST_SLOT_PATTERN:Pattern.Pattern["LatestSlotComponent.LatestSlotComponent"] = Pattern.Pattern("is_latest_slot")
 
 class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
 
@@ -51,8 +49,8 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
         self.is_major_tag = data.get("is_major_tag", False)
         self.is_unreleased_tag = data.get("is_unreleased_tag", False)
 
-        self.auto_assigner_field = ComponentListField.ComponentListField(data.get("auto_assign", ()), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ("auto_assign",), allow_inline=Field.InlinePermissions.mixed)
-        self.latest_slot_field = ComponentField.OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=Field.InlinePermissions.reference, assume_component_group="latest_slots")
+        self.auto_assigner_field = ComponentListField.ComponentListField(data.get("auto_assign", ()), VersionTagAutoAssignerComponent.VERSION_TAG_AUTO_ASSIGNER_PATTERN, ("auto_assign",), allow_inline=Field.InlinePermissions.mixed)
+        self.latest_slot_field = ComponentField.OptionalComponentField(data.get("latest_slot", None), LatestSlotComponent.LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=Field.InlinePermissions.reference, assume_component_group="latest_slots")
         return (self.auto_assigner_field, self.latest_slot_field)
 
     def create_final(self) -> VersionTag.VersionTag:

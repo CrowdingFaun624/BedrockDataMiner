@@ -20,9 +20,7 @@ import Dataminer.DataminerSettings as DataminerSettings
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
-DEPENDENCY_PATTERN:Pattern.Pattern["AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent"] = Pattern.Pattern("is_dataminer_collection")
-VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent.VersionFileTypeComponent"] = Pattern.Pattern("is_version_file_type")
-SERIALIZER_PATTERN:Pattern.Pattern["SerializerComponent.SerializerComponent"] = Pattern.Pattern("is_serializer")
+DATAMINER_SETTINGS_PATTERN:Pattern.Pattern["DataminerSettingsComponent"] = Pattern.Pattern("is_dataminer_settings")
 
 class DataminerSettingsComponent(Component.Component[DataminerSettings.DataminerSettings]):
 
@@ -56,13 +54,13 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
 
         self.new_field = ComponentField.OptionalComponentField(data["new"], VersionComponent.VERSION_PATTERN, ("new",), assume_component_group="versions")
         self.old_field = ComponentField.OptionalComponentField(data["old"], VersionComponent.VERSION_PATTERN, ("old",), assume_component_group="versions")
-        self.files_field = ComponentListField.ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
-        self.serializer_field = ComponentDictField.ComponentDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
+        self.files_field = ComponentListField.ComponentListField(data.get("files", ()), VersionFileTypeComponent.VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
+        self.serializer_field = ComponentDictField.ComponentDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, SerializerComponent.SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
         self.dataminer_field = ScriptedClassField.OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=Dataminer.NullDataminer)
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dependency_name,
-                DEPENDENCY_PATTERN,
+                AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN,
                 ("dependencies", str(index)),
                 allow_inline=Field.InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", ()))

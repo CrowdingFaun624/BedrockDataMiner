@@ -5,12 +5,10 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
-import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
 import Component.Structure.KeymapComponent as KeymapComponent
 
-IMPORTABLE_KEYS_PATTERN:Pattern.Pattern["KeymapComponent.KeymapComponent"] = Pattern.Pattern("has_importable_keys")
 
 class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.KeymapComponent"]):
 
@@ -23,7 +21,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         :subcomponents_data: The names of the Components this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_data, IMPORTABLE_KEYS_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
+        super().__init__(subcomponents_data, KeymapComponent.IMPORTABLE_KEYS_PATTERN, path, allow_inline=Field.InlinePermissions.reference)
         self.import_into_keys:FieldListField.FieldListField[KeymapKeyField.KeymapKeyField]
 
     def set_field(

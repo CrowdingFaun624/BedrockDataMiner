@@ -10,7 +10,7 @@ import Component.Pattern as Pattern
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFileType as VersionFileType
 
-ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent.AccessorTypeComponent"] = Pattern.Pattern("is_accessor_type")
+VERSION_FILE_TYPE_PATTERN:Pattern.Pattern["VersionFileTypeComponent"] = Pattern.Pattern("is_version_file_type")
 
 class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileType]):
 
@@ -32,7 +32,7 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
         self.must_exist = data["must_exist"]
         self.available_when_unreleased = data["available_when_unreleased"]
 
-        self.allowed_accessor_types_field = ComponentListField.ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ("allowed_accessor_types",), allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
+        self.allowed_accessor_types_field = ComponentListField.ComponentListField(data["allowed_accessor_types"], AccessorTypeComponent.ACCESSOR_TYPE_PATTERN, ("allowed_accessor_types",), allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
         return (self.allowed_accessor_types_field,)
 
     def create_final(self) -> VersionFileType.VersionFileType:

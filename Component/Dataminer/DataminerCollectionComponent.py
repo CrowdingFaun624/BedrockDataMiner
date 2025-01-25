@@ -7,14 +7,12 @@ import Component.Dataminer.DataminerSettingsComponent as DataminerSettingsCompon
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
-import Component.Pattern as Pattern
 import Component.Structure.BaseComponent as BaseComponent
 import Dataminer.DataminerCollection as DataminerCollection
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
-DATAMINER_SETTINGS_PATTERN:Pattern.Pattern[DataminerSettingsComponent.DataminerSettingsComponent] = Pattern.Pattern("is_dataminer_settings")
 
 class DataminerCollectionComponent(AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent[DataminerCollection.DataminerCollection]):
 
@@ -45,7 +43,7 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
         self.dataminer_settings_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dataminer_settings_data,
-                DATAMINER_SETTINGS_PATTERN,
+                DataminerSettingsComponent.DATAMINER_SETTINGS_PATTERN,
                 ("dataminers", str(index)),
                 allow_inline=Field.InlinePermissions.inline,
                 assume_type=DataminerSettingsComponent.DataminerSettingsComponent.class_name,
