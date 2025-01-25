@@ -89,7 +89,7 @@ def choose_component[a: Component.Component](
     '''
     # inline Component
     if isinstance(component_data, dict):
-        component = create_component_function(component_data, source_component, assume_type)
+        component = create_component_function(component_data, source_component, assume_type, keys)
         if not pattern.contains(component):
             raise Exceptions.InvalidComponentError(component, None, get_source_str(keys, source_component), pattern, component.my_capabilities, None)
         return component, True

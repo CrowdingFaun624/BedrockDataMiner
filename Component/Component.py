@@ -24,7 +24,6 @@ class Component[a]():
         "fields",
         "final",
         "index",
-        "inline_component_count",
         "inline_components",
         "inline_parent",
         "links_to_other_components",
@@ -48,7 +47,6 @@ class Component[a]():
         self.parents:list[Component] = []
         self.final:a
         self.inline_components:list[Component]
-        self.inline_component_count = 0
         self.inline_parent:Component|None = None
         self.variable_bools, self.variable_sets = self.get_propagated_variables()
 
@@ -71,9 +69,8 @@ class Component[a]():
             raise Exceptions.AttributeNoneError("inline_parent", self)
         return self.inline_parent
 
-    def get_inline_component_name(self) -> str:
-        output = self.name + f".{self.inline_component_count}"
-        self.inline_component_count += 1
+    def get_inline_component_name(self, path:tuple[str,...]) -> str:
+        output = self.name + "".join(f"[{item}]" for item in path)
         return output
 
     def get_all_descendants(self, memo:set["Component"]) -> list["Component"]:
@@ -167,4 +164,4 @@ class Component[a]():
         return hash((self.name, self.component_group))
 
     def __repr__(self) -> str:
-        return f"<{self.class_name} {self.name} in {self.component_group}>"
+        return f"<{self.class_name} {self.domain.name}!{self.component_group}/{self.name}>"

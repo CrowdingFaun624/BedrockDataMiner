@@ -48,9 +48,9 @@ component_group_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVer
     loose=True
 ))
 
-def get_inline_component_function(domain:"Domain.Domain") -> Callable[[ComponentTyping.ComponentTypedDicts, Component.Component, str|None], Component.Component]:
-    def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component, assume_type:str|None) -> Component.Component:
-        component_name = parent_component.get_inline_component_name()
+def get_inline_component_function(domain:"Domain.Domain") -> Callable[[ComponentTyping.ComponentTypedDicts, Component.Component, str|None, tuple[str,...]], Component.Component]:
+    def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component, assume_type:str|None, path:tuple[str,...]) -> Component.Component:
+        component_name = parent_component.get_inline_component_name(path)
         component_type_str = component_data.get("type", assume_type)
         if component_type_str is None:
             raise Exceptions.ComponentTypeMissingError(component_name, parent_component.component_group)
@@ -129,10 +129,10 @@ def create_all_components(domains:Sequence["Domain.Domain"]) -> tuple[dict[str,d
                 all_components[domain.name][name] = create_components(name, components_data, importer_environment, domain)
     return all_components, importer_environments
 
-def get_imports(domains:Sequence["Domain.Domain"]) -> dict[str,list[str]]:
+def get_imports(domains:Sequence["Domain.Domain"]) -> dict[str,Sequence[str]]:
     return {domain.name: domain.dependencies for domain in domains}
 
-def set_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain_imports:dict[str,list[str]], functions:dict[str,ScriptImporter.ScriptSetSetSet], domain_list:Sequence["Domain.Domain"]) -> None:
+def set_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain_imports:dict[str,Sequence[str]], functions:dict[str,ScriptImporter.ScriptSetSetSet], domain_list:Sequence["Domain.Domain"]) -> None:
     domains:dict[str,Domain.Domain] = {domain.name: domain for domain in domain_list}
     exceptions:list[Exception] = []
     failed_component_groups:set[str] = set()
@@ -254,7 +254,7 @@ def check_importer_environments(output:dict[str,dict[str,Any]], importer_environ
             traceback.print_exception(exception)
         raise Exceptions.ComponentParseError(sorted(failed_component_groups), len(exceptions))
 
-def get_all_functions(domain_list:Sequence["Domain.Domain"], domain_imports:dict[str,list[str]]) -> dict[str,ScriptImporter.ScriptSetSetSet]:
+def get_all_functions(domain_list:Sequence["Domain.Domain"], domain_imports:dict[str,Sequence[str]]) -> dict[str,ScriptImporter.ScriptSetSetSet]:
     domains:dict[str,"Domain.Domain"] = {domain.name: domain for domain in domain_list}
     domain_dependencies:Iterable[tuple["Domain.Domain", Iterable["Domain.Domain"]]] = ((domains[domain], (domains[dependency] for dependency in dependencies)) for domain, dependencies in domain_imports.items())
     return {domain.name: ScriptImporter.ScriptSetSetSet(domain, dependencies) for domain, dependencies in domain_dependencies}

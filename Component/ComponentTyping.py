@@ -342,4 +342,4 @@ type ComponentTypedDicts = \
 type StructureTypedDicts = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|FileTypedDict|PrimitiveTypedDict|SequenceTypedDict|SetTypedDict|StringTypedDict
 
 type ComponentGroupFileType = dict[str,ComponentTypedDicts]
-type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component.Component",str|None],"Component.Component"]
+type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component.Component",str|None,tuple[str,...]],"Component.Component"]
