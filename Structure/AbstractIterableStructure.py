@@ -73,7 +73,7 @@ class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]])
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return ()
-        else: return [self.structure]
+        else: return (self.structure,)
 
     def check_type(self, index:int, item:d) -> Trace.ErrorTrace|None:
         if not isinstance(item, self.types):

@@ -113,7 +113,7 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
     def get_structure(self, key: str, value:d|None) -> tuple[Structure.Structure|None, Sequence[Trace.ErrorTrace]]:
         output = self.keys.get(key, ...)
         if output is ...:
-            return None, [Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value)]
+            return None, (Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value),)
         return output, ()
 
     def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[Sequence[DataPath.DataPath],Sequence[Trace.ErrorTrace]]:

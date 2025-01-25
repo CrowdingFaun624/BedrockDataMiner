@@ -35,13 +35,13 @@ class SwitchStructure[d](PassthroughStructure.PassthroughStructure[d]):
         try:
             switch_key = self.switch_function(value)
         except Exception as e:
-            return None, [Trace.ErrorTrace(e, self.name, None, value)]
+            return None, (Trace.ErrorTrace(e, self.name, None, value),)
         try:
             substructure = self.switches.get(switch_key, ...)
         except Exception as e:
-            return None, [Trace.ErrorTrace(Exceptions.SwitchStructureError(switch_key, list(self.switches.keys()), self), self.name, None, value)]
+            return None, (Trace.ErrorTrace(Exceptions.SwitchStructureError(switch_key, list(self.switches.keys()), self), self.name, None, value),)
         if substructure is ...:
-            return None, [Trace.ErrorTrace(Exceptions.SwitchStructureError(switch_key, list(self.switches.keys()), self), self.name, None, value)]
+            return None, (Trace.ErrorTrace(Exceptions.SwitchStructureError(switch_key, list(self.switches.keys()), self), self.name, None, value),)
         else:
             return substructure, ()
 

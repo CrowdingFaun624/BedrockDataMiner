@@ -75,7 +75,7 @@ class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         if self.structure is None: return ()
-        else: return [self.structure]
+        else: return (self.structure,)
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if not isinstance(value, self.types):

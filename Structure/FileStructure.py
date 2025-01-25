@@ -196,7 +196,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
                 new_files = list(data1.files)
                 new_files.append(data2)
             else:
-                new_files = [data1, data2]
+                new_files = (data1, data2)
             if isinstance(data1.data, D.Diff):
                 data1_data = cast("D.Diff[a]", data1.data)
                 output = File.FileDiff(data1_data.with_last_as(branch+1, comparison_output), *new_files)
@@ -225,7 +225,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         data_extracted = data.data
         structure, new_exceptions = self.choose_structure(None, data_extracted)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-        comparer:Callable[[Any, StructureEnvironment.ComparisonEnvironment],tuple[Any,bool,list[Trace.ErrorTrace]]]
+        comparer:Callable[[Any, StructureEnvironment.ComparisonEnvironment],tuple[Any,bool,Sequence[Trace.ErrorTrace]]]
         if self.delegate is not None:
             comparer = self.delegate.compare_text
         elif structure is not None and None in structure and structure[None] is not None:

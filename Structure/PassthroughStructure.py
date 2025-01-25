@@ -187,7 +187,7 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.choose_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
-        comparer:Callable[[Any, StructureEnvironment.ComparisonEnvironment],tuple[Any,bool,list[Trace.ErrorTrace]]]
+        comparer:Callable[[Any, StructureEnvironment.ComparisonEnvironment],tuple[Any,bool,Sequence[Trace.ErrorTrace]]]
         if self.delegate is not None:
             comparer = self.delegate.compare_text
         elif structure is not None and structure[None] is not None:
