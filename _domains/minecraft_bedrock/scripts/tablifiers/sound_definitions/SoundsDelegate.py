@@ -36,7 +36,7 @@ class SoundsDelegate(Delegate.Delegate[str, AbstractIterableStructure.AbstractIt
                         upcoming_notes.append(f"{{{{Until|BE {PrimitiveDelegate.get_version(branch, True, environment)}}}}}")
                     else:
                         upcoming_notes.append(f"{{{{Upcoming|BE {PrimitiveDelegate.get_version(branch, True, environment)}}}}}")
-                upcoming_note = f" ({" ".join(upcoming_notes)})"
+                upcoming_note = f" {" ".join(upcoming_notes)}"
             else:
                 upcoming_note = ""
             structure, new_exceptions = self.get_structure().get_structure(index, item)
