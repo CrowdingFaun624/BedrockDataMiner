@@ -39,7 +39,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
             for version in reversed(output.values()):
                 if version.released and version.order_tag in latest_slot_tags:
                     version.latest = True
-                    if version.parent is not None:
+                    if version.parent is not None and version.order_tag.is_development_tag:
                         version.parent.latest = True
                     break
         if self.domain.versions_directory.exists():
