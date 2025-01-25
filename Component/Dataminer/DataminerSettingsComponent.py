@@ -9,7 +9,7 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
-import Component.Field.LinkedObjectsField as LinkedObjectsField
+import Component.Field.ComponentDictField as ComponentDictField
 import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Field.OptionalScriptedClassField as OptionalScriptedClassField
 import Component.Pattern as Pattern
@@ -58,7 +58,7 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
         self.new_field = OptionalComponentField.OptionalComponentField(data["new"], VersionComponent.VERSION_PATTERN, ("new",), assume_component_group="versions")
         self.old_field = OptionalComponentField.OptionalComponentField(data["old"], VersionComponent.VERSION_PATTERN, ("old",), assume_component_group="versions")
         self.files_field = ComponentListField.ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
-        self.serializer_field = LinkedObjectsField.LinkedObjectsField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
+        self.serializer_field = ComponentDictField.ComponentDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
         self.dataminer_field = OptionalScriptedClassField.OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=Dataminer.NullDataminer)
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(

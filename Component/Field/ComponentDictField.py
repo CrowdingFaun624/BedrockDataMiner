@@ -9,7 +9,7 @@ import Component.ScriptImporter as ScriptImporter
 import Utilities.Exceptions as Exceptions
 
 
-class LinkedObjectsField[a:Component.Component](Field.Field):
+class ComponentDictField[a:Component.Component](Field.Field):
     '''A link to multiple other Components.'''
 
     __slots__ = (

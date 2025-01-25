@@ -4,7 +4,7 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
-import Component.Field.LinkedObjectsField as LinkedObjectsField
+import Component.Field.ComponentDictField as ComponentDictField
 import Component.Field.ScriptedClassField as ScriptedClassField
 import Component.Pattern as Pattern
 import Downloader.AccessorType as AccessorType
@@ -35,7 +35,7 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
         self.propagated_arguments = data.get("propagated_arguments", {})
 
         self.accessor_class_field = ScriptedClassField.ScriptedClassField(data["accessor_class"], lambda script_set_set_set: script_set_set_set.accessor_classes, ("accessor_class",))
-        self.linked_accessor_types_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ("linked_accessors",), assume_type=self.class_name, assume_component_group="accessor_types")
+        self.linked_accessor_types_field = ComponentDictField.ComponentDictField(data.get("linked_accessors", {}), ACCESSOR_TYPE_PATTERN, ("linked_accessors",), assume_type=self.class_name, assume_component_group="accessor_types")
 
         return (self.accessor_class_field, self.linked_accessor_types_field)
 

@@ -4,7 +4,7 @@ import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
-import Component.Field.LinkedObjectsField as LinkedObjectsField
+import Component.Field.ComponentDictField as ComponentDictField
 import Component.Field.ScriptedClassField as ScriptedClassField
 import Component.Pattern as Pattern
 import Serializer.Serializer as Serializer
@@ -33,7 +33,7 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
         self.arguments = data.get("arguments", {})
 
         self.serializer_class_field = ScriptedClassField.ScriptedClassField(data["serializer_class"], lambda script_set_set_set: script_set_set_set.serializer_classes, ("serializer_class",))
-        self.linked_serializers_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_serializers", {}), SERIALIZER_PATTERN, ("linked_serializers",), allow_inline=Field.InlinePermissions.reference, assume_component_group="serializers")
+        self.linked_serializers_field = ComponentDictField.ComponentDictField(data.get("linked_serializers", {}), SERIALIZER_PATTERN, ("linked_serializers",), allow_inline=Field.InlinePermissions.reference, assume_component_group="serializers")
 
         return (self.serializer_class_field, self.linked_serializers_field)
 
