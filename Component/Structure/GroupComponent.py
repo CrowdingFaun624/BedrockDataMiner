@@ -36,7 +36,6 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         "delegate_field",
         "max_similarity_ancestor_depth",
         "max_similarity_descendent_depth",
-        "my_type",
         "normalizer_field",
         "post_normalizer_field",
         "pre_normalized_types_field",
@@ -50,7 +49,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         self.subcomponents_field = [
             (
                 (subcomponent_field := OptionalComponentField.OptionalComponentField(subcomponent_str, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent", str(index)))),
-                TypeField.TypeField(type_str, ("subcomponents", str(index))).verify_with(subcomponent_field),
+                TypeField.TypeField(type_str, ("subcomponents", str(index))).verify_with(subcomponent_field).add_to_set(self.my_type),
             )
             for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())
         ]
@@ -74,19 +73,15 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         substructures:dict[type,Structure.Structure|None] = {}
-        all_types:set[type] = set()
         for (subcomponent_field, type_field) in self.subcomponents_field:
-            valid_types = type_field.types
-            all_types.update(valid_types)
-            substructures.update((valid_type, subcomponent_field.get_final(lambda subcomponent: subcomponent.final)) for valid_type in valid_types)
-        self.my_type = all_types
+            substructures.update((valid_type, subcomponent_field.get_final(lambda subcomponent: subcomponent.final)) for valid_type in type_field.types)
         self.final.link_substructures(
             substructures=substructures,
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             types=tuple(self.my_type),
             normalizer=tuple(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
             post_normalizer=tuple(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
-            pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else tuple(all_types),
+            pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else tuple(self.my_type),
             children_tags={tag.final for tag in self.children_tags},
         )
         return exceptions

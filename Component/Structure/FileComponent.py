@@ -38,7 +38,6 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         "file_types_field",
         "max_similarity_ancestor_depth",
         "max_similarity_descendent_depth",
-        "my_type",
         "normalizer_field",
         "post_normalizer_field",
         "pre_normalized_types_field",
@@ -51,7 +50,7 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
         self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent",))
-        self.file_types_field = TypeListField.TypeListField(data.get("file_types", "abstract_file"), ("file_types",)).must_be(self.domain.type_stuff.file_types)
+        self.file_types_field = TypeListField.TypeListField(data.get("file_types", "abstract_file"), ("file_types",)).must_be(self.domain.type_stuff.file_types).add_to_set(self.my_type)
         self.content_types_field = TypeListField.TypeListField(data["content_types"], ("content_types",)).verify_with(self.subcomponent_field)
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ("delegate",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
@@ -80,5 +79,4 @@ class FileComponent(StructureComponent.StructureComponent[FileStructure.FileStru
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.file_types_field.types,
             children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.file_types_field.types)
         return exceptions

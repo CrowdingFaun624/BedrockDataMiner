@@ -16,6 +16,7 @@ class AbstractTypeField(Field.Field):
         "contained_by_field",
         "must_be_fail_message",
         "must_be_types",
+        "type_set",
         "verify_with_component",
     )
 
@@ -27,6 +28,7 @@ class AbstractTypeField(Field.Field):
         self.must_be_types:TypeUtilities.TypeSet|None = None
         self.must_be_fail_message:str|None = None
         self.contained_by_field:AbstractTypeField|None = None
+        self.type_set:set[type]|None = None
 
     def check(self, source_component:"Component.Component") -> list[Exception]:
         exceptions = super().check(source_component)
@@ -65,6 +67,13 @@ class AbstractTypeField(Field.Field):
         Cannot be called before `set_field`.
         '''
         super().resolve_link_finals()
+
+    def add_to_set(self, _set:set[type]) -> Self:
+        '''
+        This Field will add to `_set` when its types are set.
+        '''
+        self.type_set = _set
+        return self
 
     def verify_with(self, component_field:VerifyComponentType) -> Self:
         '''

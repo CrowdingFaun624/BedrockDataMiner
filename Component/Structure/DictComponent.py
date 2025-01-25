@@ -59,7 +59,6 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         "max_similarity_descendent_depth",
         "min_key_similarity_threshold",
         "min_value_similarity_threshold",
-        "my_type",
         "normalizer_field",
         "post_normalizer_field",
         "pre_normalized_types_field",
@@ -89,7 +88,7 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.key_structure_field = OptionalComponentField.OptionalComponentField(data.get("key_component", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("key_component",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ("this_type",)).must_be(self.domain.type_stuff.mapping_types)
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ("this_type",)).must_be(self.domain.type_stuff.mapping_types).add_to_set(self.my_type)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
         self.tags_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
         self.types_field = TypeListField.TypeListField(data["types"], ("types",)).verify_with(self.subcomponent_field).conditional_must_be(self.sort == DictSorting.by_value, self.domain.type_stuff.sortable_types)
@@ -132,7 +131,6 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             required_keys=self.required_keys,
             children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.this_type_field.types)
         return exceptions
 
     def check(self) -> list[Exception]:

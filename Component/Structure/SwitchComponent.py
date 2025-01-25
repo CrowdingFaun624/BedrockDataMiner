@@ -32,6 +32,18 @@ class SwitchComponent(StructureComponent.StructureComponent[SwitchStructure.Swit
         TypeVerifier.TypedDictKeyTypeVerifier("types", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
     )
 
+    __slots__ = (
+        "delegate_field",
+        "max_similarity_descendent_depth",
+        "max_similarity_ancestor_depth",
+        "normalizer_field",
+        "post_normalizer_field",
+        "pre_normalized_types_field",
+        "subcomponents_field",
+        "switch_function_field",
+        "types_field",
+    )
+
     def initialize_fields(self, data:ComponentTyping.SwitchTypedDict) -> Sequence[Field.Field]:
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
@@ -39,7 +51,7 @@ class SwitchComponent(StructureComponent.StructureComponent[SwitchStructure.Swit
         self.subcomponents_field = {key: OptionalComponentField.OptionalComponentField(subdata, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponents", key)) for key, subdata in data["subcomponents"].items()}
         self.switch_function_field = ComponentField.ComponentField(data["switch_function"], NormalizerComponent.NORMALIZER_PATTERN, ("switch_function",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ("delegate",))
-        self.types_field = TypeListField.TypeListField(data["types"], ("types",))
+        self.types_field = TypeListField.TypeListField(data["types"], ("types",)).add_to_set(self.my_type)
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
@@ -69,5 +81,4 @@ class SwitchComponent(StructureComponent.StructureComponent[SwitchStructure.Swit
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.types_field.types,
             children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.types_field.types)
         return exceptions

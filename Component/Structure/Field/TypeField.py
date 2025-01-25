@@ -49,3 +49,5 @@ class TypeField(AbstractTypeField.AbstractTypeField):
 
     def resolve_link_finals(self) -> None:
         self.types = (self.subcomponent,) if isinstance(self.subcomponent, type) else self.subcomponent.final
+        if self.type_set is not None:
+            self.type_set.update(self.types)

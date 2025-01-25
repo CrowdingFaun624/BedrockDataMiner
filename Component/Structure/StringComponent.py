@@ -32,7 +32,6 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
     __slots__ = (
         "delegate_field",
         "max_similarity_ancestor_depth",
-        "my_type",
         "normalizer_field",
         "pre_normalized_types_field",
         "similarity_function_field",
@@ -46,7 +45,7 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.tags_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
-        self.types_field = TypeListField.TypeListField(data.get("types", "str"), ("types",)).must_be(self.domain.type_stuff.string_types)
+        self.types_field = TypeListField.TypeListField(data.get("types", "str"), ("types",)).must_be(self.domain.type_stuff.string_types).add_to_set(self.my_type)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
         self.similarity_function_field = OptionalFunctionField.OptionalFunctionField(data.get("similarity_function", None), ("similarity_function",))
         return (self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field, self.similarity_function_field)
@@ -69,5 +68,4 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
             similarity_function=self.similarity_function_field.function,
             children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.types_field.types)
         return exceptions

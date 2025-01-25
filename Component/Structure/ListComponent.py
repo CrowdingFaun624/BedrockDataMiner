@@ -38,7 +38,6 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         "max_similarity_ancestor_depth",
         "max_similarity_descendent_depth",
         "subcomponent_field",
-        "my_type",
         "normalizer_field",
         "post_normalizer_field",
         "pre_normalized_types_field",
@@ -58,7 +57,7 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
         self.tags_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
-        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ("this_type",)).must_be(self.domain.type_stuff.iterable_types).contained_by(self.types_field)
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "list"), ("this_type",)).must_be(self.domain.type_stuff.iterable_types).contained_by(self.types_field).add_to_set(self.my_type)
         return (self.subcomponent_field, self.delegate_field, self.types_field, self.normalizer_field, self.this_type_field, self.tags_field, self.pre_normalized_types_field, self.post_normalizer_field)
 
     def create_final(self) -> ListStructure.ListStructure:
@@ -82,5 +81,4 @@ class ListComponent(StructureComponent.StructureComponent[ListStructure.ListStru
             tags=self.tags_field.finals,
             children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.this_type_field.types)
         return exceptions

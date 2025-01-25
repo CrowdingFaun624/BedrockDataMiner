@@ -41,7 +41,6 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         "cache_normalize",
         "cache_print_text",
         "delegate_field",
-        "my_type",
         "subcomponent_field",
         "remove_threshold",
         "types_field",
@@ -60,7 +59,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
 
         self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent",))
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
-        self.types_field = TypeListField.TypeListField(data["types"], ("types",)).verify_with(self.subcomponent_field)
+        self.types_field = TypeListField.TypeListField(data["types"], ("types",)).verify_with(self.subcomponent_field).add_to_set(self.my_type)
         return (self.subcomponent_field, self.delegate_field, self.types_field)
 
     def create_final(self) -> CacheStructure.CacheStructure:
@@ -82,7 +81,6 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         types = self.types_field.types
-        self.my_type = set(types)
         self.final.link_substructures(
             structure=self.subcomponent_field.subcomponent.final,
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),

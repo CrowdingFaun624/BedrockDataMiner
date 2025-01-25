@@ -29,7 +29,6 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
 
     __slots__ = (
         "delegate_field",
-        "my_type",
         "normalizer_field",
         "pre_normalized_types_field",
         "tags_field",
@@ -40,7 +39,7 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
         self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.tags_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
-        self.types_field = TypeListField.TypeListField(data["types"], ("types",))
+        self.types_field = TypeListField.TypeListField(data["types"], ("types",)).add_to_set(self.my_type)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
         return (self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field)
 
@@ -60,5 +59,4 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
             tags=self.tags_field.finals,
             children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.types_field.types)
         return exceptions

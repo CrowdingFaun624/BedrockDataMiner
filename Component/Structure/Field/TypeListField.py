@@ -64,6 +64,8 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         for type_alias_component in self.type_aliases:
             types.extend(type_alias_component.final)
         self.types = tuple(types)
+        if self.type_set is not None:
+            self.type_set.update(self.types)
 
     def __len__(self) -> int:
         return len(self.types)

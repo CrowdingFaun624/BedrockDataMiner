@@ -73,7 +73,6 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         "max_similarity_ancestor_depth",
         "min_key_similarity_threshold",
         "min_value_similarity_threshold",
-        "my_type",
         "normalizer_field",
         "post_normalizer_field",
         "pre_normalized_types_field",
@@ -107,7 +106,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
-        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ("this_type",)).must_be(self.domain.type_stuff.mapping_types)
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ("this_type",)).must_be(self.domain.type_stuff.mapping_types).add_to_set(self.my_type)
         return (self.import_field, self.delegate_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field)
 
     def create_final(self) -> KeymapStructure.KeymapStructure:
@@ -153,7 +152,6 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             required_keys=[key.key for key in self.keys if key.required],
             children_tags={tag.final for tag in self.children_tags},
         )
-        self.my_type = set(self.this_type_field.types)
         return exceptions
 
     def check(self) -> list[Exception]:
