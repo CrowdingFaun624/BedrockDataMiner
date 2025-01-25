@@ -1,8 +1,8 @@
-from typing import Any, BinaryIO, TypedDict
+from typing import Any, BinaryIO, Sequence, TypedDict
 
 import Downloader.DirectoryAccessor as DirectoryAccessor
 
-__all__ = ["SubDirectoryAccessor"]
+__all__ = ("SubDirectoryAccessor",)
 
 class LinkedAccessorsTypedDict(TypedDict):
     superdirectory: DirectoryAccessor.DirectoryAccessor
@@ -39,11 +39,11 @@ class SubDirectoryAccessor(DirectoryAccessor.DirectoryAccessor):
     def file_exists(self, file_name:str) -> bool:
         return self.superdirectory_accessor.file_exists(self.modify_file_name(file_name))
 
-    def get_files_in(self, parent:str) -> list[str]:
+    def get_files_in(self, parent:str) -> Sequence[str]:
         return [self.trim_file_name(file) for file in self.superdirectory_accessor.get_files_in(self.modify_file_name(parent)) if file[-1] != "/"]
 
     @property
-    def file_list(self) -> list[str]:
+    def file_list(self) -> Sequence[str]:
         if self._file_list is None:
             self._file_list = [self.trim_file_name(file) for file in self.superdirectory_accessor.get_files_in(self.modify_file_name()) if file[-1] != "/"]
         return self._file_list

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 
 import Component.Component as Component
 import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
@@ -30,9 +30,9 @@ class DataminerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
     def get_assumed_used_components(self, components: dict[str, Component.Component], name:str) -> Iterable[Component.Component]:
         return components.values()
 
-    def get_dependencies(self, dataminer_settings:DataminerSettings.DataminerSettings, dataminer_settings_dict:dict[DataminerCollection.DataminerCollection,DataminerSettings.DataminerSettings], already:set[str]) -> list[str]:
+    def get_dependencies(self, dataminer_settings:DataminerSettings.DataminerSettings, dataminer_settings_dict:dict[DataminerCollection.DataminerCollection,DataminerSettings.DataminerSettings], already:set[str]) -> Sequence[str]:
         if dataminer_settings.name in already:
-            return [dataminer_settings.name]
+            return (dataminer_settings.name,)
         already.add(dataminer_settings.name)
         duplicated_dataminer_settings:list[str] = []
         for dependency in dataminer_settings.dependencies:
@@ -56,7 +56,7 @@ class DataminerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
             )
         return exceptions
 
-    def check_for_duplicate_file_names(self, dataminers:dict[str,AbstractDataminerCollection.AbstractDataminerCollection]) -> list[Exception]:
+    def check_for_duplicate_file_names(self, dataminers:dict[str,AbstractDataminerCollection.AbstractDataminerCollection]) -> Iterable[Exception]:
         names:dict[str,AbstractDataminerCollection.AbstractDataminerCollection] = {}
         duplicate_name_groups:dict[str,list[AbstractDataminerCollection.AbstractDataminerCollection]] = {}
         for dataminer in dataminers.values():
@@ -66,10 +66,10 @@ class DataminerImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[
                 duplicate_name_groups[dataminer.file_name].append(dataminer)
             else:
                 names[dataminer.file_name] = dataminer
-        return [
+        return (
             Exceptions.DataminerDuplicateFileNameError(name, duplicate_dataminers)
             for name, duplicate_dataminers in duplicate_name_groups.items()
-        ]
+        )
 
     def check(self, output: dict[str,AbstractDataminerCollection.AbstractDataminerCollection], other_outputs:dict[str,Any]) -> list[Exception]:
         exceptions = super().check(output, other_outputs)

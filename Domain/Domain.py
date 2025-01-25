@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, NotRequired, TypedDict
+from typing import (TYPE_CHECKING, Any, Callable, NotRequired, Sequence,
+                    TypedDict)
 
 import Component.ComponentFunctions as ComponentFunctions
 import Component.Importer as Importer
@@ -177,8 +178,8 @@ class Domain():
         self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
 
         self.is_library:bool
-        self.aliases:list[str]
-        self.dependencies:list[str]
+        self.aliases:Sequence[str]
+        self.dependencies:Sequence[str]
         self.read_manifest()
 
         self.accessor_types:dict[str,"AccessorType.AccessorType"]
@@ -212,7 +213,7 @@ class Domain():
         self.type_stuff = Types.TypeStuff(self)
         self.type_stuff.extend(Types.primary_type_stuff)
 
-    def get_cascading_dependencies(self, memo:set["Domain"]) -> list["Domain"]:
+    def get_cascading_dependencies(self, memo:set["Domain"]) -> Sequence["Domain"]:
         if self not in memo:
             output:list[Domain] = []
             memo.add(self)
@@ -222,7 +223,7 @@ class Domain():
             output.append(self)
             return output
         else:
-            return []
+            return ()
 
     def read_manifest(self) -> None:
         with open(self.domain_file, "rt") as f:
@@ -231,10 +232,10 @@ class Domain():
             TypeVerifier.TypedDictKeyTypeVerifier("aliases", False, TypeVerifier.ListTypeVerifier(str, list)),
             TypeVerifier.TypedDictKeyTypeVerifier("is_library", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("dependencies", False, TypeVerifier.ListTypeVerifier(str, list)),
-        ).base_verify(file, [self])
+        ).base_verify(file, (self,))
         self.is_library = file.get("is_library", False)
-        self.aliases = file.get("aliases", [])
-        self.dependencies = file.get("dependencies", [])
+        self.aliases = file.get("aliases", ())
+        self.dependencies = file.get("dependencies", ())
 
     def import_components(self) -> None:
         all_domains = self.get_cascading_dependencies(set())

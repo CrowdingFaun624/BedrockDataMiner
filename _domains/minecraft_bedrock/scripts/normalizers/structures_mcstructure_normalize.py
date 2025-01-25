@@ -1,7 +1,7 @@
 from itertools import count, product
 from typing import Any, NotRequired, TypedDict, cast
 
-__all__ = ["structures_mcstructure_normalize"]
+__all__ = ("structures_mcstructure_normalize",)
 
 class BlockPaletteItemTypedDict(TypedDict):
     name: str

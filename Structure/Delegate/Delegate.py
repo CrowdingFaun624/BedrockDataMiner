@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, Sequence, cast
 
 import Structure.ObjectStructure as ObjectStructure
 import Structure.PrimitiveStructure as PrimitiveStructure
@@ -82,8 +82,8 @@ class Delegate[a, b:Structure.Structure|StructureBase.StructureBase, c]():
         '''
         return cast(a, data)
 
-    def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a, bool, Sequence[Trace.ErrorTrace]]:
         ...
 
-    def print_text(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> tuple[a, list[Trace.ErrorTrace]]:
+    def print_text(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> tuple[a, Sequence[Trace.ErrorTrace]]:
         ...

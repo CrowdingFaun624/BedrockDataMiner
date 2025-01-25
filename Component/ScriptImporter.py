@@ -1,5 +1,5 @@
 from itertools import chain
-from typing import Any, Callable, TypeIs
+from typing import Any, Callable, Iterable, TypeIs
 
 import Component.Component as Component
 import Component.Field.Field as Field
@@ -56,7 +56,7 @@ class ScriptSet[a]():
             options.extend(f"{object_name}" for object_name in self.scripts_by_name)
         return options
 
-    def get(self, key:str, full_key:str, source:"Component.Component", path:list[str|int]) -> a:
+    def get(self, key:str, full_key:str, source:"Component.Component", path:tuple[str,...]) -> a:
         '''
         :key: The name of the object.
         :source: The Component referencing this Script.
@@ -105,7 +105,7 @@ class ScriptSetSet[a]():
     def get_options(self, source:"Component.Component") -> list[str]:
         return list(chain.from_iterable(script_set.get_options(source) for script_set in self.script_sets.values()))
 
-    def get(self, key:str, source:"Component.Component", path:list[str|int]) -> a:
+    def get(self, key:str, source:"Component.Component", path:tuple[str,...]) -> a:
         if len(split_key := key.split("!", maxsplit=1)) == 2:
             domain_name, subkey = split_key
             if (script_set := self.script_sets.get(domain_name)) is None:
@@ -128,8 +128,8 @@ class ScriptSetSetSet():
         "version_provider_classes",
     )
 
-    def __init__(self, domain:"Domain.Domain", dependencies:list["Domain.Domain"]) -> None:
-        all_domains = dependencies.copy()
+    def __init__(self, domain:"Domain.Domain", dependencies:Iterable["Domain.Domain"]) -> None:
+        all_domains = list(dependencies)
         all_domains.append(domain)
         self.domain = domain
         self.callables = ScriptSetSet(domain, {domain.name: domain.callables for domain in all_domains})

@@ -1,4 +1,4 @@
-from typing import MutableSequence
+from typing import MutableSequence, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -16,7 +16,7 @@ class FieldContainer[a: Field.Field](Field.Field):
         "fields",
     )
 
-    def __init__(self, fields:MutableSequence[a], path: list[str | int]) -> None:
+    def __init__(self, fields:MutableSequence[a], path: tuple[str,...]) -> None:
         super().__init__(path)
         self.fields = fields
 
@@ -32,7 +32,7 @@ class FieldContainer[a: Field.Field](Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["Component.Component"],list["Component.Component"]]:
+    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
         linked_components:list["Component.Component"] = []
         inline_components:list["Component.Component"] = []
         for field in self.fields:

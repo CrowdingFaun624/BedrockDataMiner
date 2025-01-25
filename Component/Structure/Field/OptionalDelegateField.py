@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -21,7 +21,7 @@ class OptionalDelegateField(Field.Field):
         "domain",
     )
 
-    def __init__(self, delegate_name:str|None, arguments:dict[str,Any], domain:"Domain.Domain", path: list[str | int]) -> None:
+    def __init__(self, delegate_name:str|None, arguments:dict[str,Any], domain:"Domain.Domain", path: tuple[str,...]) -> None:
         super().__init__(path)
         self.delegate_name = delegate_name
         self.arguments = arguments
@@ -70,10 +70,10 @@ class OptionalDelegateField(Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["Component.Component"],list["Component.Component"]]:
+    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
         if self.delegate_name is None:
             self.delegate_type = None
         else:
             delegate_type = functions.delegate_classes.get(self.delegate_name, source_component, self.error_path)
             self.delegate_type = delegate_type
-        return [], []
+        return (), ()

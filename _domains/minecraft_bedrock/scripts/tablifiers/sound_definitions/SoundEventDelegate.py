@@ -1,4 +1,4 @@
-from typing import Any, NotRequired, Required, TypedDict, cast
+from typing import Any, NotRequired, Required, Sequence, TypedDict, cast
 
 import Structure.Delegate.Delegate as Delegate
 import Structure.Difference as D
@@ -8,7 +8,7 @@ import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["SoundEventDelegate"]
+__all__ = ("SoundEventDelegate",)
 
 class SoundEventTypedDict(TypedDict):
     name: Required[str]
@@ -25,7 +25,7 @@ class SoundEventDelegate(Delegate.Delegate[str, KeymapStructure.KeymapStructure,
 
     applies_to = (KeymapStructure.KeymapStructure,)
 
-    def compare_text(self, data:SoundEventTypedDict, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:SoundEventTypedDict, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         has_changes = False
         if self.get_structure().sorting_function is not None:

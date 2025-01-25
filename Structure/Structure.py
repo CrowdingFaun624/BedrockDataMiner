@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -60,7 +60,7 @@ class Structure[a]():
             memo.add(self)
             yield from substructure.get_descendants(memo)
 
-    def check_all_types(self, data:a, environment:"StructureEnvironment.StructureEnvironment") -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:a, environment:"StructureEnvironment.StructureEnvironment") -> Sequence[Trace.ErrorTrace]:
         '''
         Checks the types of the data using this Structure. Returns a list of ErrorTraces.
 
@@ -69,7 +69,7 @@ class Structure[a]():
         '''
         ...
 
-    def compare_text(self, data:a, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,bool,list[Trace.ErrorTrace]]:
+    def compare_text(self, data:a, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,bool,Sequence[Trace.ErrorTrace]]:
         '''
         Generates lines from an object containing Diffs.
         Returns a list of Lines, if there were any changes, and a list of ErrorTraces.
@@ -81,7 +81,7 @@ class Structure[a]():
             raise Exceptions.AttributeNoneError("delegate", self)
         return self.delegate.compare_text(data, environment)
 
-    def print_text(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
+    def print_text(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any,Sequence[Trace.ErrorTrace]]:
         '''
         Generates lines from an object containing no Diffs.
         Returns a list of Lines and a list of ErrorTraces.
@@ -93,7 +93,7 @@ class Structure[a]():
             raise Exceptions.AttributeNoneError("delegate", self)
         return self.delegate.print_text(data, environment)
 
-    def normalize(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any|None,list[Trace.ErrorTrace]]:
+    def normalize(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any|None,Sequence[Trace.ErrorTrace]]:
         '''
         Manipulates the data before comparison.
         Returns the normalized data and a list of list of ErrorTraces.
@@ -103,7 +103,7 @@ class Structure[a]():
         '''
         ...
 
-    def get_tag_paths(self, data:a, tag:StructureTag.StructureTag, data_path:DataPath.DataPath, environment:"StructureEnvironment.StructureEnvironment") -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data:a, tag:StructureTag.StructureTag, data_path:DataPath.DataPath, environment:"StructureEnvironment.StructureEnvironment") -> tuple[Sequence[DataPath.DataPath], Sequence[Trace.ErrorTrace]]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data and a list of ErrorTraces.
 
@@ -123,7 +123,7 @@ class Structure[a]():
         '''
         ...
 
-    def compare(self, data1:a, data2:a, environment:"StructureEnvironment.ComparisonEnvironment", branch:int, branches:int) -> tuple[a|D.Diff[a],bool,list[Trace.ErrorTrace]]:
+    def compare(self, data1:a, data2:a, environment:"StructureEnvironment.ComparisonEnvironment", branch:int, branches:int) -> tuple[a|D.Diff[a],bool,Sequence[Trace.ErrorTrace]]:
         '''
         Combines the data into a single object with Diffs in it. Returns the combined object and if there are any differences.
 

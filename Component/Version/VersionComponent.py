@@ -1,5 +1,5 @@
 import datetime
-from typing import Any
+from typing import Any, Sequence
 
 import Component.Capabilities as Capabilities
 import Component.Component as Component
@@ -9,8 +9,8 @@ import Component.Field.Field as Field
 import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Pattern as Pattern
 import Component.Version.Field.VersionTagListField as VersionTagListField
-import Utilities.Exceptions as Exceptions
 import Component.Version.VersionFileComponent as VersionFileComponent
+import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
@@ -56,13 +56,13 @@ class VersionComponent(Component.Component[Version.Version]):
         "time",
     )
 
-    def initialize_fields(self, data:ComponentTyping.VersionTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data:ComponentTyping.VersionTypedDict) -> Sequence[Field.Field]:
         self.time = datetime.datetime.fromisoformat(data["time"]) if data["time"] is not None else None
 
-        self.parent_field = OptionalComponentField.OptionalComponentField(data["parent"], VERSION_PATTERN, ["parent"], allow_inline=Field.InlinePermissions.reference, assume_component_group="versions")
-        self.tags_field = VersionTagListField.VersionTagListField(data["tags"], ["tags"], self)
-        self.files_field = ComponentListField.ComponentListField(self.normalize_files(data["files"]), VersionFileComponent.VERSION_FILE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.inline, assume_type=VersionFileComponent.VersionFileComponent.class_name)
-        return [self.parent_field, self.tags_field, self.files_field]
+        self.parent_field = OptionalComponentField.OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",), allow_inline=Field.InlinePermissions.reference, assume_component_group="versions")
+        self.tags_field = VersionTagListField.VersionTagListField(data["tags"], ("tags",), self)
+        self.files_field = ComponentListField.ComponentListField(self.normalize_files(data["files"]), VersionFileComponent.VERSION_FILE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.inline, assume_type=VersionFileComponent.VersionFileComponent.class_name)
+        return (self.parent_field, self.tags_field, self.files_field)
 
     def create_final(self) -> Version.Version:
         return Version.Version(

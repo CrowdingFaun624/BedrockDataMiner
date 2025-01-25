@@ -1,4 +1,5 @@
 import re
+from typing import Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
@@ -39,18 +40,18 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
         "structure_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.CoverageDataminerCollectionTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.CoverageDataminerCollectionTypedDict) -> Sequence[Field.Field]:
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
-        self.remove_files = set(data.get("remove_files", []))
-        self.remove_regex = [re.compile(pattern) for pattern in data.get("remove_regex", [])]
+        self.remove_files = set(data.get("remove_files", ()))
+        self.remove_regex = [re.compile(pattern) for pattern in data.get("remove_regex", ())]
         self.remove_prefixes = data.get("remove_prefixes", [])
         self.remove_suffixes = data.get("remove_suffixes", [])
 
-        self.file_list_dataminer_field = ComponentField.ComponentField(data["file_list_dataminer"], AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN, ["file_list_dataminer"], allow_inline=Field.InlinePermissions.reference, assume_component_group="dataminer_collections")
-        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ["structure"], allow_inline=Field.InlinePermissions.reference)
-        return [self.file_list_dataminer_field, self.structure_field]
+        self.file_list_dataminer_field = ComponentField.ComponentField(data["file_list_dataminer"], AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("file_list_dataminer",), allow_inline=Field.InlinePermissions.reference, assume_component_group="dataminer_collections")
+        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=Field.InlinePermissions.reference)
+        return (self.file_list_dataminer_field, self.structure_field)
 
     def create_final(self) -> CoverageDataminer.CoverageDataminer:
         return CoverageDataminer.CoverageDataminer(

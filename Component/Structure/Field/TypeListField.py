@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -21,13 +21,13 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         "types",
     )
 
-    def __init__(self, subcomponents_strs:list[str]|str, path:list[str|int]) -> None:
+    def __init__(self, subcomponents_strs:Sequence[str]|str, path:tuple[str,...]) -> None:
         '''
         :subcomponents_strs: List of string representing a default type or Component.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         super().__init__(path)
-        self.subcomponents_strs = [subcomponents_strs] if isinstance(subcomponents_strs, str) else subcomponents_strs
+        self.subcomponents_strs = (subcomponents_strs,) if isinstance(subcomponents_strs, str) else subcomponents_strs
         self.primitive_types:list[type]
         self.type_aliases:list[TypeAliasComponent.TypeAliasComponent]
 
@@ -38,7 +38,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["TypeAliasComponent.TypeAliasComponent"],list["TypeAliasComponent.TypeAliasComponent"]]:
+    ) -> tuple[Sequence["TypeAliasComponent.TypeAliasComponent"],Sequence["TypeAliasComponent.TypeAliasComponent"]]:
         components_used:list["TypeAliasComponent.TypeAliasComponent"] = []
         self.primitive_types = []
         self.type_aliases = []
@@ -56,7 +56,7 @@ class TypeListField(AbstractTypeField.AbstractTypeField):
                     raise Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.TypeAliasTypedDict, subcomponent_data))
                 components_used.append(subcomponent)
                 self.type_aliases.append(subcomponent)
-        return components_used, []
+        return components_used, ()
 
     def resolve_link_finals(self) -> None:
         types:list[type] = []

@@ -7,7 +7,7 @@ import Domain.Domain as Domain
 import Serializer.Serializer as Serializer
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["NbtSerializer"]
+__all__ = ("NbtSerializer",)
 
 class NbtSerializer(Serializer.Serializer[NbtTypes.TAG, None]):
 

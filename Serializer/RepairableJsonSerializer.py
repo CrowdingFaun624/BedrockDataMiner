@@ -1,4 +1,4 @@
-from typing import Any, NotRequired, Required, TypedDict
+from typing import Any, Iterable, NotRequired, Required, TypedDict
 
 import Domain.Domain as Domain
 import Serializer.JsonSerializer as JsonSerializer
@@ -11,10 +11,8 @@ class Condition():
     type_verifier:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
 
     # stupid freaking linter won't accept it when it's dict[str,Any], dict[Any,Any], or TypedDict.
-    def __init__(self, data:Any, trace:list[str|int]|None=None) -> None:
-        if trace is None:
-            trace = []
-        self.type_verifier.base_verify(data, trace)
+    def __init__(self, data:Any, trace:Iterable[Any]|None=None) -> None:
+        self.type_verifier.base_verify(data, trace if trace is not None else ())
 
     def match(self, data:bytes, is_exception:bool) -> bool: ...
 
@@ -47,7 +45,7 @@ class ContentCondition(Condition):
         TypeVerifier.TypedDictKeyTypeVerifier("content", True, str),
     )
 
-    def __init__(self, data: ContentConditionTypedDict, trace:list[str|int]|None=None) -> None:
+    def __init__(self, data: ContentConditionTypedDict, trace:Iterable[Any]|None=None) -> None:
         super().__init__(data, trace)
         self.content = data["content"].encode()
 
@@ -81,10 +79,10 @@ class MetaCondition(Condition):
         TypeVerifier.TypedDictKeyTypeVerifier("conditions", True, TypeVerifier.ListTypeVerifier(dict, list))
     )
 
-    def __init__(self, data: MetaConditionTypedDict, trace:list[str|int]|None=None) -> None:
+    def __init__(self, data: MetaConditionTypedDict, trace:Iterable[Any]|None=None) -> None:
         super().__init__(data, trace)
-        if trace is None: trace = []
-        self.conditions = [parse_condition(condition, trace + ["conditions", index]) for index, condition in enumerate(data["conditions"])]
+        if trace is None: trace = ()
+        self.conditions = [parse_condition(condition, list(trace) + ["conditions", index]) for index, condition in enumerate(data["conditions"])]
 
     def has_exception_condition(self) -> bool:
         return any(condition.has_exception_condition() for condition in self.conditions)
@@ -115,21 +113,17 @@ condition_types_list:list[type[Condition]] = [
 
 condition_types:dict[str,type[Condition]] = {condition_type.name: condition_type for condition_type in condition_types_list}
 
-def parse_condition(data:dict[Any,Any], trace:list[str|int]|None=None) -> Condition:
-    if trace is None:
-        trace = []
+def parse_condition(data:dict[Any,Any], trace:Iterable[Any]|None=None) -> Condition:
     condition_type_str:str = data.pop("type", "always")
-    return condition_types[condition_type_str](data, trace)
+    return condition_types[condition_type_str](data, trace if trace is not None else ())
 
 class Action():
 
     name:str
     type_verifier:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
 
-    def __init__(self, data:Any, trace:list[str|int]|None=None) -> None:
-        if trace is None:
-            trace = []
-        self.type_verifier.base_verify(data, trace)
+    def __init__(self, data:Any, trace:Iterable[Any]|None=None) -> None:
+        self.type_verifier.base_verify(data, trace if trace is not None else ())
 
     def do(self, data:bytes) -> bytes: ...
 
@@ -142,7 +136,7 @@ class ContentAction(Action):
         TypeVerifier.TypedDictKeyTypeVerifier("content", True, str),
     )
 
-    def __init__(self, data: ContentActionTypedDict, trace: list[str | int] | None = None) -> None:
+    def __init__(self, data: ContentActionTypedDict, trace: Iterable[Any] | None = None) -> None:
         super().__init__(data, trace)
         self.content = data["content"].encode()
 
@@ -195,7 +189,7 @@ class ReplaceSomeAction(Action):
         TypeVerifier.TypedDictKeyTypeVerifier("old_content", True, str),
     )
 
-    def __init__(self, data: ReplaceSomeActionTypedDict, trace: list[str | int] | None = None) -> None:
+    def __init__(self, data: ReplaceSomeActionTypedDict, trace: Iterable[Any] | None = None) -> None:
         super().__init__(data, trace)
         self.old_content = data["old_content"].encode()
         self.new_content = data["new_content"].encode()
@@ -214,10 +208,11 @@ class SequenceAction(Action):
         TypeVerifier.TypedDictKeyTypeVerifier("actions", True, TypeVerifier.ListTypeVerifier(dict, list)),
     )
 
-    def __init__(self, data: Any, trace: list[str | int] | None = None) -> None:
+    def __init__(self, data: Any, trace: Iterable[Any] | None = None) -> None:
         super().__init__(data, trace)
-        if trace is None: trace = []
-        self.actions = [parse_action(action, trace + ["actions", index]) for index, action in enumerate(data["actions"])]
+        if trace is None:
+            trace = []
+        self.actions = [parse_action(action, list(trace) + ["actions", index]) for index, action in enumerate(data["actions"])]
 
     def do(self, data: bytes) -> bytes:
         for action in self.actions:
@@ -235,11 +230,9 @@ action_types_list:list[type[Action]] = [
 ]
 action_types:dict[str,type[Action]] = {action.name: action for action in action_types_list}
 
-def parse_action(action:dict[Any,Any], trace:list[str|int]|None=None) -> Action:
-    if trace is None:
-        trace = []
+def parse_action(action:dict[Any,Any], trace:Iterable[Any]|None=None) -> Action:
     action_type_str = action.pop("type")
-    return action_types[action_type_str](action, trace)
+    return action_types[action_type_str](action, trace if trace is not None else ())
 
 class RulesTypedDict(TypedDict):
     condition: dict[Any,Any]

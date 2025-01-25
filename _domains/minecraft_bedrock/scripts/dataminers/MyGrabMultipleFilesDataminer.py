@@ -7,7 +7,7 @@ import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.File as File
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["MyGrabMultipleFilesDataminer"]
+__all__ = ("MyGrabMultipleFilesDataminer",)
 
 class MyGrabMultipleFilesDataminer(GrabMultipleFilesDataminer.GrabMultipleFilesDataminer):
 

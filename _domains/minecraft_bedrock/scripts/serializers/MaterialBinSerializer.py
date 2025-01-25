@@ -12,7 +12,7 @@ import Utilities.File as File
 import Utilities.FileManager as FileManager
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["MaterialBinSerializer"]
+__all__ = ("MaterialBinSerializer",)
 
 class PassTypedDict(TypedDict):
     pass_info: File.File[Any]
@@ -92,12 +92,12 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
         with open(input_file, "wb") as f:
             f.write(data)
         jar_file = self.domain.lib_files[f"MaterialBinTool/MaterialBinTool-{self.version}-all.jar"]
-        command = [
+        command = (
             "java",
             "-jar", jar_file,
             "-u", input_file,
             "-o", temporary_directory,
-        ]
+        )
         with subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE) as process:
             process.wait()
             if process.returncode != 0:

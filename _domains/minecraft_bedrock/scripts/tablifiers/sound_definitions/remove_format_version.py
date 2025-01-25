@@ -1,6 +1,6 @@
 from typing import Any, TypedDict
 
-__all__ = ["remove_format_version"]
+__all__ = ("remove_format_version",)
 
 class OldTypedDict(TypedDict):
     format_version: str

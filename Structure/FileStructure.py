@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, cast
+from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence,
+                    cast)
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -43,8 +44,8 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         self.structure:Structure.Structure[a]|None = None
         self.file_types:tuple[type,...]
         self.content_types:tuple[type,...]
-        self.normalizer:list[Normalizer.Normalizer]
-        self.post_normalizer:list[Normalizer.Normalizer]
+        self.normalizer:Sequence[Normalizer.Normalizer]
+        self.post_normalizer:Sequence[Normalizer.Normalizer]
         self.pre_normalized_types:tuple[type,...]
 
     def link_substructures(
@@ -53,8 +54,8 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         delegate:"Delegate.Delegate|None",
         file_types:tuple[type,...],
         content_types:tuple[type,...],
-        normalizer:list[Normalizer.Normalizer],
-        post_normalizer:list[Normalizer.Normalizer],
+        normalizer:Sequence[Normalizer.Normalizer],
+        post_normalizer:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
@@ -66,14 +67,14 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         self.post_normalizer = post_normalizer
         self.pre_normalized_types = pre_normalized_types
 
-    def get_structure(self, key:None, value:a) -> tuple[Structure.Structure[a]|None, list[Trace.ErrorTrace]]:
-        return self.structure, []
+    def get_structure(self, key:None, value:a) -> tuple[Structure.Structure[a]|None, Sequence[Trace.ErrorTrace]]:
+        return self.structure, ()
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        if self.structure is None: return []
-        else: return [self.structure]
+        if self.structure is None: return ()
+        else: return (self.structure,)
 
-    def check_all_types(self, data:File.AbstractFile[a], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:File.AbstractFile[a], environment:StructureEnvironment.StructureEnvironment) -> Sequence[Trace.ErrorTrace]:
         output:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.file_types):
             output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.file_types, type(data), "Data", "(file)"), self.name, None, data))
@@ -84,8 +85,8 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
             output.extend(exception.add(self.name, None) for exception in self.structure.check_all_types(data.data, environment))
         return output
 
-    def normalize(self, data:File.AbstractFile[a], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None, list[Trace.ErrorTrace]]:
-        if not self.children_has_normalizer: return None, []
+    def normalize(self, data:File.AbstractFile[a], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None, Sequence[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, ()
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -135,11 +136,11 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         else:
             return None, exceptions
 
-    def get_tag_paths(self, data:File.AbstractFile[a], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
-        if tag not in self.children_tags: return [], []
+    def get_tag_paths(self, data:File.AbstractFile[a], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[Sequence[DataPath.DataPath], Sequence[Trace.ErrorTrace]]:
+        if tag not in self.children_tags: return (), ()
         exceptions:list[Trace.ErrorTrace] = []
         if self.structure is None:
-            return [], exceptions
+            return (), exceptions
         output, new_exceptions = self.structure.get_tag_paths(data.data, tag, data_path.copy(), environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
@@ -164,7 +165,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
             output = self.structure.get_similarity(data1_data, data2.data, depth + 1, max_depth, environment, exceptions, branch)
             return output
 
-    def compare(self, data1:File.AbstractFile[a]|File.FileDiff[a], data2:File.AbstractFile[a], environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[File.FileDiff[a], bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1:File.AbstractFile[a]|File.FileDiff[a], data2:File.AbstractFile[a], environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[File.FileDiff[a], bool, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data1, File.FileDiff) and (data1 is data2 or data1 == data2):
             output, has_changes = File.FileDiff(data1.data, data1, data2), False
@@ -203,7 +204,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
                 output = File.FileDiff(comparison_output, *new_files)
         return output, has_changes, exceptions
 
-    def print_text(self, data: File.AbstractFile[a], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
+    def print_text(self, data: File.AbstractFile[a], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.get_structure(None, data.data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
@@ -219,7 +220,7 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def compare_text(self, data:File.FileDiff[a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:File.FileDiff[a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         data_extracted = data.data
         structure, new_exceptions = self.choose_structure(None, data_extracted)

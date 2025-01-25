@@ -3,7 +3,7 @@ from typing import (Any, Literal, MutableMapping, MutableSequence, Optional,
 
 import Utilities.Exceptions as Exceptions
 
-__all__ = ["volume_normalize_nbt"]
+__all__ = ("volume_normalize_nbt",)
 
 LAYER_CHARACTERS_DEFAULT_MAX = len("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+={[}];:'<,>./?αβγδεζηθικλμνξπρσςτυφχψωΓΔΘΛΞΠΣΦΨΩБбгДдËëЖжЗзИиЙйЛлФфЦцЧчШшЩщЪъЫыЬьЭэЮюЯя")
 

@@ -1,4 +1,5 @@
 import enum
+from typing import Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
@@ -82,7 +83,7 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         "value_weight",
     )
 
-    def initialize_fields(self, data: ComponentTyping.KeymapTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.KeymapTypedDict) -> Sequence[Field.Field]:
         self.detect_key_moves = data.get("detect_key_moves", False)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", KeymapStructure.MIN_KEY_SIMILARITY_THRESHOLD)
         self.min_value_similarity_threshold = data.get("min_value_similarity_threshold", KeymapStructure.MIN_VALUE_SIMILARITY_THRESHOLD)
@@ -93,21 +94,21 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         self.max_key_similarity_descendent_depth = data.get("max_key_similarity_descendent_depth", 4)
         self.default_max_similarity_descendent_depth = data.get("default_max_similarity_descendent_depth", None)
 
-        self.tags_for_all_field = TagListField.TagListField(data.get("tags", []), ["tags"]).add_to_tag_set(self.children_tags)
+        self.tags_for_all_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
         self.keys = FieldListField.FieldListField([
-            KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ["keys", key], self)
+            KeymapKeyField.KeymapKeyField(key_data, key, self.children_tags, ("keys", key), self)
                 .conditional_must_be(self.sort == KeymapSorting.by_value, self.domain.type_stuff.sortable_types)
                 .add_tag_fields(self.tags_for_all_field)
             for key, key_data in data.get("keys", {}).items()
-        ], ["keys"])
-        self.import_field = KeymapImportField.KeymapImportField(data.get("imports", []), ["imports"]).import_into(self.keys)
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
-        self.key_structure_field = OptionalComponentField.OptionalComponentField(data.get("key_component"), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["key_component"])
-        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["post_normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"]).must_be(self.domain.type_stuff.mapping_types)
-        return [self.import_field, self.delegate_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field]
+        ], ("keys",))
+        self.import_field = KeymapImportField.KeymapImportField(data.get("imports", ()), ("imports",)).import_into(self.keys)
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.key_structure_field = OptionalComponentField.OptionalComponentField(data.get("key_component"), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("key_component",))
+        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ("this_type",)).must_be(self.domain.type_stuff.mapping_types)
+        return (self.import_field, self.delegate_field, self.key_structure_field, self.tags_for_all_field, self.keys, self.this_type_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field)
 
     def create_final(self) -> KeymapStructure.KeymapStructure:
         match self.sort:
@@ -145,8 +146,8 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             delegate=self.delegate_field.create_delegate(self.final, delegate_keys_arguments, exceptions=exceptions),
             key_types={key.key: key.types_field.types for key in self.keys},
             key_structure=self.key_structure_field.get_final(lambda subcomponent: subcomponent.final),
-            normalizer=list(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
-            post_normalizer=list(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            normalizer=tuple(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            post_normalizer=tuple(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.this_type_field.types,
             tags={keymap_field.key: keymap_field.tags_field.finals for keymap_field in self.keys},
             required_keys=[key.key for key in self.keys if key.required],

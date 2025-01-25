@@ -2,7 +2,7 @@ import base64
 
 import Serializer.Serializer as Serializer
 
-__all__ = ["ProfanityFilterSerializer"]
+__all__ = ("ProfanityFilterSerializer",)
 
 class ProfanityFilterSerializer(Serializer.Serializer[list[str],list[str]]):
 

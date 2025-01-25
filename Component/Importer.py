@@ -1,7 +1,7 @@
 import traceback
 from collections import deque
 from pathlib import Path
-from typing import Any, Callable, cast
+from typing import Any, Callable, Iterable, Sequence, cast
 
 import pyjson5 as json
 
@@ -26,7 +26,7 @@ import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
-importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] = [
+importer_environment_types:tuple[type[ImporterEnvironment.ImporterEnvironment],...] = (
     AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,
     DataminerImporterEnvironment.DataminerImporterEnvironment,
     LatestSlotImporterEnvironment.LatestSlotImporterEnvironment,
@@ -39,7 +39,7 @@ importer_environment_types:list[type[ImporterEnvironment.ImporterEnvironment]] =
     VersionImporterEnvironment.VersionImporterEnvironment,
     VersionTagImporterEnvironment.VersionTagImporterEnvironment,
     VersionTagOrderImporterEnvironment.VersionTagOrderImporterEnvironment,
-]
+)
 
 component_types_dict:dict[str,type[Component.Component]] = {component_type.class_name: component_type for component_type in ComponentTypes.component_types}
 
@@ -105,7 +105,7 @@ def propagate_variables(all_components:dict[str,dict[str,dict[str,Component.Comp
                     unvisited_components.add(parent_component)
                     components_queue.append(parent_component)
 
-def create_all_components(domains:list["Domain.Domain"]) -> tuple[dict[str,dict[str,dict[str,Component.Component]]], dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]]]:
+def create_all_components(domains:Sequence["Domain.Domain"]) -> tuple[dict[str,dict[str,dict[str,Component.Component]]], dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]]]:
     all_components:dict[str,dict[str,dict[str,Component.Component]]] = {}
     already_paths:dict[Path,ImporterEnvironment.ImporterEnvironment] = {}
     importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]] = {}
@@ -125,14 +125,14 @@ def create_all_components(domains:list["Domain.Domain"]) -> tuple[dict[str,dict[
                 components_data = get_file(file_path, importer_environment)
                 if importer_environment.single_component:
                     components_data = cast(ComponentTyping.ComponentGroupFileType, {"": components_data})
-                component_group_type_verifier.base_verify(components_data, [name])
+                component_group_type_verifier.base_verify(components_data, (name,))
                 all_components[domain.name][name] = create_components(name, components_data, importer_environment, domain)
     return all_components, importer_environments
 
-def get_imports(domains:list["Domain.Domain"]) -> dict[str,list[str]]:
+def get_imports(domains:Sequence["Domain.Domain"]) -> dict[str,list[str]]:
     return {domain.name: domain.dependencies for domain in domains}
 
-def set_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain_imports:dict[str,list[str]], functions:dict[str,ScriptImporter.ScriptSetSetSet], domain_list:list["Domain.Domain"]) -> None:
+def set_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain_imports:dict[str,list[str]], functions:dict[str,ScriptImporter.ScriptSetSetSet], domain_list:Sequence["Domain.Domain"]) -> None:
     domains:dict[str,Domain.Domain] = {domain.name: domain for domain in domain_list}
     exceptions:list[Exception] = []
     failed_component_groups:set[str] = set()
@@ -226,13 +226,13 @@ def check_for_unused_components(all_components:dict[str,dict[str,dict[str,Compon
             if neighbor not in visited_nodes
         )
         visited_nodes.add(unvisited_node)
-    unused_components:list[Component.Component] = [
+    unused_components:Iterable[Component.Component] = (
         component
         for domain_components in all_components.values()
         for components in domain_components.values()
         for component in components.values()
         if component not in visited_nodes
-    ]
+    )
     for unused_component in unused_components:
         print(f"Warning: Unused component: {unused_component}")
 
@@ -254,12 +254,12 @@ def check_importer_environments(output:dict[str,dict[str,Any]], importer_environ
             traceback.print_exception(exception)
         raise Exceptions.ComponentParseError(sorted(failed_component_groups), len(exceptions))
 
-def get_all_functions(domain_list:list["Domain.Domain"], domain_imports:dict[str,list[str]]) -> dict[str,ScriptImporter.ScriptSetSetSet]:
+def get_all_functions(domain_list:Sequence["Domain.Domain"], domain_imports:dict[str,list[str]]) -> dict[str,ScriptImporter.ScriptSetSetSet]:
     domains:dict[str,"Domain.Domain"] = {domain.name: domain for domain in domain_list}
-    domain_dependencies:list[tuple["Domain.Domain", list["Domain.Domain"]]] = [(domains[domain], [domains[dependency] for dependency in dependencies]) for domain, dependencies in domain_imports.items()]
+    domain_dependencies:Iterable[tuple["Domain.Domain", Iterable["Domain.Domain"]]] = ((domains[domain], (domains[dependency] for dependency in dependencies)) for domain, dependencies in domain_imports.items())
     return {domain.name: ScriptImporter.ScriptSetSetSet(domain, dependencies) for domain, dependencies in domain_dependencies}
 
-def parse_all_component_groups(domains:list["Domain.Domain"]) -> dict[str,dict[str,Any]]:
+def parse_all_component_groups(domains:Sequence["Domain.Domain"]) -> dict[str,dict[str,Any]]:
     '''
     :domain: A Domain and its dependencies. The primary Domain goes last.
     '''

@@ -1,5 +1,5 @@
 import bisect
-from typing import BinaryIO
+from typing import BinaryIO, Sequence
 
 import Downloader.Accessor as Accessor
 
@@ -9,11 +9,7 @@ class DirectoryAccessor(Accessor.Accessor):
     __slots__ = ()
 
     @property
-    def file_list(self) -> list[str]: ...
-
-    @property
-    def full_file_list(self) -> list[str]:
-        return self.file_list
+    def file_list(self) -> Sequence[str]: ...
 
     def file_exists(self, file_name:str) -> bool: ...
 
@@ -21,7 +17,7 @@ class DirectoryAccessor(Accessor.Accessor):
 
     def open(self, file_name:str) -> BinaryIO: ...
 
-    def get_files_in(self, parent:str) -> list[str]:
+    def get_files_in(self, parent:str) -> Sequence[str]:
         '''Returns a list of all files that are within the given directory.'''
         directory_length = len(parent)
         file_list = self.file_list

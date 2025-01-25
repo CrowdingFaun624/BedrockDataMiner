@@ -1,5 +1,5 @@
 import zipfile
-from typing import Any, BinaryIO, TypedDict
+from typing import Any, BinaryIO, Sequence, TypedDict
 
 import Downloader.DirectoryAccessor as DirectoryAccessor
 import Downloader.FileAccessor as FileAccessor
@@ -33,7 +33,7 @@ class ZipAccessor(DirectoryAccessor.DirectoryAccessor):
         return self._zip_file
 
     @property
-    def file_list(self) -> list[str]:
+    def file_list(self) -> Sequence[str]:
         if self._file_list is None:
             self._file_list = sorted(file.filename for file in self.zip_file.filelist)
         return self._file_list

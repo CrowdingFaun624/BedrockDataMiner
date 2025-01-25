@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.Delegate.Delegate as Delegate
 import Structure.Difference as D
@@ -5,7 +7,7 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["DefinedInDelegate"]
+__all__ = ("DefinedInDelegate",)
 
 
 class DefinedInDelegate(Delegate.Delegate[str, AbstractIterableStructure.AbstractIterableStructure, str]):
@@ -14,7 +16,7 @@ class DefinedInDelegate(Delegate.Delegate[str, AbstractIterableStructure.Abstrac
 
     applies_to = (AbstractIterableStructure.AbstractIterableStructure,)
 
-    def compare_text(self, data:list[str|D.Diff[str]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:list[str|D.Diff[str]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
         output:list[str] = []
         exceptions:list[Trace.ErrorTrace] = []
         has_changes = False

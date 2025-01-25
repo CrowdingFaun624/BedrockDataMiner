@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Sequence
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
@@ -14,7 +14,7 @@ class OptionalFunctionField(Field.Field):
         "function_name",
     )
 
-    def __init__(self, function_name:str|None, path:list[str|int], ignore_parameters:set[str]|None=None) -> None:
+    def __init__(self, function_name:str|None, path:tuple[str,...]) -> None:
         '''
         :function_name: The name of the function this refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
@@ -30,9 +30,9 @@ class OptionalFunctionField(Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["Component.Component"],list["Component.Component"]]:
+    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
         if self.function_name is None:
             self.function = None
         else:
             self.function = functions.callables.get(self.function_name, source_component, self.error_path)
-        return [], []
+        return (), ()

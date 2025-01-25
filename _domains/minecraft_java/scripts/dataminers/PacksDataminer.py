@@ -6,7 +6,7 @@ import Dataminer.FileDataminer as FileDataminer
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["PacksDataminer"]
+__all__ = ("PacksDataminer",)
 
 class PackTypedDict(TypedDict):
     name: str

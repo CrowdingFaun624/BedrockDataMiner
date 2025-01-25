@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -19,9 +21,9 @@ class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
         "is_file",
     )
 
-    def initialize_fields(self, data: ComponentTyping.StructureTagTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.StructureTagTypedDict) -> Sequence[Field.Field]:
         self.is_file = data.get("is_file", False)
-        return []
+        return ()
 
     def create_final(self) -> StructureTag.StructureTag:
         return StructureTag.StructureTag(

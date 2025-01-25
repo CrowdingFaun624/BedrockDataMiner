@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Self, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -18,7 +18,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         "import_into_keys",
     )
 
-    def __init__(self, subcomponents_data:list[str]|str, path:list[str|int]) -> None:
+    def __init__(self, subcomponents_data:Sequence[str]|str, path:tuple[str,...]) -> None:
         '''
         :subcomponents_data: The names of the Components this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
@@ -33,7 +33,7 @@ class KeymapImportField(ComponentListField.ComponentListField["KeymapComponent.K
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["KeymapComponent.KeymapComponent"],list["KeymapComponent.KeymapComponent"]]:
+    ) -> tuple[Sequence["KeymapComponent.KeymapComponent"],Sequence["KeymapComponent.KeymapComponent"]]:
         subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function)
         self.import_into_keys.extend(
             key

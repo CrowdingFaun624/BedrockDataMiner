@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -25,13 +27,13 @@ class LogComponent(Component.Component[Log.Log]):
         "reset_on_reload",
     )
 
-    def initialize_fields(self, data: ComponentTyping.LogTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.LogTypedDict) -> Sequence[Field.Field]:
         self.file_name = data["file_name"]
         self.log_type = Log.LogType[data["log_type"]]
         self.reset_on_reload = data["reset_on_reload"]
         self.domain.log_directory.mkdir(exist_ok=True)
         self.file = self.domain.log_directory.joinpath(self.file_name)
-        return []
+        return ()
 
     def create_final(self) -> Log.Log:
         return Log.Log(

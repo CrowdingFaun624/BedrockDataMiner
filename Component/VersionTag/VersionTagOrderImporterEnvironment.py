@@ -66,11 +66,11 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
                 already_children.add(child)
 
         if output.top_level_tag is not None:
-            top_level_tags_used:Counter[VersionTag.VersionTag] = Counter(chain([output.top_level_tag], output.tags_before_top_level_tag, output.tags_after_top_level_tag))
+            top_level_tags_used:Counter[VersionTag.VersionTag] = Counter(chain((output.top_level_tag,), output.tags_before_top_level_tag, output.tags_after_top_level_tag))
             exceptions.extend(
                 Exceptions.NotAllOrderTagsUsedError(tag, "order") if times_used == 0
                 else Exceptions.DuplicateVersionTagOrderError(tag, "order")
-                for tag in chain([output.top_level_tag], output.tags_before_top_level_tag, output.tags_after_top_level_tag)
+                for tag in chain((output.top_level_tag,), output.tags_before_top_level_tag, output.tags_after_top_level_tag)
                 if (times_used := top_level_tags_used[tag]) != 1
             )
 

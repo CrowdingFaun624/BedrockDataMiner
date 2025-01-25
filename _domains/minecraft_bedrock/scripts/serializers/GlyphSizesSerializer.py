@@ -2,7 +2,7 @@ from typing import NotRequired, TypedDict
 
 import Serializer.Serializer as Serializer
 
-__all__ = ["GlyphSizesSerializer"]
+__all__ = ("GlyphSizesSerializer",)
 
 class RangeTypedDict(TypedDict):
     character: NotRequired[str]

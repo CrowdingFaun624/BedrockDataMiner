@@ -81,19 +81,19 @@ class SequenceStructure[d](AbstractIterableStructure.AbstractIterableStructure[d
         max_length = len(data1) if len(data1) > len(data2) else len(data2) # DO NOT subtract prefix_len or suffix_len
         return 1 - (levenshtein_distance / max_length)
 
-    def compare_sub(self, data1:d|D.Diff[d], data2:d, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[d|D.Diff[d],bool,list[Trace.ErrorTrace]]:
+    def compare_sub(self, data1:d|D.Diff[d], data2:d, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[d|D.Diff[d],bool,Sequence[Trace.ErrorTrace]]:
         if data1 is data2 or data1 == data2:
-            return data1, False, []
+            return data1, False, ()
         elif self.structure is None:
             if isinstance(data1, D.Diff):
                 data1_diff = cast("D.Diff[d]", data1)
                 if data1_diff.last_value == data2:
-                    return data1_diff.extend(branch+1), True, []
+                    return data1_diff.extend(branch+1), True, ()
                 else:
-                    return data1_diff.append(branch+1, data2), True, []
+                    return data1_diff.append(branch+1, data2), True, ()
             else:
                 data1_object = cast(d, data1)
-                return D.Diff(branches, {tuple(range(0,branch+1)): data1_object, (branch+1,): data2}), True, []
+                return D.Diff(branches, {tuple(range(0,branch+1)): data1_object, (branch+1,): data2}), True, ()
         elif isinstance(data1, D.Diff):
             data1_diff = cast("D.Diff[d]", data1)
             comparison, _, exceptions = self.structure.compare(data1_diff.last_value, data2, environment, branch, branches)
@@ -109,10 +109,10 @@ class SequenceStructure[d](AbstractIterableStructure.AbstractIterableStructure[d
         environment:StructureEnvironment.ComparisonEnvironment,
         branch:int,
         branches:int,
-    ) -> tuple[Sequence[d|D.Diff], bool, list[Trace.ErrorTrace]]:
+    ) -> tuple[Sequence[d|D.Diff], bool, Sequence[Trace.ErrorTrace]]:
         import numpy
         if not environment.is_multi_diff and (data1 is data2 or data1 == data2):
-            return data1, False, []
+            return data1, False, ()
         exceptions:list[Trace.ErrorTrace] = []
         similarity_function:Callable[[d,d,int,int|None,StructureEnvironment.ComparisonEnvironment,list[Trace.ErrorTrace],int],float] =\
             self.structure.get_similarity if self.structure is not None else lambda data1, data2, depth, max_depth, environment, exceptions, branch: float(data1 == data2)

@@ -1,5 +1,5 @@
 import enum
-from typing import Callable, Mapping
+from typing import Callable, Mapping, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -9,14 +9,14 @@ import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 
 
-def get_keys_strs(is_capital:bool, keys:list[str|int]) -> str:
+def get_keys_strs(is_capital:bool, keys:tuple[str,...]) -> str:
     capitalize_function:Callable[[str,bool],str] = lambda string, capitalize: string.capitalize() if capitalize else string
     return "".join(
         capitalize_function(f"key \"{key}\" of " if isinstance(key, str) else f"item {key} of ", index == 0 and is_capital)
         for index, key in enumerate(reversed(keys))
     )
 
-def get_source_str(keys:list[str|int], source_component:"Component.Component") -> str:
+def get_source_str(keys:tuple[str,...], source_component:"Component.Component") -> str:
     return f"{get_keys_strs(False, keys)}{source_component}"
 
 def get_options(
@@ -67,7 +67,7 @@ def choose_component[a: Component.Component](
         pattern:Pattern.Pattern[a],
         local_components:Mapping[str,"Component.Component"],
         global_components:Mapping[str,Mapping[str,Mapping[str,"Component.Component"]]],
-        keys:list[str|int],
+        keys:tuple[str,...],
         create_component_function:ComponentTyping.CreateComponentFunction,
         assume_type:str|None,
         assume_component_group:str|None,
@@ -153,9 +153,9 @@ class Field():
         "error_path",
     )
 
-    def __init__(self, path:list[str|int]) -> None:
+    def __init__(self, path:tuple[str,...]) -> None:
         '''
-        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: A list of strings that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
         self.error_path = path
 
@@ -169,7 +169,7 @@ class Field():
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:"ScriptImporter.ScriptSetSetSet",
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["Component.Component"],list["Component.Component"]]:
+    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
         '''
         Links this Component to other Components. Returns a list of all children Components (including inline Components) as well as a list of all inline Components.
         Fields are not responsible for calling `set_component` on inline Components.
@@ -179,7 +179,7 @@ class Field():
         :functions: A dictionary of functions that is provided by the importer.
         :create_component_function: The function used to create inline Components.
         '''
-        return [], []
+        return (), ()
 
     def resolve_create_finals(self) -> None:
         '''

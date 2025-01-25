@@ -2,9 +2,9 @@ from typing import Any, cast
 
 import Utilities.File as File
 
-__all__ = ["ui_normalize"]
+__all__ = ("ui_normalize",)
 
-CONTROLS_KEYS = ["controls", "+controls"]
+CONTROLS_KEYS = ("controls", "+controls")
 '''Keys of items that contain nested elements.'''
 
 def parse_element_name(raw_element_name:str, namespace:str) -> tuple[str,str|None,str|None]:

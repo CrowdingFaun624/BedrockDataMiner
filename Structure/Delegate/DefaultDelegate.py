@@ -1,4 +1,5 @@
-from typing import Any, Hashable, Iterable, NotRequired, TypedDict, cast
+from typing import (Any, Hashable, Iterable, NotRequired, Sequence, TypedDict,
+                    cast)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.Delegate.Delegate as Delegate
@@ -140,9 +141,9 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
             output.extend((indentation + 1, line) for indentation, line in substructure_output)
             return output
 
-    def print_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[LineType],list[Trace.ErrorTrace]]:
+    def print_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.PrinterEnvironment) -> tuple[list[LineType],Sequence[Trace.ErrorTrace]]:
         if self.structure is None or isinstance(self.structure, (PassthroughStructure.PassthroughStructure, PrimitiveStructure.PrimitiveStructure)):
-            return [(0, self.stringify(data))], []
+            return [(0, self.stringify(data))], ()
         exceptions:list[Trace.ErrorTrace] = []
         output:list[LineType] = []
         items_str:list[str] = [] # print_flat only
@@ -168,7 +169,7 @@ class DefaultDelegate[a:Hashable](Delegate.Delegate[list[LineType], Structure.St
             output.append((0, "[" + ", ".join(items_str) + "]"))
         return output, exceptions
 
-    def compare_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[LineType],bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:list[Any]|dict[str,Any], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[list[LineType],bool, Sequence[Trace.ErrorTrace]]:
         output:list[LineType] = []
         exceptions:list[Trace.ErrorTrace] = []
         any_changes = False

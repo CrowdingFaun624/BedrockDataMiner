@@ -145,7 +145,7 @@ class TAG_Byte_Array(list[TAG_Byte], TAG):
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Byte_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
-        return cls([TAG_Byte.from_bytes(data_reader, endianness) for i in range(size)])
+        return cls(TAG_Byte.from_bytes(data_reader, endianness) for i in range(size))
 
     def __str__(self) -> str:
         return f"[B;{", ".join(str(item) for item in self)}]"
@@ -221,7 +221,7 @@ class TAG_Int_Array(list[TAG_Int], TAG):
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Int_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
-        return cls([TAG_Int.from_bytes(data_reader, endianness) for i in range(size)])
+        return cls(TAG_Int.from_bytes(data_reader, endianness) for i in range(size))
 
     def __str__(self) -> str:
         return f"[I;{", ".join(str(item) for item in self)}]"
@@ -232,7 +232,7 @@ class TAG_Long_Array(list[TAG_Long], TAG):
     @classmethod
     def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Long_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
-        return cls([TAG_Long.from_bytes(data_reader, endianness) for i in range(size)])
+        return cls(TAG_Long.from_bytes(data_reader, endianness) for i in range(size))
 
     def __str__(self) -> str:
         return f"[L;{", ".join(str(item) for item in self)}]"

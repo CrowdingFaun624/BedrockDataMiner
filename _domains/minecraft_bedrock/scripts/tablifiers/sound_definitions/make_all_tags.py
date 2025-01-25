@@ -2,7 +2,7 @@ from typing import Any
 
 import _domains.minecraft_bedrock.scripts.normalizers.collapse_resource_packs as collapse_resource_packs
 
-__all__ = ["make_all_tags"]
+__all__ = ("make_all_tags",)
 
 TAG_ORDER = {value: index for index, value in enumerate ([
     "core",

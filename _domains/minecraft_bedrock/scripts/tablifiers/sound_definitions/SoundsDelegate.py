@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.PrimitiveDelegate as PrimitiveDelegate
 import _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.SoundPropertiesDelegate as SoundPropertiesDelegate
 import Structure.AbstractIterableStructure as AbstractIterableStructure
@@ -7,7 +9,7 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["SoundsDelegate"]
+__all__ = ("SoundsDelegate",)
 
 
 class SoundsDelegate(Delegate.Delegate[str, AbstractIterableStructure.AbstractIterableStructure, str]):
@@ -16,7 +18,7 @@ class SoundsDelegate(Delegate.Delegate[str, AbstractIterableStructure.AbstractIt
 
     applies_to = (AbstractIterableStructure.AbstractIterableStructure,)
 
-    def compare_text(self, data:list[SoundPropertiesDelegate.SoundPropertiesTypedDict|D.Diff[SoundPropertiesDelegate.SoundPropertiesTypedDict]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:list[SoundPropertiesDelegate.SoundPropertiesTypedDict|D.Diff[SoundPropertiesDelegate.SoundPropertiesTypedDict]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
         output:list[str] = []
         exceptions:list[Trace.ErrorTrace] = []
         has_changes = False

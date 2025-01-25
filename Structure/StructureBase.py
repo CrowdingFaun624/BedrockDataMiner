@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence
 
 import Domain.Domain as Domain
 import Structure.CacheStructure as CacheStructure
@@ -162,7 +162,7 @@ class StructureBase():
                 return True
         return False
 
-    def get_tag_paths(self, data:Any, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment, *, normalized_data:Any|None=None) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
+    def get_tag_paths(self, data:Any, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment, *, normalized_data:Any|None=None) -> dict[StructureTag.StructureTag,Sequence[DataPath.DataPath]]:
         '''
         Returns the DataPaths on which the given tag exists in the Structure for the given data.
         :data: The data to get the tag paths from.
@@ -171,14 +171,14 @@ class StructureBase():
         '''
         if not self.has_tags(tags):
             # optimization: don't need to even normalize!
-            return {tag: [] for tag in tags}
+            return {tag: () for tag in tags}
         version_tuple:tuple["Version.Version",...] = (environment.version,) if environment.version is not None else ()
-        output:dict[StructureTag.StructureTag,list[DataPath.DataPath]] = {}
+        output:dict[StructureTag.StructureTag,Sequence[DataPath.DataPath]] = {}
         if normalized_data is None:
             normalized_data = self.normalize(data, environment)
         for tag in tags:
             if not self.has_tag(tag):
-                output[tag] = []
+                output[tag] = ()
             paths, new_exceptions = self.structure.get_tag_paths(normalized_data, tag, DataPath.DataPath([], self.name), environment.structure_environment)
             self.print_exception_list(new_exceptions, version_tuple)
             output[tag] = paths
@@ -255,7 +255,7 @@ class StructureBase():
         traces = self.structure.check_all_types(data, environment)
         self.print_exception_list(traces, versions)
 
-    def print_exception_list(self, traces:list[Trace.ErrorTrace], versions:tuple["Version.Version",...]) -> None:
+    def print_exception_list(self, traces:Sequence[Trace.ErrorTrace], versions:tuple["Version.Version",...]) -> None:
         '''
         Prints all exceptions and traces in list and raises an exception at the end if the list has any items.
         :traces: The ErrorTraces to print.

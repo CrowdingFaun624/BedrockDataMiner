@@ -1,5 +1,5 @@
 from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator,
-                    MutableMapping)
+                    MutableMapping, Sequence)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -70,11 +70,11 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
             delegate:"Delegate.Delegate|None",
             key_types:dict[str,tuple[type,...]],
             key_structure:Structure.Structure[str]|None,
-            normalizer:list[Normalizer.Normalizer],
-            post_normalizer:list[Normalizer.Normalizer],
+            normalizer:Sequence[Normalizer.Normalizer],
+            post_normalizer:Sequence[Normalizer.Normalizer],
             pre_normalized_types:tuple[type,...],
             tags:dict[str,set[StructureTag.StructureTag]],
-            required_keys:list[str],
+            required_keys:Sequence[str],
             children_tags:set[StructureTag.StructureTag],
         ) -> None:
         super().link_substructures(delegate, key_structure, normalizer, post_normalizer, required_keys, children_tags)
@@ -110,14 +110,14 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         if not isinstance(value, self.key_types[key]):
             return Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.key_types[key]), type(value), "Value"), self.name, key, value)
 
-    def get_structure(self, key: str, value:d|None) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def get_structure(self, key: str, value:d|None) -> tuple[Structure.Structure|None, Sequence[Trace.ErrorTrace]]:
         output = self.keys.get(key, ...)
         if output is ...:
             return None, [Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.name, key, value)]
-        return output, []
+        return output, ()
 
-    def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
-        if tag not in self.children_tags: return [], []
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[Sequence[DataPath.DataPath],Sequence[Trace.ErrorTrace]]:
+        if tag not in self.children_tags: return (), ()
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
         for key, value in data.items():
@@ -149,8 +149,8 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
                 continue
             yield from structure.get_referenced_files(value, environment)
 
-    def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
-        if not self.children_has_normalizer: return None, []
+    def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,Sequence[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, ()
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -194,7 +194,7 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         else:
             return None, exceptions
 
-    def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet[d], list[Trace.ErrorTrace]]:
+    def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet[d], Sequence[Trace.ErrorTrace]]:
         output:dict[tuple[int,...]|None,Structure.Structure|None] = {}
         exceptions:list[Trace.ErrorTrace] = []
         for branches, key_iter, value_iter in D.double_iter_diff(key, value):

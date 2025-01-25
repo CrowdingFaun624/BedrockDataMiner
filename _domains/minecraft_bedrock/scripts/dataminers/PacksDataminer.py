@@ -1,4 +1,4 @@
-from typing import Iterable, Literal, TypedDict
+from typing import Iterable, Literal, Sequence, TypedDict
 
 import _domains.minecraft_bedrock.scripts.normalizers.collapse_resource_packs as collapse_resource_packs
 import Dataminer.Dataminer as Dataminer
@@ -7,7 +7,7 @@ import Dataminer.FileDataminer as FileDataminer
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["PacksDataminer"]
+__all__ = ("PacksDataminer",)
 
 class PackTypedDict(TypedDict):
     name: str
@@ -28,14 +28,14 @@ class PacksDataminer(Dataminer.Dataminer):
 
     def initialize(
         self,
-        directory:str|list[str],
+        directory:str|Sequence[str],
         pack_type:Literal["resource", "behavior", "skin", "emote", "piece"],
         subdirectory:str|None=None,
         require_subdirectory:bool=False,
         name_starts_with:str|None=None,
         care_about_packs_existing:bool=True,
     ) -> None:
-        self.directory = [directory] if isinstance(directory, str) else directory
+        self.directory = (directory,) if isinstance(directory, str) else directory
         self.pack_type:Literal["resource", "behavior", "skin", "emote", "piece"] = pack_type
         self.subdirectory = subdirectory
         self.require_subdirectory = require_subdirectory

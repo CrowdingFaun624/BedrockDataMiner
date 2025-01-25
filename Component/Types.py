@@ -1,6 +1,6 @@
 from collections import defaultdict
 from types import EllipsisType
-from typing import Any, Callable
+from typing import Any, Callable, Iterable
 
 import Domain.Domain as Domain
 import Domain.Domains as Domains
@@ -119,7 +119,7 @@ class TypeStuff():
         '''
         other.linked_type_stuffs.append(self)
 
-    def get_cascading_dependencies(self, memo:set["TypeStuff"]) -> list["TypeStuff"]:
+    def get_cascading_dependencies(self, memo:set["TypeStuff"]) -> Iterable["TypeStuff"]:
         if self not in memo:
             output:list[TypeStuff] = []
             memo.add(self)
@@ -128,7 +128,7 @@ class TypeStuff():
             output.append(self)
             return output
         else:
-            return []
+            return ()
 
     def hash_data(self, data:Any) -> int:
         '''

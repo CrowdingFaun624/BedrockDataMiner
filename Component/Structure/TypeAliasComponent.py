@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -19,9 +21,9 @@ class TypeAliasComponent(Component.Component[tuple[type,...]]):
         "types_strs",
     )
 
-    def initialize_fields(self, data: ComponentTyping.TypeAliasTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.TypeAliasTypedDict) -> Sequence[Field.Field]:
         self.types_strs = data["types"]
-        return []
+        return ()
 
     def create_final(self) -> tuple[type,...]:
         final:list[type] = []

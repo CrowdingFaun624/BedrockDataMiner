@@ -35,9 +35,9 @@ class ListStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
         environment:StructureEnvironment.ComparisonEnvironment,
         branch:int,
         branches:int,
-    ) -> tuple[Sequence[d|D.Diff[d]],bool,list[Trace.ErrorTrace]]:
+    ) -> tuple[Sequence[d|D.Diff[d]],bool,Sequence[Trace.ErrorTrace]]:
         if not environment.is_multi_diff and (data1 is data2 or data1 == data2):
-            return data1, False, []
+            return data1, False, ()
         has_changes = False
         exceptions:list[Trace.ErrorTrace] = []
 

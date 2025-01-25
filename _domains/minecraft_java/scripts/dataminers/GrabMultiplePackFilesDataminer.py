@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Any
+from typing import Any, Sequence
 
 import _domains.minecraft_java.scripts.dataminers.PacksDataminer as PacksDataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
@@ -8,7 +8,7 @@ import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["GrabMultiplePackFilesDataminer"]
+__all__ = ("GrabMultiplePackFilesDataminer",)
 
 class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
 
@@ -25,7 +25,7 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
 
     def initialize(
         self,
-        location:str|list[str],
+        location:str|Sequence[str],
         pack_type:str,
         ignore_suffixes:list[str]|None=None,
         suffixes:list[str]|None=None,
@@ -34,7 +34,7 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
         ignore_subdirectories:list[str]|None=None,
         ignore_files:list[str]|None=None,
     ) -> None:
-        self.location = [location] if isinstance(location, str) else location
+        self.location = (location,) if isinstance(location, str) else location
         self.pack_type = pack_type
         self.ignore_suffixes = ignore_suffixes
         self.suffixes = suffixes
@@ -47,7 +47,7 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
         return environment.dependency_data.get(self.pack_type, self)
 
     def get_coverage(self, file_set:FileDataminer.FileSet, environment:DataminerEnvironment.DataminerEnvironment) -> set[str]:
-        packs = [pack["path"] for pack in self.get_packs(environment)]
+        packs = (pack["path"] for pack in self.get_packs(environment))
         output:set[str] = set()
         for pack, location in product(packs, self.location):
             pack_base = pack + location

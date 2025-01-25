@@ -2,7 +2,7 @@ import json
 
 import Serializer.Serializer as Serializer
 
-__all__ = ["TextureListSerializer"]
+__all__ = ("TextureListSerializer",)
 
 class TextureListSerializer(Serializer.Serializer):
     '''

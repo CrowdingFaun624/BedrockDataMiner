@@ -1,5 +1,5 @@
 from itertools import count, takewhile
-from typing import Callable
+from typing import Callable, Sequence
 
 import Structure.Delegate.Delegate as Delegate
 import Structure.Normalizer as Normalizer
@@ -32,7 +32,7 @@ class StringStructure(PrimitiveStructure.PrimitiveStructure[str]):
         self,
         delegate:Delegate.Delegate|None,
         types:tuple[type,...],
-        normalizer:list[Normalizer.Normalizer],
+        normalizer:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         tags:set[StructureTag.StructureTag],
         similarity_function:Callable[[str],str]|None,

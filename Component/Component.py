@@ -47,18 +47,17 @@ class Component[a]():
         self.links_to_other_components:list[Component] = []
         self.parents:list[Component] = []
         self.final:a
-        self.fields:list["Field.Field"] = []
         self.inline_components:list[Component]
         self.inline_component_count = 0
         self.inline_parent:Component|None = None
         self.variable_bools, self.variable_sets = self.get_propagated_variables()
 
-        self.fields.extend(self.initialize_fields(data))
+        self.fields:Sequence["Field.Field"] = self.initialize_fields(data)
         for field in self.fields:
             field.set_domain(self.domain)
 
-    def initialize_fields(self, data:Any) -> list["Field.Field"]:
-        return []
+    def initialize_fields(self, data:Any) -> Sequence["Field.Field"]:
+        return ()
 
     def get_index(self) -> int:
         "Returns the index of this Component in the Component group. Raises an error if it doesn't have an index."
@@ -96,7 +95,7 @@ class Component[a]():
             component.parents.append(self)
 
     def verify_arguments(self, data:Mapping[str,Any]) -> None:
-        self.type_verifier.base_verify(data, [repr(self)])
+        self.type_verifier.base_verify(data, (repr(self),))
 
     def set_component(self, components:dict[str,"Component"], global_components:dict[str,dict[str,dict[str,"Component"]]], functions:ScriptImporter.ScriptSetSetSet, create_component_function:ComponentTyping.CreateComponentFunction) -> None:
         '''Links this Component to other Components'''
@@ -122,12 +121,9 @@ class Component[a]():
 
     def link_finals(self) -> list[Exception]:
         '''Links this Component's final object to other final objects.'''
-        exceptions:list[Exception] = []
         for field in self.fields:
             field.resolve_link_finals()
-        for inline_component in self.inline_components:
-            exceptions.extend(inline_component.link_finals())
-        return exceptions
+        return list(chain.from_iterable(inline_component.link_finals() for inline_component in self.inline_components))
 
     def check(self) -> list[Exception]:
         '''Make sure that this Component's types are all in order; no error could occur.'''

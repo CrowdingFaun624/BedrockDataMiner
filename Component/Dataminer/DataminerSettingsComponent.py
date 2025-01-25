@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Sequence, cast
 
 import Component.Capabilities as Capabilities
 import Component.Component as Component
@@ -51,24 +51,24 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
         "serializer_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.DataminerSettingsTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.DataminerSettingsTypedDict) -> Sequence[Field.Field]:
         self.files_field_exists = "files" in data
         self.arguments = data.get("arguments", {})
 
-        self.new_field = OptionalComponentField.OptionalComponentField(data["new"], VersionComponent.VERSION_PATTERN, ["new"], assume_component_group="versions")
-        self.old_field = OptionalComponentField.OptionalComponentField(data["old"], VersionComponent.VERSION_PATTERN, ["old"], assume_component_group="versions")
-        self.files_field = ComponentListField.ComponentListField(data.get("files", []), VERSION_FILE_TYPE_PATTERN, ["files"], allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
-        self.serializer_field = LinkedObjectsField.LinkedObjectsField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, SERIALIZER_PATTERN, ["serializer"], assume_component_group="serializers")
-        self.dataminer_field = OptionalScriptedClassField.OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ["name"], default=Dataminer.NullDataminer)
+        self.new_field = OptionalComponentField.OptionalComponentField(data["new"], VersionComponent.VERSION_PATTERN, ("new",), assume_component_group="versions")
+        self.old_field = OptionalComponentField.OptionalComponentField(data["old"], VersionComponent.VERSION_PATTERN, ("old",), assume_component_group="versions")
+        self.files_field = ComponentListField.ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
+        self.serializer_field = LinkedObjectsField.LinkedObjectsField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
+        self.dataminer_field = OptionalScriptedClassField.OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=Dataminer.NullDataminer)
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dependency_name,
                 DEPENDENCY_PATTERN,
-                ["dependencies", index],
+                ("dependencies", str(index)),
                 allow_inline=Field.InlinePermissions.reference
-            ) for index, dependency_name in enumerate(data.get("dependencies", []))
-        ], ["dependencies"])
-        return [self.new_field, self.old_field, self.files_field, self.serializer_field, self.dataminer_field, self.dependencies_field]
+            ) for index, dependency_name in enumerate(data.get("dependencies", ()))
+        ], ("dependencies",))
+        return (self.new_field, self.old_field, self.files_field, self.serializer_field, self.dataminer_field, self.dependencies_field)
 
     def create_final(self) -> DataminerSettings.DataminerSettings:
         return DataminerSettings.DataminerSettings(

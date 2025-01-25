@@ -5,7 +5,7 @@ import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Utilities.File as File
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["MyGrabSingleFileDataminer"]
+__all__ = ("MyGrabSingleFileDataminer",)
 
 class MyGrabSingleFileDataminer(GrabSingleFileDataminer.GrabSingleFileDataminer):
 

@@ -1,6 +1,6 @@
 from typing import Any
 
-__all__ = ["add_name"]
+__all__ = ("add_name",)
 
 def add_name(data:dict[str,dict[str,Any]]) -> None:
     defined_in = data.pop("defined_in", None)

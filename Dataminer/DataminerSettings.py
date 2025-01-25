@@ -52,7 +52,7 @@ class DataminerSettings():
         self.version_file_types_str = [version_file_type.name for version_file_type in self.version_file_types]
         exceptions:list[Exception] = []
         if dataminer_class is not None and dataminer_class.parameters is not None:
-            trace = TypeVerifier.make_trace([self])
+            trace = TypeVerifier.make_trace((self,))
             exceptions.extend(dataminer_class.parameters.verify(self.arguments, trace))
         if dataminer_class is not None:
             dataminer_class.manipulate_arguments(self.arguments)

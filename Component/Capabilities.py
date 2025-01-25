@@ -1,6 +1,6 @@
 import Utilities.Exceptions as Exceptions
 
-ALLOWED_CAPABILITIES = set([
+ALLOWED_CAPABILITIES = set((
     "has_importable_keys", # i.e. Keymap's importable keys
     "has_keys",
     "is_accessor",
@@ -26,7 +26,7 @@ ALLOWED_CAPABILITIES = set([
     "is_version_tag",
     "is_version_tag_auto_assigner",
     "is_version_tag_order",
-])
+))
 
 class Capabilities():
 

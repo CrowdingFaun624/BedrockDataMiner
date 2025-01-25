@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -29,13 +31,13 @@ class TablifierComponent(Component.Component[Tablifier.Tablifier]):
         "version_provider_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.TablifierTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.TablifierTypedDict) -> Sequence[Field.Field]:
         self.file_name = data["file_name"]
 
-        self.dataminer_collection_field = ComponentField.ComponentField(data["dataminer_collection"], AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN, ["dataminer_collection"], allow_inline=Field.InlinePermissions.reference, assume_component_group="dataminer_collections")
-        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ["structure"], allow_inline=Field.InlinePermissions.reference)
-        self.version_provider_field = ScriptedClassField.ScriptedClassField(data["version_provider"], lambda script_set_set_set: script_set_set_set.version_provider_classes, ["version_provider"])
-        return [self.dataminer_collection_field, self.structure_field, self.version_provider_field]
+        self.dataminer_collection_field = ComponentField.ComponentField(data["dataminer_collection"], AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("dataminer_collection",), allow_inline=Field.InlinePermissions.reference, assume_component_group="dataminer_collections")
+        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=Field.InlinePermissions.reference)
+        self.version_provider_field = ScriptedClassField.ScriptedClassField(data["version_provider"], lambda script_set_set_set: script_set_set_set.version_provider_classes, ("version_provider",))
+        return (self.dataminer_collection_field, self.structure_field, self.version_provider_field)
 
     def create_final(self) -> Tablifier.Tablifier:
         return Tablifier.Tablifier(

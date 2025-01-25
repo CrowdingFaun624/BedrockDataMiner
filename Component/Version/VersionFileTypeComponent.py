@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 import Component.Capabilities as Capabilities
 import Component.Component as Component
@@ -26,12 +28,12 @@ class VersionFileTypeComponent(Component.Component[VersionFileType.VersionFileTy
         "must_exist",
     )
 
-    def initialize_fields(self, data: ComponentTyping.VersionFileTypeTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.VersionFileTypeTypedDict) -> Sequence[Field.Field]:
         self.must_exist = data["must_exist"]
         self.available_when_unreleased = data["available_when_unreleased"]
 
-        self.allowed_accessor_types_field = ComponentListField.ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ["allowed_accessor_types"], allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
-        return [self.allowed_accessor_types_field]
+        self.allowed_accessor_types_field = ComponentListField.ComponentListField(data["allowed_accessor_types"], ACCESSOR_TYPE_PATTERN, ("allowed_accessor_types",), allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
+        return (self.allowed_accessor_types_field,)
 
     def create_final(self) -> VersionFileType.VersionFileType:
         return VersionFileType.VersionFileType(

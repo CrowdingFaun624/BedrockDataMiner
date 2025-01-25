@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Sequence
 
 import Structure.Difference as D
 import Structure.Trace as Trace
@@ -67,7 +67,7 @@ class StructureSet[d]():
                 return None
             return self.structures.get(branches, None)
 
-    def print_text(self, key:int|None, data:d, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any,list[Trace.ErrorTrace]]:
+    def print_text(self, key:int|None, data:d, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any,Sequence[Trace.ErrorTrace]]:
         '''
         Generates lines from the data using the Structure given by the key.
 
@@ -76,15 +76,15 @@ class StructureSet[d]():
         :environment: The ComparisonEnvironment to use.
         '''
         if key not in self:
-            return [], [] # to get to here there must be another exception anyways
+            return None, () # to get to here there must be another exception anyways
         structure = self[key]
         if structure is None:
-            output, exceptions = (str(data), []) if environment.default_delegate is None else environment.default_delegate.print_text(data, environment)
+            output, exceptions = (str(data), ()) if environment.default_delegate is None else environment.default_delegate.print_text(data, environment)
             return output, exceptions
         else:
             return structure.print_text(data, environment)
 
-    def compare_text(self, key:int|None, data:d, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, key:int|None, data:d, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any, bool, Sequence[Trace.ErrorTrace]]:
         '''
         Generates comparison lines from the data using the Structure given by the key.
 
@@ -98,7 +98,7 @@ class StructureSet[d]():
         else:
             return structure.compare_text(data, environment)
 
-    def compare(self, data1:d, data2:d, environment:"StructureEnvironment.ComparisonEnvironment", branch:int, branches:int) -> tuple[d|D.Diff[d],bool,list[Trace.ErrorTrace]]:
+    def compare(self, data1:d, data2:d, environment:"StructureEnvironment.ComparisonEnvironment", branch:int, branches:int) -> tuple[d|D.Diff[d],bool,Sequence[Trace.ErrorTrace]]:
         '''
         Compares data using the Structure given by internal conditions.
 
@@ -111,4 +111,4 @@ class StructureSet[d]():
         if structure1 is not None and structure1 is structure2:
             return structure1.compare(data1, data2, environment, branch, branches)
         else:
-            return D.Diff(branches, {tuple(range(0,branch+1)): data1, (branch+1,): data2}), True, []
+            return D.Diff(branches, {tuple(range(0,branch+1)): data1, (branch+1,): data2}), True, ()

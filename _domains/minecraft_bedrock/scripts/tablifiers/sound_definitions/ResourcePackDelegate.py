@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Sequence
 
 import _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.make_all_tags as make_all_tags
 import Structure.Delegate.Delegate as Delegate
@@ -8,7 +8,7 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["ResourcePackDelegate"]
+__all__ = ("ResourcePackDelegate",)
 
 
 class ResourcePackDelegate(Delegate.Delegate[str, DictStructure.DictStructure, str]):
@@ -17,7 +17,7 @@ class ResourcePackDelegate(Delegate.Delegate[str, DictStructure.DictStructure, s
 
     applies_to = (DictStructure.DictStructure,)
 
-    def compare_text(self, data:dict[str,dict[Any,Any]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:dict[str,dict[Any,Any]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
         output:list[str] = []
         exceptions:list[Trace.ErrorTrace] = []
         has_changes = False

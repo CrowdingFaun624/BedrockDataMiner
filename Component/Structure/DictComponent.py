@@ -1,4 +1,5 @@
 import enum
+from typing import Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
@@ -71,28 +72,28 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         "value_weight",
     )
 
-    def initialize_fields(self, data: ComponentTyping.DictTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.DictTypedDict) -> Sequence[Field.Field]:
         self.detect_key_moves = data.get("detect_key_moves", True)
         self.min_key_similarity_threshold = data.get("min_key_similarity_threshold", DictStructure.MIN_KEY_SIMILARITY_THRESHOLD)
         self.min_value_similarity_threshold = data.get("min_value_similarity_threshold", DictStructure.MIN_VALUE_SIMILARITY_THRESHOLD)
         self.key_weight = data.get("key_weight", DictStructure.KEY_WEIGHT)
         self.value_weight = data.get("value_weight", DictStructure.VALUE_WEIGHT)
         self.sort = DictSorting[data.get("sort", "none")]
-        self.required_keys = data.get("required_keys", [])
+        self.required_keys:Sequence[str] = data.get("required_keys", ())
         self.max_key_similarity_descendent_depth = data.get("max_key_similarity_descendent_depth", 6)
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 6)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
-        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["subcomponent"])
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
-        self.key_structure_field = OptionalComponentField.OptionalComponentField(data.get("key_component", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["key_component"])
-        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["post_normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ["this_type"]).must_be(self.domain.type_stuff.mapping_types)
-        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"]).add_to_tag_set(self.children_tags)
-        self.types_field = TypeListField.TypeListField(data["types"], ["types"]).verify_with(self.subcomponent_field).conditional_must_be(self.sort == DictSorting.by_value, self.domain.type_stuff.sortable_types)
-        return [self.subcomponent_field, self.delegate_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field]
+        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent",))
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.key_structure_field = OptionalComponentField.OptionalComponentField(data.get("key_component", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("key_component",))
+        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ("this_type",)).must_be(self.domain.type_stuff.mapping_types)
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
+        self.tags_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
+        self.types_field = TypeListField.TypeListField(data["types"], ("types",)).verify_with(self.subcomponent_field).conditional_must_be(self.sort == DictSorting.by_value, self.domain.type_stuff.sortable_types)
+        return (self.subcomponent_field, self.delegate_field, self.key_structure_field, self.normalizer_field, self.pre_normalized_types_field, self.this_type_field, self.types_field, self.tags_field, self.post_normalizer_field)
 
     def create_final(self) -> DictStructure.DictStructure:
         match self.sort:
@@ -124,8 +125,8 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             key_structure=self.key_structure_field.get_final(lambda subcomponent: subcomponent.final),
             types=self.types_field.types,
-            normalizer=list(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
-            post_normalizer=list(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            normalizer=tuple(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            post_normalizer=tuple(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.this_type_field.types,
             tags=self.tags_field.finals,
             required_keys=self.required_keys,

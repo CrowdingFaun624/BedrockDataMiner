@@ -24,7 +24,7 @@ from typing import Any, Callable
 
 import Domain.Domains as Domains
 
-PROGRAM_NAMES = ["AllVersions", "Cleaner", "CompareAll", "Dataminers", "FileStorage", "GarbageCollector", "Scripts", "Tablifiers", "Tests"]
+PROGRAM_NAMES = ("AllVersions", "Cleaner", "CompareAll", "Dataminers", "FileStorage", "GarbageCollector", "Scripts", "Tablifiers", "Tests")
 
 lock1 = threading.Lock() # domain input
 lock2 = threading.Lock() # program input

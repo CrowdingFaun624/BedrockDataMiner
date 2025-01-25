@@ -6,7 +6,7 @@ import Utilities.TypeVerifier as TypeVerifier
 from _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer import \
     PackTypedDict
 
-__all__ = ["PiecesDataminer"]
+__all__ = ("PiecesDataminer",)
 
 class PiecesDataminer(Dataminer.Dataminer):
 

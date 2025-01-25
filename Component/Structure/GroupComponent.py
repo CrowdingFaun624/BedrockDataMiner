@@ -1,4 +1,5 @@
 from itertools import chain
+from typing import Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
@@ -42,21 +43,21 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         "subcomponents_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.GroupTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.GroupTypedDict) -> Sequence[Field.Field]:
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
         self.subcomponents_field = [
             (
-                (subcomponent_field := OptionalComponentField.OptionalComponentField(subcomponent_str, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["subcomponent", index])),
-                TypeField.TypeField(type_str, ["subcomponents", index]).verify_with(subcomponent_field),
+                (subcomponent_field := OptionalComponentField.OptionalComponentField(subcomponent_str, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent", str(index)))),
+                TypeField.TypeField(type_str, ("subcomponents", str(index))).verify_with(subcomponent_field),
             )
             for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())
         ]
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ["delegate"])
-        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["post_normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
         output:list[Field.Field] = [self.delegate_field, self.normalizer_field, self.pre_normalized_types_field, self.post_normalizer_field]
         output.extend(chain.from_iterable(self.subcomponents_field))
         return output
@@ -83,8 +84,8 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
             substructures=substructures,
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             types=tuple(self.my_type),
-            normalizer=list(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
-            post_normalizer=list(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            normalizer=tuple(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            post_normalizer=tuple(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else tuple(all_types),
             children_tags={tag.final for tag in self.children_tags},
         )

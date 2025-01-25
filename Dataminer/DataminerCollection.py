@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Iterable
 
 import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Dataminer.Dataminer as Dataminer
@@ -21,7 +21,7 @@ class DataminerCollection(AbstractDataminerCollection.AbstractDataminerCollectio
         super().link_subcomponents(structure)
         self.dataminer_settings = dataminer_settings
 
-    def get_dependencies(self, version: Version.Version) -> list[AbstractDataminerCollection.AbstractDataminerCollection]:
+    def get_dependencies(self, version: Version.Version) -> Iterable[AbstractDataminerCollection.AbstractDataminerCollection]:
         return self.get_dataminer_settings(version).dependencies
 
     def datamine(self, version: Version.Version, environment: DataminerEnvironment.DataminerEnvironment) -> Any:

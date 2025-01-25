@@ -1,5 +1,5 @@
 import io
-from typing import Any, BinaryIO, Iterator
+from typing import Any, BinaryIO, Iterator, Sequence
 
 import Downloader.Accessor as Accessor
 import Downloader.DirectoryAccessor as DirectoryAccessor
@@ -33,7 +33,7 @@ class StoredAccessor(DirectoryAccessor.DirectoryAccessor):
         self.index = StoredIndex(self.version)
 
     @property
-    def file_list(self) -> list[str]:
+    def file_list(self) -> Sequence[str]:
         if self._file_list is None:
             self._file_list = sorted(self.index.get().keys())
         return self._file_list

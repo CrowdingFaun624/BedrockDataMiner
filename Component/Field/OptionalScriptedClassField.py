@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Callable, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -15,7 +15,7 @@ class OptionalScriptedClassField[A, B](Field.Field):
         "scripted_objects_function",
     )
 
-    def __init__(self, class_name:str|None, scripted_objects:Callable[[ScriptImporter.ScriptSetSetSet],ScriptImporter.ScriptSetSet[A]], path: list[str | int], *, default:B=None) -> None:
+    def __init__(self, class_name:str|None, scripted_objects:Callable[[ScriptImporter.ScriptSetSetSet],ScriptImporter.ScriptSetSet[A]], path: tuple[str,...], *, default:B=None) -> None:
         '''
         :class_name: The name of the scripted object.
         :scripted_objects: A function that returns the desired attribute of the Domain's ScriptSetSetSet.
@@ -35,9 +35,9 @@ class OptionalScriptedClassField[A, B](Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:"ScriptImporter.ScriptSetSetSet",
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["Component.Component"],list["Component.Component"]]:
+    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
         self.object_class = self.scripted_objects_function(functions).get(self.class_name, source_component, self.error_path) if self.class_name is not None else self.default
-        return [], []
+        return (), ()
 
     @property
     def exists(self) -> bool:

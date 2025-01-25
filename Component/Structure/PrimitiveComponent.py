@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
@@ -34,13 +36,13 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
         "types_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.PrimitiveTypedDict) -> list[Field.Field]:
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
-        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", []), NormalizerComponent.NORMALIZER_PATTERN, ["normalizer"], assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.tags_field = TagListField.TagListField(data.get("tags", []), ["tags"]).add_to_tag_set(self.children_tags)
-        self.types_field = TypeListField.TypeListField(data["types"], ["types"])
-        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", []), ["pre_normalized_types"])
-        return [self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field]
+    def initialize_fields(self, data: ComponentTyping.PrimitiveTypedDict) -> Sequence[Field.Field]:
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
+        self.tags_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
+        self.types_field = TypeListField.TypeListField(data["types"], ("types",))
+        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
+        return (self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field)
 
     def create_final(self) -> PrimitiveStructure.PrimitiveStructure:
         return PrimitiveStructure.PrimitiveStructure(
@@ -53,7 +55,7 @@ class PrimitiveComponent(StructureComponent.StructureComponent[PrimitiveStructur
         self.final.link_substructures(
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             types=self.types_field.types,
-            normalizer=list(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
+            normalizer=tuple(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.types_field.types,
             tags=self.tags_field.finals,
             children_tags={tag.final for tag in self.children_tags},

@@ -1,5 +1,5 @@
 from itertools import starmap
-from typing import Callable, Iterator
+from typing import Callable, Iterator, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -27,7 +27,7 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         self,
         subcomponents_data:dict[str,str|ComponentTyping.ComponentTypedDicts]|dict[str,str]|dict[str,ComponentTyping.ComponentTypedDicts],
         pattern:Pattern.Pattern[a],
-        path:list[str|int],
+        path:tuple[str,...],
         *,
         allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,
         assume_type:str|None=None,
@@ -58,7 +58,7 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list[a],list[a]]:
+    ) -> tuple[Sequence[a],Sequence[a]]:
         self.subcomponents = {}
         inline_components:list[a] = []
         for key, subcomponent_data in self.subcomponents_data.items():
@@ -68,7 +68,7 @@ class LinkedObjectsField[a:Component.Component](Field.Field):
             self.subcomponents[key] = subcomponent
             if is_inline:
                 inline_components.append(subcomponent)
-        return list(self.subcomponents.values()), inline_components
+        return tuple(self.subcomponents.values()), inline_components
 
     def check(self, source_component:"Component.Component") -> list[Exception]:
         exceptions:list[Exception] = super().check(source_component)

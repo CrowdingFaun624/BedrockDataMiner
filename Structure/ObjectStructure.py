@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Sequence
 
 import Structure.Difference as D
 import Structure.Structure as Structure
@@ -14,13 +14,13 @@ class ObjectStructure[d](Structure.Structure[d]):
 
     __slots__ = ()
 
-    def get_structure(self, key:Any, value:Any) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def get_structure(self, key:Any, value:Any) -> tuple[Structure.Structure|None, Sequence[Trace.ErrorTrace]]:
         '''
         Returns the substructure of this Structure.
         '''
         ...
 
-    def choose_structure(self, key:Any, value:Any|D.Diff[Any]) -> tuple[StructureSet.StructureSet[d], list[Trace.ErrorTrace]]:
+    def choose_structure(self, key:Any, value:Any|D.Diff[Any]) -> tuple[StructureSet.StructureSet[d], Sequence[Trace.ErrorTrace]]:
         '''
         Returns a StructureSet of this Structure's substructure(s).
         '''

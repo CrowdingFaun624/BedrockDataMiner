@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, Sequence, cast
 
 import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
 import Component.Capabilities as Capabilities
@@ -71,10 +71,10 @@ class AccessorComponent(Component.Component[AccessorCreator]):
         "accessor_type_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.AccessorTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.AccessorTypedDict) -> Sequence[Field.Field]:
         self.arguments = data["arguments"]
-        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], AccessorTypeComponent.ACCESSOR_TYPE_PATTERN, ["accessor_type"], allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
-        return [self.accessor_type_field]
+        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], AccessorTypeComponent.ACCESSOR_TYPE_PATTERN, ("accessor_type",), allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
+        return (self.accessor_type_field,)
 
     def create_final(self) -> AccessorCreator:
         return AccessorCreator(

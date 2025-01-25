@@ -2,7 +2,7 @@ import cssbeautifier.css.beautifier as beautifier
 
 import Serializer.Serializer as Serializer
 
-__all__ = ["CssSerializer"]
+__all__ = ("CssSerializer",)
 
 DEFAULT_OPTIONS = {
   "indent_size": "1",

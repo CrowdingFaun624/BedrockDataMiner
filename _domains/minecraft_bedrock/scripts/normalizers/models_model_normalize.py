@@ -3,7 +3,7 @@ from typing import Any, NotRequired, TypedDict, cast
 
 import Utilities.File as File
 
-__all__ = ["models_model_normalize"]
+__all__ = ("models_model_normalize",)
 
 description_typed_dict = TypedDict("description_typed_dict", {
     "identifier": str,

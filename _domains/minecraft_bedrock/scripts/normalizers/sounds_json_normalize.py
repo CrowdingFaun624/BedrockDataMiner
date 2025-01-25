@@ -4,7 +4,7 @@ from typing import Any, Mapping, NotRequired, TypedDict
 
 import Utilities.File as File
 
-__all__ = ["sounds_json_normalize"]
+__all__ = ("sounds_json_normalize",)
 
 # input
 

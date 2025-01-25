@@ -1,5 +1,5 @@
 from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator,
-                    MutableMapping)
+                    MutableMapping, Sequence)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -60,11 +60,11 @@ class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         delegate:"Delegate.Delegate|None",
         key_structure:Structure.Structure[str]|None,
         types:tuple[type,...],
-        normalizer:list[Normalizer.Normalizer],
-        post_normalizer:list[Normalizer.Normalizer],
+        normalizer:Sequence[Normalizer.Normalizer],
+        post_normalizer:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         tags:set[StructureTag.StructureTag],
-        required_keys:list[str],
+        required_keys:Sequence[str],
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
         super().link_substructures(delegate, key_structure, normalizer, post_normalizer, required_keys, children_tags)
@@ -74,15 +74,15 @@ class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         self.tags = tags
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        if self.structure is None: return []
+        if self.structure is None: return ()
         else: return [self.structure]
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None:
         if not isinstance(value, self.types):
             return Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(value), "Value"), self.name, key, value)
 
-    def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath],list[Trace.ErrorTrace]]:
-        if tag not in self.children_tags: return [], []
+    def get_tag_paths(self, data: MutableMapping[str, d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[Sequence[DataPath.DataPath],Sequence[Trace.ErrorTrace]]:
+        if tag not in self.children_tags: return (), ()
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
         if tag in self.tags:
@@ -101,8 +101,8 @@ class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
             for value in data.values():
                 yield from self.structure.get_referenced_files(value, environment)
 
-    def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
-        if not self.children_has_normalizer: return None, []
+    def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,Sequence[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, ()
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -144,11 +144,11 @@ class DictStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
         else:
             return None, exceptions
 
-    def get_structure(self, key:str, value:d) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
-        return self.structure, []
+    def get_structure(self, key:str, value:d) -> tuple[Structure.Structure|None, Sequence[Trace.ErrorTrace]]:
+        return self.structure, ()
 
-    def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet[d], list[Trace.ErrorTrace]]:
-        return StructureSet.StructureSet({value_branch: self.structure for value_branch, value_iter in D.iter_diff(value)}), []
+    def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet[d], Sequence[Trace.ErrorTrace]]:
+        return StructureSet.StructureSet({value_branch: self.structure for value_branch, value_iter in D.iter_diff(value)}), ()
 
     def get_max_similarity_descendent_depth(self, key: str) -> int | None:
         return self.max_similarity_descendent_depth

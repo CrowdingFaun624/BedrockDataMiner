@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any, Sequence, cast
 
 import Structure.Delegate.Delegate as Delegate
 import Structure.DictStructure as DictStructure
@@ -7,7 +7,7 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["SoundEventsDelegate"]
+__all__ = ("SoundEventsDelegate",)
 
 class SoundEventsDelegate(Delegate.Delegate[str, DictStructure.DictStructure, str]):
 
@@ -15,7 +15,7 @@ class SoundEventsDelegate(Delegate.Delegate[str, DictStructure.DictStructure, st
 
     applies_to = (DictStructure.DictStructure,)
 
-    def compare_text(self, data:dict[str,Any], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:dict[str,Any], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
         output:list[str] = []
         exceptions:list[Trace.ErrorTrace] = []
         has_changes = False

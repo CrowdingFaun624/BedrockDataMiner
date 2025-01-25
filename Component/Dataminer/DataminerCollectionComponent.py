@@ -1,4 +1,5 @@
 from itertools import batched
+from typing import Sequence
 
 import Component.ComponentTyping as ComponentTyping
 import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
@@ -35,22 +36,22 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
         TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
-    def initialize_fields(self, data: ComponentTyping.DataminerCollectionTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.DataminerCollectionTypedDict) -> Sequence[Field.Field]:
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
 
-        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ["structure"], allow_inline=Field.InlinePermissions.reference)
+        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=Field.InlinePermissions.reference)
         self.dataminer_settings_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dataminer_settings_data,
                 DATAMINER_SETTINGS_PATTERN,
-                ["dataminers", index],
+                ("dataminers", str(index)),
                 allow_inline=Field.InlinePermissions.inline,
                 assume_type=DataminerSettingsComponent.DataminerSettingsComponent.class_name,
             ) for index, dataminer_settings_data in enumerate(data["dataminers"])
-        ], ["dataminers"])
-        return [self.structure_field, self.dataminer_settings_field]
+        ], ("dataminers",))
+        return (self.structure_field, self.dataminer_settings_field)
 
     def create_final(self) -> DataminerCollection.DataminerCollection:
         return DataminerCollection.DataminerCollection(

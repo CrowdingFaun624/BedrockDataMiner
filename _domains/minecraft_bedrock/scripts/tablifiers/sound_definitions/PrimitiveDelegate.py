@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Sequence
 
 import Structure.Delegate.Delegate as Delegate
 import Structure.Difference as D
@@ -7,7 +7,7 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["PrimitiveDelegate"]
+__all__ = ("PrimitiveDelegate",)
 
 def get_version(branch:int, get_parent:bool, environment:StructureEnvironment.ComparisonEnvironment) -> str:
     version = environment.versions[branch]
@@ -29,7 +29,7 @@ class PrimitiveDelegate(Delegate.Delegate[str,PrimitiveStructure.PrimitiveStruct
         super().__init__(structure, keys)
         self.code = code
 
-    def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         if isinstance(data, D.Diff):
             output:list[str] = []
@@ -46,13 +46,13 @@ class PrimitiveDelegate(Delegate.Delegate[str,PrimitiveStructure.PrimitiveStruct
                     print_output, new_exceptions = self.print_text(item, environment[branch])
                     exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
                     output.append(f"{print_output} {{{{Upcoming|BE {get_version(branch, True, environment)}}}}}")
-            return " ".join(output), True, []
+            return " ".join(output), True, exceptions
         else:
             print_output, new_exceptions = self.print_text(data, environment[-1])
             exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
             return print_output, False, exceptions
 
-    def print_text(self, data: Any, environment: StructureEnvironment.PrinterEnvironment) -> tuple[str, list[Trace.ErrorTrace]]:
+    def print_text(self, data: Any, environment: StructureEnvironment.PrinterEnvironment) -> tuple[str, Sequence[Trace.ErrorTrace]]:
         match data:
             case bool():
                 output = str(data).lower()

@@ -1,5 +1,6 @@
 from types import EllipsisType
-from typing import TYPE_CHECKING, Any, Callable, Mapping, MutableMapping, cast
+from typing import (TYPE_CHECKING, Any, Callable, Mapping, MutableMapping,
+                    Sequence, cast)
 
 import Structure.Difference as D
 import Structure.Normalizer as Normalizer
@@ -65,17 +66,17 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
         # get_max_similarity_descendent_depth is defined by each subclass
 
         self.key_structure:Structure.Structure[str]|None
-        self.normalizer:list[Normalizer.Normalizer]
-        self.post_normalizer:list[Normalizer.Normalizer]
-        self.required_keys:list[str]
+        self.normalizer:Sequence[Normalizer.Normalizer]
+        self.post_normalizer:Sequence[Normalizer.Normalizer]
+        self.required_keys:Sequence[str]
 
     def link_substructures(
         self,
         delegate:"Delegate.Delegate|None",
         key_structure:Structure.Structure[str]|None,
-        normalizer:list[Normalizer.Normalizer],
-        post_normalizer:list[Normalizer.Normalizer],
-        required_keys:list[str],
+        normalizer:Sequence[Normalizer.Normalizer],
+        post_normalizer:Sequence[Normalizer.Normalizer],
+        required_keys:Sequence[str],
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
         super().link_substructures(delegate, children_tags)
@@ -87,7 +88,7 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
 
     def check_type(self, key:str, value:d) -> Trace.ErrorTrace|None: ...
 
-    def get_structure(self, key:str, value:d) -> tuple[Structure.Structure[d]|None, list[Trace.ErrorTrace]]:
+    def get_structure(self, key:str, value:d) -> tuple[Structure.Structure[d]|None, Sequence[Trace.ErrorTrace]]:
         '''
         Returns a substructure or None.
         :key: The key of this Structure at the current position.
@@ -97,7 +98,7 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
 
     def choose_structure(self, key:str|D.Diff[str], value:d|D.Diff[d]) -> tuple[StructureSet.StructureSet[d], list[Trace.ErrorTrace]]: ...
 
-    def check_all_types(self, data:MutableMapping[str,d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:MutableMapping[str,d], environment:StructureEnvironment.StructureEnvironment) -> Sequence[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
         for key, value in data.items():
@@ -273,10 +274,10 @@ class AbstractMappingStructure[d](ObjectStructure.ObjectStructure[MutableMapping
             environment:StructureEnvironment.ComparisonEnvironment,
             branch:int,
             branches:int,
-        ) -> tuple[MutableMapping[str|D.Diff[str],d|D.Diff[d]],bool,list[Trace.ErrorTrace]]:
+        ) -> tuple[MutableMapping[str|D.Diff[str],d|D.Diff[d]],bool,Sequence[Trace.ErrorTrace]]:
 
         if not environment.is_multi_diff and (data1 is data2 or data1 == data2):
-            return data1, False, []
+            return data1, False, ()
         exceptions:list[Trace.ErrorTrace] = []
 
         type_stuff = environment.domain.type_stuff

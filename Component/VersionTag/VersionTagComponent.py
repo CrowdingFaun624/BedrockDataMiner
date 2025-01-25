@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -41,7 +43,7 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
         "latest_slot_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.VersionTagTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.VersionTagTypedDict) -> Sequence[Field.Field]:
         self.is_development_tag = data.get("is_development_tag", False)
         self.development_name = data.get("development_name", "dev")
         self.is_fork_tag = data.get("is_fork_tag", False)
@@ -49,9 +51,9 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
         self.is_major_tag = data.get("is_major_tag", False)
         self.is_unreleased_tag = data.get("is_unreleased_tag", False)
 
-        self.auto_assigner_field = ComponentListField.ComponentListField(data.get("auto_assign", []), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ["auto_assign"], allow_inline=Field.InlinePermissions.mixed)
-        self.latest_slot_field = OptionalComponentField.OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ["latest_slot"], allow_inline=Field.InlinePermissions.reference, assume_component_group="latest_slots")
-        return [self.auto_assigner_field, self.latest_slot_field]
+        self.auto_assigner_field = ComponentListField.ComponentListField(data.get("auto_assign", ()), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ("auto_assign",), allow_inline=Field.InlinePermissions.mixed)
+        self.latest_slot_field = OptionalComponentField.OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=Field.InlinePermissions.reference, assume_component_group="latest_slots")
+        return (self.auto_assigner_field, self.latest_slot_field)
 
     def create_final(self) -> VersionTag.VersionTag:
         return VersionTag.VersionTag(

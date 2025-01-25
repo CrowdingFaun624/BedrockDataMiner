@@ -1,4 +1,4 @@
-from typing import Iterable, Optional, cast
+from typing import Iterable, Optional, Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -18,7 +18,7 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         "version_tag_components",
     )
 
-    def __init__(self, subcomponents_data:list[str]|str, path: list[str | int], version_component:Optional["VersionComponent.VersionComponent"]=None) -> None:
+    def __init__(self, subcomponents_data:list[str]|str, path: tuple[str,...], version_component:Optional["VersionComponent.VersionComponent"]=None) -> None:
         '''
         :subcomponents_data: The names of the reference Components and/or data of the inline Components this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
@@ -56,7 +56,7 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["VersionTagComponent.VersionTagComponent"],list["VersionTagComponent.VersionTagComponent"]]:
+    ) -> tuple[Sequence["VersionTagComponent.VersionTagComponent"],Sequence["VersionTagComponent.VersionTagComponent"]]:
         linked_components, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function)
         self.version_tag_components = cast(dict[str,"VersionTagComponent.VersionTagComponent"], global_components[self.domain.name]["version_tags"]).values()
         return linked_components, inline_components

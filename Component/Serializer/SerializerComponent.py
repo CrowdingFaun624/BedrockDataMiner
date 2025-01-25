@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -27,13 +29,13 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
         "serializer_class_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.SerializerTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.SerializerTypedDict) -> Sequence[Field.Field]:
         self.arguments = data.get("arguments", {})
 
-        self.serializer_class_field = ScriptedClassField.ScriptedClassField(data["serializer_class"], lambda script_set_set_set: script_set_set_set.serializer_classes, ["serializer_class"])
-        self.linked_serializers_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_serializers", {}), SERIALIZER_PATTERN, ["linked_serializers"], allow_inline=Field.InlinePermissions.reference, assume_component_group="serializers")
+        self.serializer_class_field = ScriptedClassField.ScriptedClassField(data["serializer_class"], lambda script_set_set_set: script_set_set_set.serializer_classes, ("serializer_class",))
+        self.linked_serializers_field = LinkedObjectsField.LinkedObjectsField(data.get("linked_serializers", {}), SERIALIZER_PATTERN, ("linked_serializers",), allow_inline=Field.InlinePermissions.reference, assume_component_group="serializers")
 
-        return [self.serializer_class_field, self.linked_serializers_field]
+        return (self.serializer_class_field, self.linked_serializers_field)
 
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
@@ -49,7 +51,7 @@ class SerializerComponent(Component.Component[Serializer.Serializer]):
 
     def check(self) -> list[Exception]:
         exceptions = super().check()
-        trace = TypeVerifier.make_trace([self.name, self.component_group])
+        trace = TypeVerifier.make_trace((self.name, self.component_group))
         exceptions.extend(self.serializer_class_field.object_class.type_verifier.verify(self.arguments, trace))
         return exceptions
 

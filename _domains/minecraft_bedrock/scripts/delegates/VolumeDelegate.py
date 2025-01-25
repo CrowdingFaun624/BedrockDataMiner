@@ -1,6 +1,7 @@
 import math
 from itertools import product
-from typing import Any, Iterator, MutableMapping, Optional, TypedDict, cast
+from typing import (Any, Iterator, MutableMapping, Optional, Sequence,
+                    TypedDict, cast)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.Delegate.DefaultDelegate as DefaultDelegate
@@ -31,7 +32,7 @@ class VolumeStructureAdditionalDataError(Exceptions.StructureException):
 
 LAYER_CHARACTERS_DEFAULT = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+={[}];:'<,>./?αβγδεζηθικλμνξπρσςτυφχψωΓΔΘΛΞΠΣΦΨΩБбгДдËëЖжЗзИиЙйЛлФфЦцЧчШшЩщЪъЫыЬьЭэЮюЯя"
 
-__all__ = ["VolumeDelegate"]
+__all__ = ("VolumeDelegate",)
 
 class DataTypedDict(TypedDict):
     states: dict[tuple[int,int,int],int]
@@ -76,12 +77,12 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             raise TypeError(f"Substructure of {self} is not an AbstractMappingStructure, but instead {substructure}!")
         self.substructure = substructure
 
-    def print_item(self, substructure_output:list[DefaultDelegate.LineType], position:tuple[int,int,int]) -> list[DefaultDelegate.LineType]:
+    def print_item(self, substructure_output:list[DefaultDelegate.LineType], position:tuple[int,int,int]) -> Sequence[DefaultDelegate.LineType]:
         match len(substructure_output):
             case 0:
-                return [(0, f"{self.field} at {position}: empty")]
+                return ((0, f"{self.field} at {position}: empty"),)
             case 1:
-                return [(0, f"{self.field} at {position}: {substructure_output[0][1]}")]
+                return ((0, f"{self.field} at {position}: {substructure_output[0][1]}"),)
             case _:
                 output:list[DefaultDelegate.LineType] = []
                 output.append((0, f"{self.field} at {position}:"))
@@ -125,7 +126,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             self,
             data:DataTypedDict,
             environment:StructureEnvironment.PrinterEnvironment,
-        ) -> tuple[list[DefaultDelegate.LineType], list[Trace.ErrorTrace]]:
+        ) -> tuple[list[DefaultDelegate.LineType], Sequence[Trace.ErrorTrace]]:
         states, additional_data, size = data["states"], data["data"], data["size"]
         output:list[DefaultDelegate.LineType] = []
         exceptions:list[Trace.ErrorTrace] = []
@@ -136,7 +137,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             exceptions.extend(exception.add(self.get_structure().name, layer) for exception in new_exceptions)
         return output, exceptions
 
-    def compare_text_size(self, size:tuple[int|D.Diff[int],int|D.Diff[int],int|D.Diff[int]]) -> tuple[list[DefaultDelegate.LineType], bool, list[Trace.ErrorTrace]]:
+    def compare_text_size(self, size:tuple[int|D.Diff[int],int|D.Diff[int],int|D.Diff[int]]) -> tuple[list[DefaultDelegate.LineType], bool]:
         output:list[DefaultDelegate.LineType] = []
         any_changes = False
         if any(isinstance(axis, D.Diff) for axis in size):
@@ -144,7 +145,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             new_size = "×".join(str(axis[0] if isinstance(axis, D.Diff) else axis) for axis in size)
             output.append((0, f"Changed size from {old_size} to {new_size}"))
             any_changes = True
-        return output, any_changes, []
+        return output, any_changes
 
     def compare_text_layer(
             self,
@@ -232,7 +233,7 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
             self,
             data:DataDiffTypedDict,
             environment:StructureEnvironment.ComparisonEnvironment,
-        ) -> tuple[list[DefaultDelegate.LineType], bool, list[Trace.ErrorTrace]]:
+        ) -> tuple[list[DefaultDelegate.LineType], bool, Sequence[Trace.ErrorTrace]]:
         states, additional_data, size = data["states"], data["data"], data["size"]
         states = dict(self.process_pos_dict(states))
         additional_data = dict(self.process_pos_dict(additional_data))
@@ -241,9 +242,8 @@ class VolumeDelegate(DefaultDelegate.DefaultDelegate[tuple[int,int,int]]):
         any_changes = False
         layers_to_print:set[int] = set()
 
-        size_comparison, has_changes, new_exceptions = self.compare_text_size(size)
+        size_comparison, has_changes = self.compare_text_size(size)
         any_changes = any_changes or has_changes
-        exceptions.extend(exception.add(self.get_structure().name, None) for exception in new_exceptions)
         if len(size_comparison) > 0:
             output.extend(size_comparison)
 

@@ -1,5 +1,5 @@
 import traceback
-from typing import Sequence
+from typing import Iterable, Sequence
 
 import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Dataminer.DataminerEnvironment as DataminerEnvironment
@@ -9,16 +9,15 @@ import Utilities.UserInput as UserInput
 import Version.Version as Version
 
 
-def get_dataminable_dataminers(version:Version.Version, domain:Domain.Domain) -> list[AbstractDataminerCollection.AbstractDataminerCollection]:
+def get_dataminable_dataminers(version:Version.Version, domain:Domain.Domain) -> Iterable[AbstractDataminerCollection.AbstractDataminerCollection]:
     '''
     Returns the names of all data files that this Version supports.
     :version: The version to test.
     '''
-    output = [dataminer for dataminer in domain.dataminer_collections.values() if dataminer.supports_version(version)]
-    return output
+    return (dataminer for dataminer in domain.dataminer_collections.values() if dataminer.supports_version(version))
 
-def currently_has_data_files_from(version:Version.Version, domain:Domain.Domain) -> list[AbstractDataminerCollection.AbstractDataminerCollection]:
-    return [dataminer for dataminer in domain.dataminer_collections.values() if dataminer.get_data_file_path(version).exists()]
+def currently_has_data_files_from(version:Version.Version, domain:Domain.Domain) -> Iterable[AbstractDataminerCollection.AbstractDataminerCollection]:
+    return (dataminer for dataminer in domain.dataminer_collections.values() if dataminer.get_data_file_path(version).exists())
 
 def get_dataminer_order(version:Version.Version, unordered_dataminers:Sequence[AbstractDataminerCollection.AbstractDataminerCollection]) -> list[AbstractDataminerCollection.AbstractDataminerCollection]:
     '''

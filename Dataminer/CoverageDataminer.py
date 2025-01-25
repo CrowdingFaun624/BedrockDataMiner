@@ -1,4 +1,5 @@
 import re
+from typing import Iterable
 
 import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Dataminer.Dataminer as Dataminer
@@ -35,14 +36,14 @@ class CoverageDataminer(AbstractDataminerCollection.AbstractDataminerCollection)
         super().link_subcomponents(structure)
         self.file_list_dataminer = file_list_dataminer
 
-    def get_dependencies(self, version: Version.Version) -> list[DataminerCollection.DataminerCollection]:
-        return [
+    def get_dependencies(self, version: Version.Version) -> Iterable[DataminerCollection.DataminerCollection]:
+        return (
             dataminer_collection for dataminer_collection in self.domain.dataminer_collections.values()
             if dataminer_collection is not self
             if isinstance(dataminer_collection, DataminerCollection.DataminerCollection)
             if (dataminer := dataminer_collection.get_dataminer_class(version)) is not None
             if issubclass(dataminer, FileDataminer.FileDataminer)
-        ]
+        )
 
     def supports_version(self, version: Version.Version) -> bool:
         assert self.file_list_dataminer is not None
@@ -65,11 +66,11 @@ class CoverageDataminer(AbstractDataminerCollection.AbstractDataminerCollection)
         # already fulfilled. Truly a wonderful advantage of having Coverage be
         # a type of DataminerCollection.
         if len(overlapping_files := version_files_covered.intersection(dataminer_files_covered)) > 0:
-            other_dataminers = [
+            other_dataminers = (
                 other_dataminer
                 for other_dataminer, other_dataminer_coverage in version_files_covered_dict.items()
                 if len(other_dataminer_coverage.intersection(dataminer_files_covered)) > 0
-            ]
+            )
             raise RuntimeError(f"The following files in {version} are covered by {dataminer} and dataminers [{", ".join(repr(other_dataminer) for other_dataminer in other_dataminers)}]: [{", ".join(overlapping_files)}]")
         version_files_covered.update(dataminer_files_covered)
         version_files_covered_dict[dataminer] = dataminer_files_covered

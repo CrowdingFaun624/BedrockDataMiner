@@ -1,5 +1,5 @@
 import struct
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     import _domains.minecraft_common.scripts.Nbt.NbtTypes as NbtTypes

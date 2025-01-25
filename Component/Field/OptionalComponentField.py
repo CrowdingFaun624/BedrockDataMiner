@@ -1,4 +1,4 @@
-from typing import Callable, cast
+from typing import Callable, Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -26,7 +26,7 @@ class OptionalComponentField[a: Component.Component](Field.Field):
         self,
         subcomponent_data:str|ComponentTyping.ComponentTypedDicts|None,
         pattern:Pattern.Pattern[a],
-        path:list[str|int],
+        path:tuple[str,...],
         *,
         allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,
         assume_type:str|None=None,
@@ -57,16 +57,16 @@ class OptionalComponentField[a: Component.Component](Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list[a],list[a]]:
+    ) -> tuple[Sequence[a],Sequence[a]]:
         if self.subcomponent_data is None:
             self.subcomponent = None
-            return [], []
+            return (), ()
         else:
             subcomponent, is_inline = Field.choose_component(self.subcomponent_data, source_component, self.pattern, components, global_components, self.error_path, create_component_function, self.assume_type, self.assume_component_group)
             self.subcomponent = subcomponent
             self.has_reference_components = self.has_reference_components or not is_inline
             self.has_inline_components = self.has_inline_components or is_inline
-            return [subcomponent], ([subcomponent] if is_inline else [])
+            return (subcomponent,), ((subcomponent,) if is_inline else ())
 
     def check(self, source_component:"Component.Component") -> list[Exception]:
         exceptions:list[Exception] = super().check(source_component)

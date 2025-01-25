@@ -3,7 +3,7 @@ from typing import Iterable, NotRequired, TypedDict
 
 import Serializer.Serializer as Serializer
 
-__all__ = ["LanguageSerializer"]
+__all__ = ("LanguageSerializer",)
 
 class LanguageObject(TypedDict):
     value: str

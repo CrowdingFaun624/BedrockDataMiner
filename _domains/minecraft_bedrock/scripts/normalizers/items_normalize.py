@@ -2,7 +2,7 @@ from typing import Any, Iterator, TypedDict, cast
 
 import Utilities.File as File
 
-__all__ = ["items_normalize"]
+__all__ = ("items_normalize",)
 
 class ItemsFileFormat(TypedDict):
     items: dict[str,dict[str,Any]]

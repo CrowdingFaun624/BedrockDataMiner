@@ -26,7 +26,7 @@ class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[Struc
         return self.get_base_component(components, name).final
 
     def get_assumed_used_components(self, components: dict[str, Component.Component], name:str) -> Iterable[Component.Component]:
-        return [self.get_base_component(components, name)]
+        return (self.get_base_component(components, name),)
 
     def get_from_directory(self, directory_path:Path) -> Iterable[Path]:
         for subpath in directory_path.iterdir():

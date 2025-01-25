@@ -1,4 +1,5 @@
 import math
+from typing import Sequence
 
 import Structure.AbstractIterableStructure as AbstractIterableStructure
 import Structure.Delegate.DefaultDelegate as DefaultDelegate
@@ -25,7 +26,7 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
 
         self.surrounding_line_count = surrounding_line_count
 
-    def print_text(self, data: list[str], environment: StructureEnvironment.PrinterEnvironment) -> tuple[list[DefaultDelegate.LineType], list[Trace.ErrorTrace]]:
+    def print_text(self, data: list[str], environment: StructureEnvironment.PrinterEnvironment) -> tuple[list[DefaultDelegate.LineType], Sequence[Trace.ErrorTrace]]:
         if len(data) == 0:
             output = [(0, "empty")]
         else:
@@ -34,7 +35,7 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
             for line in data:
                 output.append((0, line))
             output.append((0, "'''"))
-        return output, []
+        return output, ()
 
     def get_before_buffer(self, lines_before_buffer:list[tuple[int,DefaultDelegate.LineType]]) -> tuple[int|None, list[DefaultDelegate.LineType]]:
         if self.surrounding_line_count is None:
@@ -76,7 +77,7 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
             new_index_string = " " * (maximum_index_length - len(new_index_string)) + new_index_string
         return f"{old_index_string if show_old else " " * maximum_index_length} {new_index_string if show_new else " " * maximum_index_length}"
 
-    def compare_text(self, data: list[str|D.Diff[str]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[DefaultDelegate.LineType], bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data: list[str|D.Diff[str]], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[list[DefaultDelegate.LineType], bool, Sequence[Trace.ErrorTrace]]:
         output:list[DefaultDelegate.LineType] = []
         maximum_index_length = self.get_maximum_index_length(data) # determines the amount of spacing.
         # pre-text stuff takes the form of "[index] (+/-) [line]"
@@ -181,4 +182,4 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int]):
         output.append((0, f"{" " * space_count}'''"))
         if self.measure_length:
             output = [(0, f"Total {self.field}: {current_length} (+{addition_length}, -{removal_length})")] + output
-        return output, has_changes, []
+        return output, has_changes, ()

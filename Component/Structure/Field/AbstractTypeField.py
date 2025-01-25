@@ -21,7 +21,7 @@ class AbstractTypeField(Field.Field):
 
     types: tuple[type,...]
 
-    def __init__(self, path: list[str | int]) -> None:
+    def __init__(self, path: tuple[str,...]) -> None:
         super().__init__(path)
         self.verify_with_component:VerifyComponentType|None=None
         self.must_be_types:TypeUtilities.TypeSet|None = None

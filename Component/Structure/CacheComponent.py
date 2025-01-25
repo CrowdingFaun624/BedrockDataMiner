@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
@@ -45,7 +47,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         "types_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.CacheTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.CacheTypedDict) -> Sequence[Field.Field]:
         self.remove_threshold = data.get("remove_threshold", 10)
         self.cache_check_all_types = data.get("cache_check_all_types", True)
         self.cache_normalize = data.get("cache_normalize", True)
@@ -56,10 +58,10 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.cache_get_similarity = data.get("cache_get_similarity", True)
         self.cache_compare = data.get("cache_compare", True)
 
-        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ["subcomponent"])
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ["delegate"])
-        self.types_field = TypeListField.TypeListField(data["types"], ["types"]).verify_with(self.subcomponent_field)
-        return [self.subcomponent_field, self.delegate_field, self.types_field]
+        self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent",))
+        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.types_field = TypeListField.TypeListField(data["types"], ("types",)).verify_with(self.subcomponent_field)
+        return (self.subcomponent_field, self.delegate_field, self.types_field)
 
     def create_final(self) -> CacheStructure.CacheStructure:
         return CacheStructure.CacheStructure(

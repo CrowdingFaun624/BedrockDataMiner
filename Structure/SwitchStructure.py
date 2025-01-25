@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Sequence
 
 import Structure.Delegate.Delegate as Delegate
 import Structure.Normalizer as Normalizer
@@ -22,8 +22,8 @@ class SwitchStructure[d](PassthroughStructure.PassthroughStructure[d]):
         switches:dict[str,"Structure.Structure[d]|None"],
         delegate:Delegate.Delegate|None,
         types:tuple[type,...],
-        normalizer:list[Normalizer.Normalizer],
-        post_normalizer:list[Normalizer.Normalizer],
+        normalizer:Sequence[Normalizer.Normalizer],
+        post_normalizer:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         children_tags:set[StructureTag.StructureTag]
     ) -> None:
@@ -31,7 +31,7 @@ class SwitchStructure[d](PassthroughStructure.PassthroughStructure[d]):
         self.switch_function = switch_function
         self.switches = switches
 
-    def get_structure(self, key:None, value: d) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def get_structure(self, key:None, value: d) -> tuple[Structure.Structure|None, Sequence[Trace.ErrorTrace]]:
         try:
             switch_key = self.switch_function(value)
         except Exception as e:
@@ -43,7 +43,7 @@ class SwitchStructure[d](PassthroughStructure.PassthroughStructure[d]):
         if substructure is ...:
             return None, [Trace.ErrorTrace(Exceptions.SwitchStructureError(switch_key, list(self.switches.keys()), self), self.name, None, value)]
         else:
-            return substructure, []
+            return substructure, ()
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
         return (structure for structure in self.switches.values() if structure is not None)

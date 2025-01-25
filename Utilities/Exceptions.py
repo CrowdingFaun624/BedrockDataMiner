@@ -1,6 +1,7 @@
 import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Container, Literal, Optional
+from typing import (TYPE_CHECKING, Any, Callable, Container, Literal,
+                    Optional, Sequence)
 
 if TYPE_CHECKING:
     import Component.Capabilities as Capabilities
@@ -999,7 +1000,7 @@ class DataminerNullReturnError(DataminerException):
 class DataminerSettingsImporterLoopError(DataminerException):
     "A DataminerSettings has an import loop."
 
-    def __init__(self, dataminer_settings:"DataminerSettings.DataminerSettings", loop_items:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_settings:"DataminerSettings.DataminerSettings", loop_items:Sequence[str], message:Optional[str]=None) -> None:
         '''
         :dataminer_settings: The initial DataminerSettings containing the loop.
         :loop_items: A list of DataminerCollection names contained in the loop.
@@ -1904,7 +1905,7 @@ class TypeVerificationTypeError(TypeVerificationTypeException):
 
 class TypeVerificationUnionError(TypeVerificationTypeException):
 
-    def __init__(self, trace: "TypeVerifier.StackTrace", expected_type:str, observed_type:type, causes:list[list[TypeVerificationTypeException]]) -> None:
+    def __init__(self, trace: "TypeVerifier.StackTrace", expected_type:str, observed_type:type, causes:list[Sequence[TypeVerificationTypeException]]) -> None:
         super().__init__(trace, expected_type, observed_type, causes)
         self.expected_type = expected_type
         self.observed_type = observed_type

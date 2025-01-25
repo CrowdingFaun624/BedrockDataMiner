@@ -2,11 +2,11 @@ from typing import Any, Literal
 
 import _domains.minecraft_java.scripts.dataminers.PacksDataminer as PacksDataminer
 
-__all__ = [
+__all__ = (
     "font_providers_normalize_skip",
     "packs_normalizer",
     "post_effect_switch",
-]
+)
 
 def font_providers_normalize_skip(data:str|list[str]) -> list[str]|None:
     if isinstance(data, str):

@@ -54,7 +54,7 @@ def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
     with open(temp_file, "wb") as dest:
         dest.write(input_file)
     # run fsb extractor on fsb file.
-    exe_return = subprocess.run([domain.lib_files["fsb/fsb_aud_extr.exe"], temp_file], shell=True, cwd=temp_directory, capture_output=True)
+    exe_return = subprocess.run((domain.lib_files["fsb/fsb_aud_extr.exe"], temp_file), shell=True, cwd=temp_directory, capture_output=True)
     if exe_return.returncode != 0:
         raise SoundFilesExtractionError(exe_return.returncode)
 

@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -29,13 +31,13 @@ class NormalizerComponent(Component.Component[Normalizer.Normalizer]):
         "version_range_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.NormalizerTypedDict) -> list[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.NormalizerTypedDict) -> Sequence[Field.Field]:
         self.variable_bools["children_has_normalizer"] = True
         self.arguments = data.get("arguments", {})
 
-        self.function_field = FunctionField.FunctionField(data["function_name"], ["function_name"])
-        self.version_range_field = VersionRangeField.VersionRangeField(data["version_range"][0], data["version_range"][1], ["version_range"]) if "version_range" in data else VersionRangeField.VersionRangeField(None, None, ["version_range"])
-        return [self.function_field, self.version_range_field]
+        self.function_field = FunctionField.FunctionField(data["function_name"], ("function_name",))
+        self.version_range_field = VersionRangeField.VersionRangeField(data["version_range"][0], data["version_range"][1], ("version_range",)) if "version_range" in data else VersionRangeField.VersionRangeField(None, None, ("version_range",))
+        return (self.function_field, self.version_range_field)
 
     def get_propagated_variables(self) -> tuple[dict[str, bool], dict[str, set]]:
         return {"children_has_normalizer": False}, {}

@@ -1,4 +1,4 @@
-from typing import Self
+from typing import Self, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -19,7 +19,7 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         "tag_sets",
     )
 
-    def __init__(self, subcomponents_strs:list[str]|str, path:list[str|int]) -> None:
+    def __init__(self, subcomponents_strs:Sequence[str]|str, path:tuple[str,...]) -> None:
         '''
         :subcomponents_strs: The names of the TagComponents this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
@@ -36,7 +36,7 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list["StructureTagComponent.StructureTagComponent"],list["StructureTagComponent.StructureTagComponent"]]:
+    ) -> tuple[Sequence["StructureTagComponent.StructureTagComponent"],Sequence["StructureTagComponent.StructureTagComponent"]]:
         subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function)
         if self.import_from_field is not None:
             self.import_from_field.set_field(source_component, components, global_components, functions, create_component_function)

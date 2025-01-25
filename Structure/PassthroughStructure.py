@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -42,16 +42,16 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         self.max_similarity_descendent_depth = max_similarity_descendent_depth
 
         self.types:tuple[type,...]
-        self.normalizer:list[Normalizer.Normalizer]
-        self.post_normalizer:list[Normalizer.Normalizer]
+        self.normalizer:Sequence[Normalizer.Normalizer]
+        self.post_normalizer:Sequence[Normalizer.Normalizer]
         self.pre_normalized_types:tuple[type,...]
 
     def link_substructures(
         self,
         delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
-        normalizer:list[Normalizer.Normalizer],
-        post_normalizer:list[Normalizer.Normalizer],
+        normalizer:Sequence[Normalizer.Normalizer],
+        post_normalizer:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         children_tags: set[StructureTag.StructureTag],
     ) -> None:
@@ -61,13 +61,10 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         self.post_normalizer = post_normalizer
         self.pre_normalized_types = pre_normalized_types
 
-    def get_structure(self, key:None, value:a) -> tuple[Structure.Structure[a]|None, list[Trace.ErrorTrace]]:
-        ...
-
     def iter_structures(self) -> Iterable[Structure.Structure]:
         ...
 
-    def check_all_types(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:a, environment:StructureEnvironment.StructureEnvironment) -> Sequence[Trace.ErrorTrace]:
         output:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.types):
             output.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data))
@@ -78,8 +75,8 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
             output.extend(exception.add(self.name, None) for exception in structure.check_all_types(data, environment))
         return output
 
-    def normalize(self, data:a, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None, list[Trace.ErrorTrace]]:
-        if not self.children_has_normalizer: return None, []
+    def normalize(self, data:a, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None, Sequence[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, ()
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -121,13 +118,13 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         else:
             return None, exceptions
 
-    def get_tag_paths(self, data:a, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
-        if tag not in self.children_tags: return [], []
+    def get_tag_paths(self, data:a, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[Sequence[DataPath.DataPath], Sequence[Trace.ErrorTrace]]:
+        if tag not in self.children_tags: return (), ()
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.get_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         if structure is None:
-            return [], exceptions
+            return (), exceptions
         output, new_exceptions = structure.get_tag_paths(data, tag, data_path.copy(), environment)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
@@ -141,7 +138,10 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         structure1, exceptions1 = self.get_structure(None, data1)
         structure2, exceptions2 = self.get_structure(None, data2)
         if len(exceptions1) > 0 or len(exceptions2) > 0:
-            exceptions.append(Trace.ErrorTrace(Exceptions.StructureExceptionError(self, self.get_similarity, exceptions1 + exceptions2), self.name, None, (data1, data2)))
+            similarity_exceptions:list[Trace.ErrorTrace] = []
+            similarity_exceptions.extend(exceptions1)
+            similarity_exceptions.extend(exceptions2)
+            exceptions.append(Trace.ErrorTrace(Exceptions.StructureExceptionError(self, self.get_similarity, similarity_exceptions), self.name, None, (data1, data2)))
         if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth) or structure1 is None or structure1 is not structure2:
             if branch == 0:
                 return float(data1 == data2)
@@ -151,7 +151,7 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
             output = structure1.get_similarity(data1, data2, depth, max_depth, environment, exceptions, branch)
             return output
 
-    def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[a|D.Diff[a], bool, list[Trace.ErrorTrace]]:
+    def compare(self, data1:a, data2:a, environment:StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[a|D.Diff[a], bool, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure1, new_exceptions = self.get_structure(None, data1)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
@@ -167,7 +167,7 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
             exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, has_changes, exceptions
 
-    def print_text(self, data: a, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, list[Trace.ErrorTrace]]:
+    def print_text(self, data: a, environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.get_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
@@ -183,7 +183,7 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def compare_text(self, data:a|D.Diff[a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:a|D.Diff[a], environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         structure, new_exceptions = self.choose_structure(None, data)
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)

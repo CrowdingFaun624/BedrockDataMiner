@@ -3,7 +3,7 @@ from typing import Any, NotRequired, Required, TypedDict, cast
 
 import Utilities.File as File
 
-__all__ = [
+__all__ = (
     "animation_controllers_fix_old",
     "animations_fix_old",
     "attachables_normalize_old",
@@ -33,9 +33,10 @@ __all__ = [
     "spawn_rules_normalize_herd",
     "terrain_textures_normalize",
     "texture_list_normalize",
+    "textures_split_lines",
     "ui_separate_variables",
     "uniforms_normalize",
-]
+)
 
 animation_controllers_fix_old_input_typed_dict = dict[str,Any]
 animation_controllers_fix_old_output_typed_dict = TypedDict("animation_controllers_fix_old_output_typed_dict", {"animation_controllers": Any})

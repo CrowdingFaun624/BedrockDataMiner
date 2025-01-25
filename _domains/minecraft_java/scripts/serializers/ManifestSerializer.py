@@ -2,7 +2,7 @@ from typing import Any
 
 import Serializer.Serializer as Serializer
 
-__all__ = ["ManifestSerializer"]
+__all__ = ("ManifestSerializer",)
 
 class LineReader():
 

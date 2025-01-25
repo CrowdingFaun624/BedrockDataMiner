@@ -2,7 +2,7 @@ import jsbeautifier
 
 import Serializer.Serializer as Serializer
 
-__all__ = ["JavascriptSerializer"]
+__all__ = ("JavascriptSerializer",)
 
 DEFAULT_OPTIONS = {
   "indent_size": "1",

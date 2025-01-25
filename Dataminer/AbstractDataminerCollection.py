@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Iterator
+from typing import Any, Iterable, Iterator, Sequence
 
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Domain.Domain as Domain
@@ -41,7 +41,7 @@ class AbstractDataminerCollection():
 
         return self.get_data_file(version) # since the normalizing immediately before may modify it.
 
-    def get_dependencies(self, version:Version.Version) -> list["AbstractDataminerCollection"]: ...
+    def get_dependencies(self, version:Version.Version) -> Iterable["AbstractDataminerCollection"]: ...
 
     def get_data_file(self, version:Version.Version, non_exist_ok:bool=False) -> Any:
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
@@ -66,9 +66,9 @@ class AbstractDataminerCollection():
         '''
         return self.structure.has_tag(tag)
 
-    def get_tag_paths(self, version:Version.Version, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment, *, data:Any|None=None, normalized_data:Any|None=None) -> dict[StructureTag.StructureTag,list[DataPath.DataPath]]:
+    def get_tag_paths(self, version:Version.Version, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment, *, data:Any|None=None, normalized_data:Any|None=None) -> dict[StructureTag.StructureTag,Sequence[DataPath.DataPath]]:
         if not self.supports_version(version):
-            return {tag: [] for tag in tags}
+            return {tag: () for tag in tags}
         if data is None:
             data = self.get_data_file(version)
         return self.structure.get_tag_paths(data, tags, environment, normalized_data=normalized_data)

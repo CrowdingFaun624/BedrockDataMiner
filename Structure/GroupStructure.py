@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Sequence
 
 import Structure.Normalizer as Normalizer
 import Structure.PassthroughStructure as PassthroughStructure
@@ -33,8 +33,8 @@ class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
         substructures:dict[type,Structure.Structure|None],
         delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
-        normalizer:list[Normalizer.Normalizer],
-        post_normalizer:list[Normalizer.Normalizer],
+        normalizer:Sequence[Normalizer.Normalizer],
+        post_normalizer:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
@@ -44,9 +44,9 @@ class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
     def iter_structures(self) -> Iterable[Structure.Structure]:
         yield from (substructure for substructure in self.substructures.values() if substructure is not None)
 
-    def get_structure(self, key:None, value: a) -> tuple[Structure.Structure|None, list[Trace.ErrorTrace]]:
+    def get_structure(self, key:None, value: a) -> tuple[Structure.Structure|None, Sequence[Trace.ErrorTrace]]:
         output = self.substructures.get(type(value), ...)
         if output is ...:
-            return None, [Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.types), type(value), "Data"), self.name, None, value)]
+            return None, (Trace.ErrorTrace(Exceptions.StructureTypeError(tuple(self.types), type(value), "Data"), self.name, None, value),)
         else:
-            return output, []
+            return output, ()

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Sequence
 
 import Structure.Delegate.DefaultDelegate as DefaultDelegate
 import Structure.Delegate.Delegate as Delegate
@@ -24,7 +24,7 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
         super().__init__(structure, keys)
         self.structure_name = name
 
-    def compare_text(self, data: Any, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data: Any, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
         exceptions:list[Trace.ErrorTrace] = []
         version1, version2, versions_between = environment.versions[0], environment.versions[1], environment.versions_between[0]
         assert version2 is not None

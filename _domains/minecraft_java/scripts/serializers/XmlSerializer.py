@@ -7,7 +7,7 @@ import Serializer.Serializer as Serializer
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
 
-__all__ = ["XmlSerializer"]
+__all__ = ("XmlSerializer",)
 
 class ElementTypedDict(TypedDict):
     tag: str

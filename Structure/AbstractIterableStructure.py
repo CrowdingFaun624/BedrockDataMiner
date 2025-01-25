@@ -44,8 +44,8 @@ class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]])
 
         self.structure:Structure.Structure[d]|None
         self.types:tuple[type,...]
-        self.normalizer:list[Normalizer.Normalizer]
-        self.post_normalizer:list[Normalizer.Normalizer]
+        self.normalizer:Sequence[Normalizer.Normalizer]
+        self.post_normalizer:Sequence[Normalizer.Normalizer]
         self.pre_normalized_types:tuple[type,...]
         self.tags:set[StructureTag.StructureTag]
 
@@ -54,8 +54,8 @@ class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]])
         structure:Structure.Structure[d]|None,
         delegate:"Delegate.Delegate|None",
         types:tuple[type,...],
-        normalizer:list[Normalizer.Normalizer],
-        post_normalizer:list[Normalizer.Normalizer],
+        normalizer:Sequence[Normalizer.Normalizer],
+        post_normalizer:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         tags:set[StructureTag.StructureTag],
         children_tags:set[StructureTag.StructureTag],
@@ -68,18 +68,18 @@ class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]])
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
 
-    def get_structure(self, key:int, value:d) -> tuple[Structure.Structure[d]|None, list[Trace.ErrorTrace]]:
-        return self.structure, []
+    def get_structure(self, key:int, value:d) -> tuple[Structure.Structure[d]|None, Sequence[Trace.ErrorTrace]]:
+        return self.structure, ()
 
     def iter_structures(self) -> Iterable[Structure.Structure]:
-        if self.structure is None: return []
+        if self.structure is None: return ()
         else: return [self.structure]
 
     def check_type(self, index:int, item:d) -> Trace.ErrorTrace|None:
         if not isinstance(item, self.types):
             return Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(item), "Item"), self.name, index, item)
 
-    def check_all_types(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> list[Trace.ErrorTrace]:
+    def check_all_types(self, data:list[d], environment:StructureEnvironment.StructureEnvironment) -> Sequence[Trace.ErrorTrace]:
         '''Recursively checks if the types are correct. Should not be given data containing Diffs.'''
         output:list[Trace.ErrorTrace] = []
         for index, item in enumerate(data):
@@ -92,8 +92,8 @@ class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]])
                 output.extend(exception.add(self.name, index) for exception in self.structure.check_all_types(item, environment))
         return output
 
-    def normalize(self, data:list[d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,list[Trace.ErrorTrace]]:
-        if not self.children_has_normalizer: return None, []
+    def normalize(self, data:list[d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,Sequence[Trace.ErrorTrace]]:
+        if not self.children_has_normalizer: return None, ()
         exceptions:list[Trace.ErrorTrace] = []
         if not isinstance(data, self.pre_normalized_types):
             exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
@@ -133,8 +133,8 @@ class AbstractIterableStructure[d](ObjectStructure.ObjectStructure[Sequence[d]])
         else:
             return None, exceptions
 
-    def get_tag_paths(self, data: list[d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[list[DataPath.DataPath], list[Trace.ErrorTrace]]:
-        if tag not in self.children_tags: return [], []
+    def get_tag_paths(self, data: list[d], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment:StructureEnvironment.StructureEnvironment) -> tuple[Sequence[DataPath.DataPath], Sequence[Trace.ErrorTrace]]:
+        if tag not in self.children_tags: return (), ()
         output:list[DataPath.DataPath] = []
         exceptions:list[Trace.ErrorTrace] = []
         if tag in self.tags:

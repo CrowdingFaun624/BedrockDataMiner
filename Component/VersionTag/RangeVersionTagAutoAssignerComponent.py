@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Version.Field.VersionRangeField as VersionRangeField
@@ -19,9 +21,9 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.Versi
         "version_range_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict) -> list[Field.Field]:
-        self.version_range_field = VersionRangeField.VersionRangeField(data["oldest"], data["newest"], [])
-        return [self.version_range_field]
+    def initialize_fields(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict) -> Sequence[Field.Field]:
+        self.version_range_field = VersionRangeField.VersionRangeField(data["oldest"], data["newest"], ())
+        return (self.version_range_field,)
 
     def contains_version(self, version: "VersionComponent.VersionComponent") -> bool:
         return version in self.version_range_field

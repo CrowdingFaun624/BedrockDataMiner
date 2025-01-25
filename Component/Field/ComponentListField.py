@@ -1,4 +1,4 @@
-from typing import Callable, Iterator, Sequence, cast
+from typing import Any, Callable, Iterator, Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -26,7 +26,7 @@ class ComponentListField[a:Component.Component](Field.Field):
         self,
         subcomponents_data:Sequence[str|ComponentTyping.ComponentTypedDicts]|str|ComponentTyping.ComponentTypedDicts,
         pattern:Pattern.Pattern[a],
-        path:list[str|int],
+        path:tuple[str,...],
         *,
         allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,
         assume_type:str|None=None,
@@ -41,7 +41,8 @@ class ComponentListField[a:Component.Component](Field.Field):
         :assume_component_group: Assumed Component group if it is not specified.
         '''
         super().__init__(path)
-        self.subcomponents_data = cast(Sequence[str|ComponentTyping.ComponentTypedDicts], [subcomponents_data]) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
+        # I wouldn't have to use a cast here if it would get the hint and actually say that it's Sequence[str|ComponentTyping.ComponentTypedDicts] instead of tuple[ComponentTypedDicts|str]|Sequence[ComponentTypedDicts|str]
+        self.subcomponents_data:Sequence[str|ComponentTyping.ComponentTypedDicts] = cast(Any, (subcomponents_data,)) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
         self.subcomponents:list[a]
         self.pattern = pattern
         self.allow_inline = allow_inline

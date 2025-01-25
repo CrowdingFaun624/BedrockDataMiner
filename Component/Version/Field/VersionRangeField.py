@@ -15,7 +15,7 @@ class VersionRangeField(FieldContainer.FieldContainer[OptionalComponentField.Opt
         "stop_version_field",
     )
 
-    def __init__(self, start_version_str:str|None, stop_version_str:str|None, path: list[str | int]) -> None:
+    def __init__(self, start_version_str:str|None, stop_version_str:str|None, path: tuple[str,...]) -> None:
         '''
         :start_version_str: The name of the oldest Version (inclusive).
         :stop_version_str: The name of the newest Version (exclusive).

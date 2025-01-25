@@ -7,13 +7,13 @@ import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = [
+__all__ = (
     "collapse_resource_packs_dict",
     "collapse_resource_packs_dict_file",
     "collapse_resource_packs_flat",
     "collapse_resource_packs_list_file",
     "collapse_resource_pack_names",
-]
+)
 
 class UnrecognizedPackError(Exceptions.DataminerException):
     "The behavior pack/resource pack is not recognized."

@@ -83,7 +83,7 @@ class Scripts():
         for relative_name, module in modules.items():
             item_names:list[str]
             if hasattr(module, "__all__"):
-                self.all_type_verifier.base_verify(module.__all__, [relative_name])
+                self.all_type_verifier.base_verify(module.__all__, (relative_name,))
                 item_names = module.__all__
             else:
                 item_names = dir(module)

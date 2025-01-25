@@ -1,5 +1,5 @@
 from itertools import product
-from typing import Any
+from typing import Any, Sequence
 
 import _domains.minecraft_java.scripts.dataminers.PacksDataminer as PacksDataminer
 import Dataminer.DataminerEnvironment as DataminerEnvironment
@@ -9,7 +9,7 @@ import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["GrabPackFileDataminer"]
+__all__ = ("GrabPackFileDataminer",)
 
 class GrabPackFileDataminer(FileDataminer.FileDataminer):
 
@@ -20,14 +20,14 @@ class GrabPackFileDataminer(FileDataminer.FileDataminer):
         TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", False, str),
     )
 
-    def initialize(self, location:str|list[str], pack_type:str, find_none_okay:bool=False, insert_file_name:str|None=None) -> None:
-        self.location = [location] if isinstance(location, str) else location
+    def initialize(self, location:str|Sequence[str], pack_type:str, find_none_okay:bool=False, insert_file_name:str|None=None) -> None:
+        self.location = (location,) if isinstance(location, str) else location
         self.pack_type = pack_type
         self.find_none_okay = find_none_okay
         self.insert_file_name = insert_file_name
 
     def get_coverage(self, file_set:FileDataminer.FileSet, environment: DataminerEnvironment.DataminerEnvironment) -> set[str]:
-        packs = [pack["path"] for pack in self.get_packs(environment)]
+        packs = (pack["path"] for pack in self.get_packs(environment))
         output:set[str] = set()
         for pack, location in product(packs, self.location):
             file_name = pack + location

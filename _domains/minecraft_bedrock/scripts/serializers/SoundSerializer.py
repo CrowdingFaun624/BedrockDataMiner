@@ -6,7 +6,7 @@ import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 
-__all__ = ["SoundSerializer"]
+__all__ = ("SoundSerializer",)
 
 class SoundFilesMetadataError(Exceptions.DataminerException):
     "audio_metadata failed to extract the sound file."
@@ -48,8 +48,6 @@ class SoundFilesTypedDict(TypedDict):
     _obj: str
     streaminfo: SoundFilesStreamInfoTypedDict
     sha1_hash: str # hexadecimal 40-digit string
-
-ALL_SOUND_FILE_FORMATS = [".flac", ".fsb", ".mp3", ".ogg", ".wav"]
 
 def get_metadata(file:bytes) -> SoundFilesTypedDict:
     import audio_metadata

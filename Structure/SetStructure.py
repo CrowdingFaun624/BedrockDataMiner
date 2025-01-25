@@ -96,9 +96,9 @@ class SetStructure[d](AbstractIterableStructure.AbstractIterableStructure[d]):
         environment:StructureEnvironment.ComparisonEnvironment,
         branch:int,
         branches:int,
-    ) -> tuple[Sequence[d|D.Diff[d]],bool,list[Trace.ErrorTrace]]:
+    ) -> tuple[Sequence[d|D.Diff[d]],bool,Sequence[Trace.ErrorTrace]]:
         if not environment.is_multi_diff and (data1 is data2 or data1 == data2):
-            return data1, False, []
+            return data1, False, ()
         exceptions:list[Trace.ErrorTrace] = []
 
         type_stuff = environment.domain.type_stuff

@@ -1,4 +1,4 @@
-from typing import Any, NotRequired, Required, TypedDict, cast
+from typing import Any, NotRequired, Required, Sequence, TypedDict, cast
 
 import Structure.Delegate.Delegate as Delegate
 import Structure.Difference as D
@@ -7,7 +7,7 @@ import Structure.StructureEnvironment as StructureEnvironment
 import Structure.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
-__all__ = ["SoundPropertiesDelegate"]
+__all__ = ("SoundPropertiesDelegate",)
 
 class SoundPropertiesTypedDict(TypedDict):
     name: Required[str]
@@ -26,7 +26,7 @@ class SoundPropertiesDelegate(Delegate.Delegate[str, KeymapStructure.KeymapStruc
 
     applies_to = (KeymapStructure.KeymapStructure,)
 
-    def compare_text(self, data:SoundPropertiesTypedDict, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, list[Trace.ErrorTrace]]:
+    def compare_text(self, data:SoundPropertiesTypedDict, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
         output:list[str] = []
         exceptions:list[Trace.ErrorTrace] = []
         has_changes = False
