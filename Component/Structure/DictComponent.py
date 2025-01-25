@@ -3,10 +3,10 @@ from typing import Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Field.OptionalComponentField as OptionalComponentField
-import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Structure.Field.DelegateField as DelegateField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.NormalizerComponent as NormalizerComponent
@@ -83,9 +83,9 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 6)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
-        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent",))
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
-        self.key_structure_field = OptionalComponentField.OptionalComponentField(data.get("key_component", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("key_component",))
+        self.subcomponent_field = ComponentField.OptionalComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent",))
+        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.key_structure_field = ComponentField.OptionalComponentField(data.get("key_component", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("key_component",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.this_type_field = TypeListField.TypeListField(data.get("this_type", "dict"), ("this_type",)).must_be(self.domain.type_stuff.mapping_types).add_to_set(self.my_type)
@@ -120,9 +120,9 @@ class DictComponent(StructureComponent.StructureComponent[DictStructure.DictStru
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         self.final.link_substructures(
-            structure=self.subcomponent_field.get_final(lambda subcomponent: subcomponent.final),
+            structure=self.subcomponent_field.map(lambda subcomponent: subcomponent.final),
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
-            key_structure=self.key_structure_field.get_final(lambda subcomponent: subcomponent.final),
+            key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
             types=self.types_field.types,
             normalizer=tuple(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
             post_normalizer=tuple(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),

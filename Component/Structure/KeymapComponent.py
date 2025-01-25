@@ -3,13 +3,13 @@ from typing import Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
-import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Structure.Field.KeymapImportField as KeymapImportField
 import Component.Structure.Field.KeymapKeyField as KeymapKeyField
-import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Structure.Field.DelegateField as DelegateField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.NormalizerComponent as NormalizerComponent
@@ -101,8 +101,8 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
             for key, key_data in data.get("keys", {}).items()
         ], ("keys",))
         self.import_field = KeymapImportField.KeymapImportField(data.get("imports", ()), ("imports",)).import_into(self.keys)
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
-        self.key_structure_field = OptionalComponentField.OptionalComponentField(data.get("key_component"), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("key_component",))
+        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.key_structure_field = ComponentField.OptionalComponentField(data.get("key_component"), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("key_component",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
@@ -141,10 +141,10 @@ class KeymapComponent(StructureComponent.StructureComponent[KeymapStructure.Keym
         exceptions = super().link_finals()
         delegate_keys_arguments = {key.key: key.delegate_arguments for key in self.keys}
         self.final.link_substructures(
-            keys={key.key: key.subcomponent_field.get_final(lambda subcomponent: subcomponent.final) for key in self.keys},
+            keys={key.key: key.subcomponent_field.map(lambda subcomponent: subcomponent.final) for key in self.keys},
             delegate=self.delegate_field.create_delegate(self.final, delegate_keys_arguments, exceptions=exceptions),
             key_types={key.key: key.types_field.types for key in self.keys},
-            key_structure=self.key_structure_field.get_final(lambda subcomponent: subcomponent.final),
+            key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
             normalizer=tuple(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),
             post_normalizer=tuple(self.post_normalizer_field.map(lambda subcomponent: subcomponent.final)),
             pre_normalized_types=self.pre_normalized_types_field.types if len(self.pre_normalized_types_field.types) != 0 else self.this_type_field.types,

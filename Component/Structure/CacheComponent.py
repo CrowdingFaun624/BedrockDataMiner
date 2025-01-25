@@ -4,7 +4,7 @@ import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
-import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Structure.Field.DelegateField as DelegateField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Structure.CacheStructure as CacheStructure
@@ -58,7 +58,7 @@ class CacheComponent(StructureComponent.StructureComponent[CacheStructure.CacheS
         self.cache_compare = data.get("cache_compare", True)
 
         self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent",))
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
         self.types_field = TypeListField.TypeListField(data["types"], ("types",)).verify_with(self.subcomponent_field).add_to_set(self.my_type)
         return (self.subcomponent_field, self.delegate_field, self.types_field)
 

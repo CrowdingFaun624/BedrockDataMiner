@@ -8,7 +8,6 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
-import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.VersionTag.VersionTagComponent as VersionTagComponent
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
@@ -48,7 +47,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
             )
             for key, children in data["allowed_children"].items()
         ]
-        self.top_level_tag_field = OptionalComponentField.OptionalComponentField(data["top_level_tag"], VersionTagComponent.VERSION_TAG_PATTERN, ("top_level_tag",), assume_component_group="version_tags")
+        self.top_level_tag_field = ComponentField.OptionalComponentField(data["top_level_tag"], VersionTagComponent.VERSION_TAG_PATTERN, ("top_level_tag",), assume_component_group="version_tags")
         self.tags_before_top_level_tag = ComponentListField.ComponentListField(data["tags_before_top_level_tag"], VersionTagComponent.VERSION_TAG_PATTERN, ("tags_before_top_level_tag",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_tags")
         self.tags_after_top_level_tag = ComponentListField.ComponentListField(data["tags_after_top_level_tag"], VersionTagComponent.VERSION_TAG_PATTERN, ("tags_after_top_level_tag",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_tags")
         fields:list[Field.Field] = [self.order_field, self.top_level_tag_field, self.tags_before_top_level_tag, self.tags_after_top_level_tag]
@@ -68,7 +67,7 @@ class VersionTagOrderComponent(Component.Component[VersionTagOrder.VersionTagOrd
                     for version_tag_component in children_field.subcomponents
                 ) for key_field, children_field in self.allowed_children_field
             },
-            top_level_tag=self.top_level_tag_field.get_final(lambda subcomponent: subcomponent.final),
+            top_level_tag=self.top_level_tag_field.map(lambda subcomponent: subcomponent.final),
             tags_before_top_level_tag=list(self.tags_before_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
             tags_after_top_level_tag=list(self.tags_after_top_level_tag.map(lambda version_tag_component: version_tag_component.final)),
         )

@@ -1,8 +1,9 @@
-from typing import Sequence, cast
+from typing import Callable, Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
+import Component.Field.FieldContainer as FieldContainer
 import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Utilities.Exceptions as Exceptions
@@ -70,3 +71,50 @@ class ComponentField[a: Component.Component](Field.Field):
         if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
             exceptions.append(Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.ComponentTypedDicts, self.subcomponent_data)))
         return exceptions
+
+class OptionalComponentField[a: Component.Component](FieldContainer.FieldContainer):
+
+    __slots__ = (
+        "component_field",
+    )
+
+    def __init__(
+            self,
+            subcomponent_data:str|ComponentTyping.ComponentTypedDicts|None,
+            pattern:Pattern.Pattern[a],
+            path:tuple[str,...],
+            *,
+            allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,
+            assume_type:str|None=None,
+            assume_component_group:str|None=None,
+        ) -> None:
+        '''
+        :subcomponent_data: The name of the reference Component, data of the inline Component, or None.
+        :pattern: The Pattern used to search for Components.
+        :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :allow_inline: An InlinePermissions object describing the type of subcomponent_data allowed.
+        :assume_type: String to use as the type of an inline Component if the type key is missing from it.
+        :assume_component_group: Assumed Component group if it is not specified.
+        '''
+        self.component_field:ComponentField|None
+        if subcomponent_data is None:
+            self.component_field = None
+            super().__init__([], path)
+        else:
+            self.component_field = ComponentField(subcomponent_data, pattern, path, allow_inline=allow_inline, assume_type=assume_type, assume_component_group=assume_component_group)
+            super().__init__([self.component_field], path)
+
+    def map[b](self, function:Callable[[a],b]=lambda component: component.final) -> b|None:
+        return None if self.component_field is None else function(self.component_field.subcomponent)
+
+    @property
+    def subcomponent_data(self) -> str|ComponentTyping.ComponentTypedDicts|None:
+        return None if self.component_field is None else self.component_field.subcomponent_data
+
+    @property
+    def subcomponent(self) -> a|None:
+        return None if self.component_field is None else self.component_field.subcomponent
+
+    @property
+    def exists(self) -> bool:
+        return self.component_field is not None

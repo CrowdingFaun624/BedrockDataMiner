@@ -5,8 +5,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Field.OptionalComponentField as OptionalComponentField
-import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Structure.Field.DelegateField as DelegateField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.StructureComponent as StructureComponent
@@ -48,9 +47,9 @@ class SwitchComponent(StructureComponent.StructureComponent[SwitchStructure.Swit
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
-        self.subcomponents_field = {key: OptionalComponentField.OptionalComponentField(subdata, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponents", key)) for key, subdata in data["subcomponents"].items()}
+        self.subcomponents_field = {key: ComponentField.OptionalComponentField(subdata, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponents", key)) for key, subdata in data["subcomponents"].items()}
         self.switch_function_field = ComponentField.ComponentField(data["switch_function"], NormalizerComponent.NORMALIZER_PATTERN, ("switch_function",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ("delegate",))
         self.types_field = TypeListField.TypeListField(data["types"], ("types",)).add_to_set(self.my_type)
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
@@ -73,7 +72,7 @@ class SwitchComponent(StructureComponent.StructureComponent[SwitchStructure.Swit
         exceptions = super().link_finals()
         self.final.link_substructures(
             switch_function=self.switch_function_field.subcomponent.final,
-            switches={key: field.get_final(lambda subcomponent: subcomponent.final) for key, field in self.subcomponents_field.items()},
+            switches={key: field.map(lambda subcomponent: subcomponent.final) for key, field in self.subcomponents_field.items()},
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),
             types=self.types_field.types,
             normalizer=tuple(self.normalizer_field.map(lambda subcomponent: subcomponent.final)),

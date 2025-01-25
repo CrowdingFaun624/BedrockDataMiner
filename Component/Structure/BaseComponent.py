@@ -7,7 +7,7 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
-import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Structure.Field.DelegateField as DelegateField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.StructureComponent as StructureComponent
@@ -47,8 +47,8 @@ class BaseComponent(Component.Component[StructureBase.StructureBase]):
 
     def initialize_fields(self, data: ComponentTyping.BaseTypedDict) -> Sequence[Field.Field]:
         self.subcomponent_field = ComponentField.ComponentField(data["subcomponent"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent",))
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", "DefaultBaseDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
-        self.default_delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("default_delegate", "DefaultDelegate"), data.get("default_delegate_arguments", {}), self.domain, ("default_delegate",))
+        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate", "DefaultBaseDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.default_delegate_field = DelegateField.OptionalDelegateField(data.get("default_delegate", "DefaultDelegate"), data.get("default_delegate_arguments", {}), self.domain, ("default_delegate",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))

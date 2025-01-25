@@ -3,10 +3,10 @@ from typing import Sequence
 
 import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Field.OptionalComponentField as OptionalComponentField
-import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Structure.Field.DelegateField as DelegateField
 import Component.Structure.Field.TypeField as TypeField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.NormalizerComponent as NormalizerComponent
@@ -48,12 +48,12 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
 
         self.subcomponents_field = [
             (
-                (subcomponent_field := OptionalComponentField.OptionalComponentField(subcomponent_str, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent", str(index)))),
+                (subcomponent_field := ComponentField.OptionalComponentField(subcomponent_str, StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("subcomponent", str(index)))),
                 TypeField.TypeField(type_str, ("subcomponents", str(index))).verify_with(subcomponent_field).add_to_set(self.my_type),
             )
             for index, (type_str, subcomponent_str) in enumerate(data["subcomponents"].items())
         ]
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate", None), data.get("delegate_arguments", {}), self.domain, ("delegate",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.post_normalizer_field = ComponentListField.ComponentListField(data.get("post_normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
@@ -74,7 +74,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         exceptions = super().link_finals()
         substructures:dict[type,Structure.Structure|None] = {}
         for (subcomponent_field, type_field) in self.subcomponents_field:
-            substructures.update((valid_type, subcomponent_field.get_final(lambda subcomponent: subcomponent.final)) for valid_type in type_field.types)
+            substructures.update((valid_type, subcomponent_field.map(lambda subcomponent: subcomponent.final)) for valid_type in type_field.types)
         self.final.link_substructures(
             substructures=substructures,
             delegate=self.delegate_field.create_delegate(self.final, exceptions=exceptions),

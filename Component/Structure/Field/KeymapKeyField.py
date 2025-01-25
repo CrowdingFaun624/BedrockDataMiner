@@ -2,9 +2,9 @@ from typing import Self
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
-import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
@@ -46,7 +46,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.required = data.get("required", False)
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", ...)
 
-        self.subcomponent_field = OptionalComponentField.OptionalComponentField(data.get("subcomponent", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("keys", key, "subcomponent"), allow_inline=allow_inline)
+        self.subcomponent_field = ComponentField.OptionalComponentField(data.get("subcomponent", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("keys", key, "subcomponent"), allow_inline=allow_inline)
         self.types_field = TypeListField.TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), ("keys", key, "types",)).verify_with(self.subcomponent_field)
         self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", ()), ("keys", key, "tags")).add_to_tag_set(tag_set)
         self.tags_for_all_field:TagListField.TagListField|None = None

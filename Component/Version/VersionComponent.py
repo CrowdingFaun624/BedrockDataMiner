@@ -4,9 +4,9 @@ from typing import Any, Sequence
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Pattern as Pattern
 import Component.Version.Field.VersionTagListField as VersionTagListField
 import Component.Version.VersionFileComponent as VersionFileComponent
@@ -59,7 +59,7 @@ class VersionComponent(Component.Component[Version.Version]):
     def initialize_fields(self, data:ComponentTyping.VersionTypedDict) -> Sequence[Field.Field]:
         self.time = datetime.datetime.fromisoformat(data["time"]) if data["time"] is not None else None
 
-        self.parent_field = OptionalComponentField.OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",), allow_inline=Field.InlinePermissions.reference, assume_component_group="versions")
+        self.parent_field = ComponentField.OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",), allow_inline=Field.InlinePermissions.reference, assume_component_group="versions")
         self.tags_field = VersionTagListField.VersionTagListField(data["tags"], ("tags",), self)
         self.files_field = ComponentListField.ComponentListField(self.normalize_files(data["files"]), VersionFileComponent.VERSION_FILE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.inline, assume_type=VersionFileComponent.VersionFileComponent.class_name)
         return (self.parent_field, self.tags_field, self.files_field)
@@ -75,7 +75,7 @@ class VersionComponent(Component.Component[Version.Version]):
     def link_finals(self) -> list[Exception]:
         exceptions = super().link_finals()
         self.final.link_finals(
-            parent=self.parent_field.get_final(lambda subcomponent: subcomponent.final),
+            parent=self.parent_field.map(lambda subcomponent: subcomponent.final),
             tags=list(self.tags_field.map(lambda version_tag_component: version_tag_component.final)),
             version_files=list(self.files_field.map(lambda version_file_component: version_file_component.final)),
         )

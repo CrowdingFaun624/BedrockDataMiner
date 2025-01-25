@@ -3,12 +3,11 @@ from typing import Self
 import Component.Component as Component
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
-import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Structure.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeUtilities as TypeUtilities
 
-type VerifyComponentType = ComponentField.ComponentField[StructureComponent.StructureComponent]|OptionalComponentField.OptionalComponentField[StructureComponent.StructureComponent]
+type VerifyComponentType = ComponentField.ComponentField[StructureComponent.StructureComponent]|ComponentField.OptionalComponentField[StructureComponent.StructureComponent]
 
 class AbstractTypeField(Field.Field):
 

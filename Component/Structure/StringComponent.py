@@ -4,8 +4,8 @@ import Component.Capabilities as Capabilities
 import Component.ComponentTyping as ComponentTyping
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Field.OptionalFunctionField as OptionalFunctionField
-import Component.Structure.Field.OptionalDelegateField as OptionalDelegateField
+import Component.Field.FunctionField as FunctionField
+import Component.Structure.Field.DelegateField as DelegateField
 import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.NormalizerComponent as NormalizerComponent
@@ -42,12 +42,12 @@ class StringComponent(StructureComponent.StructureComponent[StringStructure.Stri
     def initialize_fields(self, data: ComponentTyping.StringTypedDict) -> Sequence[Field.Field]:
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", 6) # it's common to have a set of dicts with a significant string like [{"name": "bob"}, {"name": "alice"}]
 
-        self.delegate_field = OptionalDelegateField.OptionalDelegateField(data.get("delegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
         self.normalizer_field = ComponentListField.ComponentListField(data.get("normalizer", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizer",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
         self.tags_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
         self.types_field = TypeListField.TypeListField(data.get("types", "str"), ("types",)).must_be(self.domain.type_stuff.string_types).add_to_set(self.my_type)
         self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",))
-        self.similarity_function_field = OptionalFunctionField.OptionalFunctionField(data.get("similarity_function", None), ("similarity_function",))
+        self.similarity_function_field = FunctionField.OptionalFunctionField(data.get("similarity_function", None), ("similarity_function",))
         return (self.delegate_field, self.normalizer_field, self.tags_field, self.types_field, self.pre_normalized_types_field, self.similarity_function_field)
 
     def create_final(self) -> StringStructure.StringStructure:

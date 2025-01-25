@@ -5,13 +5,12 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
 import Component.Dataminer.DataminerCollectionComponent as DataminerCollectionComponent
+import Component.Field.ComponentDictField as ComponentDictField
 import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
-import Component.Field.ComponentDictField as ComponentDictField
-import Component.Field.OptionalComponentField as OptionalComponentField
-import Component.Field.OptionalScriptedClassField as OptionalScriptedClassField
+import Component.Field.ScriptedClassField as ScriptedClassField
 import Component.Pattern as Pattern
 import Component.Serializer.SerializerComponent as SerializerComponent
 import Component.Version.VersionComponent as VersionComponent
@@ -55,11 +54,11 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
         self.files_field_exists = "files" in data
         self.arguments = data.get("arguments", {})
 
-        self.new_field = OptionalComponentField.OptionalComponentField(data["new"], VersionComponent.VERSION_PATTERN, ("new",), assume_component_group="versions")
-        self.old_field = OptionalComponentField.OptionalComponentField(data["old"], VersionComponent.VERSION_PATTERN, ("old",), assume_component_group="versions")
+        self.new_field = ComponentField.OptionalComponentField(data["new"], VersionComponent.VERSION_PATTERN, ("new",), assume_component_group="versions")
+        self.old_field = ComponentField.OptionalComponentField(data["old"], VersionComponent.VERSION_PATTERN, ("old",), assume_component_group="versions")
         self.files_field = ComponentListField.ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
         self.serializer_field = ComponentDictField.ComponentDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
-        self.dataminer_field = OptionalScriptedClassField.OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=Dataminer.NullDataminer)
+        self.dataminer_field = ScriptedClassField.OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=Dataminer.NullDataminer)
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
                 dependency_name,
@@ -87,8 +86,8 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
             dataminer_class=self.dataminer_field.object_class,
             serializers=dict(self.serializer_field.map(lambda serializer_name, serializer_component: serializer_component.final)),
             dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.subcomponent.final)),
-            start_version=self.old_field.get_final(lambda subcomponent: subcomponent.final),
-            end_version=self.new_field.get_final(lambda subcomponent: subcomponent.final),
+            start_version=self.old_field.map(lambda subcomponent: subcomponent.final),
+            end_version=self.new_field.map(lambda subcomponent: subcomponent.final),
             version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.final))
         ))
         return exceptions

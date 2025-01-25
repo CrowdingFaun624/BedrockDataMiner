@@ -3,9 +3,9 @@ from typing import Sequence
 import Component.Capabilities as Capabilities
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
+import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
-import Component.Field.OptionalComponentField as OptionalComponentField
 import Component.Pattern as Pattern
 import Component.VersionTag.LatestSlotComponent as LatestSlotComponent
 import Component.VersionTag.VersionTagAutoAssignerComponent as VersionTagAutoAssignerComponent
@@ -52,7 +52,7 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
         self.is_unreleased_tag = data.get("is_unreleased_tag", False)
 
         self.auto_assigner_field = ComponentListField.ComponentListField(data.get("auto_assign", ()), VERSION_TAG_AUTO_ASSIGNER_PATTERN, ("auto_assign",), allow_inline=Field.InlinePermissions.mixed)
-        self.latest_slot_field = OptionalComponentField.OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=Field.InlinePermissions.reference, assume_component_group="latest_slots")
+        self.latest_slot_field = ComponentField.OptionalComponentField(data.get("latest_slot", None), LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=Field.InlinePermissions.reference, assume_component_group="latest_slots")
         return (self.auto_assigner_field, self.latest_slot_field)
 
     def create_final(self) -> VersionTag.VersionTag:
