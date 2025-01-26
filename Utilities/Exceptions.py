@@ -1,7 +1,7 @@
 import datetime
 from pathlib import Path
-from typing import (TYPE_CHECKING, Any, Callable, Container, Literal,
-                    Optional, Sequence)
+from typing import (TYPE_CHECKING, Any, Callable, Container, Literal, Optional,
+                    Sequence)
 
 if TYPE_CHECKING:
     import Component.Capabilities as Capabilities
@@ -60,6 +60,7 @@ def get_nearest(_str:str, options:list[str]) -> str|None:
     min_distance:float|None = None
     second_min_distance:float|None = None
     for option in options:
+        if option == min_option: continue
         distances:list[list[int]] = [[0] * (len(_str) + 1) for y in range(len(option) + 1)]
         path:list[list[int]] = [[0] * (len(_str) + 1) for y in range(len(option) + 1)]
         for x in range(1, len(_str) + 1):
@@ -86,20 +87,24 @@ def get_nearest(_str:str, options:list[str]) -> str|None:
         # Levenshtein space.
         x, y = len(_str), len(option)
         weirdness = 0
+        adjusted_distance = 0
         previous = -1
         while x > 0 or y > 0:
             match (item := path[y][x]):
                 case 0:
                     x -= 1
+                    adjusted_distance += 1
                 case 1:
                     y -= 1
+                    adjusted_distance += 1
                 case 2 | 3:
                     x -= 1; y -= 1
+                    adjusted_distance += item == 3
             if item != previous:
                 previous = item
                 weirdness += 1
 
-        distance = distances[len(option)][len(_str)] * 0.2 + weirdness * 1
+        distance = adjusted_distance * 1 + weirdness * 1
         if min_distance is None or distance < min_distance:
             second_min_distance = min_distance
             min_option = option
