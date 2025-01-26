@@ -1,5 +1,5 @@
 import datetime
-from typing import TYPE_CHECKING, Iterator
+from typing import TYPE_CHECKING
 
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
@@ -95,7 +95,7 @@ class Version():
     def __ge__(self, other:"Version") -> bool:
         return self.index >= other.index
 
-    def get_referenced_files(self) -> Iterator[int]:
+    def get_referenced_files(self, referenced_files:set[int]) -> None:
         for version_file in self.version_files:
             for accessor in version_file.accessors:
-                yield from accessor.get_referenced_files()
+                accessor.get_referenced_files(referenced_files)

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Sequence
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -129,10 +129,10 @@ class PassthroughStructure[a](ObjectStructure.ObjectStructure[a]):
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def get_referenced_files(self, data: a, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+    def get_referenced_files(self, data: a, environment: StructureEnvironment.PrinterEnvironment, referenced_files:set[int]) -> None:
         structure, _ = self.get_structure(None, data)
         if structure is not None and self.children_has_garbage_collection:
-            yield from structure.get_referenced_files(data, environment)
+            structure.get_referenced_files(data, environment, referenced_files)
 
     def get_similarity(self, data1: a, data2: a, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
         structure1, exceptions1 = self.get_structure(None, data1)

@@ -1,5 +1,5 @@
 import io
-from typing import Any, BinaryIO, Iterator, Sequence
+from typing import Any, BinaryIO, Sequence
 
 import Downloader.Accessor as Accessor
 import Downloader.DirectoryAccessor as DirectoryAccessor
@@ -52,5 +52,5 @@ class StoredAccessor(DirectoryAccessor.DirectoryAccessor):
         self._file_list = None
         self._file_set = None
 
-    def get_referenced_files(self) -> Iterator[int]:
-        yield from (File.hash_str_to_int(item[0]) for item in self.index.get().values())
+    def get_referenced_files(self, get_referenced_files:set[int]) -> None:
+        get_referenced_files.update(File.hash_str_to_int(item[0]) for item in self.index.get().values())

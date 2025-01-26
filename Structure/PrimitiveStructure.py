@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence, cast
+from typing import TYPE_CHECKING, Any, Iterable, Sequence, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -93,8 +93,8 @@ class PrimitiveStructure[d](Structure.Structure[d]):
         else:
             return (), ()
 
-    def get_referenced_files(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
-        return; yield
+    def get_referenced_files(self, data: d, environment: StructureEnvironment.PrinterEnvironment, referenced_files:set[int]) -> None:
+        return
 
     def compare(self, data1: d, data2: d, environment: StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[d|D.Diff[d], bool, Sequence[Trace.ErrorTrace]]:
         if not environment.is_multi_diff and (data1 is data2 or data1 == data2):

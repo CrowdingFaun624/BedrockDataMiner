@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING, Any, Iterable, Sequence
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -139,26 +139,26 @@ class CacheStructure[d](PassthroughStructure.PassthroughStructure[d]):
         cache_item.set_get_tag_paths(output)
         return output
 
-    def get_referenced_files(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+    def get_referenced_files(self, data: d, environment: StructureEnvironment.PrinterEnvironment, referenced_files:set[int]) -> None:
         if not self.children_has_garbage_collection:
-            return; yield
+            return
         if not environment.structure_environment.should_cache or not self.cache_get_referenced_files:
-            yield from self.structure.get_referenced_files(data, environment)
+            self.structure.get_referenced_files(data, environment, referenced_files)
         data_hash = environment.domain.type_stuff.hash_data(data)
         cache_item = self.cache.pop(data_hash, None)
         if cache_item is not None:
             self.cache[data_hash] = cache_item
             cache_item.retrieve_index = self.searches
-            if cache_item.get_referenced_files_data:
-                yield from cache_item.get_get_referenced_files_data()
+            if cache_item.get_referenced_files:
+                # If it's cached already, that means that all of the files are already in the set.
+                return
         else:
             new_cache_item:CacheItem[d] = CacheItem(self.delegate, self.searches)
             self.cache[data_hash] = new_cache_item
             cache_item = new_cache_item
 
-        output = self.structure.get_referenced_files(data, environment)
-        cache_item.set_get_referenced_files(output)
-        yield from output
+        self.structure.get_referenced_files(data, environment, referenced_files)
+        cache_item.set_get_referenced_files()
 
     def compare_text(self, data: d, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, Sequence[Trace.ErrorTrace]]:
         if not environment.structure_environment.should_cache or not self.cache_compare_text:
@@ -272,7 +272,6 @@ class CacheItem[d]():
         "compare_text",
         "compare_text_data",
         "get_referenced_files",
-        "get_referenced_files_data",
         "get_similarity",
         "get_similarity_data",
         "get_tag_paths",
@@ -296,7 +295,6 @@ class CacheItem[d]():
         self.get_tag_paths = False
         self.get_tag_paths_data:tuple[Sequence[DataPath.DataPath],Sequence[Trace.ErrorTrace]]
         self.get_referenced_files = False
-        self.get_referenced_files_data:list[int]
         self.compare_text = False
         self.compare_text_data:tuple[Any,bool,Sequence[Trace.ErrorTrace]]
         self.print_text = False
@@ -327,12 +325,8 @@ class CacheItem[d]():
         self.get_tag_paths = True
         self.get_tag_paths_data = (data[0], [trace.copy() for trace in data[1]])
 
-    def get_get_referenced_files_data(self) -> Iterator[int]:
-        yield from self.get_referenced_files_data
-
-    def set_get_referenced_files(self, data:Iterator[int]) -> None:
+    def set_get_referenced_files(self) -> None:
         self.get_referenced_files = True
-        self.get_referenced_files_data = list(set(data)) # remove duplicates, but keep fast iter speed.
 
     def get_get_similarity_data(self) -> float:
         return self.get_similarity_data

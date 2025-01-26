@@ -1,5 +1,5 @@
-from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator,
-                    MutableMapping, Sequence)
+from typing import (TYPE_CHECKING, Any, Callable, Iterable, MutableMapping,
+                    Sequence)
 
 import Structure.AbstractMappingStructure as AbstractMappingStructure
 import Structure.DataPath as DataPath
@@ -135,19 +135,14 @@ class KeymapStructure[d](AbstractMappingStructure.AbstractMappingStructure[d]):
                 exceptions.extend(exception.add(self.name, key) for exception in new_exceptions)
         return output, exceptions
 
-    def get_referenced_files(self, data: MutableMapping[str, d], environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+    def get_referenced_files(self, data: MutableMapping[str, d], environment: StructureEnvironment.PrinterEnvironment, referenced_files:set[int]) -> None:
         if not self.children_has_garbage_collection:
             return
         for key, value in data.items():
             structure, new_exceptions = self.get_structure(key, value)
-            # for exception in new_exceptions:
-            #     print(exception.finalize().stringify())
-            # if len(new_exceptions) > 0:
-            #     continue
-            #     raise RuntimeError()
             if structure is None:
                 continue
-            yield from structure.get_referenced_files(value, environment)
+            structure.get_referenced_files(value, environment, referenced_files)
 
     def normalize(self, data:dict[str,d], environment:StructureEnvironment.PrinterEnvironment) -> tuple[Any|None,Sequence[Trace.ErrorTrace]]:
         if not self.children_has_normalizer: return None, ()

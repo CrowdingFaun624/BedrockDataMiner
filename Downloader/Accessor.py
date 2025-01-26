@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterator
+from typing import TYPE_CHECKING, Any
 
 import Domain.Domain as Domain
 import Utilities.TypeVerifier as TypeVerifier
@@ -40,5 +40,5 @@ class Accessor():
         '''Removes all files that were created as part of the installation of this version.'''
         ...
 
-    def get_referenced_files(self) -> Iterator[int]:
-        return; yield
+    def get_referenced_files(self, get_referenced_files:set[int]) -> None:
+        ...

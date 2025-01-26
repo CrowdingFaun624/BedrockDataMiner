@@ -1,5 +1,4 @@
-import json
-from typing import Any, Iterator
+from typing import Any
 
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
@@ -57,9 +56,9 @@ class Serializer[a, b]():
         '''
         raise Exceptions.SerializerMethodNonexistentError(self, self.deserialize)
 
-    def get_referenced_files(self, data:bytes) -> Iterator[int]:
+    def get_referenced_files(self, data:bytes, referenced_files:set[int]) -> None:
         '''
         If this Serializer returns a File object, this function should return
         the hashes of those files within the given file.
         '''
-        return; yield
+        ...

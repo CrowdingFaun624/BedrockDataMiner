@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Iterable, Iterator, Sequence
+from typing import Any, Iterable, Sequence
 
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Domain.Domain as Domain
@@ -126,23 +126,23 @@ class AbstractDataminerCollection():
     def get_data_file_path(self, version:Version.Version) -> Path:
         return version.data_directory.joinpath(self.file_name)
 
-    def get_referenced_files(self, version:Version.Version, structure_tags:dict[str,StructureTag.StructureTag]) -> Iterator[int]:
+    def get_referenced_files(self, version:Version.Version, structure_tags:dict[str,StructureTag.StructureTag], referenced_files:set[int]) -> None:
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.garbage_collection, self.domain)
         data_file = self.get_data_file(version, non_exist_ok=True)
         if data_file is None: return
-        yield from File.recursive_examine_data_for_files(data_file) # this is necessary just in case there's a file that's ignored by the structure.
+        File.recursive_examine_data_for_files(data_file, referenced_files) # this is necessary just in case there's a file that's ignored by the structure.
         structure = self.structure
         file_tags = [structure_tag for structure_tag in structure_tags.values() if structure_tag.is_file]
         if structure.children_has_garbage_collection or structure.has_tags(file_tags):
             environment = StructureEnvironment.PrinterEnvironment(structure_environment, None, version, 0)
             normalized_data = structure.normalize(data_file, environment)
-            yield from structure.get_referenced_files(data_file, environment, normalized_data=normalized_data) # this is necessary just in case files appear only after normalization
+            structure.get_referenced_files(data_file, environment, referenced_files, normalized_data=normalized_data) # this is necessary just in case files appear only after normalization
             for file_tag, paths in self.get_tag_paths(version, file_tags, environment, normalized_data=normalized_data).items(): # this is necessary just in case files are referenced only by a hash that isn't used.
                 for data_path in paths:
                     match data_path.embedded_data:
                         case str():
-                            yield File.hash_str_to_int(data_path.embedded_data)
+                            referenced_files.add(File.hash_str_to_int(data_path.embedded_data))
                         case int():
-                            yield data_path.embedded_data
+                            referenced_files.add(data_path.embedded_data)
                         case _:
                             raise Exceptions.InvalidFileHashType(version, file_tag, data_path)

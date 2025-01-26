@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING, Any, Iterable, Sequence
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -114,7 +114,7 @@ class Structure[a]():
         '''
         ...
 
-    def get_referenced_files(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> Iterator[int]:
+    def get_referenced_files(self, data:a, environment:"StructureEnvironment.PrinterEnvironment", referenced_files:set[int]) -> None:
         '''
         Returns any Files within the data.
 

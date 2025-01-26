@@ -1,5 +1,5 @@
 import enum
-from typing import Any, Iterator, Optional, TypedDict
+from typing import Any, Optional, TypedDict
 
 import _domains.minecraft_bedrock.scripts.serializers.EvilFSBExtractor as EvilFSBExtractor
 import Serializer.Serializer as Serializer
@@ -94,12 +94,12 @@ class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDic
         else:
             return {"main": get_metadata(data)}
 
-    def get_referenced_files(self, data: bytes) -> Iterator[int]:
+    def get_referenced_files(self, data: bytes, referenced_files:set[int]) -> None:
         if data[:3] == b"FSB":
             # this isn't *that* slow because it's cached.
-            yield from (
+            referenced_files.update(
                 FileManager.get_hash_int(wav_file_data)
                 for wav_file_name, wav_file_data in EvilFSBExtractor.extract_fsb_file(data)
             )
         else:
-            yield FileManager.get_hash_int(data)
+            referenced_files.add(FileManager.get_hash_int(data))

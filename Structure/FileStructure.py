@@ -1,5 +1,4 @@
-from typing import (TYPE_CHECKING, Any, Callable, Iterable, Iterator, Sequence,
-                    cast)
+from typing import TYPE_CHECKING, Any, Callable, Iterable, Sequence, cast
 
 import Structure.DataPath as DataPath
 import Structure.Difference as D
@@ -145,14 +144,14 @@ class FileStructure[a](ObjectStructure.ObjectStructure[File.AbstractFile[a]]):
         exceptions.extend(exception.add(self.name, None) for exception in new_exceptions)
         return output, exceptions
 
-    def get_referenced_files(self, data: File.AbstractFile[a], environment: StructureEnvironment.PrinterEnvironment) -> Iterator[int]:
+    def get_referenced_files(self, data: File.AbstractFile[a], environment: StructureEnvironment.PrinterEnvironment, referenced_files:set[int]) -> None:
         if self.children_has_garbage_collection:
-            yield data.hash
+            referenced_files.add(data.hash)
         if self.structure is not None and self.structure.children_has_garbage_collection:
             # getting if its child has a file because self.children_has_garbage_collection is
             # always true for FileStructure objects, but if we do cancel this
             # function it's a big deal because getting file data is expensive.
-            yield from self.structure.get_referenced_files(data.data, environment)
+            self.structure.get_referenced_files(data.data, environment, referenced_files)
 
     def get_similarity(self, data1: File.AbstractFile[a]|File.FileDiff[a], data2: File.AbstractFile[a], depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
         if (max_depth is not None and depth > max_depth) or (self.max_similarity_ancestor_depth is not None and depth > self.max_similarity_ancestor_depth) or self.structure is None:

@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Iterable, Iterator, Sequence
+from typing import TYPE_CHECKING, Any, Sequence
 
 import Domain.Domain as Domain
 import Structure.CacheStructure as CacheStructure
@@ -184,15 +184,15 @@ class StructureBase():
             output[tag] = paths
         return output
 
-    def get_referenced_files(self, data:Any, environment:StructureEnvironment.PrinterEnvironment, *, normalized_data:Any|None=None) -> Iterator[int]:
+    def get_referenced_files(self, data:Any, environment:StructureEnvironment.PrinterEnvironment, referenced_files:set[int], *, normalized_data:Any|None=None) -> None:
         '''
         Returns any Files within the data.
         :data: The data to search for Files.
         :environment: The PrinterEnvironment to use.
         '''
         if self.children_has_garbage_collection:
-            normalized_data = self.normalize(data, environment)
-            yield from self.structure.get_referenced_files(normalized_data, environment)
+            normalized_data = self.normalize(data, environment) if normalized_data is None else normalized_data
+            self.structure.get_referenced_files(normalized_data, environment, referenced_files)
 
     def store(self, report:str, name:str) -> None:
         '''

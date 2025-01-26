@@ -1,5 +1,5 @@
 from types import EllipsisType
-from typing import Any, Iterator, Literal, TypedDict
+from typing import Any, Literal, TypedDict
 
 import Component.Types as Types
 import Domain.Domain as Domain
@@ -67,11 +67,11 @@ class AbstractFile[a]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} \"{self.display_name}\" hash {hash_int_to_str(self.hash)}>"
 
-    def get_referenced_files(self) -> Iterator[int]:
+    def get_referenced_files(self, referenced_files:set[int]) -> None:
         '''
         Uses the Serializer of this File to find any filse within it.
         '''
-        return; yield
+        ...
 
     def __copy_empty__(self) -> "AbstractFile[a]":
         '''
@@ -119,10 +119,10 @@ class File[a](AbstractFile[a]):
     def __copy_empty__(self) -> AbstractFile[a]:
         return EmptyFile(self.serializer, self.hash, self._data)
 
-    def get_referenced_files(self) -> Iterator[int]:
+    def get_referenced_files(self, referenced_files:set[int]) -> None:
         if self.serializer.can_contain_subfiles:
             file_bytes = FileStorage.read_archived(hash_int_to_str(self.hash))
-            yield from self.serializer.get_referenced_files(file_bytes)
+            self.serializer.get_referenced_files(file_bytes, referenced_files)
 
 @Types.register_decorator(None, None, json_coder=Types.no_coder)
 class EmptyFile[a](File[a]):
@@ -210,20 +210,20 @@ class FileDiff[a]():
 
 NoneType = type(None)
 
-def recursive_examine_data_for_files(data:Any) -> Iterator[int]:
+def recursive_examine_data_for_files(data:Any, referenced_files:set[int]) -> None:
     match data:
         case int() | str() | float() | bool() | NoneType():
             return
         case dict():
             for value in data.values():
-                yield from recursive_examine_data_for_files(value)
+                recursive_examine_data_for_files(value, referenced_files)
         case list():
             for value in data:
-                yield from recursive_examine_data_for_files(value)
+                recursive_examine_data_for_files(value, referenced_files)
         case AbstractFile():
-            yield data.hash
-            yield from data.get_referenced_files()
+            referenced_files.add(data.hash)
+            data.get_referenced_files(referenced_files)
         case DataPath.DataPath():
-            yield from recursive_examine_data_for_files(data.embedded_data)
+            recursive_examine_data_for_files(data.embedded_data, referenced_files)
         case _:
             raise TypeError(f"How do I recursively examine type {data.__class__.__name__} for files?")

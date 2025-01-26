@@ -15,15 +15,16 @@ def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
     '''
     referenced_files:set[int] = set()
     for domain in domains:
+        domain.import_components()
         print(domain.name)
         dataminer_collections = domain.dataminer_collections
         structure_tags = domain.structure_tags
         versions = domain.versions
         for version in versions.values():
             print(f"\t{version.name}")
-            referenced_files.update(version.get_referenced_files())
+            version.get_referenced_files(referenced_files)
             for dataminer_collection in dataminer_collections.values():
-                referenced_files.update(dataminer_collection.get_referenced_files(version, structure_tags))
+                dataminer_collection.get_referenced_files(version, structure_tags, referenced_files)
                 dataminer_collection.clear_some_caches()
         for dataminer_collection in dataminer_collections.values():
             dataminer_collection.clear_caches()
@@ -88,6 +89,8 @@ def print_stats(unused_hashes:set[int]) -> None:
 
 def main(domain:Domain.Domain) -> None:
     domains = list(Domains.domains.values())
+    domains.remove(domain)
+    domains.insert(0, domain) # put selected Domain first.
     unused_files:set[int] = garbage_collect(domains)
     exit_now = [False]
     functions:dict[str,Callable[[set[int]],None]] = {

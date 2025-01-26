@@ -2,7 +2,7 @@ import json
 import subprocess
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Iterator, TypedDict
+from typing import Any, TypedDict
 
 import Domain.Domain as Domain
 import Domain.Domains as Domains
@@ -166,10 +166,10 @@ class MaterialBinSerializer(Serializer.Serializer[OutputTypedDict,File.File[Outp
 
         return output_file
 
-    def get_referenced_files(self, data: bytes) -> Iterator[int]:
+    def get_referenced_files(self, data: bytes, referenced_files:set[int]) -> None:
         data_hash = FileManager.get_hash_hexdigest(data)
         cached_output = material_bin_cache.get()[self.version].get(data_hash)
         if cached_output is not None:
             # if it's not cached, there's no referenced files. If they do exist
             # in the file storage, they would have to be recalculated anyways.
-            yield from File.recursive_examine_data_for_files(json.loads(cached_output, cls=self.domain.json_decoder))
+            File.recursive_examine_data_for_files(json.loads(cached_output, cls=self.domain.json_decoder), referenced_files)

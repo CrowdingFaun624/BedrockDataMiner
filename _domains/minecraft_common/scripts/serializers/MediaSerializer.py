@@ -1,7 +1,6 @@
 import json
 import subprocess
-from typing import (Any, Iterator, Literal, NotRequired, Required, TypedDict,
-                    cast)
+from typing import Any, Literal, NotRequired, Required, TypedDict, cast
 
 import Domain.Domain as Domain
 import Domain.Domains as Domains
@@ -110,15 +109,15 @@ class MediaSerializer(Serializer.Serializer):
         media_serializer_cache.write_new_line((data_hash, output))
         return output
 
-    def get_referenced_files(self, data: bytes) -> Iterator[int]:
+    def get_referenced_files(self, data: bytes, referenced_files:set[int]) -> None:
         data_hash = FileManager.get_hash_hexdigest(data)
         cached_item = media_serializer_cache.get().get(data_hash)
         if cached_item is not None:
             # if there is no cached data, there are no files stored at the moment
             # for this file. If some do exist, they would have to be
             # recalculated anyway, since they aren't in the cache
-            yield cached_item["metadata"].hash # contains no subfiles
+            referenced_files.add(cached_item["metadata"].hash) # contains no subfiles
             for key, value in cached_item.items():
                 if key in {"sha1_hash", "metadata"}: continue
                 image_file = cast(File.File[Any], value)
-                yield image_file.hash # contains no subfiles
+                referenced_files.add(image_file.hash) # contains no subfiles
