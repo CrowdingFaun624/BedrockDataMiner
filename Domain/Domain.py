@@ -1,4 +1,5 @@
 import json
+from itertools import chain
 from pathlib import Path
 from typing import (TYPE_CHECKING, Any, Callable, NotRequired, Sequence,
                     TypedDict)
@@ -149,6 +150,7 @@ class Domain():
         "type_stuff",
         "is_library",
         "aliases",
+        "dependencies_str",
         "dependencies",
         "callables",
     )
@@ -179,7 +181,8 @@ class Domain():
 
         self.is_library:bool
         self.aliases:Sequence[str]
-        self.dependencies:Sequence[str]
+        self.dependencies_str:Sequence[str]
+        self.dependencies:list[Domain]
         self.read_manifest()
 
         self.accessor_types:dict[str,"AccessorType.AccessorType"]
@@ -215,11 +218,8 @@ class Domain():
 
     def get_cascading_dependencies(self, memo:set["Domain"]) -> Sequence["Domain"]:
         if self not in memo:
-            output:list[Domain] = []
+            output:list[Domain] = list(chain.from_iterable(dependency.get_cascading_dependencies(memo) for dependency in self.dependencies))
             memo.add(self)
-            for dependency_name in self.dependencies:
-                dependency = Domains.domains[dependency_name]
-                output.extend(dependency.get_cascading_dependencies(memo))
             output.append(self)
             return output
         else:
@@ -235,13 +235,16 @@ class Domain():
         ).base_verify(file, (self,))
         self.is_library = file.get("is_library", False)
         self.aliases = file.get("aliases", ())
-        self.dependencies = file.get("dependencies", ())
+        self.dependencies_str = file.get("dependencies", ())
+
+    def link_domains(self, domains:dict[str,"Domain"]) -> None:
+        self.dependencies = [domains[domain_name] for domain_name in self.dependencies_str]
+        # link type stuff
+        for dependency in self.dependencies:
+            self.type_stuff.link(dependency.type_stuff)
 
     def import_components(self) -> None:
         all_domains = self.get_cascading_dependencies(set())
-        for domain in all_domains:
-            for dependency_name in domain.dependencies:
-                domain.type_stuff.link(Domains.domains[dependency_name].type_stuff)
         for domain in all_domains:
             domain.import_scripts()
         all_component_groups = Importer.parse_all_component_groups(all_domains)
@@ -275,8 +278,7 @@ class Domain():
         self.versions = component_groups["versions"]
 
         self.all_serializers:dict[str, Serializer.Serializer] = {}
-        for dependency_name in self.dependencies:
-            dependency = Domains.domains[dependency_name]
+        for dependency in self.dependencies:
             self.all_serializers.update(dependency.serializers)
         self.all_serializers.update(self.serializers)
 

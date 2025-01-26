@@ -130,7 +130,7 @@ def create_all_components(domains:Sequence["Domain.Domain"]) -> tuple[dict[str,d
     return all_components, importer_environments
 
 def get_imports(domains:Sequence["Domain.Domain"]) -> dict[str,Sequence[str]]:
-    return {domain.name: domain.dependencies for domain in domains}
+    return {domain.name: domain.dependencies_str for domain in domains}
 
 def set_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain_imports:dict[str,Sequence[str]], functions:dict[str,ScriptImporter.ScriptSetSetSet], domain_list:Sequence["Domain.Domain"]) -> None:
     domains:dict[str,Domain.Domain] = {domain.name: domain for domain in domain_list}
@@ -147,7 +147,7 @@ def set_components(all_components:dict[str,dict[str,dict[str,Component.Component
                 try:
                     component.set_component(components, imports, script_set_set_set, create_inline_component)
                 except Exception as e:
-                    failed_component_groups.add(f"{domain_name}:{name}")
+                    failed_component_groups.add(f"{domain_name}!{name}")
                     exceptions.append(e)
     if len(exceptions) > 0:
         for exception in exceptions:
@@ -167,7 +167,7 @@ def link_finals(all_components:dict[str,dict[str,dict[str,Component.Component]]]
         for components in domain_components.values():
             for component in components.values():
                 if len(new_exceptions := component.link_finals()) > 0:
-                    failed_component_groups.add(f"{domain_name}:{component.component_group}")
+                    failed_component_groups.add(f"{domain_name}!{component.component_group}")
                     exceptions.extend(new_exceptions)
     if len(exceptions) > 0:
         for exception in exceptions:
@@ -181,7 +181,7 @@ def check_components(all_components:dict[str,dict[str,dict[str,Component.Compone
         for components in domain_components.values():
             for component in components.values():
                 if len(new_exceptions := component.check()) > 0:
-                    failed_component_groups.add(f"{domain_name}:{component.component_group}")
+                    failed_component_groups.add(f"{domain_name}!{component.component_group}")
                     exceptions.extend(new_exceptions)
     if len(exceptions) > 0:
         for exception in exceptions:
@@ -195,7 +195,7 @@ def finalize_components(all_components:dict[str,dict[str,dict[str,Component.Comp
         for components in domain_components.values():
             for component in components.values():
                 if len(new_exceptions := component.finalize()) > 0:
-                    failed_component_groups.add(f"{domain_name}:{component.component_group}")
+                    failed_component_groups.add(f"{domain_name}!{component.component_group}")
                     exceptions.extend(new_exceptions)
     if len(exceptions) > 0:
         for exception in exceptions:
@@ -247,7 +247,7 @@ def check_importer_environments(output:dict[str,dict[str,Any]], importer_environ
     for domain_name, domain_outputs in output.items():
         for name, component_group_output in domain_outputs.items():
             if len(new_exceptions := importer_environments[domain_name][name].check(component_group_output, output)) > 0:
-                failed_component_groups.add(f"{domain_name}:{name}")
+                failed_component_groups.add(f"{domain_name}!{name}")
                 exceptions.extend(new_exceptions)
     if len(exceptions) > 0:
         for exception in exceptions:

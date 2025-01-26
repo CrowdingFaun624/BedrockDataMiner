@@ -19,3 +19,5 @@ import Domain.Domain as Domain
 import Utilities.FileManager as FileManager
 
 domains:dict[str,Domain.Domain] = {directory.name: Domain.Domain(directory.name) for directory in FileManager.DOMAINS_DIRECTORY.iterdir() if directory.joinpath("domain.json").exists()}
+for domain in domains.values():
+    domain.link_domains(domains)
