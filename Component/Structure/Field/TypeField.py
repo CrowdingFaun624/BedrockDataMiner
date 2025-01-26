@@ -39,7 +39,7 @@ class TypeField(AbstractTypeField.AbstractTypeField):
             self.subcomponent = self.domain.type_stuff.default_types[self.subcomponent_data]
             return (), ()
         else:
-            component, is_inline = Field.choose_component(self.subcomponent_data, source_component, TypeAliasComponent.TYPE_ALIAS_PATTERN, components, global_components, self.error_path, create_component_function, None, None)
+            component, is_inline = Field.choose_component(self.subcomponent_data, source_component, TypeAliasComponent.TYPE_ALIAS_PATTERN, components, global_components, self.error_path, create_component_function, None, None, self.domain.type_stuff.default_types)
             if is_inline:
                 raise Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.TypeAliasTypedDict, self.subcomponent_data))
             self.subcomponent = component

@@ -1,5 +1,5 @@
 import enum
-from typing import Callable, Mapping, Sequence
+from typing import Callable, Iterable, Mapping, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -24,9 +24,12 @@ def get_options(
     pattern:Pattern.Pattern,
     assume_component_group:str|None,
     local_components:Mapping[str,"Component.Component"],
-    global_components:Mapping[str,Mapping[str,Mapping[str,"Component.Component"]]]
+    global_components:Mapping[str,Mapping[str,Mapping[str,"Component.Component"]]],
+    other_options:Iterable[str]|None,
 ) -> list[str]:
     options:list[str] = []
+    if other_options is not None:
+        options.extend(other_options)
     if assume_component_group is None:
         options.extend(component_name for component_name, component in local_components.items() if pattern.contains(component))
     else:
@@ -71,6 +74,7 @@ def choose_component[a: Component.Component](
         create_component_function:ComponentTyping.CreateComponentFunction,
         assume_type:str|None,
         assume_component_group:str|None,
+        other_options:Iterable[str]|None=None
     ) -> tuple[a,bool]:
     '''
     Finds a Component with the same name and properties if `component_data` is a str.
@@ -101,10 +105,10 @@ def choose_component[a: Component.Component](
         else:
             components = global_components[source_component.domain.name][assume_component_group]
         if (component := components.get(component_data)) is None:
-            options = get_options(source_component, pattern, assume_component_group, local_components, global_components)
+            options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
             raise Exceptions.UnrecognizedComponentError(component_data, component_data, get_source_str(keys, source_component), options)
         if not pattern.contains(component):
-            options = get_options(source_component, pattern, assume_component_group, local_components, global_components)
+            options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
             raise Exceptions.InvalidComponentError(component, component_data, get_source_str(keys, source_component), pattern, component.my_capabilities, options)
         return component, False
 
@@ -114,7 +118,7 @@ def choose_component[a: Component.Component](
         component_group_name = component_data[:slash_index]
         component_name = component_data[slash_index+1:]
         if (component_group := domain_components.get(component_group_name)) is None:
-            options = get_options(source_component, pattern, assume_component_group, local_components, global_components)
+            options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
             raise Exceptions.UnrecognizedComponentGroupError(component_group_name, component_data, get_source_str(keys, source_component), options)
 
     # ! and perchance /
@@ -122,26 +126,26 @@ def choose_component[a: Component.Component](
         domain_name = component_data[:bang_index]
         component_path = component_data[bang_index+1:]
         if (domain_components := global_components.get(domain_name)) is None:
-            options = get_options(source_component, pattern, assume_component_group, local_components, global_components)
+            options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
             raise Exceptions.UnrecognizedComponentDomainError(domain_name, component_data, get_source_str(keys, source_component), options)
         if slash_index != -1:
             component_group_name = component_path[:slash_index-bang_index]
             component_name = component_path[slash_index-bang_index+1:]
             if (component_group := domain_components.get(component_group_name)) is None:
-                options = get_options(source_component, pattern, assume_component_group, local_components, global_components)
+                options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
                 raise Exceptions.UnrecognizedComponentGroupError(component_group_name, component_data, get_source_str(keys, source_component), options)
         elif assume_component_group is not None:
             component_group = domain_components[assume_component_group]
             component_name = component_path
         else:
-            options = get_options(source_component, pattern, assume_component_group, local_components, global_components)
+            options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
             raise Exceptions.MalformedComponentReferenceError(component_data, get_source_str(keys, source_component), options, "because it has a !, no /, and there is no assumed Component group")
 
     if (component := component_group.get(component_name)) is None:
-        options = get_options(source_component, pattern, assume_component_group, local_components, global_components)
+        options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
         raise Exceptions.UnrecognizedComponentError(component_name, component_data, get_source_str(keys, source_component), options)
     if not pattern.contains(component):
-        options = get_options(source_component, pattern, assume_component_group, local_components, global_components)
+        options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
         raise Exceptions.InvalidComponentError(component, component_data, get_source_str(keys, source_component), pattern, component.my_capabilities, options)
     return component, False
 
