@@ -11,15 +11,15 @@ import Component.Structure.Field.TypeField as TypeField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.NormalizerComponent as NormalizerComponent
 import Component.Structure.StructureComponent as StructureComponent
-import Structure.GroupStructure as GroupStructure
 import Structure.Structure as Structure
+import Structure.UnionStructure as UnionStructure
 import Utilities.TypeVerifier as TypeVerifier
 
 
-class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupStructure]):
+class UnionComponent(StructureComponent.StructureComponent[UnionStructure.UnionStructure]):
 
-    class_name = "Group"
-    my_capabilities = Capabilities.Capabilities(is_group=True, is_structure=True)
+    class_name = "Union"
+    my_capabilities = Capabilities.Capabilities(is_union=True, is_structure=True)
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("delegate", False, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", False, dict),
@@ -42,7 +42,7 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         "subcomponents_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.GroupTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.UnionTypedDict) -> Sequence[Field.Field]:
         self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", 4)
         self.max_similarity_ancestor_depth = data.get("max_similarity_ancestor_depth", None)
 
@@ -61,8 +61,8 @@ class GroupComponent(StructureComponent.StructureComponent[GroupStructure.GroupS
         output.extend(chain.from_iterable(self.subcomponents_field))
         return output
 
-    def create_final(self) -> GroupStructure.GroupStructure:
-        return GroupStructure.GroupStructure(
+    def create_final(self) -> UnionStructure.UnionStructure:
+        return UnionStructure.UnionStructure(
             name=self.name,
             max_similarity_descendent_depth=self.max_similarity_descendent_depth,
             max_similarity_ancestor_depth=self.max_similarity_ancestor_depth,

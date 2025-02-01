@@ -10,7 +10,6 @@ import Component.Structure.BaseComponent as BaseComponent
 import Component.Structure.CacheComponent as CacheComponent
 import Component.Structure.DictComponent as DictComponent
 import Component.Structure.FileComponent as FileComponent
-import Component.Structure.GroupComponent as GroupComponent
 import Component.Structure.KeymapComponent as KeymapComponent
 import Component.Structure.ListComponent as ListComponent
 import Component.Structure.NormalizerComponent as NormalizerComponent
@@ -21,6 +20,7 @@ import Component.Structure.StringComponent as StringComponent
 import Component.Structure.StructureTagComponent as StructureTagComponent
 import Component.Structure.SwitchComponent as SwitchComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
+import Component.Structure.UnionComponent as UnionComponent
 import Component.Tablifier.TablifierComponent as TablifierComponent
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileComponent as VersionFileComponent
@@ -40,7 +40,6 @@ component_types:list[type[Component.Component]] = [
     DataminerSettingsComponent.DataminerSettingsComponent,
     DictComponent.DictComponent,
     FileComponent.FileComponent,
-    GroupComponent.GroupComponent,
     KeymapComponent.KeymapComponent,
     LatestSlotComponent.LatestSlotComponent,
     ListComponent.ListComponent,
@@ -56,6 +55,7 @@ component_types:list[type[Component.Component]] = [
     SwitchComponent.SwitchComponent,
     TablifierComponent.TablifierComponent,
     TypeAliasComponent.TypeAliasComponent,
+    UnionComponent.UnionComponent,
     VersionComponent.VersionComponent,
     VersionFileComponent.VersionFileComponent,
     VersionFileTypeComponent.VersionFileTypeComponent,

@@ -110,17 +110,6 @@ class FileTypedDict(TypedDict):
     subcomponent: Required[str|None]
     type: NotRequired[Literal["Passthrough"]]
 
-class GroupTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[list[str]]
-    subcomponents: Required[dict[str,str|None]]
-    type: NotRequired[Literal["Group"]]
-
 class KeymapKeyTypedDict(TypedDict):
     delegate_arguments: NotRequired[dict[str,Any]]
     max_similarity_descendent_depth: NotRequired[int|None]
@@ -257,7 +246,7 @@ class SwitchTypedDict(TypedDict):
     pre_normalized_types: NotRequired[list[str]]
     subcomponents: Required[dict[str,str|None]]
     switch_function: Required["str|NormalizerTypedDict"]
-    type: NotRequired[Literal["Group"]]
+    type: NotRequired[Literal["Switch"]]
     types: Required[str|list[str]]
 
 class TablifierTypedDict(TypedDict):
@@ -270,6 +259,17 @@ class TablifierTypedDict(TypedDict):
 class TypeAliasTypedDict(TypedDict):
     type: NotRequired[Literal["TypeAlias"]]
     types: Required[list[str]]
+
+class UnionTypedDict(TypedDict):
+    delegate: NotRequired[str]
+    delegate_arguments: NotRequired[dict[str,Any]]
+    max_similarity_ancestor_depth: NotRequired[int|None]
+    max_similarity_descendent_depth: NotRequired[int|None]
+    normalizer: NotRequired[str|list[str]]
+    post_normalizer: NotRequired[str|list[str]]
+    pre_normalized_types: NotRequired[list[str]]
+    subcomponents: Required[dict[str,str|None]]
+    type: NotRequired[Literal["Union"]]
 
 class VersionFileTypedDict(TypedDict):
     accessors: Required[list[AccessorTypedDict]]
@@ -319,7 +319,6 @@ type ComponentTypedDicts = \
     DataminerSettingsTypedDict|\
     DictTypedDict|\
     FileTypedDict|\
-    GroupTypedDict|\
     KeymapTypedDict|\
     LatestSlotTypedDict|\
     ListTypedDict|\
@@ -333,13 +332,14 @@ type ComponentTypedDicts = \
     StructureTagTypedDict|\
     TablifierTypedDict|\
     TypeAliasTypedDict|\
+    UnionTypedDict|\
     VersionFileTypedDict|\
     VersionFileTypeTypedDict|\
     VersionTagOrderTypedDict|\
     VersionTagTypedDict|\
     VersionTypedDict
 
-type StructureTypedDicts = CacheTypedDict|DictTypedDict|GroupTypedDict|KeymapTypedDict|ListTypedDict|FileTypedDict|PrimitiveTypedDict|SequenceTypedDict|SetTypedDict|StringTypedDict
+type StructureTypedDicts = CacheTypedDict|DictTypedDict|UnionTypedDict|KeymapTypedDict|ListTypedDict|FileTypedDict|PrimitiveTypedDict|SequenceTypedDict|SetTypedDict|StringTypedDict
 
 type ComponentGroupFileType = dict[str,ComponentTypedDicts]
 type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component.Component",str|None,tuple[str,...]],"Component.Component"]

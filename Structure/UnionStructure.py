@@ -10,7 +10,7 @@ import Utilities.Exceptions as Exceptions
 if TYPE_CHECKING:
     import Structure.Delegate.Delegate as Delegate
 
-class GroupStructure[a](PassthroughStructure.PassthroughStructure[a]):
+class UnionStructure[a](PassthroughStructure.PassthroughStructure[a]):
 
     __slots__ = (
         "substructures",
