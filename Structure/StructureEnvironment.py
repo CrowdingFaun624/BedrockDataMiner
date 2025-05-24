@@ -1,6 +1,7 @@
 import enum
 from typing import TYPE_CHECKING
 
+import Structure.StructureInfo as StructureInfo
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
@@ -10,11 +11,12 @@ if TYPE_CHECKING:
 
 class EnvironmentType(enum.Enum):
     all_datamining = "all_datamining"
+    checking_all_types = "checking_all_types"
     checking_types = "checking_types"
     comparing = "comparing"
     datamining = "datamining"
     garbage_collection = "garbage_collection"
-    checking_all_types = "checking_all_types"
+    similarity_testing = "similarity_testing"
 
 class StructureEnvironment():
 
@@ -37,6 +39,7 @@ class PrinterEnvironment():
     __slots__ = (
         "domain",
         "structure_environment",
+        "structure_info",
         "default_delegate",
         "version",
         "branch",
@@ -45,11 +48,13 @@ class PrinterEnvironment():
     def __init__(
         self,
         structure_environment:StructureEnvironment,
+        structure_info:StructureInfo.StructureInfo,
         default_delegate:"Delegate.Delegate|None",
-        version:"Version.Version|None",
+        version:"Version.Version",
         branch:int,
     ) -> None:
         self.structure_environment = structure_environment
+        self.structure_info = structure_info
         self.domain = self.structure_environment.domain
         self.default_delegate = default_delegate
         self.version = version
@@ -72,6 +77,7 @@ class ComparisonEnvironment():
         "is_multi_diff",
         "printer_environments",
         "structure_environment",
+        "structure_infos",
         "versions",
         "versions_between",
     )
@@ -80,33 +86,16 @@ class ComparisonEnvironment():
         self,
         structure_environment:StructureEnvironment,
         default_delegate:"Delegate.Delegate|None",
-        versions:list["Version.Version|None"]|list["Version.Version"],
+        versions:list[tuple["Version.Version",StructureInfo.StructureInfo]],
         versions_between:list[list["Version.Version"]], # has a length of len(versions) - 1
-        is_multi_diff:bool
     ) -> None:
         self.structure_environment = structure_environment
         self.domain = self.structure_environment.domain
         self.default_delegate = default_delegate
-        self.versions = versions
+        self.versions = [version[0] for version in versions]
+        self.structure_infos = [version[1] for version in versions]
         self.versions_between = versions_between
-        self.printer_environments = [PrinterEnvironment(structure_environment, default_delegate, version, branch) for branch, version in enumerate(versions)]
-        self.is_multi_diff = is_multi_diff # if the data1 of comparison may contain diffs.
-
-    def get_first_version(self) -> "Version.Version":
-        '''
-        Returns the first Version that is not None.
-        '''
-        for version in self.versions:
-            if version is not None:
-                return version
-        else:
-            raise Exceptions.ComparisonEnvironmentNoVersionError(self)
-
-    def get_non_none_versions(self) -> tuple["Version.Version",...]:
-        '''
-        Returns all items of versions that are not None.
-        '''
-        return tuple(version for version in self.versions if version is not None)
+        self.printer_environments = [PrinterEnvironment(structure_environment, structure_info, default_delegate, version, branch) for branch, (version, structure_info) in enumerate(versions)]
 
     def __getitem__(self, branch:int) -> "PrinterEnvironment":
         return self.printer_environments[branch]

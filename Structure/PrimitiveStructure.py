@@ -1,109 +1,122 @@
-from typing import TYPE_CHECKING, Any, Iterable, Sequence, cast
+from itertools import pairwise
+from types import EllipsisType
+from typing import Any, Callable, Mapping, Self, Sequence
 
 import Structure.DataPath as DataPath
-import Structure.Difference as D
+import Structure.Delegate.Delegate as Delegate
+import Structure.Difference as Diff
 import Structure.Normalizer as Normalizer
+import Structure.SimpleContainer as SCon
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureTag as StructureTag
-import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 
-if TYPE_CHECKING:
-    import Structure.Delegate.Delegate as Delegate
 
-class PrimitiveStructure[d](Structure.Structure[d]):
-    """
-    Structure with no substructure.
-    """
+class PrimitiveStructure[D, BO, CO](Structure.Structure[D, SCon.SCon[D], SCon.SDon[D], Diff.Diff[SCon.SDon[D]], BO, CO]):
 
     __slots__ = (
-        "normalizer",
+        "delegate",
+        "normalizers",
         "pre_normalized_types",
         "tags",
-        "types",
+        "this_types",
     )
 
-    def __init__(self, name: str, children_has_normalizer: bool) -> None:
-        super().__init__(name, children_has_normalizer, False)
-
-        self.types:tuple[type,...]
-        self.normalizer:Sequence[Normalizer.Normalizer]
-        self.pre_normalized_types:tuple[type,...]
-        self.tags:set[StructureTag.StructureTag]
-
-    def link_substructures(
+    def link_primitive_structure(
         self,
-        delegate:"Delegate.Delegate|None",
-        types:tuple[type,...],
-        normalizer:Sequence[Normalizer.Normalizer],
+        delegate:Delegate.Delegate[SCon.SCon[D], Diff.Diff[SCon.SDon[D]], Self, BO, Any, CO, Any]|None,
+        normalizers:Sequence[Normalizer.Normalizer[D, D]],
         pre_normalized_types:tuple[type,...],
         tags:set[StructureTag.StructureTag],
-        children_tags:set[StructureTag.StructureTag],
+        this_types:tuple[type,...],
     ) -> None:
-        super().link_substructures(delegate, children_tags)
-        self.types = types
-        self.normalizer = normalizer
+        self.delegate = delegate
+        self.normalizers = normalizers
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
+        self.this_types = this_types
 
-    def iter_structures(self) -> Iterable[Structure.Structure]:
+    def normalize(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> D | EllipsisType:
+        with trace.enter(self, self.name, data):
+            if not isinstance(data, self.pre_normalized_types):
+                trace.exception(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
+                return ...
+            data, data_identity_changed = self.normalizer_pass(self.normalizers, data, trace, environment)
+            return data if data_identity_changed else ...
+        return ...
+
+    def containerize(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> SCon.SCon[D] | EllipsisType:
+        with trace.enter(self, self.name, data):
+            return SCon.SCon(data, environment.domain)
+        return ...
+
+    def diffize(self, data: SCon.SCon[D], bundle: tuple[int, ...], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> Mapping[tuple[int, ...], SCon.SDon[D]] | EllipsisType:
+        with trace.enter(self, self.name, data):
+            return {bundle: data.as_don(bundle)}
+        return ...
+
+    def type_check(self, data: SCon.SCon[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> None:
+        with trace.enter(self, self.name, data):
+            if not isinstance(data, self.this_types):
+                trace.exception(Exceptions.StructureTypeError(self.this_types, type(data), "Data"))
+
+    def get_tag_paths(self, data: SCon.SCon[D], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Sequence[DataPath.DataPath]:
+        with trace.enter(self, self.name, data):
+            if tag not in self.children_tags:
+                return ()
+            if tag in self.tags:
+                return (data_path.copy(...).embed(data),)
         return ()
 
-    def check_all_types(self, data:d, environment: StructureEnvironment.StructureEnvironment) -> Sequence[Trace.ErrorTrace]:
-        if not isinstance(data, self.types):
-            return (Trace.ErrorTrace(Exceptions.StructureTypeError(self.types, type(data), "Data"), self.name, None, data),)
-        else:
-            return ()
+    def get_referenced_files(self, data: SCon.SCon[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> set[int]:
+        return set()
 
-    def compare_text(self, data: d|D.Diff[d], environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, Sequence[Trace.ErrorTrace]]:
-        if self.delegate is None:
-            if environment.default_delegate is None:
-                raise Exceptions.InvalidStateError(self)
+    def compare(self, datas: tuple[tuple[int, SCon.SCon[D]], ...], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Diff.Diff[SCon.SDon[D]] | EllipsisType, bool, bool]:
+        with trace.enter(self, self.name, datas):
+            bundles:dict[tuple[int,...], SCon.SDon[D]] = {}
+            any_changes:bool = False
+            current_bundle:list[int] = [datas[0][0]] # start off with the first branch because it won't be added otherwise.
+            for (branch1, data1), (branch2, data2) in pairwise(datas):
+                _, identical = self.get_similarity(data1, data2, branch1, branch2, trace, environment)
+                if identical:
+                    current_bundle.append(branch2)
+                else:
+                    any_changes = True
+                    current_bundle_tuple = tuple(current_bundle)
+                    bundles[current_bundle_tuple] = data1.as_don(current_bundle_tuple) # data1 is from old
+                    current_bundle = [branch2] # new bundle starts with first branch having new data.
+            current_bundle_tuple = tuple(current_bundle)
+            bundles[current_bundle_tuple] = data2.as_don(current_bundle_tuple)
+            return Diff.Diff(bundles, False), any_changes, False # contains_diffs=False and third item is False because there are no substructures to provide Diffs.
+        return ..., False, False
+
+    def get_similarity(self, data1: SCon.SCon[D], data2: SCon.SCon[D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
+        with trace.enter(self, self.name, (data1, data2)):
+            return float(is_similar := (data1 is data2 or data1 == data2)), is_similar
+        return 0.0, False
+
+    def print_branch(self, data: SCon.SCon[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:
+        with trace.enter(self, self.name, data):
+            printer:Callable[[SCon.SCon[D], Trace.Trace, StructureEnvironment.PrinterEnvironment], Any]
+            if self.delegate is not None:
+                printer = self.delegate.print_branch
+            elif environment.default_delegate is not None:
+                printer = environment.default_delegate.print_branch
             else:
-                return environment.default_delegate.compare_text(data, environment)
-        else:
-            return self.delegate.compare_text(data, environment)
+                raise Exceptions.InvalidStateError(self)
+            return printer(data, trace, environment)
+        return ...
 
-    def print_text(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> tuple[Any, Sequence[Trace.ErrorTrace]]:
-        if self.delegate is None:
-            return (str(data), ()) if environment.default_delegate is None else environment.default_delegate.print_text(data, environment)
-        else:
-            return self.delegate.print_text(data, environment)
-
-    def normalize(self, data: d, environment: StructureEnvironment.PrinterEnvironment) -> tuple[Any | None, Sequence[Trace.ErrorTrace]]:
-        exceptions:list[Trace.ErrorTrace] = []
-        if not isinstance(data, self.pre_normalized_types):
-            exceptions.append(Trace.ErrorTrace(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"), self.name, None, data))
-        for normalizer in self.normalizer:
-            try:
-                normalizer_output = normalizer(data)
-            except Exception as e:
-                exceptions.append(Trace.ErrorTrace(e, self.name, None, data))
-                return None, exceptions
-            if normalizer_output is None:
-                exceptions.append(Trace.ErrorTrace(Exceptions.NormalizerNoneError(normalizer, self), self.name, None, data))
-                return None, exceptions
-            data = cast(d, normalizer_output)
-        return data, exceptions
-
-    def get_tag_paths(self, data: d, tag: StructureTag.StructureTag, data_path: DataPath.DataPath, environment: StructureEnvironment.StructureEnvironment) -> tuple[Sequence[DataPath.DataPath], Sequence[Trace.ErrorTrace]]:
-        if tag in self.tags:
-            return (data_path.copy().embed(data),), ()
-        else:
-            return (), ()
-
-    def get_referenced_files(self, data: d, environment: StructureEnvironment.PrinterEnvironment, referenced_files:set[int]) -> None:
-        return
-
-    def compare(self, data1: d, data2: d, environment: StructureEnvironment.ComparisonEnvironment, branch:int, branches:int) -> tuple[d|D.Diff[d], bool, Sequence[Trace.ErrorTrace]]:
-        if not environment.is_multi_diff and (data1 is data2 or data1 == data2):
-            return data1, False, ()
-        else:
-            # I fill into the past for a reason.
-            # Imagine the parent is an AbstractMappingStructure. If value1 is a Diff, the branches of the below Diff will be thrown out anyways.
-            # If value1 isn't a Diff, then I want a past-filled Diff that represents both value1 and value2; the below Diff satisfies that.
-            return D.Diff(branches, {tuple(range(0,branch+1)): data1, (branch+1,): data2}), True, ()
-
-    def get_similarity(self, data1: d, data2: d, depth:int, max_depth:int|None, environment:StructureEnvironment.ComparisonEnvironment, exceptions:list[Trace.ErrorTrace], branch:int) -> float:
-        return float(data1 == data2)
+    def print_comparison(self, data: Diff.Diff[SCon.SDon[D]], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> CO|EllipsisType:
+        with trace.enter(self, self.name, data):
+            printer:Callable[[Diff.Diff[SCon.SDon[D]], Trace.Trace, StructureEnvironment.ComparisonEnvironment], Any]
+            if self.delegate is not None:
+                printer = self.delegate.print_comparison
+            elif environment.default_delegate is not None:
+                printer = environment.default_delegate.print_comparison
+            else:
+                raise Exceptions.InvalidStateError(self)
+            return printer(data, trace, environment)
+        return ...

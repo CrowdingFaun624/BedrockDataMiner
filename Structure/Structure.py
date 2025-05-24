@@ -1,180 +1,148 @@
-from typing import TYPE_CHECKING, Any, Iterable, Sequence
+from types import EllipsisType
+from typing import Mapping, Sequence
 
+import Structure.Container as Con
 import Structure.DataPath as DataPath
-import Structure.Difference as D
+import Structure.Difference as Diff
+import Structure.Normalizer as Normalizer
+import Structure.StructureEnvironment as StructureEnvironment
 import Structure.StructureTag as StructureTag
-import Structure.Trace as Trace
 import Utilities.Exceptions as Exceptions
-import Utilities.File as File
+import Utilities.Trace as Trace
 
-if TYPE_CHECKING:
-    import Structure.Delegate.Delegate as Delegate
-    import Structure.StructureEnvironment as StructureEnvironment
 
-NoneType = type(None)
+class Structure[A, B:Con.Con, C:Con.Don, D:Con.Don|Diff.Diff, BO, CO]():
+    '''
+    Modular piece that compares and provides structured access to data.
+    '''
 
-class Structure[a]():
-    "Modular piece that compares and provides structured access to data."
+    any_delegate_works: bool = False
+    '''
+    If True, InapplicableDelegateErrors won't be raised for this Structure type.
+    '''
 
     __slots__ = (
         "children_has_garbage_collection",
         "children_has_normalizer",
         "children_tags",
-        "delegate",
+        "full_name",
         "name",
     )
 
-    def __init__(self, name:str, children_has_normalizer:bool, children_has_garbage_collection:bool) -> None:
+    def __init__(self, name:str, full_name:str) -> None:
         self.name = name
-        self.children_has_normalizer = children_has_normalizer
-        self.children_has_garbage_collection = children_has_garbage_collection
+        self.full_name = full_name
 
-        self.delegate:"Delegate.Delegate|None"
-        self.children_tags:set[StructureTag.StructureTag]
-
-    def link_substructures(
+    def link_structure(
         self,
-        delegate:"Delegate.Delegate|None",
+        children_has_garbage_collection:bool,
+        children_has_normalizer:bool,
         children_tags:set[StructureTag.StructureTag],
     ) -> None:
-        self.delegate = delegate
+        self.children_has_garbage_collection = children_has_garbage_collection
+        self.children_has_normalizer = children_has_normalizer
         self.children_tags = children_tags
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.name}>"
+        return f"<{self.__class__.__name__} {self.full_name}>"
 
     def __hash__(self) -> int:
         return id(self)
 
-    def get_descendants(self, memo:set["Structure"]) -> Iterable["Structure"]:
-        '''
-        Returns this Structure and all of its descendents.
+    def iter_structures(self) -> Sequence["Structure"]:
+        return ()
 
-        :memo: The set of Structures already returned.
+    def get_descendants(self, memo:set["Structure"]) -> set["Structure"]:
+        memo.add(self)
+        for structure in self.iter_structures():
+            if structure not in memo:
+                structure.get_descendants(memo)
+        return memo
+
+    def get_structure_chain_end(self, data:B, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> "Structure|None":
         '''
-        if self not in memo:
-            yield self
-        for substructure in self.iter_structures():
-            if substructure in memo:
+        Returns the Structure at the end of a chain of AbstractPassthroughStructures
+        '''
+        with trace.enter(self, self.name, data):
+            return self
+
+    def normalize(self, data:A, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> A|EllipsisType:
+        '''
+        Manipulates the data before type checking and comparing. Returns ... if the super-Structure does not need to
+        deal with changing data.
+        '''
+        ...
+
+    def normalizer_pass(self, normalizers:Sequence[Normalizer.Normalizer[A, A]], data:A, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> tuple[A, bool]:
+        data_identity_changed:bool = False
+        for normalizer in normalizers:
+            if not normalizer.filter_pass(environment.structure_info):
                 continue
-            memo.add(self)
-            yield from substructure.get_descendants(memo)
+            normalizer_output = normalizer(data)
+            if normalizer_output is ...:
+                raise Exceptions.NormalizerEllipsisError(normalizer)
+            if normalizer_output is not None:
+                data_identity_changed = True
+                data = normalizer_output
+        return data, data_identity_changed
 
-    def check_all_types(self, data:a, environment:"StructureEnvironment.StructureEnvironment") -> Sequence[Trace.ErrorTrace]:
+    def containerize(self, data:A, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> B|EllipsisType:
         '''
-        Checks the types of the data using this Structure. Returns a list of ErrorTraces.
-
-        :data: The data to check the types of.
-        :environment: The StructureEnvironment to use.
-        '''
-        ...
-
-    def compare_text(self, data:a, environment:"StructureEnvironment.ComparisonEnvironment") -> tuple[Any,bool,Sequence[Trace.ErrorTrace]]:
-        '''
-        Generates lines from an object containing Diffs.
-        Returns a list of Lines, if there were any changes, and a list of ErrorTraces.
-
-        :data: The object containing Diffs.
-        :environment: The ComparisonEnvironment to use.
-        '''
-        if self.delegate is None:
-            raise Exceptions.AttributeNoneError("delegate", self)
-        return self.delegate.compare_text(data, environment)
-
-    def print_text(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any,Sequence[Trace.ErrorTrace]]:
-        '''
-        Generates lines from an object containing no Diffs.
-        Returns a list of Lines and a list of ErrorTraces.
-
-        :data: The object containing no Diffs.
-        :environment: The ComparisonEnvironment to use.
-        '''
-        if self.delegate is None:
-            raise Exceptions.AttributeNoneError("delegate", self)
-        return self.delegate.print_text(data, environment)
-
-    def normalize(self, data:a, environment:"StructureEnvironment.PrinterEnvironment") -> tuple[Any|None,Sequence[Trace.ErrorTrace]]:
-        '''
-        Manipulates the data before comparison.
-        Returns the normalized data and a list of list of ErrorTraces.
-
-        :data: The data to manipulate.
-        :environment: The PrinterEnvironment to use.
+        Converts the data into a containerized version.
         '''
         ...
 
-    def get_tag_paths(self, data:a, tag:StructureTag.StructureTag, data_path:DataPath.DataPath, environment:"StructureEnvironment.StructureEnvironment") -> tuple[Sequence[DataPath.DataPath], Sequence[Trace.ErrorTrace]]:
+    def diffize(self, data:B, bundle:tuple[int,...], trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> Mapping[tuple[int,...],C]|EllipsisType:
         '''
-        Returns the DataPaths on which the given tag exists in the Structure for the given data and a list of ErrorTraces.
-
-        :data: The data to get the tag paths from.
-        :tag: The tag to search for.
-        :data_path: The current path of data traversed through the Structures so far.
-        :environment: The StructureEnvironment to use.
+        Converts the containerized data into dontainerized data. Although the output may not be a Diff, it may contain Diffs.
         '''
         ...
 
-    def get_referenced_files(self, data:a, environment:"StructureEnvironment.PrinterEnvironment", referenced_files:set[int]) -> None:
+    def type_check(self, data:B, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> None:
         '''
-        Returns any Files within the data.
-
-        :data: The data to search for Files.
-        :environment: The PrinterEnvironment to use.
+        Makes sure that the data relevant to this Structure has the correct types.
         '''
         ...
 
-    def compare(self, data1:a, data2:a, environment:"StructureEnvironment.ComparisonEnvironment", branch:int, branches:int) -> tuple[a|D.Diff[a],bool,Sequence[Trace.ErrorTrace]]:
+    def get_tag_paths(self, data:B, tag:StructureTag.StructureTag, data_path: DataPath.DataPath, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Sequence[DataPath.DataPath]:
         '''
-        Combines the data into a single object with Diffs in it. Returns the combined object and if there are any differences.
-
-        :data1: The data from the oldest Version.
-        :data2: The data from the newest Version.
-        :environment: The ComparisonEnvironment to use.
-        :branch: The branch that data1 comes from.
-        :branches: The total number of branches that Diffs should support.
+        Returns the DataPaths on which the given tag exists in the Structure for the given data..
         '''
         ...
 
-    def get_similarity(self, data1:a, data2:a, depth:int, max_depth:int|None, environment:"StructureEnvironment.ComparisonEnvironment", exceptions:list[Trace.ErrorTrace], branch:int) -> float:
+    def get_referenced_files(self, data:B, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> set[int]:
         '''
-        Returns the similarity of data1 to data2, between 0.0 and 1.0.
-
-        :data1: The data from the oldest Version.
-        :data2: The data from the newest Version.
-        :depth: The current count of get_similarity calls right now.
-        :max_depth: The maximum depth before simple equality checks are used.
-        :environment: The ComparisonEnvironment to use.
-        :exceptions: A list of ErrorTraces to put exceptions into.
-        :branch: The branch that data1 comes from.
+        Returns files contained by this Structure or a child Structure.
         '''
         ...
 
-    def iter_structures(self) -> Iterable["Structure"]:
-        '''Returns an Iterable of this Structure's substructures.'''
+    def compare(self, datas:tuple[tuple[int, B], ...], trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[D|EllipsisType, bool, bool]:
+        '''
+        Combines `datas` into a single object containing Diffs.
+        Returns the combined data,
+        if there are any changes detected, and
+        if the combined data is or contains any Diffs with a `length` greater than 1.
+        :datas: All data to be combined.
+        '''
         ...
 
-def get_data_at_branch(data:Any, branch:int) -> Any|D._NoExistType:
-    '''
-    Extracts that data from `data` at `branch`.
+    def get_similarity(self, data1:B, data2:B, branch1:int, branch2:int, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
+        '''
+        Returns how similar two objects are, with 0 being no similarity and 1
+        being equal. Also returns if the two objects are exactly the same (some
+        situations in StringStructure can have this be different from
+        similarity). If the boolean is True, then the float must be 1.0.
+        '''
+        ...
 
-    :data: The data containing Diffs.
-    :branch: The branch to extract.
-    '''
-    match data:
-        case int() | float() | str() | bool() | NoneType():
-            return data
-        case D.Diff():
-            if (item := data.get(branch)) is D.NoExist:
-                return item
-            else:
-                return get_data_at_branch(item, branch)
-        case dict():
-            return {key_branch: value_branch for key, value in data.items() if (key_branch := get_data_at_branch(key, branch)) is not D.NoExist and (value_branch := get_data_at_branch(value, branch)) is not D.NoExist}
-        case list() | set() | frozenset():
-            return type(data)(item_branch for item in data if (item_branch := get_data_at_branch(item, branch)) is not D.NoExist)
-        case File.AbstractFile() | File.FileDiff():
-            return get_data_at_branch(data.data, branch)
-        case bytes() | complex() | bytearray():
-            return data
-        case _:
-            raise TypeError(f"Unknown type {data.__class__.__name__}!")
+    def print_branch(self, data:B, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:
+        '''
+        Prints one branch of data. Returns an Ellipsis if there was an error.
+        '''
+        return ...
+
+    def print_comparison(self, data:D, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> CO|EllipsisType:
+        '''
+        Prints a comparison of data. Returns an Ellipsis if there was an error.
+        '''
+        return ...

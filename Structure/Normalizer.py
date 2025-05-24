@@ -1,6 +1,7 @@
 from typing import Any, Callable
 
-import Version.VersionRange as VersionRange
+import Structure.Filter as Filter
+import Structure.StructureInfo as StructureInfo
 
 
 class Normalizer[IN, OUT]():
@@ -8,9 +9,9 @@ class Normalizer[IN, OUT]():
 
     __slots__ = (
         "arguments",
+        "filter",
         "function",
         "name",
-        "version_range"
     )
 
     def __init__(self, name:str, function:Callable[[IN], OUT], arguments:dict[str,Any]) -> None:
@@ -22,7 +23,7 @@ class Normalizer[IN, OUT]():
         self.name = name
         self.function = function
         self.arguments = arguments
-        self.version_range:VersionRange.VersionRange|None = None
+        self.filter:Filter.Filter|None = None
 
     def __repr__(self) -> str:
         function_name:str|None
@@ -37,11 +38,8 @@ class Normalizer[IN, OUT]():
         else:
             return f"<{self.__class__.__name__} {self.name} {function_name}>"
 
-    def link_subcomponents(self, version_range:VersionRange.VersionRange) -> None:
-        '''
-        :version_range: Running this Normalizer is only allowed when the Version is within this range.
-        '''
-        self.version_range = version_range if not version_range.is_all_versions() else None
+    def link_subcomponents(self, filter:Filter.Filter|None) -> None:
+        self.filter = filter
 
     def __call__(self, data:IN) -> OUT:
         '''
@@ -49,3 +47,9 @@ class Normalizer[IN, OUT]():
         :data: The argument of the Normalizer's function.
         '''
         return self.function(data, **self.arguments)
+
+    def filter_pass(self, structure_info:StructureInfo.StructureInfo) -> bool:
+        if self.filter is None:
+            return True
+        else:
+            return self.filter.filter(structure_info)

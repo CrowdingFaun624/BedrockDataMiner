@@ -1,3 +1,4 @@
+from types import EllipsisType
 from typing import Any, Hashable, Literal, Self, TypedDict
 
 import Component.Types as Types
@@ -27,14 +28,14 @@ class DataPath():
         "root",
     )
 
-    def __init__(self, path_items:list[Hashable], root:str, embedded_data:Any|None=None) -> None:
+    def __init__(self, path_items:list[Hashable], root:str, embedded_data:Any|EllipsisType=...) -> None:
         '''
         :path_items: Items in the DataPath. Cannot contain None.
         :root: The dataminer/structure in which this DataPath originates.
         :embedded_data: Data given to this DataPath when it reaches the correct tag.'''
         self.path_items = path_items
         self.root = root
-        self.embedded_data:Any|None = embedded_data
+        self.embedded_data:Any|EllipsisType = embedded_data
         self.hash = None
 
     def last_key(self) -> Hashable:
@@ -43,16 +44,16 @@ class DataPath():
 
     def remove_embedded_data(self) -> Self:
         '''Removes the embedded data from this DataPath. Returns itself.'''
-        self.embedded_data = None
+        self.embedded_data = ...
         return self
 
-    def copy(self, new_item:Hashable|None=None) -> "DataPath":
+    def copy(self, new_item:Hashable|EllipsisType=...) -> "DataPath":
         '''
         Returns a new DataPath with a copied `path_items` attribute.
         :new_item: An optional item to append to the copied DataPath.
         '''
         output = DataPath(self.path_items.copy(), self.root, self.embedded_data)
-        if new_item is not None:
+        if new_item is not ...:
             output.append(new_item)
         return output
 
