@@ -13,18 +13,18 @@
 
 # import pprofile
 
+import threading
+from typing import Any, Callable
+
+import Domain.Domains as Domains
+
 # profile = pprofile.Profile()
 # with profile():
 #     import Domain.Domains as Domains
 #     Domains.domains["minecraft_bedrock"].import_components()
 # profile.dump_stats("./time_report.txt")
 
-import threading
-from typing import Any, Callable
-
-import Domain.Domains as Domains
-
-PROGRAM_NAMES = ("AllVersions", "Cleaner", "CompareAll", "Dataminers", "FileStorage", "GarbageCollector", "Scripts", "Tablifiers", "Tests")
+PROGRAM_NAMES = ("AllVersions", "Cleaner", "CompareAll", "Dataminers", "FileStorage", "GarbageCollector", "Scripts", "SimilarityTester", "Tablifiers", "Tests")
 
 lock1 = threading.Lock() # domain input
 lock2 = threading.Lock() # program input
@@ -50,6 +50,7 @@ import Programs.AllVersions as AllVersions
 import Programs.Cleaner as Cleaner
 import Programs.CompareAll as CompareAll
 import Programs.GarbageCollector as GarbageCollector
+import Programs.SimilarityTester as SimilarityTester
 import Programs.Test.Tests as Tests
 import Tablifier.Tablifiers as Tablifiers
 import Utilities.FileManager as FileManager
@@ -64,6 +65,7 @@ PROGRAM_FUNCTIONS:dict[str,Callable[[Domain.Domain],None]] = {
     "FileStorage": FileStorage.main,
     "GarbageCollector": GarbageCollector.main,
     "Scripts": Scripts.main,
+    "SimilarityTester": SimilarityTester.main,
     "Tablifiers": Tablifiers.main,
     "Tests": Tests.main,
 }
@@ -79,6 +81,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-pass
-# TODO: make comparisons out of HTML and fancy and collapsible and stuff.
