@@ -9,14 +9,12 @@ import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ("NbtSerializer",)
 
-class NbtSerializer(Serializer.Serializer[NbtTypes.TAG, None]):
+class NbtSerializer(Serializer.Serializer[NbtTypes.TAG]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("endianness", True, TypeVerifier.EnumTypeVerifier([endianness.name.lower() for endianness in NbtTypes.End])),
         TypeVerifier.TypedDictKeyTypeVerifier("gzipped", True, bool),
     )
-
-    store_as_file_default = True
 
     def __init__(self, name:str, domain:"Domain.Domain", endianness:Literal["big", "little"], gzipped:bool) -> None:
         '''

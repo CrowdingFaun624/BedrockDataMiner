@@ -5,8 +5,6 @@ import Utilities.TypeVerifier as TypeVerifier
 
 class DummySerializer(Serializer.Serializer):
 
-    store_as_file_default = True
-
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("empty_okay", False, bool),
     )

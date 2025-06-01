@@ -5,7 +5,7 @@ import pyjson5
 import Serializer.Serializer as Serializer
 
 
-class JsonSerializer(Serializer.Serializer[Any, Any]):
+class JsonSerializer(Serializer.Serializer[Any]):
     '''
     Serializer for JSON files.
     '''

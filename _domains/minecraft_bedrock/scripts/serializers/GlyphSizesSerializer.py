@@ -9,7 +9,7 @@ class RangeTypedDict(TypedDict):
     left: int
     right: int
 
-class GlyphSizesSerializer(Serializer.Serializer[dict[str,RangeTypedDict], dict[str,RangeTypedDict]]):
+class GlyphSizesSerializer(Serializer.Serializer[dict[str,RangeTypedDict]]):
 
     def deserialize(self, data: bytes) -> dict[str,RangeTypedDict]:
         output:dict[str,RangeTypedDict] = {}

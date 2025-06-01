@@ -1,6 +1,6 @@
 import json
 import subprocess
-from typing import Any, Literal, NotRequired, Required, TypedDict, cast
+from typing import Any, Literal, NotRequired, Required, TypedDict
 
 import Domain.Domain as Domain
 import Domain.Domains as Domains
@@ -54,21 +54,13 @@ media_serializer_cache = MediaSerializerCache(Domains.get_domain_from_module(__n
 
 class MediaSerializer(Serializer.Serializer):
 
-    store_as_file_default = False
-
     empty_okay = False
 
     can_contain_subfiles = True
 
-    linked_serializers = {key: Serializer.Serializer for key in ("metadata", "file_unknown", "file_CUR", "file_GIF", "file_JPEG", "file_M4A", "file_MP3", "file_MP4", "file_OTF", "file_PNG", "file_SVG", "file_TTC", "file_TTF", "file_WEBM")}
-
     def __init__(self, name: str, domain:Domain.Domain) -> None:
         super().__init__(name, domain)
         self.cached_data:dict[str,OutputTypedDict]|None = None
-
-    def get_linked_serializers(self, linked_serializers: dict[str, Serializer.Serializer]) -> None:
-        self.metadata_serializer = linked_serializers["metadata"]
-        self.file_serializers = {key.replace("file_", ""): serializer for key, serializer in linked_serializers.items() if key.startswith("file_")}
 
     def deserialize(self, data: bytes) -> OutputTypedDict:
         data_hash = FileManager.get_hash_hexdigest(data)
@@ -102,22 +94,9 @@ class MediaSerializer(Serializer.Serializer):
         metadata.pop("FilePermissions", None)
         output:OutputTypedDict = {
             "sha1_hash": data_hash,
-            "metadata": File.new_file(json.dumps(metadata).encode(), f"metadata_of_{data_hash}.json", self.metadata_serializer),
+            "metadata": File.new_file(json.dumps(metadata).encode(), f"metadata_of_{data_hash}.json"),
         }
-        output[file_type] = File.new_file(data, f"media_{data_hash}.{file_type}", self.file_serializers[file_type])
+        output[file_type] = File.new_file(data, f"media_{data_hash}.{file_type}")
 
         media_serializer_cache.write_new_line((data_hash, output))
         return output
-
-    def get_referenced_files(self, data: bytes, referenced_files:set[int]) -> None:
-        data_hash = FileManager.get_hash_hexdigest(data)
-        cached_item = media_serializer_cache.get().get(data_hash)
-        if cached_item is not None:
-            # if there is no cached data, there are no files stored at the moment
-            # for this file. If some do exist, they would have to be
-            # recalculated anyway, since they aren't in the cache
-            referenced_files.add(cached_item["metadata"].hash) # contains no subfiles
-            for key, value in cached_item.items():
-                if key in {"sha1_hash", "metadata"}: continue
-                image_file = cast(File.File[Any], value)
-                referenced_files.add(image_file.hash) # contains no subfiles

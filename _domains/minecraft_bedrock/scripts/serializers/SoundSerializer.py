@@ -81,9 +81,7 @@ def serialize(data:Any) -> Any:
         except Exception:
             return f"Unencodable object \"{data.__class__.__name__}\""
 
-class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDict]],dict[str,dict[str,SoundFilesTypedDict]]]):
-
-    store_as_file_default = False
+class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDict]],]):
 
     can_contain_subfiles = True
 
@@ -93,13 +91,3 @@ class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDic
             return {wav_file_name: get_metadata(wave_file_data) for wav_file_name, wave_file_data in wav_files}
         else:
             return {"main": get_metadata(data)}
-
-    def get_referenced_files(self, data: bytes, referenced_files:set[int]) -> None:
-        if data[:3] == b"FSB":
-            # this isn't *that* slow because it's cached.
-            referenced_files.update(
-                FileManager.get_hash_int(wav_file_data)
-                for wav_file_name, wav_file_data in EvilFSBExtractor.extract_fsb_file(data)
-            )
-        else:
-            referenced_files.add(FileManager.get_hash_int(data))

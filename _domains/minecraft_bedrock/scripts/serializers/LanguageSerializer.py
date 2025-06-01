@@ -9,7 +9,7 @@ class LanguageObject(TypedDict):
     value: str
     comment: NotRequired[str]
 
-class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject],dict[str,LanguageObject]]):
+class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject]]):
 
     empty_okay = True
 
