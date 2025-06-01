@@ -1,12 +1,12 @@
 import json
 from itertools import chain
 from pathlib import Path
-from typing import (TYPE_CHECKING, Any, Callable, NotRequired, Sequence,
-                    TypedDict)
+from typing import TYPE_CHECKING, Any, Callable, NotRequired, Sequence, TypedDict
 
 import Component.ComponentFunctions as ComponentFunctions
 import Component.Importer as Importer
 import Component.ScriptImporter as ScriptImporter
+import Component.ScriptReferenceable as ScriptReferenceable
 import Component.Types as Types
 import Dataminer.BuiltIns.AllFilesDataminer as AllFilesDataminer
 import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
@@ -15,7 +15,6 @@ import Dataminer.BuiltIns.GrabSingleFileDataminer as GrabSingleFileDataminer
 import Dataminer.BuiltIns.SingleFileDataminer as SingleFileDataminer
 import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
 import Dataminer.Dataminer as Dataminer
-import Domain.Domains as Domains
 import Domain.LibFiles as LibFiles
 import Downloader.Accessor as Accessor
 import Downloader.DownloadAccessor as DownloadAccessor
@@ -34,6 +33,7 @@ import Structure.Delegate.DefaultBaseDelegate as DefaultBaseDelegate
 import Structure.Delegate.DefaultDelegate as DefaultDelegate
 import Structure.Delegate.Delegate as Delegate
 import Structure.Delegate.LongStringDelegate as LongStringDelegate
+import Structure.Delegate.PrimitiveDelegate as PrimitiveDelegate
 import Utilities.CustomJson as CustomJson
 import Utilities.DataFile as DataFile
 import Utilities.FileManager as FileManager
@@ -78,6 +78,7 @@ BUILT_IN_DELEGATE_CLASSES:dict[str,type[Delegate.Delegate]] = {delegate_type.__n
     DefaultDelegate.DefaultDelegate,
     DefaultBaseDelegate.DefaultBaseDelegate,
     LongStringDelegate.LongStringDelegate,
+    PrimitiveDelegate.PrimitiveDelegate,
 ]}
 
 BUILT_IN_SERIALIZER_CLASSES:dict[str,type[Serializer.Serializer]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
@@ -102,8 +103,8 @@ class DomainManifestTypedDict(TypedDict):
 class Domain():
 
     __slots__ = (
-        "all_serializers",
         "accessor_types",
+        "component_log_file",
         "dataminer_collections",
         "latest_slots",
         "logs",
@@ -153,11 +154,14 @@ class Domain():
         "dependencies_str",
         "dependencies",
         "callables",
+        "script_referenceable",
+        "comparison_file_counts",
     )
 
     def __init__(self, name:str) -> None:
         self.name = name
         self.assets_directory           = FileManager.DOMAINS_DIRECTORY.joinpath(name)
+        self.component_log_file         = self.assets_directory.joinpath("component_log.txt")
         self.data_directory             = self.assets_directory.joinpath("data")
         self.lib_directory              = self.assets_directory.joinpath("lib")
         self.log_directory              = self.assets_directory.joinpath("log")
@@ -178,6 +182,7 @@ class Domain():
         self.versions_file              = self.assets_directory.joinpath("versions.json")
         self.versions_directory         = FileManager.VERSIONS_DIRECTORY.joinpath(name)
         self.comparisons_directory      = FileManager.COMPARISONS_DIRECTORY.joinpath(name)
+        self.comparison_file_counts:dict[str, int] = {}
 
         self.is_library:bool
         self.aliases:Sequence[str]
@@ -215,6 +220,7 @@ class Domain():
         self.lib_files = LibFiles.LibFiles(self)
         self.type_stuff = Types.TypeStuff(self)
         self.type_stuff.extend(Types.primary_type_stuff)
+        self.script_referenceable:ScriptReferenceable.ScriptReferenceable = ScriptReferenceable.ScriptReferenceable(self)
 
     def get_cascading_dependencies(self, memo:set["Domain"]) -> Sequence["Domain"]:
         if self not in memo:
@@ -232,7 +238,7 @@ class Domain():
             TypeVerifier.TypedDictKeyTypeVerifier("aliases", False, TypeVerifier.ListTypeVerifier(str, list)),
             TypeVerifier.TypedDictKeyTypeVerifier("is_library", False, bool),
             TypeVerifier.TypedDictKeyTypeVerifier("dependencies", False, TypeVerifier.ListTypeVerifier(str, list)),
-        ).base_verify(file, (self,))
+        ).verify_throw(file, (self,))
         self.is_library = file.get("is_library", False)
         self.aliases = file.get("aliases", ())
         self.dependencies_str = file.get("dependencies", ())
@@ -269,18 +275,13 @@ class Domain():
         self.latest_slots = component_groups["latest_slots"]
         self.logs = component_groups["logs"]
         self.serializers = component_groups["serializers"]
-        self.structures = {component_group_name: component_group for component_group_name, component_group in component_groups.items() if component_group_name.startswith("structure/")}
+        self.structures = {component_group_name: component_group for component_group_name, component_group in component_groups.items() if component_group_name.startswith("structures/")}
         self.structure_tags = component_groups["structure_tags"]
         self.tablifiers = component_groups["tablifiers"]
         self.version_file_types = component_groups["version_file_types"]
         self.version_tags_order = component_groups["version_tags_order"]
         self.version_tags = component_groups["version_tags"]
         self.versions = component_groups["versions"]
-
-        self.all_serializers:dict[str, Serializer.Serializer] = {}
-        for dependency in self.dependencies:
-            self.all_serializers.update(dependency.serializers)
-        self.all_serializers.update(self.serializers)
 
     def _get_data_files(self) -> dict[str,DataFile.DataFile]:
         if self.data_directory.exists():

@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING, Literal, overload
 
 import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 import Version.VersionFileType as VersionFileType
 
 if TYPE_CHECKING:
@@ -35,7 +36,7 @@ class VersionFile():
         if self._accessors is None:
             # has potential to be None due to errors. These errors are handled
             # elsewhere
-            self._accessors = [accessor for accessor_creator in self.accessor_creators if (accessor := accessor_creator.create_accessor()[0]) is not None]
+            self._accessors = [accessor for accessor_creator in self.accessor_creators if (accessor := accessor_creator.create_accessor(Trace.Trace())) is not None]
         return self._accessors
 
     def __repr__(self) -> str:

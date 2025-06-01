@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any
 
 import Domain.Domain as Domain
 import Downloader.Accessor as Accessor
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.Trace as Trace
 import Version.VersionFileType as VersionFileType
 
 if TYPE_CHECKING:
@@ -38,35 +38,36 @@ class AccessorType():
 
     def create_accessor(
         self,
+        trace:Trace.Trace,
         version:"Version.Version",
         domain:"Domain.Domain",
         file_type:VersionFileType.VersionFileType,
         instance_arguments:dict[str,Any],
         higher_propagated_arguments:dict[str,Any]|None=None,
-    ) -> tuple[Accessor.Accessor|None,list[Exception]]:
-        if higher_propagated_arguments is None:
-            higher_propagated_arguments = {}
-        propagated_arguments = higher_propagated_arguments.copy()
-        propagated_arguments.update(self.propagated_arguments)
+    ) -> Accessor.Accessor|None:
+        with trace.enter(self, self.name, ...):
+            if higher_propagated_arguments is None:
+                higher_propagated_arguments = {}
+            propagated_arguments = higher_propagated_arguments.copy()
+            propagated_arguments.update(self.propagated_arguments)
 
-        linked_accessors:dict[str,Accessor.Accessor] = {}
-        exceptions:list[Exception] = []
-        for key, accessor_type in self.linked_accessor_types.items():
-            subaccessor, new_exceptions = accessor_type.create_accessor(version, domain, file_type, instance_arguments, propagated_arguments)
-            if subaccessor is not None:
-                linked_accessors[key] = subaccessor
-            exceptions.extend(new_exceptions)
+            linked_accessors:dict[str,Accessor.Accessor] = {}
+            for key, accessor_type in self.linked_accessor_types.items():
+                with trace.enter_key(key, accessor_type):
+                    subaccessor = accessor_type.create_accessor(trace, version, domain, file_type, instance_arguments, propagated_arguments)
+                    if subaccessor is not None:
+                        linked_accessors[key] = subaccessor
+                    else:
+                        return None
 
-        accessor_type = self.accessor_class
-        accessor_instance_keys = accessor_type.instance_parameters.keys_dict.keys()
-        accessor_propagated_keys = accessor_type.propagated_parameters.keys_dict.keys()
-        local_instance_arguments = {key: value for key, value in instance_arguments.items() if key in accessor_instance_keys}
-        local_propagated_arguments = {key: value for key, value in propagated_arguments.items() if key in accessor_propagated_keys}
-        trace = TypeVerifier.StackTrace([(self, TypeVerifier.TraceItemType.OTHER), (version, TypeVerifier.TraceItemType.OTHER)])
-        exceptions.extend(accessor_type.instance_parameters.verify(local_instance_arguments, trace))
-        exceptions.extend(accessor_type.propagated_parameters.verify(local_propagated_arguments, trace))
+            accessor_type = self.accessor_class
+            accessor_instance_keys = accessor_type.instance_parameters.keys_dict.keys()
+            accessor_propagated_keys = accessor_type.propagated_parameters.keys_dict.keys()
+            local_instance_arguments = {key: value for key, value in instance_arguments.items() if key in accessor_instance_keys}
+            local_propagated_arguments = {key: value for key, value in propagated_arguments.items() if key in accessor_propagated_keys}
+            if accessor_type.instance_parameters.verify(local_instance_arguments, trace):
+                return None
+            if accessor_type.propagated_parameters.verify(local_propagated_arguments, trace):
+                return None
 
-        if len(exceptions) > 0:
-            return None, exceptions
-        else:
-            return accessor_type(self.name, version, domain, local_instance_arguments, self.class_arguments, propagated_arguments, linked_accessors), exceptions
+            return accessor_type(self.name, version, domain, local_instance_arguments, self.class_arguments, propagated_arguments, linked_accessors)

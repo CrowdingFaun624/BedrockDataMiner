@@ -6,6 +6,7 @@ import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.DataminerSettings as DataminerSettings
 import Domain.Domain as Domain
 import Structure.StructureBase as StructureBase
+import Structure.StructureInfo as StructureInfo
 import Utilities.Exceptions as Exceptions
 import Version.Version as Version
 
@@ -20,6 +21,9 @@ class DataminerCollection(AbstractDataminerCollection.AbstractDataminerCollectio
     def link_subcomponents(self, structure:StructureBase.StructureBase, dataminer_settings:list["DataminerSettings.DataminerSettings"]) -> None:
         super().link_subcomponents(structure)
         self.dataminer_settings = dataminer_settings
+
+    def get_structure_info(self, version: Version.Version) -> StructureInfo.StructureInfo:
+        return self.get_dataminer_settings(version).structure_info
 
     def get_dependencies(self, version: Version.Version) -> Iterable[AbstractDataminerCollection.AbstractDataminerCollection]:
         return self.get_dataminer_settings(version).dependencies

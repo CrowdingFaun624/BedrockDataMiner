@@ -9,15 +9,23 @@ import Utilities.UserInput as UserInput
 import Version.Version as Version
 
 
+def initial_print(
+    version:Version.Version,
+    dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
+    domain:"Domain.Domain",
+) -> None:
+    environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing, domain)
+    dataminer_collection.print_initial(version, environment)
+
 def compare(
-        version1:Version.Version|None,
-        version2:Version.Version,
-        dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
-        undataminable_versions_between:list[Version.Version],
-        domain:"Domain.Domain",
-    ) -> None:
-    comparing_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing, domain)
-    dataminer_collection.compare(version1, version2, undataminable_versions_between, comparing_environment)
+    version1:Version.Version,
+    version2:Version.Version,
+    dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
+    undataminable_versions_between:list[Version.Version],
+    domain:"Domain.Domain",
+) -> None:
+    environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing, domain)
+    dataminer_collection.compare(version1, version2, undataminable_versions_between, environment)
 
 def compare_all_of(
         domain:Domain.Domain,
@@ -41,10 +49,10 @@ def compare_all_of(
                 if previous_successful_version is not None:
                     compare(previous_successful_version, version, dataminer_collection, undataminable_versions_between, domain)
                 else: # First version that has this file.
-                    compare(None, version, dataminer_collection, undataminable_versions_between, domain)
+                    initial_print(version, dataminer_collection, domain)
                 undataminable_versions_between = []
                 previous_successful_version = version
-                dataminer_collection.clear_some_caches()
+                dataminer_collection.clear_old_caches()
                 # must occur AFTER comparing.
             else:
                 undataminable_versions_between.append(version)
@@ -58,7 +66,7 @@ def compare_all_of(
         print(f"Compared all of {dataminer_collection.name}.")
         exception_holder[dataminer_collection.name] = True
     finally:
-        dataminer_collection.clear_caches()
+        dataminer_collection.clear_all_caches()
 
 def main(domain:Domain.Domain) -> None:
     selected_dataminers = UserInput.input_multi(

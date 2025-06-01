@@ -7,7 +7,6 @@ from typing import Callable, overload
 import Domain.Domain as Domain
 import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Cache as Cache
-import Utilities.Exceptions as Exceptions
 import Utilities.FileManager as FileManager
 import Utilities.UserInput as UserInput
 
@@ -60,7 +59,7 @@ def is_archived(*, data:bytes|None=None, file_hash:str|None=None) -> bool:
         file_hash = FileManager.get_hash_hexdigest(data)
     return get_file_path(file_hash).exists()
 
-def archive_data(data:bytes, file_name:str, *, empty_okay:bool=False) -> str:
+def archive_data(data:bytes, file_name:str) -> str:
     '''Takes in bytes, and stores a file in the `./_assets/file_storage/objects` directory, and adds its data to the `./_assets/file_storage/index.txt` file.
     Returns the sha1 hash in a hexadecimal string format that the file is stored at.
     If the file already exists in the archive, do nothing.'''
@@ -72,8 +71,6 @@ def archive_data(data:bytes, file_name:str, *, empty_okay:bool=False) -> str:
     archived_directory.mkdir(exist_ok=True)
     zipped = should_zip_file(file_name)
     with open(archived_path, "wb") as destination:
-        if not empty_okay and len(data) == 0:
-            raise Exceptions.EmptyFileError(message=f"(hash {file_hash})")
         if zipped:
             destination.write(gzip.compress(data))
         else:

@@ -1,7 +1,6 @@
 import datetime
 from pathlib import Path
-from typing import (TYPE_CHECKING, Any, Callable, Container, Literal, Optional,
-                    Sequence)
+from typing import TYPE_CHECKING, Any, Callable, Container, Literal, Optional, Sequence
 
 if TYPE_CHECKING:
     import Component.Capabilities as Capabilities
@@ -10,7 +9,7 @@ if TYPE_CHECKING:
     import Component.Field.Field as Field
     import Component.ImporterEnvironment as ImporterEnvironment
     import Component.Pattern as Pattern
-    import Component.Structure.BaseComponent as BaseComponent
+    import Component.Structure.StructureBaseComponent as StructureBaseComponent
     import Component.Version.Field.VersionRangeField as VersionRangeField
     import Component.Version.VersionComponent as VersionComponent
     import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
@@ -22,19 +21,18 @@ if TYPE_CHECKING:
     import Serializer.Serializer as Serializer
     import Structure.DataPath as DataPath
     import Structure.Delegate.Delegate as Delegate
-    import Structure.Difference as D
     import Structure.Normalizer as Normalizer
     import Structure.Structure as Structure
     import Structure.StructureBase as StructureBase
-    import Structure.StructureEnvironment as StructureEnvironment
-    import Structure.StructureSet as StructureSet
+    import Structure.StructureInfo as StructureInfo
     import Structure.StructureTag as StructureTag
-    import Structure.Trace as Trace
+    import Tablifier.Tablifier as Tablifier
     import Utilities.Cache as Cache
     import Utilities.DataFile as DataFile
     import Utilities.File as File
     import Utilities.Log as Log
     import Utilities.Scripts as Scripts
+    import Utilities.Trace as Trace
     import Utilities.TypeUtilities as TypeUtilities
     import Utilities.TypeVerifier as TypeVerifier
     import Version.Version as Version
@@ -135,21 +133,6 @@ class AttributeNoneError(Exception):
     def __str__(self) -> str:
         return f"Attribute \"{self.name}\" of {self.source} is None and should not be{message(self.message)}"
 
-class CannotStringifyError(Exception):
-    "Attempted to stringify an invalid object."
-
-    def __init__(self, object_type:type, message:Optional[str]=None) -> None:
-        '''
-        :object_type: The type of the object that cannot be stringified.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(object_type, message)
-        self.object_type = object_type
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Attempted to stringify an object of type \"{self.object_type}\"{message(self.message)}"
-
 class EmptyFileError(Exception):
     "The file IO has no bytes."
 
@@ -238,7 +221,7 @@ class ComponentException(Exception):
 class BaseComponentCountError(ComponentException):
     "There is an invalid number of BaseComponents."
 
-    def __init__(self, structure_name:str, base_components:list["BaseComponent.BaseComponent"], message:Optional[str]=None) -> None:
+    def __init__(self, structure_name:str, base_components:list["StructureBaseComponent.StructureBaseComponent"], message:Optional[str]=None) -> None:
         '''
         :structure_name: The name of the Structure with an invalid count of BaseComponents.
         :base_components: The list of BaseComponents.
@@ -255,19 +238,17 @@ class BaseComponentCountError(ComponentException):
 class ComponentDuplicateTypeError(ComponentException):
     "A Component has a duplicate type."
 
-    def __init__(self, type_str:str, source:object, message:Optional[str]=None) -> None:
+    def __init__(self, type_str:str, message:Optional[str]=None) -> None:
         '''
         :type_str: The name of the type that is duplicated.
-        :source: The object that references the duplicated types.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(type_str, source, message)
+        super().__init__(type_str, message)
         self.type_str = type_str
-        self.source = source
         self.message = message
 
     def __str__(self) -> str:
-        return f"Type \"{self.type_str}\", as referenced by {self.source}, is duplicate{message(self.message)}"
+        return f"Type \"{self.type_str}\" is duplicate{message(self.message)}"
 
 class ComponentInvalidNameError(ComponentException):
     "A Component's name is invalid."
@@ -292,59 +273,52 @@ class ComponentInvalidVersionRangeException(ComponentException):
 class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
     "The new/old Version of the first/last sub-Component is not None."
 
-    def __init__(self, source:"Component.Component", actual_value:"Version.Version", is_first:bool, message:Optional[str]=None) -> None:
+    def __init__(self, actual_value:"Version.Version", is_first:bool, message:Optional[str]=None) -> None:
         '''
-        :source: The Component with an invalid VersionRange.
         :actual_value: The value that is present in the new Version instead of None.
         :is_first: Whether this DataminerSettings is the newest one or not.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(source, actual_value, is_first, message)
-        self.source = source
+        super().__init__(actual_value, is_first, message)
         self.actual_value = actual_value
         self.is_first = is_first
         self.message = message
 
     def __str__(self) -> str:
-        return f"The {"new" if self.is_first else "old"} Version of the {"first" if self.is_first else "last"} sub-Component of {self.source} is not None, but instead {self.actual_value}{message(self.message)}"
+        return f"The {"new" if self.is_first else "old"} Version of the {"first" if self.is_first else "last"} DataminerSettings is not None, but instead {self.actual_value}{message(self.message)}"
 
 class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
     "There is a gap in a Components's sub-Components' Versions."
 
-    def __init__(self, source:"Component.Component", new_version:"Version.Version|str", old_version:"Version.Version|str", message:Optional[str]=None) -> None:
+    def __init__(self, new_version:"Version.Version", old_version:"Version.Version", message:Optional[str]=None) -> None:
         '''
-        :source: The Component with invalid VersionRange.
         :new_version: The Version or the Version's name on the newer side of the gap.
         :old_version: The Version or the Version's name on the older side of the gap.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(source, new_version, old_version, message)
-        self.source = source
+        super().__init__(new_version, old_version, message)
         self.new_version = new_version
         self.old_version = old_version
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.source} has a gap between Versions {self.new_version} and {self.old_version}{message(self.message)}"
+        return f"There is a gap between Versions {self.new_version} and {self.old_version}{message(self.message)}"
 
 class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
     "The new or old Version of a non-first DataminerSettings is None."
 
-    def __init__(self, source:"Component.Component", index:int, slot:Literal["old", "new"], message:Optional[str]=None) -> None:
+    def __init__(self, slot:Literal["old", "new"], message:Optional[str]=None) -> None:
         '''
-        :source: The Comopnent with an invalid VersionRange.
         :index: The index of the DataminerSettings
         :slot: The key ("old" or "new") of the sub-Component.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(source, index, slot, message)
-        self.dataminer_collection_component = source
-        self.index = index
+        super().__init__(slot, message)
         self.slot = slot
         self.message = message
 
     def __str__(self) -> str:
-        return f"The {self.slot} Version of sub-Component {self.index} of {self.dataminer_collection_component} is None{message(self.message)}"
+        return f"The {self.slot} Version is None{message(self.message)}"
 
 class ComponentMismatchedTypesError(ComponentException):
     "The types of one Component and the types of another do not match."
@@ -384,43 +358,56 @@ class ComponentParseError(ComponentException):
     def __str__(self) -> str:
         return f"{self.exception_count} exceptions in {len(self.failed_component_groups)} Component groups: [{", ".join(self.failed_component_groups)}]{message(self.message)}"
 
+class ComponentScriptUnreferenceableError(ComponentException):
+    "The Component corresponding to the object accessed by a ScriptReferenceable does not allow script referencing of its final."
+
+    def __init__(self, path:str, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :path: The path used to access the Component's final.
+        :options: All paths that can be used to access valid script-referenceable objects.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(path, options, message)
+        self.path = path
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"Component at \"{self.path}\" does not allow for its final to be referenced by Scripts{message(self.message)}{nearest_message(self.path, self.options)}"
+
 class ComponentTypeContainmentError(ComponentException):
     "A Component has a type that cannot be contained by its current container type."
 
-    def __init__(self, source_component:"Component.Component", container_type:type, containee_type:type, message:Optional[str]=None) -> None:
+    def __init__(self, container_type:type, containee_type:type, message:Optional[str]=None) -> None:
         '''
-        :source_component: The Component with the disallowed type.
         :container_type: The type of the container.
         :containee_type: The type contained by the container type.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(source_component, container_type, containee_type, message)
-        self.source_component = source_component
+        super().__init__(container_type, containee_type, message)
         self.container_type = container_type
         self.containee_type = containee_type
         self.message = message
 
     def __str__(self) -> str:
-        return f"Type \"{self.containee_type}\" of {self.source_component} cannot be contained by type \"{self.container_type}\"{message(self.message)}"
+        return f"Type \"{self.containee_type}\" cannot be contained by type \"{self.container_type}\"{message(self.message)}"
 
 class ComponentTypeInvalidTypeError(ComponentException):
     "A Component has a value in a TypeField that is not allowed."
 
-    def __init__(self, source_component:"Component.Component", observed_type:type, allowed_types:"TypeUtilities.TypeSet", message:Optional[str]=None) -> None:
+    def __init__(self, observed_type:type, allowed_types:"TypeUtilities.TypeSet", message:Optional[str]=None) -> None:
         '''
-        :source_component: The Component with the disallowed type.
         :observed_type: The type that is not allowed.
         :allowed_types: The set of types that this TypeField must be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(source_component, observed_type, allowed_types, message)
-        self.type_field = source_component
+        super().__init__(observed_type, allowed_types, message)
         self.observed_type = observed_type
         self.allowed_types = allowed_types
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.type_field} has field with type {self.observed_type}, which is not one of [{", ".join(type.__name__ for type in sorted(self.allowed_types, key=lambda value: value.__name__))}]{message(self.message)}"
+        return f"{self.observed_type} is not one of [{", ".join(type.__name__ for type in sorted(self.allowed_types, key=lambda value: value.__name__))}]{message(self.message)}"
 
 class ComponentTypeMissingError(ComponentException):
     "A Component is missing the type key and there is no type assumption."
@@ -459,34 +446,17 @@ class ComponentTypeRequiresComponentError(ComponentException):
 class ComponentUnrecognizedTypeError(ComponentException):
     "This Component references an unrecognized default type."
 
-    def __init__(self, type_str:str, source:object, message:Optional[str]=None) -> None:
+    def __init__(self, type_str:str, message:Optional[str]=None) -> None:
         '''
         :type_str: The name of the unrecognized type.
-        :source: The object that references this type.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(type_str, source, message)
+        super().__init__(type_str, message)
         self.type_str = type_str
-        self.source = source
         self.message = message
 
     def __str__(self) -> str:
-        return f"Type \"{self.type_str}\", as referenced by {self.source}, is unrecognized{message(self.message)}"
-
-class EmptyCapabilitiesError(ComponentException):
-    "An empty Capabilities object was created."
-
-    def __init__(self, capabilities:"Capabilities.Capabilities", message:Optional[str]=None) -> None:
-        '''
-        :capabilities: The empty Capabilities object.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(capabilities, message)
-        self.capabilities = capabilities
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.capabilities} is empty{message(self.message)}"
+        return f"Type \"{self.type_str}\" is unrecognized{message(self.message)}"
 
 class ImporterEnvironmentNameCollisionError(ComponentException):
     "Two Component groups have the same name."
@@ -562,107 +532,121 @@ class InlineComponentError(ComponentException):
 class InvalidComponentError(ComponentException):
     "The referenced Component has the wrong properties."
 
-    def __init__(self, component:"Component.Component", key:str|None, source:str, required_properties:"Pattern.Pattern", actual_capabilities:"Capabilities.Capabilities", options:list[str]|None, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component.Component", key:str|None, required_properties:"Pattern.Pattern", actual_capabilities:"Capabilities.Capabilities", options:list[str]|None, message:Optional[str]=None) -> None:
         '''
         :component: The Component that is being referenced.
         :key: The key used to reference the Component.
-        :source: The object or a string representing the object that is referencing the Component.
         :required_properties: The Pattern that the Component is expected to have.
         :actual_capabilities: The Capabilities that the Component actually has.
-        :Options: Values the Component reference could be.
+        :options: Values the Component reference could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component, key, source, required_properties, actual_capabilities, options, message)
+        super().__init__(component, key, required_properties, actual_capabilities, options, message)
         self.component = component
         self.key = key
-        self.source = source
         self.required_properties = required_properties
         self.actual_capabilities = actual_capabilities
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component}, as referenced by {self.source}{f" using \"{self.key}\"" if self.key is not None else ""}, is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}{nearest_message(self.key, self.options) if self.key is not None and self.options is not None else None}"
+        return f"{self.component} is expected to have {self.required_properties}, but only has {self.actual_capabilities}{message(self.message)}{nearest_message(self.key, self.options) if self.key is not None and self.options is not None else None}"
+
+class InvalidComponentFinalTypeError(ComponentException):
+    "The referenced Component's final is the wrong type."
+    # used exclusively by ScriptReferenceable
+
+    def __init__(self, path:str, object:Any, required_type:type, actual_type:type, options:list[str], message:Optional[str]=None) -> None:
+        '''
+        :path: The key used to reference the Component.
+        :object: The Component's final.
+        :required_type: The type that the Component's final should be.
+        :actual_type: The type that the Component's final is.
+        :options: Values the path could be.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(path, object, required_type, actual_type, options, message)
+        self.path = path
+        self.object = object
+        self.required_type = required_type
+        self.actual_type = actual_type
+        self.options = options
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.object:r} at \"{self.path}\" should be type {self.required_type.__name__}, but is actually {self.actual_type.__name__}{message(self.message)}{nearest_message(self.path, self.options)}"
 
 class LinkedComponentExtraError(ComponentException):
     "An extra linked Component is present."
 
-    def __init__(self, component:"Component.Component", key:str, linked_object:Any, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, key:str, linked_object:Any, options:list[str], message:Optional[str]=None) -> None:
         '''
-        :component: The Component with an extra linked Component.
         :key: The key of the extra linked Component.
         :linked_object: The object of the linked Component.
         :options: Values that `key` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component, key, linked_object, options, message)
-        self.component = component
+        super().__init__(key, linked_object, options, message)
         self.key = key
         self.linked_object = linked_object
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component} has an extra linked Component \"{self.key}\": {self.linked_object}{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"There is an extra linked Component \"{self.key}\": {self.linked_object}{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class LinkedComponentMissingError(ComponentException):
     "A linked Component is missing."
 
-    def __init__(self, component:"Component.Component", key:str, linked_type:type, message:Optional[str]=None) -> None:
+    def __init__(self, key:str, linked_type:type, message:Optional[str]=None) -> None:
         '''
-        :component: The Component missing a linked Component.
         :key: The key of the missing Component.
         :linked_type: The type of the linked object.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component, key, linked_type, message)
-        self.component = component
+        super().__init__(key, linked_type, message)
         self.key = key
         self.linked_type = linked_type
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component} is missing linked Component \"{self.key}\" of type \"{self.linked_type.__name__}\"{message(self.message)}"
+        return f"Missing linked Component \"{self.key}\" of type \"{self.linked_type.__name__}\"{message(self.message)}"
 
 class LinkedComponentTypeError(ComponentException):
     "A linked Component's object is the wrong type."
 
-    def __init__(self, component:"Component.Component", key:str, required_type:type, observed_object:Any, message:Optional[str]=None) -> None:
+    def __init__(self, key:str, required_type:type, observed_object:Any, message:Optional[str]=None) -> None:
         '''
-        :component: The Component with the wrong type of linked object.
         :key: The key of the linked Component.
         :required_type: The type the linked object should have.
         :observed_object: The linked object.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component, key, required_type, observed_object, message)
-        self.component = component
+        super().__init__(key, required_type, observed_object, message)
         self.key = key
         self.required_type = required_type
         self.observed_object = observed_object
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.component}'s linked object \"{self.key}\": {self.observed_object} should be type \"{self.required_type.__name__}\"{message(self.message)}"
+        return f"Linked object \"{self.key}\": {self.observed_object} should be type \"{self.required_type.__name__}\"{message(self.message)}"
 
 class MalformedComponentReferenceError(ComponentException):
     "A reference Component is invalid."
 
-    def __init__(self, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, key:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :key: The key used to reference the Component
-        :source: The object that refers to this reference.
         :options: Values that `key` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(key, source, options, message)
+        super().__init__(key, options, message)
         self.key = key
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component reference \"{self.key}\", as referenced by {self.source}, is malformed{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Component reference \"{self.key}\" is malformed{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class ReferenceComponentError(ComponentException):
     "A reference Component exists where it is not allowed."
@@ -701,7 +685,7 @@ class UnrecognizedCapabilityError(ComponentException):
 class UnrecognizedComponentError(ComponentException):
     "A Component is unrecognized."
 
-    def __init__(self, component_str:str, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, component_str:str, key:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :component_str: The name of the unrecognized Component.
         :key: The key used to reference the Component.
@@ -709,57 +693,52 @@ class UnrecognizedComponentError(ComponentException):
         :options: Values the Component key could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component_str, key, source, options, message)
+        super().__init__(component_str, key, options, message)
         self.component_str = component_str
         self.key = key
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component \"{self.component_str}\", as referenced by {self.source}{f"using \"{self.key}\"" if self.key != self.component_str else ""}, is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Component \"{self.component_str}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedComponentDomainError(ComponentException):
     "A Domain referenced by a Component is unrecognized."
 
-    def __init__(self, domain:str, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, domain:str, key:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :domain: The name of the unrecognized Domain.
         :key: The key used to reference the Component.
-        :source: The object that refers to this Domain.
         :options: Values that `key` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(domain, key, source, options, message)
+        super().__init__(domain, key, options, message)
         self.domain = domain
         self.key = key
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Domain \"{self.domain}\", as referenced by {self.source} using \"{self.key}\", is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Domain \"{self.domain}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedComponentGroupError(ComponentException):
     "A Component group is unrecognized"
 
-    def __init__(self, component_group:str, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, component_group:str, key:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :component_group: The name of the unrecognized Component group.
         :key: The key used to reference the Component.
-        :source_str: The object that refers to this Component group.
         :options: Values that `key` could be.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(component_group, key, source, options, message)
+        super().__init__(component_group, key, options, message)
         self.component_group = component_group
         self.key = key
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Component group \"{self.component_group}\", as referenced by {self.source} using \"{self.key}\", is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Component group \"{self.component_group}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedComponentTypeError(ComponentException):
     "A Component type is unrecognized."
@@ -875,19 +854,17 @@ class DataminerCannotKnowFileTypeError(DataminerException):
 class DataminerCollectionFileError(DataminerException):
     "The \"files\" key in a DataminerCollection is improperly specified."
 
-    def __init__(self, exists:bool, source:object, message:Optional[str]=None) -> None:
+    def __init__(self, exists:bool, message:Optional[str]=None) -> None:
         '''
         :exists: Whether or not the "files" key actually exists.
-        :source: The object that has an incorrect "files" key.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(exists, source, message)
+        super().__init__(exists, message)
         self.exists = exists
-        self.source = source
         self.message = message
 
     def __str__(self) -> str:
-        return f"Key \"files\" of {self.source} {"cannot" if self.exists else "must"} exist{message(self.message)}"
+        return f"Key \"files\" {"cannot" if self.exists else "must"} exist{message(self.message)}"
 
 class DataminerDependencyOverwriteError(DataminerException):
     "Attempted to set an item of a DataminerDependencies object that already exists."
@@ -1035,23 +1012,6 @@ class DataminersFailureError(DataminerException):
 
     def __str__(self) -> str:
         return f"Failed to datamine {self.version} on {len(self.dataminer_collections)} Dataminers: [{", ".join(dataminer_collection.name for dataminer_collection in self.dataminer_collections)}]{message(self.message)}"
-
-class DataminerUnrecognizedSerializerError(DataminerException):
-    "Called `export_file` on a Dataminer with no Serializer"
-
-    def __init__(self, dataminer:"Dataminer.Dataminer", key:str, message:Optional[str]=None) -> None:
-        '''
-        :dataminer: The Dataminer missing a Serializer.
-        :key: The key that attempted to access the Serializer.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(dataminer, key, message)
-        self.dataminer = dataminer
-        self.key = key
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Attempted to call export_file on {self.dataminer} using non-existent Serializer key \"{self.key}\"{message(self.message)}"
 
 class DataminerUnrecognizedDependencyError(DataminerException):
     "A dependency does not exist."
@@ -1315,156 +1275,181 @@ class ScriptNameCollideError(ScriptException):
 class ScriptGeneralityError(ScriptException):
     "Cannot use a Script key because it could refer to multiple objects"
 
-    def __init__(self, script_name:str, potential_meanings:list["Scripts.Script"], source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, script_name:str, potential_meanings:list["Scripts.Script"], options:list[str], message:Optional[str]=None) -> None:
         '''
         :script_name: The key used to access the ScriptSet.
         :potential_meanings: The Scripts that `script_name` could refer to.
-        :source: A string representing the object referencing this Script.
         :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(script_name, potential_meanings, source, options, message)
+        super().__init__(script_name, potential_meanings, options, message)
         self.script_name = script_name
         self.potential_meanings = potential_meanings
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Script name \"{self.script_name}\", as referenced by {self.source}, could be referring to {self.potential_meanings}{message(self.message)}{nearest_message(self.script_name, self.options)}"
+        return f"Script name \"{self.script_name}\" could be referring to {self.potential_meanings}{message(self.message)}{nearest_message(self.script_name, self.options)}"
 
 class UnrecognizedScriptDomainError(ScriptException):
     "An unrecognized Domain is referenced by a Script."
 
-    def __init__(self, domain_name:str, key:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, domain_name:str, key:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :domain_name: The name of the unrecognized Domain.
         :key: The key used to access the Script.
-        :source: A string representing the object referencing this Script.
         :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(domain_name, key, source, options, message)
+        super().__init__(domain_name, key, options, message)
         self.domain_name = domain_name
         self.key = key
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Domain \"{self.domain_name}\" in key \"{self.key}\", as referenced by {self.source}, is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Domain \"{self.domain_name}\" in key \"{self.key}\" is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedScriptError(ScriptException):
     "An unrecognized Script was referenced."
 
-    def __init__(self, script_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, script_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :script_name: The name of the unrecognized script.
-        :source: A string representing the object referencing this Script.
         :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(script_name, source, options, message)
+        super().__init__(script_name, options, message)
         self.script_name = script_name
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Unrecognized Script \"{self.script_name}\" referenced by {self.source}{message(self.message)}{nearest_message(self.script_name, self.options)}"
+        return f"Unrecognized Script \"{self.script_name}\"{message(self.message)}{nearest_message(self.script_name, self.options)}"
 
 class UnrecognizedScriptFileNameError(ScriptException):
     "A Script references a file that does not exist."
 
-    def __init__(self, key:str, file_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, key:str, file_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :key: The key used to access the Script.
         :file_name: The unrecognized file name.
-        :source: A string representing the object referencing this Script.
         :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(key, file_name, source, options, message)
+        super().__init__(key, file_name, options, message)
         self.key = key
         self.file_name = file_name
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Script file name \"{self.file_name}\"{f" from key \"{self.key}\"" if self.key != self.file_name else ""}, as referenced by {self.source}, is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Script file name \"{self.file_name}\"{f" from key \"{self.key}\"" if self.key != self.file_name else ""} is unrecognized{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class UnrecognizedScriptObjectNameError(ScriptException):
     "A Script references an object that does not exist in a file that does exist."
 
-    def __init__(self, key:str, file_name:str, object_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, key:str, file_name:str, object_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :key: The key used to access the Script.
         :file_name: The recognized file name.
         :object_name: The unrecognized object name.
-        :source: A string representing the object referencing this Script.
         :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(key, file_name, object_name, source, options, message)
+        super().__init__(key, file_name, object_name, options, message)
         self.key = key
         self.file_name = file_name
         self.object_name = object_name
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Scripted object \"{self.object_name}\", as referenced by {self.source}, is unrecognized in recognized file \"{self.file_name}\"{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Scripted object \"{self.object_name}\" is unrecognized in recognized file \"{self.file_name}\"{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class WrongScriptError(ScriptException):
     "Attempted to import a Script that exists, but cannot be used in this situation."
 
-    def __init__(self, key:str, script:"Scripts.Script", type_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, key:str, script:"Scripts.Script", type_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :key: The key used to access the Script.
         :script: The Script that cannot be used in this situation.
         :type_name: A string representing the type the ScriptSet should be referencing.
-        :source: A string representing the object referencing this Script.
         :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(key, script, source, options, message)
+        super().__init__(key, script, options, message)
         self.key = key
         self.script = script
         self.type_name = type_name
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Cannot load {self.script} from \"{self.key}\", as referenced by {self.source}, in this situation; should be {self.type_name}{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Cannot load {self.script} from \"{self.key}\" in this situation; should be {self.type_name}{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class WrongScriptFileError(ScriptException):
     "Attempted to import a Script file that exists, but cannot be used in this situation."
 
-    def __init__(self, key:str, file_name:str, type_name:str, source:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, key:str, file_name:str, type_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :key: The key used to access the Script.
         :file_name: The file name of the Script that cannot be used in this situation.
         :type_name: A string representing the type the ScriptSet should be referencing.
-        :source: A string representing the object referencing this Script.
         :options: Values this Script could have.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(key, file_name, source, options, message)
+        super().__init__(key, file_name, options, message)
         self.key = key
         self.file_name = file_name
         self.type_name = type_name
-        self.source = source
         self.options = options
         self.message = message
 
     def __str__(self) -> str:
-        return f"Cannot load any Script in \"{self.file_name}\" from \"{self.key}\", as referenced by {self.source}, in this situation; should be {self.type_name}{message(self.message)}{nearest_message(self.key, self.options)}"
+        return f"Cannot load any Script in \"{self.file_name}\" from \"{self.key}\" in this situation; should be {self.type_name}{message(self.message)}{nearest_message(self.key, self.options)}"
 
 class SerializerException(Exception):
     "Abstract Exception class for errors relating to Serializers"
+
+class FileWrongSerializerError(SerializerException):
+    "A File cannot be read with the given Serializer."
+
+    def __init__(self, file:"File.AbstractFile", serializers:list["Serializer.Serializer|None"], serializer:"Serializer.Serializer|None", message:Optional[str]=None) -> None:
+        '''
+        :file: The File without the correct Serializer.
+        :serializers: The Serializers that the File does have.
+        :serializer: The Serializer used to access the File.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(file, serializers, serializer, message)
+        self.file = file
+        self.serializers = serializers
+        self.serializer = serializer
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.file} cannot be read with {self.serializer} because {"it has not been read yet" if len(self.serializers) == 0 else f"it can only be read by [{", ".join(repr(serializer) for serializer in self.serializers)}]"}{message(self.message)}"
+
+class SerializerEllipsisError(SerializerException):
+    "A Serializer returned an Ellipsis object."
+
+    def __init__(self, file:"File.AbstractFile", serializer:"Serializer.Serializer|None", message:Optional[str]=None) -> None:
+        '''
+        :file: The File that was read using the Serializer.
+        :serializer: The Serializer that returned an Ellipsis object.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(file, serializer, message)
+        self.file = file
+        self.serializer = serializer
+        self.message = message
+
+    def __str__(self) -> str:
+        if self.serializer is None:
+            return f"Attempted to set a the data of {self.file} to an Ellipsis{message(self.message)}"
+        else:
+            return f"{self.serializer} returned an Ellipsis while deserializing {self.file}{message(self.message)}"
 
 class SerializationFailureError(SerializerException):
     "A Serializer failed to serialize."
@@ -1500,106 +1485,39 @@ class SerializerMethodNonexistentError(SerializerException):
     def __str__(self) -> str:
         return f"{self.serializer} is missing method {self.method.__name__}{message(self.message)}"
 
-class UnrecognizedSerializerInFileError(SerializerException):
-    "A Serializer's name in a stored File does not exist."
+class SerializerNoneError(SerializerException):
+    "Attempted to read a File without using a Serializer."
 
-    def __init__(self, file_data:"File.FileJsonTypedDict", message:Optional[str]=None) -> None:
+    def __init__(self, file:"File.File", message:Optional[str]=None) -> None:
         '''
-        :file_data: The data used to create the File.
+        :file: The File that was read without a Serializer.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(file_data, message)
-        self.serializer = file_data["serializer"]
-        self.name = file_data["name"]
-        self.hash = file_data["hash"]
+        super().__init__(file, message)
+        self.file = file
         self.message = message
 
     def __str__(self) -> str:
-        return f"Attempted to create File with name \"{self.name}\" and hash \"{self.hash}\" using non-existent Serializer \"{self.serializer}\"{message(self.message)}"
+        return f"Attempted to read non-fake File {self.file} without a Serializer{message(self.message)}"
 
 class StructureException(Exception):
     "Abstract Exception class for errors relating to Structures"
 
-class CompareWithNoneError(StructureException):
-    "A StructureSet attempted to compare data using None instead of a Structure."
+class ConditionStructureFilterError(StructureException):
+    "A ConditionStructure encountered StructureInfo that fits none of its filters."
 
-    def __init__(self, structure:"Structure.Structure|StructureSet.StructureSet", key:int|None=None, message:Optional[str]=None) -> None:
+    def __init__(self, structure:"Structure.Structure", structure_info:"StructureInfo.StructureInfo", message:Optional[str]=None) -> None:
         '''
-        :structure_set: The Structure or StructureSet with a None substructure.
-        :key: The key used to access the StructureSet if it is a StructureSet.
+        :structure: The Structure that encountered StructureInfo that fits none of its filters.
+        :structure_info: The StructureInfo that fits no filter.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(structure, key, message)
         self.structure = structure
-        self.key = key
+        self.structure_info = structure_info
         self.message = message
 
     def __str__(self) -> str:
-        return f"Attempted to compare with {message(self.key, "", "key %s on ")}{self.structure} using a NoneType object{message(self.message)}"
-
-class ComparisonEnvironmentNoVersionError(StructureException):
-    "A ComparisonEnvironment has no non-None items in its Version list."
-
-    def __init__(self, environment:"StructureEnvironment.ComparisonEnvironment", message:Optional[str]=None) -> None:
-        '''
-        :environment: The ComparisonEnvironment with no non-None items in its Versions list.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(environment, message)
-        self.environment = environment
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.environment} has non non-None Versions{message(self.message)}"
-
-class DiffContinuityError(StructureException):
-    "Attempted to create a Diff with overlapping branches."
-
-    def __init__(self, all_branches:list[int], overlapping_branch:int, message:Optional[str]=None) -> None:
-        '''
-        :all_branches: All branches that the Diff would have.
-        :overlapping_branch: The branch that is already in `all_branches`.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(all_branches, overlapping_branch, message)
-        self.all_branches = all_branches
-        self.overlapping_branches = overlapping_branch
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Attempted to create a Diff with branch {self.overlapping_branches} overlapping with one of [{", ".join(str(branch) for branch in self.all_branches)}]{message(self.message)}"
-
-class DiffExistenceError(StructureException):
-    "The Diff object has no items except for NoExist."
-
-    def __init__(self, diff:"D.Diff", message:Optional[str]=None) -> None:
-        '''
-        :diff: The Diff object with no items except for NoExist.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(diff, message)
-        self.diff = diff
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.diff} has no items besides NoExist{message(self.message)}"
-
-class DiffKeyError(StructureException):
-    "The Diff object does not have anything at the position indexed."
-
-    def __init__(self, index:int|tuple[int,...], diff:"D.Diff", message:Optional[str]=None) -> None:
-        '''
-        :index: The index used to access the Diff.
-        :diff: The Diff that was indexed.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(index, diff, message)
-        self.index = index
-        self.diff = diff
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.diff} does not have an item at index {self.index}{message(self.message)}"
+        return f"{self.structure} encountered {self.structure_info}, which passes no filter{message(self.message)}"
 
 class SwitchStructureError(StructureException):
     "A SwitchStructure's switch function returned a value that is not in its switches."
@@ -1638,38 +1556,16 @@ class InvalidFileHashType(StructureException):
     def __str__(self) -> str:
         return f"Data {self.data_path.embedded_data} at path {self.data_path} of {self.structure_tag} of {self.version} is not a valid file hash{message(self.message)}"
 
-class InvalidSimilarityError(StructureException):
-    "A calulated similarity is not in [0.0, 1.0]"
+class NormalizerEllipsisError(StructureException):
+    "A Normalizer returned Ellipsis."
 
-    def __init__(self, structure:"Structure.Structure", similarity:float, data1:Any, data2:Any, message:Optional[str]=None) -> None:
-        '''
-        :structure: The Structure that returned an invalid similarity.
-        :similarity: The similarity that is out of range.
-        :data1: The older data that caused an invalid similarity
-        :data2: The newer data that caused an invalid similarity
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(structure, similarity, data1, data2, message)
-        self.structure = structure
-        self.similarity = similarity
-        self.data1 = data1
-        self.data2 = data2
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.structure} has a similarity of {self.similarity}{message(self.message, "", " %s")} on data {self.data1} and {self.data2}!"
-
-class NormalizerNoneError(StructureException):
-    "A Normalizer has returned None where it should return something."
-
-    def __init__(self, normalizer:"Normalizer.Normalizer", source:object, message:Optional[str]=None) -> None:
-        super().__init__(normalizer, source, message)
+    def __init__(self, normalizer:"Normalizer.Normalizer", message:Optional[str]=None) -> None:
+        super().__init__(normalizer, message)
         self.normalizer = normalizer
-        self.source = source
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.normalizer}, as referenced by {self.source}, returned None when it shouldn't have{message(self.message)}"
+        return f"{self.normalizer} returned Ellipsis{message(self.message)}"
 
 class SequenceTooLongError(StructureException):
     "A StringStructure or SequenceStructure cannot compare or get similarity of data because it is too long."
@@ -1703,7 +1599,7 @@ class StructuresCompareFailureError(StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Failed to compare on Structures [{", ".join(self.structure_names)}]{message(self.message)}"
+        return f"Failed to compare on Structures [{", ".join(self.structure_names)}] (len {len(self.structure_names)}){message(self.message)}"
 
 class StructureCannotPrintFlatError(StructureException):
     "Some data cannot be printed on a single line."
@@ -1721,7 +1617,7 @@ class StructureCannotPrintFlatError(StructureException):
 class StructureError(StructureException):
     "A StructureBase has failed."
 
-    def __init__(self, structure_base:"StructureBase.StructureBase", message:Optional[str]=None) -> None:
+    def __init__(self, structure_base:"Structure.Structure", message:Optional[str]=None) -> None:
         '''
         :structure_base: The StructureBase that failed.
         :message: Additional text to place after the main message.
@@ -1733,29 +1629,27 @@ class StructureError(StructureException):
     def __str__(self) -> str:
         return f"{self.structure_base} has failed{message(self.message)}"
 
-class StructureExceptionError(StructureException):
-    "An error occured where it should not."
+class StructureNoManipulationFunctionError(StructureException):
+    "In order to normalize a type a certain way, it must have a certain TypeStuff function, but does not."
 
-    def __init__(self, structure:"Structure.Structure", function:Callable, exceptions:list["Trace.ErrorTrace"], message:Optional[str]=None) -> None:
+    def __init__(self, function_name:str, data_type:type, message:Optional[str]=None) -> None:
         '''
-        :structure: The Structure with the errors inside its function.
-        :function: The function of the Structure where the errors occured.
-        :exceptions: The exceptions that should not exist.
+        :function_name: The name of the function the TypeStuff should have, such as "setitem" or "popitem".
+        :data_type: The type that the TypeStuff does not know about.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(structure, function, exceptions, message)
-        self.structure = structure
-        self.function = function
-        self.exceptions = exceptions
+        super().__init__(function_name, data_type, message)
+        self.function_name = function_name
+        self.data_type = data_type
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.structure} has errors in function \"{self.function.__name__}\" where it should not{message(self.message, "", " %s")}: [{", ".join(exception.finalize().stringify() for exception in self.exceptions)}]"
+        return f"Type {self.data_type} does not have a {self.function_name} method{message(self.message)}"
 
 class StructureRequiredKeyMissingError(StructureException):
     "A required key is missing."
 
-    def __init__(self, structure:"Structure.Structure", key:str, message:Optional[str]=None) -> None:
+    def __init__(self, structure:"Structure.Structure", key:Any, message:Optional[str]=None) -> None:
         '''
         :structure: The Structure that should have the key.
         :key: The required key that is missing from the data.
@@ -1791,7 +1685,7 @@ class StructureTypeError(StructureException):
 class StructureUnrecognizedKeyError(StructureException):
     "A key in some data is not a recognized key."
 
-    def __init__(self, unrecognized_key:str, label:str="Key", message:Optional[str]=None) -> None:
+    def __init__(self, unrecognized_key:Any, label:str="Key", message:Optional[str]=None) -> None:
         '''
         :unrecognized_key: The key that is unrecognized.
         :label: The uppercase text to label the key with.
@@ -1804,25 +1698,6 @@ class StructureUnrecognizedKeyError(StructureException):
 
     def __str__(self) -> str:
         return f"{self.label} \"{self.unrecognized_key}\" is not recognized{message(self.message)}"
-
-class TraceError(StructureException):
-    "The operation cannot be performed on this Trace due to its finalization being wrong."
-
-    def __init__(self, trace:"Trace.ErrorTrace", function:Callable, is_finalized:bool, message:Optional[str]=None) -> None:
-        '''
-        :trace: The Trace with the invalid finalization.
-        :function: The function that was called on the Trace.
-        :is_finalized: The current, incorrect finalization status of the Trace.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(trace, function, is_finalized, message)
-        self.trace = trace
-        self.function = function
-        self.is_finalized = is_finalized
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"Cannot perform function \"{self.function.__name__}\" on {self.trace} due to it being {"finalized" if self.is_finalized else "not finalized"}{message(self.message)}"
 
 class UnrecognizedStructureTagError(StructureException):
     "A StructureTag referenced in a tag expression does not exist."
@@ -1843,8 +1718,55 @@ class UnrecognizedStructureTagError(StructureException):
     def __str__(self) -> str:
         return f"Unrecognized tag \"{self.tag_name}\" referenced in expression \"{self.expression}{message(self.message)}{nearest_message(self.tag_name, self.options)}"
 
+class ZeroWeightError(StructureException):
+    "The sum of the key weight and value weight for a Structure may be 0!"
+
+    def __init__(self, key_weight_path:str, value_weight_path:str, message:Optional[str]=None) -> None:
+        '''
+        :key_weight_path: A string representing the key path from the Structure to the key weight.
+        :value_weight_path: A string representing the key path from the Structure to the value weight.
+        :message: Additional text to place after the main message
+        '''
+        self.key_weight_path = key_weight_path
+        self.value_weight_path = value_weight_path
+        self.message = message
+        super().__init__(key_weight_path, value_weight_path, message)
+
+    def __str__(self) -> str:
+        return f"The sum of {self.key_weight_path} and {self.value_weight_path} is 0{message(self.message)}"
+
+class TablifierException(Exception):
+    "Abstract Exception class for errors relating to Tablifiers."
+
+class TablifierError(StructureException):
+    "A Tablifier has failed."
+
+    def __init__(self, tablifier:"Tablifier.Tablifier", message:Optional[str]=None) -> None:
+        '''
+        :tablifier: The Tablifier that failed.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(tablifier, message)
+        self.tablifier = tablifier
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"{self.tablifier} has failed{message(self.message)}"
+
 class TypeVerifierException(Exception):
     "Abstract Exception class for errors relating to TypeVerifiers."
+
+class TypedDictTypeVerifierKeysOverlapError(TypeVerifierException):
+    "Attempted to extend a TypedDictTypeVerifier with another TypedDictTypeVerifier that shares its same keys!"
+
+    def __init__(self, type_verifier:"TypeVerifier.TypedDictTypeVerifier", other:"TypeVerifier.TypedDictTypeVerifier", keys_overlap:list[str]) -> None:
+        super().__init__(type_verifier, other, keys_overlap)
+        self.type_verifier = type_verifier
+        self.other = other
+        self.keys_overlap = keys_overlap
+
+    def __str__(self) -> str:
+        return f"Cannot combine {self.other} into {self.type_verifier} because they share these keys: {self.keys_overlap}!"
 
 class TypeVerificationFailedError(TypeVerifierException):
     "Type verification failed."
@@ -1863,81 +1785,66 @@ class TypeVerificationFailedError(TypeVerifierException):
 
 class TypeVerificationTypeException(TypeVerifierException):
     "Abstract Exception class for errors that are passed around by TypeVerifiers."
-
-    trace: "TypeVerifier.StackTrace"
-
-    def __init__(self, trace:"TypeVerifier.StackTrace", *args: object) -> None:
-        self.trace = trace
-        super().__init__(trace, *args)
+    ...
 
 class TypeVerificationEnumError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.StackTrace", options:Container, value:Any) -> None:
-        super().__init__(trace, options, value)
+    def __init__(self, options:Container, value:Any) -> None:
+        super().__init__(options, value)
         self.options = options
         self.value = value
 
     def __str__(self) -> str:
-        return f"{self.trace.to_str()} is not one of {self.options}, but instead {self.value}"
+        return f"The data is not one of {self.options}, but instead {self.value}"
 
 class TypeVerificationFunctionError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.StackTrace", message:str|None, data:Any|None=None) -> None:
-        super().__init__(trace, message, data)
+    def __init__(self, message:str|None) -> None:
+        super().__init__(message)
         self.message = message
-        self.data = data
 
     def __str__(self) -> str:
-        return f"{self.trace.to_str()}{message(self.data, "", " (data %s)")} failed verification{message(self.message, yes_message=" due to \"%s\"!")}"
+        return f"The data failed verification{message(self.message, yes_message=" due to \"%s\"!")}"
 
 class TypeVerificationMissingKeyError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.StackTrace") -> None:
-        super().__init__(trace)
+    def __init__(self, key:str) -> None:
+        super().__init__(key)
+        self.key = key
 
     def __str__(self) -> str:
-        return f"Required {self.trace.to_str(capitalize=False)} is missing!"
+        return f"Required key \"{self.key}\" is missing!"
 
 class TypeVerificationTypeError(TypeVerificationTypeException):
 
-    def __init__(self, trace: "TypeVerifier.StackTrace", expected_type:str, observed_type:type) -> None:
-        super().__init__(trace, expected_type, observed_type)
+    def __init__(self, expected_type:str, observed_type:type) -> None:
+        super().__init__(expected_type, observed_type)
         self.expected_type = expected_type
         self.observed_type = observed_type
 
     def __str__(self) -> str:
-        return f"{self.trace.to_str()} is not {self.expected_type}, but instead {self.observed_type.__name__}"
+        return f"The data is not {self.expected_type}, but instead {self.observed_type.__name__}!"
 
 class TypeVerificationUnionError(TypeVerificationTypeException):
 
-    def __init__(self, trace: "TypeVerifier.StackTrace", expected_type:str, observed_type:type, causes:list[Sequence[TypeVerificationTypeException]]) -> None:
-        super().__init__(trace, expected_type, observed_type, causes)
+    def __init__(self, expected_type:str, observed_type:type, count:int) -> None:
+        super().__init__(expected_type, observed_type)
         self.expected_type = expected_type
         self.observed_type = observed_type
-        self.causes = causes
+        self.count = count
 
     def __str__(self) -> str:
-        return f"{self.trace.to_str()} is not {self.expected_type}, but instead {self.observed_type.__name__} due to {[[str(exception) for exception in exception_list] for exception_list in self.causes]}"
+        return f"The data is not {self.expected_type}, but instead {self.observed_type.__name__} due to {self.count} above exception(s)!"
 
 class TypeVerificationUnrecognizedKeyError(TypeVerificationTypeException):
 
-    def __init__(self, trace:"TypeVerifier.StackTrace", key:str, options:list[str]) -> None:
-        super().__init__(trace)
+    def __init__(self, key:str, options:list[str]) -> None:
+        super().__init__(key, options)
         self.key = key
         self.options = options
 
     def __str__(self) -> str:
-        return f"{self.trace.to_str()} is an unrecognized key!{nearest_message(self.key, self.options)}"
-
-class TypeVerificationWrongLengthError(TypeVerificationTypeException):
-
-    def __init__(self, trace:"TypeVerifier.StackTrace", expected_length:int, observed_length:int) -> None:
-        super().__init__(trace, expected_length, observed_length)
-        self.expected_length = expected_length
-        self.observed_length = observed_length
-
-    def __str__(self) -> str:
-        return f"{self.trace.to_str()} is not length {self.expected_length}, but instead length {self.observed_length}!"
+        return f"\"{self.key}\" is an unrecognized key!{nearest_message(self.key, self.options)}"
 
 class VersionException(Exception):
     "Abstract Exception class for errors relating to Versions."
@@ -2203,21 +2110,19 @@ class VersionRangeOrderError(VersionException):
 class VersionTagExclusivePropertyError(VersionException):
     "A VersionTag has properties that are mutually exclusive."
 
-    def __init__(self, source:object, property1:str, property2:str, message:Optional[str]=None) -> None:
+    def __init__(self, property1:str, property2:str, message:Optional[str]=None) -> None:
         '''
-        :source: The object that has conflicting properties.
         :property1: The name of the first mutually exclusive property.
         :property2: The name of the second mutually exclusive property.
         :message: Additional text to place after the main message.
         '''
-        super().__init__(source, property1, property2, message)
-        self.source = source
+        super().__init__(property1, property2, message)
         self.property1 = property1
         self.property2 = property2
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.source} cannot have both {self.property1} and {self.property2}{message(self.message)}"
+        return f"Cannot have both {self.property1} and {self.property2}{message(self.message)}"
 
 class VersionTimeTravelError(VersionException):
     "A Version's children are not in order chronologically."
@@ -2331,18 +2236,3 @@ class VersionFileNoAccessorsError(VersionFileException):
 
     def __str__(self) -> str:
         return f"{self.version_file} has no available Accessors{message_bool(self.version_file.has_accessors(), "", lambda: f" from [{", ".join(repr(accessor) for accessor in self.version_file.accessors)}]")}{message(self.message)}"
-
-class VersionFileTypeNotAutoAssigning(VersionFileException):
-    "The VersionFileType does not auto assign."
-
-    def __init__(self, version_file_type:"VersionFileType.VersionFileType", message:Optional[str]=None) -> None:
-        '''
-        :version_file_type: The VersionFileType that does not have auto assign.
-        :message: Additional text to place after the main message.
-        '''
-        super().__init__(version_file_type, message)
-        self.version_file_type = version_file_type
-        self.message = message
-
-    def __str__(self) -> str:
-        return f"{self.version_file_type} is not an auto-assigning VersionFileType{message(self.message)}"

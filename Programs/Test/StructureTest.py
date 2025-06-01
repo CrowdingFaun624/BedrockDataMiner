@@ -45,9 +45,9 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
         print(f"Scanning {len(dataminer_collections)} DataminerCollections in {version}")
         dataminers_without_file:list[AbstractDataminerCollection.AbstractDataminerCollection] = []
         structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.checking_types, self.domain)
-        printer_environment = StructureEnvironment.PrinterEnvironment(structure_environment, None, version, 0)
         failed_structures:list[StructureBase.StructureBase] = []
         for dataminer_collection in dataminer_collections:
+            printer_environment = StructureEnvironment.PrinterEnvironment(structure_environment, dataminer_collection.get_structure_info(version), None, version, 0)
             structure = dataminer_collection.structure
             try:
                 data_file = dataminer_collection.get_data_file(version, non_exist_ok=True)
@@ -61,8 +61,7 @@ class StructurePlan(TestUtil.Plan[StructureBase.StructureBase]):
             else:
                 # get all dataminer collections that already have files.
                 try:
-                    normalized_data = structure.normalize(data_file, printer_environment)
-                    structure.check_types(normalized_data, structure_environment, (version,))
+                    structure.type_check_from_raw(data_file, version, printer_environment)
                 except Exception as e:
                     print(f"{dataminer_collection} on {structure} on {version} (file was already datamined)")
                     traceback.print_exception(e)

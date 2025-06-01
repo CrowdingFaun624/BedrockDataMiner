@@ -24,6 +24,7 @@ def guess_intent(user_input:str, items:list[str], threshold:int) -> str|None:
     Returns what the user probably wants based on their input, or returns None
     if it cannot be guessed.
     '''
+    if len(user_input) < 2: return None
     similarities:dict[str,int] = {option: get_levenshtein_distance(user_input, option) for option in items}
     min_option, min_distance = None, None
     for option, distance in similarities.items():

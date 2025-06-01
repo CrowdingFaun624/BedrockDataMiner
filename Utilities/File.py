@@ -1,16 +1,13 @@
-from types import EllipsisType
-from typing import Any, Literal, TypedDict
+from typing import Literal, TypedDict
 
 import Component.Types as Types
 import Domain.Domain as Domain
 import Serializer.Serializer as Serializer
-import Structure.DataPath as DataPath
-import Structure.Difference as D
 import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
 import Utilities.FileStorage as FileStorage
 
-FileJsonTypedDict = TypedDict("FileJsonTypedDict", {"$special_type": Literal["file"], "hash": str, "name": str, "serializer": str})
+FileJsonTypedDict = TypedDict("FileJsonTypedDict", {"$special_type": Literal["file"], "hash": str, "name": str})
 
 class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
 
@@ -18,21 +15,15 @@ class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
 
     @classmethod
     def decode(cls, data: FileJsonTypedDict, domain:"Domain.Domain") -> "File":
-        serializer = domain.all_serializers.get(data["serializer"])
-        if serializer is None:
-            raise Exceptions.UnrecognizedSerializerInFileError(data)
-        return File(data["name"], serializer, data_hash=hash_str_to_int(data["hash"]))
+        return File(data["name"], data_hash=hash_str_to_int(data["hash"]))
 
     @classmethod
     def encode(cls, data: "File", domain:"Domain.Domain") -> FileJsonTypedDict:
         # files contained by data are archived when the File object is created.
-        return {"$special_type": "file", "hash": hash_int_to_str(data.hash), "name": data.display_name, "serializer": data.serializer.name}
+        return {"$special_type": "file", "hash": hash_int_to_str(data.hash), "name": data.display_name}
 
-def new_file(data:bytes, file_name:str, serializer:Serializer.Serializer) -> "File":
-    if not serializer.empty_okay and len(data) == 0:
-        raise Exceptions.EmptyFileError(message=f"(file \"{file_name}\")")
-    file_hash = hash_str_to_int(FileStorage.archive_data(data, file_name, empty_okay=serializer.empty_okay))
-    return File(file_name, serializer, file_hash) # not create with value argument to not clog the memory.
+def new_file(data:bytes, file_name:str) -> "File":
+    return File(file_name, hash_str_to_int(FileStorage.archive_data(data, file_name)))
 
 def hash_int_to_str(hash_int:int) -> str:
     '''Assumes hash length of 40'''
@@ -44,8 +35,6 @@ def hash_str_to_int(hash_str:str) -> int:
 @Types.register_decorator("abstract_file", ..., is_file=True)
 class AbstractFile[a]():
 
-    data:a
-
     __slots__ = (
         "display_name",
         "hash",
@@ -55,7 +44,13 @@ class AbstractFile[a]():
         self.display_name = display_name
         self.hash = data_hash
 
-    def read(self) -> None:
+    def read(self, serializer:Serializer.Serializer|None) -> a:
+        ...
+
+    def set_data(self, serializer:Serializer.Serializer|None, data:a) -> None:
+        ...
+
+    def del_data(self, serializer:Serializer.Serializer|None) -> None:
         ...
 
     def __eq__(self, other:"AbstractFile") -> bool:
@@ -67,163 +62,77 @@ class AbstractFile[a]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} \"{self.display_name}\" hash {hash_int_to_str(self.hash)}>"
 
-    def get_referenced_files(self, referenced_files:set[int]) -> None:
-        '''
-        Uses the Serializer of this File to find any filse within it.
-        '''
-        ...
-
-    def __copy_empty__(self) -> "AbstractFile[a]":
-        '''
-        Creates a file with data of the same type as this file, but empty.
-        '''
-        ...
-
 @Types.register_decorator("file", None, json_coder=FileCoder)
 class File[a](AbstractFile[a]):
 
     __slots__ = (
+        "_bytes",
         "_data",
-        "serializer",
     )
 
-    def __init__(self, display_name:str, serializer:Serializer.Serializer, data_hash:int) -> None:
+    def __init__(self, display_name:str, data_hash:int) -> None:
         super().__init__(display_name, data_hash)
-        self.serializer = serializer
-        self._data:a|EllipsisType = ...
+        self._bytes:bytes|None = None
+        self._data:dict[Serializer.Serializer,a] = {}
 
-    def read(self) -> None:
+    @property
+    def bytes(self) -> bytes:
+        if self._bytes is None:
+            self._bytes = FileStorage.read_archived(hash_int_to_str(self.hash))
+        return self._bytes
+
+    def read(self, serializer:Serializer.Serializer|None) -> a:
         # installs data without returning anything.
-        self.data
+        if serializer is None:
+            raise Exceptions.SerializerNoneError(self)
+        if (data := self._data.get(serializer, ...)) is not ...:
+            return data
+        try:
+            self._data[serializer] = data = serializer.deserialize(self.bytes)
+            if data is ...:
+                raise Exceptions.SerializerEllipsisError(self, serializer)
+            return data
+        except Exception:
+            raise Exceptions.SerializationFailureError(serializer, self.display_name)
 
-    def _get_data(self) -> a:
-        if self._data is ...:
-            file_bytes = FileStorage.read_archived(hash_int_to_str(self.hash))
-            try:
-                data:a = self.serializer.deserialize(file_bytes)
-                self._data = data
-            except Exception:
-                raise Exceptions.SerializationFailureError(self.serializer, self.display_name, "(in File.read)")
-        return self._data
-
-    def _set_data(self, data:a) -> None:
+    def set_data(self, serializer:Serializer.Serializer|None, data:a) -> None:
         # modifies data, and *does not* change the hash of this File.
-        self._data = data
-
-    def _del_data(self) -> None:
-        # in case you want to clear up memory or something.
-        self._data = ...
-
-    data = property(_get_data, _set_data, _del_data) # type: ignore
-
-    def __copy_empty__(self) -> AbstractFile[a]:
-        return EmptyFile(self.serializer, self.hash, self._data)
-
-    def get_referenced_files(self, referenced_files:set[int]) -> None:
-        if self.serializer.can_contain_subfiles:
-            file_bytes = FileStorage.read_archived(hash_int_to_str(self.hash))
-            self.serializer.get_referenced_files(file_bytes, referenced_files)
-
-@Types.register_decorator(None, None, json_coder=Types.no_coder)
-class EmptyFile[a](File[a]):
-
-    __slots__ = ()
-
-    def __init__(
-        self,
-        serializer:Serializer.Serializer,
-        data_hash:int,
-        data:a|EllipsisType=..., # type: ignore idk
-    ) -> None:
-        super().__init__("empty_file", serializer, data_hash)
-        # when data is needed, it will read the file at `data_hash` using `serializer`, but
-        # then replace it with data of same type but empty.
+        if serializer is None:
+            raise Exceptions.SerializerNoneError(self)
         if data is ...:
-            self._data:a|EllipsisType = ...
-        else:
-            self._data:a|EllipsisType = type(data)()
+            raise Exceptions.SerializerEllipsisError(self, None)
+        self._data[serializer] = data
 
-    def __hash__(self) -> int:
-        # must have a different hash than the creating file for caching reasons
-        # but must remember what hash the creating file had so it knows the
-        # data type.
-        return 0
+    def del_data(self, serializer:Serializer.Serializer|None) -> None:
+        # in case you want to clear up memory or something.
+        if serializer is None:
+            raise Exceptions.SerializerNoneError(self)
+        del self._data[serializer]
 
-    def _get_data(self) -> a:
-        if self._data is ...:
-            data:a = super()._get_data()
-            self._data = type(data)()
-        return self._data
-
-    data = property(_get_data, File._set_data, File._del_data) # type: ignore
-
-    def __copy_empty__(self) -> AbstractFile[a]:
-        return self
 
 @Types.register_decorator("fake_file", None)
 class FakeFile[a](AbstractFile[a]):
     '''Similar to a File, but it can be created anywhere and using any hash/data.'''
 
     __slots__ = (
-        "data"
+        "_data"
     )
 
-    def __init__(self, display_name: str, data:a, data_hash: int) -> None:
+    def __init__(self, display_name: str, data:a, serializer:Serializer.Serializer|None, data_hash: int) -> None:
         super().__init__(display_name, data_hash)
-        self.data = data
+        if data is ...:
+            raise Exceptions.SerializerEllipsisError(self, serializer)
+        self._data = {serializer: data}
 
-    def __copy_empty__(self) -> AbstractFile[a]:
-        return FakeFile("empty_file", type(self.data)(), 0) # FakeFile does not need data_hash.
-        # the `hash` attribute must be different for caching reasons, so it's just 0.
+    def read(self, serializer: Serializer.Serializer|None) -> a:
+        if (output := self._data.get(serializer, ...)) is ...:
+            raise Exceptions.FileWrongSerializerError(self, list(self._data.keys()), serializer)
+        return output
 
-@Types.register_decorator(None, ..., is_file=True)
-class FileDiff[a]():
-    '''
-    Similar to a FakeFile, but contains the data from multiple files.
-    This exists because it's easier to hash or something.
-    '''
+    def set_data(self, serializer: Serializer.Serializer|None, data: a) -> None:
+        if data is ...:
+            raise Exceptions.SerializerEllipsisError(self, serializer)
+        self._data[serializer] = data
 
-    __slots__ = (
-        "data",
-        "display_names",
-        "files",
-        "hash",
-        "last_value",
-    )
-
-    def __init__(self, data:a|D.Diff[a], *files:AbstractFile[a]) -> None:
-        self.data = data
-        self.display_names:list[str] = [file.display_name for file in files]
-        self.hash = hash(files)
-        self.files = files
-        self.last_value = files[-1]
-
-    def __hash__(self) -> int:
-        return self.hash
-
-    def __repr__(self) -> str:
-        unique_display_names:list[str] = [] # list of display names such that the previous one is not equal to the current one.
-        for display_name in self.display_names:
-            if len(unique_display_names) == 0 or display_name != unique_display_names[-1]:
-                unique_display_names.append(display_name)
-        return f"<{self.__class__.__name__} {", ".join(f"\"{display_name}\"" for display_name in unique_display_names)} hash {hash_int_to_str(self.hash)}>"
-
-NoneType = type(None)
-
-def recursive_examine_data_for_files(data:Any, referenced_files:set[int]) -> None:
-    match data:
-        case int() | str() | float() | bool() | NoneType():
-            return
-        case dict():
-            for value in data.values():
-                recursive_examine_data_for_files(value, referenced_files)
-        case list():
-            for value in data:
-                recursive_examine_data_for_files(value, referenced_files)
-        case AbstractFile():
-            referenced_files.add(data.hash)
-            data.get_referenced_files(referenced_files)
-        case DataPath.DataPath():
-            recursive_examine_data_for_files(data.embedded_data, referenced_files)
-        case _:
-            raise TypeError(f"How do I recursively examine type {data.__class__.__name__} for files?")
+    def del_data(self, serializer: Serializer.Serializer|None) -> None:
+        del self._data[serializer]

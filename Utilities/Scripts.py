@@ -1,6 +1,4 @@
 import importlib
-import importlib.machinery
-import importlib.util
 from pathlib import Path
 from types import ModuleType
 from typing import Any, Callable, Iterable
@@ -83,7 +81,7 @@ class Scripts():
         for relative_name, module in modules.items():
             item_names:list[str]
             if hasattr(module, "__all__"):
-                self.all_type_verifier.base_verify(module.__all__, (relative_name,))
+                self.all_type_verifier.verify_throw(module.__all__, (relative_name,))
                 item_names = module.__all__
             else:
                 item_names = dir(module)

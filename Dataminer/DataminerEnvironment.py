@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, cast
 
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureInfo as StructureInfo
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
@@ -9,6 +10,10 @@ if TYPE_CHECKING:
 
 class DataminerDependencies():
     "Controls the dependencies of Dataminers."
+
+    __slots__ = (
+        "data",
+    )
 
     def __init__(self, data:dict[str,Any]) -> None:
         '''
@@ -54,12 +59,21 @@ class DataminerDependencies():
 
 class DataminerEnvironment():
 
-    def __init__(self, dependency_data:DataminerDependencies, structure_environment:StructureEnvironment.StructureEnvironment) -> None:
+    __slots__ = (
+        "dependency_data",
+        "structure_environment",
+    )
+
+    def __init__(
+        self,
+        dependency_data:DataminerDependencies,
+        structure_environment:StructureEnvironment.StructureEnvironment,
+    ) -> None:
         self.dependency_data = dependency_data
         self.structure_environment = structure_environment
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.dependency_data} {self.structure_environment}>"
 
-    def get_printer_environment(self, version:"Version.Version") -> StructureEnvironment.PrinterEnvironment:
-        return StructureEnvironment.PrinterEnvironment(self.structure_environment, None, version, 0)
+    def get_printer_environment(self, version:"Version.Version", structure_info:StructureInfo.StructureInfo) -> StructureEnvironment.PrinterEnvironment:
+        return StructureEnvironment.PrinterEnvironment(self.structure_environment, structure_info, None, version, 0)
