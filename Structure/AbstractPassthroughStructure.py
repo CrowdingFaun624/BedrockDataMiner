@@ -48,6 +48,13 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
             structure = self.get_structure(data.data, trace, environment)
             return structure.get_structure_chain_end(data, trace, environment) if structure is not None else None
 
+    def get_substructure_chain_end(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure|None:
+        substructure = self.get_structure(data.data, trace, environment)
+        if substructure is None:
+            return None
+        else:
+            return substructure.get_structure_chain_end(data, trace, environment)
+
     def diffize(self, data: Con.Con[D], bundle: tuple[int, ...], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> Mapping[tuple[int,...],Con.Don[D]]|EllipsisType:
         with trace.enter(self, self.name, data):
             structures = [(branch, self.get_structure(data.data, trace, environment[branch])) for branch in bundle]
@@ -110,7 +117,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
 
     def compare(self, datas: tuple[tuple[int, Con.Con[D]], ...], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Con.Don[D]|Diff.Diff[Con.Don[D]]|EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
-            structures = {branch: (data, self.get_structure_chain_end(data, trace, environment[branch])) for branch, data in datas}
+            structures = {branch: (data, self.get_substructure_chain_end(data, trace, environment[branch])) for branch, data in datas}
 
             bundles:list[tuple[int,...]] = []
             last_structure:Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None|EllipsisType = ...
@@ -187,10 +194,10 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
         with trace.enter(self, self.name, (data1, data2)):
             if data1 is data2 or data1 == data2:
                 return 1.0, True
-            structure1 = self.get_structure_chain_end(data1, trace, environment[branch1])
+            structure1 = self.get_substructure_chain_end(data1, trace, environment[branch1])
             if structure1 is None:
                 return float(is_similar := (data1 is data2 or data1 == data2)), is_similar
-            structure2 = self.get_structure_chain_end(data2, trace, environment[branch2])
+            structure2 = self.get_substructure_chain_end(data2, trace, environment[branch2])
             if structure1 is structure2:
                 return structure1.get_similarity(data1, data2, branch1, branch2, trace, environment)
             else:
@@ -224,7 +231,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
         if isinstance(data, Con.Don):
             structure:Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None|EllipsisType = ...
             for branch in data.iter_branches():
-                new_structure = self.get_structure_chain_end(data.get_con(branch), trace, environment[branch])
+                new_structure = self.get_substructure_chain_end(data.get_con(branch), trace, environment[branch])
                 if structure is ...:
                     structure = new_structure
                 elif new_structure is not structure:
@@ -233,7 +240,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
                 if structure is not None and structure is not ...: # an error occurred.
                     return structure.print_comparison
         if isinstance(data, Diff.Diff) and data.length == 1 and\
-            len(set((structures := [self.get_structure_chain_end(data[branch].get_con(branch), trace, environment[branch]) for branch in range(data.branch_count)]))) == 1 and structures[0] is not None:
+            len(set((structures := [self.get_substructure_chain_end(data[branch].get_con(branch), trace, environment[branch]) for branch in range(data.branch_count)]))) == 1 and structures[0] is not None:
             # if all structures are the same and not None.
             return structures[0].print_comparison
         if environment.default_delegate is not None:

@@ -339,7 +339,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
         if structure1 is None:
             return float(is_similar := (key1 is key2 or key1 == key2)), is_similar
         structure2 = self.get_key_structure(key2.data, value2.data, trace, (environment2 := environment[branch2]))
-        if structure1 is not structure2 or structure2 is None:
+        if structure2 is None:
             return float(is_similar := (key1 is key2 or key1 == key2)), is_similar
 
         structure1_chain_end = structure1.get_structure_chain_end(key1, trace, environment1)
@@ -348,7 +348,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
         structure2_chain_end = structure2.get_structure_chain_end(key2, trace, environment2)
         if structure1_chain_end is not structure2_chain_end:
             return float(is_similar := (key1 is key2 or key1 == key2)), is_similar
-        return structure1.get_similarity(key1, key2, branch1, branch2, trace, environment)
+        return structure1_chain_end.get_similarity(key1, key2, branch1, branch2, trace, environment)
 
     def get_value_similarity(self, key1:Con.Con[K], key2:Con.Con[K], value1:Con.Con[V], value2:Con.Con[V], branch1:int, branch2:int, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
         if value1 is value2 or value1 == value2:
@@ -358,7 +358,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
         if structure1 is None:
             return float(is_similar := (value1 is value2 or value1 == value2)), is_similar
         structure2 = self.get_value_structure(key2.data, value2.data, trace, (environment2 := environment[branch2]))
-        if structure1 is not structure2 or structure2 is None:
+        if structure2 is None:
             return float(is_similar := (value1 is value2 or value1 == value2)), is_similar
 
         structure1_chain_end = structure1.get_structure_chain_end(value1, trace, environment1)
@@ -367,7 +367,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
         structure2_chain_end = structure2.get_structure_chain_end(value2, trace, environment2)
         if structure1_chain_end is not structure2_chain_end:
             return float(is_similar := (value1 is value2 or value1 == value2)), is_similar
-        return structure1.get_similarity(value1, value2, branch1, branch2, trace, environment)
+        return structure1_chain_end.get_similarity(value1, value2, branch1, branch2, trace, environment)
 
     def assemble_output(
         self,
