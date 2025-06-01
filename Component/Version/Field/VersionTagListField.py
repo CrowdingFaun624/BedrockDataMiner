@@ -7,6 +7,7 @@ import Component.Field.Field as Field
 import Component.ScriptImporter as ScriptImporter
 import Component.Version.VersionComponent as VersionComponent
 import Component.VersionTag.VersionTagComponent as VersionTagComponent
+import Utilities.Trace as Trace
 
 
 class VersionTagListField(ComponentListField.ComponentListField["VersionTagComponent.VersionTagComponent"]):
@@ -32,8 +33,7 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         :version_component: The VersionComponent to test for inclusion.
         '''
         already_names = {linked_component.name for linked_component in self.subcomponents}
-        subcomponents = cast(list["VersionTagComponent.VersionTagComponent"], self.subcomponents)
-        subcomponents.extend(
+        self.subcomponents.extend(
             version_tag_component
             for version_tag_component in version_tag_components
             if version_tag_component.name not in already_names
@@ -43,9 +43,10 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
             )
         )
 
-    def resolve_create_finals(self) -> None:
-        if self.version_component is not None:
-            self.auto_assign(self.version_tag_components, self.version_component)
+    def resolve_create_finals(self, trace:Trace.Trace) -> None:
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            if self.version_component is not None:
+                self.auto_assign(self.version_tag_components, self.version_component)
 
     def set_field(
         self,
@@ -54,7 +55,10 @@ class VersionTagListField(ComponentListField.ComponentListField["VersionTagCompo
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
+        trace:Trace.Trace,
     ) -> tuple[Sequence["VersionTagComponent.VersionTagComponent"],Sequence["VersionTagComponent.VersionTagComponent"]]:
-        linked_components, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function)
-        self.version_tag_components = cast(dict[str,"VersionTagComponent.VersionTagComponent"], global_components[self.domain.name]["version_tags"]).values()
-        return linked_components, inline_components
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            linked_components, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function, trace)
+            self.version_tag_components = cast(dict[str,"VersionTagComponent.VersionTagComponent"], global_components[self.domain.name]["version_tags"]).values()
+            return linked_components, inline_components
+        return (), ()

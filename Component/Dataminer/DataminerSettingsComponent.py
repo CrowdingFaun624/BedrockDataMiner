@@ -5,19 +5,19 @@ import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
 import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
 import Component.Dataminer.DataminerCollectionComponent as DataminerCollectionComponent
-import Component.Field.ComponentDictField as ComponentDictField
 import Component.Field.ComponentField as ComponentField
 import Component.Field.ComponentListField as ComponentListField
 import Component.Field.Field as Field
 import Component.Field.FieldListField as FieldListField
 import Component.Field.ScriptedClassField as ScriptedClassField
 import Component.Pattern as Pattern
-import Component.Serializer.SerializerComponent as SerializerComponent
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 import Dataminer.Dataminer as Dataminer
 import Dataminer.DataminerSettings as DataminerSettings
+import Structure.StructureInfo as StructureInfo
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 DATAMINER_SETTINGS_PATTERN:Pattern.Pattern["DataminerSettingsComponent"] = Pattern.Pattern("is_dataminer_settings")
@@ -33,7 +33,7 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
         TypeVerifier.TypedDictKeyTypeVerifier("name", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("new", True, (str, type(None))),
         TypeVerifier.TypedDictKeyTypeVerifier("old", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("serializer", False, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.DictTypeVerifier(dict, str, str))),
+        TypeVerifier.TypedDictKeyTypeVerifier("structure_info", False, dict),
         TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
     )
 
@@ -45,17 +45,17 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
         "files_field_exists",
         "new_field",
         "old_field",
-        "serializer_field",
+        "structure_info",
     )
 
     def initialize_fields(self, data: ComponentTyping.DataminerSettingsTypedDict) -> Sequence[Field.Field]:
         self.files_field_exists = "files" in data
         self.arguments = data.get("arguments", {})
+        self.structure_info = data.get("structure_info", {})
 
         self.new_field = ComponentField.OptionalComponentField(data["new"], VersionComponent.VERSION_PATTERN, ("new",), assume_component_group="versions")
         self.old_field = ComponentField.OptionalComponentField(data["old"], VersionComponent.VERSION_PATTERN, ("old",), assume_component_group="versions")
         self.files_field = ComponentListField.ComponentListField(data.get("files", ()), VersionFileTypeComponent.VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
-        self.serializer_field = ComponentDictField.ComponentDictField((data["serializer"] if isinstance(data["serializer"], dict) else {"main": data["serializer"]}) if "serializer" in data else {}, SerializerComponent.SERIALIZER_PATTERN, ("serializer",), assume_component_group="serializers")
         self.dataminer_field = ScriptedClassField.OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=Dataminer.NullDataminer)
         self.dependencies_field = FieldListField.FieldListField([
             ComponentField.ComponentField(
@@ -65,37 +65,37 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
                 allow_inline=Field.InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", ()))
         ], ("dependencies",))
-        return (self.new_field, self.old_field, self.files_field, self.serializer_field, self.dataminer_field, self.dependencies_field)
+        return (self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field)
 
-    def create_final(self) -> DataminerSettings.DataminerSettings:
+    def create_final(self, trace:Trace.Trace) -> DataminerSettings.DataminerSettings:
         return DataminerSettings.DataminerSettings(
             kwargs=self.arguments,
             domain=self.domain
         )
 
-    def link_finals(self) -> list[Exception]:
-        exceptions = super().link_finals()
-        parent = cast("DataminerCollectionComponent.DataminerCollectionComponent", self.get_inline_parent())
-        exceptions.extend(self.serializer_field.check_coverage(lambda serializer_component: serializer_component.final, self.dataminer_field.object_class.serializer_types, self))
-        exceptions.extend(self.final.link_subcomponents(
-            file_name=parent.file_name,
-            name=parent.name,
-            structure=parent.structure_field.subcomponent.final,
-            dataminer_class=self.dataminer_field.object_class,
-            serializers=dict(self.serializer_field.map(lambda serializer_name, serializer_component: serializer_component.final)),
-            dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.subcomponent.final)),
-            start_version=self.old_field.map(lambda subcomponent: subcomponent.final),
-            end_version=self.new_field.map(lambda subcomponent: subcomponent.final),
-            version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.final))
-        ))
-        return exceptions
+    def link_finals(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().link_finals(trace)
+            parent = cast("DataminerCollectionComponent.DataminerCollectionComponent", self.get_inline_parent())
+            self.final.link_subcomponents(
+                trace,
+                file_name=parent.file_name,
+                name=parent.name,
+                structure=parent.structure_field.subcomponent.final,
+                dataminer_class=self.dataminer_field.object_class,
+                dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.subcomponent.final)),
+                start_version=self.old_field.map(lambda subcomponent: subcomponent.final),
+                end_version=self.new_field.map(lambda subcomponent: subcomponent.final),
+                structure_info=StructureInfo.StructureInfo(self.structure_info, self.domain, repr(self)),
+                version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.final))
+            )
 
-    def check(self) -> list[Exception]:
-        exceptions = super().check()
-        if self.dataminer_field.exists:
-            if not self.files_field_exists:
-                exceptions.append(Exceptions.DataminerCollectionFileError(False, self, "when \"name\" is not null"))
-        else:
-            if self.files_field_exists:
-                exceptions.append(Exceptions.DataminerCollectionFileError(True, self, "when \"name\" is null"))
-        return exceptions
+    def check(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().check(trace)
+            if self.dataminer_field.exists:
+                if not self.files_field_exists:
+                    trace.exception(Exceptions.DataminerCollectionFileError(False, "when \"name\" is not null"))
+            else:
+                if self.files_field_exists:
+                    trace.exception(Exceptions.DataminerCollectionFileError(True, "when \"name\" is null"))

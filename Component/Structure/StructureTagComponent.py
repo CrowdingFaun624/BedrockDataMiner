@@ -6,6 +6,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Structure.StructureTag as StructureTag
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 TAG_PATTERN:Pattern.Pattern["StructureTagComponent"] = Pattern.Pattern("is_structure_tag")
@@ -27,11 +28,8 @@ class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
         self.is_file = data.get("is_file", False)
         return ()
 
-    def create_final(self) -> StructureTag.StructureTag:
+    def create_final(self, trace:Trace.Trace) -> StructureTag.StructureTag:
         return StructureTag.StructureTag(
             name=self.name,
             is_file=self.is_file,
         )
-
-    def __hash__(self) -> int:
-        return hash(self.name)

@@ -22,7 +22,7 @@ class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.Versi
     )
 
     def initialize_fields(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict) -> Sequence[Field.Field]:
-        self.version_range_field = VersionRangeField.VersionRangeField(data["oldest"], data["newest"], ())
+        self.version_range_field = VersionRangeField.VersionRangeField(data["oldest"], data["newest"], ("oldest/newest",), ("oldest",), ("newest",))
         return (self.version_range_field,)
 
     def contains_version(self, version: "VersionComponent.VersionComponent") -> bool:

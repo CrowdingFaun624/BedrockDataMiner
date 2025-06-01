@@ -7,6 +7,7 @@ import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 
 
 class ComponentDictField[a:Component.Component](Field.Field):
@@ -58,25 +59,31 @@ class ComponentDictField[a:Component.Component](Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
+        trace:Trace.Trace,
     ) -> tuple[Sequence[a],Sequence[a]]:
-        self.subcomponents = {}
-        inline_components:list[a] = []
-        for key, subcomponent_data in self.subcomponents_data.items():
-            subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, self.pattern, components, global_components, self.error_path, create_component_function, self.assume_type, self.assume_component_group)
-            self.has_reference_components = self.has_reference_components or not is_inline
-            self.has_inline_components = self.has_inline_components or is_inline
-            self.subcomponents[key] = subcomponent
-            if is_inline:
-                inline_components.append(subcomponent)
-        return tuple(self.subcomponents.values()), inline_components
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            self.subcomponents = {}
+            inline_components:list[a] = []
+            for key, subcomponent_data in self.subcomponents_data.items():
+                with trace.enter_key(key, subcomponent_data):
+                    subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
+                    self.has_reference_components = self.has_reference_components or not is_inline
+                    self.has_inline_components = self.has_inline_components or is_inline
+                    if subcomponent is ...:
+                        continue
+                    self.subcomponents[key] = subcomponent
+                    if is_inline:
+                        inline_components.append(subcomponent)
+            return tuple(self.subcomponents.values()), inline_components
+        return (), ()
 
-    def check(self, source_component:"Component.Component") -> list[Exception]:
-        exceptions:list[Exception] = super().check(source_component)
-        if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
-            exceptions.append(Exceptions.ReferenceComponentError(source_component, self))
-        if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
-            exceptions.append(Exceptions.InlineComponentError(source_component, self))
-        return exceptions
+    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            super().check(source_component, trace)
+            if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
+                trace.exception(Exceptions.ReferenceComponentError(source_component, self))
+            if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
+                trace.exception(Exceptions.InlineComponentError(source_component, self))
 
     def for_each[b](self, function:Callable[[str, a],b]) -> None:
         '''
@@ -93,51 +100,43 @@ class ComponentDictField[a:Component.Component](Field.Field):
         '''
         return zip(self.subcomponents.keys(), starmap(function, self.subcomponents.items()))
 
-    def check_coverage[b](self, get_final_function:Callable[[a],b], linked_requirements:dict[str,type[b]], component:"Component.Component") -> Iterator[Exception]:
+    def check_coverage[b](self, get_final_function:Callable[[a],b], linked_requirements:dict[str,type[b]], trace:Trace.Trace) -> None:
         '''
         :get_final_function: A function that turns the Components referenced in this Field into their finals.
         :linked_requirements: The dictionary that verifies the validity of this Field's Components.
-        :component: The Component that owns this Field.
         '''
-        linked_objects:dict[str,b] = {key: get_final_function(linked_component) for key, linked_component in self.subcomponents.items()}
-        yield from (
-            Exceptions.LinkedComponentMissingError(component, key, linked_type)
-            for key, linked_type in linked_requirements.items()
-            if key not in linked_objects
-        )
-        yield from (
-            Exceptions.LinkedComponentExtraError(component, key, linked_object, [key for key in linked_requirements if key not in linked_objects])
-            for key, linked_object in linked_objects.items()
-            if key not in linked_requirements
-        )
-        yield from (
-            Exceptions.LinkedComponentTypeError(component, key, required_type, linked_serializer)
-            for key, linked_serializer in linked_objects.items()
-            if (required_type := linked_requirements.get(key)) is not None and not isinstance(linked_serializer, required_type)
-        )
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            linked_objects:dict[str,b] = {key: get_final_function(linked_component) for key, linked_component in self.subcomponents.items()}
+            for key, linked_type in linked_requirements.items():
+                with trace.enter_key(key, linked_type):
+                    if key not in linked_objects:
+                        trace.exception(Exceptions.LinkedComponentMissingError(key, linked_type))
+            for key, linked_object in linked_objects.items():
+                with trace.enter_key(key, linked_object):
+                    if key not in linked_requirements:
+                        Exceptions.LinkedComponentExtraError(key, linked_object, [key for key in linked_requirements if key not in linked_objects])
+                    required_type = linked_requirements.get(key)
+                    if required_type is not None and not isinstance(linked_object, required_type):
+                        Exceptions.LinkedComponentTypeError(key, required_type, linked_object)
 
-    def check_coverage_types[b](self, get_final_function:Callable[[a],type[b]], linked_requirements:dict[str,type[b]], component:"Component.Component") -> Iterator[Exception]:
+    def check_coverage_types[b](self, get_final_function:Callable[[a],type[b]], linked_requirements:dict[str,type[b]], trace:Trace.Trace) -> None:
         '''
         :get_final_function: A function that turns the Components referenced in this Field into their finals.
         :linked_requirements: The dictionary that verifies the validity of this Field's Components.
-        :component: The Component that owns this Field.
         '''
-        linked_objects:dict[str,type[b]] = {key: get_final_function(linked_component) for key, linked_component in self.subcomponents.items()}
-        yield from (
-            Exceptions.LinkedComponentMissingError(component, key, linked_type)
-            for key, linked_type in linked_requirements.items()
-            if key not in linked_objects
-        )
-        yield from (
-            Exceptions.LinkedComponentExtraError(component, key, linked_object, [key for key in linked_requirements if key not in linked_objects])
-            for key, linked_object in linked_objects.items()
-            if key not in linked_requirements
-        )
-        yield from (
-            Exceptions.LinkedComponentTypeError(component, key, required_type, linked_serializer)
-            for key, linked_serializer in linked_objects.items()
-            if (required_type := linked_requirements.get(key)) is not None and not issubclass(linked_serializer, required_type)
-        )
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            linked_objects:dict[str,type[b]] = {key: get_final_function(linked_component) for key, linked_component in self.subcomponents.items()}
+            for key, linked_type in linked_requirements.items():
+                with trace.enter_key(key, linked_type):
+                    if key not in linked_objects:
+                        trace.exception(Exceptions.LinkedComponentMissingError(key, linked_type))
+            for key, linked_object in linked_objects.items():
+                with trace.enter_key(key, linked_object):
+                    if key not in linked_requirements:
+                        trace.exception(Exceptions.LinkedComponentExtraError(key, linked_object, [key for key in linked_requirements if key not in linked_objects]))
+                    required_type = linked_requirements.get(key)
+                    if required_type is not None and not issubclass(linked_object, required_type):
+                        trace.exception(Exceptions.LinkedComponentTypeError(key, required_type, linked_object))
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} len {len(self)} id {id(self)}>"

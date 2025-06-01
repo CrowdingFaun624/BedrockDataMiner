@@ -7,6 +7,7 @@ import Component.Field.Field as Field
 import Component.ScriptImporter as ScriptImporter
 import Component.Structure.StructureTagComponent as StructureTagComponent
 import Structure.StructureTag as StructureTag
+import Utilities.Trace as Trace
 
 
 class TagListField(ComponentListField.ComponentListField["StructureTagComponent.StructureTagComponent"]):
@@ -34,14 +35,17 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
+        trace:Trace.Trace,
     ) -> tuple[Sequence["StructureTagComponent.StructureTagComponent"],Sequence["StructureTagComponent.StructureTagComponent"]]:
-        subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function)
-        if self.import_from_field is not None:
-            self.import_from_field.set_field(source_component, components, global_components, functions, create_component_function)
-            self.extend(self.import_from_field.subcomponents)
-        for tag_set in self.tag_sets:
-            tag_set.update(self.subcomponents)
-        return subcomponents, inline_components
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function, trace)
+            if self.import_from_field is not None:
+                self.import_from_field.set_field(source_component, components, global_components, functions, create_component_function, trace)
+                self.extend(self.import_from_field.subcomponents)
+            for tag_set in self.tag_sets:
+                tag_set.update(self.subcomponents)
+            return subcomponents, inline_components
+        return (), ()
 
     def import_from(self, tag_list_field:"TagListField") -> Self:
         '''

@@ -3,30 +3,33 @@ from typing import Iterable
 
 import Component.Component as Component
 import Component.ImporterEnvironment as ImporterEnvironment
-import Component.Structure.BaseComponent as BaseComponent
+import Component.Structure.StructureBaseComponent as StructureBaseComponent
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 
 
 class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[StructureBase.StructureBase]):
 
     __slots__ = ()
 
-    def get_base_component(self, components:dict[str,Component.Component], name:str) -> BaseComponent.BaseComponent:
-        base_components:dict[str,BaseComponent.BaseComponent] = {
+    def get_base_component(self, components:dict[str,Component.Component], name:str) -> StructureBaseComponent.StructureBaseComponent:
+        base_components:dict[str,StructureBaseComponent.StructureBaseComponent] = {
             component_name: component
             for component_name, component in components.items()
-            if isinstance(component, BaseComponent.BaseComponent)
+            if isinstance(component, StructureBaseComponent.StructureBaseComponent)
         }
         if len(base_components) != 1:
             raise Exceptions.BaseComponentCountError(name, list(base_components.values()))
         return next(iter(base_components.values()))
 
-    def get_output(self, components: dict[str,Component.Component], name: str) -> StructureBase.StructureBase:
+    def get_output(self, components: dict[str,Component.Component], name: str, trace:Trace.Trace) -> StructureBase.StructureBase:
         return self.get_base_component(components, name).final
 
-    def get_assumed_used_components(self, components: dict[str, Component.Component], name:str) -> Iterable[Component.Component]:
-        return (self.get_base_component(components, name),)
+    def get_assumed_used_components(self, components: dict[str, Component.Component], name:str, trace:Trace.Trace) -> Iterable[Component.Component]:
+        with trace.enter(self, name, ...):
+            return (self.get_base_component(components, name),)
+        return ()
 
     def get_from_directory(self, directory_path:Path) -> Iterable[Path]:
         for subpath in directory_path.iterdir():

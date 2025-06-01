@@ -11,6 +11,7 @@ import Component.Pattern as Pattern
 import Component.Version.Field.VersionTagListField as VersionTagListField
 import Component.Version.VersionFileComponent as VersionFileComponent
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 import Version.Version as Version
 
@@ -64,7 +65,7 @@ class VersionComponent(Component.Component[Version.Version]):
         self.files_field = ComponentListField.ComponentListField(self.normalize_files(data["files"]), VersionFileComponent.VERSION_FILE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.inline, assume_type=VersionFileComponent.VersionFileComponent.class_name)
         return (self.parent_field, self.tags_field, self.files_field)
 
-    def create_final(self) -> Version.Version:
+    def create_final(self, trace:Trace.Trace) -> Version.Version:
         return Version.Version(
             name=self.name,
             domain=self.domain,
@@ -72,20 +73,20 @@ class VersionComponent(Component.Component[Version.Version]):
             index=self.get_index(),
         )
 
-    def link_finals(self) -> list[Exception]:
-        exceptions = super().link_finals()
-        self.final.link_finals(
-            parent=self.parent_field.map(lambda subcomponent: subcomponent.final),
-            tags=list(self.tags_field.map(lambda version_tag_component: version_tag_component.final)),
-            version_files=list(self.files_field.map(lambda version_file_component: version_file_component.final)),
-        )
-        return exceptions
+    def link_finals(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().link_finals(trace)
+            self.final.link_finals(
+                parent=self.parent_field.map(lambda subcomponent: subcomponent.final),
+                tags=list(self.tags_field.map(lambda version_tag_component: version_tag_component.final)),
+                version_files=list(self.files_field.map(lambda version_file_component: version_file_component.final)),
+            )
 
-    def check(self) -> list[Exception]:
-        exceptions = super().check()
-        parent_component = self.parent_field.subcomponent
-        if parent_component is not None and parent_component is self:
-            exceptions.append(Exceptions.InvalidParentVersionError(self.final, parent_component.final))
-        if self.time is not None and compare_to_now(self.time):
-            exceptions.append(Exceptions.InvalidVersionTimeError(self.final, self.time, "time is after today"))
-        return exceptions
+    def check(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().check(trace)
+            parent_component = self.parent_field.subcomponent
+            if parent_component is not None and parent_component is self:
+                trace.exception(Exceptions.InvalidParentVersionError(self.final, parent_component.final))
+            if self.time is not None and compare_to_now(self.time):
+                trace.exception(Exceptions.InvalidVersionTimeError(self.final, self.time, "time is after today"))

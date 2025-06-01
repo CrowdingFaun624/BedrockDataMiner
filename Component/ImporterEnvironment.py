@@ -1,8 +1,10 @@
 from pathlib import Path
+from types import EllipsisType
 from typing import Any, Iterable
 
 import Component.Component as Component
 import Domain.Domain as Domain
+import Utilities.Trace as Trace
 
 
 class ImporterEnvironment[a]():
@@ -29,18 +31,20 @@ class ImporterEnvironment[a]():
         '''
         return None if self.single_component else {}
 
-    def get_output(self, components:dict[str,Component.Component], name:str) -> a:
+    def get_output(self, components:dict[str,Component.Component], name:str, trace:Trace.Trace) -> a|EllipsisType:
         '''
         Given the Component group, return the intended output from the Component group.
         By default, returns the finals of all Components.
         :components: The Components in the current Component group.
         :name: The name of the current Component group.
         '''
-        output = {component_name: component.final for component_name, component in components.items()}
-        if self.single_component:
-            return output[""]
-        else:
-            return output # type: ignore
+        with trace.enter(self, name, ...):
+            output = {component_name: component.final for component_name, component in components.items()}
+            if self.single_component:
+                return output[""]
+            else:
+                return output # type: ignore
+        return ...
 
     def get_component_files(self) -> Iterable[Path]:
         '''
@@ -48,17 +52,19 @@ class ImporterEnvironment[a]():
         '''
         ...
 
-    def get_assumed_used_components(self, components:dict[str,Component.Component], name:str) -> Iterable[Component.Component]:
+    def get_assumed_used_components(self, components:dict[str,Component.Component], name:str, trace:Trace.Trace) -> Iterable[Component.Component]:
         '''
         Returns the Components that are marked as used.
         :components: All Components in his Component group.
         '''
-        if self.single_component:
-            return components.values()
-        else:
-            return ()
+        with trace.enter(self, name, ...):
+            if self.single_component:
+                return components.values()
+            else:
+                return ()
+        return ()
 
-    def finalize(self, output:a, other_outputs:dict[str,Any]) -> None:
+    def finalize(self, output:a, other_outputs:dict[str,Any], name:str, trace:Trace.Trace) -> None:
         '''
         Run any final actions on the output.
         :output: The output that `get_output` returned.
@@ -66,13 +72,13 @@ class ImporterEnvironment[a]():
         '''
         ...
 
-    def check(self, output:a, other_outputs:dict[str,Any]) -> list[Exception]:
+    def check(self, output:a, other_outputs:dict[str,Any], name:str, trace:Trace.Trace) -> None:
         '''
         Make sure that this Component's types are all in order; no error could occur.
         :output: The output that `get_output` returned.
         :other_outputs: The outputs of all Component groups.
         '''
-        return []
+        ...
 
     def get_component_group_name(self, file_path:Path) -> str:
         '''

@@ -5,6 +5,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
 import Component.ScriptImporter as ScriptImporter
+import Utilities.Trace as Trace
 
 
 class FunctionField(Field.Field):
@@ -30,9 +31,12 @@ class FunctionField(Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
+        trace:Trace.Trace,
     ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
-        function = functions.callables.get(self.function_name, source_component, self.error_path)
-        self.function = function
+        with trace.enter_keys(self.trace_path, self.function_name):
+            function = functions.callables.get(self.function_name, source_component)
+            self.function = function
+            return (), ()
         return (), ()
 
 class OptionalFunctionField(FieldContainer.FieldContainer):

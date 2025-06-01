@@ -1,3 +1,4 @@
+from types import EllipsisType
 from typing import Any, Callable, Literal, NotRequired, Required, TypedDict
 
 import Component.Component as Component
@@ -15,34 +16,6 @@ class AccessorTypeTypedDict(TypedDict):
     propagated_arguments: NotRequired[dict[str,Any]]
     type: NotRequired[Literal["AccessorType"]]
 
-class BaseTypedDict(TypedDict):
-    default_delegate: NotRequired[str]
-    default_delegate_arguments: NotRequired[dict[str,Any]]
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    subcomponent: Required[str]
-    type: NotRequired[Literal["Base"]]
-    types: Required[str|list[str]]
-
-class CacheTypedDict(TypedDict):
-    cache_check_all_types: NotRequired[bool]
-    cache_compare: NotRequired[bool]
-    cache_compare_text: NotRequired[bool]
-    cache_get_referenced_files: NotRequired[bool]
-    cache_get_similarity: NotRequired[bool]
-    cache_get_tag_paths: NotRequired[bool]
-    cache_normalize: NotRequired[bool]
-    cache_print_text: NotRequired[bool]
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    remove_threshold: NotRequired[int]
-    subcomponent: Required[str]
-    type: NotRequired[Literal["Cache"]]
-    types: Required[str|list[str]]
-
 class CoverageDataminerCollectionTypedDict(TypedDict):
     comparing_disabled: NotRequired[bool]
     disabled: NotRequired[bool]
@@ -52,8 +25,9 @@ class CoverageDataminerCollectionTypedDict(TypedDict):
     remove_regex: NotRequired[list[str]]
     remove_prefixes: NotRequired[list[str]]
     remove_suffixes: NotRequired[list[str]]
-    structure: str
-    type: Literal["CoverageDataminerCollection"]
+    structure: Required[str]
+    structure_info: NotRequired[dict[str,Any]]
+    type: NotRequired[Literal["CoverageDataminerCollection"]]
 
 class DataminerCollectionTypedDict(TypedDict):
     comparing_disabled: NotRequired[bool]
@@ -70,92 +44,15 @@ class DataminerSettingsTypedDict(TypedDict):
     name: Required[str|None]
     new: Required[str|None]
     old: Required[str|None]
-    serializer: NotRequired[str|dict[str,str]]
+    structure_info: NotRequired[dict[str,Any]]
     type: NotRequired[Literal["DataminerSettings"]]
 
-class DictTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    detect_key_moves: NotRequired[bool]
-    key_component: NotRequired[str]
-    key_weight: NotRequired[float]
-    max_key_similarity_descendent_depth: NotRequired[int|None]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    min_key_similarity_threshold: NotRequired[float]
-    min_value_similarity_threshold: NotRequired[float]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    required_keys: NotRequired[list[str]]
-    sort: NotRequired[Literal["none", "by_key", "by_value"]]
-    subcomponent: Required[str|None]
-    tags: NotRequired[str|list[str]]
-    this_type: NotRequired[str|list[str]]
-    type: NotRequired[Literal["Dict"]]
-    types: Required[str|list[str]]
-    value_weight: NotRequired[float]
-
-class FileTypedDict(TypedDict):
-    content_types: Required[str|list[str]]
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    file_types: NotRequired[str|list[str]]
-    garbage_collect: NotRequired[bool]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    subcomponent: Required[str|None]
-    type: NotRequired[Literal["Passthrough"]]
-
-class KeymapKeyTypedDict(TypedDict):
-    delegate_arguments: NotRequired[dict[str,Any]]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    required: NotRequired[bool]
-    subcomponent: NotRequired["str|None|StructureTypedDicts"]
-    tags: NotRequired[str|list[str]]
-    types: Required[str|list[str]]
-    weight: NotRequired[int]
-
-class KeymapTypedDict(TypedDict):
-    default_max_similarity_descendent_depth: NotRequired[int|None]
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    detect_key_moves: NotRequired[bool]
-    imports: NotRequired[str|list[str]]
-    key_component: NotRequired[str]
-    key_weight: NotRequired[float]
-    keys: Required[dict[str,KeymapKeyTypedDict]]
-    max_key_similarity_descendent_depth: NotRequired[int|None]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    min_key_similarity_threshold: NotRequired[float]
-    min_value_similarity_threshold: NotRequired[float]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    sort: NotRequired[Literal["none", "by_key", "by_value", "by_component_order"]]
-    tags: NotRequired[str|list[str]]
-    this_type: NotRequired[str|list[str]]
-    type: NotRequired[Literal["Keymap"]]
-    value_weight: NotRequired[float]
+class KeyFilterTypedDict(TypedDict):
+    key: Required[str]
+    type: NotRequired[str]
 
 class LatestSlotTypedDict(TypedDict):
     type: NotRequired[Literal["LatestSlot"]]
-
-class ListTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    subcomponent: Required[str|None]
-    tags: NotRequired[str|list[str]]
-    this_type: NotRequired[str|list[str]]
-    type: NotRequired[Literal["List"]]
-    types: Required[str|list[str]]
 
 class LogTypedDict(TypedDict):
     file_name: Required[str]
@@ -163,91 +60,29 @@ class LogTypedDict(TypedDict):
     reset_on_reload: Required[bool]
     type: NotRequired[Literal["Log"]]
 
+class MetaFilterTypedDict(TypedDict):
+    subfilters: Required[list["ComponentTypedDicts"]]
+    type: NotRequired[str]
+
 class NormalizerTypedDict(TypedDict):
     arguments: NotRequired[dict[str,Any]]
     function_name: Required[str]
     type: NotRequired[Literal["Normalizer"]]
-    version_range: NotRequired[list[str|None]]
-
-class PrimitiveTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    tags: NotRequired[str|list[str]]
-    type: NotRequired[Literal["Primitive"]]
-    types: Required[str|list[str]]
+    filter: NotRequired["str|ComponentTypedDicts|None"]
 
 class RangeVersionTagAutoAssignerTypedDict(TypedDict):
     newest: Required[str|None]
     oldest: Required[str|None]
     type: NotRequired[Literal["RangeVersionTagAutoAssign"]]
 
-class SequenceTypedDict(TypedDict):
-    addition_cost: NotRequired[int|float]
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    deletion_cost: NotRequired[int|float]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    subcomponent: Required[str|None]
-    substitution_cost: NotRequired[int|float]
-    tags: NotRequired[str|list[str]]
-    this_type: NotRequired[str|list[str]]
-    type: NotRequired[Literal["List"]]
-    types: Required[str|list[str]]
-
 class SerializerTypedDict(TypedDict):
     arguments: NotRequired[dict[str,Any]]
-    linked_serializers: NotRequired[dict[str,str]]
     serializer_class: Required[str]
     type: NotRequired[Literal["Serializer"]]
-
-class SetTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    min_similarity_threshold: NotRequired[float]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[str|list[str]]
-    sort: NotRequired[bool]
-    subcomponent: Required[str|None]
-    tags: NotRequired[str|list[str]]
-    this_type: NotRequired[str|list[str]]
-    type: NotRequired[Literal["List"]]
-    types: Required[str|list[str]]
-
-class StringTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    normalizer: NotRequired[str|list[str]]
-    similarity_function: NotRequired[str|None]
-    tags: NotRequired[str|list[str]]
-    type: NotRequired[Literal["Primitive"]]
-    types: NotRequired[str|list[str]]
 
 class StructureTagTypedDict(TypedDict):
     is_file: NotRequired[bool]
     type: NotRequired[Literal["StructureTag"]]
-
-class SwitchTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[list[str]]
-    subcomponents: Required[dict[str,str|None]]
-    switch_function: Required["str|NormalizerTypedDict"]
-    type: NotRequired[Literal["Switch"]]
-    types: Required[str|list[str]]
 
 class TablifierTypedDict(TypedDict):
     dataminer_collection: Required[str]
@@ -260,16 +95,11 @@ class TypeAliasTypedDict(TypedDict):
     type: NotRequired[Literal["TypeAlias"]]
     types: Required[list[str]]
 
-class UnionTypedDict(TypedDict):
-    delegate: NotRequired[str]
-    delegate_arguments: NotRequired[dict[str,Any]]
-    max_similarity_ancestor_depth: NotRequired[int|None]
-    max_similarity_descendent_depth: NotRequired[int|None]
-    normalizer: NotRequired[str|list[str]]
-    post_normalizer: NotRequired[str|list[str]]
-    pre_normalized_types: NotRequired[list[str]]
-    subcomponents: Required[dict[str,str|None]]
-    type: NotRequired[Literal["Union"]]
+class ValueFilterTypedDict(TypedDict):
+    default: NotRequired[bool]
+    key: Required[str]
+    type: NotRequired[str]
+    value: Required[object]
 
 class VersionFileTypedDict(TypedDict):
     accessors: Required[list[AccessorTypedDict]]
@@ -308,38 +138,165 @@ class VersionTypedDict(TypedDict):
     time: Required[str|None]
     type: NotRequired[Literal["Version"]]
 
+# STRUCTURE COMPONENTS
+
+class StructureTypedDict(TypedDict):
+    pass
+
+class IterableStructureTypedDict(StructureTypedDict):
+    delegate: NotRequired[str|None]
+    delegate_arguments: NotRequired[dict[str,Any]]
+    key_function: NotRequired[str]
+    key_types: NotRequired[str|list[str]]
+    normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
+    post_normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
+    pre_normalized_types: NotRequired[str|list[str]]
+    required_keys: NotRequired[list[str]]
+    tags: NotRequired[str|list[str]]
+    this_types: Required[str|list[str]]
+
+class PassthroughStructureTypedDict(StructureTypedDict):
+    normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
+    post_normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
+    pre_normalized_types: NotRequired[str|list[str]]
+    tags: NotRequired[str|list[str]]
+
+class BranchlessStructureTypedDict(PassthroughStructureTypedDict):
+    structure: Required["str|ComponentTypedDicts|None"]
+    this_types: Required[str|list[str]]
+
+class PrimitiveStructureTypedDict(StructureTypedDict):
+    delegate: NotRequired[str|None]
+    delegate_arguments: NotRequired[dict[str,Any]]
+    normalizers: NotRequired["str|ComponentTypedDicts|list[str|ComponentTypedDicts]"]
+    pre_normalized_types: NotRequired[str|list[str]]
+    tags: NotRequired[str|list[str]]
+    this_types: NotRequired[str|list[str]]
+
+class MappingStructureTypedDict(IterableStructureTypedDict):
+    min_key_similarity_threshold: NotRequired[float]
+    min_value_similarity_threshold: NotRequired[float]
+
+class CacheStructureTypedDict(BranchlessStructureTypedDict):
+    removal_threshold: NotRequired[int]
+    delegate: NotRequired[str|None]
+    delegate_arguments: NotRequired[dict[str,Any]]
+
+class ConditionStructureItemTypedDict(TypedDict):
+    filter: Required["str|ComponentTypedDicts|None"]
+    structure: NotRequired["str|ComponentTypedDicts|None"]
+    types: Required[str|list[str]]
+
+class ConditionStructureTypedDict(PassthroughStructureTypedDict):
+    substructures: Required[list[ConditionStructureItemTypedDict]]
+
+class DictStructureTypedDict(MappingStructureTypedDict):
+    allow_key_moves: NotRequired[bool]
+    allow_same_key_optimization: NotRequired[bool|None]
+    key_structure: NotRequired["str|ComponentTypedDicts|None"]
+    key_weight: NotRequired[int]
+    value_structure: Required["str|ComponentTypedDicts|None"]
+    value_types: Required[str|list[str]]
+    value_weight: NotRequired[int]
+
+class FileStructureTypedDict(PassthroughStructureTypedDict):
+    content_types: Required[str|list[str]]
+    file_types: NotRequired[str|list[str]]
+    serializer: Required["str|ComponentTypedDicts"]
+    structure: Required["str|ComponentTypedDicts|None"]
+
+class KeymapStructureKeyTypedDict(TypedDict):
+    delegate_arguments: NotRequired[dict[str,Any]]
+    required: NotRequired[bool]
+    similarity_weight: NotRequired[int]
+    structure: NotRequired["str|ComponentTypedDicts|None"]
+    tags: NotRequired[str|list[str]]
+    types: Required[str|list[str]]
+    value_weight: NotRequired[int|None]
+
+class KeymapStructureTypedDict(MappingStructureTypedDict):
+    allow_key_moves: NotRequired[bool]
+    imports: NotRequired[str|list[str]]
+    key_structure: NotRequired["str|ComponentTypedDicts|None"]
+    key_weight: NotRequired[int]
+    keys: NotRequired[dict[str,KeymapStructureKeyTypedDict]]
+    value_weight: NotRequired[int]
+
+class NumberStructureTypedDict(PrimitiveStructureTypedDict):
+    normal_value: Required[float|int]
+    similarity_function: NotRequired[str]
+
+class SequenceStructureTypedDict(IterableStructureTypedDict):
+    addition_cost: NotRequired[float]
+    deletion_cost: NotRequired[float]
+    key_structure: NotRequired["str|ComponentTypedDicts|None"]
+    key_weight: NotRequired[int|None]
+    max_square_length: NotRequired[int]
+    substitution_cost: NotRequired[float]
+    value_structure: Required["str|ComponentTypedDicts|None"]
+    value_types: Required[str|list[str]]
+    value_weight: NotRequired[int]
+
+class StringStructureTypedDict(PrimitiveStructureTypedDict):
+    max_square_length: NotRequired[int]
+    similarity_function: NotRequired[str]
+    similarity_weight_function: NotRequired[str]
+
+class StructureBaseTypedDict(BranchlessStructureTypedDict):
+    default_delegate: NotRequired[str|None]
+    default_delegate_arguments: NotRequired[dict[str,Any]]
+    delegate: NotRequired[str|None]
+    delegate_arguments: NotRequired[dict[str,Any]]
+
+class SwitchStructureItemTypedDict(TypedDict):
+    structure: NotRequired["str|ComponentTypedDicts|None"]
+    types: Required[str|list[str]]
+
+class SwitchStructureTypedDict(PassthroughStructureTypedDict):
+    switch_function: Required[str]
+    substructures: Required[dict[str, SwitchStructureItemTypedDict]]
+
+class UnionStructureTypedDict(PassthroughStructureTypedDict):
+    substructures: Required[dict[str, "str|ComponentTypedDicts|None"]]
+
 type AutoAssignerTypedDicts = RangeVersionTagAutoAssignerTypedDict
 type ComponentTypedDicts = \
     AccessorTypedDict|\
     AccessorTypeTypedDict|\
-    BaseTypedDict|\
-    CacheTypedDict|\
+    BranchlessStructureTypedDict|\
+    CacheStructureTypedDict|\
+    ConditionStructureTypedDict|\
     CoverageDataminerCollectionTypedDict|\
     DataminerCollectionTypedDict|\
     DataminerSettingsTypedDict|\
-    DictTypedDict|\
-    FileTypedDict|\
-    KeymapTypedDict|\
+    DictStructureTypedDict|\
+    FileStructureTypedDict|\
+    IterableStructureTypedDict|\
+    KeymapStructureTypedDict|\
     LatestSlotTypedDict|\
-    ListTypedDict|\
+    MappingStructureTypedDict|\
+    MetaFilterTypedDict|\
     NormalizerTypedDict|\
-    PrimitiveTypedDict|\
+    NumberStructureTypedDict|\
+    PassthroughStructureTypedDict|\
+    PrimitiveStructureTypedDict|\
     RangeVersionTagAutoAssignerTypedDict|\
-    SequenceTypedDict|\
+    SequenceStructureTypedDict|\
     SerializerTypedDict|\
-    SetTypedDict|\
-    StringTypedDict|\
+    StringStructureTypedDict|\
+    StructureBaseTypedDict|\
     StructureTagTypedDict|\
+    StructureTypedDict|\
+    SwitchStructureTypedDict|\
     TablifierTypedDict|\
     TypeAliasTypedDict|\
-    UnionTypedDict|\
+    UnionStructureTypedDict|\
+    ValueFilterTypedDict|\
     VersionFileTypedDict|\
     VersionFileTypeTypedDict|\
     VersionTagOrderTypedDict|\
     VersionTagTypedDict|\
     VersionTypedDict
 
-type StructureTypedDicts = CacheTypedDict|DictTypedDict|UnionTypedDict|KeymapTypedDict|ListTypedDict|FileTypedDict|PrimitiveTypedDict|SequenceTypedDict|SetTypedDict|StringTypedDict
-
 type ComponentGroupFileType = dict[str,ComponentTypedDicts]
-type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component.Component",str|None,tuple[str,...]],"Component.Component"]
+type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component.Component",str|None,tuple[str,...]],"Component.Component|EllipsisType"]

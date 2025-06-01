@@ -3,6 +3,7 @@ import Component.Field.ComponentField as ComponentField
 import Component.Field.FieldContainer as FieldContainer
 import Component.Version.VersionComponent as VersionComponent
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 import Version.VersionRange as VersionRange
 
 
@@ -15,14 +16,14 @@ class VersionRangeField(FieldContainer.FieldContainer[ComponentField.OptionalCom
         "stop_version_field",
     )
 
-    def __init__(self, start_version_str:str|None, stop_version_str:str|None, path: tuple[str,...]) -> None:
+    def __init__(self, start_version_str:str|None, stop_version_str:str|None, path: tuple[str,...], start_path:tuple[str,...], stop_path:tuple[str,...]) -> None:
         '''
         :start_version_str: The name of the oldest Version (inclusive).
         :stop_version_str: The name of the newest Version (exclusive).
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        self.start_version_field = ComponentField.OptionalComponentField(start_version_str, VersionComponent.VERSION_PATTERN, path, assume_component_group="versions")
-        self.stop_version_field = ComponentField.OptionalComponentField(stop_version_str, VersionComponent.VERSION_PATTERN, path, assume_component_group="versions")
+        self.start_version_field = ComponentField.OptionalComponentField(start_version_str, VersionComponent.VERSION_PATTERN, start_path, assume_component_group="versions")
+        self.stop_version_field = ComponentField.OptionalComponentField(stop_version_str, VersionComponent.VERSION_PATTERN, stop_path, assume_component_group="versions")
         self.equals = start_version_str == stop_version_str
         self._final:VersionRange.VersionRange|None = None
         super().__init__([self.start_version_field, self.stop_version_field], path)
@@ -43,13 +44,13 @@ class VersionRangeField(FieldContainer.FieldContainer[ComponentField.OptionalCom
         else:
             raise Exceptions.InvalidStateError("logic has failed us")
 
-    def check(self, source_component: Component.Component) -> list[Exception]:
-        exceptions = super().check(source_component)
-        start_version = self.start_version_field.subcomponent
-        stop_version = self.stop_version_field.subcomponent
-        if start_version is not None and stop_version is not None and start_version.get_index() > stop_version.get_index():
-            exceptions.append(Exceptions.VersionRangeOrderError(self, start_version, stop_version))
-        return exceptions
+    def check(self, source_component: Component.Component, trace:Trace.Trace) -> None:
+        with trace.enter_keys(self.trace_path, (self.start_version_field.subcomponent_data, self.stop_version_field.subcomponent_data)):
+            super().check(source_component, trace)
+            start_version = self.start_version_field.subcomponent
+            stop_version = self.stop_version_field.subcomponent
+            if start_version is not None and stop_version is not None and start_version.get_index() > stop_version.get_index():
+                trace.exception(Exceptions.VersionRangeOrderError(self, start_version, stop_version))
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} \"{str(self.start_version_field.subcomponent_data)}\"–\"{str(self.stop_version_field.subcomponent_data)}\">"

@@ -2,7 +2,6 @@ from itertools import chain
 from typing import Any, Callable, Iterable, TypeIs
 
 import Component.Component as Component
-import Component.Field.Field as Field
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
 import Utilities.Scripts as Scripts
@@ -44,24 +43,26 @@ class ScriptSet[a]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} \"{self.type_name}\" of {self.domain.name}>"
 
-    def get_options(self, source:"Component.Component") -> list[str]:
+    def get_options(self, source_domain:"Domain.Domain") -> list[str]:
         options:list[str] = []
         options.extend(self.built_in_objects.keys())
         options.extend(f"{self.domain.name}!{file_name} {object_name}" for file_name, object_name in self.all_scripts)
         options.extend(f"{self.domain.name}!{file_name}" for file_name in self.scripts_by_file)
         options.extend(f"{self.domain.name}!{object_name}" for object_name in self.scripts_by_name)
-        if self.domain is source.domain:
+        if self.domain is source_domain:
             options.extend(f"{file_name} {object_name}" for file_name, object_name in self.all_scripts)
             options.extend(f"{file_name}" for file_name in self.scripts_by_file)
             options.extend(f"{object_name}" for object_name in self.scripts_by_name)
         return options
 
-    def get(self, key:str, full_key:str, source:"Component.Component", path:tuple[str,...]) -> a:
+    def get(self, key:str, source_domain:"Domain.Domain", full_key:str|None=None, ) -> a:
         '''
         :key: The name of the object.
         :source: The Component referencing this Script.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this Script.
         '''
+        if full_key is None:
+            full_key = key
         if key in self.built_in_objects:
             return self.built_in_objects[key]
         elif (script := self.scripts_by_name.get(key)) is not None:
@@ -72,19 +73,19 @@ class ScriptSet[a]():
             return script.object
         # cannot find Script, show a nice error message.
         elif len(split_key) == 2 and (script := self.domain_scripts.get((split_key[0], split_key[1]))) is not None:
-            raise Exceptions.WrongScriptError(full_key, script, self.type_name, Field.get_source_str(path, source), self.get_options(source))
+            raise Exceptions.WrongScriptError(full_key, script, self.type_name, self.get_options(source_domain))
         elif len(split_key) == 2 and script is None and not any(file_name == split_key[0] for (file_name, object_name) in self.all_scripts):
-            raise Exceptions.UnrecognizedScriptFileNameError(full_key, split_key[0], Field.get_source_str(path, source), self.get_options(source))
+            raise Exceptions.UnrecognizedScriptFileNameError(full_key, split_key[0], self.get_options(source_domain))
         elif len(split_key) == 2 and script is None:
-            raise Exceptions.UnrecognizedScriptObjectNameError(full_key, split_key[0], split_key[1], Field.get_source_str(path, source), self.get_options(source))
+            raise Exceptions.UnrecognizedScriptObjectNameError(full_key, split_key[0], split_key[1], self.get_options(source_domain))
         elif len(split_key) == 2 and script is None and len(file_names := [file_name for (file_name, object_name), script in self.domain_scripts.items() if file_name == split_key[0]]) > 0:
-            raise Exceptions.WrongScriptFileError(full_key, file_names[0], self.type_name, Field.get_source_str(path, source), self.get_options(source))
+            raise Exceptions.WrongScriptFileError(full_key, file_names[0], self.type_name, self.get_options(source_domain))
         elif len(duplications := [script for (file_name, object_name), script in self.all_scripts.items() if file_name == key or object_name == key]) > 0:
-            raise Exceptions.ScriptGeneralityError(full_key, duplications, Field.get_source_str(path, source), self.get_options(source))
+            raise Exceptions.ScriptGeneralityError(full_key, duplications, self.get_options(source_domain))
         elif len(scripts := [script for (file_name, object_name), script in self.domain_scripts.items() if file_name == key or object_name == key]) > 0:
-            raise Exceptions.ScriptGeneralityError(full_key, scripts, Field.get_source_str(path, source), self.get_options(source))
+            raise Exceptions.ScriptGeneralityError(full_key, scripts, self.get_options(source_domain))
         else:
-            raise Exceptions.UnrecognizedScriptError(full_key, Field.get_source_str(path, source), self.get_options(source))
+            raise Exceptions.UnrecognizedScriptError(full_key, self.get_options(source_domain))
 
 class ScriptSetSet[a]():
 
@@ -103,16 +104,16 @@ class ScriptSetSet[a]():
         return f"<{self.__class__.__name__} of {self.domain.name} in \"{next(iter(self.script_sets.values())).folder}\">"
 
     def get_options(self, source:"Component.Component") -> list[str]:
-        return list(chain.from_iterable(script_set.get_options(source) for script_set in self.script_sets.values()))
+        return list(chain.from_iterable(script_set.get_options(source.domain) for script_set in self.script_sets.values()))
 
-    def get(self, key:str, source:"Component.Component", path:tuple[str,...]) -> a:
+    def get(self, key:str, source:"Component.Component") -> a:
         if len(split_key := key.split("!", maxsplit=1)) == 2:
             domain_name, subkey = split_key
             if (script_set := self.script_sets.get(domain_name)) is None:
-                raise Exceptions.UnrecognizedScriptDomainError(domain_name, key, Field.get_source_str(path, source), self.get_options(source))
-            return script_set.get(subkey, key, source, path)
+                raise Exceptions.UnrecognizedScriptDomainError(domain_name, key, self.get_options(source))
+            return script_set.get(subkey, source.domain, key)
         else:
-            return self.script_sets[self.domain.name].get(key, key, source, path)
+            return self.script_sets[self.domain.name].get(key, source.domain)
 
 class ScriptSetSetSet():
 

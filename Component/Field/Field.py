@@ -1,5 +1,6 @@
 import enum
-from typing import Callable, Iterable, Mapping, Sequence
+from types import EllipsisType
+from typing import Iterable, Mapping, Sequence
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -7,17 +8,8 @@ import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 
-
-def get_keys_strs(is_capital:bool, keys:tuple[str,...]) -> str:
-    capitalize_function:Callable[[str,bool],str] = lambda string, capitalize: string.capitalize() if capitalize else string
-    return "".join(
-        capitalize_function(f"key \"{key}\" of " if isinstance(key, str) else f"item {key} of ", index == 0 and is_capital)
-        for index, key in enumerate(reversed(keys))
-    )
-
-def get_source_str(keys:tuple[str,...], source_component:"Component.Component") -> str:
-    return f"{get_keys_strs(False, keys)}{source_component}"
 
 def get_options(
     source_component:"Component.Component",
@@ -70,12 +62,13 @@ def choose_component[a: Component.Component](
         pattern:Pattern.Pattern[a],
         local_components:Mapping[str,"Component.Component"],
         global_components:Mapping[str,Mapping[str,Mapping[str,"Component.Component"]]],
+        trace:Trace.Trace,
         keys:tuple[str,...],
         create_component_function:ComponentTyping.CreateComponentFunction,
         assume_type:str|None,
         assume_component_group:str|None,
-        other_options:Iterable[str]|None=None
-    ) -> tuple[a,bool]:
+        other_options:Iterable[str]|None=None,
+    ) -> tuple[a|EllipsisType,bool]:
     '''
     Finds a Component with the same name and properties if `component_data` is a str.
     If `component_data` is a dict, it creates a new inline Component using the `create_component_function`.
@@ -94,8 +87,11 @@ def choose_component[a: Component.Component](
     # inline Component
     if isinstance(component_data, dict):
         component = create_component_function(component_data, source_component, assume_type, keys)
+        if component is ...:
+            return ..., True
         if not pattern.contains(component):
-            raise Exceptions.InvalidComponentError(component, None, get_source_str(keys, source_component), pattern, component.my_capabilities, None)
+            trace.exception(Exceptions.InvalidComponentError(component, None, pattern, component.my_capabilities, None))
+            return ..., True
         return component, True
 
     # neither ! nor /
@@ -106,10 +102,12 @@ def choose_component[a: Component.Component](
             components = global_components[source_component.domain.name][assume_component_group]
         if (component := components.get(component_data)) is None:
             options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
-            raise Exceptions.UnrecognizedComponentError(component_data, component_data, get_source_str(keys, source_component), options)
+            trace.exception(Exceptions.UnrecognizedComponentError(component_data, component_data, options))
+            return ..., False
         if not pattern.contains(component):
             options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
-            raise Exceptions.InvalidComponentError(component, component_data, get_source_str(keys, source_component), pattern, component.my_capabilities, options)
+            trace.exception(Exceptions.InvalidComponentError(component, component_data, pattern, component.my_capabilities, options))
+            return ..., False
         return component, False
 
     # only /
@@ -119,7 +117,8 @@ def choose_component[a: Component.Component](
         component_name = component_data[slash_index+1:]
         if (component_group := domain_components.get(component_group_name)) is None:
             options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
-            raise Exceptions.UnrecognizedComponentGroupError(component_group_name, component_data, get_source_str(keys, source_component), options)
+            trace.exception(Exceptions.UnrecognizedComponentGroupError(component_group_name, component_data, options))
+            return ..., False
 
     # ! and perchance /
     else:
@@ -127,26 +126,31 @@ def choose_component[a: Component.Component](
         component_path = component_data[bang_index+1:]
         if (domain_components := global_components.get(domain_name)) is None:
             options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
-            raise Exceptions.UnrecognizedComponentDomainError(domain_name, component_data, get_source_str(keys, source_component), options)
+            trace.exception(Exceptions.UnrecognizedComponentDomainError(domain_name, component_data, options))
+            return ..., False
         if slash_index != -1:
             component_group_name = component_path[:slash_index-bang_index]
             component_name = component_path[slash_index-bang_index+1:]
             if (component_group := domain_components.get(component_group_name)) is None:
                 options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
-                raise Exceptions.UnrecognizedComponentGroupError(component_group_name, component_data, get_source_str(keys, source_component), options)
+                trace.exception(Exceptions.UnrecognizedComponentGroupError(component_group_name, component_data, options))
+                return ..., False
         elif assume_component_group is not None:
             component_group = domain_components[assume_component_group]
             component_name = component_path
         else:
             options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
-            raise Exceptions.MalformedComponentReferenceError(component_data, get_source_str(keys, source_component), options, "because it has a !, no /, and there is no assumed Component group")
+            trace.exception(Exceptions.MalformedComponentReferenceError(component_data, options, "because it has a !, no /, and there is no assumed Component group"))
+            return ..., False
 
     if (component := component_group.get(component_name)) is None:
         options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
-        raise Exceptions.UnrecognizedComponentError(component_name, component_data, get_source_str(keys, source_component), options)
+        trace.exception(Exceptions.UnrecognizedComponentError(component_name, component_data, options))
+        return ..., False
     if not pattern.contains(component):
         options = get_options(source_component, pattern, assume_component_group, local_components, global_components, other_options)
-        raise Exceptions.InvalidComponentError(component, component_data, get_source_str(keys, source_component), pattern, component.my_capabilities, options)
+        trace.exception(Exceptions.InvalidComponentError(component, component_data, pattern, component.my_capabilities, options))
+        return ..., False
     return component, False
 
 class Field():
@@ -154,14 +158,14 @@ class Field():
 
     __slots__ = (
         "domain",
-        "error_path",
+        "trace_path",
     )
 
     def __init__(self, path:tuple[str,...]) -> None:
         '''
-        :path: A list of strings that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
+        :path: The JSON keys that created this Field.
         '''
-        self.error_path = path
+        self.trace_path = path
 
     def set_domain(self, domain:"Domain.Domain") -> None:
         self.domain = domain
@@ -173,6 +177,7 @@ class Field():
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:"ScriptImporter.ScriptSetSetSet",
         create_component_function:ComponentTyping.CreateComponentFunction,
+        trace:Trace.Trace,
     ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
         '''
         Links this Component to other Components. Returns a list of all children Components (including inline Components) as well as a list of all inline Components.
@@ -183,28 +188,33 @@ class Field():
         :functions: A dictionary of functions that is provided by the importer.
         :create_component_function: The function used to create inline Components.
         '''
+        with trace.enter_keys(self.trace_path, ...):
+            return (), ()
         return (), ()
 
-    def resolve_create_finals(self) -> None:
+    def resolve_create_finals(self, trace:Trace.Trace) -> None:
         '''
         Used for setting an attribute of this Field that requires a linked Component to be set.
         Ran during the create_finals stage.
         '''
         ...
 
-    def resolve_link_finals(self) -> None:
+    def resolve_link_finals(self, trace:Trace.Trace) -> None:
         '''
         Used for setting an attribute of this Field that requires a linked Component to have its final created.
         Ran during the link_finals stage.
         '''
         ...
 
-    def check(self, source_component:"Component.Component") -> list[Exception]:
+    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
         '''
         Make sure that this Component's types are all in order; no error could occur.
         :source_component: The Component that owns this Field.
         '''
-        return []
+        ...
+
+    def finalize(self, trace:Trace.Trace) -> None:
+        ...
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} id {id(self)}>"

@@ -6,8 +6,10 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
 import Component.Field.ComponentField as ComponentField
 import Component.Field.Field as Field
-import Component.Structure.BaseComponent as BaseComponent
+import Component.Structure.StructureBaseComponent as StructureBaseComponent
 import Dataminer.CoverageDataminer as CoverageDataminer
+import Structure.StructureInfo as StructureInfo
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 
@@ -38,6 +40,7 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
         "remove_regex",
         "remove_suffixes",
         "structure_field",
+        "structure_info",
     )
 
     def initialize_fields(self, data: ComponentTyping.CoverageDataminerCollectionTypedDict) -> Sequence[Field.Field]:
@@ -48,12 +51,13 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
         self.remove_regex = [re.compile(pattern) for pattern in data.get("remove_regex", ())]
         self.remove_prefixes = data.get("remove_prefixes", [])
         self.remove_suffixes = data.get("remove_suffixes", [])
+        self.structure_info = data.get("structure_info", {})
 
         self.file_list_dataminer_field = ComponentField.ComponentField(data["file_list_dataminer"], AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("file_list_dataminer",), allow_inline=Field.InlinePermissions.reference, assume_component_group="dataminer_collections")
-        self.structure_field = ComponentField.ComponentField(data["structure"], BaseComponent.STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=Field.InlinePermissions.reference)
+        self.structure_field = ComponentField.ComponentField(data["structure"], StructureBaseComponent.STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=Field.InlinePermissions.reference)
         return (self.file_list_dataminer_field, self.structure_field)
 
-    def create_final(self) -> CoverageDataminer.CoverageDataminer:
+    def create_final(self, trace:Trace.Trace) -> CoverageDataminer.CoverageDataminer:
         return CoverageDataminer.CoverageDataminer(
             file_name=self.file_name,
             name=self.name,
@@ -65,10 +69,11 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
             remove_suffixes=self.remove_suffixes,
         )
 
-    def link_finals(self) -> list[Exception]:
-        exceptions = super().link_finals()
-        self.final.link_subcomponents(
-            file_list_dataminer=self.file_list_dataminer_field.subcomponent.final,
-            structure=self.structure_field.subcomponent.final,
-        )
-        return exceptions
+    def link_finals(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().link_finals(trace)
+            self.final.link_subcomponents(
+                file_list_dataminer=self.file_list_dataminer_field.subcomponent.final,
+                structure=self.structure_field.subcomponent.final,
+                structure_info=StructureInfo.StructureInfo(self.structure_info, self.domain, repr(self))
+            )

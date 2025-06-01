@@ -6,21 +6,22 @@ import Component.Dataminer.DataminerCollectionComponent as DataminerCollectionCo
 import Component.Dataminer.DataminerSettingsComponent as DataminerSettingsComponent
 import Component.Log.LogComponent as LogComponent
 import Component.Serializer.SerializerComponent as SerializerComponent
-import Component.Structure.BaseComponent as BaseComponent
-import Component.Structure.CacheComponent as CacheComponent
-import Component.Structure.DictComponent as DictComponent
-import Component.Structure.FileComponent as FileComponent
-import Component.Structure.KeymapComponent as KeymapComponent
-import Component.Structure.ListComponent as ListComponent
+import Component.Structure.CacheStructureComponent as CacheStructureComponent
+import Component.Structure.ConditionStructureComponent as ConditionStructureComponent
+import Component.Structure.DictStructureComponent as DictStructureComponent
+import Component.Structure.FileStructureComponent as FileStructureComponent
+import Component.Structure.FilterComponent as FilterComponent
+import Component.Structure.KeymapStructureComponent as KeymapStructureComponent
 import Component.Structure.NormalizerComponent as NormalizerComponent
-import Component.Structure.PrimitiveComponent as PrimitiveComponent
-import Component.Structure.SequenceComponent as SequenceComponent
-import Component.Structure.SetComponent as SetComponent
-import Component.Structure.StringComponent as StringComponent
+import Component.Structure.NumberStructureComponent as NumberStructureComponent
+import Component.Structure.PrimitiveStructureComponent as PrimitiveStructureComponent
+import Component.Structure.SequenceStructureComponent as SequenceStructureComponent
+import Component.Structure.StringStructureComponent as StringStructureComponent
+import Component.Structure.StructureBaseComponent as StructureBaseComponent
 import Component.Structure.StructureTagComponent as StructureTagComponent
-import Component.Structure.SwitchComponent as SwitchComponent
+import Component.Structure.SwitchStructureComponent as SwitchStructureComponent
 import Component.Structure.TypeAliasComponent as TypeAliasComponent
-import Component.Structure.UnionComponent as UnionComponent
+import Component.Structure.UnionStructureComponent as UnionStructureComponent
 import Component.Tablifier.TablifierComponent as TablifierComponent
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileComponent as VersionFileComponent
@@ -33,29 +34,41 @@ import Component.VersionTag.VersionTagOrderComponent as VersionTagOrderComponent
 component_types:list[type[Component.Component]] = [
     AccessorComponent.AccessorComponent,
     AccessorTypeComponent.AccessorTypeComponent,
-    BaseComponent.BaseComponent,
-    CacheComponent.CacheComponent,
+    CacheStructureComponent.CacheStructureComponent,
+    ConditionStructureComponent.ConditionStructureComponent,
     CoverageDataminerCollectionComponent.CoverageDataminerCollectionComponent,
     DataminerCollectionComponent.DataminerCollectionComponent,
     DataminerSettingsComponent.DataminerSettingsComponent,
-    DictComponent.DictComponent,
-    FileComponent.FileComponent,
-    KeymapComponent.KeymapComponent,
+    DictStructureComponent.DictStructureComponent,
+    FileStructureComponent.FileStructureComponent,
+    FilterComponent.AndFilterComponent,
+    FilterComponent.EqFilterComponent,
+    FilterComponent.GeFilterComponent,
+    FilterComponent.GtFilterComponent,
+    FilterComponent.KeyNotPresentFilterComponent,
+    FilterComponent.KeyPresentFilterComponent,
+    FilterComponent.LeFilterComponent,
+    FilterComponent.LtFilterComponent,
+    FilterComponent.NandFilterComponent,
+    FilterComponent.NeFilterComponent,
+    FilterComponent.NorFilterComponent,
+    FilterComponent.OrFilterComponent,
+    KeymapStructureComponent.KeymapStructureComponent,
     LatestSlotComponent.LatestSlotComponent,
-    ListComponent.ListComponent,
     LogComponent.LogComponent,
     NormalizerComponent.NormalizerComponent,
-    PrimitiveComponent.PrimitiveComponent,
+    NumberStructureComponent.NumberStructureComponent,
+    PrimitiveStructureComponent.PrimitiveStructureComponent,
+    SequenceStructureComponent.SequenceStructureComponent,
     SerializerComponent.SerializerComponent,
-    SequenceComponent.SequenceComponent,
-    SetComponent.SetComponent,
-    StringComponent.StringComponent,
+    StringStructureComponent.StringStructureComponent,
     RangeVersionTagAutoAssignerComponent.RangeVersionTagAutoAssignerComponent,
+    StructureBaseComponent.StructureBaseComponent,
     StructureTagComponent.StructureTagComponent,
-    SwitchComponent.SwitchComponent,
+    SwitchStructureComponent.SwitchStructureComponent,
     TablifierComponent.TablifierComponent,
     TypeAliasComponent.TypeAliasComponent,
-    UnionComponent.UnionComponent,
+    UnionStructureComponent.UnionStructureComponent,
     VersionComponent.VersionComponent,
     VersionFileComponent.VersionFileComponent,
     VersionFileTypeComponent.VersionFileTypeComponent,

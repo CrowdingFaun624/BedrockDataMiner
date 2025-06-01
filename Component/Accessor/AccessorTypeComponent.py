@@ -8,6 +8,7 @@ import Component.Field.Field as Field
 import Component.Field.ScriptedClassField as ScriptedClassField
 import Component.Pattern as Pattern
 import Downloader.AccessorType as AccessorType
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 ACCESSOR_TYPE_PATTERN:Pattern.Pattern["AccessorTypeComponent"] = Pattern.Pattern("is_accessor_type")
@@ -39,20 +40,19 @@ class AccessorTypeComponent(Component.Component[AccessorType.AccessorType]):
 
         return (self.accessor_class_field, self.linked_accessor_types_field)
 
-    def create_final(self) -> AccessorType.AccessorType:
+    def create_final(self, trace:Trace.Trace) -> AccessorType.AccessorType:
         return AccessorType.AccessorType(
             name=self.name,
             class_arguments=self.class_arguments,
             propagated_arguments=self.propagated_arguments,
         )
 
-    def link_finals(self) -> list[Exception]:
-        exceptions = super().link_finals()
-        exceptions.extend(self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.object_class, self.accessor_class_field.object_class.linked_accessors, self))
-        trace = TypeVerifier.StackTrace([(self.accessor_class_field.object_class, TypeVerifier.TraceItemType.OTHER)])
-        exceptions.extend(self.accessor_class_field.object_class.class_parameters.verify(self.class_arguments, trace))
-        self.final.link_finals(
-            accessor_class=self.accessor_class_field.object_class,
-            get_linked_accessor_types=dict(self.linked_accessor_types_field.map(lambda key, component: component.final))
-        )
-        return exceptions
+    def link_finals(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().link_finals(trace)
+            self.linked_accessor_types_field.check_coverage_types(lambda component: component.accessor_class_field.object_class, self.accessor_class_field.object_class.linked_accessors, trace)
+            self.accessor_class_field.object_class.class_parameters.verify(self.class_arguments, trace)
+            self.final.link_finals(
+                accessor_class=self.accessor_class_field.object_class,
+                get_linked_accessor_types=dict(self.linked_accessor_types_field.map(lambda key, component: component.final))
+            )

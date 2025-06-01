@@ -5,6 +5,7 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
 import Component.ScriptImporter as ScriptImporter
+import Utilities.Trace as Trace
 
 
 class ScriptedClassField[A](Field.Field):
@@ -34,8 +35,11 @@ class ScriptedClassField[A](Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:"ScriptImporter.ScriptSetSetSet",
         create_component_function:ComponentTyping.CreateComponentFunction,
+        trace:Trace.Trace,
     ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
-        self.object_class = self.scripted_objects_function(functions).get(self.class_name, source_component, self.error_path)
+        with trace.enter_keys(self.trace_path, self.class_name):
+            self.object_class = self.scripted_objects_function(functions).get(self.class_name, source_component)
+            return (), ()
         return (), ()
 
 class OptionalScriptedClassField[A, B](FieldContainer.FieldContainer):

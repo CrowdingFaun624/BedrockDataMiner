@@ -6,13 +6,14 @@ import Component.ComponentTyping as ComponentTyping
 import Component.Field.Field as Field
 import Utilities.Exceptions as Exceptions
 import Utilities.Log as Log
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 
 class LogComponent(Component.Component[Log.Log]):
 
     class_name = "Log"
-    my_capabilities = Capabilities.Capabilities(is_log=True)
+    my_capabilities = Capabilities.Capabilities()
     type_verifier = TypeVerifier.TypedDictTypeVerifier(
         TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
         TypeVerifier.TypedDictKeyTypeVerifier("log_type", True, TypeVerifier.EnumTypeVerifier({log_type.value for log_type in Log.LogType})),
@@ -35,7 +36,7 @@ class LogComponent(Component.Component[Log.Log]):
         self.file = self.domain.log_directory.joinpath(self.file_name)
         return ()
 
-    def create_final(self) -> Log.Log:
+    def create_final(self, trace:Trace.Trace) -> Log.Log:
         return Log.Log(
             name=self.name,
             file=self.file,
@@ -43,8 +44,8 @@ class LogComponent(Component.Component[Log.Log]):
             reset_on_reload=self.reset_on_reload,
         )
 
-    def check(self) -> list[Exception]:
-        exceptions = super().check()
-        if self.domain.log_directory not in self.file.parents:
-            exceptions.append(Exceptions.LogInvalidFileError(self.final, self.file))
-        return exceptions
+    def check(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().check(trace)
+            if self.domain.log_directory not in self.file.parents:
+                trace.exception(Exceptions.LogInvalidFileError(self.final, self.file))

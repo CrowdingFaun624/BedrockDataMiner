@@ -10,6 +10,7 @@ import Component.Pattern as Pattern
 import Component.VersionTag.LatestSlotComponent as LatestSlotComponent
 import Component.VersionTag.VersionTagAutoAssignerComponent as VersionTagAutoAssignerComponent
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionTag.VersionTag as VersionTag
 
@@ -53,7 +54,7 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
         self.latest_slot_field = ComponentField.OptionalComponentField(data.get("latest_slot", None), LatestSlotComponent.LATEST_SLOT_PATTERN, ("latest_slot",), allow_inline=Field.InlinePermissions.reference, assume_component_group="latest_slots")
         return (self.auto_assigner_field, self.latest_slot_field)
 
-    def create_final(self) -> VersionTag.VersionTag:
+    def create_final(self, trace:Trace.Trace) -> VersionTag.VersionTag:
         return VersionTag.VersionTag(
             name=self.name,
             development_name=self.development_name,
@@ -64,23 +65,23 @@ class VersionTagComponent(Component.Component[VersionTag.VersionTag]):
             is_unreleased_tag=self.is_unreleased_tag
         )
 
-    def link_finals(self) -> list[Exception]:
-        exceptions = super().link_finals()
-        latest_slot_component = self.latest_slot_field.subcomponent
-        self.final.link_finals(
-            latest_slot=latest_slot_component.final if latest_slot_component is not None else None,
-        )
-        return exceptions
+    def link_finals(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().link_finals(trace)
+            latest_slot_component = self.latest_slot_field.subcomponent
+            self.final.link_finals(
+                latest_slot=latest_slot_component.final if latest_slot_component is not None else None,
+            )
 
-    def check(self) -> list[Exception]:
-        exceptions = super().check()
-        if not self.is_order_tag:
-            if self.latest_slot_field.subcomponent is not None:
-                exceptions.append(Exceptions.VersionTagExclusivePropertyError(self, "!is_order_tag", "latest_slot"))
-            if self.is_major_tag:
-                exceptions.append(Exceptions.VersionTagExclusivePropertyError(self, "!is_order_tag", "is_major_tag"))
-            if self.is_fork_tag:
-                exceptions.append(Exceptions.VersionTagExclusivePropertyError(self, "!is_order_tag", "is_fork_tag"))
-            if self.is_development_tag:
-                exceptions.append(Exceptions.VersionTagExclusivePropertyError(self, "!is_order_tag", "is_development_tag"))
-        return exceptions
+    def check(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().check(trace)
+            if not self.is_order_tag:
+                if self.latest_slot_field.subcomponent is not None:
+                    trace.exception(Exceptions.VersionTagExclusivePropertyError("!is_order_tag", "latest_slot"))
+                if self.is_major_tag:
+                    trace.exception(Exceptions.VersionTagExclusivePropertyError("!is_order_tag", "is_major_tag"))
+                if self.is_fork_tag:
+                    trace.exception(Exceptions.VersionTagExclusivePropertyError("!is_order_tag", "is_fork_tag"))
+                if self.is_development_tag:
+                    trace.exception(Exceptions.VersionTagExclusivePropertyError("!is_order_tag", "is_development_tag"))

@@ -6,6 +6,7 @@ import Component.Field.Field as Field
 import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 
 
 class ComponentListField[a:Component.Component](Field.Field):
@@ -58,25 +59,31 @@ class ComponentListField[a:Component.Component](Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
-    ) -> tuple[list[a],list[a]]:
-        self.subcomponents = []
-        inline_components:list[a] = []
-        for subcomponent_data in self.subcomponents_data:
-            subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, self.pattern, components, global_components, self.error_path, create_component_function, self.assume_type, self.assume_component_group)
-            self.has_reference_components = self.has_reference_components or not is_inline
-            self.has_inline_components = self.has_inline_components or is_inline
-            self.subcomponents.append(subcomponent)
-            if is_inline:
-                inline_components.append(subcomponent)
-        return self.subcomponents, inline_components
+        trace:Trace.Trace,
+    ) -> tuple[Sequence[a],Sequence[a]]:
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            self.subcomponents = []
+            inline_components:list[a] = []
+            for index, subcomponent_data in enumerate(self.subcomponents_data):
+                with trace.enter_key(index, subcomponent_data):
+                    subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
+                    self.has_reference_components = self.has_reference_components or not is_inline
+                    self.has_inline_components = self.has_inline_components or is_inline
+                    if subcomponent is ...:
+                        continue
+                    self.subcomponents.append(subcomponent)
+                    if is_inline:
+                        inline_components.append(subcomponent)
+            return self.subcomponents, inline_components
+        return (), ()
 
-    def check(self, source_component:"Component.Component") -> list[Exception]:
-        exceptions:list[Exception] = super().check(source_component)
-        if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
-            exceptions.append(Exceptions.ReferenceComponentError(source_component, self))
-        if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
-            exceptions.append(Exceptions.InlineComponentError(source_component, self))
-        return exceptions
+    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
+        with trace.enter_keys(self.trace_path, self.subcomponents_data):
+            super().check(source_component, trace)
+            if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
+                trace.exception(Exceptions.ReferenceComponentError(source_component, self))
+            if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
+                trace.exception(Exceptions.InlineComponentError(source_component, self))
 
     def extend(self, new_components:Sequence[a]) -> None:
         '''

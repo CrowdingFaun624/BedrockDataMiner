@@ -9,7 +9,6 @@ import Component.Structure.Field.TagListField as TagListField
 import Component.Structure.Field.TypeListField as TypeListField
 import Component.Structure.StructureComponent as StructureComponent
 import Component.Structure.StructureTagComponent as StructureTagComponent
-import Utilities.TypeUtilities as TypeUtilities
 
 
 class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
@@ -17,18 +16,19 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
     __slots__ = (
         "allow_inline",
         "delegate_arguments",
+        "excluded_from_similarity",
         "key",
-        "max_similarity_descendent_depth",
         "required",
+        "similarity_weight",
         "source_component",
         "subcomponent_field",
         "tags_field",
         "tags_for_all_field",
         "types_field",
-        "weight",
+        "value_weight",
     )
 
-    def __init__(self, data:ComponentTyping.KeymapKeyTypedDict, key:str, tag_set:set["StructureTagComponent.StructureTagComponent"], path:tuple[str,...], source_component:"Component.Component", *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
+    def __init__(self, data:ComponentTyping.KeymapStructureKeyTypedDict, key:str, tag_set:set["StructureTagComponent.StructureTagComponent"], path:tuple[str,...], source_component:"Component.Component", *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
         '''
         :data: A dictionary containing the keys data.
         :key: The key that this Field corresponds to.
@@ -41,14 +41,15 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.key = key
         self.source_component = source_component # used to make sure keys cannot be imported in chains.
         self.allow_inline = allow_inline
-        self.weight = data.get("weight", 1)
         self.delegate_arguments = data.get("delegate_arguments", {})
         self.required = data.get("required", False)
-        self.max_similarity_descendent_depth = data.get("max_similarity_descendent_depth", ...)
+        self.similarity_weight = data.get("similarity_weight", 1)
+        self.value_weight = data.get("weight", None)
 
-        self.subcomponent_field = ComponentField.OptionalComponentField(data.get("subcomponent", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("keys", key, "subcomponent"), allow_inline=allow_inline)
-        self.types_field = TypeListField.TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), ("keys", key, "types",)).verify_with(self.subcomponent_field)
-        self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", ()), ("keys", key, "tags")).add_to_tag_set(tag_set)
+        self.subcomponent_field = ComponentField.OptionalComponentField(data.get("structure", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("structure",), allow_inline=allow_inline)
+        self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(tag_set)
+        self.types_field = TypeListField.TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), ("types",)).verify_with(self.subcomponent_field)
+
         self.tags_for_all_field:TagListField.TagListField|None = None
 
         self.fields.extend((self.types_field, self.subcomponent_field, self.tags_field))
@@ -67,11 +68,6 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         :tag_set: The set of strings to add to.
         '''
         self.tags_field.add_to_tag_set(tag_set)
-
-    def conditional_must_be(self, condition:bool, types:TypeUtilities.TypeSet, *, fail_message:str|None=None) -> Self:
-        if condition:
-            self.types_field.must_be(types, fail_message=fail_message)
-        return self
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.key} id {id(self)}>"

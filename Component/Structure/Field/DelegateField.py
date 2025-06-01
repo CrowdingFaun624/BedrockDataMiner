@@ -9,13 +9,14 @@ import Structure.Delegate.Delegate as Delegate
 import Structure.Structure as Structure
 import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier as TypeVerifier
+import Utilities.Trace as Trace
 
 
 class OptionalDelegateField(Field.Field):
 
     __slots__ = (
         "arguments",
+        "delegate",
         "delegate_name",
         "delegate_type",
         "domain",
@@ -28,40 +29,37 @@ class OptionalDelegateField(Field.Field):
         self.domain = domain
 
         self.delegate_type:type[Delegate.Delegate]|None
+        self.delegate:Delegate.Delegate|None = None
 
-    def create_delegate(self, structure:"Structure.Structure|StructureBase.StructureBase|None", keys:dict[str,Any]|None=None, exceptions:list[Exception]|None=None) -> Delegate.Delegate|None:
+    def create_delegate(self, structure:"Structure.Structure|StructureBase.StructureBase|None", trace:Trace.Trace, keys:dict[str,Any]|None=None) -> Delegate.Delegate|None:
         '''
         Returns a Delegate or None.
         :structure: The parent Structure of this Delegate.
         :keys: Arguments for the Delegate's keys.
         :exceptions: List to add Exceptions with creating the Delegate to, instead of raising them.
         '''
-        if (exceptions_missing := exceptions is None):
-            exceptions = []
-        delegate_type = self.delegate_type
-        if delegate_type is None:
-            return None
-        if delegate_type.type_verifier is not None:
-            exceptions.extend(delegate_type.type_verifier.verify(self.arguments, TypeVerifier.StackTrace([(structure, TypeVerifier.TraceItemType.OTHER)])))
-        if keys is not None and delegate_type.key_type_verifier is not None:
-            for key, key_arguments in keys.items():
-                exceptions.extend(delegate_type.key_type_verifier.verify(key_arguments, TypeVerifier.StackTrace([(structure, TypeVerifier.TraceItemType.OTHER), (key, TypeVerifier.TraceItemType.KEY)])))
-        if keys is None:
-            keys = {}
-        if not isinstance(structure, delegate_type.applies_to):
-            exceptions.append(Exceptions.InapplicableDelegateError(delegate_type, structure, delegate_type.applies_to))
-        if len(exceptions) == 0:
-            try:
-                delegate = delegate_type(structure, keys, **self.arguments)
-            except Exception as e:
-                print(f"Failed to create Delegate of {structure}!")
-                exceptions.append(e)
-                delegate = None
-        else:
-            delegate = None
-        if exceptions_missing and len(exceptions) > 0:
-            raise exceptions[0]
-        return delegate
+        with trace.enter_keys(self.trace_path, (self.delegate_name, self.arguments)):
+            delegate_type = self.delegate_type
+            if delegate_type is None:
+                return None
+            if delegate_type.type_verifier is not None:
+                if delegate_type.type_verifier.verify(self.arguments, trace):
+                    return None
+
+            if keys is not None and delegate_type.key_type_verifier is not None:
+                for key, key_arguments in keys.items():
+                    with trace.enter_key(key, key_arguments):
+                        if delegate_type.key_type_verifier.verify(key_arguments, trace):
+                            return None
+
+            if keys is None:
+                keys = {}
+            if not ((structure is not None and structure.any_delegate_works) or isinstance(structure, delegate_type.applies_to)):
+                trace.exception(Exceptions.InapplicableDelegateError(delegate_type, structure, delegate_type.applies_to))
+                return None
+            self.delegate = delegate_type(structure, keys, **self.arguments)
+            return self.delegate
+        return None
 
     def set_field(
         self,
@@ -70,10 +68,18 @@ class OptionalDelegateField(Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
+        trace:Trace.Trace,
     ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
-        if self.delegate_name is None:
-            self.delegate_type = None
-        else:
-            delegate_type = functions.delegate_classes.get(self.delegate_name, source_component, self.error_path)
-            self.delegate_type = delegate_type
+        with trace.enter_keys(self.trace_path, (self.delegate_name, self.arguments)):
+            if self.delegate_name is None:
+                self.delegate_type = None
+            else:
+                delegate_type = functions.delegate_classes.get(self.delegate_name, source_component)
+                self.delegate_type = delegate_type
+            return (), ()
         return (), ()
+
+    def finalize(self, trace:Trace.Trace) -> None:
+        with trace.enter_keys(self.trace_path, (self.delegate_name, self.arguments)):
+            if self.delegate is not None:
+                self.delegate.finalize(self.domain, trace)

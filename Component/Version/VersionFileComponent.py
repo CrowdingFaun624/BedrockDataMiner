@@ -11,6 +11,7 @@ import Component.Pattern as Pattern
 import Component.Version.VersionComponent as VersionComponent
 import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 import Version.VersionFile as VersionFile
 
@@ -36,25 +37,25 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
         self.accessors_field = ComponentListField.ComponentListField(data["accessors"], AccessorComponent.ACCESSOR_PATTERN, ("accessors",), allow_inline=Field.InlinePermissions.inline, assume_type=AccessorComponent.AccessorComponent.class_name)
         return (self.version_file_type_field, self.accessors_field)
 
-    def create_final(self) -> VersionFile.VersionFile:
+    def create_final(self, trace:Trace.Trace) -> VersionFile.VersionFile:
         return VersionFile.VersionFile()
 
-    def link_finals(self) -> list[Exception]:
-        exceptions = super().link_finals()
-        version = cast("VersionComponent.VersionComponent", self.get_inline_parent()).final
-        self.final.link_finals(
-            version=version,
-            version_file_type=self.version_file_type_field.subcomponent.final,
-            accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.final)),
-        )
-        return exceptions
+    def link_finals(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().link_finals(trace)
+            version = cast("VersionComponent.VersionComponent", self.get_inline_parent()).final
+            self.final.link_finals(
+                version=version,
+                version_file_type=self.version_file_type_field.subcomponent.final,
+                accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.final)),
+            )
 
-    def check(self) -> list[Exception]:
-        exceptions = super().check()
-        allowed_accessors = set(self.version_file_type_field.subcomponent.allowed_accessor_types_field.subcomponents)
-        exceptions.extend(
-            Exceptions.VersionFileInvalidAccessorError(self.final, accessor.name)
-            for accessor in self.accessors_field.subcomponents
-            if accessor.accessor_type_field.subcomponent not in allowed_accessors
-        )
-        return exceptions
+    def check(self, trace:Trace.Trace) -> None:
+        with trace.enter(self, self.name, ...):
+            super().check(trace)
+            allowed_accessors = set(self.version_file_type_field.subcomponent.allowed_accessor_types_field.subcomponents)
+            trace.exceptions(
+                Exceptions.VersionFileInvalidAccessorError(self.final, accessor.name)
+                for accessor in self.accessors_field.subcomponents
+                if accessor.accessor_type_field.subcomponent not in allowed_accessors
+            )

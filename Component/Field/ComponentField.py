@@ -1,4 +1,4 @@
-from typing import Callable, Sequence, cast
+from typing import Callable, Self, Sequence, cast
 
 import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
@@ -6,7 +6,10 @@ import Component.Field.Field as Field
 import Component.Field.FieldContainer as FieldContainer
 import Component.Pattern as Pattern
 import Component.ScriptImporter as ScriptImporter
+import Component.Structure.Field.AbstractTypeField as AbstractTypeField
+import Component.Structure.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 
 
 class ComponentField[a: Component.Component](Field.Field):
@@ -58,19 +61,25 @@ class ComponentField[a: Component.Component](Field.Field):
         global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
         functions:ScriptImporter.ScriptSetSetSet,
         create_component_function:ComponentTyping.CreateComponentFunction,
+        trace:Trace.Trace,
     ) -> tuple[Sequence[a],Sequence[a]]:
-        self.subcomponent, is_inline = Field.choose_component(self.subcomponent_data, source_component, self.pattern, components, global_components, self.error_path, create_component_function, self.assume_type, self.assume_component_group)
-        self.has_reference_components = self.has_reference_components or not is_inline
-        self.has_inline_components = self.has_inline_components or is_inline
-        return (self.subcomponent,), ((self.subcomponent,) if is_inline else ())
+        with trace.enter_keys(self.trace_path, self.subcomponent_data):
+            subcomponent, is_inline = Field.choose_component(self.subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
+            if subcomponent is ...:
+                return (), ()
+            self.subcomponent = subcomponent
+            self.has_reference_components = self.has_reference_components or not is_inline
+            self.has_inline_components = self.has_inline_components or is_inline
+            return (self.subcomponent,), ((self.subcomponent,) if is_inline else ())
+        return (), ()
 
-    def check(self, source_component:"Component.Component") -> list[Exception]:
-        exceptions:list[Exception] = super().check(source_component)
-        if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
-            exceptions.append(Exceptions.ReferenceComponentError(source_component, self, cast(str, self.subcomponent_data)))
-        if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
-            exceptions.append(Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.ComponentTypedDicts, self.subcomponent_data)))
-        return exceptions
+    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
+        with trace.enter_keys(self.trace_path, ...):
+            super().check(source_component, trace)
+            if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
+                trace.exception(Exceptions.ReferenceComponentError(source_component, self, cast(str, self.subcomponent_data)))
+            if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
+                trace.exception(Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.ComponentTypedDicts, self.subcomponent_data)))
 
 class OptionalComponentField[a: Component.Component](FieldContainer.FieldContainer):
 
