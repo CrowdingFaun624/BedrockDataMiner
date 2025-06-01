@@ -30,13 +30,15 @@ Changed entity "armadillo.json":
 							Removed field "on_damage":
 								field "event": "minecraft:relax"
 								field "target": "self"
-							Added field "damage_multiplier" of 0.5.
-							Added field "damage_modifier" of -1.0.
+							Added field "damage_multiplier": 0.5.
+							Added field "damage_modifier": -1.0.
 			Changed field "components":
 				Changed component "minecraft:entity_sensor":
+					Removed field "relative_range": false.
 					Changed field "subsensors":
 						Changed subsensor:
-							Unchanged field "event": "minecraft:no_threat_detected"
+							Unchanged field "event": "minecraft:no_threat_detected".
+							Changed field "range" from 7.0 to [7.0, 2.0].
 							Changed field "event_filters":
 								Changed filter property "all_of":
 									Changed filter:
@@ -49,9 +51,9 @@ Changed entity "armadillo.json":
 															Added filter:
 																filter property "test": "was_last_hurt_by"
 																filter property "subject": "other"
-							Changed field "range" from 7.0 to [7.0, 2.0].
 						Changed subsensor:
-							Unchanged field "event": "minecraft:threat_detected"
+							Unchanged field "event": "minecraft:threat_detected".
+							Changed field "range" from 7.0 to [7.0, 2.0].
 							Changed field "event_filters":
 								Changed filter property "all_of":
 									Changed filter:
@@ -64,22 +66,20 @@ Changed entity "armadillo.json":
 															Added filter:
 																filter property "test": "was_last_hurt_by"
 																filter property "subject": "other"
-							Changed field "range" from 7.0 to [7.0, 2.0].
-					Removed field "relative_range" of false.
 				Changed component "minecraft:behavior.panic":
-					Added field "ignore_mob_damage" of true.
+					Added field "ignore_mob_damage": true.
 			Changed field "events":
 				Changed event "minecraft:roll_up":
-					Removed field "add" of field "component_groups": component group: "minecraft:rolled_up".
-					Removed field "emit_vibration" of field "vibration": "entity_act".
+					Removed field "add": field "component_groups": component group "minecraft:rolled_up".
+					Removed field "emit_vibration": field "vibration": "entity_act".
 					Removed field "remove":
 						field "component_groups":
-							component group: "minecraft:relaxed"
-							component group: "minecraft:baby_relaxed"
-							component group: "minecraft:adult_relaxed"
+							component group "minecraft:adult_relaxed"
+							component group "minecraft:baby_relaxed"
+							component group "minecraft:relaxed"
 					Added field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:rolled_up"
+							field "add": field "component_groups": component group "minecraft:rolled_up"
 							field "emit_vibration": field "vibration": "entity_act"
 							field "filters":
 								filter property "test": "actor_health"
@@ -88,11 +88,11 @@ Changed entity "armadillo.json":
 								filter property "value": 0
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:relaxed"
-									component group: "minecraft:baby_relaxed"
-									component group: "minecraft:adult_relaxed"
+									component group "minecraft:adult_relaxed"
+									component group "minecraft:baby_relaxed"
+									component group "minecraft:relaxed"
 							field "set_property": property "minecraft:is_rolled_up": true
-					Removed field "set_property" of property "minecraft:is_rolled_up": true.
+					Removed field "set_property": property "minecraft:is_rolled_up": true.
 Changed entity "cave_spider.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.20.70"
@@ -178,7 +178,7 @@ Changed entity "cave_spider.json":
 					component "minecraft:addrider": field "entity_type": "minecraft:skeleton"
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "skeleton"
+						field "family_types": family "skeleton"
 						field "seats": field "position": [0.0, 0.3, -0.1]
 				component group "minecraft:spider_neutral":
 					component "minecraft:environment_sensor":
@@ -208,13 +208,13 @@ Changed entity "cave_spider.json":
 					component "minecraft:addrider": field "entity_type": "minecraft:skeleton.stray"
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "skeleton"
+						field "family_types": family "skeleton"
 						field "seats": field "position": [0.0, 0.3, -0.1]
 				component group "minecraft:spider_wither_jockey":
 					component "minecraft:addrider": field "entity_type": "minecraft:skeleton.wither"
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "skeleton"
+						field "family_types": family "skeleton"
 						field "seats": field "position": [0.0, 0.25, -0.1]
 			field "components":
 				component "minecraft:breathable":
@@ -253,14 +253,14 @@ Changed entity "cave_spider.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:rideable":
 					field "seat_count": 1
-					field "family_types": family: "zombie"
+					field "family_types": family "zombie"
 					field "seats": field "position": [0.0, 0.3, 0.0]
 				component "minecraft:type_family":
 					field "family":
-						family: "cavespider"
-						family: "monster"
-						family: "arthropod"
-						family: "mob"
+						family "arthropod"
+						family "cavespider"
+						family "mob"
+						family "monster"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 2
 					field "entity_types":
@@ -297,70 +297,70 @@ Changed entity "cave_spider.json":
 				event "minecraft:become_angry":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:spider_angry"
-							field "remove": field "component_groups": component group: "minecraft:spider_neutral"
+							field "add": field "component_groups": component group "minecraft:spider_angry"
+							field "remove": field "component_groups": component group "minecraft:spider_neutral"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_easy"
+							field "add": field "component_groups": component group "minecraft:spider_poison_easy"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "easy"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:spider_poison_hard"
-									component group: "minecraft:spider_poison_normal"
+									component group "minecraft:spider_poison_hard"
+									component group "minecraft:spider_poison_normal"
 						sequence item 2:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_normal"
+							field "add": field "component_groups": component group "minecraft:spider_poison_normal"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "normal"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:spider_poison_easy"
-									component group: "minecraft:spider_poison_hard"
+									component group "minecraft:spider_poison_easy"
+									component group "minecraft:spider_poison_hard"
 						sequence item 3:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_hard"
+							field "add": field "component_groups": component group "minecraft:spider_poison_hard"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "hard"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:spider_poison_easy"
-									component group: "minecraft:spider_poison_normal"
+									component group "minecraft:spider_poison_easy"
+									component group "minecraft:spider_poison_normal"
 				event "minecraft:become_hostile":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:spider_hostile"
-							field "remove": field "component_groups": component group: "minecraft:spider_neutral"
+							field "add": field "component_groups": component group "minecraft:spider_hostile"
+							field "remove": field "component_groups": component group "minecraft:spider_neutral"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_easy"
+							field "add": field "component_groups": component group "minecraft:spider_poison_easy"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "easy"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:spider_poison_hard"
-									component group: "minecraft:spider_poison_normal"
+									component group "minecraft:spider_poison_hard"
+									component group "minecraft:spider_poison_normal"
 						sequence item 2:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_normal"
+							field "add": field "component_groups": component group "minecraft:spider_poison_normal"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "normal"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:spider_poison_easy"
-									component group: "minecraft:spider_poison_hard"
+									component group "minecraft:spider_poison_easy"
+									component group "minecraft:spider_poison_hard"
 						sequence item 3:
-							field "add": field "component_groups": component group: "minecraft:spider_poison_hard"
+							field "add": field "component_groups": component group "minecraft:spider_poison_hard"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "hard"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:spider_poison_easy"
-									component group: "minecraft:spider_poison_normal"
+									component group "minecraft:spider_poison_easy"
+									component group "minecraft:spider_poison_normal"
 				event "minecraft:become_neutral":
-					field "add": field "component_groups": component group: "minecraft:spider_neutral"
-					field "remove": field "component_groups": component group: "minecraft:spider_hostile"
+					field "add": field "component_groups": component group "minecraft:spider_neutral"
+					field "remove": field "component_groups": component group "minecraft:spider_hostile"
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
@@ -370,8 +370,8 @@ Changed entity "cave_spider.json":
 									field "weight": 80
 									field "add":
 										field "component_groups":
-											component group: "minecraft:spider_stray_jockey"
-											component group: "minecraft:spider_neutral"
+											component group "minecraft:spider_neutral"
+											component group "minecraft:spider_stray_jockey"
 									field "filters":
 										filter property "all_of":
 											filter:
@@ -388,8 +388,8 @@ Changed entity "cave_spider.json":
 									field "weight": 80
 									field "add":
 										field "component_groups":
-											component group: "minecraft:spider_wither_jockey"
-											component group: "minecraft:spider_neutral"
+											component group "minecraft:spider_neutral"
+											component group "minecraft:spider_wither_jockey"
 									field "filters":
 										filter property "test": "is_biome"
 										filter property "value": "the_nether"
@@ -398,8 +398,8 @@ Changed entity "cave_spider.json":
 									field "weight": 20
 									field "add":
 										field "component_groups":
-											component group: "minecraft:spider_jockey"
-											component group: "minecraft:spider_neutral"
+											component group "minecraft:spider_jockey"
+											component group "minecraft:spider_neutral"
 									field "filters":
 										filter property "all_of":
 											filter:
@@ -411,11 +411,11 @@ Changed entity "cave_spider.json":
 									field "remove": empty
 						randomize item:
 							field "weight": 99
-							field "add": field "component_groups": component group: "minecraft:spider_neutral"
+							field "add": field "component_groups": component group "minecraft:spider_neutral"
 							field "remove": empty
 				event "minecraft:on_calm":
-					field "add": field "component_groups": component group: "minecraft:spider_neutral"
-					field "remove": field "component_groups": component group: "minecraft:spider_angry"
+					field "add": field "component_groups": component group "minecraft:spider_neutral"
+					field "remove": field "component_groups": component group "minecraft:spider_angry"
 Changed entity "spider.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.20.70"
@@ -473,7 +473,7 @@ Changed entity "spider.json":
 					component "minecraft:addrider": field "entity_type": "minecraft:skeleton"
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "skeleton"
+						field "family_types": family "skeleton"
 						field "seats": field "position": [0.0, 0.54, 0.0]
 				component group "minecraft:spider_neutral":
 					component "minecraft:environment_sensor":
@@ -488,13 +488,13 @@ Changed entity "spider.json":
 					component "minecraft:addrider": field "entity_type": "minecraft:skeleton.stray"
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "skeleton"
+						field "family_types": family "skeleton"
 						field "seats": field "position": [0.0, 0.54, 0.0]
 				component group "minecraft:spider_wither_jockey":
 					component "minecraft:addrider": field "entity_type": "minecraft:skeleton.wither"
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "skeleton"
+						field "family_types": family "skeleton"
 						field "seats": field "position": [0.0, 0.54, 0.0]
 			field "components":
 				component "minecraft:attack": field "damage": 2
@@ -534,14 +534,14 @@ Changed entity "spider.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:rideable":
 					field "seat_count": 1
-					field "family_types": family: "zombie"
+					field "family_types": family "zombie"
 					field "seats": field "position": [0.0, 0.54, -0.1]
 				component "minecraft:type_family":
 					field "family":
-						family: "spider"
-						family: "monster"
-						family: "mob"
-						family: "arthropod"
+						family "arthropod"
+						family "mob"
+						family "monster"
+						family "spider"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 2
 					field "entity_types":
@@ -575,14 +575,14 @@ Changed entity "spider.json":
 					field "priority": 6
 					field "speed_multiplier": 0.8
 			field "events":
-				event "minecraft:become_angry": field "add": field "component_groups": component group: "minecraft:spider_angry"
-				event "minecraft:become_calm": field "remove": field "component_groups": component group: "minecraft:spider_angry"
+				event "minecraft:become_angry": field "add": field "component_groups": component group "minecraft:spider_angry"
+				event "minecraft:become_calm": field "remove": field "component_groups": component group "minecraft:spider_angry"
 				event "minecraft:become_hostile":
-					field "add": field "component_groups": component group: "minecraft:spider_hostile"
-					field "remove": field "component_groups": component group: "minecraft:spider_neutral"
+					field "add": field "component_groups": component group "minecraft:spider_hostile"
+					field "remove": field "component_groups": component group "minecraft:spider_neutral"
 				event "minecraft:become_neutral":
-					field "add": field "component_groups": component group: "minecraft:spider_neutral"
-					field "remove": field "component_groups": component group: "minecraft:spider_hostile"
+					field "add": field "component_groups": component group "minecraft:spider_neutral"
+					field "remove": field "component_groups": component group "minecraft:spider_hostile"
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
@@ -592,8 +592,8 @@ Changed entity "spider.json":
 									field "weight": 80
 									field "add":
 										field "component_groups":
-											component group: "minecraft:spider_stray_jockey"
-											component group: "minecraft:spider_neutral"
+											component group "minecraft:spider_neutral"
+											component group "minecraft:spider_stray_jockey"
 									field "filters":
 										filter property "all_of":
 											filter:
@@ -610,8 +610,8 @@ Changed entity "spider.json":
 									field "weight": 80
 									field "add":
 										field "component_groups":
-											component group: "minecraft:spider_wither_jockey"
-											component group: "minecraft:spider_neutral"
+											component group "minecraft:spider_neutral"
+											component group "minecraft:spider_wither_jockey"
 									field "filters":
 										filter property "test": "is_biome"
 										filter property "value": "the_nether"
@@ -620,8 +620,8 @@ Changed entity "spider.json":
 									field "weight": 20
 									field "add":
 										field "component_groups":
-											component group: "minecraft:spider_jockey"
-											component group: "minecraft:spider_neutral"
+											component group "minecraft:spider_jockey"
+											component group "minecraft:spider_neutral"
 									field "filters":
 										filter property "any_of":
 											filter:
@@ -633,15 +633,15 @@ Changed entity "spider.json":
 									field "remove": empty
 						randomize item:
 							field "weight": 99
-							field "add": field "component_groups": component group: "minecraft:spider_neutral"
+							field "add": field "component_groups": component group "minecraft:spider_neutral"
 							field "remove": empty
 Changed entity "wolf.json":
 	Changed behavior pack "core":
 		Changed field "format_version" from "1.18.10" to "1.20.70".
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:wolf"
-				Removed description "is_experimental" of false.
+				Unchanged description "identifier": "minecraft:wolf".
+				Removed description "is_experimental": false.
 				Added description "properties":
 					property "minecraft:has_increased_max_health":
 						field "type": "bool"
@@ -675,124 +675,63 @@ Changed entity "wolf.json":
 							field "event": "minecraft:increase_max_health"
 				Changed component "minecraft:healable":
 					Changed field "items":
-						Total item: 18 (+18, -18)
-						Removed item:
-							field "item": "porkchop"
-							field "heal_amount": 3
-						Removed item:
-							field "item": "cooked_porkchop"
-							field "heal_amount": 8
-						Removed item:
-							field "item": "fish"
-							field "heal_amount": 2
-						Removed item:
-							field "item": "salmon"
-							field "heal_amount": 2
-						Removed item:
-							field "item": "clownfish"
-							field "heal_amount": 1
-						Removed item:
-							field "item": "pufferfish"
-							field "heal_amount": 1
-						Removed item:
-							field "item": "cooked_fish"
-							field "heal_amount": 5
-						Removed item:
-							field "item": "cooked_salmon"
-							field "heal_amount": 6
-						Removed item:
-							field "item": "beef"
-							field "heal_amount": 3
-						Removed item:
-							field "item": "cooked_beef"
-							field "heal_amount": 8
-						Removed item:
-							field "item": "chicken"
-							field "heal_amount": 2
-						Removed item:
-							field "item": "cooked_chicken"
-							field "heal_amount": 6
-						Removed item:
-							field "item": "muttonRaw"
-							field "heal_amount": 2
-						Removed item:
-							field "item": "muttonCooked"
-							field "heal_amount": 6
-						Removed item:
-							field "item": "rotten_flesh"
-							field "heal_amount": 4
-						Removed item:
-							field "item": "rabbit"
-							field "heal_amount": 3
-						Removed item:
-							field "item": "cooked_rabbit"
-							field "heal_amount": 5
-						Removed item:
-							field "item": "rabbit_stew"
-							field "heal_amount": 10
-						Added item:
-							field "item": "porkchop"
-							field "heal_amount": 6
-						Added item:
-							field "item": "cooked_porkchop"
-							field "heal_amount": 16
-						Added item:
-							field "item": "fish"
-							field "heal_amount": 4
-						Added item:
-							field "item": "salmon"
-							field "heal_amount": 4
-						Added item:
-							field "item": "clownfish"
-							field "heal_amount": 2
-						Added item:
-							field "item": "pufferfish"
-							field "heal_amount": 2
-						Added item:
-							field "item": "cooked_fish"
-							field "heal_amount": 10
-						Added item:
-							field "item": "cooked_salmon"
-							field "heal_amount": 12
-						Added item:
-							field "item": "beef"
-							field "heal_amount": 6
-						Added item:
-							field "item": "cooked_beef"
-							field "heal_amount": 16
-						Added item:
-							field "item": "chicken"
-							field "heal_amount": 4
-						Added item:
-							field "item": "cooked_chicken"
-							field "heal_amount": 12
-						Added item:
-							field "item": "muttonRaw"
-							field "heal_amount": 4
-						Added item:
-							field "item": "muttonCooked"
-							field "heal_amount": 12
-						Added item:
-							field "item": "rotten_flesh"
-							field "heal_amount": 8
-						Added item:
-							field "item": "rabbit"
-							field "heal_amount": 6
-						Added item:
-							field "item": "cooked_rabbit"
-							field "heal_amount": 10
-						Added item:
-							field "item": "rabbit_stew"
-							field "heal_amount": 20
+						Changed item:
+							Unchanged field "item": "porkchop".
+							Changed field "heal_amount" from 3 to 6.
+						Changed item:
+							Unchanged field "item": "cooked_porkchop".
+							Changed field "heal_amount" from 8 to 16.
+						Changed item:
+							Unchanged field "item": "fish".
+							Changed field "heal_amount" from 2 to 4.
+						Changed item:
+							Unchanged field "item": "salmon".
+							Changed field "heal_amount" from 2 to 4.
+						Changed item:
+							Unchanged field "item": "clownfish".
+							Changed field "heal_amount" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "pufferfish".
+							Changed field "heal_amount" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "cooked_fish".
+							Changed field "heal_amount" from 5 to 10.
+						Changed item:
+							Unchanged field "item": "cooked_salmon".
+							Changed field "heal_amount" from 6 to 12.
+						Changed item:
+							Unchanged field "item": "beef".
+							Changed field "heal_amount" from 3 to 6.
+						Changed item:
+							Unchanged field "item": "cooked_beef".
+							Changed field "heal_amount" from 8 to 16.
+						Changed item:
+							Unchanged field "item": "chicken".
+							Changed field "heal_amount" from 2 to 4.
+						Changed item:
+							Unchanged field "item": "cooked_chicken".
+							Changed field "heal_amount" from 6 to 12.
+						Changed item:
+							Unchanged field "item": "muttonRaw".
+							Changed field "heal_amount" from 2 to 4.
+						Changed item:
+							Unchanged field "item": "muttonCooked".
+							Changed field "heal_amount" from 6 to 12.
+						Changed item:
+							Unchanged field "item": "rotten_flesh".
+							Changed field "heal_amount" from 4 to 8.
+						Changed item:
+							Unchanged field "item": "rabbit".
+							Changed field "heal_amount" from 3 to 6.
+						Changed item:
+							Unchanged field "item": "cooked_rabbit".
+							Changed field "heal_amount" from 5 to 10.
+						Changed item:
+							Unchanged field "item": "rabbit_stew".
+							Changed field "heal_amount" from 10 to 20.
 			Changed field "events":
 				Total event: 12 (+5, -0)
-				Changed event "minecraft:entity_born":
-					Added field "trigger" of "minecraft:spawn_tame_baby".
-					Removed field "add":
-						field "component_groups":
-							component group: "minecraft:wolf_baby"
-							component group: "minecraft:wolf_tame"
-					Removed empty field "remove".
+				Added event "minecraft:entity_born": field "trigger": "minecraft:spawn_tame_baby".
 				Changed event "minecraft:entity_spawned":
 					Changed field "randomize":
 						Total randomize item: 2 (+2, -2)
@@ -800,15 +739,15 @@ Changed entity "wolf.json":
 							field "weight": 9
 							field "add":
 								field "component_groups":
-									component group: "minecraft:wolf_adult"
-									component group: "minecraft:wolf_wild"
+									component group "minecraft:wolf_adult"
+									component group "minecraft:wolf_wild"
 							field "remove": empty
 						Removed randomize item:
 							field "weight": 1
 							field "add":
 								field "component_groups":
-									component group: "minecraft:wolf_baby"
-									component group: "minecraft:wolf_wild"
+									component group "minecraft:wolf_baby"
+									component group "minecraft:wolf_wild"
 							field "remove": empty
 						Added randomize item:
 							field "trigger": "minecraft:spawn_wild_adult"
@@ -817,34 +756,32 @@ Changed entity "wolf.json":
 							field "trigger": "minecraft:spawn_wild_baby"
 							field "weight": 1
 				Added event "minecraft:increase_max_health":
-					field "add": field "component_groups": component group: "minecraft:wolf_increased_max_health"
+					field "add": field "component_groups": component group "minecraft:wolf_increased_max_health"
 					field "set_property": property "minecraft:has_increased_max_health": true
 				Added event "minecraft:spawn_tame_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_adult"
-							component group: "minecraft:wolf_tame"
-				Added event "minecraft:spawn_tame_baby":
-					field "add":
-						field "component_groups":
-							component group: "minecraft:wolf_baby"
-							component group: "minecraft:wolf_tame"
+							component group "minecraft:wolf_adult"
+							component group "minecraft:wolf_tame"
+				Moved event from "minecraft:entity_born" to "minecraft:spawn_tame_baby".
+				Changed event "minecraft:spawn_tame_baby":
+					Removed field "remove": empty.
 				Added event "minecraft:spawn_wild_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_adult"
-							component group: "minecraft:wolf_wild"
+							component group "minecraft:wolf_adult"
+							component group "minecraft:wolf_wild"
 				Added event "minecraft:spawn_wild_baby":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_baby"
-							component group: "minecraft:wolf_wild"
+							component group "minecraft:wolf_baby"
+							component group "minecraft:wolf_wild"
 	Changed behavior pack "experimental":
 		Changed field "format_version" from "1.20.60" to "1.20.70".
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:wolf"
-				Removed description "is_experimental" of false.
+				Unchanged description "identifier": "minecraft:wolf".
+				Removed description "is_experimental": false.
 				Changed description "properties":
 					Total property: 3 (+1, -0)
 					Added property "minecraft:has_increased_max_health":
@@ -879,117 +816,62 @@ Changed entity "wolf.json":
 							field "event": "minecraft:increase_max_health"
 				Changed component "minecraft:healable":
 					Changed field "items":
-						Total item: 18 (+18, -18)
-						Removed item:
-							field "item": "porkchop"
-							field "heal_amount": 3
-						Removed item:
-							field "item": "cooked_porkchop"
-							field "heal_amount": 8
-						Removed item:
-							field "item": "fish"
-							field "heal_amount": 2
-						Removed item:
-							field "item": "salmon"
-							field "heal_amount": 2
-						Removed item:
-							field "item": "clownfish"
-							field "heal_amount": 1
-						Removed item:
-							field "item": "pufferfish"
-							field "heal_amount": 1
-						Removed item:
-							field "item": "cooked_fish"
-							field "heal_amount": 5
-						Removed item:
-							field "item": "cooked_salmon"
-							field "heal_amount": 6
-						Removed item:
-							field "item": "beef"
-							field "heal_amount": 3
-						Removed item:
-							field "item": "cooked_beef"
-							field "heal_amount": 8
-						Removed item:
-							field "item": "chicken"
-							field "heal_amount": 2
-						Removed item:
-							field "item": "cooked_chicken"
-							field "heal_amount": 6
-						Removed item:
-							field "item": "muttonRaw"
-							field "heal_amount": 2
-						Removed item:
-							field "item": "muttonCooked"
-							field "heal_amount": 6
-						Removed item:
-							field "item": "rotten_flesh"
-							field "heal_amount": 4
-						Removed item:
-							field "item": "rabbit"
-							field "heal_amount": 3
-						Removed item:
-							field "item": "cooked_rabbit"
-							field "heal_amount": 5
-						Removed item:
-							field "item": "rabbit_stew"
-							field "heal_amount": 10
-						Added item:
-							field "item": "porkchop"
-							field "heal_amount": 6
-						Added item:
-							field "item": "cooked_porkchop"
-							field "heal_amount": 16
-						Added item:
-							field "item": "fish"
-							field "heal_amount": 4
-						Added item:
-							field "item": "salmon"
-							field "heal_amount": 4
-						Added item:
-							field "item": "clownfish"
-							field "heal_amount": 2
-						Added item:
-							field "item": "pufferfish"
-							field "heal_amount": 2
-						Added item:
-							field "item": "cooked_fish"
-							field "heal_amount": 10
-						Added item:
-							field "item": "cooked_salmon"
-							field "heal_amount": 12
-						Added item:
-							field "item": "beef"
-							field "heal_amount": 6
-						Added item:
-							field "item": "cooked_beef"
-							field "heal_amount": 16
-						Added item:
-							field "item": "chicken"
-							field "heal_amount": 4
-						Added item:
-							field "item": "cooked_chicken"
-							field "heal_amount": 12
-						Added item:
-							field "item": "muttonRaw"
-							field "heal_amount": 4
-						Added item:
-							field "item": "muttonCooked"
-							field "heal_amount": 12
-						Added item:
-							field "item": "rotten_flesh"
-							field "heal_amount": 8
-						Added item:
-							field "item": "rabbit"
-							field "heal_amount": 6
-						Added item:
-							field "item": "cooked_rabbit"
-							field "heal_amount": 10
-						Added item:
-							field "item": "rabbit_stew"
-							field "heal_amount": 20
+						Changed item:
+							Unchanged field "item": "porkchop".
+							Changed field "heal_amount" from 3 to 6.
+						Changed item:
+							Unchanged field "item": "cooked_porkchop".
+							Changed field "heal_amount" from 8 to 16.
+						Changed item:
+							Unchanged field "item": "fish".
+							Changed field "heal_amount" from 2 to 4.
+						Changed item:
+							Unchanged field "item": "salmon".
+							Changed field "heal_amount" from 2 to 4.
+						Changed item:
+							Unchanged field "item": "clownfish".
+							Changed field "heal_amount" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "pufferfish".
+							Changed field "heal_amount" from 1 to 2.
+						Changed item:
+							Unchanged field "item": "cooked_fish".
+							Changed field "heal_amount" from 5 to 10.
+						Changed item:
+							Unchanged field "item": "cooked_salmon".
+							Changed field "heal_amount" from 6 to 12.
+						Changed item:
+							Unchanged field "item": "beef".
+							Changed field "heal_amount" from 3 to 6.
+						Changed item:
+							Unchanged field "item": "cooked_beef".
+							Changed field "heal_amount" from 8 to 16.
+						Changed item:
+							Unchanged field "item": "chicken".
+							Changed field "heal_amount" from 2 to 4.
+						Changed item:
+							Unchanged field "item": "cooked_chicken".
+							Changed field "heal_amount" from 6 to 12.
+						Changed item:
+							Unchanged field "item": "muttonRaw".
+							Changed field "heal_amount" from 2 to 4.
+						Changed item:
+							Unchanged field "item": "muttonCooked".
+							Changed field "heal_amount" from 6 to 12.
+						Changed item:
+							Unchanged field "item": "rotten_flesh".
+							Changed field "heal_amount" from 4 to 8.
+						Changed item:
+							Unchanged field "item": "rabbit".
+							Changed field "heal_amount" from 3 to 6.
+						Changed item:
+							Unchanged field "item": "cooked_rabbit".
+							Changed field "heal_amount" from 5 to 10.
+						Changed item:
+							Unchanged field "item": "rabbit_stew".
+							Changed field "heal_amount" from 10 to 20.
 			Changed field "events":
 				Total event: 15 (+1, -0)
 				Added event "minecraft:increase_max_health":
-					field "add": field "component_groups": component group: "minecraft:wolf_increased_max_health"
+					field "add": field "component_groups": component group "minecraft:wolf_increased_max_health"
 					field "set_property": property "minecraft:has_increased_max_health": true

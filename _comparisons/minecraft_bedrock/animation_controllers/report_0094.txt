@@ -9,23 +9,23 @@ Added file "creaking.animation_controllers.json":
 				field "initial_state": "default"
 				field "states":
 					state "attack":
-						field "animations": animation dict: "attack"
-						field "transitions": transition list: transition "default": "!variable.attacking"
-					state "default": field "transitions": transition list: transition "attack": "variable.attacking && query.all_animations_finished"
+						field "animations": animation dict "attack"
+						field "transitions": transition list transition "default": "!variable.attacking"
+					state "default": field "transitions": transition list transition "attack": "variable.attacking && query.all_animations_finished"
 			animation controller "controller.animation.creaking.sway":
 				field "initial_state": "default"
 				field "states":
-					state "default": field "transitions": transition list: transition "sway": "variable.swaying"
+					state "default": field "transitions": transition list transition "sway": "variable.swaying"
 					state "sway":
-						field "animations": animation dict: "sway"
-						field "transitions": transition list: transition "default": "!variable.swaying && query.all_animations_finished"
+						field "animations": animation dict "sway"
+						field "transitions": transition list transition "default": "!variable.swaying && query.all_animations_finished"
 			animation controller "controller.animation.creaking.walk":
 				field "initial_state": "default"
 				field "states":
 					state "default":
-						field "transitions": transition list: transition "walking": "variable.walking"
+						field "transitions": transition list transition "walking": "variable.walking"
 						field "blend_transition": 0.2
 					state "walking":
-						field "animations": animation dict: animation "walk": "math.min(1.2, math.lerp(0.2, 2.0, query.modified_move_speed))"
-						field "transitions": transition list: transition "default": "!variable.walking"
+						field "animations": animation dict animation "walk": "math.min(1.2, math.lerp(0.2, 2.0, query.modified_move_speed))"
+						field "transitions": transition list transition "default": "!variable.walking"
 						field "blend_transition": 0.5

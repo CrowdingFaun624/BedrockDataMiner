@@ -1,27 +1,24 @@
 Difference of "entities" between "1.17.0.50" (beta of "1.17.0") and "1.17.0.52" (beta of "1.17.0").
 
 Changed entity "axolotl.json":
-	Moved behavior pack "experimental" to "core".
+	Moved behavior pack from "experimental" to "core".
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
-				Total component group: 12 (+3, -3)
-				Moved component group "minecraft:axolotl_adult" to "axolotl_adult".
-				Moved component group "minecraft:axolotl_baby" to "axolotl_baby".
-				Moved component group "minecraft:axolotl_blue" to "axolotl_blue".
-				Moved component group "minecraft:axolotl_cyan" to "axolotl_cyan".
-				Moved component group "minecraft:axolotl_dried" to "axolotl_dried".
-				Moved component group "minecraft:axolotl_gold" to "axolotl_gold".
-				Added component group "axolotl_in_water":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "filters":
-									filter property "test": "in_water"
-									filter property "operator": "!="
-									filter property "value": true
-								field "event": "start_drying_out"
-				Moved component group "minecraft:axolotl_lucy" to "axolotl_lucy".
+				Total component group: 12 (+1, -1)
+				Moved component group from "minecraft:axolotl_adult" to "axolotl_adult".
+				Moved component group from "minecraft:axolotl_baby" to "axolotl_baby".
+				Moved component group from "minecraft:axolotl_blue" to "axolotl_blue".
+				Moved component group from "minecraft:axolotl_cyan" to "axolotl_cyan".
+				Moved component group from "minecraft:axolotl_dried" to "axolotl_dried".
+				Moved component group from "minecraft:axolotl_gold" to "axolotl_gold".
+				Moved component group from "minecraft:axolotl_in_water" to "axolotl_in_water".
+				Changed component group "axolotl_in_water":
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Changed trigger:
+								Changed field "event" from "minecraft:start_dryingout" to "start_drying_out".
+				Moved component group from "minecraft:axolotl_lucy" to "axolotl_lucy".
 				Added component group "axolotl_on_land":
 					component "minecraft:drying_out_timer":
 						field "total_time": 300
@@ -29,31 +26,15 @@ Changed entity "axolotl.json":
 						field "dried_out_event": field "event": "dried_out"
 						field "stopped_drying_out_event": field "event": "stop_drying_out"
 						field "recover_after_dried_out_event": field "event": "recover_after_dried_out"
-				Added component group "axolotl_on_land_in_rain":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "filters":
-									filter property "test": "in_water_or_rain"
-									filter property "operator": "!="
-									filter property "value": true
-								field "event": "start_drying_out"
-							trigger:
-								field "filters":
-									filter property "test": "in_water"
-									filter property "operator": "=="
-									filter property "value": true
-								field "event": "enter_water"
-				Moved component group "minecraft:axolotl_wild" to "axolotl_wild".
-				Removed component group "minecraft:axolotl_in_water":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "filters":
-									filter property "test": "in_water"
-									filter property "operator": "!="
-									filter property "value": true
-								field "event": "minecraft:start_dryingout"
+				Moved component group from "minecraft:axolotl_on_land_in_rain" to "axolotl_on_land_in_rain".
+				Changed component group "axolotl_on_land_in_rain":
+					Changed component "minecraft:environment_sensor":
+						Changed field "triggers":
+							Changed trigger:
+								Changed field "event" from "minecraft:start_dryingout" to "start_drying_out".
+							Changed trigger:
+								Changed field "event" from "minecraft:enter_water" to "enter_water".
+				Moved component group from "minecraft:axolotl_wild" to "axolotl_wild".
 				Removed component group "minecraft:axolotl_on_land":
 					component "minecraft:environment_sensor":
 						field "triggers":
@@ -67,136 +48,91 @@ Changed entity "axolotl.json":
 						field "looping": false
 						field "time": 300
 						field "time_down_event": field "event": "minecraft:dried_out"
-				Removed component group "minecraft:axolotl_on_land_in_rain":
-					component "minecraft:environment_sensor":
-						field "triggers":
-							trigger:
-								field "filters":
-									filter property "test": "in_water_or_rain"
-									filter property "operator": "!="
-									filter property "value": true
-								field "event": "minecraft:start_dryingout"
-							trigger:
-								field "filters":
-									filter property "test": "in_water"
-									filter property "operator": "=="
-									filter property "value": true
-								field "event": "minecraft:enter_water"
 			Changed field "components":
 				Changed component "minecraft:behavior.swim_idle":
 					Changed field "success_rate" from 0.5 to 0.05.
 			Changed field "events":
-				Total event: 10 (+5, -4)
-				Added event "dried_out" of field "add": field "component_groups": component group: "axolotl_dried".
-				Added event "enter_water":
-					field "add": field "component_groups": component group: "axolotl_in_water"
-					field "remove":
-						field "component_groups":
-							component group: "axolotl_on_land"
-							component group: "axolotl_on_land_in_rain"
-							component group: "axolotl_dried"
+				Total event: 10 (+1, -0)
+				Moved event from "minecraft:dried_out" to "dried_out".
+				Changed event "dried_out":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:axolotl_dried" to "axolotl_dried".
+				Moved event from "minecraft:enter_water" to "enter_water".
+				Changed event "enter_water":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:axolotl_in_water" to "axolotl_in_water".
+					Changed field "remove":
+						Changed field "component_groups":
+							Changed component group from "minecraft:axolotl_dried" to "axolotl_dried".
+							Changed component group from "minecraft:axolotl_on_land" to "axolotl_on_land".
+							Changed component group from "minecraft:axolotl_on_land_in_rain" to "axolotl_on_land_in_rain".
 				Changed event "minecraft:ageable_grow_up":
 					Changed field "add":
 						Changed field "component_groups":
-							Total component group: 1 (+1, -1)
-							Added component group "axolotl_adult".
-							Removed component group "minecraft:axolotl_adult".
+							Changed component group from "minecraft:axolotl_adult" to "axolotl_adult".
 					Changed field "remove":
 						Changed field "component_groups":
-							Total component group: 1 (+1, -1)
-							Added component group "axolotl_baby".
-							Removed component group "minecraft:axolotl_baby".
-				Removed event "minecraft:dried_out" of field "add": field "component_groups": component group: "minecraft:axolotl_dried".
-				Removed event "minecraft:enter_water":
-					field "add": field "component_groups": component group: "minecraft:axolotl_in_water"
-					field "remove":
-						field "component_groups":
-							component group: "minecraft:axolotl_on_land"
-							component group: "minecraft:axolotl_on_land_in_rain"
-							component group: "minecraft:axolotl_dried"
+							Changed component group from "minecraft:axolotl_baby" to "axolotl_baby".
 				Changed event "minecraft:entity_born":
 					Changed field "sequence":
 						Changed sequence item 0:
 							Changed field "add":
 								Changed field "component_groups":
-									Total component group: 2 (+2, -2)
-									Added component group "axolotl_baby".
-									Added component group "axolotl_in_water".
-									Removed component group "minecraft:axolotl_baby".
-									Removed component group "minecraft:axolotl_in_water".
+									Changed component group from "minecraft:axolotl_baby" to "axolotl_baby".
+									Changed component group from "minecraft:axolotl_in_water" to "axolotl_in_water".
 							Changed field "remove":
 								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Added component group "axolotl_adult".
-									Removed component group "minecraft:axolotl_adult".
+									Changed component group from "minecraft:axolotl_adult" to "axolotl_adult".
 						Changed sequence item 1:
 							Changed field "add":
 								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Added component group "axolotl_blue".
-									Removed component group "minecraft:axolotl_blue".
+									Changed component group from "minecraft:axolotl_blue" to "axolotl_blue".
 				Changed event "minecraft:entity_spawned":
 					Changed field "sequence":
 						Changed sequence item 0:
 							Changed field "add":
 								Changed field "component_groups":
-									Total component group: 2 (+2, -2)
-									Added component group "axolotl_adult".
-									Added component group "axolotl_in_water".
-									Removed component group "minecraft:axolotl_adult".
-									Removed component group "minecraft:axolotl_in_water".
+									Changed component group from "minecraft:axolotl_adult" to "axolotl_adult".
+									Changed component group from "minecraft:axolotl_in_water" to "axolotl_in_water".
 						Changed sequence item 1:
 							Changed field "randomize":
-								Total randomize item: 4 (+4, -4)
-								Removed randomize item:
-									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:axolotl_cyan"
-								Removed randomize item:
-									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:axolotl_gold"
-								Removed randomize item:
-									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:axolotl_lucy"
-								Removed randomize item:
-									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:axolotl_wild"
-								Added randomize item:
-									field "weight": 25
-									field "add": field "component_groups": component group: "axolotl_cyan"
-								Added randomize item:
-									field "weight": 25
-									field "add": field "component_groups": component group: "axolotl_gold"
-								Added randomize item:
-									field "weight": 25
-									field "add": field "component_groups": component group: "axolotl_lucy"
-								Added randomize item:
-									field "weight": 25
-									field "add": field "component_groups": component group: "axolotl_wild"
-				Removed event "minecraft:start_dryingout":
-					field "add": field "component_groups": component group: "minecraft:axolotl_on_land"
-					field "remove":
-						field "component_groups":
-							component group: "minecraft:axolotl_on_land_in_rain"
-							component group: "minecraft:axolotl_in_water"
-				Removed event "minecraft:stop_dryingout":
-					field "add": field "component_groups": component group: "minecraft:axolotl_on_land_in_rain"
-					field "remove":
-						field "component_groups":
-							component group: "minecraft:axolotl_on_land"
-							component group: "minecraft:axolotl_dried"
-				Added event "recover_after_dried_out" of field "remove": field "component_groups": component group: "axolotl_dried".
-				Added event "start_drying_out":
-					field "add": field "component_groups": component group: "axolotl_on_land"
-					field "remove":
-						field "component_groups":
-							component group: "axolotl_on_land_in_rain"
-							component group: "axolotl_in_water"
-				Added event "stop_drying_out":
-					field "add": field "component_groups": component group: "axolotl_on_land_in_rain"
-					field "remove":
-						field "component_groups":
-							component group: "axolotl_on_land"
-							component group: "axolotl_dried"
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Changed component group from "minecraft:axolotl_cyan" to "axolotl_cyan".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Changed component group from "minecraft:axolotl_gold" to "axolotl_gold".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Changed component group from "minecraft:axolotl_lucy" to "axolotl_lucy".
+								Changed randomize item:
+									Changed field "add":
+										Changed field "component_groups":
+											Changed component group from "minecraft:axolotl_wild" to "axolotl_wild".
+				Added event "recover_after_dried_out": field "remove": field "component_groups": component group "axolotl_dried".
+				Moved event from "minecraft:start_dryingout" to "start_drying_out".
+				Changed event "start_drying_out":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:axolotl_on_land" to "axolotl_on_land".
+					Changed field "remove":
+						Changed field "component_groups":
+							Changed component group from "minecraft:axolotl_in_water" to "axolotl_in_water".
+							Changed component group from "minecraft:axolotl_on_land_in_rain" to "axolotl_on_land_in_rain".
+				Moved event from "minecraft:stop_dryingout" to "stop_drying_out".
+				Changed event "stop_drying_out":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:axolotl_on_land_in_rain" to "axolotl_on_land_in_rain".
+					Changed field "remove":
+						Changed field "component_groups":
+							Changed component group from "minecraft:axolotl_dried" to "axolotl_dried".
+							Changed component group from "minecraft:axolotl_on_land" to "axolotl_on_land".
 Changed entity "bee.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -218,11 +154,11 @@ Changed entity "bee.json":
 						Changed field "goal_radius" from 0.633 to 1.2.
 				Changed component group "look_for_food":
 					Changed component "minecraft:behavior.move_to_block":
+						Changed field "goal_radius" from 1.0 to 1.2.
 						Changed field "target_blocks":
 							Total block: 10 (+2, -0)
 							Added block "minecraft:azalea_leaves_flowered".
 							Added block "minecraft:flowering_azalea".
-						Changed field "goal_radius" from 1.0 to 1.2.
 			Changed field "components":
 				Changed component "minecraft:behavior.tempt":
 					Changed field "items":
@@ -281,15 +217,15 @@ Changed entity "bee.json":
 								field "event": "minecraft:entity_born"
 								field "target": "baby"
 						field "breed_items":
-							item: "minecraft:red_flower"
-							item: "minecraft:yellow_flower"
-							item: "minecraft:wither_rose"
-							item: "minecraft:double_plant:0"
-							item: "minecraft:double_plant:1"
-							item: "minecraft:double_plant:4"
-							item: "minecraft:double_plant:5"
-							item: "minecraft:flowering_azalea"
-							item: "minecraft:azalea_leaves_flowered"
+							item "minecraft:azalea_leaves_flowered"
+							item "minecraft:double_plant:0"
+							item "minecraft:double_plant:1"
+							item "minecraft:double_plant:4"
+							item "minecraft:double_plant:5"
+							item "minecraft:flowering_azalea"
+							item "minecraft:red_flower"
+							item "minecraft:wither_rose"
+							item "minecraft:yellow_flower"
 					component "minecraft:experience_reward":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
@@ -300,15 +236,15 @@ Changed entity "bee.json":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feed_items":
-							item: "minecraft:red_flower"
-							item: "minecraft:yellow_flower"
-							item: "minecraft:wither_rose"
-							item: "minecraft:double_plant:0"
-							item: "minecraft:double_plant:1"
-							item: "minecraft:double_plant:4"
-							item: "minecraft:double_plant:5"
-							item: "minecraft:flowering_azalea"
-							item: "minecraft:azalea_leaves_flowered"
+							item "minecraft:red_flower"
+							item "minecraft:yellow_flower"
+							item "minecraft:wither_rose"
+							item "minecraft:double_plant:0"
+							item "minecraft:double_plant:1"
+							item "minecraft:double_plant:4"
+							item "minecraft:double_plant:5"
+							item "minecraft:flowering_azalea"
+							item "minecraft:azalea_leaves_flowered"
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
@@ -328,10 +264,10 @@ Changed entity "bee.json":
 							field "target": "self"
 					component "minecraft:type_family":
 						field "family":
-							family: "bee"
-							family: "mob"
-							family: "arthropod"
-							family: "pacified"
+							family "arthropod"
+							family "bee"
+							family "mob"
+							family "pacified"
 					component "minecraft:behavior.panic":
 						field "priority": 1
 						field "speed_multiplier": 1.25
@@ -368,8 +304,8 @@ Changed entity "bee.json":
 						field "tick_interval": 1
 						field "goal_radius": 1.2
 						field "target_blocks":
-							block: "bee_nest"
-							block: "beehive"
+							block "bee_nest"
+							block "beehive"
 						field "on_reach":
 							event:
 								field "event": "minecraft:bee_returned_to_hive"
@@ -412,16 +348,16 @@ Changed entity "bee.json":
 						field "target_selection_method": "random"
 						field "target_offset": [0, 0.25, 0]
 						field "target_blocks":
-							block: "minecraft:red_flower"
-							block: "minecraft:yellow_flower"
-							block: "minecraft:wither_rose"
-							block: "minecraft:sweet_berry_bush"
-							block: "minecraft:double_plant:8"
-							block: "minecraft:double_plant:9"
-							block: "minecraft:double_plant:12"
-							block: "minecraft:double_plant:13"
-							block: "minecraft:flowering_azalea"
-							block: "minecraft:azalea_leaves_flowered"
+							block "minecraft:azalea_leaves_flowered"
+							block "minecraft:double_plant:12"
+							block "minecraft:double_plant:13"
+							block "minecraft:double_plant:8"
+							block "minecraft:double_plant:9"
+							block "minecraft:flowering_azalea"
+							block "minecraft:red_flower"
+							block "minecraft:sweet_berry_bush"
+							block "minecraft:wither_rose"
+							block "minecraft:yellow_flower"
 						field "on_stay_completed":
 							event:
 								field "event": "collected_nectar"
@@ -521,8 +457,8 @@ Changed entity "bee.json":
 					field "on_break":
 						event:
 							field "block_list":
-								block: "minecraft:beehive"
-								block: "minecraft:bee_nest"
+								block "minecraft:bee_nest"
+								block "minecraft:beehive"
 							field "on_block_broken": "hive_destroyed"
 				component "minecraft:breathable":
 					field "totalSupply": 15
@@ -544,8 +480,8 @@ Changed entity "bee.json":
 				component "minecraft:home":
 					field "restriction_radius": 22
 					field "home_block_list":
-						block: "minecraft:bee_nest"
-						block: "minecraft:beehive"
+						block "minecraft:bee_nest"
+						block "minecraft:beehive"
 				component "minecraft:hurt_on_condition":
 					field "damage_conditions":
 						damage condition:
@@ -581,9 +517,9 @@ Changed entity "bee.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "bee"
-						family: "mob"
-						family: "arthropod"
+						family "arthropod"
+						family "bee"
+						family "mob"
 				component "minecraft:behavior.float": field "priority": 19
 				component "minecraft:behavior.move_towards_home_restriction": field "priority": 9
 				component "minecraft:behavior.random_hover":
@@ -599,190 +535,190 @@ Changed entity "bee.json":
 					field "within_radius": 8
 					field "can_tempt_vertically": true
 					field "items":
-						item: "minecraft:red_flower"
-						item: "minecraft:yellow_flower"
-						item: "minecraft:wither_rose"
-						item: "minecraft:double_plant:0"
-						item: "minecraft:double_plant:1"
-						item: "minecraft:double_plant:4"
-						item: "minecraft:double_plant:5"
-						item: "minecraft:flowering_azalea"
-						item: "minecraft:azalea_leaves_flowered"
+						item "minecraft:azalea_leaves_flowered"
+						item "minecraft:double_plant:0"
+						item "minecraft:double_plant:1"
+						item "minecraft:double_plant:4"
+						item "minecraft:double_plant:5"
+						item "minecraft:flowering_azalea"
+						item "minecraft:red_flower"
+						item "minecraft:wither_rose"
+						item "minecraft:yellow_flower"
 			field "events":
 				event "abort_sheltering":
 					field "add":
 						field "component_groups":
-							component group: "shelter_detection"
-							component group: "look_for_food"
+							component group "look_for_food"
+							component group "shelter_detection"
 					field "remove":
 						field "component_groups":
-							component group: "abort_shelter_detection"
-							component group: "return_to_home"
-							component group: "escape_fire"
+							component group "abort_shelter_detection"
+							component group "escape_fire"
+							component group "return_to_home"
 				event "attacked":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "angry_bee"
-							field "remove": field "component_groups": component group: "take_nearest_target"
+							field "add": field "component_groups": component group "angry_bee"
+							field "remove": field "component_groups": component group "take_nearest_target"
 						sequence item 1:
-							field "add": field "component_groups": component group: "easy_attack"
+							field "add": field "component_groups": component group "easy_attack"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "easy"
 							field "remove":
 								field "component_groups":
-									component group: "normal_attack"
-									component group: "hard_attack"
+									component group "hard_attack"
+									component group "normal_attack"
 						sequence item 2:
-							field "add": field "component_groups": component group: "normal_attack"
+							field "add": field "component_groups": component group "normal_attack"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "normal"
 							field "remove":
 								field "component_groups":
-									component group: "easy_attack"
-									component group: "hard_attack"
+									component group "easy_attack"
+									component group "hard_attack"
 						sequence item 3:
-							field "add": field "component_groups": component group: "hard_attack"
+							field "add": field "component_groups": component group "hard_attack"
 							field "filters":
 								filter property "test": "is_difficulty"
 								filter property "value": "hard"
 							field "remove":
 								field "component_groups":
-									component group: "easy_attack"
-									component group: "normal_attack"
+									component group "easy_attack"
+									component group "normal_attack"
 				event "calmed_down":
 					field "add":
 						field "component_groups":
-							component group: "shelter_detection"
-							component group: "return_to_home"
+							component group "return_to_home"
+							component group "shelter_detection"
 					field "remove":
 						field "component_groups":
-							component group: "angry_bee"
-							component group: "take_nearest_target"
+							component group "angry_bee"
+							component group "take_nearest_target"
 				event "collected_nectar":
 					field "add":
 						field "component_groups":
-							component group: "return_to_home"
-							component group: "has_nectar"
-							component group: "default_sound"
-					field "remove": field "component_groups": component group: "look_for_food"
+							component group "default_sound"
+							component group "has_nectar"
+							component group "return_to_home"
+					field "remove": field "component_groups": component group "look_for_food"
 				event "countdown_to_perish_event":
-					field "add": field "component_groups": component group: "countdown_to_perish"
+					field "add": field "component_groups": component group "countdown_to_perish"
 					field "remove":
 						field "component_groups":
-							component group: "collect_nectar"
-							component group: "track_attacker"
-							component group: "take_nearest_target"
-							component group: "look_for_food"
-							component group: "angry_bee"
-							component group: "hive_full"
-							component group: "find_hive"
-							component group: "escape_fire"
+							component group "angry_bee"
+							component group "collect_nectar"
+							component group "escape_fire"
+							component group "find_hive"
+							component group "hive_full"
+							component group "look_for_food"
+							component group "take_nearest_target"
+							component group "track_attacker"
 				event "find_flower_timeout":
-					field "add": field "component_groups": component group: "return_to_home"
-					field "remove": field "component_groups": component group: "look_for_food"
+					field "add": field "component_groups": component group "return_to_home"
+					field "remove": field "component_groups": component group "look_for_food"
 				event "find_hive_event":
-					field "add": field "component_groups": component group: "find_hive"
+					field "add": field "component_groups": component group "find_hive"
 					field "remove":
 						field "component_groups":
-							component group: "return_to_home"
-							component group: "hive_full"
+							component group "hive_full"
+							component group "return_to_home"
 				event "find_hive_timeout":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "look_for_food"
+							field "add": field "component_groups": component group "look_for_food"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
 								filter property "value": "minecraft:is_charged"
 							field "remove":
 								field "component_groups":
-									component group: "find_hive"
-									component group: "escape_fire"
+									component group "escape_fire"
+									component group "find_hive"
 						sequence item 1:
-							field "add": field "component_groups": component group: "return_to_home"
+							field "add": field "component_groups": component group "return_to_home"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_charged"
-							field "remove": field "component_groups": component group: "find_hive"
+							field "remove": field "component_groups": component group "find_hive"
 				event "hive_destroyed":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "take_nearest_target"
+							field "add": field "component_groups": component group "take_nearest_target"
 							field "filters":
 								filter property "test": "is_family"
 								filter property "subject": "self"
 								filter property "operator": "!="
 								filter property "value": "pacified"
-							field "remove": field "component_groups": component group: "escape_fire"
+							field "remove": field "component_groups": component group "escape_fire"
 				event "minecraft:ageable_grow_up":
-					field "add": field "component_groups": component group: "bee_adult"
-					field "remove": field "component_groups": component group: "bee_baby"
+					field "add": field "component_groups": component group "bee_adult"
+					field "remove": field "component_groups": component group "bee_baby"
 				event "minecraft:entity_born":
 					field "add":
 						field "component_groups":
-							component group: "bee_baby"
-							component group: "shelter_detection"
-							component group: "track_attacker"
-							component group: "look_for_food"
+							component group "bee_baby"
+							component group "look_for_food"
+							component group "shelter_detection"
+							component group "track_attacker"
 				event "minecraft:entity_spawned":
 					field "sequence":
 						sequence item 0:
 							field "randomize":
 								randomize item:
 									field "weight": 95
-									field "add": field "component_groups": component group: "bee_adult"
+									field "add": field "component_groups": component group "bee_adult"
 								randomize item:
 									field "weight": 5
-									field "add": field "component_groups": component group: "bee_baby"
+									field "add": field "component_groups": component group "bee_baby"
 						sequence item 1:
 							field "add":
 								field "component_groups":
-									component group: "track_attacker"
-									component group: "shelter_detection"
-									component group: "look_for_food"
+									component group "look_for_food"
+									component group "shelter_detection"
+									component group "track_attacker"
 				event "minecraft:exited_disturbed_hive":
-					field "add": field "component_groups": component group: "take_nearest_target"
+					field "add": field "component_groups": component group "take_nearest_target"
 					field "remove":
 						field "component_groups":
-							component group: "find_hive"
-							component group: "return_to_home"
-							component group: "has_nectar"
-							component group: "abort_shelter_detection"
-							component group: "shelter_detection"
-							component group: "escape_fire"
+							component group "abort_shelter_detection"
+							component group "escape_fire"
+							component group "find_hive"
+							component group "has_nectar"
+							component group "return_to_home"
+							component group "shelter_detection"
 				event "minecraft:exited_hive":
 					field "add":
 						field "component_groups":
-							component group: "look_for_food"
-							component group: "shelter_detection"
+							component group "look_for_food"
+							component group "shelter_detection"
 					field "remove":
 						field "component_groups":
-							component group: "find_hive"
-							component group: "return_to_home"
-							component group: "has_nectar"
-							component group: "abort_shelter_detection"
-				event "minecraft:exited_hive_on_fire": field "add": field "component_groups": component group: "escape_fire"
+							component group "abort_shelter_detection"
+							component group "find_hive"
+							component group "has_nectar"
+							component group "return_to_home"
+				event "minecraft:exited_hive_on_fire": field "add": field "component_groups": component group "escape_fire"
 				event "minecraft:hive_full":
-					field "add": field "component_groups": component group: "hive_full"
+					field "add": field "component_groups": component group "hive_full"
 					field "remove":
 						field "component_groups":
-							component group: "find_hive"
-							component group: "return_to_home"
-				event "perish_event": field "add": field "component_groups": component group: "perish"
+							component group "find_hive"
+							component group "return_to_home"
+				event "perish_event": field "add": field "component_groups": component group "perish"
 				event "seek_shelter":
 					field "add":
 						field "component_groups":
-							component group: "default_sound"
-							component group: "return_to_home"
-							component group: "abort_shelter_detection"
+							component group "abort_shelter_detection"
+							component group "default_sound"
+							component group "return_to_home"
 					field "remove":
 						field "component_groups":
-							component group: "look_for_food"
-							component group: "collect_nectar"
-							component group: "shelter_detection"
-				event "stop_panicking_after_fire": field "remove": field "component_groups": component group: "escape_fire"
+							component group "collect_nectar"
+							component group "look_for_food"
+							component group "shelter_detection"
+				event "stop_panicking_after_fire": field "remove": field "component_groups": component group "escape_fire"
 Changed entity "blaze.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -791,9 +727,9 @@ Changed entity "blaze.json":
 					Changed field "damage_conditions":
 						Changed damage condition:
 							Changed field "filters":
-								Unchanged filter property "operator": "=="
-								Unchanged filter property "value": true
 								Changed filter property "test" from "in_water_or_rain" to "in_contact_with_water".
+								Unchanged filter property "operator": "==".
+								Unchanged filter property "value": true.
 Changed entity "creeper.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -933,9 +869,9 @@ Changed entity "creeper.json":
 						field "target": "self"
 				component "minecraft:type_family":
 					field "family":
-						family: "creeper"
-						family: "monster"
-						family: "mob"
+						family "creeper"
+						family "mob"
+						family "monster"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 3
 					field "entity_types":
@@ -990,35 +926,35 @@ Changed entity "creeper.json":
 					field "priority": 2
 			field "events":
 				event "minecraft:become_charged":
-					field "add": field "component_groups": component group: "minecraft:charged_creeper"
-					field "remove": field "component_groups": component group: "minecraft:exploding"
+					field "add": field "component_groups": component group "minecraft:charged_creeper"
+					field "remove": field "component_groups": component group "minecraft:exploding"
 				event "minecraft:start_exploding":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:exploding"
+							field "add": field "component_groups": component group "minecraft:exploding"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
 								filter property "value": "minecraft:is_charged"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:charged_exploding"
+							field "add": field "component_groups": component group "minecraft:charged_exploding"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_charged"
 				event "minecraft:start_exploding_forced":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:forced_exploding"
+							field "add": field "component_groups": component group "minecraft:forced_exploding"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
 								filter property "value": "minecraft:is_charged"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:forced_charged_exploding"
+							field "add": field "component_groups": component group "minecraft:forced_charged_exploding"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_charged"
-				event "minecraft:stop_exploding": field "remove": field "component_groups": component group: "minecraft:exploding"
+				event "minecraft:stop_exploding": field "remove": field "component_groups": component group "minecraft:exploding"
 Changed entity "dolphin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -1045,7 +981,7 @@ Changed entity "dolphin.json":
 						field "time_down_event": field "event": "dried_out"
 			Changed field "events":
 				Total event: 10 (+1, -0)
-				Added event "recover_after_dried_out" of field "remove": field "component_groups": component group: "dolphin_dried".
+				Added event "recover_after_dried_out": field "remove": field "component_groups": component group "dolphin_dried".
 Changed entity "enderman.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -1054,9 +990,9 @@ Changed entity "enderman.json":
 					Changed field "damage_conditions":
 						Changed damage condition:
 							Changed field "filters":
-								Unchanged filter property "operator": "=="
-								Unchanged filter property "value": true
 								Changed filter property "test" from "in_water_or_rain" to "in_contact_with_water".
+								Unchanged filter property "operator": "==".
+								Unchanged filter property "value": true.
 Changed entity "fox.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -1064,13 +1000,13 @@ Changed entity "fox.json":
 				Changed component group "minecraft:fox_adult":
 					Changed component "minecraft:breedable":
 						Changed field "breed_items" from "sweet_berries" to:
-							item: "sweet_berries"
-							item: "glow_berries"
+							item "glow_berries"
+							item "sweet_berries"
 				Changed component group "minecraft:fox_baby":
 					Changed component "minecraft:ageable":
 						Changed field "feed_items" from "sweet_berries" to:
-							item: "sweet_berries"
-							item: "glow_berries"
+							item "sweet_berries"
+							item "glow_berries"
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
@@ -1143,8 +1079,8 @@ Changed entity "fox.json":
 					component "minecraft:breedable":
 						field "require_tame": false
 						field "breed_items":
-							item: "sweet_berries"
-							item: "glow_berries"
+							item "glow_berries"
+							item "sweet_berries"
 						field "breeds_with":
 							field "mate_type": "minecraft:fox"
 							field "baby_type": "minecraft:fox"
@@ -1226,8 +1162,8 @@ Changed entity "fox.json":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feed_items":
-							item: "sweet_berries"
-							item: "glow_berries"
+							item "sweet_berries"
+							item "glow_berries"
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
@@ -1674,9 +1610,9 @@ Changed entity "fox.json":
 							field "max_amount": 1
 				component "minecraft:type_family":
 					field "family":
-						family: "fox"
-						family: "lightweight"
-						family: "mob"
+						family "fox"
+						family "lightweight"
+						family "mob"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 5
 					field "entity_types":
@@ -1727,9 +1663,9 @@ Changed entity "fox.json":
 				component "minecraft:behavior.raid_garden":
 					field "priority": 12
 					field "blocks":
-						block: "minecraft:sweet_berry_bush"
-						block: "minecraft:cave_vines_head_with_berries"
-						block: "minecraft:cave_vines_body_with_berries"
+						block "minecraft:cave_vines_body_with_berries"
+						block "minecraft:cave_vines_head_with_berries"
+						block "minecraft:sweet_berry_bush"
 					field "speed_multiplier": 1.2
 					field "search_range": 12
 					field "search_height": 2
@@ -1768,21 +1704,21 @@ Changed entity "fox.json":
 					field "within_radius": 16
 					field "can_get_scared": true
 					field "items":
-						item: "sweet_berries"
-						item: "glow_berries"
+						item "glow_berries"
+						item "sweet_berries"
 			field "events":
 				event "minecraft:ageable_grow_up":
-					field "add": field "component_groups": component group: "minecraft:fox_adult"
-					field "remove": field "component_groups": component group: "minecraft:fox_baby"
-				event "minecraft:ambient_night": field "add": field "component_groups": component group: "minecraft:fox_ambient_night"
-				event "minecraft:ambient_normal": field "add": field "component_groups": component group: "minecraft:fox_ambient_normal"
-				event "minecraft:ambient_sleep": field "add": field "component_groups": component group: "minecraft:fox_ambient_sleep"
+					field "add": field "component_groups": component group "minecraft:fox_adult"
+					field "remove": field "component_groups": component group "minecraft:fox_baby"
+				event "minecraft:ambient_night": field "add": field "component_groups": component group "minecraft:fox_ambient_night"
+				event "minecraft:ambient_normal": field "add": field "component_groups": component group "minecraft:fox_ambient_normal"
+				event "minecraft:ambient_sleep": field "add": field "component_groups": component group "minecraft:fox_ambient_sleep"
 				event "minecraft:entity_born":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:fox_baby"
-							component group: "minecraft:trusting_fox"
-							component group: "minecraft:docile_fox"
+							component group "minecraft:docile_fox"
+							component group "minecraft:fox_baby"
+							component group "minecraft:trusting_fox"
 				event "minecraft:entity_spawned":
 					field "sequence":
 						sequence item 0:
@@ -1791,72 +1727,72 @@ Changed entity "fox.json":
 									field "weight": 95
 									field "add":
 										field "component_groups":
-											component group: "minecraft:fox_adult"
-											component group: "minecraft:fox_with_item"
-											component group: "minecraft:docile_fox"
+											component group "minecraft:docile_fox"
+											component group "minecraft:fox_adult"
+											component group "minecraft:fox_with_item"
 								randomize item:
 									field "weight": 5
 									field "add":
 										field "component_groups":
-											component group: "minecraft:fox_baby"
-											component group: "minecraft:docile_fox"
+											component group "minecraft:docile_fox"
+											component group "minecraft:fox_baby"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:fox_arctic"
+							field "add": field "component_groups": component group "minecraft:fox_arctic"
 							field "filters":
 								filter property "test": "is_snow_covered"
 								filter property "value": true
 						sequence item 2:
-							field "add": field "component_groups": component group: "minecraft:fox_red"
+							field "add": field "component_groups": component group "minecraft:fox_red"
 							field "filters":
 								filter property "test": "is_snow_covered"
 								filter property "value": false
 				event "minecraft:fox_configure_day":
-					field "add": field "component_groups": component group: "minecraft:fox_day"
+					field "add": field "component_groups": component group "minecraft:fox_day"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:fox_night"
-							component group: "minecraft:fox_thunderstorm"
+							component group "minecraft:fox_night"
+							component group "minecraft:fox_thunderstorm"
 				event "minecraft:fox_configure_defending":
-					field "add": field "component_groups": component group: "minecraft:defending_fox"
+					field "add": field "component_groups": component group "minecraft:defending_fox"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:docile_fox"
-							component group: "minecraft:fox_day"
-							component group: "minecraft:fox_night"
+							component group "minecraft:docile_fox"
+							component group "minecraft:fox_day"
+							component group "minecraft:fox_night"
 				event "minecraft:fox_configure_docile_day":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:docile_fox"
-							component group: "minecraft:fox_day"
+							component group "minecraft:docile_fox"
+							component group "minecraft:fox_day"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:defending_fox"
-							component group: "minecraft:fox_night"
+							component group "minecraft:defending_fox"
+							component group "minecraft:fox_night"
 				event "minecraft:fox_configure_docile_night":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:docile_fox"
-							component group: "minecraft:fox_night"
+							component group "minecraft:docile_fox"
+							component group "minecraft:fox_night"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:defending_fox"
-							component group: "minecraft:fox_day"
+							component group "minecraft:defending_fox"
+							component group "minecraft:fox_day"
 				event "minecraft:fox_configure_night":
-					field "add": field "component_groups": component group: "minecraft:fox_night"
+					field "add": field "component_groups": component group "minecraft:fox_night"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:fox_day"
-							component group: "minecraft:fox_thunderstorm"
+							component group "minecraft:fox_day"
+							component group "minecraft:fox_thunderstorm"
 				event "minecraft:fox_configure_thunderstorm":
-					field "add": field "component_groups": component group: "minecraft:fox_thunderstorm"
+					field "add": field "component_groups": component group "minecraft:fox_thunderstorm"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:fox_night"
-							component group: "minecraft:fox_day"
+							component group "minecraft:fox_day"
+							component group "minecraft:fox_night"
 Changed entity "glow_squid.json":
-	Moved behavior pack "experimental" to "core".
+	Moved behavior pack from "experimental" to "core".
 Changed entity "goat.json":
-	Moved behavior pack "experimental" to "core".
+	Moved behavior pack from "experimental" to "core".
 Changed entity "piglin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -1962,7 +1898,7 @@ Changed entity "piglin.json":
 						field "broadcast_anger_on_attack": true
 						field "broadcast_anger_on_being_attacked": true
 						field "broadcast_range": 16
-						field "broadcast_targets": entity: "piglin"
+						field "broadcast_targets": entity "piglin"
 						field "calm_event":
 							field "event": "become_calm_event"
 							field "target": "self"
@@ -1998,9 +1934,9 @@ Changed entity "piglin.json":
 				component group "hunter":
 					component "minecraft:type_family":
 						field "family":
-							family: "piglin"
-							family: "piglin_hunter"
-							family: "monster"
+							family "monster"
+							family "piglin"
+							family "piglin_hunter"
 				component group "interactable_piglin":
 					component "minecraft:interact":
 						field "interactions":
@@ -2038,8 +1974,8 @@ Changed entity "piglin.json":
 				component group "not_hunter":
 					component "minecraft:type_family":
 						field "family":
-							family: "piglin"
-							family: "monster"
+							family "monster"
+							family "piglin"
 				component group "piglin_adult":
 					component "minecraft:barter":
 						field "barter_table": "loot_tables/entities/piglin_barter.json"
@@ -2049,16 +1985,16 @@ Changed entity "piglin.json":
 						field "on_break":
 							event:
 								field "block_list":
-									block: "minecraft:gold_block"
-									block: "minecraft:gilded_blackstone"
-									block: "minecraft:nether_gold_ore"
-									block: "minecraft:gold_ore"
-									block: "minecraft:chest"
-									block: "minecraft:trapped_chest"
-									block: "minecraft:ender_chest"
-									block: "minecraft:barrel"
-									block: "minecraft:shulker_box"
-									block: "minecraft:undyed_shulker_box"
+									block "minecraft:barrel"
+									block "minecraft:chest"
+									block "minecraft:ender_chest"
+									block "minecraft:gilded_blackstone"
+									block "minecraft:gold_block"
+									block "minecraft:gold_ore"
+									block "minecraft:nether_gold_ore"
+									block "minecraft:shulker_box"
+									block "minecraft:trapped_chest"
+									block "minecraft:undyed_shulker_box"
 								field "on_block_broken": "important_block_destroyed_event"
 					component "minecraft:celebrate_hunt":
 						field "celebration_targets":
@@ -2106,7 +2042,7 @@ Changed entity "piglin.json":
 					component "minecraft:variant": field "value": 0
 					component "minecraft:behavior.charge_held_item":
 						field "priority": 3
-						field "items": item: "minecraft:arrow"
+						field "items": item "minecraft:arrow"
 					component "minecraft:behavior.ranged_attack":
 						field "priority": 8
 						field "attack_interval_min": 1
@@ -2493,10 +2429,10 @@ Changed entity "piglin.json":
 					field "sprint_speed_modifier": 1.1
 					field "target_selection_method": "nearest"
 					field "target_blocks":
-						block: "minecraft:soul_fire"
-						block: "minecraft:soul_lantern"
-						block: "minecraft:soul_torch"
-						block: "minecraft:item.soul_campfire"
+						block "minecraft:item.soul_campfire"
+						block "minecraft:soul_fire"
+						block "minecraft:soul_lantern"
+						block "minecraft:soul_torch"
 					field "avoid_block_sound": "retreat"
 					field "sound_interval":
 						field "range_max": 5.0
@@ -2560,23 +2496,23 @@ Changed entity "piglin.json":
 					field "priority": 10
 					field "speed_multiplier": 0.6
 			field "events":
-				event "admire_item_started_event": field "remove": field "component_groups": component group: "interactable_piglin"
-				event "admire_item_stopped_event": field "add": field "component_groups": component group: "interactable_piglin"
-				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
-				event "become_angry_event": field "add": field "component_groups": component group: "angry"
+				event "admire_item_started_event": field "remove": field "component_groups": component group "interactable_piglin"
+				event "admire_item_stopped_event": field "add": field "component_groups": component group "interactable_piglin"
+				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group "attack_cooldown"
+				event "become_angry_event": field "add": field "component_groups": component group "angry"
 				event "become_calm_event":
 					field "add":
 						field "component_groups":
-							component group: "alert_for_attack_targets"
-							component group: "attack_cooldown"
+							component group "alert_for_attack_targets"
+							component group "attack_cooldown"
 					field "remove":
 						field "component_groups":
-							component group: "angry"
-							component group: "take_target_as_response_to_block_break"
-				event "become_zombie_event": field "add": field "component_groups": component group: "become_zombie"
+							component group "angry"
+							component group "take_target_as_response_to_block_break"
+				event "become_zombie_event": field "add": field "component_groups": component group "become_zombie"
 				event "important_block_destroyed_event":
-					field "add": field "component_groups": component group: "take_target_as_response_to_block_break"
-					field "remove": field "component_groups": component group: "alert_for_attack_targets"
+					field "add": field "component_groups": component group "take_target_as_response_to_block_break"
+					field "remove": field "component_groups": component group "alert_for_attack_targets"
 				event "minecraft:entity_born": field "trigger": "spawn_baby"
 				event "minecraft:entity_spawned":
 					field "randomize":
@@ -2597,23 +2533,23 @@ Changed entity "piglin.json":
 				event "spawn_adult_melee":
 					field "add":
 						field "component_groups":
-							component group: "piglin_adult"
-							component group: "zombification_sensor"
-							component group: "alert_for_attack_targets"
-							component group: "melee_unit"
-							component group: "attack_cooldown"
-							component group: "hunter"
-							component group: "interactable_piglin"
+							component group "alert_for_attack_targets"
+							component group "attack_cooldown"
+							component group "hunter"
+							component group "interactable_piglin"
+							component group "melee_unit"
+							component group "piglin_adult"
+							component group "zombification_sensor"
 				event "spawn_adult_melee_no_hunting":
 					field "add":
 						field "component_groups":
-							component group: "piglin_adult"
-							component group: "zombification_sensor"
-							component group: "alert_for_attack_targets"
-							component group: "melee_unit"
-							component group: "attack_cooldown"
-							component group: "not_hunter"
-							component group: "interactable_piglin"
+							component group "alert_for_attack_targets"
+							component group "attack_cooldown"
+							component group "interactable_piglin"
+							component group "melee_unit"
+							component group "not_hunter"
+							component group "piglin_adult"
+							component group "zombification_sensor"
 				event "spawn_adult_no_hunting":
 					field "randomize":
 						randomize item:
@@ -2625,46 +2561,46 @@ Changed entity "piglin.json":
 				event "spawn_adult_ranged":
 					field "add":
 						field "component_groups":
-							component group: "piglin_adult"
-							component group: "zombification_sensor"
-							component group: "alert_for_attack_targets"
-							component group: "ranged_unit"
-							component group: "attack_cooldown"
-							component group: "hunter"
-							component group: "interactable_piglin"
+							component group "alert_for_attack_targets"
+							component group "attack_cooldown"
+							component group "hunter"
+							component group "interactable_piglin"
+							component group "piglin_adult"
+							component group "ranged_unit"
+							component group "zombification_sensor"
 				event "spawn_adult_ranged_no_hunting":
 					field "add":
 						field "component_groups":
-							component group: "piglin_adult"
-							component group: "zombification_sensor"
-							component group: "alert_for_attack_targets"
-							component group: "ranged_unit"
-							component group: "attack_cooldown"
-							component group: "not_hunter"
-							component group: "interactable_piglin"
+							component group "alert_for_attack_targets"
+							component group "attack_cooldown"
+							component group "interactable_piglin"
+							component group "not_hunter"
+							component group "piglin_adult"
+							component group "ranged_unit"
+							component group "zombification_sensor"
 				event "spawn_baby":
 					field "randomize":
 						randomize item:
 							field "weight": 9
 							field "add":
 								field "component_groups":
-									component group: "piglin_baby"
-									component group: "zombification_sensor"
-									component group: "not_hunter"
+									component group "not_hunter"
+									component group "piglin_baby"
+									component group "zombification_sensor"
 						randomize item:
 							field "weight": 1
 							field "add":
 								field "component_groups":
-									component group: "piglin_baby"
-									component group: "zombification_sensor"
-									component group: "piglin_jockey"
-									component group: "not_hunter"
+									component group "not_hunter"
+									component group "piglin_baby"
+									component group "piglin_jockey"
+									component group "zombification_sensor"
 				event "start_zombification_event":
-					field "add": field "component_groups": component group: "start_zombification"
-					field "remove": field "component_groups": component group: "zombification_sensor"
+					field "add": field "component_groups": component group "start_zombification"
+					field "remove": field "component_groups": component group "zombification_sensor"
 				event "stop_zombification_event":
-					field "add": field "component_groups": component group: "zombification_sensor"
-					field "remove": field "component_groups": component group: "start_zombification"
+					field "add": field "component_groups": component group "zombification_sensor"
+					field "remove": field "component_groups": component group "start_zombification"
 Changed entity "snow_golem.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -2673,9 +2609,9 @@ Changed entity "snow_golem.json":
 					Changed field "damage_conditions":
 						Changed damage condition:
 							Changed field "filters":
-								Unchanged filter property "operator": "=="
-								Unchanged filter property "value": true
 								Changed filter property "test" from "in_water_or_rain" to "in_contact_with_water".
+								Unchanged filter property "operator": "==".
+								Unchanged filter property "value": true.
 Changed entity "strider.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -2684,6 +2620,6 @@ Changed entity "strider.json":
 					Changed field "damage_conditions":
 						Changed damage condition:
 							Changed field "filters":
-								Unchanged filter property "operator": "=="
-								Unchanged filter property "value": true
 								Changed filter property "test" from "in_water_or_rain" to "in_contact_with_water".
+								Unchanged filter property "operator": "==".
+								Unchanged filter property "value": true.

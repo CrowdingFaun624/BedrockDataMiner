@@ -2,11 +2,11 @@ Difference of "ui" between "1.16.0.61" (beta of "1.16.0") and "1.16.0.63" (beta 
 
 Changed namespace "common":
 	Changed element "base_screen":
-		Unchanged field "type": "screen"
+		Unchanged field "type": "screen".
 		Changed field "controls":
 			Changed control:
 				Changed element "variables_button_mappings_and_controls":
-					Unchanged field "type": "input_panel"
+					Unchanged field "type": "input_panel".
 					Changed field "variables":
 						Changed variable:
 							Changed field "$variables":
@@ -16,7 +16,7 @@ Changed namespace "common":
 									item 1: "100% - 50px"
 Changed namespace "general_section":
 	Changed element "accessibility_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 6 (+1, -0)
 			Added control:
@@ -27,7 +27,7 @@ Changed namespace "general_section":
 						variable "$slider_value_binding_name": "#text_background_opacity"
 						variable "$slider_tts_text_value": "#text_background_opacity_text_value"
 						variable "$option_enabled_binding_name": "#text_background_opacity_enabled"
-						variable "$label_bindings": item 0: field "binding_name": "$option_label"
+						variable "$label_bindings": item 0: item "binding_name": "$option_label"
 Changed namespace "hud":
 	Total element: 103 (+8, -0)
 	Added element "anim_actionbar_text_background_alpha_out":
@@ -152,19 +152,49 @@ Changed namespace "hud":
 							field "binding_name": "#tip_text"
 							field "binding_name_override": "#text"
 	Changed element "hud_title_text":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "subtitle_frame":
-					Unchanged field "type": "panel"
+				Changed element "title_frame":
+					Unchanged field "type": "panel".
 					Changed field "size":
-						Unchanged item 0: "100%"
+						Unchanged item 0: "100%".
+						Changed item 1 from "100%c" to "100%cm".
+					Changed field "controls":
+						Total control: 2 (+1, -0)
+						Changed control:
+							Changed element "title":
+								Unchanged field "type": "label".
+								Changed field "shadow" from true to "$show_shadow".
+								Removed field "size": ["100%", "default"].
+								Added field "layer": 1.
+								Added field "variables":
+									variable:
+										field "requires": "(not $title_shadow)"
+										field "$variables": variable "$show_shadow": false
+									variable:
+										field "requires": "$title_shadow"
+										field "$variables": variable "$show_shadow": true
+								Added field "offset": [0, 1].
+						Added control:
+							element "title_background":
+								field "type": "image"
+								field "size": ["100%sm + 6px", "100%sm - 1px"]
+								field "texture": "textures/ui/hud_tip_text_background"
+								field "alpha": "@hud.anim_title_background_alpha_in"
+			Changed control:
+				Changed element "subtitle_frame":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
 						Changed item 1 from "100%c" to "100%cm".
 					Changed field "controls":
 						Total control: 2 (+1, -0)
 						Changed control:
 							Changed element "subtitle":
-								Unchanged field "type": "label"
+								Unchanged field "type": "label".
+								Changed field "shadow" from true to "$show_shadow".
+								Removed field "size": ["100%", "default"].
 								Changed field "variables":
 									Total variable: 4 (+2, -0)
 									Added variable:
@@ -173,9 +203,7 @@ Changed namespace "hud":
 									Added variable:
 										field "requires": "$title_shadow"
 										field "$variables": variable "$show_shadow": true
-								Changed field "shadow" from true to "$show_shadow".
-								Removed field "size" of ["100%", "default"].
-								Added field "layer" of 1.
+								Added field "layer": 1.
 						Added control:
 							element "subtitle_background":
 								field "type": "image"
@@ -189,34 +217,6 @@ Changed namespace "hud":
 										field "requires": "(not $subtitle_initially_visible)"
 										field "$variables": variable "$subtitle_bg": "@hud.anim_subtitle_background_alpha_in"
 								field "alpha": "$subtitle_bg"
-			Changed control:
-				Changed element "title_frame":
-					Unchanged field "type": "panel"
-					Changed field "size":
-						Unchanged item 0: "100%"
-						Changed item 1 from "100%c" to "100%cm".
-					Changed field "controls":
-						Total control: 2 (+1, -0)
-						Changed control:
-							Changed element "title":
-								Unchanged field "type": "label"
-								Changed field "shadow" from true to "$show_shadow".
-								Removed field "size" of ["100%", "default"].
-								Added field "layer" of 1.
-								Added field "variables":
-									variable:
-										field "requires": "(not $title_shadow)"
-										field "$variables": variable "$show_shadow": false
-									variable:
-										field "requires": "$title_shadow"
-										field "$variables": variable "$show_shadow": true
-								Added field "offset" of [0, 1].
-						Added control:
-							element "title_background":
-								field "type": "image"
-								field "size": ["100%sm + 6px", "100%sm - 1px"]
-								field "texture": "textures/ui/hud_tip_text_background"
-								field "alpha": "@hud.anim_title_background_alpha_in"
 	Changed element "item_name_text":
 		field "type": "panel"
 		field "size": [100, 10]
@@ -330,7 +330,7 @@ Changed namespace "npc_interact":
 							field "source_property_name": "(#item_name = '')"
 							field "target_property_name": "#visible"
 							field "resolve_sibling_scope": true
-			control: element "background@common.empty_panel": field "size": ["100%", "100%sm"]
+			control element "background@common.empty_panel": field "size": ["100%", "100%sm"]
 		field "$variables":
 			variable "$enabled": true
 			variable "$text_background_default": "npc_interact.edit_box_background"
@@ -345,7 +345,7 @@ Changed namespace "npc_interact":
 			variable "$locked_text_alpha": "$disabled_alpha"
 			variable "$locked_color": "$color"
 	Changed element "student_message_bubble":
-		Unchanged field "type": "image"
+		Unchanged field "type": "image".
 		Changed field "controls":
 			Total control: 1 (+1, -1)
 			Removed control:
@@ -483,58 +483,32 @@ Changed namespace "persona":
 													field "binding_name_override": "#text"
 													field "binding_condition": "always"
 	Changed element "emote_offer_section_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "emote_offer_scroll_panel@persona.scroll_section":
 					Changed field "size":
-						Unchanged item 0: "100%"
+						Unchanged item 0: "100%".
 						Changed item 1 from "100%" to "fill".
 	Changed element "emote_wheel_screen_content":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
-				Changed element "dressing_room_button_panel":
-					Unchanged field "type": "panel"
-					Changed field "controls":
-						Changed control:
-							Changed element "dressing_room_button@common_buttons.light_text_button":
-								Added field "focus_change_down" of "FOCUS_OVERRIDE_STOP".
-								Added field "focus_change_left" of "emote_wheel".
-								Added field "focus_change_right" of "emote_wheel".
-			Changed control:
 				Changed element "root_panel":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "emotes_panel@common_dialogs.main_panel":
 								Changed field "controls":
 									Changed control:
 										Changed element "emote_wheel@persona.selection_wheel":
-											Changed field "$variables":
-												Total variable: 3 (+1, -0)
-												Added variable "$button_focus_precedence" of 10.
-											Changed field "state_controls":
-												Total control: 7 (+6, -6)
-												Removed control "state_0".
-												Removed control "state_1".
-												Removed control "state_2".
-												Removed control "state_3".
-												Removed control "state_4".
-												Removed control "state_5".
-												Added control "emote_slot_0".
-												Added control "emote_slot_1".
-												Added control "emote_slot_2".
-												Added control "emote_slot_3".
-												Added control "emote_slot_4".
-												Added control "emote_slot_5".
 											Changed field "controls":
 												Total control: 7 (+6, -18)
 												Removed control element "state_0@persona.wheel_state": field "texture": "textures/ui/emote_wheel_select_0".
 												Removed control:
 													element "image_0@persona.emote_image":
 														field "offset": [-31, -52]
-														field "$variables": variable "$property_bag": field "#index": 0
+														field "$variables": variable "$property_bag": item "#index": 0
 												Removed control:
 													element "touch_label_0@persona.touch_name_label":
 														field "offset": [-102, -54]
@@ -544,7 +518,7 @@ Changed namespace "persona":
 												Removed control:
 													element "image_1@persona.emote_image":
 														field "offset": [-62, 0]
-														field "$variables": variable "$property_bag": field "#index": 1
+														field "$variables": variable "$property_bag": item "#index": 1
 												Removed control:
 													element "touch_label_1@persona.touch_name_label":
 														field "offset": [-132, 0]
@@ -554,7 +528,7 @@ Changed namespace "persona":
 												Removed control:
 													element "image_2@persona.emote_image":
 														field "offset": [-31, 52]
-														field "$variables": variable "$property_bag": field "#index": 2
+														field "$variables": variable "$property_bag": item "#index": 2
 												Removed control:
 													element "touch_label_2@persona.touch_name_label":
 														field "offset": [-103, 54]
@@ -564,7 +538,7 @@ Changed namespace "persona":
 												Removed control:
 													element "image_3@persona.emote_image":
 														field "offset": [31, 52]
-														field "$variables": variable "$property_bag": field "#index": 3
+														field "$variables": variable "$property_bag": item "#index": 3
 												Removed control:
 													element "touch_label_3@persona.touch_name_label":
 														field "offset": [102, 54]
@@ -573,7 +547,7 @@ Changed namespace "persona":
 												Removed control:
 													element "image_4@persona.emote_image":
 														field "offset": [62, 0]
-														field "$variables": variable "$property_bag": field "#index": 4
+														field "$variables": variable "$property_bag": item "#index": 4
 												Removed control:
 													element "touch_label_4@persona.touch_name_label":
 														field "offset": [133, 0]
@@ -582,7 +556,7 @@ Changed namespace "persona":
 												Removed control:
 													element "image_5@persona.emote_image":
 														field "offset": [31, -52]
-														field "$variables": variable "$property_bag": field "#index": 5
+														field "$variables": variable "$property_bag": item "#index": 5
 												Removed control:
 													element "touch_label_5@persona.touch_name_label":
 														field "offset": [102, -54]
@@ -659,42 +633,66 @@ Changed namespace "persona":
 															variable "$emote_touch_label_offset":
 																item 0: -132
 																item 1: 0
-											Added field "focus_identifier" of "emote_wheel".
-											Added field "focus_change_left" of "FOCUS_OVERRIDE_STOP".
-											Added field "focus_change_right" of "FOCUS_OVERRIDE_STOP".
-											Added field "focus_change_up" of "FOCUS_OVERRIDE_STOP".
+											Changed field "state_controls":
+												Total control: 7 (+6, -6)
+												Removed control "state_0".
+												Removed control "state_1".
+												Removed control "state_2".
+												Removed control "state_3".
+												Removed control "state_4".
+												Removed control "state_5".
+												Added control "emote_slot_0".
+												Added control "emote_slot_1".
+												Added control "emote_slot_2".
+												Added control "emote_slot_3".
+												Added control "emote_slot_4".
+												Added control "emote_slot_5".
+											Changed field "$variables":
+												Total variable: 3 (+1, -0)
+												Added variable "$button_focus_precedence": 10.
+											Added field "focus_identifier": "emote_wheel".
+											Added field "focus_change_left": "FOCUS_OVERRIDE_STOP".
+											Added field "focus_change_right": "FOCUS_OVERRIDE_STOP".
+											Added field "focus_change_up": "FOCUS_OVERRIDE_STOP".
+			Changed control:
+				Changed element "dressing_room_button_panel":
+					Unchanged field "type": "panel".
+					Changed field "controls":
+						Changed control:
+							Changed element "dressing_room_button@common_buttons.light_text_button":
+								Added field "focus_change_down": "FOCUS_OVERRIDE_STOP".
+								Added field "focus_change_left": "emote_wheel".
+								Added field "focus_change_right": "emote_wheel".
 	Added element "emote_wheel_slot_content":
 		field "type": "panel"
 		field "controls":
-			control: element "$emote_slot_name@persona.wheel_state": empty
+			control element "$emote_slot_name@persona.wheel_state": empty
 			control:
 				element "image_0@persona.emote_image":
 					field "offset": "$emote_image_offset"
-					field "$variables": variable "$property_bag": field "#index": "$emote_slot_index"
+					field "$variables": variable "$property_bag": item "#index": "$emote_slot_index"
 			control:
 				element "touch_label_0@persona.touch_name_label":
 					field "offset": "$emote_touch_label_offset"
 					field "text_alignment": "right"
 					field "property_bag": field "#index": "$emote_slot_index"
 	Changed element "offer_state_info":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "offer_state_info_panel":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "sale_ribbon@persona.icon_image":
-								Changed field "texture" from "textures/ui/icon_saleribbon" to "textures/ui/slot_sale".
 								Changed field "size":
 									Changed item 0 from 11 to 9.
 									Changed item 1 from 10 to 6.
+								Changed field "texture" from "textures/ui/icon_saleribbon" to "textures/ui/slot_sale".
 	Changed element "selection_wheel":
-		Unchanged field "type": "selection_wheel"
-		Changed field "$variables":
-			Total variable: 12 (+2, -0)
-			Added variable "$iterate_left_button_name|default" of "button.iterate_selection_left".
-			Added variable "$iterate_right_button_name|default" of "button.iterate_selection_right".
+		Unchanged field "type": "selection_wheel".
+		Changed field "focus_enabled" from false to true.
+		Removed field "focus_magnet_enabled": false.
 		Changed field "button_mappings":
 			Total button mapping: 13 (+10, -0)
 			Added button mapping:
@@ -741,93 +739,96 @@ Changed namespace "persona":
 				field "to_button_id": "$iterate_left_button_name"
 				field "mapping_type": "global"
 				field "consume_event": false
-		Changed field "focus_enabled" from false to true.
-		Removed field "focus_magnet_enabled" of false.
-		Added field "iterate_left_button_name" of "$iterate_left_button_name".
-		Added field "iterate_right_button_name" of "$iterate_right_button_name".
+		Changed field "$variables":
+			Total variable: 12 (+2, -0)
+			Added variable "$iterate_left_button_name|default": "button.iterate_selection_left".
+			Added variable "$iterate_right_button_name|default": "button.iterate_selection_right".
+		Added field "iterate_left_button_name": "$iterate_left_button_name".
+		Added field "iterate_right_button_name": "$iterate_right_button_name".
 	Changed element "wheel_state":
-		Unchanged field "type": "image"
-		Added field "texture" of "$wheel_state_texture".
+		Unchanged field "type": "image".
+		Added field "texture": "$wheel_state_texture".
 Changed namespace "play":
 	Changed element "add_server_toggle_button@common_toggles.light_text_toggle":
 		Changed field "$variables":
 			Total variable: 10 (+1, -0)
 			Changed variable "$focus_override_up" from "close_button" to "left_panel".
 			Changed variable "$toggle_tab_focus_binding_name" from "none" to "#navigation_tab_focus_precedence".
-			Added variable "$toggle_tab_focus_binding_type" of "global".
+			Added variable "$toggle_tab_focus_binding_type": "global".
 	Changed element "additional_server_info_panel@play.common_scroll_pane":
 		Changed field "controls":
 			Changed control:
 				Changed element "server_info_stack_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "join_server_button@common_buttons.light_text_button":
 								Changed field "$variables":
 									Total variable: 3 (+1, -0)
-									Added variable "$focus_override_left" of "left_panel".
+									Added variable "$focus_override_left": "left_panel".
 	Changed element "description_section_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "read_more_panel":
-					Unchanged field "type": "image"
+					Unchanged field "type": "image".
 					Changed field "controls":
 						Changed control:
 							Changed element "description_read_more_button_panel@common_buttons.read_button":
 								Changed field "$variables":
 									Total variable: 5 (+1, -0)
-									Added variable "$focus_override_left" of "left_panel".
+									Added variable "$focus_override_left": "left_panel".
 						Changed control:
 							Changed element "description_read_less_button_panel@common_buttons.read_button":
 								Changed field "$variables":
 									Total variable: 5 (+1, -0)
-									Added variable "$focus_override_left" of "left_panel".
+									Added variable "$focus_override_left": "left_panel".
 	Changed element "more_servers_world_item":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "network_server_world_edit_button@play.network_server_world_edit_button":
 					Changed field "$variables":
-						Total variable: 1 (+0, -0)
 						Changed variable "$focus_override_right" from "right_panel" to "right_side".
 	Changed element "news_section_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "read_more_panel":
-					Unchanged field "type": "image"
+					Unchanged field "type": "image".
 					Changed field "controls":
 						Changed control:
 							Changed element "news_read_more_button_panel@common_buttons.read_button":
 								Changed field "$variables":
 									Total variable: 5 (+1, -0)
-									Added variable "$focus_override_left" of "left_panel".
+									Added variable "$focus_override_left": "left_panel".
 						Changed control:
 							Changed element "news_read_less_button_panel@common_buttons.read_button":
 								Changed field "$variables":
 									Total variable: 5 (+1, -0)
-									Added variable "$focus_override_left" of "left_panel".
+									Added variable "$focus_override_left": "left_panel".
 	Changed element "screenshots_section_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "nagivation_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Changed control:
-							Changed element "right_arrow_button@common_buttons.light_content_button":
-								Changed field "$variables":
-									Total variable: 3 (+1, -0)
-									Added variable "$focus_id" of "right_arrow_button".
 						Changed control:
 							Changed element "left_arrow_button@common_buttons.light_content_button":
 								Changed field "$variables":
 									Total variable: 4 (+2, -0)
-									Added variable "$focus_override_right" of "right_arrow_button".
-									Added variable "$focus_override_left" of "left_panel".
+									Added variable "$focus_override_right": "right_arrow_button".
+									Added variable "$focus_override_left": "left_panel".
+						Changed control:
+							Changed element "right_arrow_button@common_buttons.light_content_button":
+								Changed field "$variables":
+									Total variable: 3 (+1, -0)
+									Added variable "$focus_id": "right_arrow_button".
 	Changed element "server_content_area":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
+		Removed field "focus_container": true.
+		Removed field "use_last_focus": false.
 		Changed field "controls":
 			Total control: 3 (+1, -1)
 			Removed control:
@@ -847,20 +848,18 @@ Changed namespace "play":
 		Changed field "$variables":
 			Total variable: 1 (+0, -1)
 			Changed variable "$focus_id" from "right_panel" to "right_side".
-			Removed variable "$default_focus_precedence" of 2.
-		Removed field "focus_container" of true.
-		Removed field "use_last_focus" of false.
+			Removed variable "$default_focus_precedence": 2.
 	Changed element "server_scroll_content@play.common_content":
 		Changed field "controls":
 			Changed control:
 				Changed element "show_servers_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "left_panel":
-								Unchanged field "type": "panel"
-								Removed field "focus_container" of true.
-								Removed field "use_last_focus" of true.
+								Unchanged field "type": "panel".
+								Removed field "focus_container": true.
+								Removed field "use_last_focus": true.
 								Removed field "$variables":
 									variable "$focus_id": "left_panel"
 									variable "$default_focus_precedence": 1
@@ -868,7 +867,7 @@ Changed namespace "play":
 		Changed field "controls":
 			Changed control:
 				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 7 (+1, -2)
 						Removed control:
@@ -896,8 +895,8 @@ Changed namespace "play":
 										element "loading_featured_panel@play.label_background":
 											field "size": ["100%", 40]
 											field "controls":
-												control: element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
-												control: element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+												control element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
+												control element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
 											field "bindings":
 												binding:
 													field "binding_name": "#loading_servers_progress_visible"
@@ -934,7 +933,7 @@ Changed namespace "play":
 								field "focus_container": true
 								field "use_last_focus": true
 								field "controls":
-									control: element "more_servers_divider@common.horizontal_divider": empty
+									control element "more_servers_divider@common.horizontal_divider": empty
 									control:
 										element "padding_0":
 											field "type": "panel"
@@ -952,7 +951,7 @@ Changed namespace "play":
 										element "padding_1":
 											field "type": "panel"
 											field "size": ["100%", 2]
-									control: element "more_servers_grid@play.more_servers_grid": empty
+									control element "more_servers_grid@play.more_servers_grid": empty
 									control:
 										element "padding_3":
 											field "type": "panel"
@@ -980,8 +979,8 @@ Changed namespace "play":
 													element "loading_featured_panel@play.label_background":
 														field "size": ["100%", 40]
 														field "controls":
-															control: element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
-															control: element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
+															control element "loading_friends_realms_label@play.light_loading_label": field "$variables": variable "$label_text": "thirdPartyWorld.loadingFeaturedServers"
+															control element "loading_featured_servers_panel@play.loading_featured_servers_panel": empty
 														field "bindings":
 															binding:
 																field "binding_name": "#loading_servers_progress_visible"
@@ -999,7 +998,7 @@ Changed namespace "play":
 													element "padding_2":
 														field "type": "panel"
 														field "size": ["100%", 2]
-												control: element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
+												control element "third_party_featured_grid@play.third_party_featured_server_grid": field "$variables": variable "$tts_section_header": "$third_party_featured_servers"
 												control:
 													element "padding_3":
 														field "type": "panel"
@@ -1021,7 +1020,7 @@ Changed namespace "play":
 													field "binding_name": "#is_network_available_and_multiplayer_visible"
 													field "binding_name_override": "#visible"
 											field "controls":
-												control: element "more_servers_divider@common.horizontal_divider": empty
+												control element "more_servers_divider@common.horizontal_divider": empty
 												control:
 													element "padding_0":
 														field "type": "panel"
@@ -1039,7 +1038,7 @@ Changed namespace "play":
 													element "padding_1":
 														field "type": "panel"
 														field "size": ["100%", 2]
-												control: element "more_servers_grid@play.more_servers_grid": empty
+												control element "more_servers_grid@play.more_servers_grid": empty
 												control:
 													element "padding_3":
 														field "type": "panel"
@@ -1053,24 +1052,24 @@ Changed namespace "play":
 	Changed element "server_toggle_base@common_toggles.dark_image_toggle_collection":
 		Changed field "$variables":
 			Total variable: 12 (+2, -0)
-			Added variable "$focus_override_right" of "right_side".
-			Added variable "$button_content" of "play.server_button_content_panel".
+			Added variable "$focus_override_right": "right_side".
+			Added variable "$button_content": "play.server_button_content_panel".
 	Changed element "third_party_featured_server_grid":
-		Unchanged field "type": "grid"
+		Unchanged field "type": "grid".
 		Changed field "$variables":
 			Total variable: 2 (+1, -0)
-			Added variable "$toggle_index_binding_name" of "#third_party_toggle_index".
+			Added variable "$toggle_index_binding_name": "#third_party_toggle_index".
 	Changed element "third_party_server_info_panel@play.common_scroll_pane":
 		Changed field "controls":
 			Changed control:
 				Changed element "server_info_stack_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "join_server_button@common_buttons.light_text_button":
 								Changed field "$variables":
 									Total variable: 3 (+1, -0)
-									Added variable "$focus_override_left" of "left_panel".
+									Added variable "$focus_override_left": "left_panel".
 Changed namespace "profile":
 	Total element: 47 (+1, -0)
 	Added element "buttons_sides_padding_panel":
@@ -1090,16 +1089,14 @@ Changed namespace "profile":
 						item 1: 0
 		field "size": "$sides_padding_size"
 	Changed element "lower_button_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 8 (+2, -2)
-			Removed control element "left_padding@profile.sides_padding_panel": empty.
-			Removed control element "right_padding@profile.sides_padding_panel": empty.
-			Added control element "left_padding@profile.buttons_sides_padding_panel": empty.
-			Added control element "right_padding@profile.buttons_sides_padding_panel": empty.
+			Changed control:
+				Moved element from "left_padding@profile.sides_padding_panel" to "left_padding@profile.buttons_sides_padding_panel".
+			Changed control:
+				Moved element from "right_padding@profile.sides_padding_panel" to "right_padding@profile.buttons_sides_padding_panel".
 	Changed element "sides_padding_panel":
-		Unchanged field "type": "panel"
-		Changed field "size" from "$sides_padding_size" to ["5%", 0].
+		Unchanged field "type": "panel".
 		Removed field "variables":
 			variable:
 				field "requires": "$supports_xbl_achievements"
@@ -1113,16 +1110,17 @@ Changed namespace "profile":
 					variable "$sides_padding_size":
 						item 0: "27%"
 						item 1: 0
+		Changed field "size" from "$sides_padding_size" to ["5%", 0].
 Changed namespace "smithing_table":
 	Total element: 16 (+4, -0)
 	Changed element "icon_and_text_panel":
-		Unchanged field "type": "panel"
-		Changed field "controls":
-			Total control: 2 (+1, -0)
-			Added control element "smithing_icon_panel@smithing_table.smithing_icon_panel": empty.
+		Unchanged field "type": "panel".
 		Changed field "offset":
 			Changed item 0 from 0 to "7%".
 			Changed item 1 from "5%" to 0.
+		Changed field "controls":
+			Total control: 2 (+1, -0)
+			Added control element "smithing_icon_panel@smithing_table.smithing_icon_panel": empty.
 	Added element "ingot_image@smithing_table.smithing_image":
 		field "anchor_to": "top_left"
 		field "anchor_from": "top_left"
@@ -1131,13 +1129,13 @@ Changed namespace "smithing_table":
 		field "size": [16, 16]
 		field "texture": "textures/ui/ingot_image"
 	Changed element "recipe_grid":
-		Unchanged field "type": "grid"
+		Unchanged field "type": "grid".
 		Changed field "controls":
 			Changed control:
 				Changed element "material_item_slot@smithing_table.smithing_table_item_slot":
 					Changed field "$variables":
 						Total variable: 8 (+1, -0)
-						Added variable "$cell_overlay_ref" of "smithing_table.ingot_image".
+						Added variable "$cell_overlay_ref": "smithing_table.ingot_image".
 	Added element "smithing_icon":
 		field "type": "image"
 		field "anchor_from": "top_left"
@@ -1149,14 +1147,14 @@ Changed namespace "smithing_table":
 		field "type": "panel"
 		field "anchor_from": "top_left"
 		field "anchor_to": "top_left"
-		field "controls": control: element "smithing_icon@smithing_table.smithing_icon": empty
-	Added element "smithing_image" of field "type": "image".
+		field "controls": control element "smithing_icon@smithing_table.smithing_icon": empty
+	Added element "smithing_image": field "type": "image".
 	Changed element "upgrade_label":
-		Unchanged field "type": "label"
-		Added field "anchor_from" of "center".
-		Added field "anchor_to" of "center".
-		Added field "size" of ["80%", "30%"].
-		Added field "offset" of ["30%", 0].
+		Unchanged field "type": "label".
+		Added field "anchor_from": "center".
+		Added field "anchor_to": "center".
+		Added field "size": ["80%", "30%"].
+		Added field "offset": ["30%", 0].
 Changed namespace "smithing_table_pocket":
 	Total element: 14 (+1, -0)
 	Added element "ingot_image@smithing_table.smithing_image":
@@ -1165,20 +1163,25 @@ Changed namespace "smithing_table_pocket":
 		field "size": [16, 16]
 		field "texture": "textures/ui/ingot_image"
 	Changed element "slots_panel":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "material_slot@common.pocket_ui_large_container_item":
 					Changed field "$variables":
 						Total variable: 2 (+1, -0)
-						Added variable "$cell_overlay_ref" of "smithing_table_pocket.ingot_image".
+						Added variable "$cell_overlay_ref": "smithing_table_pocket.ingot_image".
 Changed namespace "store_inventory":
 	Changed element "content_area":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
+		Changed field "use_last_focus" from false to true.
+		Changed field "focus_nagivation_mode_down" from "$focus_nagivation_mode_override_down" to "contained".
+		Changed field "focus_nagivation_mode_up" from "$focus_nagivation_mode_override_up" to "contained".
+		Changed field "focus_nagivation_mode_left" from "$focus_nagivation_mode_override_left" to "none".
+		Changed field "focus_nagivation_mode_right" from "$focus_nagivation_mode_override_right" to "stop".
 		Changed field "controls":
 			Changed control:
 				Changed element "control":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 1 (+1, -1)
 						Removed control:
@@ -1194,71 +1197,57 @@ Changed namespace "store_inventory":
 										item 0: 4
 										item 1: 0
 						Added control element "right_pane_factory@store_inventory.right_pane_factory": empty.
-		Changed field "use_last_focus" from false to true.
-		Changed field "focus_nagivation_mode_up" from "$focus_nagivation_mode_override_up" to "contained".
-		Changed field "focus_nagivation_mode_right" from "$focus_nagivation_mode_override_right" to "stop".
-		Changed field "focus_nagivation_mode_left" from "$focus_nagivation_mode_override_left" to "none".
-		Changed field "focus_nagivation_mode_down" from "$focus_nagivation_mode_override_down" to "contained".
 		Changed field "$variables":
 			Total variable: 1 (+1, -4)
-			Removed variable "$focus_nagivation_mode_override_down|default" of "contained".
-			Removed variable "$focus_nagivation_mode_override_up|default" of "contained".
-			Removed variable "$focus_nagivation_mode_override_left|default" of "".
-			Removed variable "$focus_nagivation_mode_override_right|default" of "".
-			Added variable "$focus_id" of "right_side".
+			Removed variable "$focus_nagivation_mode_override_down|default": "contained".
+			Removed variable "$focus_nagivation_mode_override_up|default": "contained".
+			Removed variable "$focus_nagivation_mode_override_left|default": "".
+			Removed variable "$focus_nagivation_mode_override_right|default": "".
+			Added variable "$focus_id": "right_side".
 	Changed element "dropdown_button_content":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 8 (+1, -1)
-			Changed control:
-				Changed element "down_carrot":
-					Unchanged field "type": "panel"
-					Added field "priority" of 0.
-			Changed control:
-				Changed element "right_carrot":
-					Unchanged field "type": "panel"
-					Added field "priority" of 0.
-			Changed control:
-				Changed element "count_panel":
-					Unchanged field "type": "panel"
-					Added field "priority" of 1.
-			Changed control:
-				Changed element "icon_panel":
-					Unchanged field "type": "panel"
-					Added field "priority" of 2.
 			Changed control:
 				Changed element "title_label@common.minecraftTenLabel":
 					Changed field "max_size":
 						Changed item 0 from "35%" to "fill".
-						Unchanged item 1: 10
-					Added field "priority" of 0.
-					Added field "text_alignment" of "left".
+						Unchanged item 1: 10.
+					Added field "priority": 0.
+					Added field "text_alignment": "left".
 			Changed control:
-				Changed element "pad_1":
-					Unchanged field "type": "panel"
-					Changed field "size":
-						Changed item 0 from 5 to 4.
-						Unchanged item 1: "100%"
-					Added field "priority" of 2.
-			Changed control:
+				Moved element from "fill_pad" to "pad_0".
 				Changed element "pad_0":
-					Unchanged field "type": "panel"
-					Changed field "size":
-						Changed item 0 from 4 to "fill".
-						Unchanged item 1: "100%"
-					Added field "priority" of 0.
-			Removed control:
-				element "fill_pad":
-					field "type": "panel"
-					field "size": ["fill", "100%"]
-			Added control:
-				element "pad_2":
-					field "priority": 1
-					field "type": "panel"
-					field "size": [5, "100%"]
-		Added field "use_priority" of true.
+					Unchanged field "type": "panel".
+					Added field "priority": 0.
+			Changed control:
+				Changed element "icon_panel":
+					Unchanged field "type": "panel".
+					Added field "priority": 2.
+			Changed control:
+				Moved element from "pad_0" to "pad_1".
+				Changed element "pad_1":
+					Unchanged field "type": "panel".
+					Added field "priority": 2.
+			Changed control:
+				Changed element "count_panel":
+					Unchanged field "type": "panel".
+					Added field "priority": 1.
+			Changed control:
+				Moved element from "pad_1" to "pad_2".
+				Changed element "pad_2":
+					Unchanged field "type": "panel".
+					Added field "priority": 1.
+			Changed control:
+				Changed element "right_carrot":
+					Unchanged field "type": "panel".
+					Added field "priority": 0.
+			Changed control:
+				Changed element "down_carrot":
+					Unchanged field "type": "panel".
+					Added field "priority": 0.
+		Added field "use_priority": true.
 	Changed element "inventory_left_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 7 (+0, -1)
 			Removed control:
@@ -1266,25 +1255,25 @@ Changed namespace "store_inventory":
 					field "type": "input_panel"
 					field "focus_enabled": true
 					field "size": ["100%", 4]
-		Added field "focus_container" of true.
-		Added field "use_last_focus" of false.
-		Added field "focus_nagivation_mode_left" of "".
-		Added field "focus_nagivation_mode_right" of "".
-		Added field "focus_nagivation_mode_down" of "".
-		Added field "focus_nagivation_mode_up" of "".
+		Added field "focus_container": true.
+		Added field "use_last_focus": false.
+		Added field "focus_nagivation_mode_left": "".
+		Added field "focus_nagivation_mode_right": "".
+		Added field "focus_nagivation_mode_down": "".
+		Added field "focus_nagivation_mode_up": "".
 		Added field "$variables":
 			variable "$focus_id": "left_side"
 			variable "$focus_override_right": "right_side"
 	Changed element "realms_plus_stack_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "dropdown_panel":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "dropdown_stack_panel":
-								Unchanged field "type": "stack_panel"
+								Unchanged field "type": "stack_panel".
 								Changed field "controls":
 									Total control: 7 (+2, -2)
 									Removed control element "current_toggle@store_inventory.current_toggle": empty.
@@ -1301,12 +1290,12 @@ Changed namespace "store_inventory":
 											field "$variables": variable "$focus_id": "removed_toggle"
 Changed namespace "structure_editor":
 	Changed element "export_disabled_label":
-		Unchanged field "type": "label"
+		Unchanged field "type": "label".
 		Changed field "color" from "$tool_tip_text" to "$structure_editor_text".
 	Changed element "save_message_text":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "save_message_label":
-					Unchanged field "type": "label"
+					Unchanged field "type": "label".
 					Changed field "color" from "$tool_tip_text" to "$structure_editor_text".

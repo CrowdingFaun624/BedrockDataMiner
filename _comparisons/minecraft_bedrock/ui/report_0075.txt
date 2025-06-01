@@ -14,16 +14,16 @@ Changed namespace "common_buttons":
 	Changed element "light_text_button@common_buttons.light_button_assets":
 		Changed field "$variables":
 			Total variable: 18 (+1, -0)
-			Added variable "$button_font_size|default" of "normal".
+			Added variable "$button_font_size|default": "normal".
 	Changed element "new_ui_binding_button_label":
-		Unchanged field "type": "label"
+		Unchanged field "type": "label".
 		Changed field "$variables":
 			Total variable: 6 (+1, -0)
-			Added variable "$button_font_size|default" of "normal".
-		Added field "font_size" of "$button_font_size".
+			Added variable "$button_font_size|default": "normal".
+		Added field "font_size": "$button_font_size".
 Changed namespace "common_store":
 	Changed element "content_offer_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 4 (+1, -2)
 			Removed control element "offer_item_4@common_store.store_offer_grid_item": field "collection_index": 3.
@@ -46,10 +46,10 @@ Changed namespace "common_store":
 					field "size": ["25%", "100%"]
 					field "collection_index": 3
 					field "controls":
-						control: element "show_more@common_store.store_offer_grid_show_more": field "size": ["100%", "100%"]
-						control: element "offer_item_4@common_store.store_offer_grid_item": field "size": ["100%", "100%"]
+						control element "show_more@common_store.store_offer_grid_show_more": field "size": ["100%", "100%"]
+						control element "offer_item_4@common_store.store_offer_grid_item": field "size": ["100%", "100%"]
 	Changed element "store_offer_grid_show_more":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "offer_button@common.button":
@@ -72,95 +72,42 @@ Changed namespace "common_store":
 				field "binding_collection_name": "$offers_collection_name"
 				field "binding_name": "#show_more_visible"
 				field "binding_name_override": "#visible"
-		Added field "$variables" of variable "$offers_collection_name|default": "offers_collection".
+		Added field "$variables": variable "$offers_collection_name|default": "offers_collection".
 Changed namespace "invite":
 	Total element: 40 (+1, -0)
 	Changed element "button_stack_panel":
-		Unchanged field "type": "stack_panel"
-		Changed field "$variables":
-			Total variable: 2 (+1, -0)
-			Added variable "$add_button_mappings":
-				item 0:
-					field "from_button_id": "button.controller_secondary_select"
-					field "to_button_id": "$pressed_button_name"
-					field "mapping_type": "global"
-				item 1:
-					field "from_button_id": "button.menu_select"
-					field "to_button_id": "$pressed_button_name"
-					field "mapping_type": "pressed"
-				item 2:
-					field "from_button_id": "button.menu_ok"
-					field "to_button_id": "$pressed_button_name"
-					field "mapping_type": "focused"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 4 (+3, -3)
-			Removed control:
-				element "add_friend_button@common_buttons.light_text_button":
-					field "ignored": "($is_inviting_to_realm or (not $supports_add_friend))"
-					field "size": "$button_size"
-					field "layer": 2
-					field "$variables":
-						variable "$pressed_button_name": "button.add_friend"
-						variable "$button_text": "networkWorld.add_friend"
-			Removed control:
-				element "add_member_button@common_buttons.light_text_button":
-					field "ignored": "(not $is_realm_owner)"
-					field "size": "$button_size"
-					field "anchor_from": "bottom_left"
-					field "anchor_to": "bottom_left"
-					field "layer": 2
-					field "$variables":
-						variable "$pressed_button_name": "button.add_member"
-						variable "$button_text": "invite.realm.add_member"
-			Removed control:
-				element "send_button@common_buttons.light_text_button":
-					field "size": ["fill", 30]
-					field "layer": 2
-					field "toggle_manager_behavior": "gather"
-					field "toggle_manage_groups":
-						group: "toggle_invite_online"
-						group: "toggle_invite_offline"
-					field "$variables":
-						variable "$pressed_button_name": "button.send_invites"
-						variable "$button_text_binding_type": "global"
-						variable "$button_text": "#send_button"
-			Added control:
-				element "add_friend_button@common_buttons.light_content_button":
-					field "ignored": "($is_inviting_to_realm or (not $supports_add_friend))"
-					field "size": "$button_size"
-					field "layer": 2
-					field "button_mappings": "$add_button_mappings"
-					field "$variables":
-						variable "$pressed_button_name": "button.add_friend"
-						variable "$button_content": "invite.invite_button_content"
-						variable "$button_text": "networkWorld.add_friend"
-						variable "$icon_description_bind_type": "none"
-						variable "$gamepad_helper": "common.gamepad_helper_y"
-						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
-			Added control:
-				element "add_member_button@common_buttons.light_content_button":
-					field "ignored": "(not $is_realm_owner)"
-					field "size": "$button_size"
-					field "anchor_from": "bottom_left"
-					field "anchor_to": "bottom_left"
-					field "layer": 2
-					field "button_mappings": "$add_button_mappings"
-					field "$variables":
-						variable "$pressed_button_name": "button.add_member"
-						variable "$button_content": "invite.invite_button_content"
-						variable "$button_text": "invite.realm.add_member"
-						variable "$icon_description_bind_type": "none"
-						variable "$gamepad_helper": "common.gamepad_helper_y"
-						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
-			Added control:
-				element "send_button@common_buttons.light_content_button":
-					field "size": ["fill", 30]
-					field "layer": 2
-					field "toggle_manager_behavior": "gather"
-					field "toggle_manage_groups":
-						group: "toggle_invite_online"
-						group: "toggle_invite_offline"
-					field "button_mappings":
+			Changed control:
+				Moved element from "add_friend_button@common_buttons.light_text_button" to "add_friend_button@common_buttons.light_content_button".
+				Changed element "add_friend_button@common_buttons.light_content_button":
+					Changed field "$variables":
+						Total variable: 6 (+4, -0)
+						Added variable "$button_content": "invite.invite_button_content".
+						Added variable "$icon_description_bind_type": "none".
+						Added variable "$gamepad_helper": "common.gamepad_helper_y".
+						Added variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
+					Added field "button_mappings": "$add_button_mappings".
+			Changed control:
+				Moved element from "add_member_button@common_buttons.light_text_button" to "add_member_button@common_buttons.light_content_button".
+				Changed element "add_member_button@common_buttons.light_content_button":
+					Changed field "$variables":
+						Total variable: 6 (+4, -0)
+						Added variable "$button_content": "invite.invite_button_content".
+						Added variable "$icon_description_bind_type": "none".
+						Added variable "$gamepad_helper": "common.gamepad_helper_y".
+						Added variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
+					Added field "button_mappings": "$add_button_mappings".
+			Changed control:
+				Moved element from "send_button@common_buttons.light_text_button" to "send_button@common_buttons.light_content_button".
+				Changed element "send_button@common_buttons.light_content_button":
+					Changed field "$variables":
+						Total variable: 6 (+3, -0)
+						Moved variable from "$button_text_binding_type" to "$invite_label_binding_type".
+						Added variable "$button_content": "invite.invite_button_content".
+						Added variable "$gamepad_helper": "common.gamepad_helper_x".
+						Added variable "$focus_override_down": "FOCUS_OVERRIDE_STOP".
+					Added field "button_mappings":
 						button mapping:
 							field "from_button_id": "button.controller_select"
 							field "to_button_id": "$pressed_button_name"
@@ -173,13 +120,21 @@ Changed namespace "invite":
 							field "from_button_id": "button.menu_ok"
 							field "to_button_id": "$pressed_button_name"
 							field "mapping_type": "focused"
-					field "$variables":
-						variable "$pressed_button_name": "button.send_invites"
-						variable "$button_content": "invite.invite_button_content"
-						variable "$button_text": "#send_button"
-						variable "$invite_label_binding_type": "global"
-						variable "$gamepad_helper": "common.gamepad_helper_x"
-						variable "$focus_override_down": "FOCUS_OVERRIDE_STOP"
+		Changed field "$variables":
+			Total variable: 2 (+1, -0)
+			Added variable "$add_button_mappings":
+				item 0:
+					item "from_button_id": "button.controller_secondary_select"
+					item "to_button_id": "$pressed_button_name"
+					item "mapping_type": "global"
+				item 1:
+					item "from_button_id": "button.menu_select"
+					item "to_button_id": "$pressed_button_name"
+					item "mapping_type": "pressed"
+				item 2:
+					item "from_button_id": "button.menu_ok"
+					item "to_button_id": "$pressed_button_name"
+					item "mapping_type": "focused"
 	Added element "invite_button_content":
 		field "type": "panel"
 		field "size": ["100%", "100%"]
@@ -224,7 +179,7 @@ Changed namespace "realms_create":
 						variable "$button_text": "#confirmation_button_text"
 						variable "$button_text_binding_type": "global"
 	Changed element "main_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 3 (+2, -6)
 			Removed control:
@@ -384,15 +339,25 @@ Changed namespace "realms_create":
 						variable "$show_option_label": false
 						variable "$show_for_ios|default": false
 	Changed element "terms_and_conditions_panel":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "terms_string_panel":
-					Unchanged field "type": "panel"
-					Changed field "$variables":
-						Total variable: 2 (+1, -0)
-						Moved variable "$pressed_button_name" to "$pressed_button_name_terms_conditions".
-						Added variable "$pressed_button_name_privacy_policy" of "button.privpol_hyperlink".
+					Unchanged field "type": "panel".
+					Changed field "variables":
+						Total variable: 3 (+2, -1)
+						Changed variable:
+							Changed field "$variables":
+								Moved variable from "$pressed_button_name" to "$pressed_button_name_terms_conditions".
+						Removed variable:
+							field "requires": "($is_ios or $apple_tv)"
+							field "$variables": variable "$pressed_button_name": "button.tos_ios_appletv"
+						Added variable:
+							field "requires": "($is_holographic or $fire_tv or $apple_tv)"
+							field "$variables": variable "$pressed_button_name_privacy_policy": "button.privpol_popup"
+						Added variable:
+							field "requires": "($apple_tv)"
+							field "$variables": variable "$pressed_button_name_terms_conditions": "button.tos_ios_appletv"
 					Changed field "controls":
 						Total control: 2 (+1, -3)
 						Removed control:
@@ -459,85 +424,46 @@ Changed namespace "realms_create":
 														field "layer": 3
 														field "anchor_from": "left_middle"
 														field "anchor_to": "left_middle"
-									control: element "view_terms_button@realms_create.view_terms_button": field "size": ["fill", "100%"]
-									control: element "privacy_policy_button@realms_create.privacy_policy_button": field "size": ["fill", "100%"]
-					Changed field "variables":
-						Total variable: 3 (+2, -1)
-						Changed variable:
-							Changed field "$variables":
-								Moved variable "$pressed_button_name" to "$pressed_button_name_terms_conditions".
-						Removed variable:
-							field "requires": "($is_ios or $apple_tv)"
-							field "$variables": variable "$pressed_button_name": "button.tos_ios_appletv"
-						Added variable:
-							field "requires": "($is_holographic or $fire_tv or $apple_tv)"
-							field "$variables": variable "$pressed_button_name_privacy_policy": "button.privpol_popup"
-						Added variable:
-							field "requires": "($apple_tv)"
-							field "$variables": variable "$pressed_button_name_terms_conditions": "button.tos_ios_appletv"
+									control element "view_terms_button@realms_create.view_terms_button": field "size": ["fill", "100%"]
+									control element "privacy_policy_button@realms_create.privacy_policy_button": field "size": ["fill", "100%"]
+					Changed field "$variables":
+						Total variable: 2 (+1, -0)
+						Moved variable from "$pressed_button_name" to "$pressed_button_name_terms_conditions".
+						Added variable "$pressed_button_name_privacy_policy": "button.privpol_hyperlink".
 	Changed element "view_terms_button@common_buttons.light_text_button":
+		Removed field "size": ["50%", "100%"].
+		Changed field "anchor_from" from "left_middle" to "right_middle".
+		Changed field "anchor_to" from "left_middle" to "right_middle".
 		Changed field "$variables":
 			Total variable: 6 (+3, -0)
-			Added variable "$button_font_size" of "normal".
-			Added variable "$font_type" of "smooth".
-			Added variable "$pressed_button_name" of "$pressed_button_name_terms_conditions".
-		Changed field "anchor_to" from "left_middle" to "right_middle".
-		Changed field "anchor_from" from "left_middle" to "right_middle".
-		Removed field "size" of ["50%", "100%"].
+			Added variable "$button_font_size": "normal".
+			Added variable "$font_type": "smooth".
+			Added variable "$pressed_button_name": "$pressed_button_name_terms_conditions".
 Changed namespace "realms_purchase_info":
 	Changed element "view_realms_purchase_info":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "two_buttons_panel":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
-						Total control: 3 (+1, -1)
-						Removed control:
-							element "feedback_button@common_buttons.hyperlink_button":
-								field "ignored": "($apple_tv)"
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "size": ["50% - 2px", "100%"]
-								field "property_bag": field "#hyperlink": "http://aka.ms/minecraftrealmsterms"
-								field "$variables":
-									variable "$button_text": "realmsCreateScreen.viewTermsAndConditions"
-									variable "$button_text_size":
-										item 0: "100%"
-										item 1: "default"
-									variable "$button_text_max_size":
-										item 0: "100% - 10px"
-										item 1: 20
-						Added control:
-							element "terms_and_conditions_button@common_buttons.hyperlink_button":
-								field "ignored": "($apple_tv)"
-								field "anchor_from": "top_left"
-								field "anchor_to": "top_left"
-								field "size": ["50% - 2px", "100%"]
-								field "property_bag": field "#hyperlink": "http://aka.ms/minecraftrealmsterms"
-								field "$variables":
-									variable "$button_text": "realmsCreateScreen.viewTermsAndConditions"
-									variable "$button_text_size":
-										item 0: "100%"
-										item 1: "default"
-									variable "$button_text_max_size":
-										item 0: "100% - 10px"
-										item 1: 20
+						Changed control:
+							Moved element from "feedback_button@common_buttons.hyperlink_button" to "terms_and_conditions_button@common_buttons.hyperlink_button".
 Changed namespace "settings_common":
 	Changed element "option_info_label_control":
-		Unchanged field "type": "image"
+		Unchanged field "type": "image".
 		Changed field "controls":
 			Changed control:
 				Changed element "control":
-					Unchanged field "type": "label"
-					Added field "font_size" of "$used_fontsize".
-					Added field "font_type" of "$used_fonttype".
+					Unchanged field "type": "label".
+					Added field "font_size": "$used_fontsize".
+					Added field "font_type": "$used_fonttype".
 		Added field "$variables":
 			variable "$used_fontsize|default": "normal"
 			variable "$used_fonttype|default": "default"
 Changed namespace "world_section":
 	Changed element "game_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 43 (+1, -0)
 			Added control:

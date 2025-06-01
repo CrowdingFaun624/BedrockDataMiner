@@ -58,7 +58,7 @@ Changed file "education.json":
 									field "name": "victim"
 									field "type": "target"
 						field "output":
-							field "format_strings": format string: field "format": "commands.querytarget.success"
+							field "format_strings": format string field "format": "commands.querytarget.success"
 							field "parameters":
 								parameter:
 									field "name": "details"
@@ -87,7 +87,7 @@ Changed file "education.json":
 									field "name": "height"
 									field "type": "int"
 						field "output":
-							field "format_strings": format string: field "format": "commands.getchunkdata.success"
+							field "format_strings": format string field "format": "commands.getchunkdata.success"
 							field "parameters":
 								parameter:
 									field "name": "data"
@@ -107,7 +107,7 @@ Changed file "education.json":
 									field "type": "stringenum"
 									field "enum_type": "dimensionTypes"
 						field "output":
-							field "format_strings": format string: field "format": "commands.getchunks.success"
+							field "format_strings": format string field "format": "commands.getchunks.success"
 							field "parameters":
 								parameter:
 									field "name": "data"
@@ -126,7 +126,7 @@ Changed file "education.json":
 									field "name": "player"
 									field "type": "target"
 						field "output":
-							field "format_strings": format string: field "format": "{0}"
+							field "format_strings": format string field "format": "{0}"
 							field "parameters":
 								parameter:
 									field "name": "details"
@@ -141,7 +141,7 @@ Changed file "education.json":
 				field "overloads":
 					overload "default":
 						field "input": empty
-						field "output": field "format_strings": format string: field "format": "commands.clearfixedinv.success"
+						field "output": field "format_strings": format string field "format": "commands.clearfixedinv.success"
 	Removed command "setfixedinvslot":
 		field "versions":
 			version:
@@ -165,7 +165,7 @@ Changed file "education.json":
 									field "type": "int"
 									field "optional": true
 						field "output":
-							field "format_strings": format string: field "format": "commands.setfixedinvslot.success"
+							field "format_strings": format string field "format": "commands.setfixedinvslot.success"
 							field "parameters":
 								parameter:
 									field "name": "fixedinvslotnum"
@@ -198,6 +198,19 @@ Changed file "pregame.json":
 							field "format_strings": empty
 							field "parameters": empty
 Changed file "standard-test.json":
+	Changed command "getexperience":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "input":
+							Changed field "parameters":
+								Changed parameter:
+									Changed field "type" from "target" to "string".
+						Changed field "output":
+							Changed field "parameters":
+								Changed parameter:
+									Changed field "type" from "string" to "int".
 	Changed command "nearbyentityisbaby":
 		Changed field "versions":
 			Changed version:
@@ -215,31 +228,9 @@ Changed file "standard-test.json":
 						Changed field "input":
 							Changed field "parameters":
 								Changed parameter:
-									Changed field "type" from "target" to "string".
-								Changed parameter:
 									Changed field "type" from "string" to "int".
-	Changed command "fly":
-		Changed field "versions":
-			Changed version:
-				Changed field "overloads":
-					Changed overload "default":
-						Changed field "input":
-							Changed field "parameters":
 								Changed parameter:
 									Changed field "type" from "target" to "string".
-	Changed command "isplayergrounded":
-		Changed field "versions":
-			Changed version:
-				Changed field "overloads":
-					Changed overload "default":
-						Changed field "input":
-							Changed field "parameters":
-								Changed parameter:
-									Changed field "type" from "target" to "string".
-						Changed field "output":
-							Changed field "parameters":
-								Changed parameter:
-									Changed field "type" from "string" to "bool".
 	Changed command "isplayerflying":
 		Changed field "versions":
 			Changed version:
@@ -266,7 +257,7 @@ Changed file "standard-test.json":
 							Changed field "parameters":
 								Changed parameter:
 									Changed field "type" from "string" to "bool".
-	Changed command "getexperience":
+	Changed command "isplayergrounded":
 		Changed field "versions":
 			Changed version:
 				Changed field "overloads":
@@ -278,22 +269,8 @@ Changed file "standard-test.json":
 						Changed field "output":
 							Changed field "parameters":
 								Changed parameter:
-									Changed field "type" from "string" to "int".
-Changed file "standard.json":
-	Changed command "gamemode":
-		Changed field "versions":
-			Changed version:
-				Changed field "overloads":
-					Changed overload "byId":
-						Changed field "output":
-							Changed field "parameters":
-								Removed parameter:
-									field "name": "result"
-									field "type": "string"
-							Changed field "format_strings":
-								Removed format string field "format": "{0}".
-								Added format string field "format": "commands.gamemode.success.other".
-	Changed command "clone":
+									Changed field "type" from "string" to "bool".
+	Changed command "fly":
 		Changed field "versions":
 			Changed version:
 				Changed field "overloads":
@@ -301,8 +278,8 @@ Changed file "standard.json":
 						Changed field "input":
 							Changed field "parameters":
 								Changed parameter:
-									Changed field "enum_values":
-										Removed enum value "force".
+									Changed field "type" from "target" to "string".
+Changed file "standard.json":
 	Changed command "give":
 		Changed field "versions":
 			Changed version:
@@ -323,7 +300,7 @@ Changed file "standard.json":
 									field "type": "int"
 									field "optional": true
 						field "output":
-							field "format_strings": format string: field "format": "commands.give.success"
+							field "format_strings": format string field "format": "commands.give.success"
 							field "parameters":
 								parameter:
 									field "name": "itemName"
@@ -334,6 +311,33 @@ Changed file "standard.json":
 								parameter:
 									field "name": "playerName"
 									field "type": "string"
+	Changed command "gamemode":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "byId":
+						Changed field "output":
+							Changed field "format_strings":
+								Changed format string:
+									Changed field "format" from "{0}" to "commands.gamemode.success.other".
+							Changed field "parameters":
+								Changed parameter:
+									Changed field "name" from "result" to "player".
+								Changed parameter:
+									Changed field "name" from "player" to "gameMode".
+								Removed parameter:
+									field "name": "gameMode"
+									field "type": "string"
+	Changed command "clone":
+		Changed field "versions":
+			Changed version:
+				Changed field "overloads":
+					Changed overload "default":
+						Changed field "input":
+							Changed field "parameters":
+								Changed parameter:
+									Changed field "enum_values":
+										Removed enum value "force".
 	Added command "querytarget":
 		field "versions":
 			version:
@@ -347,7 +351,7 @@ Changed file "standard.json":
 									field "name": "victim"
 									field "type": "target"
 						field "output":
-							field "format_strings": format string: field "format": "commands.querytarget.success"
+							field "format_strings": format string field "format": "commands.querytarget.success"
 							field "parameters":
 								parameter:
 									field "name": "details"
@@ -375,7 +379,7 @@ Changed file "standard.json":
 									field "name": "height"
 									field "type": "int"
 						field "output":
-							field "format_strings": format string: field "format": "commands.getchunkdata.success"
+							field "format_strings": format string field "format": "commands.getchunkdata.success"
 							field "parameters":
 								parameter:
 									field "name": "data"
@@ -394,7 +398,7 @@ Changed file "standard.json":
 									field "type": "stringenum"
 									field "enum_type": "dimensionTypes"
 						field "output":
-							field "format_strings": format string: field "format": "commands.getchunks.success"
+							field "format_strings": format string field "format": "commands.getchunks.success"
 							field "parameters":
 								parameter:
 									field "name": "data"
@@ -412,7 +416,7 @@ Changed file "standard.json":
 									field "name": "player"
 									field "type": "target"
 						field "output":
-							field "format_strings": format string: field "format": "{0}"
+							field "format_strings": format string field "format": "{0}"
 							field "parameters":
 								parameter:
 									field "name": "details"
@@ -426,7 +430,7 @@ Changed file "standard.json":
 				field "overloads":
 					overload "default":
 						field "input": empty
-						field "output": field "format_strings": format string: field "format": "commands.setfixedinvslots.success"
+						field "output": field "format_strings": format string field "format": "commands.setfixedinvslots.success"
 	Added command "setfixedinvslot":
 		field "versions":
 			version:
@@ -450,7 +454,7 @@ Changed file "standard.json":
 									field "type": "int"
 									field "optional": true
 						field "output":
-							field "format_strings": format string: field "format": "commands.setfixedinvslot.success"
+							field "format_strings": format string field "format": "commands.setfixedinvslot.success"
 							field "parameters":
 								parameter:
 									field "name": "fixedinvslotnum"

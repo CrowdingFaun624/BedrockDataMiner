@@ -7,7 +7,7 @@ Changed entity "donkey.json":
 			Changed field "component_groups":
 				Changed component group "minecraft:donkey_tamed":
 					Changed component "minecraft:breedable":
-						Added field "parent_centric_attribute_blending" of attribute: "minecraft:health".
+						Added field "parent_centric_attribute_blending": attribute "minecraft:health".
 Changed entity "horse.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -15,16 +15,16 @@ Changed entity "horse.json":
 				Changed component group "minecraft:horse_tamed":
 					Changed component "minecraft:breedable":
 						Added field "parent_centric_attribute_blending":
-							attribute: "minecraft:health"
-							attribute: "minecraft:movement"
-							attribute: "minecraft:horse.jump_strength"
+							attribute "minecraft:health"
+							attribute "minecraft:horse.jump_strength"
+							attribute "minecraft:movement"
 Changed entity "llama.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "component_groups":
 				Changed component group "minecraft:llama_adult":
 					Changed component "minecraft:breedable":
-						Added field "parent_centric_attribute_blending" of attribute: "minecraft:health".
+						Added field "parent_centric_attribute_blending": attribute "minecraft:health".
 Added entity "sniffer.json":
 	behavior pack "experimental":
 		field "format_version": "1.16.0"
@@ -57,7 +57,7 @@ Added entity "sniffer.json":
 								field "breed_event":
 									field "event": "minecraft:entity_born"
 									field "target": "baby"
-						field "breed_items": item: "torchflower_seeds"
+						field "breed_items": item "torchflower_seeds"
 					component "minecraft:experience_reward":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
@@ -67,7 +67,7 @@ Added entity "sniffer.json":
 				component group "sniffer_baby":
 					component "minecraft:ageable":
 						field "duration": 2400
-						field "feed_items": item: "torchflower_seeds"
+						field "feed_items": item "torchflower_seeds"
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
@@ -155,8 +155,8 @@ Added entity "sniffer.json":
 				component "minecraft:physics": empty
 				component "minecraft:type_family":
 					field "family":
-						family: "sniffer"
-						family: "mob"
+						family "mob"
+						family "sniffer"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.look_at_player":
 					field "priority": 7
@@ -178,13 +178,13 @@ Added entity "sniffer.json":
 						field "target": "self"
 			field "events":
 				event "minecraft:ageable_grow_up":
-					field "add": field "component_groups": component group: "sniffer_adult"
-					field "remove": field "component_groups": component group: "sniffer_baby"
+					field "add": field "component_groups": component group "sniffer_adult"
+					field "remove": field "component_groups": component group "sniffer_baby"
 				event "minecraft:entity_born":
 					field "add":
 						field "component_groups":
-							component group: "sniffer_baby"
-							component group: "pushable"
+							component group "pushable"
+							component group "sniffer_baby"
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
@@ -196,23 +196,23 @@ Added entity "sniffer.json":
 				event "minecraft:spawn_adult":
 					field "add":
 						field "component_groups":
-							component group: "sniffer_adult"
-							component group: "pushable"
-				event "on_digging_start": field "remove": field "component_groups": component group: "pushable"
+							component group "pushable"
+							component group "sniffer_adult"
+				event "on_digging_start": field "remove": field "component_groups": component group "pushable"
 				event "on_fail_during_digging":
 					field "add":
 						field "component_groups":
-							component group: "pushable"
-							component group: "stand_up"
-					field "remove": field "component_groups": component group: "sniffer_search_and_dig"
-				event "on_fail_during_searching": field "remove": field "component_groups": component group: "sniffer_search_and_dig"
-				event "on_feeling_happy_end": field "remove": field "component_groups": component group: "feeling_happy"
-				event "on_item_found": field "add": field "component_groups": component group: "feeling_happy"
-				event "on_rising_end": field "remove": field "component_groups": component group: "stand_up"
+							component group "pushable"
+							component group "stand_up"
+					field "remove": field "component_groups": component group "sniffer_search_and_dig"
+				event "on_fail_during_searching": field "remove": field "component_groups": component group "sniffer_search_and_dig"
+				event "on_feeling_happy_end": field "remove": field "component_groups": component group "feeling_happy"
+				event "on_item_found": field "add": field "component_groups": component group "feeling_happy"
+				event "on_rising_end": field "remove": field "component_groups": component group "stand_up"
 				event "on_scenting_success":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "sniffer_search_and_dig"
+							field "add": field "component_groups": component group "sniffer_search_and_dig"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "subject": "self"
@@ -221,6 +221,6 @@ Added entity "sniffer.json":
 				event "on_search_and_digging_success":
 					field "add":
 						field "component_groups":
-							component group: "pushable"
-							component group: "stand_up"
-					field "remove": field "component_groups": component group: "sniffer_search_and_digging"
+							component group "pushable"
+							component group "stand_up"
+					field "remove": field "component_groups": component group "sniffer_search_and_digging"

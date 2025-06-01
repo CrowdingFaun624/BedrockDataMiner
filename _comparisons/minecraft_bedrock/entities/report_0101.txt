@@ -15,58 +15,45 @@ Changed entity "boat.json":
 				Changed component "minecraft:rideable":
 					Changed field "seats":
 						Changed seat:
-							Added field "rotate_rider_by" of "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0".
-						Changed seat:
 							Changed field "rotate_rider_by" from -90 to "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0".
+						Changed seat:
+							Added field "rotate_rider_by": "query.has_any_family('blaze', 'creeper', 'enderman', 'illager', 'magmacube', 'piglin', 'player', 'skeleton', 'slime', 'villager', 'wandering_trader', 'witch', 'zombie', 'zombie_pigman') ? -90 : 0".
 Changed entity "drowned.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 36 (+3, -2)
+						Total item: 36 (+1, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:carved_pumpkin"
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 5 to 6.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 6 to 5.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 0.
 							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:turtle_helmet".
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
+							Removed field "item_aux": 1.
+							Changed field "priority" from 6 to 7.
 						Changed item:
-							Unchanged field "item": "minecraft:golden_sword"
-							Changed field "priority" from 5 to 6.
-						Removed item:
-							field "item": "minecraft:skull"
+							Unchanged field "item": "minecraft:carved_pumpkin".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
-							field "item_aux": 0
 							field "surplus_amount": 1
 							field "priority": 6
-						Removed item:
-							field "item": "minecraft:skull"
-							field "want_amount": 1
-							field "item_aux": 1
-							field "surplus_amount": 1
-							field "priority": 6
-						Added item:
-							field "item": "minecraft:stone_sword"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 5
-						Added item:
-							field "item": "minecraft:skull:0"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
-						Added item:
-							field "item": "minecraft:skull:1"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
 Changed entity "fox.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Total component: 33 (+2, -0)
-				Added empty component "minecraft:equip_item".
-				Added component "minecraft:behavior.equip_item" of field "priority": 2.
+				Added component "minecraft:equip_item": empty.
+				Added component "minecraft:behavior.equip_item": field "priority": 2.
 Changed entity "hoglin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -76,10 +63,10 @@ Changed entity "hoglin.json":
 						Changed field "duration" from 100 to 10.
 			Changed field "components":
 				Total component: 19 (+1, -0)
-				Added component "minecraft:knockback_resistance" of field "value": 0.5.
+				Added component "minecraft:knockback_resistance": field "value": 0.5.
 				Changed component "minecraft:behavior.avoid_block":
 					Changed field "walk_speed_modifier" from 0.4 to 1.
-					Added field "avoid_block_sound" of "retreat".
+					Added field "avoid_block_sound": "retreat".
 					Added field "sound_interval":
 						field "range_max": 5.0
 						field "range_min": 2.0
@@ -87,16 +74,38 @@ Changed entity "hoglin.json":
 					Changed field "entity_types":
 						Total entity type: 1 (+0, -1)
 						Changed entity type:
-							Changed field "sprint_speed_multiplier" from 1 to 1.2.
-							Changed field "max_dist" from 32 to 10.
-						Removed entity type:
-							field "filters":
-								filter property "any_of":
+							Changed field "filters":
+								Removed filter property "any_of":
 									filter:
 										filter property "test": "is_family"
 										filter property "subject": "other"
 										filter property "value": "zoglin"
-							field "max_dist": 6
+								Added filter property "all_of":
+									filter:
+										filter property "test": "has_target"
+										filter property "subject": "other"
+										filter property "value": true
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "piglin"
+							Changed field "max_dist" from 6 to 10.
+							Added field "check_if_outnumbered": true.
+							Added field "sprint_speed_multiplier": 1.2.
+						Removed entity type:
+							field "filters":
+								filter property "all_of":
+									filter:
+										filter property "test": "has_target"
+										filter property "subject": "other"
+										filter property "value": true
+									filter:
+										filter property "test": "is_family"
+										filter property "subject": "other"
+										filter property "value": "piglin"
+							field "check_if_outnumbered": true
+							field "max_dist": 32
+							field "sprint_speed_multiplier": 1
 Changed entity "husk.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -105,83 +114,78 @@ Changed entity "husk.json":
 					Changed field "items":
 						Total item: 34 (+9, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:leather_boots"
-							Changed field "priority" from 4 to 5.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_boots"
-							Changed field "priority" from 3 to 4.
-						Changed item:
-							Unchanged field "item": "minecraft:iron_boots"
-							Changed field "priority" from 1 to 3.
-						Changed item:
-							Unchanged field "item": "minecraft:diamond_boots"
+							Unchanged field "item": "minecraft:diamond_sword".
 							Changed field "priority" from 0 to 1.
 						Changed item:
-							Unchanged field "item": "minecraft:leather_leggings"
-							Changed field "priority" from 4 to 5.
+							Unchanged field "item": "minecraft:iron_sword".
+							Changed field "priority" from 1 to 2.
 						Changed item:
-							Unchanged field "item": "minecraft:golden_leggings"
-							Changed field "priority" from 3 to 4.
-						Changed item:
-							Unchanged field "item": "minecraft:iron_leggings"
-							Changed field "priority" from 1 to 3.
-						Changed item:
-							Changed field "item" from "minecraft:diamond_leggings" to "minecraft:netherite_boots".
-						Changed item:
-							Unchanged field "item": "minecraft:leather_chestplate"
-							Changed field "priority" from 4 to 5.
-						Changed item:
-							Unchanged field "item": "minecraft:golden_chestplate"
-							Changed field "priority" from 3 to 4.
-						Changed item:
-							Changed field "item" from "minecraft:iron_chestplate" to "minecraft:diamond_leggings".
-						Changed item:
-							Changed field "item" from "minecraft:diamond_chestplate" to "minecraft:netherite_leggings".
-						Changed item:
-							Unchanged field "item": "minecraft:leather_helmet"
-							Changed field "priority" from 4 to 5.
-						Changed item:
-							Changed field "item" from "minecraft:golden_helmet" to "minecraft:iron_chestplate".
-						Changed item:
-							Changed field "item" from "minecraft:iron_helmet" to "minecraft:diamond_chestplate".
-						Changed item:
-							Changed field "item" from "minecraft:diamond_helmet" to "minecraft:netherite_chestplate".
-						Changed item:
-							Changed field "item" from "minecraft:wooden_sword" to "minecraft:golden_helmet".
-						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:iron_helmet".
-						Changed item:
-							Unchanged field "item": "minecraft:golden_sword"
+							Unchanged field "item": "minecraft:golden_sword".
 							Changed field "priority" from 2 to 3.
 						Changed item:
-							Changed field "item" from "minecraft:iron_sword" to "minecraft:diamond_helmet".
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 3 to 4.
 						Changed item:
-							Changed field "item" from "minecraft:diamond_sword" to "minecraft:netherite_helmet".
+							Unchanged field "item": "minecraft:wooden_sword".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_helmet".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_helmet".
+							Changed field "priority" from 1 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_helmet".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:leather_helmet".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_chestplate".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_chestplate".
+							Changed field "priority" from 1 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_chestplate".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:leather_chestplate".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_leggings".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_leggings".
+							Changed field "priority" from 1 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_leggings".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:leather_leggings".
+							Changed field "priority" from 4 to 5.
+						Changed item:
+							Unchanged field "item": "minecraft:diamond_boots".
+							Changed field "priority" from 0 to 1.
+						Changed item:
+							Unchanged field "item": "minecraft:iron_boots".
+							Changed field "priority" from 1 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:golden_boots".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:leather_boots".
+							Changed field "priority" from 4 to 5.
 						Added item:
 							field "item": "minecraft:netherite_sword"
 							field "want_amount": 1
 							field "surplus_amount": 1
 							field "priority": 0
 						Added item:
-							field "item": "minecraft:diamond_sword"
+							field "item": "minecraft:netherite_helmet"
 							field "want_amount": 1
 							field "surplus_amount": 1
-							field "priority": 1
-						Added item:
-							field "item": "minecraft:iron_sword"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 2
-						Added item:
-							field "item": "minecraft:stone_sword"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 4
-						Added item:
-							field "item": "minecraft:wooden_sword"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 5
+							field "priority": 0
 						Added item:
 							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
@@ -202,6 +206,21 @@ Changed entity "husk.json":
 							field "want_amount": 1
 							field "surplus_amount": 1
 							field "priority": 7
+						Added item:
+							field "item": "minecraft:netherite_chestplate"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						Added item:
+							field "item": "minecraft:netherite_leggings"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
+						Added item:
+							field "item": "minecraft:netherite_boots"
+							field "want_amount": 1
+							field "surplus_amount": 1
+							field "priority": 0
 Changed entity "piglin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -279,16 +298,16 @@ Changed entity "piglin.json":
 						Changed field "priority" from 4 to 7.
 			Changed field "components":
 				Changed component "minecraft:inventory":
-					Unchanged field "inventory_size": 8
-					Removed field "private" of true.
+					Unchanged field "inventory_size": 8.
+					Removed field "private": true.
 				Changed component "minecraft:shareables":
 					Changed field "items":
 						Changed item:
-							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
-							Removed field "item_aux" of 1.
-						Changed item:
 							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
-							Removed field "item_aux" of 0.
+							Removed field "item_aux": 0.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 1.
 				Changed component "minecraft:behavior.admire_item":
 					Changed field "priority" from 1 to 2.
 					Added field "on_admire_item_start":
@@ -298,19 +317,19 @@ Changed entity "piglin.json":
 						field "event": "admire_item_stopped_event"
 						field "target": "self"
 				Changed component "minecraft:behavior.avoid_block":
+					Changed field "priority" from 6 to 9.
 					Changed field "target_blocks":
 						Total block: 4 (+1, -0)
 						Added block "minecraft:item.soul_campfire".
-					Changed field "priority" from 6 to 9.
-					Added field "avoid_block_sound" of "retreat".
+					Added field "avoid_block_sound": "retreat".
 					Added field "sound_interval":
 						field "range_max": 5.0
 						field "range_min": 2.0
 				Changed component "minecraft:behavior.avoid_mob_type":
+					Changed field "priority" from 6 to 4.
 					Changed field "entity_types":
 						Changed entity type:
-							Added field "sprint_speed_multiplier" of 1.2.
-					Changed field "priority" from 6 to 4.
+							Added field "sprint_speed_multiplier": 1.2.
 				Changed component "minecraft:behavior.barter":
 					Changed field "priority" from 1 to 3.
 				Changed component "minecraft:behavior.equip_item":
@@ -325,8 +344,8 @@ Changed entity "piglin.json":
 					Changed field "priority" from 6 to 10.
 			Changed field "events":
 				Total event: 18 (+2, -0)
-				Added event "admire_item_started_event" of field "remove": field "component_groups": component group: "interactable_piglin".
-				Added event "admire_item_stopped_event" of field "add": field "component_groups": component group: "interactable_piglin".
+				Added event "admire_item_started_event": field "remove": field "component_groups": component group "interactable_piglin".
+				Added event "admire_item_stopped_event": field "add": field "component_groups": component group "interactable_piglin".
 				Changed event "spawn_adult_melee":
 					Changed field "add":
 						Changed field "component_groups":
@@ -356,111 +375,92 @@ Changed entity "sheep.json":
 					Changed field "sequence":
 						Changed sequence item 0:
 							Changed field "randomize":
-								Total randomize item: 2 (+2, -2)
-								Removed randomize item:
-									field "weight": 95
-									field "add":
+								Changed randomize item:
+									Added field "trigger": "spawn_adult".
+									Removed field "add":
 										field "component_groups":
-											component group: "minecraft:sheep_adult"
-											component group: "minecraft:sheep_dyeable"
-											component group: "minecraft:rideable_wooly"
-											component group: "minecraft:loot_wooly"
-									field "remove": empty
-								Removed randomize item:
-									field "weight": 5
-									field "add":
+											component group "minecraft:loot_wooly"
+											component group "minecraft:rideable_wooly"
+											component group "minecraft:sheep_adult"
+											component group "minecraft:sheep_dyeable"
+								Changed randomize item:
+									Added field "trigger": "spawn_baby".
+									Removed field "add":
 										field "component_groups":
-											component group: "minecraft:sheep_baby"
-											component group: "minecraft:sheep_dyeable"
-											component group: "minecraft:rideable_sheared"
-									field "remove": empty
-								Added randomize item:
-									field "trigger": "spawn_adult"
-									field "weight": 95
-									field "remove": empty
-								Added randomize item:
-									field "trigger": "spawn_baby"
-									field "weight": 5
-									field "remove": empty
+											component group "minecraft:rideable_sheared"
+											component group "minecraft:sheep_baby"
+											component group "minecraft:sheep_dyeable"
 				Added event "spawn_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:sheep_adult"
-							component group: "minecraft:sheep_dyeable"
-							component group: "minecraft:rideable_wooly"
-							component group: "minecraft:loot_wooly"
+							component group "minecraft:loot_wooly"
+							component group "minecraft:rideable_wooly"
+							component group "minecraft:sheep_adult"
+							component group "minecraft:sheep_dyeable"
 				Added event "spawn_baby":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:sheep_baby"
-							component group: "minecraft:sheep_dyeable"
-							component group: "minecraft:rideable_sheared"
+							component group "minecraft:rideable_sheared"
+							component group "minecraft:sheep_baby"
+							component group "minecraft:sheep_dyeable"
 Changed entity "skeleton.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 35 (+2, -1)
+						Total item: 35 (+1, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:carved_pumpkin"
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 4 to 3.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 0.
 							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:golden_sword".
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
+							Removed field "item_aux": 1.
+							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:golden_sword" to "minecraft:stone_sword".
-						Changed item:
-							Changed field "item" from "minecraft:skull" to "minecraft:turtle_helmet".
-							Removed field "item_aux" of 1.
-						Removed item:
-							field "item": "minecraft:skull"
+							Unchanged field "item": "minecraft:carved_pumpkin".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
-							field "item_aux": 0
 							field "surplus_amount": 1
 							field "priority": 6
-						Added item:
-							field "item": "minecraft:skull:0"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
-						Added item:
-							field "item": "minecraft:skull:1"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
 Changed entity "stray.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 35 (+2, -1)
+						Total item: 35 (+1, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:carved_pumpkin"
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 4 to 3.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 0.
 							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:golden_sword".
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
+							Removed field "item_aux": 1.
+							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:golden_sword" to "minecraft:stone_sword".
-						Changed item:
-							Changed field "item" from "minecraft:skull" to "minecraft:turtle_helmet".
-							Removed field "item_aux" of 1.
-						Removed item:
-							field "item": "minecraft:skull"
+							Unchanged field "item": "minecraft:carved_pumpkin".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
-							field "item_aux": 0
 							field "surplus_amount": 1
 							field "priority": 6
-						Added item:
-							field "item": "minecraft:skull:0"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
-						Added item:
-							field "item": "minecraft:skull:1"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
 Changed entity "strider.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -492,10 +492,10 @@ Changed entity "strider.json":
 					Changed component "minecraft:environment_sensor":
 						Changed field "triggers":
 							Changed field "filters":
-								Removed filter property "test" of "in_lava".
-								Removed filter property "subject" of "self".
-								Removed filter property "operator" of "==".
-								Removed filter property "value" of true.
+								Removed filter property "test": "in_lava".
+								Removed filter property "subject": "self".
+								Removed filter property "operator": "==".
+								Removed filter property "value": true.
 								Added filter property "any_of":
 									filter:
 										filter property "test": "in_lava"
@@ -534,8 +534,8 @@ Changed entity "villager_v2.json":
 							Changed field "sequence":
 								Changed sequence item 12:
 									Changed field "filters":
-										Unchanged filter property "test": "is_family"
-										Unchanged filter property "subject": "other"
+										Unchanged filter property "test": "is_family".
+										Unchanged filter property "subject": "other".
 										Changed filter property "value" from "mason" to "stone_mason".
 Changed entity "wither_skeleton.json":
 	Changed behavior pack "core":
@@ -543,33 +543,29 @@ Changed entity "wither_skeleton.json":
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 58 (+2, -1)
+						Total item: 58 (+1, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:carved_pumpkin"
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 4 to 3.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 0.
 							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:golden_sword".
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
+							Removed field "item_aux": 1.
+							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:golden_sword" to "minecraft:stone_sword".
-						Changed item:
-							Changed field "item" from "minecraft:skull" to "minecraft:turtle_helmet".
-							Removed field "item_aux" of 1.
-						Removed item:
-							field "item": "minecraft:skull"
+							Unchanged field "item": "minecraft:carved_pumpkin".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
-							field "item_aux": 0
 							field "surplus_amount": 1
 							field "priority": 6
-						Added item:
-							field "item": "minecraft:skull:0"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
-						Added item:
-							field "item": "minecraft:skull:1"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
 Added entity "xp_orb.json":
 	behavior pack "core":
 		field "format_version": "1.16.0"
@@ -594,110 +590,98 @@ Changed entity "zoglin.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:zoglin"
+				Unchanged description "identifier": "minecraft:zoglin".
 				Changed description "is_spawnable" from false to true.
 			Changed field "components":
 				Total component: 19 (+1, -0)
-				Added component "minecraft:knockback_resistance" of field "value": 0.5.
+				Added component "minecraft:knockback_resistance": field "value": 0.5.
 Changed entity "zombie.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 34 (+2, -1)
+						Total item: 34 (+1, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:carved_pumpkin"
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 4 to 3.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 0.
 							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:golden_sword".
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
+							Removed field "item_aux": 1.
+							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:golden_sword" to "minecraft:stone_sword".
-						Changed item:
-							Changed field "item" from "minecraft:skull" to "minecraft:turtle_helmet".
-							Removed field "item_aux" of 1.
-						Removed item:
-							field "item": "minecraft:skull"
+							Unchanged field "item": "minecraft:carved_pumpkin".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
-							field "item_aux": 0
 							field "surplus_amount": 1
 							field "priority": 6
-						Added item:
-							field "item": "minecraft:skull:0"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
-						Added item:
-							field "item": "minecraft:skull:1"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
 Changed entity "zombie_pigman.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 34 (+2, -1)
+						Total item: 34 (+1, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:carved_pumpkin"
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 2 to 3.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 3 to 2.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 0.
 							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:golden_sword".
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
+							Removed field "item_aux": 1.
+							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:golden_sword" to "minecraft:stone_sword".
-						Changed item:
-							Changed field "item" from "minecraft:skull" to "minecraft:turtle_helmet".
-							Removed field "item_aux" of 1.
-						Removed item:
-							field "item": "minecraft:skull"
+							Unchanged field "item": "minecraft:carved_pumpkin".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
-							field "item_aux": 0
 							field "surplus_amount": 1
 							field "priority": 6
-						Added item:
-							field "item": "minecraft:skull:0"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
-						Added item:
-							field "item": "minecraft:skull:1"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
 Changed entity "zombie_villager.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 34 (+2, -1)
+						Total item: 34 (+1, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:carved_pumpkin"
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 4 to 3.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 0.
 							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:golden_sword".
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
+							Removed field "item_aux": 1.
+							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:golden_sword" to "minecraft:stone_sword".
-						Changed item:
-							Changed field "item" from "minecraft:skull" to "minecraft:turtle_helmet".
-							Removed field "item_aux" of 1.
-						Removed item:
-							field "item": "minecraft:skull"
+							Unchanged field "item": "minecraft:carved_pumpkin".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
-							field "item_aux": 0
 							field "surplus_amount": 1
 							field "priority": 6
-						Added item:
-							field "item": "minecraft:skull:0"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
-						Added item:
-							field "item": "minecraft:skull:1"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
 Changed entity "zombie_villager_v2.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -711,33 +695,29 @@ Changed entity "zombie_villager_v2.json":
 			Changed field "components":
 				Changed component "minecraft:shareables":
 					Changed field "items":
-						Total item: 34 (+2, -1)
+						Total item: 34 (+1, -0)
 						Changed item:
-							Unchanged field "item": "minecraft:carved_pumpkin"
+							Unchanged field "item": "minecraft:golden_sword".
+							Changed field "priority" from 3 to 4.
+						Changed item:
+							Unchanged field "item": "minecraft:stone_sword".
+							Changed field "priority" from 4 to 3.
+						Changed item:
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:1".
+							Removed field "item_aux": 0.
 							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:stone_sword" to "minecraft:golden_sword".
+							Changed field "item" from "minecraft:skull" to "minecraft:skull:0".
+							Removed field "item_aux": 1.
+							Changed field "priority" from 6 to 7.
 						Changed item:
-							Changed field "item" from "minecraft:golden_sword" to "minecraft:stone_sword".
-						Changed item:
-							Changed field "item" from "minecraft:skull" to "minecraft:turtle_helmet".
-							Removed field "item_aux" of 1.
-						Removed item:
-							field "item": "minecraft:skull"
+							Unchanged field "item": "minecraft:carved_pumpkin".
+							Changed field "priority" from 6 to 7.
+						Added item:
+							field "item": "minecraft:turtle_helmet"
 							field "want_amount": 1
-							field "item_aux": 0
 							field "surplus_amount": 1
 							field "priority": 6
-						Added item:
-							field "item": "minecraft:skull:0"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
-						Added item:
-							field "item": "minecraft:skull:1"
-							field "want_amount": 1
-							field "surplus_amount": 1
-							field "priority": 7
 			Changed field "events":
 				Changed event "minecraft:entity_transformed":
 					Changed field "sequence":
@@ -745,6 +725,6 @@ Changed entity "zombie_villager_v2.json":
 							Changed field "sequence":
 								Changed sequence item 16:
 									Changed field "filters":
-										Unchanged filter property "test": "is_family"
-										Unchanged filter property "subject": "other"
+										Unchanged filter property "test": "is_family".
+										Unchanged filter property "subject": "other".
 										Changed filter property "value" from "mason" to "stone_mason".

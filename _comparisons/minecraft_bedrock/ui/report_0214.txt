@@ -2,36 +2,43 @@ Difference of "ui" between "1.17.0.56" (beta of "1.17.0") and "1.17.0.58" (beta 
 
 Changed namespace "common_store":
 	Changed element "promo_banner_image":
-		Unchanged field "type": "image"
+		Unchanged field "type": "image".
 		Changed field "size":
-			Unchanged item 0: "100%"
+			Unchanged item 0: "100%".
 			Changed item 1 from "17%x" to "14.43%x".
 	Changed element "promo_banner_panel":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "promo_banner_panel_content":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
+						Changed control:
+							Changed element "banner_text_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "offset":
+									Unchanged item 0: 5.
+									Changed item 1 from 9 to 5.
 						Changed control:
 							Changed element "banner_button@common_buttons.light_content_button":
 								Changed field "offset":
-									Unchanged item 0: 5
+									Unchanged item 0: 5.
 									Changed item 1 from -13 to -8.
-						Changed control:
-							Changed element "banner_text_panel":
-								Unchanged field "type": "stack_panel"
-								Changed field "offset":
-									Unchanged item 0: 5
-									Changed item 1 from 9 to 5.
 Changed namespace "general_section":
 	Changed element "gamertag_controls":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 6 (+2, -1)
+			Removed control:
+				element "spacer":
+					field "type": "panel"
+					field "size": [0, 1]
 			Changed control:
 				Changed element "xboxlive_deep_link_buttons":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from 62 to "62px + 8px".
 					Changed field "controls":
 						Total control: 8 (+2, -1)
 						Removed control:
@@ -48,13 +55,6 @@ Changed namespace "general_section":
 								field "ignored": "($is_holographic or $fire_tv or $education_edition or $thirdpartyconsole)"
 								field "type": "panel"
 								field "size": "$spatialPatternsPadding"
-					Changed field "size":
-						Unchanged item 0: "100%"
-						Changed item 1 from 62 to "62px + 8px".
-			Removed control:
-				element "spacer":
-					field "type": "panel"
-					field "size": [0, 1]
 			Added control:
 				element "paddingXboxAccountButtons":
 					field "ignored": "($device_must_be_removed_for_xbl_signin or $fire_tv or not $is_pregame or $disable_gamertag_controls)"
@@ -70,32 +70,44 @@ Changed namespace "general_section":
 				item 0: "100%"
 				item 1: 8
 	Changed element "profile_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 54 (+29, -3)
+			Total control: 54 (+27, -1)
+			Removed control:
+				element "spacer_0":
+					field "type": "panel"
+					field "size": [0, 2]
+			Changed control:
+				Moved element from "file_storage_spacer" to "paddingFileStorageDropdown".
+				Changed element "paddingFileStorageDropdown":
+					Unchanged field "type": "panel".
+					Removed field "visible": "($storage_location_switch_enabled and not $gear_vr)".
+					Changed field "size" from [0, 2] to "$spatialPatternsPadding".
+			Changed control:
+				Moved element from "spacer_10" to "dividerLicenses".
+				Changed element "dividerLicenses":
+					Unchanged field "type": "panel".
+					Changed field "size":
+						Unchanged item 0: "100%".
+						Changed item 1 from 1 to "100%c + 14px".
+					Added field "controls":
+						control:
+							element "section_divider":
+								field "type": "image"
+								field "size": ["100% - 30px", 1]
+								field "anchor_from": "center"
+								field "anchor_to": "center"
+								field "layer": 3
+								field "texture": "textures/ui/list_item_divider_line_light"
 			Changed control:
 				Changed element "build_info_label_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 8 (+1, -0)
 						Added control:
 							element "paddingVersionLabel":
 								field "type": "panel"
 								field "size": "$spatialPatternsPadding"
-			Removed control:
-				element "spacer_0":
-					field "type": "panel"
-					field "size": [0, 2]
-			Removed control:
-				element "file_storage_spacer":
-					field "ignored": "($is_holographic and $is_reality_mode)"
-					field "type": "panel"
-					field "visible": "($storage_location_switch_enabled and not $gear_vr)"
-					field "size": [0, 2]
-			Removed control:
-				element "spacer_10":
-					field "type": "panel"
-					field "size": ["100%", 1]
 			Added control:
 				element "paddingUseSSO":
 					field "ignored": "$ignore_profile_sso_toggle"
@@ -162,11 +174,6 @@ Changed namespace "general_section":
 					field "type": "panel"
 					field "size": "$spatialPatternsPadding"
 			Added control:
-				element "paddingFileStorageDropdown":
-					field "ignored": "($is_holographic and $is_reality_mode)"
-					field "type": "panel"
-					field "size": "$spatialPatternsPadding"
-			Added control:
 				element "paddingClearMSAToken":
 					field "ignored": "($education_edition or not $is_pregame or not ($thirdpartyconsole or $is_android or $is_ios))"
 					field "type": "panel"
@@ -220,19 +227,6 @@ Changed namespace "general_section":
 					field "type": "panel"
 					field "size": "$paddingLineDivider"
 			Added control:
-				element "dividerLicenses":
-					field "type": "panel"
-					field "size": ["100%", "100%c + 14px"]
-					field "controls":
-						control:
-							element "section_divider":
-								field "type": "image"
-								field "size": ["100% - 30px", 1]
-								field "anchor_from": "center"
-								field "anchor_to": "center"
-								field "layer": 3
-								field "texture": "textures/ui/list_item_divider_line_light"
-			Added control:
 				element "paddingLicensesAfter":
 					field "type": "panel"
 					field "size": "$spatialPatternsPadding"
@@ -266,42 +260,42 @@ Changed namespace "general_section":
 				item 0: "100%"
 				item 1: 16
 	Changed element "sound_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 27 (+15, -0)
 			Changed control:
-				Changed element "option_slider_10@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
-			Changed control:
-				Changed element "option_slider_9@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
-			Changed control:
-				Changed element "option_slider_8@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
-			Changed control:
-				Changed element "option_slider_7@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
-			Changed control:
-				Changed element "option_slider_6@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
-			Changed control:
-				Changed element "option_slider_5@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
-			Changed control:
-				Changed element "option_slider_4@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
-			Changed control:
-				Changed element "option_slider_3@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
-			Changed control:
-				Changed element "option_slider_2@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
+				Changed element "option_slider_0@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
 			Changed control:
 				Changed element "option_slider_1@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
+					Added field "size": "$audioSlidersSize".
 			Changed control:
-				Changed element "option_slider_0@settings_common.option_slider":
-					Added field "size" of "$audioSlidersSize".
+				Changed element "option_slider_2@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
+			Changed control:
+				Changed element "option_slider_3@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
+			Changed control:
+				Changed element "option_slider_4@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
+			Changed control:
+				Changed element "option_slider_5@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
+			Changed control:
+				Changed element "option_slider_6@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
+			Changed control:
+				Changed element "option_slider_7@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
+			Changed control:
+				Changed element "option_slider_8@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
+			Changed control:
+				Changed element "option_slider_9@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
+			Changed control:
+				Changed element "option_slider_10@settings_common.option_slider":
+					Added field "size": "$audioSlidersSize".
 			Added control:
 				element "paddingMainVolume":
 					field "type": "panel"
@@ -379,7 +373,7 @@ Changed namespace "general_section":
 				item 0: "75% - 2px"
 				item 1: 16
 	Changed element "switch_accounts_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 3 (+1, -0)
 			Added control:
@@ -388,7 +382,7 @@ Changed namespace "general_section":
 					field "size": "$spatialPatternsPadding"
 Changed namespace "gift_promo":
 	Changed element "promotion_screen_top":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Total control: 3 (+2, -0)
 			Added control:
@@ -411,7 +405,7 @@ Changed namespace "gift_promo":
 					field "layer": 1
 Changed namespace "settings_common":
 	Changed element "settings_content":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Total control: 3 (+1, -0)
 			Added control:
@@ -427,7 +421,7 @@ Changed namespace "settings_common":
 					field "anchor_to": "top_left"
 Changed namespace "world_section":
 	Changed element "game_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 55 (+0, -1)
 			Removed control element "experimental_toggles_label_info@settings_common.option_group_label": field "$variables": variable "$text": "createWorldScreen.experimentalgameplayinfo".

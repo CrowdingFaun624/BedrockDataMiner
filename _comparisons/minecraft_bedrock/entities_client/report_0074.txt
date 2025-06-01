@@ -1,45 +1,14 @@
 Difference of "entities_client" between "1.17.10.20" (beta of "1.17.10") and "1.17.10.22" (beta of "1.17.10").
 Unable to create data files for 1 file between: "1.17.10.21"
 
-Total entity: 158 (+9, -4)
-Removed entity "donkey.entity.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "geometry": geometry "default": "geometry.horse"
-				field "identifier": "minecraft:donkey"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 30
-				field "textures":
-					texture "armor_diamond": "textures/entity/horse/armor/horse_armor_diamond"
-					texture "armor_gold": "textures/entity/horse/armor/horse_armor_gold"
-					texture "armor_iron": "textures/entity/horse/armor/horse_armor_iron"
-					texture "armor_leather": "textures/entity/horse/armor/horse_armor_leather"
-					texture "armor_none": "textures/entity/horse/armor/horse_armor_none"
-					texture "base_black": "textures/entity/horse/horse_black"
-					texture "base_brown": "textures/entity/horse/horse_brown"
-					texture "base_chestnut": "textures/entity/horse/horse_chestnut"
-					texture "base_creamy": "textures/entity/horse/horse_creamy"
-					texture "base_darkbrown": "textures/entity/horse/horse_darkbrown"
-					texture "base_gray": "textures/entity/horse/horse_gray"
-					texture "base_white": "textures/entity/horse/horse_white"
-					texture "donkey": "textures/entity/horse/donkey"
-					texture "markings_blackdots": "textures/entity/horse/horse_markings_blackdots"
-					texture "markings_none": "textures/entity/horse/horse_markings_none"
-					texture "markings_white": "textures/entity/horse/horse_markings_white"
-					texture "markings_whitedots": "textures/entity/horse/horse_markings_whitedots"
-					texture "markings_whitefield": "textures/entity/horse/horse_markings_whitefield"
-					texture "mule": "textures/entity/horse/mule"
-					texture "skeleton": "textures/entity/horse/horse_skeleton"
-					texture "zombie": "textures/entity/horse/horse_zombie"
-Added entity "donkey_v1.entity.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
+Total entity: 158 (+5, -0)
+Moved entity from "donkey.entity.json" to "donkey_v1.entity.json".
+Changed entity "donkey_v1.entity.json":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Added field "animations":
 					animation "baby_transform": "animation.horse.baby_transform"
 					animation "eat": "animation.horse.eat"
 					animation "look_at_player": "animation.horse.look_at_player"
@@ -48,45 +17,57 @@ Added entity "donkey_v1.entity.json":
 					animation "shake_tail": "animation.horse.shake_tail"
 					animation "stand": "animation.horse.stand"
 					animation "walk": "animation.horse.walk"
-				field "geometry": geometry "default": "geometry.horse"
-				field "identifier": "minecraft:donkey"
-				field "materials": materials "default": "horse"
-				field "render_controllers": render controller: "controller.render.donkey.v1.and.v2"
-				field "scripts":
+				Unchanged field "identifier": "minecraft:donkey".
+				Added field "materials": materials "default": "horse".
+				Added field "render_controllers": render controller "controller.render.donkey.v1.and.v2".
+				Added field "scripts":
 					field "scale": "0.87"
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
-						script: "variable.leg_back_origin = query.bone_origin('leg1a');"
-						script: "variable.leg_front_origin = query.bone_origin('leg3a');"
-						script: "variable.head_rotation = query.bone_rotation('head');"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
+						script "variable.leg_back_origin = query.bone_origin('leg1a');"
+						script "variable.leg_front_origin = query.bone_origin('leg3a');"
+						script "variable.head_rotation = query.bone_rotation('head');"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
-						script: "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
+						script "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: script item "walk": "variable.stand_anim < 0.5"
-						script: script item "stand": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "shake_tail": "variable.shake_tail"
-						script: "mouth"
-						script: "look_at_player"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 30
-				field "textures":
-					texture "armor_none": "textures/entity/horse/armor/horse_armor_none"
-					texture "donkey": "textures/entity/horse/donkey"
-					texture "markings_none": "textures/entity/horse/horse_markings_none"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script script item "walk": "variable.stand_anim < 0.5"
+						script script item "stand": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "shake_tail": "variable.shake_tail"
+						script "mouth"
+						script "look_at_player"
+				Changed field "textures":
+					Total texture: 3 (+0, -18)
+					Removed texture "armor_diamond": "textures/entity/horse/armor/horse_armor_diamond".
+					Removed texture "armor_gold": "textures/entity/horse/armor/horse_armor_gold".
+					Removed texture "armor_iron": "textures/entity/horse/armor/horse_armor_iron".
+					Removed texture "armor_leather": "textures/entity/horse/armor/horse_armor_leather".
+					Removed texture "base_black": "textures/entity/horse/horse_black".
+					Removed texture "base_brown": "textures/entity/horse/horse_brown".
+					Removed texture "base_chestnut": "textures/entity/horse/horse_chestnut".
+					Removed texture "base_creamy": "textures/entity/horse/horse_creamy".
+					Removed texture "base_darkbrown": "textures/entity/horse/horse_darkbrown".
+					Removed texture "base_gray": "textures/entity/horse/horse_gray".
+					Removed texture "base_white": "textures/entity/horse/horse_white".
+					Removed texture "markings_blackdots": "textures/entity/horse/horse_markings_blackdots".
+					Removed texture "markings_white": "textures/entity/horse/horse_markings_white".
+					Removed texture "markings_whitedots": "textures/entity/horse/horse_markings_whitedots".
+					Removed texture "markings_whitefield": "textures/entity/horse/horse_markings_whitefield".
+					Removed texture "mule": "textures/entity/horse/mule".
+					Removed texture "skeleton": "textures/entity/horse/horse_skeleton".
+					Removed texture "zombie": "textures/entity/horse/horse_zombie".
 Changed entity "donkey_v2.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
@@ -99,51 +80,51 @@ Changed entity "donkey_v2.entity.json":
 					animation "stand": "animation.horse.v2.stand"
 					animation "tail": "animation.horse.v2.tail"
 					animation "walk": "animation.horse.v2.walk"
-				Unchanged field "identifier": "minecraft:donkey"
-				Added field "materials" of materials "default": "horse".
-				Added field "render_controllers" of render controller: "controller.render.donkey.v1.and.v2".
+				Unchanged field "identifier": "minecraft:donkey".
+				Added field "materials": materials "default": "horse".
+				Added field "render_controllers": render controller "controller.render.donkey.v1.and.v2".
 				Added field "scripts":
 					field "scale": "0.87"
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg1a_aabb = query.bone_aabb('leg1a');"
-						script: "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg1a_aabb = query.bone_aabb('leg1a');"
+						script "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "stand"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "stand"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				Changed field "textures":
 					Total texture: 3 (+0, -18)
-					Removed texture "armor_diamond" of "textures/entity/horse2/armor/horse_armor_diamond".
-					Removed texture "armor_gold" of "textures/entity/horse2/armor/horse_armor_gold".
-					Removed texture "armor_iron" of "textures/entity/horse2/armor/horse_armor_iron".
-					Removed texture "armor_leather" of "textures/entity/horse2/armor/horse_armor_leather".
-					Removed texture "base_black" of "textures/entity/horse2/horse_black".
-					Removed texture "base_brown" of "textures/entity/horse2/horse_brown".
-					Removed texture "base_chestnut" of "textures/entity/horse2/horse_chestnut".
-					Removed texture "base_creamy" of "textures/entity/horse2/horse_creamy".
-					Removed texture "base_darkbrown" of "textures/entity/horse2/horse_darkbrown".
-					Removed texture "base_gray" of "textures/entity/horse2/horse_gray".
-					Removed texture "base_white" of "textures/entity/horse2/horse_white".
-					Removed texture "markings_blackdots" of "textures/entity/horse2/horse_markings_blackdots".
-					Removed texture "markings_white" of "textures/entity/horse2/horse_markings_white".
-					Removed texture "markings_whitedots" of "textures/entity/horse2/horse_markings_whitedots".
-					Removed texture "markings_whitefield" of "textures/entity/horse2/horse_markings_whitefield".
-					Removed texture "mule" of "textures/entity/horse2/mule".
-					Removed texture "skeleton" of "textures/entity/horse2/horse_skeleton".
-					Removed texture "zombie" of "textures/entity/horse2/horse_zombie".
+					Removed texture "armor_diamond": "textures/entity/horse2/armor/horse_armor_diamond".
+					Removed texture "armor_gold": "textures/entity/horse2/armor/horse_armor_gold".
+					Removed texture "armor_iron": "textures/entity/horse2/armor/horse_armor_iron".
+					Removed texture "armor_leather": "textures/entity/horse2/armor/horse_armor_leather".
+					Removed texture "base_black": "textures/entity/horse2/horse_black".
+					Removed texture "base_brown": "textures/entity/horse2/horse_brown".
+					Removed texture "base_chestnut": "textures/entity/horse2/horse_chestnut".
+					Removed texture "base_creamy": "textures/entity/horse2/horse_creamy".
+					Removed texture "base_darkbrown": "textures/entity/horse2/horse_darkbrown".
+					Removed texture "base_gray": "textures/entity/horse2/horse_gray".
+					Removed texture "base_white": "textures/entity/horse2/horse_white".
+					Removed texture "markings_blackdots": "textures/entity/horse2/horse_markings_blackdots".
+					Removed texture "markings_white": "textures/entity/horse2/horse_markings_white".
+					Removed texture "markings_whitedots": "textures/entity/horse2/horse_markings_whitedots".
+					Removed texture "markings_whitefield": "textures/entity/horse2/horse_markings_whitefield".
+					Removed texture "mule": "textures/entity/horse2/mule".
+					Removed texture "skeleton": "textures/entity/horse2/horse_skeleton".
+					Removed texture "zombie": "textures/entity/horse2/horse_zombie".
 Added entity "donkey_v3.entity.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
@@ -160,23 +141,23 @@ Added entity "donkey_v3.entity.json":
 				field "identifier": "minecraft:donkey"
 				field "materials": materials "default": "horse"
 				field "min_engine_version": "1.17.10"
-				field "render_controllers": render controller: "controller.render.donkey.v3"
+				field "render_controllers": render controller "controller.render.donkey.v3"
 				field "scripts":
 					field "scale": "0.87"
-					field "initialize": script: "variable.eat_anim = 0.0;"
+					field "initialize": script "variable.eat_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
 					field "animate":
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "look_at_player"
-						script: script item "rear": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "look_at_player"
+						script script item "rear": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 30
@@ -188,43 +169,43 @@ Changed entity "elder_guardian.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Unchanged field "identifier": "minecraft:elder_guardian"
+				Unchanged field "identifier": "minecraft:elder_guardian".
 				Changed field "scripts":
 					Added field "initialize":
-						script: "variable.spike_animation_speed = 0.0;"
-						script: "variable.tail_animation_speed = 0.0;"
-						script: "variable.tail_swim = 0.0;"
+						script "variable.spike_animation_speed = 0.0;"
+						script "variable.tail_animation_speed = 0.0;"
+						script "variable.tail_swim = 0.0;"
 Changed entity "elder_guardian.entity.v1.0.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Unchanged field "identifier": "minecraft:elder_guardian"
+				Unchanged field "identifier": "minecraft:elder_guardian".
 				Changed field "scripts":
 					Added field "initialize":
-						script: "variable.spike_animation_speed = 0.0;"
-						script: "variable.tail_animation_speed = 0.0;"
-						script: "variable.tail_swim = 0.0;"
+						script "variable.spike_animation_speed = 0.0;"
+						script "variable.tail_animation_speed = 0.0;"
+						script "variable.tail_swim = 0.0;"
 Changed entity "guardian.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Unchanged field "identifier": "minecraft:guardian"
+				Unchanged field "identifier": "minecraft:guardian".
 				Changed field "scripts":
 					Added field "initialize":
-						script: "variable.spike_animation_speed = 0.0;"
-						script: "variable.tail_animation_speed = 0.0;"
-						script: "variable.tail_swim = 0.0;"
+						script "variable.spike_animation_speed = 0.0;"
+						script "variable.tail_animation_speed = 0.0;"
+						script "variable.tail_swim = 0.0;"
 Changed entity "guardian.entity.v1.0.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Unchanged field "identifier": "minecraft:guardian"
+				Unchanged field "identifier": "minecraft:guardian".
 				Changed field "scripts":
 					Added field "initialize":
-						script: "variable.spike_animation_speed = 0.0;"
-						script: "variable.tail_animation_speed = 0.0;"
-						script: "variable.tail_swim = 0.0;"
-Moved entity "horse.entity.json" to "horse_v1.entity.json".
+						script "variable.spike_animation_speed = 0.0;"
+						script "variable.tail_animation_speed = 0.0;"
+						script "variable.tail_swim = 0.0;"
+Moved entity from "horse.entity.json" to "horse_v1.entity.json".
 Changed entity "horse_v1.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
@@ -239,43 +220,43 @@ Changed entity "horse_v1.entity.json":
 					animation "shake_tail": "animation.horse.shake_tail"
 					animation "stand": "animation.horse.stand"
 					animation "walk": "animation.horse.walk"
-				Unchanged field "identifier": "minecraft:horse"
-				Added field "materials" of materials "default": "horse_leather_armor".
-				Added field "render_controllers" of render controller: "controller.render.horse.v1.and.v2".
+				Unchanged field "identifier": "minecraft:horse".
+				Added field "materials": materials "default": "horse_leather_armor".
+				Added field "render_controllers": render controller "controller.render.horse.v1.and.v2".
 				Added field "scripts":
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
-						script: "variable.leg_back_origin = query.bone_origin('leg1a');"
-						script: "variable.leg_front_origin = query.bone_origin('leg3a');"
-						script: "variable.head_rotation = query.bone_rotation('head');"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
+						script "variable.leg_back_origin = query.bone_origin('leg1a');"
+						script "variable.leg_front_origin = query.bone_origin('leg3a');"
+						script "variable.head_rotation = query.bone_rotation('head');"
 					field "pre_animation":
-						script: "variable.armor_texture_slot = query.armor_texture_slot(1);"
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
-						script: "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
+						script "variable.armor_texture_slot = query.armor_texture_slot(1);"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
+						script "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: script item "walk": "variable.stand_anim < 0.5"
-						script: script item "stand": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "shake_tail": "variable.shake_tail"
-						script: "mouth"
-						script: "look_at_player"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script script item "walk": "variable.stand_anim < 0.5"
+						script script item "stand": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "shake_tail": "variable.shake_tail"
+						script "mouth"
+						script "look_at_player"
 				Changed field "textures":
 					Total texture: 17 (+0, -4)
-					Removed texture "donkey" of "textures/entity/horse/donkey".
-					Removed texture "mule" of "textures/entity/horse/mule".
-					Removed texture "skeleton" of "textures/entity/horse/horse_skeleton".
-					Removed texture "zombie" of "textures/entity/horse/horse_zombie".
+					Removed texture "donkey": "textures/entity/horse/donkey".
+					Removed texture "mule": "textures/entity/horse/mule".
+					Removed texture "skeleton": "textures/entity/horse/horse_skeleton".
+					Removed texture "zombie": "textures/entity/horse/horse_zombie".
 Changed entity "horse_v2.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
@@ -288,37 +269,37 @@ Changed entity "horse_v2.entity.json":
 					animation "stand": "animation.horse.v2.stand"
 					animation "tail": "animation.horse.v2.tail"
 					animation "walk": "animation.horse.v2.walk"
-				Unchanged field "identifier": "minecraft:horse"
-				Added field "materials" of materials "default": "horse_leather_armor".
-				Added field "render_controllers" of render controller: "controller.render.horse.v1.and.v2".
+				Unchanged field "identifier": "minecraft:horse".
+				Added field "materials": materials "default": "horse_leather_armor".
+				Added field "render_controllers": render controller "controller.render.horse.v1.and.v2".
 				Added field "scripts":
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.armor_texture_slot = query.armor_texture_slot(1);"
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg1a_aabb = query.bone_aabb('leg1a');"
-						script: "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
+						script "variable.armor_texture_slot = query.armor_texture_slot(1);"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg1a_aabb = query.bone_aabb('leg1a');"
+						script "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "stand"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "stand"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				Changed field "textures":
 					Total texture: 17 (+0, -4)
-					Removed texture "donkey" of "textures/entity/horse2/donkey".
-					Removed texture "mule" of "textures/entity/horse2/mule".
-					Removed texture "skeleton" of "textures/entity/horse2/horse_skeleton".
-					Removed texture "zombie" of "textures/entity/horse2/horse_zombie".
+					Removed texture "donkey": "textures/entity/horse2/donkey".
+					Removed texture "mule": "textures/entity/horse2/mule".
+					Removed texture "skeleton": "textures/entity/horse2/horse_skeleton".
+					Removed texture "zombie": "textures/entity/horse2/horse_zombie".
 Added entity "horse_v3.entity.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
@@ -335,23 +316,23 @@ Added entity "horse_v3.entity.json":
 				field "identifier": "minecraft:horse"
 				field "materials": materials "default": "horse_leather_armor"
 				field "min_engine_version": "1.17.10"
-				field "render_controllers": render controller: "controller.render.horse.v3"
+				field "render_controllers": render controller "controller.render.horse.v3"
 				field "scripts":
-					field "initialize": script: "variable.eat_anim = 0.0;"
+					field "initialize": script "variable.eat_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.armor_texture_slot = query.armor_texture_slot(1);"
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.armor_texture_slot = query.armor_texture_slot(1);"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
 					field "animate":
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "look_at_player"
-						script: script item "rear": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "look_at_player"
+						script script item "rear": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 23
@@ -373,44 +354,13 @@ Added entity "horse_v3.entity.json":
 					texture "markings_white": "textures/entity/horse2/horse_markings_white"
 					texture "markings_whitedots": "textures/entity/horse2/horse_markings_whitedots"
 					texture "markings_whitefield": "textures/entity/horse2/horse_markings_whitefield"
-Removed entity "mule.entity.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "geometry": geometry "default": "geometry.horse"
-				field "identifier": "minecraft:mule"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 31
-				field "textures":
-					texture "armor_diamond": "textures/entity/horse/armor/horse_armor_diamond"
-					texture "armor_gold": "textures/entity/horse/armor/horse_armor_gold"
-					texture "armor_iron": "textures/entity/horse/armor/horse_armor_iron"
-					texture "armor_leather": "textures/entity/horse/armor/horse_armor_leather"
-					texture "armor_none": "textures/entity/horse/armor/horse_armor_none"
-					texture "base_black": "textures/entity/horse/horse_black"
-					texture "base_brown": "textures/entity/horse/horse_brown"
-					texture "base_chestnut": "textures/entity/horse/horse_chestnut"
-					texture "base_creamy": "textures/entity/horse/horse_creamy"
-					texture "base_darkbrown": "textures/entity/horse/horse_darkbrown"
-					texture "base_gray": "textures/entity/horse/horse_gray"
-					texture "base_white": "textures/entity/horse/horse_white"
-					texture "donkey": "textures/entity/horse/donkey"
-					texture "markings_blackdots": "textures/entity/horse/horse_markings_blackdots"
-					texture "markings_none": "textures/entity/horse/horse_markings_none"
-					texture "markings_white": "textures/entity/horse/horse_markings_white"
-					texture "markings_whitedots": "textures/entity/horse/horse_markings_whitedots"
-					texture "markings_whitefield": "textures/entity/horse/horse_markings_whitefield"
-					texture "mule": "textures/entity/horse/mule"
-					texture "skeleton": "textures/entity/horse/horse_skeleton"
-					texture "zombie": "textures/entity/horse/horse_zombie"
-Added entity "mule_v1.entity.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
+Moved entity from "mule.entity.json" to "mule_v1.entity.json".
+Changed entity "mule_v1.entity.json":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Added field "animations":
 					animation "baby_transform": "animation.horse.baby_transform"
 					animation "eat": "animation.horse.eat"
 					animation "look_at_player": "animation.horse.look_at_player"
@@ -419,45 +369,57 @@ Added entity "mule_v1.entity.json":
 					animation "shake_tail": "animation.horse.shake_tail"
 					animation "stand": "animation.horse.stand"
 					animation "walk": "animation.horse.walk"
-				field "geometry": geometry "default": "geometry.horse"
-				field "identifier": "minecraft:mule"
-				field "materials": materials "default": "horse"
-				field "render_controllers": render controller: "controller.render.mule.v1.and.v2"
-				field "scripts":
+				Unchanged field "identifier": "minecraft:mule".
+				Added field "materials": materials "default": "horse".
+				Added field "render_controllers": render controller "controller.render.mule.v1.and.v2".
+				Added field "scripts":
 					field "scale": "0.92"
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
-						script: "variable.leg_back_origin = query.bone_origin('leg1a');"
-						script: "variable.leg_front_origin = query.bone_origin('leg3a');"
-						script: "variable.head_rotation = query.bone_rotation('head');"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
+						script "variable.leg_back_origin = query.bone_origin('leg1a');"
+						script "variable.leg_front_origin = query.bone_origin('leg3a');"
+						script "variable.head_rotation = query.bone_rotation('head');"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
-						script: "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
+						script "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: script item "walk": "variable.stand_anim < 0.5"
-						script: script item "stand": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "shake_tail": "variable.shake_tail"
-						script: "mouth"
-						script: "look_at_player"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 31
-				field "textures":
-					texture "armor_none": "textures/entity/horse/armor/horse_armor_none"
-					texture "markings_none": "textures/entity/horse/horse_markings_none"
-					texture "mule": "textures/entity/horse/mule"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script script item "walk": "variable.stand_anim < 0.5"
+						script script item "stand": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "shake_tail": "variable.shake_tail"
+						script "mouth"
+						script "look_at_player"
+				Changed field "textures":
+					Total texture: 3 (+0, -18)
+					Removed texture "armor_diamond": "textures/entity/horse/armor/horse_armor_diamond".
+					Removed texture "armor_gold": "textures/entity/horse/armor/horse_armor_gold".
+					Removed texture "armor_iron": "textures/entity/horse/armor/horse_armor_iron".
+					Removed texture "armor_leather": "textures/entity/horse/armor/horse_armor_leather".
+					Removed texture "base_black": "textures/entity/horse/horse_black".
+					Removed texture "base_brown": "textures/entity/horse/horse_brown".
+					Removed texture "base_chestnut": "textures/entity/horse/horse_chestnut".
+					Removed texture "base_creamy": "textures/entity/horse/horse_creamy".
+					Removed texture "base_darkbrown": "textures/entity/horse/horse_darkbrown".
+					Removed texture "base_gray": "textures/entity/horse/horse_gray".
+					Removed texture "base_white": "textures/entity/horse/horse_white".
+					Removed texture "donkey": "textures/entity/horse/donkey".
+					Removed texture "markings_blackdots": "textures/entity/horse/horse_markings_blackdots".
+					Removed texture "markings_white": "textures/entity/horse/horse_markings_white".
+					Removed texture "markings_whitedots": "textures/entity/horse/horse_markings_whitedots".
+					Removed texture "markings_whitefield": "textures/entity/horse/horse_markings_whitefield".
+					Removed texture "skeleton": "textures/entity/horse/horse_skeleton".
+					Removed texture "zombie": "textures/entity/horse/horse_zombie".
 Changed entity "mule_v2.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
@@ -470,51 +432,51 @@ Changed entity "mule_v2.entity.json":
 					animation "stand": "animation.horse.v2.stand"
 					animation "tail": "animation.horse.v2.tail"
 					animation "walk": "animation.horse.v2.walk"
-				Unchanged field "identifier": "minecraft:mule"
-				Added field "materials" of materials "default": "horse".
-				Added field "render_controllers" of render controller: "controller.render.mule.v1.and.v2".
+				Unchanged field "identifier": "minecraft:mule".
+				Added field "materials": materials "default": "horse".
+				Added field "render_controllers": render controller "controller.render.mule.v1.and.v2".
 				Added field "scripts":
 					field "scale": "0.92"
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg1a_aabb = query.bone_aabb('leg1a');"
-						script: "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg1a_aabb = query.bone_aabb('leg1a');"
+						script "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "stand"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "stand"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				Changed field "textures":
 					Total texture: 3 (+0, -18)
-					Removed texture "armor_diamond" of "textures/entity/horse2/armor/horse_armor_diamond".
-					Removed texture "armor_gold" of "textures/entity/horse2/armor/horse_armor_gold".
-					Removed texture "armor_iron" of "textures/entity/horse2/armor/horse_armor_iron".
-					Removed texture "armor_leather" of "textures/entity/horse2/armor/horse_armor_leather".
-					Removed texture "base_black" of "textures/entity/horse2/horse_black".
-					Removed texture "base_brown" of "textures/entity/horse2/horse_brown".
-					Removed texture "base_chestnut" of "textures/entity/horse2/horse_chestnut".
-					Removed texture "base_creamy" of "textures/entity/horse2/horse_creamy".
-					Removed texture "base_darkbrown" of "textures/entity/horse2/horse_darkbrown".
-					Removed texture "base_gray" of "textures/entity/horse2/horse_gray".
-					Removed texture "base_white" of "textures/entity/horse2/horse_white".
-					Removed texture "donkey" of "textures/entity/horse2/donkey".
-					Removed texture "markings_blackdots" of "textures/entity/horse2/horse_markings_blackdots".
-					Removed texture "markings_white" of "textures/entity/horse2/horse_markings_white".
-					Removed texture "markings_whitedots" of "textures/entity/horse2/horse_markings_whitedots".
-					Removed texture "markings_whitefield" of "textures/entity/horse2/horse_markings_whitefield".
-					Removed texture "skeleton" of "textures/entity/horse2/horse_skeleton".
-					Removed texture "zombie" of "textures/entity/horse2/horse_zombie".
+					Removed texture "armor_diamond": "textures/entity/horse2/armor/horse_armor_diamond".
+					Removed texture "armor_gold": "textures/entity/horse2/armor/horse_armor_gold".
+					Removed texture "armor_iron": "textures/entity/horse2/armor/horse_armor_iron".
+					Removed texture "armor_leather": "textures/entity/horse2/armor/horse_armor_leather".
+					Removed texture "base_black": "textures/entity/horse2/horse_black".
+					Removed texture "base_brown": "textures/entity/horse2/horse_brown".
+					Removed texture "base_chestnut": "textures/entity/horse2/horse_chestnut".
+					Removed texture "base_creamy": "textures/entity/horse2/horse_creamy".
+					Removed texture "base_darkbrown": "textures/entity/horse2/horse_darkbrown".
+					Removed texture "base_gray": "textures/entity/horse2/horse_gray".
+					Removed texture "base_white": "textures/entity/horse2/horse_white".
+					Removed texture "donkey": "textures/entity/horse2/donkey".
+					Removed texture "markings_blackdots": "textures/entity/horse2/horse_markings_blackdots".
+					Removed texture "markings_white": "textures/entity/horse2/horse_markings_white".
+					Removed texture "markings_whitedots": "textures/entity/horse2/horse_markings_whitedots".
+					Removed texture "markings_whitefield": "textures/entity/horse2/horse_markings_whitefield".
+					Removed texture "skeleton": "textures/entity/horse2/horse_skeleton".
+					Removed texture "zombie": "textures/entity/horse2/horse_zombie".
 Added entity "mule_v3.entity.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
@@ -531,23 +493,23 @@ Added entity "mule_v3.entity.json":
 				field "identifier": "minecraft:mule"
 				field "materials": materials "default": "horse"
 				field "min_engine_version": "1.17.10"
-				field "render_controllers": render controller: "controller.render.mule.v3"
+				field "render_controllers": render controller "controller.render.mule.v3"
 				field "scripts":
 					field "scale": "0.92"
-					field "initialize": script: "variable.eat_anim = 0.0;"
+					field "initialize": script "variable.eat_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
 					field "animate":
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "look_at_player"
-						script: script item "rear": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "look_at_player"
+						script script item "rear": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 31
@@ -555,44 +517,13 @@ Added entity "mule_v3.entity.json":
 					texture "armor_none": "textures/entity/horse2/armor/horse_armor_none"
 					texture "markings_none": "textures/entity/horse2/horse_markings_none"
 					texture "mule": "textures/entity/horse2/mule"
-Removed entity "skeleton_horse.entity.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "geometry": geometry "default": "geometry.horse"
-				field "identifier": "minecraft:skeleton_horse"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 32
-				field "textures":
-					texture "armor_diamond": "textures/entity/horse/armor/horse_armor_diamond"
-					texture "armor_gold": "textures/entity/horse/armor/horse_armor_gold"
-					texture "armor_iron": "textures/entity/horse/armor/horse_armor_iron"
-					texture "armor_leather": "textures/entity/horse/armor/horse_armor_leather"
-					texture "armor_none": "textures/entity/horse/armor/horse_armor_none"
-					texture "base_black": "textures/entity/horse/horse_black"
-					texture "base_brown": "textures/entity/horse/horse_brown"
-					texture "base_chestnut": "textures/entity/horse/horse_chestnut"
-					texture "base_creamy": "textures/entity/horse/horse_creamy"
-					texture "base_darkbrown": "textures/entity/horse/horse_darkbrown"
-					texture "base_gray": "textures/entity/horse/horse_gray"
-					texture "base_white": "textures/entity/horse/horse_white"
-					texture "donkey": "textures/entity/horse/donkey"
-					texture "markings_blackdots": "textures/entity/horse/horse_markings_blackdots"
-					texture "markings_none": "textures/entity/horse/horse_markings_none"
-					texture "markings_white": "textures/entity/horse/horse_markings_white"
-					texture "markings_whitedots": "textures/entity/horse/horse_markings_whitedots"
-					texture "markings_whitefield": "textures/entity/horse/horse_markings_whitefield"
-					texture "mule": "textures/entity/horse/mule"
-					texture "skeleton": "textures/entity/horse/horse_skeleton"
-					texture "zombie": "textures/entity/horse/horse_zombie"
-Added entity "skeleton_horse_v1.entity.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
+Moved entity from "skeleton_horse.entity.json" to "skeleton_horse_v1.entity.json".
+Changed entity "skeleton_horse_v1.entity.json":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Added field "animations":
 					animation "baby_transform": "animation.horse.baby_transform"
 					animation "eat": "animation.horse.eat"
 					animation "look_at_player": "animation.horse.look_at_player"
@@ -601,44 +532,56 @@ Added entity "skeleton_horse_v1.entity.json":
 					animation "shake_tail": "animation.horse.shake_tail"
 					animation "stand": "animation.horse.stand"
 					animation "walk": "animation.horse.walk"
-				field "geometry": geometry "default": "geometry.horse"
-				field "identifier": "minecraft:skeleton_horse"
-				field "materials": materials "default": "horse"
-				field "render_controllers": render controller: "controller.render.skeleton_horse.v1.and.v2"
-				field "scripts":
+				Unchanged field "identifier": "minecraft:skeleton_horse".
+				Added field "materials": materials "default": "horse".
+				Added field "render_controllers": render controller "controller.render.skeleton_horse.v1.and.v2".
+				Added field "scripts":
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
-						script: "variable.leg_back_origin = query.bone_origin('leg1a');"
-						script: "variable.leg_front_origin = query.bone_origin('leg3a');"
-						script: "variable.head_rotation = query.bone_rotation('head');"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
+						script "variable.leg_back_origin = query.bone_origin('leg1a');"
+						script "variable.leg_front_origin = query.bone_origin('leg3a');"
+						script "variable.head_rotation = query.bone_rotation('head');"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
-						script: "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
+						script "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: script item "walk": "variable.stand_anim < 0.5"
-						script: script item "stand": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "shake_tail": "variable.shake_tail"
-						script: "mouth"
-						script: "look_at_player"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 32
-				field "textures":
-					texture "armor_none": "textures/entity/horse/armor/horse_armor_none"
-					texture "markings_none": "textures/entity/horse/horse_markings_none"
-					texture "skeleton": "textures/entity/horse/horse_skeleton"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script script item "walk": "variable.stand_anim < 0.5"
+						script script item "stand": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "shake_tail": "variable.shake_tail"
+						script "mouth"
+						script "look_at_player"
+				Changed field "textures":
+					Total texture: 3 (+0, -18)
+					Removed texture "armor_diamond": "textures/entity/horse/armor/horse_armor_diamond".
+					Removed texture "armor_gold": "textures/entity/horse/armor/horse_armor_gold".
+					Removed texture "armor_iron": "textures/entity/horse/armor/horse_armor_iron".
+					Removed texture "armor_leather": "textures/entity/horse/armor/horse_armor_leather".
+					Removed texture "base_black": "textures/entity/horse/horse_black".
+					Removed texture "base_brown": "textures/entity/horse/horse_brown".
+					Removed texture "base_chestnut": "textures/entity/horse/horse_chestnut".
+					Removed texture "base_creamy": "textures/entity/horse/horse_creamy".
+					Removed texture "base_darkbrown": "textures/entity/horse/horse_darkbrown".
+					Removed texture "base_gray": "textures/entity/horse/horse_gray".
+					Removed texture "base_white": "textures/entity/horse/horse_white".
+					Removed texture "donkey": "textures/entity/horse/donkey".
+					Removed texture "markings_blackdots": "textures/entity/horse/horse_markings_blackdots".
+					Removed texture "markings_white": "textures/entity/horse/horse_markings_white".
+					Removed texture "markings_whitedots": "textures/entity/horse/horse_markings_whitedots".
+					Removed texture "markings_whitefield": "textures/entity/horse/horse_markings_whitefield".
+					Removed texture "mule": "textures/entity/horse/mule".
+					Removed texture "zombie": "textures/entity/horse/horse_zombie".
 Changed entity "skeleton_horse_v2.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
@@ -651,50 +594,50 @@ Changed entity "skeleton_horse_v2.entity.json":
 					animation "stand": "animation.horse.v2.stand"
 					animation "tail": "animation.horse.v2.tail"
 					animation "walk": "animation.horse.v2.walk"
-				Unchanged field "identifier": "minecraft:skeleton_horse"
-				Added field "materials" of materials "default": "horse".
-				Added field "render_controllers" of render controller: "controller.render.skeleton_horse.v1.and.v2".
+				Unchanged field "identifier": "minecraft:skeleton_horse".
+				Added field "materials": materials "default": "horse".
+				Added field "render_controllers": render controller "controller.render.skeleton_horse.v1.and.v2".
 				Added field "scripts":
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg1a_aabb = query.bone_aabb('leg1a');"
-						script: "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg1a_aabb = query.bone_aabb('leg1a');"
+						script "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "stand"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "stand"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				Changed field "textures":
 					Total texture: 3 (+0, -18)
-					Removed texture "armor_diamond" of "textures/entity/horse2/armor/horse_armor_diamond".
-					Removed texture "armor_gold" of "textures/entity/horse2/armor/horse_armor_gold".
-					Removed texture "armor_iron" of "textures/entity/horse2/armor/horse_armor_iron".
-					Removed texture "armor_leather" of "textures/entity/horse2/armor/horse_armor_leather".
-					Removed texture "base_black" of "textures/entity/horse2/horse_black".
-					Removed texture "base_brown" of "textures/entity/horse2/horse_brown".
-					Removed texture "base_chestnut" of "textures/entity/horse2/horse_chestnut".
-					Removed texture "base_creamy" of "textures/entity/horse2/horse_creamy".
-					Removed texture "base_darkbrown" of "textures/entity/horse2/horse_darkbrown".
-					Removed texture "base_gray" of "textures/entity/horse2/horse_gray".
-					Removed texture "base_white" of "textures/entity/horse2/horse_white".
-					Removed texture "donkey" of "textures/entity/horse2/donkey".
-					Removed texture "markings_blackdots" of "textures/entity/horse2/horse_markings_blackdots".
-					Removed texture "markings_white" of "textures/entity/horse2/horse_markings_white".
-					Removed texture "markings_whitedots" of "textures/entity/horse2/horse_markings_whitedots".
-					Removed texture "markings_whitefield" of "textures/entity/horse2/horse_markings_whitefield".
-					Removed texture "mule" of "textures/entity/horse2/mule".
-					Removed texture "zombie" of "textures/entity/horse2/horse_zombie".
+					Removed texture "armor_diamond": "textures/entity/horse2/armor/horse_armor_diamond".
+					Removed texture "armor_gold": "textures/entity/horse2/armor/horse_armor_gold".
+					Removed texture "armor_iron": "textures/entity/horse2/armor/horse_armor_iron".
+					Removed texture "armor_leather": "textures/entity/horse2/armor/horse_armor_leather".
+					Removed texture "base_black": "textures/entity/horse2/horse_black".
+					Removed texture "base_brown": "textures/entity/horse2/horse_brown".
+					Removed texture "base_chestnut": "textures/entity/horse2/horse_chestnut".
+					Removed texture "base_creamy": "textures/entity/horse2/horse_creamy".
+					Removed texture "base_darkbrown": "textures/entity/horse2/horse_darkbrown".
+					Removed texture "base_gray": "textures/entity/horse2/horse_gray".
+					Removed texture "base_white": "textures/entity/horse2/horse_white".
+					Removed texture "donkey": "textures/entity/horse2/donkey".
+					Removed texture "markings_blackdots": "textures/entity/horse2/horse_markings_blackdots".
+					Removed texture "markings_white": "textures/entity/horse2/horse_markings_white".
+					Removed texture "markings_whitedots": "textures/entity/horse2/horse_markings_whitedots".
+					Removed texture "markings_whitefield": "textures/entity/horse2/horse_markings_whitefield".
+					Removed texture "mule": "textures/entity/horse2/mule".
+					Removed texture "zombie": "textures/entity/horse2/horse_zombie".
 Added entity "skeleton_horse_v3.entity.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
@@ -711,22 +654,22 @@ Added entity "skeleton_horse_v3.entity.json":
 				field "identifier": "minecraft:skeleton_horse"
 				field "materials": materials "default": "horse"
 				field "min_engine_version": "1.17.10"
-				field "render_controllers": render controller: "controller.render.skeleton_horse.v3"
+				field "render_controllers": render controller "controller.render.skeleton_horse.v3"
 				field "scripts":
-					field "initialize": script: "variable.eat_anim = 0.0;"
+					field "initialize": script "variable.eat_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
 					field "animate":
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "look_at_player"
-						script: script item "rear": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "look_at_player"
+						script script item "rear": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 32
@@ -734,44 +677,13 @@ Added entity "skeleton_horse_v3.entity.json":
 					texture "armor_none": "textures/entity/horse2/armor/horse_armor_none"
 					texture "markings_none": "textures/entity/horse2/horse_markings_none"
 					texture "skeleton": "textures/entity/horse2/horse_skeleton"
-Removed entity "zombie_horse.entity.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "geometry": geometry "default": "geometry.horse"
-				field "identifier": "minecraft:zombie_horse"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 33
-				field "textures":
-					texture "armor_diamond": "textures/entity/horse/armor/horse_armor_diamond"
-					texture "armor_gold": "textures/entity/horse/armor/horse_armor_gold"
-					texture "armor_iron": "textures/entity/horse/armor/horse_armor_iron"
-					texture "armor_leather": "textures/entity/horse/armor/horse_armor_leather"
-					texture "armor_none": "textures/entity/horse/armor/horse_armor_none"
-					texture "base_black": "textures/entity/horse/horse_black"
-					texture "base_brown": "textures/entity/horse/horse_brown"
-					texture "base_chestnut": "textures/entity/horse/horse_chestnut"
-					texture "base_creamy": "textures/entity/horse/horse_creamy"
-					texture "base_darkbrown": "textures/entity/horse/horse_darkbrown"
-					texture "base_gray": "textures/entity/horse/horse_gray"
-					texture "base_white": "textures/entity/horse/horse_white"
-					texture "donkey": "textures/entity/horse/donkey"
-					texture "markings_blackdots": "textures/entity/horse/horse_markings_blackdots"
-					texture "markings_none": "textures/entity/horse/horse_markings_none"
-					texture "markings_white": "textures/entity/horse/horse_markings_white"
-					texture "markings_whitedots": "textures/entity/horse/horse_markings_whitedots"
-					texture "markings_whitefield": "textures/entity/horse/horse_markings_whitefield"
-					texture "mule": "textures/entity/horse/mule"
-					texture "skeleton": "textures/entity/horse/horse_skeleton"
-					texture "zombie": "textures/entity/horse/horse_zombie"
-Added entity "zombie_horse_v1.entity.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animations":
+Moved entity from "zombie_horse.entity.json" to "zombie_horse_v1.entity.json".
+Changed entity "zombie_horse_v1.entity.json":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Added field "animations":
 					animation "baby_transform": "animation.horse.baby_transform"
 					animation "eat": "animation.horse.eat"
 					animation "look_at_player": "animation.horse.look_at_player"
@@ -780,44 +692,56 @@ Added entity "zombie_horse_v1.entity.json":
 					animation "shake_tail": "animation.horse.shake_tail"
 					animation "stand": "animation.horse.stand"
 					animation "walk": "animation.horse.walk"
-				field "geometry": geometry "default": "geometry.horse"
-				field "identifier": "minecraft:zombie_horse"
-				field "materials": materials "default": "horse"
-				field "render_controllers": render controller: "controller.render.zombie_horse.v1.and.v2"
-				field "scripts":
+				Unchanged field "identifier": "minecraft:zombie_horse".
+				Added field "materials": materials "default": "horse".
+				Added field "render_controllers": render controller "controller.render.zombie_horse.v1.and.v2".
+				Added field "scripts":
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
-						script: "variable.leg_back_origin = query.bone_origin('leg1a');"
-						script: "variable.leg_front_origin = query.bone_origin('leg3a');"
-						script: "variable.head_rotation = query.bone_rotation('head');"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
+						script "variable.leg_back_origin = query.bone_origin('leg1a');"
+						script "variable.leg_front_origin = query.bone_origin('leg3a');"
+						script "variable.head_rotation = query.bone_rotation('head');"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
-						script: "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.walk_tail_angle = math.clamp(query.modified_move_speed * 50.0, 0.0, 90.0) * (1.0 - variable.stand_anim);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_walk_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_walk_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg_stand = math.cos((query.life_time * 20.0) * 34.38)  * variable.stand_anim;"
+						script "variable.baby_ratio = query.is_baby ? ((0.0625 - query.model_scale) * 16.0) : 0.0;"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: script item "walk": "variable.stand_anim < 0.5"
-						script: script item "stand": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "shake_tail": "variable.shake_tail"
-						script: "mouth"
-						script: "look_at_player"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 33
-				field "textures":
-					texture "armor_none": "textures/entity/horse/armor/horse_armor_none"
-					texture "markings_none": "textures/entity/horse/horse_markings_none"
-					texture "zombie": "textures/entity/horse/horse_zombie"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script script item "walk": "variable.stand_anim < 0.5"
+						script script item "stand": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "shake_tail": "variable.shake_tail"
+						script "mouth"
+						script "look_at_player"
+				Changed field "textures":
+					Total texture: 3 (+0, -18)
+					Removed texture "armor_diamond": "textures/entity/horse/armor/horse_armor_diamond".
+					Removed texture "armor_gold": "textures/entity/horse/armor/horse_armor_gold".
+					Removed texture "armor_iron": "textures/entity/horse/armor/horse_armor_iron".
+					Removed texture "armor_leather": "textures/entity/horse/armor/horse_armor_leather".
+					Removed texture "base_black": "textures/entity/horse/horse_black".
+					Removed texture "base_brown": "textures/entity/horse/horse_brown".
+					Removed texture "base_chestnut": "textures/entity/horse/horse_chestnut".
+					Removed texture "base_creamy": "textures/entity/horse/horse_creamy".
+					Removed texture "base_darkbrown": "textures/entity/horse/horse_darkbrown".
+					Removed texture "base_gray": "textures/entity/horse/horse_gray".
+					Removed texture "base_white": "textures/entity/horse/horse_white".
+					Removed texture "donkey": "textures/entity/horse/donkey".
+					Removed texture "markings_blackdots": "textures/entity/horse/horse_markings_blackdots".
+					Removed texture "markings_white": "textures/entity/horse/horse_markings_white".
+					Removed texture "markings_whitedots": "textures/entity/horse/horse_markings_whitedots".
+					Removed texture "markings_whitefield": "textures/entity/horse/horse_markings_whitefield".
+					Removed texture "mule": "textures/entity/horse/mule".
+					Removed texture "skeleton": "textures/entity/horse/horse_skeleton".
 Changed entity "zombie_horse_v2.entity.json":
 	Changed resource pack "core":
 		Changed field "format_version" from "1.8.0" to "1.10.0".
@@ -830,50 +754,50 @@ Changed entity "zombie_horse_v2.entity.json":
 					animation "stand": "animation.horse.v2.stand"
 					animation "tail": "animation.horse.v2.tail"
 					animation "walk": "animation.horse.v2.walk"
-				Unchanged field "identifier": "minecraft:zombie_horse"
-				Added field "materials" of materials "default": "horse".
-				Added field "render_controllers" of render controller: "controller.render.zombie_horse.v1.and.v2".
+				Unchanged field "identifier": "minecraft:zombie_horse".
+				Added field "materials": materials "default": "horse".
+				Added field "render_controllers": render controller "controller.render.zombie_horse.v1.and.v2".
 				Added field "scripts":
 					field "initialize":
-						script: "variable.eat_anim = 0.0;"
-						script: "variable.mouth_anim = 0.0;"
+						script "variable.eat_anim = 0.0;"
+						script "variable.mouth_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
-						script: "variable.leg1a_aabb = query.bone_aabb('leg1a');"
-						script: "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.mouth_anim = math.clamp(variable.mouth_anim + (variable.open_mouth ? ((1.0 - variable.mouth_anim) * 0.7 + 0.05) : -variable.mouth_anim * 0.7 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.base_head_angle = variable.inverse_max_stand_eat * (30.0 + variable.head_x_rot + variable.mouth_anim  * math.sin((query.life_time * 20.0 + query.frame_alpha) * 57.3) * 2.86);"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.leg1a_aabb = query.bone_aabb('leg1a');"
+						script "variable.y_adjust = query.is_baby ? 0.0 : (variable.leg1a_aabb.max.y - variable.leg1a_aabb.min.y) * (1.0 - (query.model_scale * 16.0));"
 					field "animate":
-						script: "setup"
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "stand"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script "setup"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "stand"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				Changed field "textures":
 					Total texture: 3 (+0, -18)
-					Removed texture "armor_diamond" of "textures/entity/horse2/armor/horse_armor_diamond".
-					Removed texture "armor_gold" of "textures/entity/horse2/armor/horse_armor_gold".
-					Removed texture "armor_iron" of "textures/entity/horse2/armor/horse_armor_iron".
-					Removed texture "armor_leather" of "textures/entity/horse2/armor/horse_armor_leather".
-					Removed texture "base_black" of "textures/entity/horse2/horse_black".
-					Removed texture "base_brown" of "textures/entity/horse2/horse_brown".
-					Removed texture "base_chestnut" of "textures/entity/horse2/horse_chestnut".
-					Removed texture "base_creamy" of "textures/entity/horse2/horse_creamy".
-					Removed texture "base_darkbrown" of "textures/entity/horse2/horse_darkbrown".
-					Removed texture "base_gray" of "textures/entity/horse2/horse_gray".
-					Removed texture "base_white" of "textures/entity/horse2/horse_white".
-					Removed texture "donkey" of "textures/entity/horse2/donkey".
-					Removed texture "markings_blackdots" of "textures/entity/horse2/horse_markings_blackdots".
-					Removed texture "markings_white" of "textures/entity/horse2/horse_markings_white".
-					Removed texture "markings_whitedots" of "textures/entity/horse2/horse_markings_whitedots".
-					Removed texture "markings_whitefield" of "textures/entity/horse2/horse_markings_whitefield".
-					Removed texture "mule" of "textures/entity/horse2/mule".
-					Removed texture "skeleton" of "textures/entity/horse2/horse_skeleton".
+					Removed texture "armor_diamond": "textures/entity/horse2/armor/horse_armor_diamond".
+					Removed texture "armor_gold": "textures/entity/horse2/armor/horse_armor_gold".
+					Removed texture "armor_iron": "textures/entity/horse2/armor/horse_armor_iron".
+					Removed texture "armor_leather": "textures/entity/horse2/armor/horse_armor_leather".
+					Removed texture "base_black": "textures/entity/horse2/horse_black".
+					Removed texture "base_brown": "textures/entity/horse2/horse_brown".
+					Removed texture "base_chestnut": "textures/entity/horse2/horse_chestnut".
+					Removed texture "base_creamy": "textures/entity/horse2/horse_creamy".
+					Removed texture "base_darkbrown": "textures/entity/horse2/horse_darkbrown".
+					Removed texture "base_gray": "textures/entity/horse2/horse_gray".
+					Removed texture "base_white": "textures/entity/horse2/horse_white".
+					Removed texture "donkey": "textures/entity/horse2/donkey".
+					Removed texture "markings_blackdots": "textures/entity/horse2/horse_markings_blackdots".
+					Removed texture "markings_white": "textures/entity/horse2/horse_markings_white".
+					Removed texture "markings_whitedots": "textures/entity/horse2/horse_markings_whitedots".
+					Removed texture "markings_whitefield": "textures/entity/horse2/horse_markings_whitefield".
+					Removed texture "mule": "textures/entity/horse2/mule".
+					Removed texture "skeleton": "textures/entity/horse2/horse_skeleton".
 Added entity "zombie_horse_v3.entity.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
@@ -890,22 +814,22 @@ Added entity "zombie_horse_v3.entity.json":
 				field "identifier": "minecraft:zombie_horse"
 				field "materials": materials "default": "horse"
 				field "min_engine_version": "1.17.10"
-				field "render_controllers": render controller: "controller.render.zombie_horse.v3"
+				field "render_controllers": render controller "controller.render.zombie_horse.v3"
 				field "scripts":
-					field "initialize": script: "variable.eat_anim = 0.0;"
+					field "initialize": script "variable.eat_anim = 0.0;"
 					field "pre_animation":
-						script: "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
-						script: "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
-						script: "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
-						script: "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
-						script: "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
+						script "variable.eat_anim = math.clamp(variable.eat_anim + (query.is_grazing ? ((1.0 - variable.eat_anim) * 0.4 + 0.05) : -variable.eat_anim * 0.4 - 0.05) * query.delta_time * 20.0, 0.0, 1.0);"
+						script "variable.head_x_rot = query.target_x_rotation + (query.modified_move_speed > 0.2 ? (math.cos(query.modified_distance_moved * 11.46) * 11.46 * query.modified_move_speed + query.modified_move_speed * 11.46) : 0.0);"
+						script "variable.inverse_max_stand_eat = (1.0 - math.max(variable.stand_anim, variable.eat_anim));"
+						script "variable.leg_stand_factor = math.cos((query.modified_distance_moved * 38.38) + 180.0);"
+						script "variable.leg_x_rot_anim = variable.leg_stand_factor * 45.8 * query.modified_move_speed;"
 					field "animate":
-						script: script item "baby_transform": "query.is_baby"
-						script: "walk"
-						script: "look_at_player"
-						script: script item "rear": "variable.stand_anim > 0.0"
-						script: script item "eat": "!query.is_standing"
-						script: script item "tail": "variable.shake_tail"
+						script script item "baby_transform": "query.is_baby"
+						script "walk"
+						script "look_at_player"
+						script script item "rear": "variable.stand_anim > 0.0"
+						script script item "eat": "!query.is_standing"
+						script script item "tail": "variable.shake_tail"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 33

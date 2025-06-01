@@ -89,7 +89,7 @@ Added entity "bogged.json":
 								filter property "operator": "=="
 								filter property "value": false
 							field "event": "minecraft:melee_mode"
-				component "minecraft:equip_item": field "excluded_items": item: field "item": "minecraft:banner:15"
+				component "minecraft:equip_item": field "excluded_items": item field "item": "minecraft:banner:15"
 				component "minecraft:equipment": field "table": "loot_tables/entities/skeleton_gear.json"
 				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0"
 				component "minecraft:health":
@@ -302,11 +302,11 @@ Added entity "bogged.json":
 					field "aux_val": 26
 				component "minecraft:type_family":
 					field "family":
-						family: "bogged"
-						family: "skeleton"
-						family: "monster"
-						family: "mob"
-						family: "undead"
+						family "bogged"
+						family "mob"
+						family "monster"
+						family "skeleton"
+						family "undead"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 4
 					field "entity_types":
@@ -380,13 +380,13 @@ Added entity "bogged.json":
 					field "attack_interval": 3.5
 					field "attack_radius": 15.0
 			field "events":
-				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group "minecraft:ranged_attack"
 				event "minecraft:melee_mode":
-					field "add": field "component_groups": component group: "minecraft:melee_attack"
-					field "remove": field "component_groups": component group: "minecraft:ranged_attack"
+					field "add": field "component_groups": component group "minecraft:melee_attack"
+					field "remove": field "component_groups": component group "minecraft:ranged_attack"
 				event "minecraft:ranged_mode":
-					field "add": field "component_groups": component group: "minecraft:ranged_attack"
-					field "remove": field "component_groups": component group: "minecraft:melee_attack"
+					field "add": field "component_groups": component group "minecraft:ranged_attack"
+					field "remove": field "component_groups": component group "minecraft:melee_attack"
 Changed entity "breeze.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
@@ -395,14 +395,14 @@ Changed entity "breeze.json":
 				Changed component "minecraft:damage_sensor":
 					Changed field "triggers":
 						Changed trigger:
-							Unchanged field "cause": "projectile"
+							Unchanged field "cause": "projectile".
 							Added field "on_damage":
 								field "filters":
 									filter property "test": "is_family"
 									filter property "subject": "damager"
 									filter property "operator": "!="
 									filter property "value": "wind_charge"
-				Added component "minecraft:loot" of field "table": "loot_tables/entities/breeze.json".
+				Added component "minecraft:loot": field "table": "loot_tables/entities/breeze.json".
 				Changed component "minecraft:behavior.fire_at_target":
 					Changed field "projectile_def" from "minecraft:wind_charge_projectile" to "minecraft:breeze_wind_charge_projectile".
 Added entity "breeze_wind_charge_projectile.json":
@@ -441,8 +441,8 @@ Added entity "breeze_wind_charge_projectile.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "wind_charge"
-						family: "wind_charge_projectile"
+						family "wind_charge"
+						family "wind_charge_projectile"
 				component "minecraft:wind_burst":
 					field "radius": 3.0
 					field "particle_effect": "breeze_wind_burst"
@@ -456,10 +456,10 @@ Changed entity "husk.json":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
-								Unchanged filter property "test": "is_family"
-								Unchanged filter property "operator": "!="
-								Changed filter property "value" from "wind_charge_projectile" to "breeze".
+								Unchanged filter property "test": "is_family".
 								Changed filter property "subject" from "damager" to "other".
+								Unchanged filter property "operator": "!=".
+								Changed filter property "value" from "wind_charge_projectile" to "breeze".
 Changed entity "skeleton.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
@@ -468,10 +468,10 @@ Changed entity "skeleton.json":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
-								Unchanged filter property "test": "is_family"
-								Unchanged filter property "operator": "!="
-								Changed filter property "value" from "wind_charge_projectile" to "breeze".
+								Unchanged filter property "test": "is_family".
 								Changed filter property "subject" from "damager" to "other".
+								Unchanged filter property "operator": "!=".
+								Changed filter property "value" from "wind_charge_projectile" to "breeze".
 Changed entity "stray.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
@@ -480,20 +480,20 @@ Changed entity "stray.json":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
-								Unchanged filter property "test": "is_family"
-								Unchanged filter property "operator": "!="
-								Changed filter property "value" from "wind_charge_projectile" to "breeze".
+								Unchanged filter property "test": "is_family".
 								Changed filter property "subject" from "damager" to "other".
+								Unchanged filter property "operator": "!=".
+								Changed filter property "value" from "wind_charge_projectile" to "breeze".
 Changed entity "wind_charge_projectile.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Total component: 7 (+1, -0)
 				Changed component "minecraft:projectile":
-					Changed field "uncertainty_multiplier" from 4.0 to 0.0.
-					Changed field "uncertainty_base" from 5.0 to 1.0.
 					Changed field "power" from 0.7 to 1.0.
-					Added field "offset" of [0.0, 0.0, 0.3].
+					Changed field "uncertainty_base" from 5.0 to 1.0.
+					Changed field "uncertainty_multiplier" from 4.0 to 0.0.
+					Added field "offset": [0.0, 0.0, 0.3].
 				Added component "minecraft:wind_burst":
 					field "radius": 1.7
 					field "particle_effect": "wind_burst"
@@ -507,7 +507,7 @@ Changed entity "zombie.json":
 					Changed field "entity_types":
 						Changed entity type:
 							Changed field "filters":
-								Unchanged filter property "test": "is_family"
-								Unchanged filter property "operator": "!="
-								Changed filter property "value" from "wind_charge_projectile" to "breeze".
+								Unchanged filter property "test": "is_family".
 								Changed filter property "subject" from "damager" to "other".
+								Unchanged filter property "operator": "!=".
+								Changed filter property "value" from "wind_charge_projectile" to "breeze".

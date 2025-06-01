@@ -2,27 +2,27 @@ Difference of "ui" between "1.13.0.13" (beta of "1.13.0") and "1.13.0.15" (beta 
 
 Changed namespace "chat":
 	Changed element "messages_scrolling_panel@common.scrolling_panel":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "$variables":
 			Total variable: 5 (+1, -0)
-			Added variable "$always_handle_scrolling" of true.
+			Added variable "$always_handle_scrolling": true.
 Changed namespace "common":
 	Changed element "single_line_label":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "label_panel":
-					Unchanged field "type": "label"
+					Unchanged field "type": "label".
+					Changed field "text" from "$text" to "$single_line_label_text".
 					Changed field "$variables":
 						Total variable: 3 (+2, -0)
-						Added variable "$single_line_label_text|default" of "".
-						Added empty variable "$label_text_bindings|default".
-					Changed field "text" from "$text" to "$single_line_label_text".
-					Added field "bindings" of "$label_text_bindings".
+						Added variable "$single_line_label_text|default": "".
+						Added variable "$label_text_bindings|default": empty.
+					Added field "bindings": "$label_text_bindings".
 		Changed field "$variables":
 			Total variable: 5 (+0, -2)
-			Removed variable "$single_line_label_binding_condition|default" of "once".
-			Removed variable "$text|default" of "$single_line_label_binding".
+			Removed variable "$single_line_label_binding_condition|default": "once".
+			Removed variable "$text|default": "$single_line_label_binding".
 Changed namespace "game_tip":
 	Total element: 17 (+1, -4)
 	Removed element "anim_game_tip_alpha":
@@ -33,43 +33,30 @@ Changed namespace "game_tip":
 		field "to": 0
 	Changed element "cell_image_classic_hint@crafting.cell_image":
 		Changed field "factory":
+			Changed field "max_children_size" from 5 to 3.
 			Changed field "control_ids":
 				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1" of "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2" of "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3" of "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item" of "visual_tip_item@game_tip.cell_image_hint_tip".
-			Changed field "max_children_size" from 5 to 3.
-	Moved element "cell_image_hint_tips_3@common.cell_image" to "cell_image_hint_tip".
+				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
+				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
+				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
+				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
+	Moved element from "cell_image_hint_tips@common.cell_image" to "cell_image_hint_tip".
 	Changed element "cell_image_hint_tip":
-		Unchanged field "type": "image"
+		Unchanged field "type": "image".
 		Changed field "variables":
 			Changed variable:
 				Changed field "$variables":
 					Total variable: 2 (+1, -0)
-					Changed variable "$hint_texture" from "textures/ui/hint_small_3" to "textures/ui/hint_burst_small".
-					Added variable "$hint_frame_count" of 4.
+					Changed variable "$hint_texture" from "textures/ui/hint_small_1" to "textures/ui/hint_burst_small".
+					Added variable "$hint_frame_count": 4.
+		Removed field "anims": animation "@game_tip.game_tip_size_animation_wait".
 		Changed field "$variables":
 			Total variable: 2 (+1, -1)
-			Changed variable "$hint_texture|default" from "textures/ui/hint_3" to "textures/ui/hint_burst".
-			Removed variable "$wait_time" of 0.6.
-			Added variable "$hint_frame_count|default" of 5.
-		Removed field "anims" of animation: "@game_tip.game_tip_size_animation_wait".
-		Added field "uv_size" of [37, 37].
-		Added field "uv" of "@game_tip.hint_tip_animation".
-	Removed element "cell_image_hint_tips@common.cell_image":
-		field "layer": 14
-		field "type": "image"
-		field "variables":
-			variable:
-				field "requires": "($desktop_screen and $is_recipe_book_tip)"
-				field "$variables": variable "$hint_texture": "textures/ui/hint_small_1"
-		field "texture": "$hint_texture"
-		field "size": [37, 37]
-		field "anims": animation: "@game_tip.game_tip_size_animation_wait"
-		field "$variables":
-			variable "$hint_texture|default": "textures/ui/hint_1"
-			variable "$wait_time": 0.2
+			Changed variable "$hint_texture|default" from "textures/ui/hint_1" to "textures/ui/hint_burst".
+			Removed variable "$wait_time": 0.2.
+			Added variable "$hint_frame_count|default": 5.
+		Added field "uv_size": [37, 37].
+		Added field "uv": "@game_tip.hint_tip_animation".
 	Removed element "cell_image_hint_tips_2@common.cell_image":
 		field "layer": 14
 		field "type": "image"
@@ -79,20 +66,33 @@ Changed namespace "game_tip":
 				field "$variables": variable "$hint_texture": "textures/ui/hint_small_2"
 		field "texture": "$hint_texture"
 		field "size": [37, 37]
-		field "anims": animation: "@game_tip.game_tip_size_animation_wait"
+		field "anims": animation "@game_tip.game_tip_size_animation_wait"
 		field "$variables":
 			variable "$hint_texture|default": "textures/ui/hint_2"
 			variable "$wait_time": 0.4
+	Removed element "cell_image_hint_tips_3@common.cell_image":
+		field "layer": 14
+		field "type": "image"
+		field "variables":
+			variable:
+				field "requires": "($desktop_screen and $is_recipe_book_tip)"
+				field "$variables": variable "$hint_texture": "textures/ui/hint_small_3"
+		field "texture": "$hint_texture"
+		field "size": [37, 37]
+		field "anims": animation "@game_tip.game_tip_size_animation_wait"
+		field "$variables":
+			variable "$hint_texture|default": "textures/ui/hint_3"
+			variable "$wait_time": 0.6
 	Changed element "close_inventory_factory":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "factory":
+			Changed field "max_children_size" from 5 to 3.
 			Changed field "control_ids":
 				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1" of "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2" of "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3" of "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item" of "visual_tip_item@game_tip.cell_image_hint_tip".
-			Changed field "max_children_size" from 5 to 3.
+				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
+				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
+				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
+				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
 	Removed element "game_tip_size_animation_wait":
 		field "anim_type": "wait"
 		field "duration": "$wait_time"
@@ -105,39 +105,39 @@ Changed namespace "game_tip":
 		field "fps": 6
 		field "easing": "linear"
 	Changed element "open_recipe_book_factory":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "factory":
+			Changed field "max_children_size" from 5 to 3.
 			Changed field "control_ids":
 				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1" of "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2" of "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3" of "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item" of "visual_tip_item@game_tip.cell_image_hint_tip".
-			Changed field "max_children_size" from 5 to 3.
+				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
+				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
+				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
+				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
 	Changed element "open_search_tab_factory":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "factory":
+			Changed field "max_children_size" from 5 to 3.
 			Changed field "control_ids":
 				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1" of "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2" of "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3" of "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item" of "visual_tip_item@game_tip.cell_image_hint_tip".
-			Changed field "max_children_size" from 5 to 3.
+				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
+				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
+				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
+				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
 	Changed element "recipe_item_tip":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "factory":
+			Changed field "max_children_size" from 5 to 3.
 			Changed field "control_ids":
 				Total control id: 2 (+1, -3)
-				Removed control id "visual_tip_item_1" of "visual_tip_item_1@game_tip.cell_image_hint_tips".
-				Removed control id "visual_tip_item_2" of "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
-				Removed control id "visual_tip_item_3" of "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
-				Added control id "visual_tip_item" of "visual_tip_item@game_tip.cell_image_hint_tip".
-			Changed field "max_children_size" from 5 to 3.
+				Removed control id "visual_tip_item_1": "visual_tip_item_1@game_tip.cell_image_hint_tips".
+				Removed control id "visual_tip_item_2": "visual_tip_item_2@game_tip.cell_image_hint_tips_2".
+				Removed control id "visual_tip_item_3": "visual_tip_item_3@game_tip.cell_image_hint_tips_3".
+				Added control id "visual_tip_item": "visual_tip_item@game_tip.cell_image_hint_tip".
 Changed namespace "general_section":
 	Total element: 83 (+7, -2)
 	Changed element "accessibility_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 5 (+1, -0)
 			Added control:
@@ -176,7 +176,7 @@ Changed namespace "general_section":
 							element "black_background@general_section.black_image":
 								field "layer": 1
 								field "size": ["100%", 70]
-						control: element "additional_realms_subscription_stack@general_section.additional_realms_subscription_stack": field "layer": 2
+						control element "additional_realms_subscription_stack@general_section.additional_realms_subscription_stack": field "layer": 2
 			control:
 				element "renews_panel":
 					field "type": "panel"
@@ -218,23 +218,23 @@ Changed namespace "general_section":
 		field "type": "stack_panel"
 		field "size": ["100%", "100%c"]
 		field "controls":
-			control: element "additional_realm_subscription@general_section.additional_realm_subscription": empty
+			control element "additional_realm_subscription@general_section.additional_realm_subscription": empty
 			control:
 				element "padding1":
 					field "type": "panel"
 					field "size": ["100%", 3]
 	Changed element "additional_realms_offer_stack":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 3 (+2, -0)
 			Changed control:
 				Changed element "additional_realms_desc_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 2 (+1, -0)
 						Changed control:
 							Changed element "realms_plus_desc_label":
-								Unchanged field "type": "label"
+								Unchanged field "type": "label".
 								Changed field "text" from "BUY AN ADDITIONAL REALM" to "options.viewSubscriptions.buyAnAdditionalRealm".
 						Added control:
 							element "realms_plus_button_panel@general_section.realms_button_panel":
@@ -283,12 +283,14 @@ Changed namespace "general_section":
 						variable "$manage_button_name": "button.realms_additional_info_button"
 						variable "$purchase_button_name": "button.realms_additional_purchase_button"
 	Changed element "additional_realms_subscription_stack":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "size":
-			Unchanged item 0: "100%"
+			Unchanged item 0: "100%".
 			Changed item 1 from "100%" to 70.
+		Removed field "anchor_from": "top_left".
+		Removed field "anchor_to": "top_left".
 		Changed field "controls":
-			Total control: 2 (+2, -3)
+			Total control: 2 (+1, -2)
 			Removed control:
 				element "realms_additional_image":
 					field "type": "image"
@@ -300,64 +302,26 @@ Changed namespace "general_section":
 				element "padding":
 					field "type": "panel"
 					field "size": ["2%", "100%"]
-			Removed control:
-				element "realms_additional_sub_desc_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["76%", "100%"]
-					field "controls":
-						control:
-							element "realms_additional_desc_label":
-								field "type": "label"
-								field "text": "2 PERSON REALM"
-								field "text_alignment": "left"
-								field "color": "$body_text_color"
-								field "font_type": "smooth"
-								field "font_scale_factor": 1.5
-								field "size": ["100%", "default"]
-						control:
-							element "realms_additional_info_label":
-								field "type": "label"
-								field "text": "Access to your own Realm server with up to 2 concurent players"
-								field "text_alignment": "left"
-								field "color": "$body_text_color"
-								field "font_type": "smooth"
-								field "font_scale_factor": 0.9
-								field "size": ["100%", "default"]
-						control:
+			Changed control:
+				Moved element from "realms_additional_sub_desc_panel" to "additional_realms_sub_desc_panel".
+				Changed element "additional_realms_sub_desc_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 3 (+1, -2)
+						Changed control:
+							Changed element "realms_additional_desc_label":
+								Unchanged field "type": "label".
+								Changed field "text" from "2 PERSON REALM" to "options.viewSubscriptions.twoPlayers".
+						Changed control:
+							Changed element "realms_additional_info_label":
+								Unchanged field "type": "label".
+								Changed field "text" from "Access to your own Realm server with up to 2 concurent players" to "options.viewSubscriptions.personalRealmServer".
+						Removed control:
 							element "padding2":
 								field "type": "panel"
 								field "size": ["100%", 10]
-						control: element "realms_additional_button_panel@general_section.realms_button_panel": field "$variables": variable "$renew_label_text": ""
-			Added control:
-				element "additional_realms_image@common.service_repo_image_panel":
-					field "size": ["24%", "100% - 4px"]
-					field "$variables": variable "$repo_image_texture": "realms_key_art"
-			Added control:
-				element "additional_realms_sub_desc_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["76%", "100%"]
-					field "controls":
-						control:
-							element "realms_additional_desc_label":
-								field "type": "label"
-								field "text": "options.viewSubscriptions.twoPlayers"
-								field "text_alignment": "left"
-								field "color": "$body_text_color"
-								field "font_type": "smooth"
-								field "font_scale_factor": 1.5
-								field "size": ["100%", "default"]
-						control:
-							element "realms_additional_info_label":
-								field "type": "label"
-								field "text": "options.viewSubscriptions.personalRealmServer"
-								field "text_alignment": "left"
-								field "color": "$body_text_color"
-								field "font_type": "smooth"
-								field "font_scale_factor": 0.9
-								field "size": ["100%", "default"]
-						control:
+						Removed control element "realms_additional_button_panel@general_section.realms_button_panel": field "$variables": variable "$renew_label_text": "".
+						Added control:
 							element "realms_additional_button_panel@general_section.realms_button_panel":
 								field "bindings":
 									binding:
@@ -377,20 +341,22 @@ Changed namespace "general_section":
 									variable "$manage_button_name": "button.realms_additional_info_button"
 									variable "$purchase_button_name": "button.realms_additional_purchase_button"
 									variable "$purchase_button_visible": "#can_buy_more_subscriptions"
-		Removed field "anchor_from" of "top_left".
-		Removed field "anchor_to" of "top_left".
-		Removed field "$variables" of variable "$placeholder_text|default": "asdasdasd".
+			Added control:
+				element "additional_realms_image@common.service_repo_image_panel":
+					field "size": ["24%", "100% - 4px"]
+					field "$variables": variable "$repo_image_texture": "realms_key_art"
+		Removed field "$variables": variable "$placeholder_text|default": "asdasdasd".
 	Changed element "additional_realms_subscriptions_grid":
-		Unchanged field "type": "grid"
+		Unchanged field "type": "grid".
 		Changed field "size":
-			Unchanged item 0: "100%"
+			Unchanged item 0: "100%".
 			Changed item 1 from "default" to "100%c".
-		Changed field "$variables":
-			Total variable: 3 (+2, -0)
-			Added variable "$realm_collection_name" of "additional_realms_subscriptions_collection".
-			Added variable "$binding_collection_type" of "collection".
 		Changed field "grid_item_template" from "general_section.additional_realm_subscription" to "general_section.additional_realm_subscription_panel".
 		Changed field "collection_name" from "additional_realms_subscriptions_collection" to "$realm_collection_name".
+		Changed field "$variables":
+			Total variable: 3 (+2, -0)
+			Added variable "$realm_collection_name": "additional_realms_subscriptions_collection".
+			Added variable "$binding_collection_type": "collection".
 	Added element "appearance_status_image_panel":
 		field "type": "image"
 		field "size": ["100%", "100%x"]
@@ -411,14 +377,14 @@ Changed namespace "general_section":
 					field "type": "panel"
 					field "size": ["100%", "100%cm"]
 					field "controls":
-						control: element "summary_update_stack_panel@general_section.summary_update_stack_panel": empty
+						control element "summary_update_stack_panel@general_section.summary_update_stack_panel": empty
 						control:
 							element "padded_icon_1":
 								field "type": "stack_panel"
 								field "orientation": "horizontal"
 								field "size": ["100%", "100%cm"]
 								field "controls":
-									control: element "padded_icon_0@common.empty_panel": field "size": [10, 0]
+									control element "padded_icon_0@common.empty_panel": field "size": [10, 0]
 									control:
 										element "limited_status_image":
 											field "type": "image"
@@ -426,7 +392,7 @@ Changed namespace "general_section":
 											field "bilinear": true
 											field "texture": "textures/ui/infobulb"
 											field "layer": 1
-									control: element "padded_icon_1@common.empty_panel": field "size": [10, 0]
+									control element "padded_icon_1@common.empty_panel": field "size": [10, 0]
 									control:
 										element "label_panel":
 											field "type": "panel"
@@ -448,9 +414,18 @@ Changed namespace "general_section":
 				field "binding_type": "collection"
 				field "binding_collection_name": "$realm_collection_name"
 	Changed element "realms_button_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 3 (+1, -1)
+			Removed control:
+				element "renew_label":
+					field "type": "label"
+					field "text": "$renew_label_text"
+					field "text_alignment": "left"
+					field "color": "$body_text_color"
+					field "font_type": "smooth"
+					field "font_scale_factor": 0.9
+					field "size": ["fill", "100%"]
 			Changed control:
 				Changed element "purchase_button@settings_common.action_button":
 					Added field "bindings":
@@ -463,17 +438,8 @@ Changed namespace "general_section":
 							field "binding_type": "$binding_collection_type"
 							field "binding_collection_name": "$realm_collection_name"
 							field "binding_condition": "visible"
-			Removed control:
-				element "renew_label":
-					field "type": "label"
-					field "text": "$renew_label_text"
-					field "text_alignment": "left"
-					field "color": "$body_text_color"
-					field "font_type": "smooth"
-					field "font_scale_factor": 0.9
-					field "size": ["fill", "100%"]
 			Added control element "padded_icon_0@common.empty_panel": field "size": ["fill", "100%"].
-		Added field "visible" of "$purchase_button_visible".
+		Added field "visible": "$purchase_button_visible".
 	Removed element "realms_plus_offer":
 		field "type": "panel"
 		field "size": ["100%", 73]
@@ -482,44 +448,28 @@ Changed namespace "general_section":
 				element "black_background@general_section.black_image":
 					field "layer": 1
 					field "size": ["100%", 70]
-			control: element "realms_plus_offer_stack@general_section.realms_plus_offer_stack": field "layer": 2
+			control element "realms_plus_offer_stack@general_section.realms_plus_offer_stack": field "layer": 2
 			control:
 				element "margin":
 					field "type": "panel"
 					field "size": ["100%", 3]
 	Changed element "realms_plus_offer_stack":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 3 (+1, -0)
 			Changed control:
 				Changed element "realms_plus_desc_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Total control: 2 (+2, -2)
-						Removed control:
-							element "realms_plus_desc_label":
-								field "type": "label"
-								field "text": "options.viewSubscriptions.realmsPlus.detail"
-								field "text_alignment": "left"
-								field "color": "$body_text_color"
-								field "font_type": "smooth"
-								field "font_scale_factor": 0.9
-								field "size": ["100%", "fill"]
+						Total control: 2 (+1, -1)
+						Changed control:
+							Moved element from "realms_plus_desc_label" to "realms_plus_50_content".
 						Removed control:
 							element "realms_plus_button_panel@general_section.realms_button_panel":
 								field "$variables":
 									variable "$renew_label_text": ""
 									variable "$purchase_realm_button_text": "#buy_realms_plus_button_text"
 									variable "$manage_realm_button_text": "options.viewSubscriptions.button.manage"
-						Added control:
-							element "realms_plus_50_content":
-								field "type": "label"
-								field "text": "options.viewSubscriptions.realmsPlus.detail"
-								field "text_alignment": "left"
-								field "color": "$body_text_color"
-								field "font_type": "smooth"
-								field "font_scale_factor": 0.9
-								field "size": ["100%", "fill"]
 						Added control:
 							element "realms_plus_button_panel@general_section.realms_button_panel":
 								field "bindings":
@@ -556,7 +506,7 @@ Changed namespace "general_section":
 				element "black_background@general_section.black_image":
 					field "layer": 1
 					field "size": ["100%", 70]
-			control: element "realms_plus_subscription_stack@general_section.realms_plus_subscription_stack": field "layer": 2
+			control element "realms_plus_subscription_stack@general_section.realms_plus_subscription_stack": field "layer": 2
 			control:
 				element "margin":
 					field "type": "panel"
@@ -573,7 +523,7 @@ Changed namespace "general_section":
 							element "black_background@general_section.black_image":
 								field "layer": 1
 								field "size": ["100%", 70]
-						control: element "realms_plus_subscription_stack@general_section.realms_plus_subscription_stack": field "layer": 2
+						control element "realms_plus_subscription_stack@general_section.realms_plus_subscription_stack": field "layer": 2
 			control:
 				element "renews_panel":
 					field "type": "panel"
@@ -612,7 +562,7 @@ Changed namespace "general_section":
 									variable "$tooltip_button_collection_name": "realms_plus_subscriptions_collection"
 									variable "$tooltip_text_binding_name": "#realms_purchased_store"
 	Changed element "realms_plus_subscription_stack":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "orientation" from "horizontal" to "vertical".
 		Changed field "controls":
 			Total control: 2 (+2, -2)
@@ -701,12 +651,12 @@ Changed namespace "general_section":
 						variable "$purchase_button_name": "button.purchase_realms_plus_button"
 						variable "$purchase_button_visible": "#can_buy_more_subscriptions"
 	Changed element "realms_plus_subscriptions_grid":
-		Unchanged field "type": "grid"
+		Unchanged field "type": "grid".
+		Changed field "collection_name" from "realms_plus_subscriptions_collection" to "$realm_collection_name".
 		Changed field "$variables":
 			Total variable: 3 (+2, -0)
-			Added variable "$realm_collection_name" of "realms_plus_subscriptions_collection".
-			Added variable "$binding_collection_type" of "collection".
-		Changed field "collection_name" from "realms_plus_subscriptions_collection" to "$realm_collection_name".
+			Added variable "$realm_collection_name": "realms_plus_subscriptions_collection".
+			Added variable "$binding_collection_type": "collection".
 	Added element "realms_subscription_offer_common":
 		field "type": "stack_panel"
 		field "orientation": "vertical"
@@ -784,9 +734,9 @@ Changed namespace "general_section":
 				field "binding_type": "collection_details"
 				field "binding_collection_name": "$realm_collection_name"
 		field "controls":
-			control: element "default@common.empty_panel": empty
-			control: element "hover@common.static_tooltip_popup_with_image_and_text": field "bindings": empty
-			control: element "pressed@common.static_tooltip_popup_with_image_and_text": field "bindings": empty
+			control element "default@common.empty_panel": empty
+			control element "hover@common.static_tooltip_popup_with_image_and_text": field "bindings": empty
+			control element "pressed@common.static_tooltip_popup_with_image_and_text": field "bindings": empty
 		field "$variables":
 			variable "$tooltip_button_content_size|default":
 				item 0: "100%"
@@ -806,14 +756,14 @@ Changed namespace "general_section":
 		field "size": ["100% -20px", "14px"]
 		field "anchor_from": "top_left"
 		field "anchor_to": "top_left"
-		field "controls": control: element "static_tooltip_notification_panel@general_section.static_tooltip_notification_panel": field "layer": 2
+		field "controls": control element "static_tooltip_notification_panel@general_section.static_tooltip_notification_panel": field "layer": 2
 	Changed element "view_subscriptions_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 12 (+4, -2)
 			Changed control:
 				Changed element "realms_plus_header_label":
-					Unchanged field "type": "label"
+					Unchanged field "type": "label".
 					Added field "bindings":
 						binding:
 							field "binding_name": "#realms_plus_subscriptions_visible"
@@ -876,96 +826,93 @@ Changed namespace "general_section":
 						variable "$realm_collection_name": "additional_realms_subscriptions_collection"
 Changed namespace "pdp":
 	Changed element "bundle_upsell_offer_info":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
+			Changed control:
+				Changed element "bundle_title@pdp.offer_title_label":
+					Removed field "$variables": variable "$single_line_label_binding_condition": "visibility_changed".
 			Changed control:
 				Changed element "other_bundle_packs_label@common.single_line_label":
 					Changed field "$variables":
 						Total variable: 4 (+1, -0)
-						Moved variable "$single_line_label_binding" to "$single_line_label_text".
-						Added variable "$label_text_bindings" of item 0: field "binding_name": "#bundle_upsell_other_packs_description".
-			Changed control:
-				Changed element "bundle_title@pdp.offer_title_label":
-					Removed field "$variables" of variable "$single_line_label_binding_condition": "visibility_changed".
+						Moved variable from "$single_line_label_binding" to "$single_line_label_text".
+						Added variable "$label_text_bindings": item 0: item "binding_name": "#bundle_upsell_other_packs_description".
 	Changed element "offer_title_label@common.single_line_label":
 		Changed field "$variables":
 			Total variable: 2 (+1, -0)
-			Moved variable "$single_line_label_binding" to "$single_line_label_text".
+			Moved variable from "$single_line_label_binding" to "$single_line_label_text".
 			Added variable "$label_text_bindings":
 				item 0:
-					field "binding_name": "#title_label"
-					field "binding_type": "$mashup_collection_binding_type"
-					field "binding_collection_name": "$mashup_collection_name"
-					field "binding_condition": "once"
+					item "binding_name": "#title_label"
+					item "binding_type": "$mashup_collection_binding_type"
+					item "binding_collection_name": "$mashup_collection_name"
+					item "binding_condition": "once"
 	Changed element "summary_content_left_side":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "full_content":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "top":
-								Unchanged field "type": "stack_panel"
+								Unchanged field "type": "stack_panel".
 								Changed field "controls":
 									Changed control:
 										Changed element "info":
-											Unchanged field "type": "stack_panel"
+											Unchanged field "type": "stack_panel".
 											Changed field "controls":
 												Changed control:
 													Changed element "ratings_summary":
-														Unchanged field "type": "stack_panel"
+														Unchanged field "type": "stack_panel".
 														Changed field "controls":
 															Changed control:
 																Changed element "ratings_display":
-																	Unchanged field "type": "stack_panel"
+																	Unchanged field "type": "stack_panel".
 																	Changed field "controls":
 																		Changed control:
 																			Changed element "summary_rating_button@common_buttons.underline_button":
+																				Removed field "bindings": binding field "binding_name": "#rating_button_text".
 																				Changed field "$variables":
 																					Total variable: 3 (+1, -0)
-																					Moved variable "$single_line_label_binding" to "$single_line_label_text".
-																					Added variable "$label_text_bindings" of item 0: field "binding_name": "#rating_button_text".
-																				Removed field "bindings" of binding: field "binding_name": "#rating_button_text".
+																					Moved variable from "$single_line_label_binding" to "$single_line_label_text".
+																					Added variable "$label_text_bindings": item 0: item "binding_name": "#rating_button_text".
 	Changed element "summary_description_inner_panel":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "summary_description_stack_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "read_more_button_panel@common_buttons.read_button":
 								Changed field "$variables":
 									Total variable: 4 (+0, -1)
-									Moved variable "$text" to "$single_line_label_text".
-									Removed variable "$single_line_label_binding" of "#read_more_label".
+									Removed variable "$single_line_label_binding": "#read_more_label".
+									Moved variable from "$text" to "$single_line_label_text".
 						Changed control:
 							Changed element "read_less_button_panel@common_buttons.read_button":
 								Changed field "$variables":
 									Total variable: 4 (+0, -1)
-									Moved variable "$text" to "$single_line_label_text".
-									Removed variable "$single_line_label_binding" of "#read_less_label".
+									Removed variable "$single_line_label_binding": "#read_less_label".
+									Moved variable from "$text" to "$single_line_label_text".
 	Changed element "title_and_author_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "author_button_panel":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "summary_author_button@common_buttons.underline_button":
 								Changed field "$variables":
 									Total variable: 3 (+1, -0)
-									Moved variable "$single_line_label_binding" to "$single_line_label_text".
-									Added variable "$label_text_bindings" of item 0: field "binding_name": "#creator_label".
+									Moved variable from "$single_line_label_binding" to "$single_line_label_text".
+									Added variable "$label_text_bindings": item 0: item "binding_name": "#creator_label".
 Changed namespace "persona":
 	Total element: 169 (+1, -0)
 	Changed element "offer_state_info":
-		Unchanged field "type": "panel"
-		Changed field "$variables":
-			Total variable: 2 (+1, -0)
-			Added variable "$ignore_offer_state_info|default" of false.
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Total control: 1 (+1, -5)
 			Removed control:
@@ -1107,27 +1054,30 @@ Changed namespace "persona":
 										field "binding_collection_name": "$offer_state_info_collection_name"
 										field "binding_name": "#is_offer_locked"
 										field "binding_name_override": "#visible"
+		Changed field "$variables":
+			Total variable: 2 (+1, -0)
+			Added variable "$ignore_offer_state_info|default": false.
 	Changed element "persona_piece_offer_scroll_content":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "piece_offer_list_stack":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "default_item_panel":
-								Unchanged field "type": "stack_panel"
+								Unchanged field "type": "stack_panel".
 								Changed field "controls":
 									Changed control:
 										Changed element "default_item_grid":
-											Unchanged field "type": "grid"
+											Unchanged field "type": "grid".
 											Changed field "$variables":
 												Total variable: 8 (+1, -0)
-												Added variable "$ignore_offer_state_info" of true.
+												Added variable "$ignore_offer_state_info": true.
 	Changed element "persona_screen@common.base_screen":
 		Changed field "$variables":
 			Total variable: 7 (+1, -0)
-			Added variable "$screen_bg_content" of "persona.persona_screen_background_content".
+			Added variable "$screen_bg_content": "persona.persona_screen_background_content".
 	Added element "persona_screen_background_content":
 		field "type": "image"
 		field "fill": true
@@ -1179,45 +1129,35 @@ Changed namespace "persona":
 		Changed field "controls":
 			Changed control:
 				Changed element "button_controls":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "previewed@persona.focus_border_skin_picker":
-								Added field "ignored" of "$ignore_piece_selected".
+								Added field "ignored": "$ignore_piece_selected".
 Changed namespace "play":
 	Changed element "server_scroll_panel@play.common_scroll_pane":
 		Changed field "controls":
 			Changed control:
 				Changed element "stack_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
-						Changed control:
-							Changed element "more_servers_panel":
-								Unchanged field "type": "stack_panel"
-								Changed field "bindings":
-									Total binding: 1 (+1, -1)
-									Removed binding:
-										field "binding_name": "(not #multiplayer_blocked_panel_visible)"
-										field "binding_name_override": "#visible"
-									Added binding:
-										field "binding_name": "#is_network_available_and_not_multiplayer_visible"
-										field "binding_name_override": "#visible"
 						Changed control:
 							Changed element "no_third_party_connection@play.label_content_template":
 								Changed field "bindings":
-									Total binding: 1 (+1, -1)
-									Removed binding:
-										field "binding_name": "((not #multiplayer_blocked_panel_visible) or $ignore_3rd_party_servers)"
-										field "binding_name_override": "#visible"
-									Added binding:
-										field "binding_name": "(not #is_network_available)"
-										field "binding_name_override": "#visible"
+									Changed binding:
+										Changed field "binding_name" from "((not #multiplayer_blocked_panel_visible) or $ignore_3rd_party_servers)" to "(not #is_network_available)".
+						Changed control:
+							Changed element "more_servers_panel":
+								Unchanged field "type": "stack_panel".
+								Changed field "bindings":
+									Changed binding:
+										Changed field "binding_name" from "(not #multiplayer_blocked_panel_visible)" to "#is_network_available_and_not_multiplayer_visible".
 Changed namespace "profile":
 	Total element: 37 (+1, -0)
 	Changed element "profile_screen@common.base_screen":
 		Changed field "$variables":
 			Total variable: 14 (+1, -0)
-			Added variable "$screen_bg_content" of "profile.profile_screen_background_content".
+			Added variable "$screen_bg_content": "profile.profile_screen_background_content".
 	Added element "profile_screen_background_content":
 		field "type": "image"
 		field "fill": true
@@ -1265,7 +1205,7 @@ Changed namespace "profile":
 			variable "$ignore_search": true
 Changed namespace "realmsPlus":
 	Changed element "scrollable_selector_area_content":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 6 (+2, -1)
 			Removed control element "buy_now_toggle@realmsPlus.buy_now_toggle": empty.
@@ -1277,19 +1217,19 @@ Changed namespace "realmsPlus":
 					field "size": ["100%", 4]
 Changed namespace "realmsPlus_buy":
 	Changed element "buy_button_panel":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "buy_button@common_buttons.light_content_button":
-					Changed field "$variables":
-						Total variable: 1 (+0, -1)
-						Removed variable "$pressed_button_name" of "button.create_realm".
 					Changed field "bindings" to "$buy_now_bindings" from:
 						binding:
 							field "binding_name": "#buy_now_button_enabled"
 							field "binding_name_override": "#enabled"
+					Changed field "$variables":
+						Total variable: 1 (+0, -1)
+						Removed variable "$pressed_button_name": "button.create_realm".
 	Changed element "buy_now_content":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 10 (+1, -1)
 			Removed control element "buy_button@realmsPlus_buy.buy_button_panel": empty.
@@ -1299,15 +1239,15 @@ Changed namespace "realmsPlus_buy":
 						variable "$pressed_button_name": "button.create_realm"
 						variable "$buy_now_bindings":
 							item 0:
-								field "binding_name": "#buy_now_button_enabled"
-								field "binding_name_override": "#enabled"
+								item "binding_name": "#buy_now_button_enabled"
+								item "binding_name_override": "#enabled"
 	Changed element "title_text":
-		Unchanged field "type": "label"
+		Unchanged field "type": "label".
 		Changed field "text" from "store.realmsPlus.startTrial.title" to "#buy_now_banner_text".
-		Added field "bindings" of binding: field "binding_name": "#buy_now_banner_text".
+		Added field "bindings": binding field "binding_name": "#buy_now_banner_text".
 Changed namespace "realmsPlus_landing":
 	Changed element "title_stack":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 5 (+1, -1)
 			Removed control element "buy_button@realmsPlus_buy.buy_button_panel": empty.
@@ -1341,11 +1281,11 @@ Changed namespace "realms_settings":
 			variable "$container_text_binding_name": "#realm_subscription_origin"
 			variable "$show_option_label": false
 	Changed element "subscriptions_section":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "loaded_view":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 15 (+2, -1)
 						Removed control element "realm_subscription_origin_label@realms_settings.realm_subscription_origin_label": empty.
@@ -1368,7 +1308,7 @@ Changed namespace "realms_settings":
 Changed namespace "resource_packs":
 	Total element: 108 (+0, -3)
 	Changed element "available_pack_button_layout":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "text_panel_full@resource_packs.available_text_panel":
@@ -1376,34 +1316,23 @@ Changed namespace "resource_packs":
 						Changed variable "$size":
 							Changed item 0 from "100%-35px" to "100% - 60px".
 	Changed element "available_pack_button_layout_hover":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 6 (+2, -2)
 			Changed control:
 				Changed element "text_panel_full_hover":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "text_panel_full@resource_packs.available_text_panel":
 								Changed field "$variables":
 									Changed variable "$size":
 										Changed item 0 from "100%-35px" to "100% - 60px".
-			Removed control:
-				element "read_more_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "controls":
+			Changed control:
+				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
+				Changed element "read_more_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_more_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1422,13 +1351,27 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_more_label"
 									variable "$text": "store.mashup.readMore"
 									variable "$pressed_button_name": "button.read_toggle"
-			Removed control:
-				element "read_less_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "controls":
+					Added field "$variables":
+						variable "$text": "store.mashup.readMore"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$single_line_label_binding": "$read_more_label"
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$bindings":
+							item 0:
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
+							item 1:
+								item "binding_type": "view"
+								item "source_property_name": "#using_ellipses"
+								item "target_property_name": "#visible"
+			Changed control:
+				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
+				Changed element "read_less_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_less_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1447,39 +1390,7 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_less_label"
 									variable "$text": "store.mashup.readLess"
 									variable "$pressed_button_name": "button.read_toggle"
-			Added control:
-				element "read_more_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
-							item 1:
-								field "binding_type": "view"
-								field "source_property_name": "#using_ellipses"
-								field "target_property_name": "#visible"
-			Added control:
-				element "read_less_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "$variables":
+					Added field "$variables":
 						variable "$offset":
 							item 0: -6
 							item 1: -1
@@ -1488,48 +1399,37 @@ Changed namespace "resource_packs":
 						variable "$pressed_button_name": "button.read_toggle"
 						variable "$bindings":
 							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
 							item 1:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_name": "#is_read_less"
-								field "binding_name_override": "#visible"
-								field "binding_type": "collection"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_name": "#is_read_less"
+								item "binding_name_override": "#visible"
+								item "binding_type": "collection"
 	Changed element "available_text_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "$variables":
 			Changed variable "$size|default":
 				Changed item 0 from "100%-35px" to "100% - 60px".
 	Changed element "invalid_text_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "$variables":
 			Changed variable "$size|default":
 				Changed item 0 from "100%-35px" to "100%".
 	Changed element "realms_pack_button_layout":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 5 (+2, -2)
 			Changed control:
 				Changed element "text_panel_full@resource_packs.realms_text_panel":
 					Changed field "$variables":
 						Changed variable "$size":
 							Changed item 0 from "100%-35px" to "100% - 60px".
-			Removed control:
-				element "read_more_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "controls":
+			Changed control:
+				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
+				Changed element "read_more_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_more_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1548,13 +1448,27 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_more_label"
 									variable "$text": "store.mashup.readMore"
 									variable "$pressed_button_name": "button.read_toggle"
-			Removed control:
-				element "read_less_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "controls":
+					Added field "$variables":
+						variable "$text": "store.mashup.readMore"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$single_line_label_binding": "$read_more_label"
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$bindings":
+							item 0:
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
+							item 1:
+								item "binding_type": "view"
+								item "source_property_name": "#using_ellipses"
+								item "target_property_name": "#visible"
+			Changed control:
+				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
+				Changed element "read_less_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_less_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1573,39 +1487,7 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_less_label"
 									variable "$text": "store.mashup.readLess"
 									variable "$pressed_button_name": "button.read_toggle"
-			Added control:
-				element "read_more_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
-							item 1:
-								field "binding_type": "view"
-								field "source_property_name": "#using_ellipses"
-								field "target_property_name": "#visible"
-			Added control:
-				element "read_less_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "$variables":
+					Added field "$variables":
 						variable "$offset":
 							item 0: -6
 							item 1: -1
@@ -1614,42 +1496,31 @@ Changed namespace "resource_packs":
 						variable "$pressed_button_name": "button.read_toggle"
 						variable "$bindings":
 							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
 							item 1:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_name": "#is_read_less"
-								field "binding_name_override": "#visible"
-								field "binding_type": "collection"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_name": "#is_read_less"
+								item "binding_name_override": "#visible"
+								item "binding_type": "collection"
 	Changed element "realms_pack_button_layout_hover":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 6 (+2, -2)
 			Changed control:
 				Changed element "text_panel_full_hover":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "text_panel_full@resource_packs.realms_text_panel":
 								Changed field "$variables":
 									Changed variable "$size":
 										Changed item 0 from "100%-35px" to "100% - 60px".
-			Removed control:
-				element "read_more_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "controls":
+			Changed control:
+				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
+				Changed element "read_more_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_more_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1668,13 +1539,27 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_more_label"
 									variable "$text": "store.mashup.readMore"
 									variable "$pressed_button_name": "button.read_toggle"
-			Removed control:
-				element "read_less_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "controls":
+					Added field "$variables":
+						variable "$text": "store.mashup.readMore"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$single_line_label_binding": "$read_more_label"
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$bindings":
+							item 0:
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
+							item 1:
+								item "binding_type": "view"
+								item "source_property_name": "#using_ellipses"
+								item "target_property_name": "#visible"
+			Changed control:
+				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
+				Changed element "read_less_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_less_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1693,39 +1578,7 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_less_label"
 									variable "$text": "store.mashup.readLess"
 									variable "$pressed_button_name": "button.read_toggle"
-			Added control:
-				element "read_more_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
-							item 1:
-								field "binding_type": "view"
-								field "source_property_name": "#using_ellipses"
-								field "target_property_name": "#visible"
-			Added control:
-				element "read_less_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "$variables":
+					Added field "$variables":
 						variable "$offset":
 							item 0: -6
 							item 1: -1
@@ -1734,43 +1587,32 @@ Changed namespace "resource_packs":
 						variable "$pressed_button_name": "button.read_toggle"
 						variable "$bindings":
 							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
 							item 1:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_name": "#is_read_less"
-								field "binding_name_override": "#visible"
-								field "binding_type": "collection"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_name": "#is_read_less"
+								item "binding_name_override": "#visible"
+								item "binding_type": "collection"
 	Changed element "realms_text_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "$variables":
 			Changed variable "$size|default":
 				Changed item 0 from "100%-35px" to "100% - 60px".
 	Changed element "selected_pack_button_layout":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 5 (+2, -2)
 			Changed control:
 				Changed element "text_panel_full@resource_packs.selected_text_panel":
 					Changed field "$variables":
 						Changed variable "$size":
 							Changed item 0 from "100%-35px" to "100% - 60px".
-			Removed control:
-				element "read_more_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "controls":
+			Changed control:
+				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
+				Changed element "read_more_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_more_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1789,13 +1631,27 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_more_label"
 									variable "$text": "store.mashup.readMore"
 									variable "$pressed_button_name": "button.read_toggle"
-			Removed control:
-				element "read_less_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "controls":
+					Added field "$variables":
+						variable "$text": "store.mashup.readMore"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$single_line_label_binding": "$read_more_label"
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$bindings":
+							item 0:
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
+							item 1:
+								item "binding_type": "view"
+								item "source_property_name": "#using_ellipses"
+								item "target_property_name": "#visible"
+			Changed control:
+				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
+				Changed element "read_less_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_less_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1814,39 +1670,7 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_less_label"
 									variable "$text": "store.mashup.readLess"
 									variable "$pressed_button_name": "button.read_toggle"
-			Added control:
-				element "read_more_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
-							item 1:
-								field "binding_type": "view"
-								field "source_property_name": "#using_ellipses"
-								field "target_property_name": "#visible"
-			Added control:
-				element "read_less_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "$variables":
+					Added field "$variables":
 						variable "$offset":
 							item 0: -6
 							item 1: -1
@@ -1855,42 +1679,31 @@ Changed namespace "resource_packs":
 						variable "$pressed_button_name": "button.read_toggle"
 						variable "$bindings":
 							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
 							item 1:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_name": "#is_read_less"
-								field "binding_name_override": "#visible"
-								field "binding_type": "collection"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_name": "#is_read_less"
+								item "binding_name_override": "#visible"
+								item "binding_type": "collection"
 	Changed element "selected_pack_button_layout_hover":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 6 (+2, -2)
 			Changed control:
 				Changed element "text_panel_full_hover":
-					Unchanged field "type": "panel"
+					Unchanged field "type": "panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "text_panel_full@resource_packs.selected_text_panel":
 								Changed field "$variables":
 									Changed variable "$size":
 										Changed item 0 from "100%-35px" to "100% - 60px".
-			Removed control:
-				element "read_more_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "controls":
+			Changed control:
+				Moved element from "read_more_button_panel" to "read_more_button_panel@common_buttons.read_button".
+				Changed element "read_more_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_more_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1909,13 +1722,27 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_more_label"
 									variable "$text": "store.mashup.readMore"
 									variable "$pressed_button_name": "button.read_toggle"
-			Removed control:
-				element "read_less_button_panel":
-					field "type": "panel"
-					field "size": ["100%", "100%c"]
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "controls":
+					Added field "$variables":
+						variable "$text": "store.mashup.readMore"
+						variable "$pressed_button_name": "button.read_toggle"
+						variable "$single_line_label_binding": "$read_more_label"
+						variable "$offset":
+							item 0: -6
+							item 1: -1
+						variable "$bindings":
+							item 0:
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
+							item 1:
+								item "binding_type": "view"
+								item "source_property_name": "#using_ellipses"
+								item "target_property_name": "#visible"
+			Changed control:
+				Moved element from "read_less_button_panel" to "read_less_button_panel@common_buttons.read_button".
+				Changed element "read_less_button_panel@common_buttons.read_button":
+					Removed field "type": "panel".
+					Removed field "size": ["100%", "100%c"].
+					Removed field "controls":
 						control:
 							element "read_less_button@resource_packs.underline_button":
 								field "anchor_from": "bottom_right"
@@ -1934,39 +1761,7 @@ Changed namespace "resource_packs":
 									variable "$single_line_label_binding": "$read_less_label"
 									variable "$text": "store.mashup.readLess"
 									variable "$pressed_button_name": "button.read_toggle"
-			Added control:
-				element "read_more_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "bindings":
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_type": "collection_details"
-						binding:
-							field "binding_collection_name": "$name_collection_name"
-							field "binding_name": "#is_read_more"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-					field "$variables":
-						variable "$text": "store.mashup.readMore"
-						variable "$pressed_button_name": "button.read_toggle"
-						variable "$single_line_label_binding": "$read_more_label"
-						variable "$offset":
-							item 0: -6
-							item 1: -1
-						variable "$bindings":
-							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
-							item 1:
-								field "binding_type": "view"
-								field "source_property_name": "#using_ellipses"
-								field "target_property_name": "#visible"
-			Added control:
-				element "read_less_button_panel@common_buttons.read_button":
-					field "anchor_from": "bottom_right"
-					field "anchor_to": "bottom_right"
-					field "$variables":
+					Added field "$variables":
 						variable "$offset":
 							item 0: -6
 							item 1: -1
@@ -1975,36 +1770,35 @@ Changed namespace "resource_packs":
 						variable "$pressed_button_name": "button.read_toggle"
 						variable "$bindings":
 							item 0:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_type": "collection_details"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_type": "collection_details"
 							item 1:
-								field "binding_collection_name": "$name_collection_name"
-								field "binding_name": "#is_read_less"
-								field "binding_name_override": "#visible"
-								field "binding_type": "collection"
+								item "binding_collection_name": "$name_collection_name"
+								item "binding_name": "#is_read_less"
+								item "binding_name_override": "#visible"
+								item "binding_type": "collection"
 	Changed element "selected_pack_store_button@resource_packs.selected_pack_movement_button":
 		Changed field "$variables":
-			Total variable: 3 (+0, -0)
 			Changed variable "$visible_binding_name" from "#can_move" to "#can_go_to_store".
 	Changed element "selected_stack_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "selected_pack_section":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "default_item":
-								Unchanged field "type": "panel"
+								Unchanged field "type": "panel".
 								Changed field "controls":
 									Changed control:
 										Changed element "description_panel":
-											Unchanged field "type": "panel"
+											Unchanged field "type": "panel".
 											Changed field "size":
 												Changed item 0 from "100%-45px" to "100%-50px".
-												Unchanged item 1: 30
+												Unchanged item 1: 30.
 	Changed element "selected_text_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "$variables":
 			Changed variable "$size|default":
 				Changed item 0 from "100%-35px" to "100% - 60px".
@@ -2064,7 +1858,7 @@ Changed namespace "resource_packs":
 							element "label_default@common.single_line_label":
 								field "$variables":
 									variable "$single_line_label_color": "$dark_button_default_text_color"
-									variable "$underline_control": item 0: field "underline_default@resource_packs.underline": empty
+									variable "$underline_control": item 0: item "underline_default@resource_packs.underline": empty
 			control:
 				element "hover":
 					field "type": "panel"
@@ -2077,7 +1871,7 @@ Changed namespace "resource_packs":
 										item 0: 0.215
 										item 1: 0.839
 										item 2: 0.118
-									variable "$underline_control": item 0: field "underline_hover@resource_packs.underline": field "$texture": "textures/ui/underline_focus"
+									variable "$underline_control": item 0: item "underline_hover@resource_packs.underline": item "$texture": "textures/ui/underline_focus"
 		field "$variables":
 			variable "$single_label_size":
 				item 0: "default"
@@ -2099,14 +1893,14 @@ Changed namespace "settings_common":
 					field "size": ["100%", "100%cm"]
 					field "orientation": "horizontal"
 					field "controls":
-						control: element "padding1@common.empty_panel": field "size": [2, 19]
+						control element "padding1@common.empty_panel": field "size": [2, 19]
 						control:
 							element "bulb_panel":
 								field "type": "stack_panel"
 								field "orientation": "vertical"
 								field "size": ["100%c", "100%sm"]
 								field "controls":
-									control: element "padding1@common.empty_panel": field "size": [0, "fill"]
+									control element "padding1@common.empty_panel": field "size": [0, "fill"]
 									control:
 										element "bulb_image":
 											field "type": "image"
@@ -2114,8 +1908,8 @@ Changed namespace "settings_common":
 											field "bilinear": true
 											field "texture": "textures/ui/infobulb"
 											field "layer": 1
-									control: element "padding2@common.empty_panel": field "size": [0, "fill"]
-						control: element "padding2@common.empty_panel": field "size": [2, 0]
+									control element "padding2@common.empty_panel": field "size": [0, "fill"]
+						control element "padding2@common.empty_panel": field "size": [2, 0]
 						control:
 							element "label_panel":
 								field "type": "panel"
@@ -2130,7 +1924,7 @@ Changed namespace "settings_common":
 											field "text": "$container_text_binding_name"
 											field "font_size": "$used_fontsize"
 											field "font_type": "$used_fonttype"
-											field "bindings": binding: field "binding_name": "$container_text_binding_name"
+											field "bindings": binding field "binding_name": "$container_text_binding_name"
 		field "$variables":
 			variable "$used_fontsize|default": "normal"
 			variable "$used_fonttype|default": "default"

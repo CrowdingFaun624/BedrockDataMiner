@@ -4,7 +4,7 @@ Changed entity "armadillo.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:armadillo"
+				Unchanged description "identifier": "minecraft:armadillo".
 				Changed description "properties":
 					Total property: 1 (+1, -3)
 					Added property "minecraft:armadillo_state":
@@ -12,11 +12,11 @@ Changed entity "armadillo.json":
 						field "client_sync": true
 						field "default": "unrolled"
 						field "values":
-							possible property: "unrolled"
-							possible property: "rolled_up"
-							possible property: "rolled_up_peeking"
-							possible property: "rolled_up_relaxing"
-							possible property: "rolled_up_unrolling"
+							possible property "rolled_up"
+							possible property "rolled_up_peeking"
+							possible property "rolled_up_relaxing"
+							possible property "rolled_up_unrolling"
+							possible property "unrolled"
 					Removed property "minecraft:is_rolled_up":
 						field "type": "bool"
 						field "client_sync": true
@@ -31,15 +31,15 @@ Changed entity "armadillo.json":
 						field "default": false
 			Changed field "component_groups":
 				Total component group: 8 (+2, -1)
-				Moved component group "minecraft:adult_relaxed" to "minecraft:adult_unrolled".
+				Moved component group from "minecraft:adult_relaxed" to "minecraft:adult_unrolled".
 				Changed component group "minecraft:baby":
 					Changed component "minecraft:ageable":
 						Changed field "interact_filters":
 							Changed filter property "test" from "bool_property" to "enum_property".
+							Removed filter property "operator": "!=".
 							Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
-							Removed filter property "operator" of "!=".
-							Added filter property "value" of "unrolled".
-				Moved component group "minecraft:baby_relaxed" to "minecraft:baby_unrolled".
+							Added filter property "value": "unrolled".
+				Moved component group from "minecraft:baby_relaxed" to "minecraft:baby_unrolled".
 				Changed component group "minecraft:rolled_up":
 					Total component: 3 (+1, -0)
 					Changed component "minecraft:damage_sensor":
@@ -67,16 +67,9 @@ Changed entity "armadillo.json":
 								field "damage_modifier": -1.0
 					Changed component "minecraft:environment_sensor":
 						Changed field "triggers":
-							Total trigger: 1 (+1, -3)
-							Removed trigger:
-								field "filters":
-									filter property "any_of":
-										filter: filter property "test": "on_fire"
-										filter: filter property "test": "in_water"
-										filter: filter property "test": "is_panicking"
-										filter: filter property "test": "is_leashed"
-										filter: filter property "test": "is_riding"
-								field "event": "minecraft:relax"
+							Total trigger: 1 (+0, -2)
+							Changed trigger:
+								Changed field "event" from "minecraft:relax" to "minecraft:unroll".
 							Removed trigger:
 								field "filters":
 									filter property "all_of":
@@ -99,16 +92,7 @@ Changed entity "armadillo.json":
 											filter property "test": "bool_property"
 											filter property "domain": "minecraft:is_trying_to_relax"
 								field "event": "minecraft:stop_trying_to_relax"
-							Added trigger:
-								field "filters":
-									filter property "any_of":
-										filter: filter property "test": "on_fire"
-										filter: filter property "test": "in_water"
-										filter: filter property "test": "is_panicking"
-										filter: filter property "test": "is_leashed"
-										filter: filter property "test": "is_riding"
-								field "event": "minecraft:unroll"
-					Added component "minecraft:movement" of field "value": 0.0.
+					Added component "minecraft:movement": field "value": 0.0.
 				Removed component group "minecraft:rolled_up_trying_to_relax":
 					component "minecraft:timer":
 						field "looping": true
@@ -133,13 +117,13 @@ Changed entity "armadillo.json":
 						field "cooldown_range": 2.5
 						field "duration_range": 1.5
 						field "on_start": field "event": "minecraft:start_unrolling"
-				Moved component group "minecraft:relaxed" to "minecraft:unrolled".
+				Moved component group from "minecraft:relaxed" to "minecraft:unrolled".
 				Changed component group "minecraft:unrolled":
 					Total component: 7 (+1, -0)
-					Added component "minecraft:movement" of field "value": 0.14.
+					Added component "minecraft:movement": field "value": 0.14.
 			Changed field "components":
 				Total component: 20 (+0, -1)
-				Removed component "minecraft:movement" of field "value": 0.14.
+				Removed component "minecraft:movement": field "value": 0.14.
 			Changed field "events":
 				Total event: 12 (+4, -3)
 				Changed event "minecraft:ageable_grow_up":
@@ -147,24 +131,20 @@ Changed entity "armadillo.json":
 						Changed sequence item 0:
 							Changed field "remove":
 								Changed field "component_groups":
-									Total component group: 2 (+1, -1)
-									Removed component group "minecraft:baby_relaxed".
-									Added component group "minecraft:baby_unrolled".
+									Changed component group from "minecraft:baby_relaxed" to "minecraft:baby_unrolled".
 						Changed sequence item 1:
 							Changed field "add":
 								Changed field "component_groups":
-									Total component group: 1 (+1, -1)
-									Removed component group "minecraft:adult_relaxed".
-									Added component group "minecraft:adult_unrolled".
+									Changed component group from "minecraft:adult_relaxed" to "minecraft:adult_unrolled".
 							Changed field "filters":
 								Changed filter property "test" from "bool_property" to "enum_property".
+								Removed filter property "operator": "!=".
 								Changed filter property "domain" from "minecraft:is_rolled_up" to "minecraft:armadillo_state".
-								Removed filter property "operator" of "!=".
-								Added filter property "value" of "unrolled".
+								Added filter property "value": "unrolled".
 				Changed event "minecraft:no_threat_detected":
 					Added field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:rolled_up_without_threats"
+							field "add": field "component_groups": component group "minecraft:rolled_up_without_threats"
 							field "filters":
 								filter property "all_of":
 									filter:
@@ -192,13 +172,13 @@ Changed entity "armadillo.json":
 									filter:
 										filter property "test": "is_riding"
 										filter property "value": false
-							field "remove": field "component_groups": component group: "minecraft:rolled_up_with_threats"
+							field "remove": field "component_groups": component group "minecraft:rolled_up_with_threats"
 							field "set_property": property "minecraft:armadillo_state": "rolled_up_relaxing"
-					Removed field "set_property" of property "minecraft:is_threatened": false.
+					Removed field "set_property": property "minecraft:is_threatened": false.
 				Removed event "minecraft:relax":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:relaxed"
+							field "add": field "component_groups": component group "minecraft:relaxed"
 							field "emit_vibration": field "vibration": "entity_act"
 							field "filters":
 								filter property "any_of":
@@ -210,18 +190,18 @@ Changed entity "armadillo.json":
 										filter property "domain": "minecraft:is_trying_to_relax"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:rolled_up"
-									component group: "minecraft:rolled_up_trying_to_relax"
+									component group "minecraft:rolled_up"
+									component group "minecraft:rolled_up_trying_to_relax"
 							field "set_property":
 								property "minecraft:is_rolled_up": false
 								property "minecraft:is_trying_to_relax": false
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:baby_relaxed"
+							field "add": field "component_groups": component group "minecraft:baby_relaxed"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_baby"
 						sequence item 2:
-							field "add": field "component_groups": component group: "minecraft:adult_relaxed"
+							field "add": field "component_groups": component group "minecraft:adult_relaxed"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
@@ -234,12 +214,12 @@ Changed entity "armadillo.json":
 								Changed field "component_groups":
 									Total component group: 2 (+1, -0)
 									Added component group "minecraft:rolled_up_with_threats".
-							Removed field "emit_vibration" of field "vibration": "entity_act".
+							Removed field "emit_vibration": field "vibration": "entity_act".
 							Changed field "filters":
-								Removed filter property "test" of "actor_health".
-								Removed filter property "subject" of "self".
-								Removed filter property "operator" of ">".
-								Removed filter property "value" of 0.
+								Removed filter property "test": "actor_health".
+								Removed filter property "subject": "self".
+								Removed filter property "operator": ">".
+								Removed filter property "value": 0.
 								Added filter property "all_of":
 									filter:
 										filter property "test": "enum_property"
@@ -258,18 +238,16 @@ Changed entity "armadillo.json":
 										filter property "value": 0
 							Changed field "remove":
 								Changed field "component_groups":
-									Total component group: 4 (+4, -3)
-									Removed component group "minecraft:adult_relaxed".
-									Added component group "minecraft:adult_unrolled".
-									Removed component group "minecraft:baby_relaxed".
-									Added component group "minecraft:baby_unrolled".
+									Total component group: 4 (+2, -1)
+									Changed component group from "minecraft:adult_relaxed" to "minecraft:adult_unrolled".
+									Changed component group from "minecraft:baby_relaxed" to "minecraft:baby_unrolled".
 									Removed component group "minecraft:relaxed".
 									Added component group "minecraft:rolled_up_without_threats".
 									Added component group "minecraft:unrolled".
 							Changed field "set_property":
 								Total property: 1 (+1, -1)
-								Added property "minecraft:armadillo_state" of "rolled_up".
-								Removed property "minecraft:is_rolled_up" of true.
+								Added property "minecraft:armadillo_state": "rolled_up".
+								Removed property "minecraft:is_rolled_up": true.
 						Added sequence item 1:
 							field "emit_vibration": field "vibration": "entity_act"
 							field "filters":
@@ -286,17 +264,15 @@ Changed entity "armadillo.json":
 				Changed event "minecraft:spawn_adult":
 					Changed field "add":
 						Changed field "component_groups":
-							Total component group: 4 (+2, -2)
-							Removed component group "minecraft:adult_relaxed".
-							Added component group "minecraft:adult_unrolled".
+							Total component group: 4 (+1, -1)
+							Changed component group from "minecraft:adult_relaxed" to "minecraft:adult_unrolled".
 							Removed component group "minecraft:relaxed".
 							Added component group "minecraft:unrolled".
 				Changed event "minecraft:spawn_baby":
 					Changed field "add":
 						Changed field "component_groups":
-							Total component group: 4 (+2, -2)
-							Removed component group "minecraft:baby_relaxed".
-							Added component group "minecraft:baby_unrolled".
+							Total component group: 4 (+1, -1)
+							Changed component group from "minecraft:baby_relaxed" to "minecraft:baby_unrolled".
 							Removed component group "minecraft:relaxed".
 							Added component group "minecraft:unrolled".
 				Added event "minecraft:start_peeking":
@@ -308,7 +284,7 @@ Changed entity "armadillo.json":
 								filter property "value": "rolled_up"
 							field "set_property": property "minecraft:armadillo_state": "rolled_up_peeking"
 				Removed event "minecraft:start_trying_to_relax":
-					field "add": field "component_groups": component group: "minecraft:rolled_up_trying_to_relax"
+					field "add": field "component_groups": component group "minecraft:rolled_up_trying_to_relax"
 					field "set_property": property "minecraft:is_trying_to_relax": true
 				Added event "minecraft:start_unrolling":
 					field "sequence":
@@ -327,12 +303,12 @@ Changed entity "armadillo.json":
 								filter property "value": "rolled_up_peeking"
 							field "set_property": property "minecraft:armadillo_state": "rolled_up"
 				Removed event "minecraft:stop_trying_to_relax":
-					field "remove": field "component_groups": component group: "minecraft:rolled_up_trying_to_relax"
+					field "remove": field "component_groups": component group "minecraft:rolled_up_trying_to_relax"
 					field "set_property": property "minecraft:is_trying_to_relax": false
 				Changed event "minecraft:threat_detected":
 					Changed field "sequence":
 						Changed sequence item 0:
-							Added field "trigger" of "minecraft:roll_up".
+							Added field "trigger": "minecraft:roll_up".
 							Added field "filters":
 								filter property "all_of":
 									filter:
@@ -357,10 +333,10 @@ Changed entity "armadillo.json":
 									filter:
 										filter property "test": "is_riding"
 										filter property "value": false
-							Removed field "set_property" of property "minecraft:is_threatened": true.
+							Removed field "set_property": property "minecraft:is_threatened": true.
 						Changed sequence item 1:
-							Removed field "trigger" of "minecraft:roll_up".
-							Added field "add" of field "component_groups": component group: "minecraft:rolled_up_with_threats".
+							Removed field "trigger": "minecraft:roll_up".
+							Added field "add": field "component_groups": component group "minecraft:rolled_up_with_threats".
 							Changed field "filters":
 								Removed filter property "all_of":
 									filter:
@@ -394,12 +370,12 @@ Changed entity "armadillo.json":
 										filter property "test": "enum_property"
 										filter property "domain": "minecraft:armadillo_state"
 										filter property "value": "rolled_up_unrolling"
-							Added field "remove" of field "component_groups": component group: "minecraft:rolled_up_without_threats".
-							Added field "set_property" of property "minecraft:armadillo_state": "rolled_up".
+							Added field "remove": field "component_groups": component group "minecraft:rolled_up_without_threats".
+							Added field "set_property": property "minecraft:armadillo_state": "rolled_up".
 				Added event "minecraft:unroll":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:unrolled"
+							field "add": field "component_groups": component group "minecraft:unrolled"
 							field "emit_vibration": field "vibration": "entity_act"
 							field "filters":
 								filter property "all_of":
@@ -415,12 +391,12 @@ Changed entity "armadillo.json":
 										filter property "value": 0
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:rolled_up"
-									component group: "minecraft:rolled_up_with_threats"
-									component group: "minecraft:rolled_up_without_threats"
+									component group "minecraft:rolled_up"
+									component group "minecraft:rolled_up_with_threats"
+									component group "minecraft:rolled_up_without_threats"
 							field "set_property": property "minecraft:armadillo_state": "unrolled"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:baby_unrolled"
+							field "add": field "component_groups": component group "minecraft:baby_unrolled"
 							field "filters":
 								filter property "all_of":
 									filter:
@@ -437,7 +413,7 @@ Changed entity "armadillo.json":
 										filter property "test": "has_component"
 										filter property "value": "minecraft:is_baby"
 						sequence item 2:
-							field "add": field "component_groups": component group: "minecraft:adult_unrolled"
+							field "add": field "component_groups": component group "minecraft:adult_unrolled"
 							field "filters":
 								filter property "all_of":
 									filter:

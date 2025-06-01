@@ -1372,173 +1372,173 @@ Changed behavior pack "vanilla_gametest":
 		          '''
 	Changed script "BigMobTests.js":
 		Total line: 87 (+6, -15)
-		          '''
-		          ...
-		  3   3   
-		  4   4   const BIGMOB_TEST_MAX_TICKS = 100;
-		  5   5   const BIGMOB_TEST_STARTUP_TICKS = 0;
-		  6   6   const BIGMOB_REQUIRE = false;
-		  7   7   
-		  8     - const ROTATION = ["NONE"]; //["NONE", "CLOCKWISE_90", "CLOCKWISE_180", "COUNTERCLOCKWISE_90"]
-		  9   8   const MOBTOTEST = ["zoglin", "ravager", "iron_golem", "spider", "horse"];
-		 10   9   
-		     10 + function _descending(test, entityType) {
-		 11     - function getRotationStepsForRotation(rotation) {
-		 12     -     switch (rotation) {
-		     11 +   let zPos = 1; // in Java, let zPos = (wallSide=="RIGHT")?-0.25:0.25;
-		     12 +   const spawnType = "minecraft:" + entityType;
-		     13 +   const mob = test.spawnWithoutBehaviors(spawnType, new BlockLocation(0, 6, zPos));
-		     14 +   const targetPos = new BlockLocation(7, 2, 1);
-		     15 +   test.walkTo(mob, targetPos, 1);
-		     16 +   test.succeedWhenEntityPresent(spawnType, targetPos);
-		     17 + }
-		     18 + 
-		     19 + function createDescendingTest(wallSide, entityType) {
-		     20 +   const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
-		     21 +   const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_descend_" + entityType;
-		 13     -         case "NONE":
-		 14     -             return 0;
-		 15     -         case "CLOCKWISE_90":
-		 16     -             return 1;
-		 17     -         case "CLOCKWISE_180":
-		 18     -             return 2;
-		 19     -         case "COUNTERCLOCKWISE_90":
-		 20     -             return 3;
-		 21     -         default:
-		 22     -             throw "Unknown rotation value, don't know how many steps it represents:" + rotation;
-		 23     -     }
-		 24     - }
-		 25  22   
-		     23 +   if (entityType == "horse") {
-		 26     - function _descending(test, entityType) {
-		 27     -     let zPos = 1;  // in Java, let zPos = (wallSide=="RIGHT")?-0.25:0.25;
-		     24 +     GameTest.register("BigMobTests", testName, (test) => {
-		     25 +       _descending(test, entityType);
-		     26 +     })
-		     27 +       .structureName(structureName)
-		     28 +       .maxTicks(BIGMOB_TEST_MAX_TICKS)
-		     29 +       .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
-		     30 +       .tag(GameTest.Tags.suiteDisabled) // Somes horses always walk at very low speed and cause timeout. So I disabled these tests.
-		     31 +       .required(BIGMOB_REQUIRE)
-		     32 +       .rotateTest(true);
-		     33 +   } else {
-		     34 +     GameTest.register("BigMobTests", testName, (test) => {
-		     35 +       _descending(test, entityType);
-		     36 +     })
-		     37 +       .structureName(structureName)
-		     38 +       .maxTicks(BIGMOB_TEST_MAX_TICKS)
-		     39 +       .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
-		     40 +       .tag(GameTest.Tags.suiteDefault)
-		     41 +       .required(BIGMOB_REQUIRE)
-		     42 +       .rotateTest(true);
-		     43 +   }
-		     44 + }
-		     45 + 
-		     46 + function _ascending(test, entityType) {
-		     47 +   const spawnType = "minecraft:" + entityType;
-		     48 +   const targetPos = new BlockLocation(0, 6, 1);
-		     49 +   const mob = test.spawnWithoutBehaviors(spawnType, new BlockLocation(7, 2, 1));
-		     50 +   test.walkTo(mob, targetPos, 1);
-		     51 +   test.succeedWhenEntityPresent(spawnType, targetPos);
-		 28     -     const spawnType = "minecraft:" + entityType;
-		 29     -     const mob = test.spawnWithoutBehaviors(spawnType, new BlockLocation(0, 6, zPos));
-		 30     -     const targetPos = new BlockLocation(7, 2, 1);
-		 31     -     test.walkTo(mob, targetPos, 1);
-		 32     -     test.succeedWhenEntityPresent(spawnType, targetPos);
-		 33     - }
-		 34     - 
-		 35     - 
-		 36     - function createDescendingTest(wallSide, rotation, entityType) {
-		 37     -     const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
-		 38     -     const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_descend_" + entityType + "_rotation_" + getRotationStepsForRotation(rotation);
-		 39     - 
-		 40     -     if (entityType == 'horse') {
-		 41     -         GameTest.register("BigMobTests", testName, (test) => { _descending(test, entityType) })
-		 42     -             .structureName(structureName)
-		 43     -             .maxTicks(BIGMOB_TEST_MAX_TICKS)
-		 44     -             .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
-		 45     -             .tag(GameTest.Tags.suiteDisabled)  // Somes horses always walk at very low speed and cause timeout. So I disabled these tests.
-		 46     -             .required(BIGMOB_REQUIRE);
-		 47     -     }
-		 48     -     else {
-		 49     -         GameTest.register("BigMobTests", testName, (test) => { _descending(test, entityType) })
-		 50     -             .structureName(structureName)
-		 51     -             .maxTicks(BIGMOB_TEST_MAX_TICKS)
-		 52     -             .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
-		 53     -             .tag(GameTest.Tags.suiteDefault)
-		 54     -             .required(BIGMOB_REQUIRE);
-		 55     -     }
-		 56  52   }
-		 57     - 
-		 58  53   
-		 59     - function _ascending(test, entityType) {
-		 60     -     const spawnType = "minecraft:" + entityType;
-		 61     -     const targetPos = new BlockLocation(0, 6, 1); // Location(0.5, 6.0, 1.5) in Java , but not be supported to be parameter in .walkTo() 
-		     54 + function createAscendingTest(wallSide, entityType) {
-		     55 +   const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
-		     56 +   const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_ascend_" + entityType;
-		 62     -     const mob = test.spawnWithoutBehaviors(spawnType, new BlockLocation(7, 2, 1));
-		 63     -     test.walkTo(mob, targetPos, 1);
-		 64     -     test.succeedWhenEntityPresent(spawnType, targetPos);
-		 65     - }
-		 66  57   
-		     58 +   if (entityType == "horse" || entityType == "spider") {
-		     59 +     GameTest.register("BigMobTests", testName, (test) => {
-		     60 +       _ascending(test, entityType);
-		 67     - function createAscendingTest(wallSide, rotation, entityType) {
-		     61 +     })
-		     62 +       .structureName(structureName)
-		     63 +       .maxTicks(BIGMOB_TEST_MAX_TICKS)
-		     64 +       .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
-		     65 +       .tag("suite:java_parity")
-		     66 +       .tag(GameTest.Tags.suiteDisabled) // Somes horses always walk at very low speed and cause timeout. Spiders will climb the floating block when walking up stairs at an angle.
-		     67 +       .required(BIGMOB_REQUIRE)
-		     68 +       .rotateTest(true);
-		     69 +   } else {
-		     70 +     GameTest.register("BigMobTests", testName, (test) => {
-		     71 +       _ascending(test, entityType);
-		     72 +     })
-		     73 +       .structureName(structureName)
-		     74 +       .maxTicks(BIGMOB_TEST_MAX_TICKS)
-		     75 +       .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
-		     76 +       .tag(GameTest.Tags.suiteDefault)
-		     77 +       .required(BIGMOB_REQUIRE)
-		     78 +       .rotateTest(true);
-		     79 +   }
-		 68     -     const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
-		 69     -     const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_ascend_" + entityType + "_rotation_" + getRotationStepsForRotation(rotation);
-		 70     - 
-		 71     -     if (entityType == 'horse' || (entityType == 'spider' && wallSide.toLowerCase() == 'left')) {
-		 72     -         GameTest.register("BigMobTests", testName, (test) => { _ascending(test, entityType) })
-		 73     -             .structureName(structureName)
-		 74     -             .maxTicks(BIGMOB_TEST_MAX_TICKS)
-		 75     -             .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
-		 76     -             .tag(GameTest.Tags.suiteDisabled) // Somes horses always walk at very low speed and cause timeout. altitude_change_wall_on_left_ascend_spider_rotation_0 failed by timeout on BuildBott.So I disabled these tests.
-		 77     -             .required(BIGMOB_REQUIRE);
-		 78     -     }
-		 79     -     else {
-		 80     -         GameTest.register("BigMobTests", testName, (test) => { _ascending(test, entityType) })
-		 81     -             .structureName(structureName)
-		 82     -             .maxTicks(BIGMOB_TEST_MAX_TICKS)
-		 83     -             .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
-		 84     -             .tag(GameTest.Tags.suiteDefault)
-		 85     -             .required(BIGMOB_REQUIRE);
-		 86     -     }
-		 87  80   }
-		 88  81   
-		 89  82   for (var bigmobIndex = 0; bigmobIndex < MOBTOTEST.length; bigmobIndex++) {
-		     83 +   createDescendingTest("RIGHT", MOBTOTEST[bigmobIndex]);
-		 90     -     for (var rotationIndex = 0; rotationIndex < ROTATION.length; rotationIndex++) {
-		 91     -         createDescendingTest("RIGHT", ROTATION[rotationIndex], MOBTOTEST[bigmobIndex]);
-		 92     -         createDescendingTest("LEFT", ROTATION[rotationIndex], MOBTOTEST[bigmobIndex]);
-		     84 +   createDescendingTest("LEFT", MOBTOTEST[bigmobIndex]);
-		     85 +   createAscendingTest("RIGHT", MOBTOTEST[bigmobIndex]);
-		     86 +   createAscendingTest("LEFT", MOBTOTEST[bigmobIndex]);
-		 93     -         createAscendingTest("RIGHT", ROTATION[rotationIndex], MOBTOTEST[bigmobIndex]);
-		 94     -         createAscendingTest("LEFT", ROTATION[rotationIndex], MOBTOTEST[bigmobIndex]);
-		 95     -     }
-		 96  87   }
-		          '''
+		        '''
+		        ...
+		 3  3   
+		 4  4   const BIGMOB_TEST_MAX_TICKS = 100;
+		 5  5   const BIGMOB_TEST_STARTUP_TICKS = 0;
+		 6  6   const BIGMOB_REQUIRE = false;
+		 7  7   
+		 8    - const ROTATION = ["NONE"]; //["NONE", "CLOCKWISE_90", "CLOCKWISE_180", "COUNTERCLOCKWISE_90"]
+		 9  8   const MOBTOTEST = ["zoglin", "ravager", "iron_golem", "spider", "horse"];
+		10  9   
+		   10 + function _descending(test, entityType) {
+		11    - function getRotationStepsForRotation(rotation) {
+		12    -     switch (rotation) {
+		   11 +   let zPos = 1; // in Java, let zPos = (wallSide=="RIGHT")?-0.25:0.25;
+		   12 +   const spawnType = "minecraft:" + entityType;
+		   13 +   const mob = test.spawnWithoutBehaviors(spawnType, new BlockLocation(0, 6, zPos));
+		   14 +   const targetPos = new BlockLocation(7, 2, 1);
+		   15 +   test.walkTo(mob, targetPos, 1);
+		   16 +   test.succeedWhenEntityPresent(spawnType, targetPos);
+		   17 + }
+		   18 + 
+		   19 + function createDescendingTest(wallSide, entityType) {
+		   20 +   const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
+		   21 +   const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_descend_" + entityType;
+		13    -         case "NONE":
+		14    -             return 0;
+		15    -         case "CLOCKWISE_90":
+		16    -             return 1;
+		17    -         case "CLOCKWISE_180":
+		18    -             return 2;
+		19    -         case "COUNTERCLOCKWISE_90":
+		20    -             return 3;
+		21    -         default:
+		22    -             throw "Unknown rotation value, don't know how many steps it represents:" + rotation;
+		23    -     }
+		24    - }
+		25 22   
+		   23 +   if (entityType == "horse") {
+		26    - function _descending(test, entityType) {
+		27    -     let zPos = 1;  // in Java, let zPos = (wallSide=="RIGHT")?-0.25:0.25;
+		   24 +     GameTest.register("BigMobTests", testName, (test) => {
+		   25 +       _descending(test, entityType);
+		   26 +     })
+		   27 +       .structureName(structureName)
+		   28 +       .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		   29 +       .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
+		   30 +       .tag(GameTest.Tags.suiteDisabled) // Somes horses always walk at very low speed and cause timeout. So I disabled these tests.
+		   31 +       .required(BIGMOB_REQUIRE)
+		   32 +       .rotateTest(true);
+		   33 +   } else {
+		   34 +     GameTest.register("BigMobTests", testName, (test) => {
+		   35 +       _descending(test, entityType);
+		   36 +     })
+		   37 +       .structureName(structureName)
+		   38 +       .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		   39 +       .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
+		   40 +       .tag(GameTest.Tags.suiteDefault)
+		   41 +       .required(BIGMOB_REQUIRE)
+		   42 +       .rotateTest(true);
+		   43 +   }
+		   44 + }
+		   45 + 
+		   46 + function _ascending(test, entityType) {
+		   47 +   const spawnType = "minecraft:" + entityType;
+		   48 +   const targetPos = new BlockLocation(0, 6, 1);
+		   49 +   const mob = test.spawnWithoutBehaviors(spawnType, new BlockLocation(7, 2, 1));
+		   50 +   test.walkTo(mob, targetPos, 1);
+		   51 +   test.succeedWhenEntityPresent(spawnType, targetPos);
+		28    -     const spawnType = "minecraft:" + entityType;
+		29    -     const mob = test.spawnWithoutBehaviors(spawnType, new BlockLocation(0, 6, zPos));
+		30    -     const targetPos = new BlockLocation(7, 2, 1);
+		31    -     test.walkTo(mob, targetPos, 1);
+		32    -     test.succeedWhenEntityPresent(spawnType, targetPos);
+		33    - }
+		34    - 
+		35    - 
+		36    - function createDescendingTest(wallSide, rotation, entityType) {
+		37    -     const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
+		38    -     const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_descend_" + entityType + "_rotation_" + getRotationStepsForRotation(rotation);
+		39    - 
+		40    -     if (entityType == 'horse') {
+		41    -         GameTest.register("BigMobTests", testName, (test) => { _descending(test, entityType) })
+		42    -             .structureName(structureName)
+		43    -             .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		44    -             .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
+		45    -             .tag(GameTest.Tags.suiteDisabled)  // Somes horses always walk at very low speed and cause timeout. So I disabled these tests.
+		46    -             .required(BIGMOB_REQUIRE);
+		47    -     }
+		48    -     else {
+		49    -         GameTest.register("BigMobTests", testName, (test) => { _descending(test, entityType) })
+		50    -             .structureName(structureName)
+		51    -             .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		52    -             .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
+		53    -             .tag(GameTest.Tags.suiteDefault)
+		54    -             .required(BIGMOB_REQUIRE);
+		55    -     }
+		56 52   }
+		57    - 
+		58 53   
+		59    - function _ascending(test, entityType) {
+		60    -     const spawnType = "minecraft:" + entityType;
+		61    -     const targetPos = new BlockLocation(0, 6, 1); // Location(0.5, 6.0, 1.5) in Java , but not be supported to be parameter in .walkTo() 
+		   54 + function createAscendingTest(wallSide, entityType) {
+		   55 +   const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
+		   56 +   const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_ascend_" + entityType;
+		62    -     const mob = test.spawnWithoutBehaviors(spawnType, new BlockLocation(7, 2, 1));
+		63    -     test.walkTo(mob, targetPos, 1);
+		64    -     test.succeedWhenEntityPresent(spawnType, targetPos);
+		65    - }
+		66 57   
+		   58 +   if (entityType == "horse" || entityType == "spider") {
+		   59 +     GameTest.register("BigMobTests", testName, (test) => {
+		   60 +       _ascending(test, entityType);
+		67    - function createAscendingTest(wallSide, rotation, entityType) {
+		   61 +     })
+		   62 +       .structureName(structureName)
+		   63 +       .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		   64 +       .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
+		   65 +       .tag("suite:java_parity")
+		   66 +       .tag(GameTest.Tags.suiteDisabled) // Somes horses always walk at very low speed and cause timeout. Spiders will climb the floating block when walking up stairs at an angle.
+		   67 +       .required(BIGMOB_REQUIRE)
+		   68 +       .rotateTest(true);
+		   69 +   } else {
+		   70 +     GameTest.register("BigMobTests", testName, (test) => {
+		   71 +       _ascending(test, entityType);
+		   72 +     })
+		   73 +       .structureName(structureName)
+		   74 +       .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		   75 +       .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
+		   76 +       .tag(GameTest.Tags.suiteDefault)
+		   77 +       .required(BIGMOB_REQUIRE)
+		   78 +       .rotateTest(true);
+		   79 +   }
+		68    -     const structureName = "BigMobTests:altitude_change_wall_on_" + wallSide.toLowerCase();
+		69    -     const testName = "altitude_change_wall_on_" + wallSide.toLowerCase() + "_ascend_" + entityType + "_rotation_" + getRotationStepsForRotation(rotation);
+		70    - 
+		71    -     if (entityType == 'horse' || (entityType == 'spider' && wallSide.toLowerCase() == 'left')) {
+		72    -         GameTest.register("BigMobTests", testName, (test) => { _ascending(test, entityType) })
+		73    -             .structureName(structureName)
+		74    -             .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		75    -             .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
+		76    -             .tag(GameTest.Tags.suiteDisabled) // Somes horses always walk at very low speed and cause timeout. altitude_change_wall_on_left_ascend_spider_rotation_0 failed by timeout on BuildBott.So I disabled these tests.
+		77    -             .required(BIGMOB_REQUIRE);
+		78    -     }
+		79    -     else {
+		80    -         GameTest.register("BigMobTests", testName, (test) => { _ascending(test, entityType) })
+		81    -             .structureName(structureName)
+		82    -             .maxTicks(BIGMOB_TEST_MAX_TICKS)
+		83    -             .setupTicks(BIGMOB_TEST_STARTUP_TICKS)
+		84    -             .tag(GameTest.Tags.suiteDefault)
+		85    -             .required(BIGMOB_REQUIRE);
+		86    -     }
+		87 80   }
+		88 81   
+		89 82   for (var bigmobIndex = 0; bigmobIndex < MOBTOTEST.length; bigmobIndex++) {
+		   83 +   createDescendingTest("RIGHT", MOBTOTEST[bigmobIndex]);
+		90    -     for (var rotationIndex = 0; rotationIndex < ROTATION.length; rotationIndex++) {
+		91    -         createDescendingTest("RIGHT", ROTATION[rotationIndex], MOBTOTEST[bigmobIndex]);
+		92    -         createDescendingTest("LEFT", ROTATION[rotationIndex], MOBTOTEST[bigmobIndex]);
+		   84 +   createDescendingTest("LEFT", MOBTOTEST[bigmobIndex]);
+		   85 +   createAscendingTest("RIGHT", MOBTOTEST[bigmobIndex]);
+		   86 +   createAscendingTest("LEFT", MOBTOTEST[bigmobIndex]);
+		93    -         createAscendingTest("RIGHT", ROTATION[rotationIndex], MOBTOTEST[bigmobIndex]);
+		94    -         createAscendingTest("LEFT", ROTATION[rotationIndex], MOBTOTEST[bigmobIndex]);
+		95    -     }
+		96 87   }
+		        '''
 	Changed script "BlockTests.js":
 		Total line: 266 (+27, -22)
 		          '''

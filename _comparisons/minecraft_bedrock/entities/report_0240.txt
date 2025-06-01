@@ -4,7 +4,7 @@ Changed entity "creaking.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:creaking"
+				Unchanged description "identifier": "minecraft:creaking".
 				Changed description "properties":
 					Total property: 2 (+1, -0)
 					Added property "minecraft:creaking_swaying_ticks":
@@ -63,13 +63,13 @@ Changed entity "creaking.json":
 						Changed field "triggers":
 							Total trigger: 5 (+1, -0)
 							Changed trigger:
-								Unchanged field "cause": "all"
-								Changed field "on_damage":
-									Changed field "event" from "minecraft:attacked_by_mob" to "minecraft:damaged_by_entity".
-							Changed trigger:
-								Unchanged field "cause": "all"
 								Changed field "on_damage":
 									Changed field "event" from "minecraft:attacked_by_player" to "minecraft:damaged_by_player".
+								Unchanged field "cause": "all".
+							Changed trigger:
+								Changed field "on_damage":
+									Changed field "event" from "minecraft:attacked_by_mob" to "minecraft:damaged_by_entity".
+								Unchanged field "cause": "all".
 							Added trigger:
 								field "on_damage": field "event": "minecraft:damaged_by_entity"
 								field "cause": "projectile"
@@ -151,19 +151,16 @@ Changed entity "creaking.json":
 								filter property "value": 5
 							field "event": "minecraft:reset_swaying_ticks"
 			Changed field "events":
-				Total event: 12 (+4, -4)
-				Removed event "minecraft:attacked_by_mob" of field "trigger": "minecraft:start_swaying".
-				Removed event "minecraft:attacked_by_player":
-					field "trigger": "minecraft:start_swaying"
-					field "execute_event_on_home_block": field "event": "minecraft:on_spawned_creaking_damaged_by_player"
-				Added event "minecraft:damaged_by_entity" of field "trigger": "minecraft:increment_swaying_ticks".
-				Added event "minecraft:damaged_by_player":
-					field "trigger": "minecraft:increment_swaying_ticks"
-					field "execute_event_on_home_block": field "event": "minecraft:on_spawned_creaking_damaged_by_player"
-				Added event "minecraft:increment_swaying_ticks" of field "set_property": property "minecraft:creaking_swaying_ticks": "math.clamp(query.property('minecraft:creaking_swaying_ticks') + 1, 0, 6)".
-				Added event "minecraft:reset_swaying_ticks" of field "set_property": property "minecraft:creaking_swaying_ticks": "0".
-				Removed event "minecraft:start_swaying" of field "add": field "component_groups": component group: "minecraft:swaying".
-				Removed event "minecraft:stop_swaying" of field "remove": field "component_groups": component group: "minecraft:swaying".
+				Total event: 12 (+3, -3)
+				Removed event "minecraft:attacked_by_mob": field "trigger": "minecraft:start_swaying".
+				Added event "minecraft:damaged_by_entity": field "trigger": "minecraft:increment_swaying_ticks".
+				Moved event from "minecraft:attacked_by_player" to "minecraft:damaged_by_player".
+				Changed event "minecraft:damaged_by_player":
+					Changed field "trigger" from "minecraft:start_swaying" to "minecraft:increment_swaying_ticks".
+				Added event "minecraft:increment_swaying_ticks": field "set_property": property "minecraft:creaking_swaying_ticks": "math.clamp(query.property('minecraft:creaking_swaying_ticks') + 1, 0, 6)".
+				Added event "minecraft:reset_swaying_ticks": field "set_property": property "minecraft:creaking_swaying_ticks": "0".
+				Removed event "minecraft:start_swaying": field "add": field "component_groups": component group "minecraft:swaying".
+				Removed event "minecraft:stop_swaying": field "remove": field "component_groups": component group "minecraft:swaying".
 Changed entity "mooshroom.json":
 	Changed behavior pack "core":
 		Changed field "format_version" from "1.21.0" to "1.21.50".
@@ -238,8 +235,8 @@ Changed entity "mooshroom.json":
 									field "particle_y_offset": 0.25
 									field "particle_offset_towards_interactor": true
 								field "interact_text": "action.interact.feed"
-				Added component group "minecraft:mooshroom_brown_fed_closed_eyeblossom" of component "minecraft:mark_variant": field "value": 12.
-				Added component group "minecraft:mooshroom_brown_fed_open_eyeblossom" of component "minecraft:mark_variant": field "value": 11.
+				Added component group "minecraft:mooshroom_brown_fed_closed_eyeblossom": component "minecraft:mark_variant": field "value": 12.
+				Added component group "minecraft:mooshroom_brown_fed_open_eyeblossom": component "minecraft:mark_variant": field "value": 11.
 			Changed field "components":
 				Changed component "minecraft:damage_sensor":
 					Changed field "triggers":
@@ -249,5 +246,5 @@ Changed entity "mooshroom.json":
 							Changed field "deals_damage" from false to "no".
 			Changed field "events":
 				Total event: 22 (+2, -0)
-				Added event "minecraft:ate_closed_eyeblossom" of field "add": field "component_groups": component group: "minecraft:mooshroom_brown_fed_closed_eyeblossom".
-				Added event "minecraft:ate_open_eyeblossom" of field "add": field "component_groups": component group: "minecraft:mooshroom_brown_fed_open_eyeblossom".
+				Added event "minecraft:ate_closed_eyeblossom": field "add": field "component_groups": component group "minecraft:mooshroom_brown_fed_closed_eyeblossom".
+				Added event "minecraft:ate_open_eyeblossom": field "add": field "component_groups": component group "minecraft:mooshroom_brown_fed_open_eyeblossom".

@@ -9,15 +9,15 @@ Added file "hoglin.animation_controllers.json":
 				field "initial_state": "default"
 				field "states":
 					state "attack":
-						field "animations": animation dict: "attack"
-						field "transitions": transition list: transition "default": "!variable.has_target || variable.attack_time < 0.0"
-					state "default": field "transitions": transition list: transition "attack": "variable.has_target && variable.attack_time >= 0.0"
+						field "animations": animation dict "attack"
+						field "transitions": transition list transition "default": "!variable.has_target || variable.attack_time < 0.0"
+					state "default": field "transitions": transition list transition "attack": "variable.has_target && variable.attack_time >= 0.0"
 			animation controller "controller.animation.hoglin.look_at_target":
 				field "initial_state": "default"
-				field "states": state "default": field "animations": animation dict: "look_at_target"
+				field "states": state "default": field "animations": animation dict "look_at_target"
 			animation controller "controller.animation.hoglin.walk":
 				field "initial_state": "walking"
-				field "states": state "walking": field "animations": animation dict: "walk"
+				field "states": state "walking": field "animations": animation dict "walk"
 Added file "piglin.animation_controllers.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
@@ -27,35 +27,35 @@ Added file "piglin.animation_controllers.json":
 				field "states":
 					state "default":
 						field "transitions":
-							transition list: transition "ranged_hold": "query.variant == 0 && variable.attack_state == 1"
-							transition list: transition "ranged_charge": "query.variant == 0 && variable.attack_state == 2"
-							transition list: transition "melee_attack": "variable.has_target && query.variant == 1 && variable.attack_time >= 0.0"
+							transition list transition "ranged_hold": "query.variant == 0 && variable.attack_state == 1"
+							transition list transition "ranged_charge": "query.variant == 0 && variable.attack_state == 2"
+							transition list transition "melee_attack": "variable.has_target && query.variant == 1 && variable.attack_time >= 0.0"
 					state "melee_attack":
-						field "animations": animation dict: "melee_attack"
-						field "transitions": transition list: transition "default": "!variable.has_target || variable.attack_time < 0.0"
+						field "animations": animation dict "melee_attack"
+						field "transitions": transition list transition "default": "!variable.has_target || variable.attack_time < 0.0"
 					state "ranged_charge":
-						field "animations": animation dict: "crossbow_charge"
+						field "animations": animation dict "crossbow_charge"
 						field "transitions":
-							transition list: transition "default": "variable.attack_state == 0"
-							transition list: transition "ranged_hold": "variable.attack_state == 1"
+							transition list transition "default": "variable.attack_state == 0"
+							transition list transition "ranged_hold": "variable.attack_state == 1"
 					state "ranged_hold":
-						field "animations": animation dict: "crossbow_hold"
+						field "animations": animation dict "crossbow_hold"
 						field "transitions":
-							transition list: transition "default": "variable.attack_state == 0"
-							transition list: transition "ranged_charge": "variable.attack_state == 2"
+							transition list transition "default": "variable.attack_state == 0"
+							transition list transition "ranged_charge": "variable.attack_state == 2"
 			animation controller "controller.animation.piglin.celebrate":
 				field "initial_state": "default"
 				field "states":
 					state "celebrating":
-						field "animations": animation dict: "celebrate_hunt"
-						field "transitions": transition list: transition "default": "query.is_celebrating == 0"
+						field "animations": animation dict "celebrate_hunt"
+						field "transitions": transition list transition "default": "query.is_celebrating == 0"
 					state "celebrating_special":
-						field "animations": animation dict: "celebrate_hunt_special"
-						field "transitions": transition list: transition "default": "query.is_celebrating_special == 0"
+						field "animations": animation dict "celebrate_hunt_special"
+						field "transitions": transition list transition "default": "query.is_celebrating_special == 0"
 					state "default":
 						field "transitions":
-							transition list: transition "celebrating": "query.is_celebrating == 1"
-							transition list: transition "celebrating_special": "query.is_celebrating_special == 1"
+							transition list transition "celebrating": "query.is_celebrating == 1"
+							transition list transition "celebrating_special": "query.is_celebrating_special == 1"
 			animation controller "controller.animation.piglin.move":
 				field "initial_state": "default"
-				field "states": state "default": field "animations": animation dict: "move"
+				field "states": state "default": field "animations": animation dict "move"

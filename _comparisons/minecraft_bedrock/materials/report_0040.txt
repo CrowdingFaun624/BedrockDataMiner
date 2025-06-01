@@ -3,7 +3,7 @@ Difference of "materials" between "1.1.7" and "1.2.0.2" (beta of "1.2.0").
 Changed material "entity.material":
 	Changed resource pack "core":
 		Changed field "materials":
-			Total material: 129 (+9, -14)
+			Total material: 129 (+11, -16)
 			Removed material "armor_chain_1:entity_alphatest_glint":
 				field "textures":
 					texture:
@@ -124,21 +124,21 @@ Changed material "entity.material":
 						field "textureIndex": 1
 						field "textureLocation": "InUserPackage"
 						field "textureName": "textures/misc/enchanted_item_glint"
-			Added empty material "armor_stand:entity_alphatest".
+			Added material "armor_stand:entity_alphatest": empty.
 			Added material "banner":
 				field "defines":
-					definition: "ENABLE_FOG"
-					definition: "ENABLE_LIGHT"
+					definition "ENABLE_FOG"
+					definition "ENABLE_LIGHT"
 				field "vertexShader": "shaders/banner.vertex"
 				field "vrGeometryShader": "shaders/banner.geometry"
 				field "fragmentShader": "shaders/banner.fragment"
 				field "depthFunc": "LessEqual"
-				field "states": statement: "Blending"
+				field "states": statement "Blending"
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 				field "msaaSupport": "Both"
 				field "samplerStates":
 					sampler state:
@@ -146,39 +146,54 @@ Changed material "entity.material":
 						field "textureFilter": "Point"
 			Added material "banner_pole:banner":
 				field "defines":
-					definition: "ENABLE_FOG"
-					definition: "ENABLE_LIGHT"
-					definition: "DISABLE_TINTING"
+					definition "DISABLE_TINTING"
+					definition "ENABLE_FOG"
+					definition "ENABLE_LIGHT"
 				field "states": empty
 			Changed material "beacon_beam:entity_nocull":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Changed material "beacon_beam_transparent:entity":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Changed material "entity:entity_static":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
-			Moved material "entity_alphablend:entity_nocull" to "entity_alphablend:entity".
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
+			Added material "entity_alphablend:entity":
+				field "states": statement "Blending"
+				field "vertexFields":
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
+				field "msaaSupport": "Both"
+			Removed material "entity_alphablend:entity_nocull":
+				field "states": statement "Blending"
+				field "vertexFields":
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
+				field "msaaSupport": "Both"
 			Added material "entity_alphablend_nocolor:entity_alphablend":
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Changed material "entity_alphatest:entity_nocull":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
-			Removed material "entity_alphatest_change_color_glint:entity_alphatest_glint" of field "defines": definition: "USE_COLOR_MASK".
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
+			Removed material "entity_alphatest_change_color_glint:entity_alphatest_glint": field "defines": definition "USE_COLOR_MASK".
 			Changed material "entity_alphatest_change_color_glint:entity_change_color":
 				Changed field "textures":
 					Total texture: 1 (+0, -1)
@@ -195,21 +210,29 @@ Changed material "entity.material":
 						field "textureName": "atlas.terrain"
 			Changed material "entity_beam:entity_nocull":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
-			Moved material "entity_flat_color" to "entity_flat_color_line".
-			Changed material "entity_flat_color_line":
-				Added field "defines" of definition: "LINE_STRIP".
-				Added field "primitiveMode" of "Line".
-				Added field "vertexFields" of vertex field: field "field": "Position".
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
+			Removed material "entity_flat_color":
+				field "vertexShader": "shaders/position.vertex"
+				field "vrGeometryShader": "shaders/position.geometry"
+				field "fragmentShader": "shaders/current_color.fragment"
+				field "msaaSupport": "Both"
+			Added material "entity_flat_color_line":
+				field "vertexShader": "shaders/position.vertex"
+				field "vrGeometryShader": "shaders/position.geometry"
+				field "fragmentShader": "shaders/current_color.fragment"
+				field "msaaSupport": "Both"
+				field "defines": definition "LINE_STRIP"
+				field "primitiveMode": "Line"
+				field "vertexFields": vertex field field "field": "Position"
 			Removed material "entity_flat_color_line:entity_flat_color":
-				field "defines": definition: "LINE_STRIP"
+				field "defines": definition "LINE_STRIP"
 				field "primitiveMode": "Line"
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
 			Changed material "entity_glint:entity":
 				Changed field "textures":
 					Total texture: 1 (+0, -1)
@@ -224,134 +247,134 @@ Changed material "entity.material":
 						field "textureFilter": "Point"
 			Changed material "item_in_hand_entity_alphatest:entity_alphatest":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Added material "item_in_hand_entity_alphatest_color:item_in_hand_entity_alphatest":
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Changed material "item_in_hand_glint:item_in_hand":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
-				Removed field "msaaSupport" of "MSAA".
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
+				Removed field "msaaSupport": "MSAA".
 			Added material "map:entity_alphatest":
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Changed material "map_marker":
 				Changed field "defines":
 					Total definition: 2 (+1, -0)
 					Added definition "TINTED".
-				Changed field "vrGeometryShader" from "shaders/color_uv.geometry" to "shaders/entity.geometry".
 				Changed field "vertexShader" from "shaders/color_uv.vertex" to "shaders/entity.vertex".
+				Changed field "vrGeometryShader" from "shaders/color_uv.geometry" to "shaders/entity.geometry".
 				Changed field "fragmentShader" from "shaders/color_texture.fragment" to "shaders/entity.fragment".
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
-				Added field "msaaSupport" of "Both".
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
+				Added field "msaaSupport": "Both".
 				Added field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Point"
 			Changed material "moving_block":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV1"
-					vertex field: field "field": "UV0"
-				Added field "msaaSupport" of "Both".
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV1"
+					vertex field field "field": "UV0"
+				Added field "msaaSupport": "Both".
 			Added material "opaque_block_color:opaque_block":
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Added material "opaque_block_color_uv2:opaque_block":
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV1"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
-			Added empty material "parrot:entity_alphatest".
+					vertex field field "field": "Position"
+					vertex field field "field": "UV1"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
+			Added material "parrot:entity_alphatest": empty.
 Changed material "hologram.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Changed material "holo_coord_frame":
-				Added field "msaaSupport" of "MSAA".
+				Added field "msaaSupport": "MSAA".
 			Changed material "holo_hand":
-				Added field "msaaSupport" of "MSAA".
+				Added field "msaaSupport": "MSAA".
 			Changed material "holo_hand_pointer":
-				Added field "msaaSupport" of "MSAA".
+				Added field "msaaSupport": "MSAA".
 			Changed material "holo_hud_quad":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
-				Added field "msaaSupport" of "Both".
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
+				Added field "msaaSupport": "Both".
 			Changed material "hologram":
 				Added field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Point"
 			Changed material "hologram_hit_effect":
-				Added field "vertexFields" of vertex field: field "field": "Position".
-				Added field "msaaSupport" of "MSAA".
+				Added field "vertexFields": vertex field field "field": "Position".
+				Added field "msaaSupport": "MSAA".
 			Changed material "hololens_LSRPlane":
 				Added field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Point"
-				Added field "vertexFields" of vertex field: field "field": "Position".
+				Added field "vertexFields": vertex field field "field": "Position".
 			Changed material "hololens_LSRPlaneTextured":
 				Added field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Point"
 			Changed material "hololens_UICursor":
-				Added field "msaaSupport" of "Both".
+				Added field "msaaSupport": "Both".
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 			Changed material "hololens_UICursor_ingame_mainpart":
-				Added field "vertexFields" of vertex field: field "field": "Position".
-				Added field "msaaSupport" of "Both".
+				Added field "vertexFields": vertex field field "field": "Position".
+				Added field "msaaSupport": "Both".
 			Changed material "hololens_UICursor_ingame_pseudoshadow":
-				Added field "vertexFields" of vertex field: field "field": "Position".
-				Added field "msaaSupport" of "Both".
+				Added field "vertexFields": vertex field field "field": "Position".
+				Added field "msaaSupport": "Both".
 			Changed material "holoscreen_level_quad":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
-				Added field "msaaSupport" of "Both".
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
+				Added field "msaaSupport": "Both".
 			Changed material "holoscreen_monoscopic_quad":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
-				Added field "msaaSupport" of "Both".
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
+				Added field "msaaSupport": "Both".
 			Changed material "living_room":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
-				Added field "msaaSupport" of "MSAA".
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
+				Added field "msaaSupport": "MSAA".
 			Changed material "reality_frame_cutout":
-				Added field "vertexFields" of vertex field: field "field": "Position".
-				Added field "msaaSupport" of "Both".
+				Added field "vertexFields": vertex field field "field": "Position".
+				Added field "msaaSupport": "Both".
 			Changed material "reality_frame_skyfill":
-				Added field "vertexFields" of vertex field: field "field": "Position".
-				Added field "msaaSupport" of "Both".
+				Added field "vertexFields": vertex field field "field": "Position".
+				Added field "msaaSupport": "Both".
 			Changed material "rift_mirror_texture":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 Changed material "particles.material":
 	Changed resource pack "core":
 		Changed field "materials":
@@ -362,7 +385,7 @@ Changed material "particles.material":
 						field "samplerIndex": 0
 						field "textureFilter": "Point"
 			Added material "particles_effects:particles_alpha":
-				field "defines": definition: "EFFECTS_OFFSET"
+				field "defines": definition "EFFECTS_OFFSET"
 				field "msaaSupport": "Both"
 Changed material "portal.material":
 	Changed resource pack "core":
@@ -375,11 +398,11 @@ Changed material "portal.material":
 						field "textureLocation": "Dynamic"
 						field "textureName": "SeasonFoliage"
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV1"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
-				Added field "msaaSupport" of "MSAA".
+					vertex field field "field": "Position"
+					vertex field field "field": "UV1"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
+				Added field "msaaSupport": "MSAA".
 				Added field "textures":
 					texture:
 						field "textureIndex": 0
@@ -398,16 +421,16 @@ Changed material "shadows.material":
 		Changed field "materials":
 			Changed material "water_hole":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
-				Added field "msaaSupport" of "MSAA".
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
+				Added field "msaaSupport": "MSAA".
 Changed material "sky.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Total material: 8 (+1, -0)
 			Added material "cubemap":
-				field "states": statement: "Blending"
+				field "states": statement "Blending"
 				field "blendSrc": "SourceAlpha"
 				field "blendDst": "OneMinusSrcAlpha"
 				field "vertexShader": "shaders/uv.vertex"
@@ -418,8 +441,8 @@ Changed material "sky.material":
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 				field "msaaSupport": "MSAA"
 			Changed material "end_sky":
 				Changed field "vertexFields":
@@ -439,7 +462,7 @@ Changed material "terrain.material":
 	Changed resource pack "core":
 		Changed field "materials":
 			Total material: 28 (+1, -0)
-			Added material "terrain_blend_no_culling:terrain_blend" of field "states": statement: "DisableCulling".
+			Added material "terrain_blend_no_culling:terrain_blend": field "states": statement "DisableCulling".
 			Changed material "terrain_water_below_stencil":
 				Added field "samplerStates":
 					sampler state:
@@ -448,7 +471,7 @@ Changed material "terrain.material":
 					sampler state:
 						field "samplerIndex": 1
 						field "textureFilter": "Bilinear"
-				Added field "msaaSupport" of "MSAA".
+				Added field "msaaSupport": "MSAA".
 				Added field "textures":
 					texture:
 						field "textureIndex": 0
@@ -474,21 +497,21 @@ Changed material "ui.material":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Point"
-			Added material "debug_array_texture:debug_texture" of field "defines": definition: "ARRAY_TEXTURE_0".
+			Added material "debug_array_texture:debug_texture": field "defines": definition "ARRAY_TEXTURE_0".
 			Changed material "debug_texture:ui_base":
-				Removed field "defines" of definition: "NO_ALPHA".
+				Removed field "defines": definition "NO_ALPHA".
 			Added material "ui_banner:ui_item":
 				field "vertexShader": "shaders/banner.vertex"
 				field "vrGeometryShader": "shaders/banner.geometry"
 				field "fragmentShader": "shaders/banner.fragment"
 				field "depthFunc": "LessEqual"
-				field "states": statement: "Blending"
-				field "defines": definition: "ENABLE_LIGHT"
+				field "states": statement "Blending"
+				field "defines": definition "ENABLE_LIGHT"
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 				field "msaaSupport": "Both"
 				field "samplerStates":
 					sampler state:
@@ -496,17 +519,17 @@ Changed material "ui.material":
 						field "textureFilter": "Point"
 			Added material "ui_banner_pole:ui_banner":
 				field "defines":
-					definition: "DISABLE_TINTING"
-					definition: "ENABLE_LIGHT"
+					definition "DISABLE_TINTING"
+					definition "ENABLE_LIGHT"
 				field "states": empty
 			Changed material "ui_base":
 				Changed field "vertexFields":
 					Total vertex field: 3 (+1, -0)
 					Added vertex field field "field": "Color".
-				Added field "vertexShader" of "shaders/color_uv.vertex".
-				Added field "vrGeometryShader" of "shaders/color_uv.geometry".
-				Added field "fragmentShader" of "shaders/color_texture.fragment".
-				Added field "msaaSupport" of "Both".
+				Added field "vertexShader": "shaders/color_uv.vertex".
+				Added field "vrGeometryShader": "shaders/color_uv.geometry".
+				Added field "fragmentShader": "shaders/color_texture.fragment".
+				Added field "msaaSupport": "Both".
 				Added field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
@@ -516,59 +539,59 @@ Changed material "ui.material":
 						field "textureFilter": "Point"
 			Changed material "ui_crosshair:ui_invert_overlay":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 			Changed material "ui_cubemap:ui_base":
 				Changed field "vertexShader" from "shaders/uv.vertex" to "shaders/uv_time_rotate.vertex".
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 			Changed material "ui_grayscale:ui_base":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 			Changed material "ui_inventory_item_glint:ui_item_glint":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
 			Changed material "ui_invert_overlay:ui_base":
-				Added field "vertexFields" of vertex field: field "field": "Position".
+				Added field "vertexFields": vertex field field "field": "Position".
 			Changed material "ui_item:ui_base":
 				Changed field "defines":
 					Total definition: 3 (+1, -0)
 					Added definition "ENABLE_CURRENT_ALPHA_MULTIPLY".
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
 			Changed material "ui_item_glint:ui_base":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
 			Changed material "ui_text:ui_texture_and_color":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
 			Changed material "ui_texture_and_color:ui_base":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
 			Changed material "ui_texture_and_color_tint:ui_texture_and_color":
 				Changed field "defines":
 					Total definition: 2 (+1, -0)
 					Added definition "COLOR_MULTIPLIER".
 			Changed material "ui_textured:ui_base":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 			Changed material "ui_textured_and_glcolor_sprite:ui_textured_and_glcolor":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 Changed material "ui3D.material":
 	Changed resource pack "core":
 		Changed field "materials":
@@ -580,9 +603,9 @@ Changed material "ui3D.material":
 						field "textureFilter": "Point"
 			Changed material "cracks_overlay_tile_entity:cracks_overlay":
 				Added field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Changed material "fullscreen_cube_overlay":
 				Added field "samplerStates":
 					sampler state:
@@ -595,16 +618,16 @@ Changed material "ui3D.material":
 						field "textureFilter": "Point"
 			Added material "overlay_quad":
 				field "states":
-					statement: "DisableCulling"
-					statement: "DisableDepthWrite"
-					statement: "Blending"
+					statement "Blending"
+					statement "DisableCulling"
+					statement "DisableDepthWrite"
 				field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Bilinear"
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV0"
 				field "blendSrc": "SourceAlpha"
 				field "blendDst": "OneMinusSrcAlpha"
 				field "depthFunc": "Always"
@@ -616,19 +639,19 @@ Changed material "ui3D.material":
 				field "vertexShader": "shaders/simple.vertex"
 				field "vrGeometryShader": "shaders/color.geometry"
 				field "fragmentShader": "shaders/color.fragment"
-				field "vertexFields": vertex field: field "field": "Position"
+				field "vertexFields": vertex field field "field": "Position"
 				field "msaaSupport": "Both"
 			Added material "plankton:precipitation":
 				field "defines":
-					definition: "COMFORT_MODE"
-					definition: "FLIP_OCCLUSION"
-					definition: "NO_VARIETY"
+					definition "COMFORT_MODE"
+					definition "FLIP_OCCLUSION"
+					definition "NO_VARIETY"
 			Added material "precipitation":
-				field "defines": definition: "COMFORT_MODE"
+				field "defines": definition "COMFORT_MODE"
 				field "states":
-					statement: "DisableCulling"
-					statement: "DisableDepthWrite"
-					statement: "Blending"
+					statement "Blending"
+					statement "DisableCulling"
+					statement "DisableDepthWrite"
 				field "blendSrc": "SourceAlpha"
 				field "blendDst": "OneMinusSrcAlpha"
 				field "depthFunc": "LessEqual"
@@ -636,9 +659,9 @@ Changed material "ui3D.material":
 				field "vrGeometryShader": "shaders/rain_snow.geometry"
 				field "fragmentShader": "shaders/rain_snow.fragment"
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
 				field "msaaSupport": "MSAA"
 				field "samplerStates":
 					sampler state:
@@ -664,11 +687,11 @@ Changed material "ui3D.material":
 						field "textureLocation": "Dynamic"
 						field "textureName": "Brightness"
 			Removed material "rain":
-				field "defines": definition: "COMFORT_MODE"
+				field "defines": definition "COMFORT_MODE"
 				field "states":
-					statement: "DisableCulling"
-					statement: "DisableDepthWrite"
-					statement: "Blending"
+					statement "Blending"
+					statement "DisableCulling"
+					statement "DisableDepthWrite"
 				field "blendSrc": "SourceAlpha"
 				field "blendDst": "OneMinusSrcAlpha"
 				field "depthFunc": "LessEqual"
@@ -676,9 +699,9 @@ Changed material "ui3D.material":
 				field "vrGeometryShader": "shaders/rain_snow.geometry"
 				field "fragmentShader": "shaders/rain_snow.fragment"
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
 				field "msaaSupport": "MSAA"
 				field "textures":
 					texture:
@@ -689,42 +712,42 @@ Changed material "ui3D.material":
 						field "textureIndex": 1
 						field "textureLocation": "InAppPackage"
 						field "textureName": "DYNAMIC_WEATHER"
-			Added empty material "rain:precipitation".
+			Added material "rain:precipitation": empty.
 			Added material "selection_box":
-				field "defines": definition: "LINE_STRIP"
+				field "defines": definition "LINE_STRIP"
 				field "primitiveMode": "Line"
 				field "depthFunc": "LessEqual"
 				field "vertexShader": "shaders/selection_box.vertex"
 				field "vrGeometryShader": "shaders/position.geometry"
 				field "fragmentShader": "shaders/current_color.fragment"
-				field "vertexFields": vertex field: field "field": "Position"
+				field "vertexFields": vertex field field "field": "Position"
 				field "msaaSupport": "Both"
 			Added material "selection_overlay_alpha:selection_overlay_level":
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV1"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV1"
+					vertex field field "field": "UV0"
 			Added material "selection_overlay_block_entity:selection_overlay":
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Normal"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Normal"
+					vertex field field "field": "UV0"
 			Changed material "selection_overlay_opaque:selection_overlay":
 				Removed field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "UV1"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "UV1"
+					vertex field field "field": "UV0"
 			Changed material "sign_text":
 				Added field "samplerStates":
 					sampler state:
 						field "samplerIndex": 0
 						field "textureFilter": "Point"
 			Removed material "snow":
-				field "defines": definition: "COMFORT_MODE"
+				field "defines": definition "COMFORT_MODE"
 				field "states":
-					statement: "DisableCulling"
-					statement: "DisableDepthWrite"
-					statement: "Blending"
+					statement "Blending"
+					statement "DisableCulling"
+					statement "DisableDepthWrite"
 				field "blendSrc": "SourceAlpha"
 				field "blendDst": "OneMinusSrcAlpha"
 				field "depthFunc": "LessEqual"
@@ -732,9 +755,9 @@ Changed material "ui3D.material":
 				field "vrGeometryShader": "shaders/rain_snow.geometry"
 				field "fragmentShader": "shaders/rain_snow.fragment"
 				field "vertexFields":
-					vertex field: field "field": "Position"
-					vertex field: field "field": "Color"
-					vertex field: field "field": "UV0"
+					vertex field field "field": "Position"
+					vertex field field "field": "Color"
+					vertex field field "field": "UV0"
 				field "msaaSupport": "MSAA"
 				field "textures":
 					texture:
@@ -746,7 +769,7 @@ Changed material "ui3D.material":
 						field "textureLocation": "InAppPackage"
 						field "textureName": "DYNAMIC_WEATHER"
 			Added material "snow:precipitation":
-				field "defines": definition: "SNOW"
+				field "defines": definition "SNOW"
 				field "textures":
 					texture:
 						field "textureIndex": 0
@@ -761,8 +784,8 @@ Changed material "ui3D.material":
 						field "textureLocation": "Dynamic"
 						field "textureName": "Brightness"
 			Removed material "weather":
-				field "defines": definition: "ALPHA_TEST"
-				field "states": statement: "DisableCulling"
+				field "defines": definition "ALPHA_TEST"
+				field "states": statement "DisableCulling"
 				field "depthFunc": "LessEqual"
 				field "vertexShader": "shaders/weather.vertex"
 				field "vrGeometryShader": "shaders/weather.geometry"

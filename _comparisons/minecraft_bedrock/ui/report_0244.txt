@@ -9,11 +9,11 @@ Changed namespace "cloud_upload":
 				item 1: 200
 Changed namespace "common":
 	Changed element "base_screen":
-		Unchanged field "type": "screen"
+		Unchanged field "type": "screen".
 		Changed field "controls":
 			Changed control:
 				Changed element "variables_button_mappings_and_controls":
-					Unchanged field "type": "input_panel"
+					Unchanged field "type": "input_panel".
 					Changed field "variables":
 						Changed variable:
 							Changed field "$variables":
@@ -37,19 +37,19 @@ Changed namespace "common_store":
 		field "fps": 4
 		field "reversible": false
 	Changed element "progress_loading":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "size":
 			Changed item 0 from "100%" to "100%cm".
 			Changed item 1 from "100%" to "50%".
 		Changed field "controls":
-			Total control: 4 (+4, -2)
+			Total control: 4 (+3, -1)
 			Removed control element "progress_loading_outline@common_store.banner_fill": field "visible": "(not $hide_progress_loading_outline)".
-			Removed control:
-				element "stack_panel":
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "controls":
-						control:
+			Changed control:
+				Changed element "stack_panel":
+					Unchanged field "type": "stack_panel".
+					Changed field "controls":
+						Total control: 3 (+3, -3)
+						Removed control:
 							element "centerer_0":
 								field "type": "panel"
 								field "size": ["100%", "100%c"]
@@ -66,7 +66,7 @@ Changed namespace "common_store":
 											field "font_scale_factor": 1.2
 											field "text": "$store_failure_text"
 											field "alpha": 0
-											field "anims": animation: "@common_store.failure_text_wait_animation"
+											field "anims": animation "@common_store.failure_text_wait_animation"
 											field "bindings":
 												binding:
 													field "binding_name": "$store_failure_text"
@@ -74,12 +74,12 @@ Changed namespace "common_store":
 											field "$variables":
 												variable "$store_failure_text|default": "store.connection.failed.body"
 												variable "$store_failure_text_binding_type|default": "none"
-						control:
+						Removed control:
 							element "centerer_1":
 								field "type": "panel"
 								field "size": ["100%", "100%c + 8px"]
-								field "controls": control: element "progress_loading_spinner@common_store.progress_loading_spinner": field "layer": "($baseLayer + 1)"
-						control:
+								field "controls": control element "progress_loading_spinner@common_store.progress_loading_spinner": field "layer": "($baseLayer + 1)"
+						Removed control:
 							element "centerer_2":
 								field "type": "panel"
 								field "size": ["100%", "100%c"]
@@ -94,30 +94,9 @@ Changed namespace "common_store":
 											field "size": ["100%-4px", "default"]
 											field "text": "#store_failure_code"
 											field "alpha": 0
-											field "anims": animation: "@common_store.failure_text_wait_animation"
-											field "bindings": binding: field "binding_name": "#store_failure_code"
-			Added control:
-				element "centerer":
-					field "type": "panel"
-					field "size": ["100%sm", "100%c + 8px"]
-					field "layer": 0
-					field "controls": control: element "progress_loading_spinner@common_store.progress_loading_spinner": empty
-			Added control:
-				element "progress_loading_outline@common_store.banner_fill":
-					field "visible": "(not $hide_failure_text) or (not $hide_progress_loading_outline)"
-					field "size": ["100%sm + 8px", "100%"]
-					field "layer": 1
-					field "alpha": 0
-					field "anims": animation: "@common_store.failure_text_wait_animation"
-			Added control:
-				element "stack_panel":
-					field "ignored": "$hide_failure_text"
-					field "type": "stack_panel"
-					field "orientation": "vertical"
-					field "size": ["100%cm", "100% - 8px"]
-					field "layer": 2
-					field "controls":
-						control:
+											field "anims": animation "@common_store.failure_text_wait_animation"
+											field "bindings": binding field "binding_name": "#store_failure_code"
+						Added control:
 							element "top_panel":
 								field "type": "stack_panel"
 								field "orientation": "horizontal"
@@ -135,7 +114,7 @@ Changed namespace "common_store":
 														field "offset": [0, 2]
 														field "texture": "textures/ui/ErrorGlyph"
 														field "alpha": 0
-														field "anims": animation: "@common_store.failure_text_wait_animation"
+														field "anims": animation "@common_store.failure_text_wait_animation"
 									control:
 										element "padding":
 											field "type": "panel"
@@ -151,21 +130,21 @@ Changed namespace "common_store":
 											field "font_scale_factor": 1.2
 											field "text": "#store_failure_text"
 											field "alpha": 0
-											field "anims": animation: "@common_store.failure_text_wait_animation"
+											field "anims": animation "@common_store.failure_text_wait_animation"
 											field "bindings":
 												binding:
 													field "binding_name": "#store_failure_text"
 													field "binding_type": "global"
-						control:
+						Added control:
 							element "padding":
 								field "type": "panel"
 								field "size": ["100%sm", "fill"]
-						control:
+						Added control:
 							element "image":
 								field "type": "image"
 								field "size": [194, 80]
 								field "alpha": 0
-								field "anims": animation: "@common_store.failure_text_wait_animation"
+								field "anims": animation "@common_store.failure_text_wait_animation"
 								field "uv_size": [194, 80]
 								field "uv": "@common_store.error_image_animation"
 								field "disable_anim_fast_forward": true
@@ -173,6 +152,22 @@ Changed namespace "common_store":
 									binding:
 										field "binding_name": "#store_failure_image"
 										field "binding_name_override": "#texture"
+					Added field "ignored": "$hide_failure_text".
+					Added field "size": ["100%cm", "100% - 8px"].
+					Added field "layer": 2.
+			Added control:
+				element "centerer":
+					field "type": "panel"
+					field "size": ["100%sm", "100%c + 8px"]
+					field "layer": 0
+					field "controls": control element "progress_loading_spinner@common_store.progress_loading_spinner": empty
+			Added control:
+				element "progress_loading_outline@common_store.banner_fill":
+					field "visible": "(not $hide_failure_text) or (not $hide_progress_loading_outline)"
+					field "size": ["100%sm + 8px", "100%"]
+					field "layer": 1
+					field "alpha": 0
+					field "anims": animation "@common_store.failure_text_wait_animation"
 			Added control:
 				element "store_failure_code":
 					field "ignored": "$hide_failure_text"
@@ -186,31 +181,31 @@ Changed namespace "common_store":
 					field "offset": [1, 2]
 					field "text": "#store_failure_code"
 					field "alpha": 0
-					field "anims": animation: "@common_store.failure_text_wait_animation"
-					field "bindings": binding: field "binding_name": "#store_failure_code"
+					field "anims": animation "@common_store.failure_text_wait_animation"
+					field "bindings": binding field "binding_name": "#store_failure_code"
 Changed namespace "general_section":
 	Changed element "accessibility_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
+			Changed control:
+				Changed element "option_toggle0@settings_common.option_toggle":
+					Changed field "ignored" from "(not $text_to_speech_supported or not $platform_tts_exists)" to "(not $supports_flite_tts or not $platform_tts_exists)".
+			Changed control:
+				Changed element "option_toggle1@settings_common.option_toggle":
+					Changed field "ignored" from "(not $text_to_speech_supported)" to "(not $supports_flite_tts)".
 			Changed control:
 				Changed element "option_toggle2@settings_common.option_toggle":
 					Changed field "ignored" from "(not $text_to_speech_supported)" to "(not $supports_flite_tts)".
 			Changed control:
 				Changed element "option_toggle3@settings_common.option_toggle":
 					Changed field "ignored" from "(not $text_to_speech_supported)" to "(not $supports_flite_tts)".
-			Changed control:
-				Changed element "option_toggle1@settings_common.option_toggle":
-					Changed field "ignored" from "(not $text_to_speech_supported)" to "(not $supports_flite_tts)".
-			Changed control:
-				Changed element "option_toggle0@settings_common.option_toggle":
-					Changed field "ignored" from "(not $text_to_speech_supported or not $platform_tts_exists)" to "(not $supports_flite_tts or not $platform_tts_exists)".
 Changed namespace "hud":
 	Changed element "item_name_text_root":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "item_text_aligner":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 4 (+1, -0)
 						Added control:
@@ -226,9 +221,9 @@ Changed namespace "progress":
 		Changed field "$variables":
 			Total variable: 3 (+1, -0)
 			Changed variable "$button_text" from "gui.cancel" to "#cancel_button_text".
-			Added variable "$button_text_binding_type" of "global".
+			Added variable "$button_text_binding_type": "global".
 Changed namespace "world_recovery":
 	Changed element "description_label":
-		Unchanged field "type": "label"
+		Unchanged field "type": "label".
 		Changed field "text" from "world_recovery.description" to "#recovery_text".
-		Added field "bindings" of binding: field "binding_name": "#recovery_text".
+		Added field "bindings": binding field "binding_name": "#recovery_text".

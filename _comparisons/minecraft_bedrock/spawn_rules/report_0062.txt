@@ -13,14 +13,14 @@ Changed spawn rules "fox.json":
 			Changed field "conditions":
 				Changed condition set:
 					Changed field "minecraft:biome_filter":
-						Unchanged filter property "test": "has_biome_tag"
-						Unchanged filter property "value": "taiga"
-						Removed filter property "operator" of "==".
+						Unchanged filter property "test": "has_biome_tag".
+						Removed filter property "operator": "==".
+						Unchanged filter property "value": "taiga".
 				Changed condition set:
 					Changed field "minecraft:biome_filter":
-						Unchanged filter property "test": "has_biome_tag"
-						Unchanged filter property "value": "grove"
-						Removed filter property "operator" of "==".
+						Unchanged filter property "test": "has_biome_tag".
+						Removed filter property "operator": "==".
+						Unchanged filter property "value": "grove".
 					Changed field "minecraft:weight":
 						Changed field "default" from 8 to 4.
 Changed spawn rules "rabbit.json":
@@ -32,52 +32,50 @@ Changed spawn rules "rabbit.json":
 					Changed field "minecraft:biome_filter":
 						Changed filter property "any_of":
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "cherry_grove"
-								Removed filter property "operator" of "==".
+								Changed filter property "all_of":
+									Changed filter:
+										Unchanged filter property "test": "has_biome_tag".
+										Removed filter property "operator": "==".
+										Unchanged filter property "value": "taiga".
+									Changed filter:
+										Unchanged filter property "test": "has_biome_tag".
+										Changed filter property "operator" from "!=" to "not".
+										Unchanged filter property "value": "mega".
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "meadow"
-								Removed filter property "operator" of "==".
+								Unchanged filter property "test": "is_snow_covered".
+								Removed filter property "operator": "==".
+								Removed filter property "value": true.
+							Changed filter:
+								Unchanged filter property "test": "has_biome_tag".
+								Removed filter property "operator": "==".
+								Unchanged filter property "value": "desert".
 				Changed condition set:
 					Changed field "minecraft:biome_filter":
 						Changed filter property "any_of":
 							Total filter: 2 (+0, -1)
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "snowy_slopes"
-								Removed filter property "operator" of "==".
-							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "flower_forest"
-								Removed filter property "operator" of "==".
+								Unchanged filter property "test": "has_biome_tag".
+								Removed filter property "operator": "==".
+								Unchanged filter property "value": "flower_forest".
 							Removed filter:
 								filter property "test": "has_biome_tag"
 								filter property "operator": "=="
 								filter property "value": "grove"
+							Changed filter:
+								Unchanged filter property "test": "has_biome_tag".
+								Removed filter property "operator": "==".
+								Unchanged filter property "value": "snowy_slopes".
 				Changed condition set:
 					Changed field "minecraft:biome_filter":
 						Changed filter property "any_of":
-							Total filter: 3 (+1, -1)
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "desert"
-								Removed filter property "operator" of "==".
+								Unchanged filter property "test": "has_biome_tag".
+								Removed filter property "operator": "==".
+								Unchanged filter property "value": "meadow".
 							Changed filter:
-								Changed filter property "all_of":
-									Changed filter:
-										Unchanged filter property "test": "has_biome_tag"
-										Unchanged filter property "value": "mega"
-										Changed filter property "operator" from "!=" to "not".
-									Changed filter:
-										Unchanged filter property "test": "has_biome_tag"
-										Unchanged filter property "value": "taiga"
-										Removed filter property "operator" of "==".
-							Removed filter:
-								filter property "test": "is_snow_covered"
-								filter property "operator": "=="
-								filter property "value": true
-							Added filter filter property "test": "is_snow_covered".
+								Unchanged filter property "test": "has_biome_tag".
+								Removed filter property "operator": "==".
+								Unchanged filter property "value": "cherry_grove".
 				Added condition set:
 					field "minecraft:biome_filter":
 						filter property "test": "has_biome_tag"
@@ -91,10 +89,10 @@ Changed spawn rules "rabbit.json":
 							field "min_size": 2
 							field "max_size": 3
 					field "minecraft:spawns_on_block_filter":
-						block: "minecraft:grass"
-						block: "minecraft:snow"
-						block: "minecraft:sand"
-						block: "minecraft:snow_layer"
+						block "minecraft:grass"
+						block "minecraft:snow"
+						block "minecraft:sand"
+						block "minecraft:snow_layer"
 					field "minecraft:spawns_on_surface": empty
 					field "minecraft:weight": field "default": 8
 Changed spawn rules "wolf.json":
@@ -104,131 +102,79 @@ Changed spawn rules "wolf.json":
 				Total condition set: 9 (+6, -0)
 				Changed condition set:
 					Changed field "minecraft:biome_filter":
+						Removed filter property "test": "has_biome_tag".
+						Removed filter property "operator": "==".
+						Removed filter property "value": "taiga".
+						Added filter property "all_of":
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "taiga"
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "operator": "not"
+								filter property "value": "cold"
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "operator": "not"
+								filter property "value": "mega"
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "operator": "not"
+								filter property "value": "mutated"
+					Changed field "minecraft:spawns_on_block_filter" to "minecraft:grass_block" from:
+						block "minecraft:grass"
+						block "minecraft:podzol"
+						block "minecraft:dirt"
+				Changed condition set:
+					Changed field "minecraft:biome_filter":
+						Removed filter property "test": "has_biome_tag".
+						Removed filter property "operator": "==".
+						Removed filter property "value": "grove".
+						Added filter property "all_of":
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "taiga"
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "cold"
+					Changed field "minecraft:herd":
+						Changed event:
+							Changed field "min_size" from 2 to 4.
+					Changed field "minecraft:spawns_on_block_filter":
+						Total block: 3 (+1, -3)
+						Removed block "minecraft:grass".
+						Removed block "minecraft:podzol".
+						Removed block "minecraft:dirt".
+						Added block "minecraft:grass_block".
+				Changed condition set:
+					Changed field "minecraft:biome_filter":
 						Changed filter property "all_of":
 							Total filter: 6 (+1, -0)
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "mountain"
-								Changed filter property "operator" from "!=" to "not".
+								Unchanged filter property "test": "has_biome_tag".
+								Removed filter property "operator": "==".
+								Unchanged filter property "value": "forest".
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "roofed"
+								Unchanged filter property "test": "has_biome_tag".
 								Changed filter property "operator" from "!=" to "not".
+								Unchanged filter property "value": "mutated".
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "birch"
+								Unchanged filter property "test": "has_biome_tag".
 								Changed filter property "operator" from "!=" to "not".
+								Unchanged filter property "value": "birch".
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "mutated"
+								Unchanged filter property "test": "has_biome_tag".
 								Changed filter property "operator" from "!=" to "not".
+								Unchanged filter property "value": "roofed".
 							Changed filter:
-								Unchanged filter property "test": "has_biome_tag"
-								Unchanged filter property "value": "forest"
-								Removed filter property "operator" of "==".
+								Unchanged filter property "test": "has_biome_tag".
+								Changed filter property "operator" from "!=" to "not".
+								Unchanged filter property "value": "mountain".
 							Added filter:
 								filter property "test": "has_biome_tag"
 								filter property "operator": "not"
 								filter property "value": "taiga"
 					Changed field "minecraft:spawns_on_block_filter" from "minecraft:grass" to "minecraft:grass_block".
-				Changed condition set:
-					Changed field "minecraft:biome_filter":
-						Removed filter property "test" of "has_biome_tag".
-						Removed filter property "operator" of "==".
-						Removed filter property "value" of "grove".
-						Added filter property "all_of":
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "edge"
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "jungle"
-					Changed field "minecraft:spawns_on_block_filter" to "minecraft:grass_block" from:
-						block: "minecraft:grass"
-						block: "minecraft:podzol"
-						block: "minecraft:dirt"
-						block: "minecraft:snow"
-						block: "minecraft:snow_layer"
-				Changed condition set:
-					Changed field "minecraft:biome_filter":
-						Removed filter property "test" of "has_biome_tag".
-						Removed filter property "operator" of "==".
-						Removed filter property "value" of "taiga".
-						Added filter property "all_of":
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "mega"
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "taiga"
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "forest"
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "mutated"
-					Changed field "minecraft:spawns_on_block_filter":
-						Total block: 3 (+3, -3)
-						Removed block "minecraft:grass".
-						Removed block "minecraft:podzol".
-						Removed block "minecraft:dirt".
-						Added block field "name": "minecraft:podzol".
-						Added block field "name": "minecraft:grass_block".
-						Added block:
-							field "name": "minecraft:dirt"
-							field "states": field "dirt_type": "coarse"
-				Added condition set:
-					field "minecraft:biome_filter":
-						filter property "all_of":
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "taiga"
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "operator": "not"
-								filter property "value": "cold"
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "operator": "not"
-								filter property "value": "mega"
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "operator": "not"
-								filter property "value": "mutated"
-					field "minecraft:brightness_filter":
-						field "min": 7
-						field "max": 15
-						field "adjust_for_weather": false
-					field "minecraft:herd":
-						event:
-							field "min_size": 4
-							field "max_size": 4
-					field "minecraft:spawns_on_block_filter": "minecraft:grass_block"
-					field "minecraft:spawns_on_surface": empty
-					field "minecraft:weight": field "default": 8
-				Added condition set:
-					field "minecraft:biome_filter":
-						filter property "all_of":
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "taiga"
-							filter:
-								filter property "test": "has_biome_tag"
-								filter property "value": "cold"
-					field "minecraft:brightness_filter":
-						field "min": 7
-						field "max": 15
-						field "adjust_for_weather": false
-					field "minecraft:herd":
-						event:
-							field "min_size": 4
-							field "max_size": 4
-					field "minecraft:spawns_on_block_filter":
-						block: "minecraft:grass_block"
-						block: "minecraft:snow"
-						block: "minecraft:snow_layer"
-					field "minecraft:spawns_on_surface": empty
-					field "minecraft:weight": field "default": 8
 				Added condition set:
 					field "minecraft:biome_filter":
 						filter property "all_of":
@@ -254,11 +200,62 @@ Changed spawn rules "wolf.json":
 							field "min_size": 2
 							field "max_size": 4
 					field "minecraft:spawns_on_block_filter":
-						block: field "name": "minecraft:podzol"
-						block: field "name": "minecraft:grass_block"
+						block field "name": "minecraft:podzol"
+						block field "name": "minecraft:grass_block"
 						block:
 							field "name": "minecraft:dirt"
 							field "states": field "dirt_type": "coarse"
+					field "minecraft:spawns_on_surface": empty
+					field "minecraft:weight": field "default": 8
+				Added condition set:
+					field "minecraft:biome_filter":
+						filter property "all_of":
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "mega"
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "taiga"
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "forest"
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "mutated"
+					field "minecraft:brightness_filter":
+						field "min": 7
+						field "max": 15
+						field "adjust_for_weather": false
+					field "minecraft:herd":
+						event:
+							field "min_size": 4
+							field "max_size": 4
+					field "minecraft:spawns_on_block_filter":
+						block field "name": "minecraft:podzol"
+						block field "name": "minecraft:grass_block"
+						block:
+							field "name": "minecraft:dirt"
+							field "states": field "dirt_type": "coarse"
+					field "minecraft:spawns_on_surface": empty
+					field "minecraft:weight": field "default": 8
+				Added condition set:
+					field "minecraft:biome_filter":
+						filter property "all_of":
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "edge"
+							filter:
+								filter property "test": "has_biome_tag"
+								filter property "value": "jungle"
+					field "minecraft:brightness_filter":
+						field "min": 7
+						field "max": 15
+						field "adjust_for_weather": false
+					field "minecraft:herd":
+						event:
+							field "min_size": 2
+							field "max_size": 4
+					field "minecraft:spawns_on_block_filter": "minecraft:grass_block"
 					field "minecraft:spawns_on_surface": empty
 					field "minecraft:weight": field "default": 8
 				Added condition set:
@@ -274,9 +271,9 @@ Changed spawn rules "wolf.json":
 							field "min_size": 1
 							field "max_size": 1
 					field "minecraft:spawns_on_block_filter":
-						block: "minecraft:grass_block"
-						block: "minecraft:snow"
-						block: "minecraft:snow_layer"
+						block "minecraft:grass_block"
+						block "minecraft:snow"
+						block "minecraft:snow_layer"
 					field "minecraft:spawns_on_surface": empty
 					field "minecraft:weight": field "default": 1
 				Added condition set:
@@ -320,7 +317,7 @@ Changed spawn rules "wolf.json":
 							field "min_size": 4
 							field "max_size": 8
 					field "minecraft:spawns_on_block_filter":
-						block: field "name": "minecraft:grass_block"
+						block field "name": "minecraft:grass_block"
 						block:
 							field "name": "minecraft:dirt"
 							field "states": field "dirt_type": "coarse"

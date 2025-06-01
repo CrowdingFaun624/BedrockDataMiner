@@ -1029,143 +1029,143 @@ Changed behavior pack "vanilla_gametest":
 		'''
 	Changed script "GameTestExtensions.js":
 		Total line: 90 (+46, -12)
-		          '''
-		  1   1   import { Direction } from "mojang-minecraft";
-		      2 + import { ItemStack } from "mojang-minecraft";
-		      3 + 
-		      4 + export default class GameTestExtensions {
-		      5 +   constructor(test) {
-		      6 +     this.test = test;
-		      7 +   }
-		      8 + 
-		      9 +   addEntityInBoat(entityType, blockLoc) {
-		     10 +     const boat = this.test.spawn("boat", blockLoc);
-		     11 +     this.test.assert(boat !== undefined, "Failed to spawn boat");
-		     12 +     const rider = this.test.spawn(entityType, blockLoc);
-		     13 +     this.test.assert(rider !== undefined, "Failed to spawn rider");
-		     14 +     const boatRideableComp = boat.getComponent("rideable");
-		     15 +     this.test.assert(boatRideableComp !== undefined, "Boat missing rideable component");
-		     16 +     this.test.assert(boatRideableComp.addRider(rider), "Failed to add rider");
-		     17 +     return rider;
-		     18 +   }
-		     19 + 
-		     20 +   makeAboutToDrown(entity) {
-		     21 +     this.test.assert(entity !== undefined, "Expected entity");
-		     22 +     const healthComp = entity.getComponent("health");
-		     23 +     this.test.assert(healthComp !== undefined, "Entity missing health component");
-		     24 +     const breathableComp = entity.getComponent("breathable");
-		     25 +     this.test.assert(breathableComp !== undefined, "Entity missing breathable component");
-		     26 +     healthComp.setCurrent(1);
-		     27 +     breathableComp.setAirSupply(0);
-		     28 +   }
-		     29 + 
-		     30 +   assertBlockProperty(propertyName, value, blockLocation) {
-		     31 +     this.test.assertBlockState(blockLocation, (block) => {
-		     32 +       return block.permutation.getProperty(propertyName).value == value;
-		     33 +     });
-		     34 +   }
-		     35 + 
-		     36 + giveItem(player, itemType, amount, slot) {
-		     37 +   const inventoryContainer = player.getComponent("inventory").container;
-		     38 +   inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
-		     39 +   player.selectedSlot = slot ?? 0;
-		     40 + }
-		  2     - import {ItemStack} from "mojang-minecraft";
-		  3  41   
-		     42 +   getVineDirection(direction) {
-		  4     - export default class GameTestExtensions {
-		  5     -   constructor(test) {
-		  6     -     this.test = test;
-		     43 +     const rotated = this.test.rotateDirection(direction);
-		  7     -   }
-		  8  44   
-		     45 +     switch (rotated) {
-		     46 +       case Direction.north:
-		  9     -   addEntityInBoat(entityType, blockLoc) {
-		     47 +         return 2;
-		     48 +       case Direction.east:
-		     49 +         return 3;
-		     50 +       case Direction.south:
-		     51 +         return 0;
-		     52 +       case Direction.west:
-		     53 +         return 1;
-		     54 +     }
-		 10     -     const boat = this.test.spawn("boat", blockLoc);
-		 11     -     this.test.assert(boat !== undefined, "Failed to spawn boat");
-		 12     -     const rider = this.test.spawn(entityType, blockLoc);
-		 13     -     this.test.assert(rider !== undefined, "Failed to spawn rider");
-		 14     -     const boatRideableComp = boat.getComponent("rideable");
-		 15     -     this.test.assert(boatRideableComp !== undefined, "Boat missing rideable component");
-		 16     -     this.test.assert(boatRideableComp.addRider(rider), "Failed to add rider");
-		 17     -     return rider;
-		 18  55     }
-		 19  56   
-		     57 +   rotateVolume(volume) {
-		     58 +     switch (this.test.getTestDirection()) {
-		 20     -   makeAboutToDrown(entity) {
-		 21     -     this.test.assert(entity !== undefined, "Expected entity");
-		     59 +       case Direction.east:
-		     60 +         volume.z = -volume.z;
-		     61 +         break;
-		     62 +       case Direction.west:
-		     63 +         volume.x = -volume.x;
-		     64 +         break;
-		     65 +       case Direction.north:
-		     66 +         volume.x = -volume.x;
-		     67 +         volume.z = -volume.z;
-		     68 +         break;
-		     69 +     }
-		     70 +     return volume;
-		 22     -     const healthComp = entity.getComponent("health");
-		 23     -     this.test.assert(healthComp !== undefined, "Entity missing health component");
-		 24     -     const breathableComp = entity.getComponent("breathable");
-		 25     -     this.test.assert(breathableComp !== undefined, "Entity missing breathable component");
-		 26     -     healthComp.setCurrent(1);
-		 27     -     breathableComp.setAirSupply(0);
-		 28     -   }
-		 29     - 
-		 30     -   assertBlockProperty(propertyName, value, blockLocation) {
-		 31     -     this.test.assertBlockState(blockLocation, (block) => {
-		 32     -       return block.permutation.getProperty(propertyName).value == value;
-		 33     -     });
-		 34  71     }
-		 35  72   
-		     73 +   rotateAngle(angle) {
-		 36     - giveItem(player, itemType, amount, slot) {
-		 37     -   const inventoryContainer = player.getComponent("inventory").container;
-		     74 +     switch (this.test.getTestDirection()) {
-		     75 +       case Direction.east:
-		     76 +         angle -= 90;
-		 38     -   inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
-		 39     -   player.selectedSlot = slot ?? 0;
-		 40     - }
-		 41     - 
-		     77 +         break;
-		     78 +       case Direction.west:
-		     79 +         angle -= 270;
-		     80 +         break;
-		 42     -   getVineDirection(direction) {
-		 43     -     const rotated = this.test.rotateDirection(direction);
-		 44     - 
-		 45     -     switch (rotated) {
-		 46  81         case Direction.north:
-		     82 +         angle -= 180;
-		 47     -         return 2;
-		 48     -       case Direction.east:
-		 49     -         return 3;
-		     83 +         break;
-		     84 +     }
-		     85 +     if (angle < -180) {
-		     86 +       angle += 360;
-		 50     -       case Direction.south:
-		 51     -         return 0;
-		 52     -       case Direction.west:
-		 53     -         return 1;
-		 54  87       }
-		     88 +     return angle;
-		 55  89     }
-		 56  90   }
-		          '''
+		        '''
+		 1  1   import { Direction } from "mojang-minecraft";
+		    2 + import { ItemStack } from "mojang-minecraft";
+		    3 + 
+		    4 + export default class GameTestExtensions {
+		    5 +   constructor(test) {
+		    6 +     this.test = test;
+		    7 +   }
+		    8 + 
+		    9 +   addEntityInBoat(entityType, blockLoc) {
+		   10 +     const boat = this.test.spawn("boat", blockLoc);
+		   11 +     this.test.assert(boat !== undefined, "Failed to spawn boat");
+		   12 +     const rider = this.test.spawn(entityType, blockLoc);
+		   13 +     this.test.assert(rider !== undefined, "Failed to spawn rider");
+		   14 +     const boatRideableComp = boat.getComponent("rideable");
+		   15 +     this.test.assert(boatRideableComp !== undefined, "Boat missing rideable component");
+		   16 +     this.test.assert(boatRideableComp.addRider(rider), "Failed to add rider");
+		   17 +     return rider;
+		   18 +   }
+		   19 + 
+		   20 +   makeAboutToDrown(entity) {
+		   21 +     this.test.assert(entity !== undefined, "Expected entity");
+		   22 +     const healthComp = entity.getComponent("health");
+		   23 +     this.test.assert(healthComp !== undefined, "Entity missing health component");
+		   24 +     const breathableComp = entity.getComponent("breathable");
+		   25 +     this.test.assert(breathableComp !== undefined, "Entity missing breathable component");
+		   26 +     healthComp.setCurrent(1);
+		   27 +     breathableComp.setAirSupply(0);
+		   28 +   }
+		   29 + 
+		   30 +   assertBlockProperty(propertyName, value, blockLocation) {
+		   31 +     this.test.assertBlockState(blockLocation, (block) => {
+		   32 +       return block.permutation.getProperty(propertyName).value == value;
+		   33 +     });
+		   34 +   }
+		   35 + 
+		   36 + giveItem(player, itemType, amount, slot) {
+		   37 +   const inventoryContainer = player.getComponent("inventory").container;
+		   38 +   inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
+		   39 +   player.selectedSlot = slot ?? 0;
+		   40 + }
+		 2    - import {ItemStack} from "mojang-minecraft";
+		 3 41   
+		   42 +   getVineDirection(direction) {
+		 4    - export default class GameTestExtensions {
+		 5    -   constructor(test) {
+		 6    -     this.test = test;
+		   43 +     const rotated = this.test.rotateDirection(direction);
+		 7    -   }
+		 8 44   
+		   45 +     switch (rotated) {
+		   46 +       case Direction.north:
+		 9    -   addEntityInBoat(entityType, blockLoc) {
+		   47 +         return 2;
+		   48 +       case Direction.east:
+		   49 +         return 3;
+		   50 +       case Direction.south:
+		   51 +         return 0;
+		   52 +       case Direction.west:
+		   53 +         return 1;
+		   54 +     }
+		10    -     const boat = this.test.spawn("boat", blockLoc);
+		11    -     this.test.assert(boat !== undefined, "Failed to spawn boat");
+		12    -     const rider = this.test.spawn(entityType, blockLoc);
+		13    -     this.test.assert(rider !== undefined, "Failed to spawn rider");
+		14    -     const boatRideableComp = boat.getComponent("rideable");
+		15    -     this.test.assert(boatRideableComp !== undefined, "Boat missing rideable component");
+		16    -     this.test.assert(boatRideableComp.addRider(rider), "Failed to add rider");
+		17    -     return rider;
+		18 55     }
+		19 56   
+		   57 +   rotateVolume(volume) {
+		   58 +     switch (this.test.getTestDirection()) {
+		20    -   makeAboutToDrown(entity) {
+		21    -     this.test.assert(entity !== undefined, "Expected entity");
+		   59 +       case Direction.east:
+		   60 +         volume.z = -volume.z;
+		   61 +         break;
+		   62 +       case Direction.west:
+		   63 +         volume.x = -volume.x;
+		   64 +         break;
+		   65 +       case Direction.north:
+		   66 +         volume.x = -volume.x;
+		   67 +         volume.z = -volume.z;
+		   68 +         break;
+		   69 +     }
+		   70 +     return volume;
+		22    -     const healthComp = entity.getComponent("health");
+		23    -     this.test.assert(healthComp !== undefined, "Entity missing health component");
+		24    -     const breathableComp = entity.getComponent("breathable");
+		25    -     this.test.assert(breathableComp !== undefined, "Entity missing breathable component");
+		26    -     healthComp.setCurrent(1);
+		27    -     breathableComp.setAirSupply(0);
+		28    -   }
+		29    - 
+		30    -   assertBlockProperty(propertyName, value, blockLocation) {
+		31    -     this.test.assertBlockState(blockLocation, (block) => {
+		32    -       return block.permutation.getProperty(propertyName).value == value;
+		33    -     });
+		34 71     }
+		35 72   
+		   73 +   rotateAngle(angle) {
+		36    - giveItem(player, itemType, amount, slot) {
+		37    -   const inventoryContainer = player.getComponent("inventory").container;
+		   74 +     switch (this.test.getTestDirection()) {
+		   75 +       case Direction.east:
+		   76 +         angle -= 90;
+		38    -   inventoryContainer.addItem(new ItemStack(itemType, amount ?? 1));
+		39    -   player.selectedSlot = slot ?? 0;
+		40    - }
+		41    - 
+		   77 +         break;
+		   78 +       case Direction.west:
+		   79 +         angle -= 270;
+		   80 +         break;
+		42    -   getVineDirection(direction) {
+		43    -     const rotated = this.test.rotateDirection(direction);
+		44    - 
+		45    -     switch (rotated) {
+		46 81         case Direction.north:
+		   82 +         angle -= 180;
+		47    -         return 2;
+		48    -       case Direction.east:
+		49    -         return 3;
+		   83 +         break;
+		   84 +     }
+		   85 +     if (angle < -180) {
+		   86 +       angle += 360;
+		50    -       case Direction.south:
+		51    -         return 0;
+		52    -       case Direction.west:
+		53    -         return 1;
+		54 87       }
+		   88 +     return angle;
+		55 89     }
+		56 90   }
+		        '''
 	Changed script "Main.js":
 		Total line: 31 (+1, -0)
 		        '''

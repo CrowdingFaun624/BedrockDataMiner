@@ -23,7 +23,7 @@ Changed entity "llama.json":
 						field "target": "self"
 			Changed field "events":
 				Total event: 12 (+1, -0)
-				Added event "minecraft:defend_wandering_trader" of field "add": field "component_groups": component group: "minecraft:llama_defend_trader".
+				Added event "minecraft:defend_wandering_trader": field "add": field "component_groups": component group "minecraft:llama_defend_trader".
 				Changed event "minecraft:on_calm":
 					Changed field "remove":
 						Changed field "component_groups":
@@ -35,9 +35,9 @@ Changed entity "wandering_trader.json":
 			Changed field "component_groups":
 				Changed component group "minecraft:scared":
 					Changed component "minecraft:angry":
-						Added field "broadcastAnger" of true.
-						Added field "broadcastRange" of 10.
-						Added field "broadcast_targets" of entity: "llama".
+						Added field "broadcastAnger": true.
+						Added field "broadcastRange": 10.
+						Added field "broadcast_targets": entity "llama".
 						Added field "broadcast_filters":
 							filter property "test": "is_leashed_to"
 							filter property "subject": "other"
@@ -46,7 +46,7 @@ Changed entity "wandering_trader.json":
 				Changed component "minecraft:damage_sensor":
 					Changed field "triggers":
 						Changed trigger:
-							Unchanged field "cause": "magic"
+							Unchanged field "cause": "entity_attack".
 							Changed field "on_damage":
 								Removed field "filters":
 									filter property "test": "is_family"
@@ -54,7 +54,7 @@ Changed entity "wandering_trader.json":
 									filter property "operator": "!="
 									filter property "value": "player"
 						Changed trigger:
-							Unchanged field "cause": "projectile"
+							Unchanged field "cause": "projectile".
 							Changed field "on_damage":
 								Removed field "filters":
 									filter property "test": "is_family"
@@ -62,7 +62,7 @@ Changed entity "wandering_trader.json":
 									filter property "operator": "!="
 									filter property "value": "player"
 						Changed trigger:
-							Unchanged field "cause": "entity_attack"
+							Unchanged field "cause": "magic".
 							Changed field "on_damage":
 								Removed field "filters":
 									filter property "test": "is_family"
@@ -72,27 +72,17 @@ Changed entity "wandering_trader.json":
 				Changed component "minecraft:behavior.drink_potion":
 					Changed field "potions":
 						Changed potion:
-							Unchanged field "id": 7
+							Unchanged field "id": 7.
 							Changed field "filters":
 								Changed filter property "all_of":
-									Total filter: 3 (+1, -1)
-									Removed filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "is_avoiding_mobs"
-												filter property "subject": "self"
-												filter property "value": true
-											filter:
+									Changed filter:
+										Changed filter property "any_of":
+											Total filter: 2 (+1, -1)
+											Removed filter:
 												filter property "test": "has_component"
 												filter property "subject": "self"
 												filter property "value": "minecraft:angry"
-									Added filter:
-										filter property "any_of":
-											filter:
-												filter property "test": "is_avoiding_mobs"
-												filter property "subject": "self"
-												filter property "value": true
-											filter:
+											Added filter:
 												filter property "all_of":
 													filter:
 														filter property "test": "has_component"

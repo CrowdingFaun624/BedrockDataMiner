@@ -2,7 +2,7 @@ Difference of "ui" between "1.21.0.23" (beta of "1.21.0") and "1.21.0.24" (beta 
 
 Changed namespace "common_store":
 	Changed element "thumbnail_only_offer":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "frame@$offer_background_asset":
@@ -32,7 +32,8 @@ Changed namespace "general_section":
 	Changed element "preview_button@settings_common.section_toggle_base":
 		Changed field "ignored" from "($trial or $pre_release or (not $is_ps4))" to "(not $show_preview_button)".
 	Changed element "preview_section":
-		Unchanged field "type": "stack_panel"
+		Changed field "ignored" from "($trial or $pre_release or (not $is_ps4))" to "(not $show_preview_button)".
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 4 (+2, -1)
 			Removed control:
@@ -54,35 +55,29 @@ Changed namespace "general_section":
 						variable "$pressed_button_name": "button.preview_app2"
 						variable "$button_text": "#preview_app2_button_text"
 						variable "$button_text_binding_type": "global"
-		Changed field "ignored" from "($trial or $pre_release or (not $is_ps4))" to "(not $show_preview_button)".
 Changed namespace "hud":
 	Changed element "centered_gui_elements_at_bottom_middle":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Changed control:
-				Changed element "bubbles_rend_1@bubbles_renderer":
-					Changed field "offset":
-						Changed item 0 from 180 to 179.
-						Unchanged item 1: -70
 			Changed control:
 				Changed element "bubbles_rend_0@bubbles_renderer":
 					Changed field "offset":
 						Changed item 0 from 180 to 179.
-						Unchanged item 1: -50
+						Unchanged item 1: -50.
+			Changed control:
+				Changed element "bubbles_rend_1@bubbles_renderer":
+					Changed field "offset":
+						Changed item 0 from 180 to 179.
+						Unchanged item 1: -70.
 Changed namespace "pause":
 	Total element: 84 (+5, -0)
 	Changed element "achievements_icon_button":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 1 (+1, -1)
-			Removed control:
-				element "achievements_button@pause.achievements_button":
-					field "ignored": "$education_edition"
-					field "$variables": variable "$focus_id": "achievements_button_focus"
-			Added control:
-				element "achievements_button@pause.achievements_button":
-					field "ignored": "$education_edition"
-					field "variables":
+			Changed control:
+				Changed element "achievements_button@pause.achievements_button":
+					Removed field "$variables": variable "$focus_id": "achievements_button_focus".
+					Added field "variables":
 						variable:
 							field "requires": "$achievements_button_focus"
 							field "$variables": variable "$focus_id": "icon_panel_main_focus"
@@ -100,37 +95,28 @@ Changed namespace "pause":
 				field "binding_name": "$button_x_visible"
 				field "binding_name_override": "#visible"
 		field "$variables": variable "$gamepad_helper_visible_binding_type": "none"
-	Moved element "change_profile_button@common_buttons.light_text_form_fitting_button" to "dressing_room_button@common_buttons.light_text_form_fitting_button".
+	Moved element from "change_profile_button@common_buttons.light_text_form_fitting_button" to "dressing_room_button@common_buttons.light_text_form_fitting_button".
 	Changed element "dressing_room_button@common_buttons.light_text_form_fitting_button":
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "(not #is_using_gamepad)" to "#dressing_room_button_visible".
 		Changed field "$variables":
 			Total variable: 5 (+0, -1)
-			Removed variable "$button_tts_header" of "accessibility.start.profile".
-		Changed field "bindings":
-			Total binding: 1 (+1, -1)
-			Removed binding:
-				field "binding_name": "(not #is_using_gamepad)"
-				field "binding_name_override": "#visible"
-			Added binding:
-				field "binding_name": "#dressing_room_button_visible"
-				field "binding_name_override": "#visible"
-	Moved element "change_profile_button_gamepad@common_buttons.light_content_form_fitting_button" to "dressing_room_button_gamepad@common_buttons.light_content_form_fitting_button".
+			Removed variable "$button_tts_header": "accessibility.start.profile".
+	Moved element from "change_profile_button_gamepad@common_buttons.light_content_form_fitting_button" to "dressing_room_button_gamepad@common_buttons.light_content_form_fitting_button".
 	Changed element "dressing_room_button_gamepad@common_buttons.light_content_form_fitting_button":
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#is_using_gamepad" to "#dressing_room_controller_button_visible".
 		Changed field "$variables":
 			Total variable: 9 (+0, -1)
 			Changed variable "$button_content_size_override":
 				Changed item 0 from "100%c - 4px" to "100%c - 2px".
-			Removed variable "$button_tts_header" of "accessibility.start.profile".
-		Changed field "bindings":
-			Changed binding:
-				Changed field "binding_name" from "#is_using_gamepad" to "#dressing_room_controller_button_visible".
+			Removed variable "$button_tts_header": "accessibility.start.profile".
 	Changed element "dressing_room_controller_button_content":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Total control: 2 (+1, -1)
-			Changed control:
-				Changed element "button_label_panel":
-					Unchanged field "type": "panel"
-					Added field "offset" of [-1, 0].
 			Removed control:
 				element "button_x@common.gamepad_helper_x_14":
 					field "anchor_from": "left_middle"
@@ -141,6 +127,10 @@ Changed namespace "pause":
 							field "binding_name": "#can_change_skin"
 							field "binding_name_override": "#visible"
 					field "$variables": variable "$gamepad_helper_visible_binding_type": "none"
+			Changed control:
+				Changed element "button_label_panel":
+					Unchanged field "type": "panel".
+					Added field "offset": [-1, 0].
 			Added control:
 				element "button_x@pause.button_x":
 					field "offset": [1, -1]
@@ -194,7 +184,7 @@ Changed namespace "pause":
 								field "size": [18, 18]
 								field "offset": [-2, 0]
 								field "controls":
-									control: element "gamerpic@pause.profile_gamerpic": field "$variables": variable "$gamerpic_visible": "#is_signed_in_xbl"
+									control element "gamerpic@pause.profile_gamerpic": field "$variables": variable "$gamerpic_visible": "#is_signed_in_xbl"
 									control:
 										element "alex_icon@pause.alex_icon":
 											field "bindings":
@@ -205,7 +195,7 @@ Changed namespace "pause":
 										element "border_black@common.focus_border_black":
 											field "layer": 3
 											field "size": [18, 18]
-			control: element "padding_middle@common.empty_panel": field "size": [2, "100%"]
+			control element "padding_middle@common.empty_panel": field "size": [2, "100%"]
 			control:
 				element "vertically_central_text":
 					field "type": "stack_panel"
@@ -230,7 +220,7 @@ Changed namespace "pause":
 									variable "$button_text_binding_type": "none"
 									variable "$button_binding_condition": "none"
 									variable "$button_text_grid_collection_name": ""
-			control: element "padding_right@common.empty_panel": field "size": [6, "100%"]
+			control element "padding_right@common.empty_panel": field "size": [6, "100%"]
 	Added element "profile_gamerpic":
 		field "type": "image"
 		field "size": [16, 16]
@@ -247,32 +237,29 @@ Changed namespace "pause":
 				field "binding_name_override": "#visible"
 	Changed element "quit_button@pause.pause_button_template":
 		Changed field "$variables":
-			Total variable: 3 (+0, -0)
 			Changed variable "$focus_override_down" from "achievements_button_focus" to "icon_panel_main_focus".
 	Changed element "return_to_game_button@pause.pause_button_template":
 		Changed field "$variables":
-			Total variable: 4 (+0, -0)
 			Changed variable "$focus_override_up" from "achievements_button_focus" to "icon_panel_main_focus".
 	Changed element "skin_panel_interior":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "change_profile_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 3 (+2, -1)
 						Changed control:
 							Changed element "centering_panel_1":
-								Unchanged field "type": "panel"
+								Unchanged field "type": "panel".
 								Changed field "controls":
-									Total control: 1 (+1, -1)
-									Removed control element "profile_button@pause.change_profile_button": empty.
-									Added control element "dressing_room_button@pause.dressing_room_button": empty.
+									Changed control:
+										Moved element from "profile_button@pause.change_profile_button" to "dressing_room_button@pause.dressing_room_button".
 						Removed control:
 							element "centering_panel_2":
 								field "type": "panel"
 								field "size": ["100%", "100%c"]
-								field "controls": control: element "profile_button_gamepad@pause.change_profile_button_gamepad": empty
+								field "controls": control element "profile_button_gamepad@pause.change_profile_button_gamepad": empty
 						Added control:
 							element "centering_panel_2":
 								field "type": "input_panel"
@@ -283,7 +270,7 @@ Changed namespace "pause":
 										field "to_button_id": "button.to_profile_or_skins_screen"
 										field "mapping_type": "global"
 										field "scope": "controller"
-								field "controls": control: element "dressing_room_button_gamepad@pause.dressing_room_button_gamepad": empty
+								field "controls": control element "dressing_room_button_gamepad@pause.dressing_room_button_gamepad": empty
 								field "bindings":
 									binding:
 										field "binding_name": "#dressing_room_controller_button_visible"
@@ -298,7 +285,7 @@ Changed namespace "pause":
 										field "to_button_id": "button.menu_profile"
 										field "mapping_type": "global"
 										field "scope": "controller"
-								field "controls": control: element "profile_button@pause.profile_button": field "$variables": variable "$focus_id": "profile_button"
+								field "controls": control element "profile_button@pause.profile_button": field "$variables": variable "$focus_id": "profile_button"
 								field "bindings":
 									binding:
 										field "binding_name": "#profile_button_b_visible"
@@ -306,13 +293,13 @@ Changed namespace "pause":
 	Changed element "take_screenshot_button@common_buttons.light_glyph_button":
 		Changed field "$variables":
 			Total variable: 5 (+1, -0)
-			Added variable "$focus_id" of "icon_panel_main_focus".
+			Added variable "$focus_id": "icon_panel_main_focus".
 	Changed element "the_icon_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "stacked_column":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 10 (+4, -0)
 						Changed control:
@@ -367,24 +354,7 @@ Changed namespace "pause":
 										field "binding_name_override": "#visible"
 Changed namespace "promo_timeline":
 	Changed element "promotion_period_grid_panel":
-		Unchanged field "type": "panel"
-		Changed field "controls":
-			Changed control:
-				Changed element "promotion_offer_grid_image":
-					Unchanged field "type": "panel"
-					Added field "bindings":
-						binding:
-							field "binding_type": "$store_factory_collection_details"
-							field "binding_collection_name": "$store_factory_collection_name"
-							field "binding_collection_prefix": "$store_factory_collection_prefix"
-						binding:
-							field "binding_type": "collection_details"
-							field "binding_collection_name": "gift_promotion_collection"
-						binding:
-							field "binding_name": "#is_valid"
-							field "binding_name_override": "#visible"
-							field "binding_type": "collection"
-							field "binding_collection_name": "gift_promotion_collection"
+		Unchanged field "type": "panel".
 		Removed field "bindings":
 			binding:
 				field "binding_type": "$store_factory_collection_details"
@@ -398,13 +368,30 @@ Changed namespace "promo_timeline":
 				field "binding_name_override": "#visible"
 				field "binding_type": "collection"
 				field "binding_collection_name": "gift_promotion_collection"
+		Changed field "controls":
+			Changed control:
+				Changed element "promotion_offer_grid_image":
+					Unchanged field "type": "panel".
+					Added field "bindings":
+						binding:
+							field "binding_type": "$store_factory_collection_details"
+							field "binding_collection_name": "$store_factory_collection_name"
+							field "binding_collection_prefix": "$store_factory_collection_prefix"
+						binding:
+							field "binding_type": "collection_details"
+							field "binding_collection_name": "gift_promotion_collection"
+						binding:
+							field "binding_name": "#is_valid"
+							field "binding_name_override": "#visible"
+							field "binding_type": "collection"
+							field "binding_collection_name": "gift_promotion_collection"
 Changed namespace "settings":
 	Changed element "selector_stack_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "controls_and_settings_selector_pane":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "preview_button@general_section.preview_button":
@@ -416,11 +403,11 @@ Changed namespace "start":
 		field "texture": "textures/ui/icon_alex"
 		field "layer": 1
 		field "size": [16, 16]
-	Moved element "profile_button@common_buttons.light_text_form_fitting_button" to "dressing_room_button@common_buttons.light_text_form_fitting_button".
+	Moved element from "profile_button@common_buttons.light_text_form_fitting_button" to "dressing_room_button@common_buttons.light_text_form_fitting_button".
 	Changed element "dressing_room_button@common_buttons.light_text_form_fitting_button":
 		Changed field "$variables":
 			Total variable: 6 (+0, -1)
-			Removed variable "$button_tts_header" of "accessibility.start.profile".
+			Removed variable "$button_tts_header": "accessibility.start.profile".
 	Added element "gamerpic":
 		field "type": "image"
 		field "size": [16, 16]
@@ -437,11 +424,11 @@ Changed namespace "start":
 				field "binding_name_override": "#visible"
 		field "$variables": variable "$gamerpic_visible|default": "#none"
 	Changed element "lower_online_buttons_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "stacked_column":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 11 (+2, -0)
 						Added control:
@@ -455,7 +442,7 @@ Changed namespace "start":
 						Added control:
 							element "profile_btn@start.column_frame":
 								field "size": ["100%c", 32]
-								field "controls": control: element "profile_button@start.profile_button": empty
+								field "controls": control element "profile_button@start.profile_button": empty
 								field "bindings":
 									binding:
 										field "binding_name": "#profile_button_a_visible"
@@ -484,7 +471,7 @@ Changed namespace "start":
 								field "size": [18, 18]
 								field "offset": [-2, 0]
 								field "controls":
-									control: element "gamerpic@start.gamerpic": field "$variables": variable "$gamerpic_visible": "#show_gamerpic"
+									control element "gamerpic@start.gamerpic": field "$variables": variable "$gamerpic_visible": "#show_gamerpic"
 									control:
 										element "alex_icon@start.alex_icon":
 											field "bindings":
@@ -495,7 +482,7 @@ Changed namespace "start":
 										element "border_black@common.focus_border_black":
 											field "layer": 3
 											field "size": [18, 18]
-			control: element "padding_middle@common.empty_panel": field "size": [2, "100%"]
+			control element "padding_middle@common.empty_panel": field "size": [2, "100%"]
 			control:
 				element "vertically_central_text":
 					field "type": "stack_panel"
@@ -520,23 +507,17 @@ Changed namespace "start":
 									variable "$button_text_binding_type": "none"
 									variable "$button_binding_condition": "none"
 									variable "$button_text_grid_collection_name": ""
-			control: element "padding_right@common.empty_panel": field "size": [6, "100%"]
+			control element "padding_right@common.empty_panel": field "size": [6, "100%"]
 	Changed element "skin_or_profile_panel":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
-			Total control: 3 (+2, -1)
-			Removed control:
-				element "change_profile@start.profile_button":
-					field "bindings":
-						binding:
-							field "binding_name": "#change_profile_visible"
-							field "binding_name_override": "#visible"
-			Added control:
-				element "dressing_room_button@start.dressing_room_button":
-					field "bindings":
-						binding:
-							field "binding_name": "#dressing_room_button_visible"
-							field "binding_name_override": "#visible"
+			Total control: 3 (+1, -0)
+			Changed control:
+				Moved element from "change_profile@start.profile_button" to "dressing_room_button@start.dressing_room_button".
+				Changed element "dressing_room_button@start.dressing_room_button":
+					Changed field "bindings":
+						Changed binding:
+							Changed field "binding_name" from "#change_profile_visible" to "#dressing_room_button_visible".
 			Added control:
 				element "profile_button@start.profile_button":
 					field "bindings":
@@ -545,19 +526,19 @@ Changed namespace "start":
 							field "binding_name_override": "#visible"
 					field "$variables": variable "$focus_id": "profile_button"
 	Changed element "upper_online_buttons_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "stacked_column":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "gamertag_pic_and_label":
-								Unchanged field "type": "stack_panel"
+								Unchanged field "type": "stack_panel".
 								Changed field "controls":
 									Changed control:
 										Changed element "gamerpic_with_border":
-											Unchanged field "type": "panel"
+											Unchanged field "type": "panel".
 											Changed field "controls":
 												Total control: 2 (+1, -1)
 												Removed control:

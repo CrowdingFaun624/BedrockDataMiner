@@ -6,7 +6,7 @@ Changed entity "bee.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:bee"
+				Unchanged description "identifier": "minecraft:bee".
 				Added description "properties":
 					property "minecraft:has_nectar":
 						field "type": "bool"
@@ -15,7 +15,7 @@ Changed entity "bee.json":
 			Changed field "component_groups":
 				Changed component group "has_nectar":
 					Total component: 1 (+0, -1)
-					Removed empty component "minecraft:is_charged".
+					Removed component "minecraft:is_charged": empty.
 				Changed component group "shelter_detection":
 					Changed component "minecraft:environment_sensor":
 						Changed field "triggers":
@@ -33,24 +33,24 @@ Changed entity "bee.json":
 											filter property "operator": "!="
 			Changed field "events":
 				Changed event "collected_nectar":
-					Added field "set_property" of property "minecraft:has_nectar": true.
+					Added field "set_property": property "minecraft:has_nectar": true.
 				Changed event "find_hive_timeout":
 					Changed field "sequence":
 						Changed sequence item 0:
 							Changed field "filters":
-								Unchanged filter property "operator": "!="
 								Changed filter property "test" from "has_component" to "bool_property".
-								Removed filter property "value" of "minecraft:is_charged".
-								Added filter property "domain" of "minecraft:has_nectar".
+								Unchanged filter property "operator": "!=".
+								Removed filter property "value": "minecraft:is_charged".
+								Added filter property "domain": "minecraft:has_nectar".
 						Changed sequence item 1:
 							Changed field "filters":
 								Changed filter property "test" from "has_component" to "bool_property".
-								Removed filter property "value" of "minecraft:is_charged".
-								Added filter property "domain" of "minecraft:has_nectar".
+								Removed filter property "value": "minecraft:is_charged".
+								Added filter property "domain": "minecraft:has_nectar".
 				Changed event "minecraft:exited_disturbed_hive":
-					Added field "set_property" of property "minecraft:has_nectar": false.
+					Added field "set_property": property "minecraft:has_nectar": false.
 				Changed event "minecraft:exited_hive":
-					Added field "set_property" of property "minecraft:has_nectar": false.
+					Added field "set_property": property "minecraft:has_nectar": false.
 Changed entity "boat.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.18.10"
@@ -67,8 +67,8 @@ Changed entity "boat.json":
 						field "apply_gravity": true
 						field "simulate_waves": false
 						field "liquid_blocks":
-							block: "minecraft:water"
-							block: "minecraft:flowing_water"
+							block "minecraft:flowing_water"
+							block "minecraft:water"
 						field "drag_down_on_buoyancy_removed": 0.7
 					component "minecraft:out_of_control": empty
 					component "minecraft:timer":
@@ -83,8 +83,8 @@ Changed entity "boat.json":
 						field "apply_gravity": true
 						field "simulate_waves": false
 						field "liquid_blocks":
-							block: "minecraft:water"
-							block: "minecraft:flowing_water"
+							block "minecraft:flowing_water"
+							block "minecraft:water"
 						field "drag_down_on_buoyancy_removed": 0.7
 					component "minecraft:out_of_control": empty
 				component group "minecraft:can_ride_bamboo":
@@ -143,8 +143,8 @@ Changed entity "boat.json":
 						field "big_wave_probability": 0.03
 						field "big_wave_speed": 10.0
 						field "liquid_blocks":
-							block: "minecraft:water"
-							block: "minecraft:flowing_water"
+							block "minecraft:flowing_water"
+							block "minecraft:water"
 			field "components":
 				component "minecraft:balloonable": empty
 				component "minecraft:buoyant":
@@ -154,8 +154,8 @@ Changed entity "boat.json":
 					field "big_wave_probability": 0.03
 					field "big_wave_speed": 10.0
 					field "liquid_blocks":
-						block: "minecraft:water"
-						block: "minecraft:flowing_water"
+						block "minecraft:flowing_water"
+						block "minecraft:water"
 				component "minecraft:collision_box":
 					field "width": 1.4
 					field "height": 0.455
@@ -219,47 +219,47 @@ Changed entity "boat.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "boat"
-						family: "inanimate"
+						family "boat"
+						family "inanimate"
 			field "events":
 				event "minecraft:add_can_ride":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:can_ride_default"
+							field "add": field "component_groups": component group "minecraft:can_ride_default"
 							field "filters":
 								filter property "test": "is_variant"
 								filter property "subject": "self"
 								filter property "operator": "!="
 								filter property "value": 7
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:can_ride_bamboo"
+							field "add": field "component_groups": component group "minecraft:can_ride_bamboo"
 							field "filters":
 								filter property "test": "is_variant"
 								filter property "subject": "self"
 								filter property "operator": "=="
 								filter property "value": 7
 				event "minecraft:entered_bubble_column_down":
-					field "add": field "component_groups": component group: "minecraft:above_bubble_column_down"
-					field "remove": field "component_groups": component group: "minecraft:floating"
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_down"
+					field "remove": field "component_groups": component group "minecraft:floating"
 				event "minecraft:entered_bubble_column_up":
-					field "add": field "component_groups": component group: "minecraft:above_bubble_column_up"
-					field "remove": field "component_groups": component group: "minecraft:floating"
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_up"
+					field "remove": field "component_groups": component group "minecraft:floating"
 				event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride"
 				event "minecraft:exited_bubble_column":
 					field "trigger": "minecraft:add_can_ride"
-					field "add": field "component_groups": component group: "minecraft:floating"
+					field "add": field "component_groups": component group "minecraft:floating"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:above_bubble_column_down"
-							component group: "minecraft:above_bubble_column_up"
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
 				event "minecraft:sink":
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:floating"
-							component group: "minecraft:can_ride_default"
-							component group: "minecraft:can_ride_bamboo"
-							component group: "minecraft:above_bubble_column_down"
-							component group: "minecraft:above_bubble_column_up"
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
+							component group "minecraft:can_ride_bamboo"
+							component group "minecraft:can_ride_default"
+							component group "minecraft:floating"
 Added entity "camel.json":
 	behavior pack "experimental":
 		field "format_version": "1.16.0"
@@ -280,13 +280,13 @@ Added entity "camel.json":
 								field "breed_event":
 									field "event": "minecraft:entity_born"
 									field "target": "baby"
-						field "breed_items": item: "cactus"
+						field "breed_items": item "cactus"
 					component "minecraft:equippable":
 						field "slots":
 							slot:
 								field "slot": 0
 								field "item": "saddle"
-								field "accepted_items": item: "saddle"
+								field "accepted_items": item "saddle"
 								field "on_equip": field "event": "minecraft:camel_saddled"
 								field "on_unequip": field "event": "minecraft:camel_unsaddled"
 					component "minecraft:experience_reward":
@@ -297,7 +297,7 @@ Added entity "camel.json":
 						field "seat_count": 2
 						field "crouching_skip_interact": true
 						field "pull_in_entities": true
-						field "family_types": family: "player"
+						field "family_types": family "player"
 						field "interact_text": "action.interact.ride.horse"
 						field "seats":
 							seat:
@@ -382,8 +382,8 @@ Added entity "camel.json":
 				component "minecraft:physics": empty
 				component "minecraft:type_family":
 					field "family":
-						family: "camel"
-						family: "mob"
+						family "camel"
+						family "mob"
 				component "minecraft:variable_max_auto_step":
 					field "base_value": 1.5625
 					field "jump_prevented_value": 0.5625
@@ -416,18 +416,18 @@ Added entity "camel.json":
 					field "priority": 3
 					field "speed_multiplier": 2.5
 					field "can_tempt_vertically": true
-					field "items": item: "cactus"
+					field "items": item "cactus"
 			field "events":
 				event "minecraft:ageable_grow_up":
-					field "add": field "component_groups": component group: "minecraft:camel_adult"
-					field "remove": field "component_groups": component group: "minecraft:camel_baby"
-				event "minecraft:camel_saddled": field "add": field "component_groups": component group: "minecraft:camel_saddled"
-				event "minecraft:camel_unsaddled": field "remove": field "component_groups": component group: "minecraft:camel_saddled"
+					field "add": field "component_groups": component group "minecraft:camel_adult"
+					field "remove": field "component_groups": component group "minecraft:camel_baby"
+				event "minecraft:camel_saddled": field "add": field "component_groups": component group "minecraft:camel_saddled"
+				event "minecraft:camel_unsaddled": field "remove": field "component_groups": component group "minecraft:camel_saddled"
 				event "minecraft:entity_born":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:camel_baby"
-							component group: "minecraft:camel_standing"
+							component group "minecraft:camel_baby"
+							component group "minecraft:camel_standing"
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
@@ -437,19 +437,19 @@ Added entity "camel.json":
 							field "trigger": "minecraft:entity_born"
 							field "weight": 5
 				event "minecraft:entity_transformed":
-					field "add": field "component_groups": component group: "minecraft:camel_adult"
+					field "add": field "component_groups": component group "minecraft:camel_adult"
 					field "remove": empty
 				event "minecraft:spawn_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:camel_adult"
-							component group: "minecraft:camel_standing"
+							component group "minecraft:camel_adult"
+							component group "minecraft:camel_standing"
 				event "minecraft:start_sitting":
-					field "add": field "component_groups": component group: "minecraft:camel_sitting"
-					field "remove": field "component_groups": component group: "minecraft:camel_standing"
+					field "add": field "component_groups": component group "minecraft:camel_sitting"
+					field "remove": field "component_groups": component group "minecraft:camel_standing"
 				event "minecraft:stop_sitting":
-					field "add": field "component_groups": component group: "minecraft:camel_standing"
-					field "remove": field "component_groups": component group: "minecraft:camel_sitting"
+					field "add": field "component_groups": component group "minecraft:camel_standing"
+					field "remove": field "component_groups": component group "minecraft:camel_sitting"
 Changed entity "chest_boat.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.18.10"
@@ -466,8 +466,8 @@ Changed entity "chest_boat.json":
 						field "apply_gravity": true
 						field "simulate_waves": false
 						field "liquid_blocks":
-							block: "minecraft:water"
-							block: "minecraft:flowing_water"
+							block "minecraft:flowing_water"
+							block "minecraft:water"
 						field "drag_down_on_buoyancy_removed": 0.7
 					component "minecraft:out_of_control": empty
 					component "minecraft:timer":
@@ -482,8 +482,8 @@ Changed entity "chest_boat.json":
 						field "apply_gravity": true
 						field "simulate_waves": false
 						field "liquid_blocks":
-							block: "minecraft:water"
-							block: "minecraft:flowing_water"
+							block "minecraft:flowing_water"
+							block "minecraft:water"
 						field "drag_down_on_buoyancy_removed": 0.7
 					component "minecraft:out_of_control": empty
 				component group "minecraft:can_ride_bamboo":
@@ -518,8 +518,8 @@ Changed entity "chest_boat.json":
 						field "big_wave_probability": 0.03
 						field "big_wave_speed": 10.0
 						field "liquid_blocks":
-							block: "minecraft:water"
-							block: "minecraft:flowing_water"
+							block "minecraft:flowing_water"
+							block "minecraft:water"
 			field "components":
 				component "minecraft:balloonable": empty
 				component "minecraft:buoyant":
@@ -529,8 +529,8 @@ Changed entity "chest_boat.json":
 					field "big_wave_probability": 0.03
 					field "big_wave_speed": 10.0
 					field "liquid_blocks":
-						block: "minecraft:water"
-						block: "minecraft:flowing_water"
+						block "minecraft:flowing_water"
+						block "minecraft:water"
 				component "minecraft:collision_box":
 					field "width": 1.4
 					field "height": 0.455
@@ -597,47 +597,47 @@ Changed entity "chest_boat.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "boat"
-						family: "inanimate"
+						family "boat"
+						family "inanimate"
 			field "events":
 				event "minecraft:add_can_ride":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:can_ride_default"
+							field "add": field "component_groups": component group "minecraft:can_ride_default"
 							field "filters":
 								filter property "test": "is_variant"
 								filter property "subject": "self"
 								filter property "operator": "!="
 								filter property "value": 7
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:can_ride_bamboo"
+							field "add": field "component_groups": component group "minecraft:can_ride_bamboo"
 							field "filters":
 								filter property "test": "is_variant"
 								filter property "subject": "self"
 								filter property "operator": "=="
 								filter property "value": 7
 				event "minecraft:entered_bubble_column_down":
-					field "add": field "component_groups": component group: "minecraft:above_bubble_column_down"
-					field "remove": field "component_groups": component group: "minecraft:floating"
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_down"
+					field "remove": field "component_groups": component group "minecraft:floating"
 				event "minecraft:entered_bubble_column_up":
-					field "add": field "component_groups": component group: "minecraft:above_bubble_column_up"
-					field "remove": field "component_groups": component group: "minecraft:floating"
+					field "add": field "component_groups": component group "minecraft:above_bubble_column_up"
+					field "remove": field "component_groups": component group "minecraft:floating"
 				event "minecraft:entity_spawned": field "trigger": "minecraft:add_can_ride"
 				event "minecraft:exited_bubble_column":
 					field "trigger": "minecraft:add_can_ride"
-					field "add": field "component_groups": component group: "minecraft:floating"
+					field "add": field "component_groups": component group "minecraft:floating"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:above_bubble_column_down"
-							component group: "minecraft:above_bubble_column_up"
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
 				event "minecraft:sink":
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:floating"
-							component group: "minecraft:can_ride_default"
-							component group: "minecraft:can_ride_bamboo"
-							component group: "minecraft:above_bubble_column_down"
-							component group: "minecraft:above_bubble_column_up"
+							component group "minecraft:above_bubble_column_down"
+							component group "minecraft:above_bubble_column_up"
+							component group "minecraft:can_ride_bamboo"
+							component group "minecraft:can_ride_default"
+							component group "minecraft:floating"
 Changed entity "enderman.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -718,7 +718,7 @@ Changed entity "player.json":
 		Changed field "minecraft:entity":
 			Changed field "components":
 				Changed component "minecraft:physics":
-					Added field "push_towards_closest_space" of true.
+					Added field "push_towards_closest_space": true.
 Changed entity "pufferfish.json":
 	Changed behavior pack "core":
 		Changed field "format_version" from "1.16.0" to "1.19.50".
@@ -726,7 +726,7 @@ Changed entity "pufferfish.json":
 			Changed field "component_groups":
 				Changed component group "minecraft:full_puff":
 					Changed component "minecraft:area_attack":
-						Added field "damage_cooldown" of 0.5.
+						Added field "damage_cooldown": 0.5.
 Changed entity "slime.json":
 	Changed behavior pack "core":
 		Changed field "format_version" from "1.18.10" to "1.19.50".

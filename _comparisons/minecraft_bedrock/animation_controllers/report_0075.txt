@@ -25,49 +25,49 @@ Added file "camel.animation_controllers.json":
 				field "initial_state": "default"
 				field "states":
 					state "dashing":
-						field "animations": animation dict: "dashing"
+						field "animations": animation dict "dashing"
 						field "transitions":
-							transition list: transition "idling": "(query.is_on_ground || query.is_in_water) && !variable.moving"
-							transition list: transition "moving": "(query.is_on_ground || query.is_in_water) && variable.moving"
+							transition list transition "idling": "(query.is_on_ground || query.is_in_water) && !variable.moving"
+							transition list transition "moving": "(query.is_on_ground || query.is_in_water) && variable.moving"
 						field "blend_transition": 0.5
 					state "default":
 						field "transitions":
-							transition list: transition "idling": "!query.is_sitting"
-							transition list: transition "sitting": "query.is_sitting"
+							transition list transition "idling": "!query.is_sitting"
+							transition list transition "sitting": "query.is_sitting"
 						field "blend_transition": 0.0
 					state "idling":
 						field "transitions":
-							transition list: transition "moving": "variable.moving"
-							transition list: transition "sit_down": "query.is_sitting"
-							transition list: transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water"
+							transition list transition "moving": "variable.moving"
+							transition list transition "sit_down": "query.is_sitting"
+							transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water"
 						field "blend_transition": 0.5
 					state "moving":
-						field "animations": animation dict: animation "moving": "math.min(1.0, math.lerp(0.2, 1.5, query.modified_move_speed))"
+						field "animations": animation dict animation "moving": "math.min(1.0, math.lerp(0.2, 1.5, query.modified_move_speed))"
 						field "transitions":
-							transition list: transition "idling": "!variable.moving"
-							transition list: transition "sit_down": "query.is_sitting"
-							transition list: transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water"
+							transition list transition "idling": "!variable.moving"
+							transition list transition "sit_down": "query.is_sitting"
+							transition list transition "dashing": "query.has_dash_cooldown && !query.is_on_ground && !query.is_in_water"
 						field "blend_transition": 0.2
 					state "sit_down":
-						field "animations": animation dict: "sit_down"
-						field "transitions": transition list: transition "stand_up": "!query.is_sitting"
+						field "animations": animation dict "sit_down"
+						field "transitions": transition list transition "stand_up": "!query.is_sitting"
 						field "blend_transition": 0.5
 					state "sitting":
-						field "animations": animation dict: "sitting"
-						field "transitions": transition list: transition "stand_up": "!query.is_sitting"
+						field "animations": animation dict "sitting"
+						field "transitions": transition list transition "stand_up": "!query.is_sitting"
 						field "blend_transition": 0.5
 					state "stand_up":
-						field "animations": animation dict: "stand_up"
+						field "animations": animation dict "stand_up"
 						field "transitions":
-							transition list: transition "sit_down": "query.is_sitting"
-							transition list: transition "moving": "variable.moving"
+							transition list transition "sit_down": "query.is_sitting"
+							transition list transition "moving": "variable.moving"
 						field "blend_transition": 0.5
 			animation controller "controller.animation.camel.idle":
 				field "initial_state": "idling"
-				field "states": state "idling": field "animations": animation dict: "idle"
+				field "states": state "idling": field "animations": animation dict "idle"
 			animation controller "controller.animation.camel.look_at_player":
 				field "initial_state": "looking_at_player"
-				field "states": state "looking_at_player": field "animations": animation dict: "look_at_player"
+				field "states": state "looking_at_player": field "animations": animation dict "look_at_player"
 Changed file "vex.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -76,12 +76,12 @@ Changed file "vex.animation_controllers.json":
 				field "initial_state": "default"
 				field "states":
 					state "charging":
-						field "animations": animation dict: "vex_charge"
-						field "transitions": transition list: transition "default": "!query.is_charging"
-					state "default": field "transitions": transition list: transition "charging": "query.is_charging"
+						field "animations": animation dict "vex_charge"
+						field "transitions": transition list transition "default": "!query.is_charging"
+					state "default": field "transitions": transition list transition "charging": "query.is_charging"
 			Added animation controller "controller.animation.vex.idle":
 				field "initial_state": "default"
-				field "states": state "default": field "animations": animation dict: "vex_idle"
+				field "states": state "default": field "animations": animation dict "vex_idle"
 			Removed animation controller "controller.animation.vex.move":
 				field "initial_state": "default"
-				field "states": state "default": field "animations": animation dict: "vex_move"
+				field "states": state "default": field "animations": animation dict "vex_move"

@@ -5,18 +5,18 @@ Changed attachable "bow.json":
 	Changed field "format_version" from "1.10" to "1.10.0".
 	Changed field "minecraft:attachable":
 		Changed field "description":
-			Unchanged field "identifier": "minecraft:bow"
+			Unchanged field "identifier": "minecraft:bow".
 			Added field "animations":
 				animation "wield": "animation.bow.wield"
 				animation "wield_first_person_pull": "animation.bow.wield_first_person_pull"
 			Changed field "scripts":
-				Removed situation "initialize" of script: "variable.anim_frame = 0;".
+				Removed situation "initialize": script "variable.anim_frame = 0;".
 				Removed situation "pre_animation":
-					script: "variable.anim_frame = (query.item_remaining_use_duration / query.item_max_use_duration);"
-					script: "variable.anim_frame = math.min(((variable.anim_frame * variable.anim_frame) + variable.anim_frame * 2.0), 2.0);"
+					script "variable.anim_frame = (query.item_remaining_use_duration / query.item_max_use_duration);"
+					script "variable.anim_frame = math.min(((variable.anim_frame * variable.anim_frame) + variable.anim_frame * 2.0), 2.0);"
 				Added situation "animate":
-					script: "wield"
-					script: field "wield_first_person_pull": "query.main_hand_item_use_duration > 0.0f && c.is_first_person"
+					script "wield"
+					script field "wield_first_person_pull": "query.main_hand_item_use_duration > 0.0f && c.is_first_person"
 Added attachable "crossbow.entity.json":
 	field "format_version": "1.10.0"
 	field "minecraft:attachable":
@@ -33,8 +33,8 @@ Added attachable "crossbow.entity.json":
 			field "materials":
 				material "default": "entity_alphatest"
 				material "enchanted": "entity_alphatest_glint"
-			field "render_controllers": render controller: "controller.render.crossbow"
-			field "scripts": situation "animate": script: "wield"
+			field "render_controllers": render controller "controller.render.crossbow"
+			field "scripts": situation "animate": script "wield"
 			field "textures":
 				texture "crossbow_arrow": "textures/items/crossbow_arrow"
 				texture "crossbow_pulling_0": "textures/items/crossbow_pulling_0"
@@ -58,8 +58,8 @@ Added attachable "shield.entity.json":
 			field "materials":
 				material "default": "entity_alphatest"
 				material "enchanted": "entity_alphatest_glint"
-			field "render_controllers": render controller: "controller.render.item_default"
-			field "scripts": situation "animate": script: "wield"
+			field "render_controllers": render controller "controller.render.item_default"
+			field "scripts": situation "animate": script "wield"
 			field "textures":
 				texture "default": "textures/entity/shield"
 				texture "enchanted": "textures/misc/enchanted_item_glint"
@@ -79,10 +79,10 @@ Added attachable "trident.entity.json":
 			field "materials":
 				material "default": "entity_alphatest"
 				material "enchanted": "entity_alphatest_glint"
-			field "render_controllers": render controller: "controller.render.item_default"
+			field "render_controllers": render controller "controller.render.item_default"
 			field "scripts":
-				situation "pre_animation": script: "variable.charge_amount = math.clamp((query.main_hand_item_max_duration - (query.main_hand_item_use_duration - query.frame_alpha + 1.0)) / 10.0, 0.0, 1.0f);"
-				situation "animate": script: "wield"
+				situation "pre_animation": script "variable.charge_amount = math.clamp((query.main_hand_item_max_duration - (query.main_hand_item_use_duration - query.frame_alpha + 1.0)) / 10.0, 0.0, 1.0f);"
+				situation "animate": script "wield"
 			field "textures":
 				texture "default": "textures/entity/trident"
 				texture "enchanted": "textures/misc/enchanted_item_glint"

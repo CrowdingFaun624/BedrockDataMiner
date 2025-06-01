@@ -2,24 +2,20 @@ Difference of "ui" between "1.16.210.51" (beta of "1.16.210") and "1.16.210.53" 
 
 Changed namespace "coin_purchase":
 	Changed element "coin_purchase_screen_content":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "dialog@common_dialogs.main_panel_no_buttons":
 					Changed field "variables":
-						Total variable: 4 (+4, -2)
+						Total variable: 4 (+3, -1)
 						Removed variable:
 							field "requires": "$show_tokens_faq_button"
 							field "$variables": variable "$window_size": "$purchase_coin_screen_size_extended"
-						Removed variable:
-							field "requires": "(not $show_tokens_faq_button)"
-							field "$variables": variable "$window_size": "$purchase_coin_screen_size"
+						Changed variable:
+							Changed field "requires" from "(not $show_tokens_faq_button)" to "(not $show_tokens_faq_button and not $show_need_more_coins_string)".
 						Added variable:
 							field "requires": "($show_tokens_faq_button and $show_need_more_coins_string)"
 							field "$variables": variable "$window_size": "$purchase_coin_screen_size_extended_not_enough"
-						Added variable:
-							field "requires": "(not $show_tokens_faq_button and not $show_need_more_coins_string)"
-							field "$variables": variable "$window_size": "$purchase_coin_screen_size"
 						Added variable:
 							field "requires": "(not $show_tokens_faq_button and $show_need_more_coins_string)"
 							field "$variables": variable "$window_size": "$purchase_coin_screen_size_not_enough"
@@ -28,11 +24,11 @@ Changed namespace "coin_purchase":
 							field "$variables": variable "$window_size": "$purchase_coin_screen_size_extended"
 Changed namespace "common":
 	Changed element "base_screen":
-		Unchanged field "type": "screen"
+		Unchanged field "type": "screen".
 		Changed field "controls":
 			Changed control:
 				Changed element "variables_button_mappings_and_controls":
-					Unchanged field "type": "input_panel"
+					Unchanged field "type": "input_panel".
 					Changed field "variables":
 						Changed variable:
 							Changed field "$variables":
@@ -57,17 +53,17 @@ Changed namespace "common_store":
 		Changed field "controls":
 			Changed control:
 				Changed element "results_panel":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Changed control:
 							Changed element "results_content":
-								Unchanged field "type": "stack_panel"
+								Unchanged field "type": "stack_panel".
 								Changed field "controls":
 									Changed control:
 										Changed element "results_close_centering_panel":
-											Unchanged field "type": "panel"
+											Unchanged field "type": "panel".
 											Changed field "size":
-												Unchanged item 0: 20
+												Unchanged item 0: 20.
 												Changed item 1 from 24 to 20.
 Changed namespace "general_section":
 	Total element: 95 (+0, -2)
@@ -81,7 +77,7 @@ Changed namespace "general_section":
 				item 0: 18
 				item 1: 19
 			variable "$button_text": "options.broadcast"
-			variable "$toggle_property_bag": field "#panel_title": "options.broadcast"
+			variable "$toggle_property_bag": item "#panel_title": "options.broadcast"
 	Removed element "broadcast_section":
 		field "ignored": "(not $can_support_broadcast)"
 		field "type": "stack_panel"
@@ -153,7 +149,7 @@ Changed namespace "general_section":
 						variable "$pressed_button_name": "button.start_broadcast"
 						variable "$button_text": "options.broadcast.start"
 	Changed element "debug_section":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Total control: 80 (+0, -1)
 			Removed control:
@@ -169,52 +165,28 @@ Changed namespace "pdp":
 			Changed variable "$skins_grid_item_size":
 				Changed item 0 from "20%" to "19.9%".
 Changed namespace "realms_world_section":
-	Total element: 10 (+1, -1)
-	Removed element "club_description_edit@settings_common.option_text_edit":
-		field "bindings":
-			binding:
-				field "binding_name": "#club_description_enabled"
-				field "binding_name_override": "#enabled"
-			binding:
-				field "binding_name": "#club_description_visible"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$option_label": "feed.clubdescription"
-			variable "$option_binding_name": "#club_description"
-			variable "$option_enabled_binding_name": "#realm_name_enabled"
-			variable "$option_place_holder_text": "realmsSettingsScreen.realmDescriptionEditPlaceholder"
-			variable "$text_box_name": "club_description_text_box"
-			variable "$allow_data_binding": true
-			variable "$max_text_edit_length": 499
 	Changed element "panel_content":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
-			Total control: 14 (+1, -1)
-			Removed control element "club_description_edit@realms_world_section.club_description_edit": empty.
-			Added control element "realm_description_edit@realms_world_section.realm_description_edit": empty.
-	Added element "realm_description_edit@settings_common.option_text_edit":
-		field "bindings":
-			binding:
-				field "binding_name": "#realm_description_enabled"
-				field "binding_name_override": "#enabled"
-			binding:
-				field "binding_name": "#realm_description_visible"
-				field "binding_name_override": "#visible"
-		field "$variables":
-			variable "$option_label": "feed.clubdescription"
-			variable "$option_binding_name": "#realm_description"
-			variable "$option_enabled_binding_name": "#realm_name_enabled"
-			variable "$option_place_holder_text": "realmsSettingsScreen.realmDescriptionEditPlaceholder"
-			variable "$text_box_name": "realm_description_text_box"
-			variable "$allow_data_binding": true
-			variable "$max_text_edit_length": 499
+			Changed control:
+				Moved element from "club_description_edit@realms_world_section.club_description_edit" to "realm_description_edit@realms_world_section.realm_description_edit".
+	Moved element from "club_description_edit@settings_common.option_text_edit" to "realm_description_edit@settings_common.option_text_edit".
+	Changed element "realm_description_edit@settings_common.option_text_edit":
+		Changed field "bindings":
+			Changed binding:
+				Changed field "binding_name" from "#club_description_enabled" to "#realm_description_enabled".
+			Changed binding:
+				Changed field "binding_name" from "#club_description_visible" to "#realm_description_visible".
+		Changed field "$variables":
+			Changed variable "$option_binding_name" from "#club_description" to "#realm_description".
+			Changed variable "$text_box_name" from "club_description_text_box" to "realm_description_text_box".
 Changed namespace "settings":
 	Changed element "section_content_panels":
-		Unchanged field "type": "panel"
+		Unchanged field "type": "panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "general_and_controls_sections":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 16 (+0, -1)
 						Removed control:
@@ -222,11 +194,11 @@ Changed namespace "settings":
 								field "ignored": "(not $can_support_broadcast or $education_edition)"
 								field "visible": false
 	Changed element "selector_stack_panel":
-		Unchanged field "type": "stack_panel"
+		Unchanged field "type": "stack_panel".
 		Changed field "controls":
 			Changed control:
 				Changed element "controls_and_settings_selector_pane":
-					Unchanged field "type": "stack_panel"
+					Unchanged field "type": "stack_panel".
 					Changed field "controls":
 						Total control: 18 (+0, -1)
 						Removed control:

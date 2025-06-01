@@ -16,7 +16,7 @@ Changed entity "armadillo.json":
 				Changed component "minecraft:entity_sensor":
 					Changed field "subsensors":
 						Changed subsensor:
-							Unchanged field "event": "minecraft:no_threat_detected"
+							Unchanged field "event": "minecraft:no_threat_detected".
 							Changed field "event_filters":
 								Removed filter property "all_of":
 									filter:
@@ -33,7 +33,7 @@ Changed entity "armadillo.json":
 										filter property "value": false
 									filter:
 										filter property "any_of":
-											filter: filter property "test": "on_ground"
+											filter filter property "test": "on_ground"
 											filter:
 												filter property "test": "bool_property"
 												filter property "domain": "minecraft:is_threatened"
@@ -83,7 +83,7 @@ Changed entity "armadillo.json":
 														filter property "test": "is_riding"
 														filter property "subject": "other"
 						Changed subsensor:
-							Unchanged field "event": "minecraft:threat_detected"
+							Unchanged field "event": "minecraft:threat_detected".
 							Changed field "event_filters":
 								Removed filter property "all_of":
 									filter:
@@ -100,7 +100,7 @@ Changed entity "armadillo.json":
 										filter property "value": false
 									filter:
 										filter property "any_of":
-											filter: filter property "test": "on_ground"
+											filter filter property "test": "on_ground"
 											filter:
 												filter property "test": "bool_property"
 												filter property "domain": "minecraft:is_threatened"
@@ -165,9 +165,9 @@ Changed entity "armadillo.json":
 					Changed field "sequence":
 						Changed sequence item 1:
 							Changed field "filters":
-								Removed filter property "test" of "bool_property".
-								Removed filter property "operator" of "!=".
-								Removed filter property "domain" of "minecraft:is_rolled_up".
+								Removed filter property "test": "bool_property".
+								Removed filter property "operator": "!=".
+								Removed filter property "domain": "minecraft:is_rolled_up".
 								Added filter property "all_of":
 									filter:
 										filter property "test": "bool_property"
@@ -246,14 +246,14 @@ Changed entity "breeze.json":
 										filter property "test": "is_family"
 										filter property "subject": "other"
 										filter property "value": "player"
-								Added filter property "test" of "is_family".
-								Added filter property "subject" of "other".
-								Added filter property "value" of "irongolem".
+								Added filter property "test": "is_family".
+								Added filter property "subject": "other".
+								Added filter property "value": "player".
 						Added entity type:
 							field "filters":
 								filter property "test": "is_family"
 								filter property "subject": "other"
-								filter property "value": "player"
+								filter property "value": "irongolem"
 							field "max_dist": 24
 Changed entity "husk.json":
 	Added behavior pack "experimental":
@@ -306,7 +306,7 @@ Changed entity "husk.json":
 					component "minecraft:movement": field "value": 0.23
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "zombie"
+						field "family_types": family "zombie"
 						field "seats":
 							field "position": [0.0, 1.1, -0.35]
 							field "lock_rider_rotation": 0
@@ -348,7 +348,7 @@ Changed entity "husk.json":
 								filter property "operator": "=="
 								filter property "value": true
 							field "event": "minecraft:start_transforming"
-				component "minecraft:equip_item": field "excluded_items": item: field "item": "minecraft:banner:15"
+				component "minecraft:equip_item": field "excluded_items": item field "item": "minecraft:banner:15"
 				component "minecraft:equipment": field "table": "loot_tables/entities/zombie_equipment.json"
 				component "minecraft:health":
 					field "value": 20
@@ -552,11 +552,11 @@ Changed entity "husk.json":
 							field "priority": 5
 				component "minecraft:type_family":
 					field "family":
-						family: "husk"
-						family: "zombie"
-						family: "undead"
-						family: "monster"
-						family: "mob"
+						family "husk"
+						family "mob"
+						family "monster"
+						family "undead"
+						family "zombie"
 				component "minecraft:variant": field "value": 2
 				component "minecraft:behavior.equip_item": field "priority": 2
 				component "minecraft:behavior.hurt_by_target":
@@ -630,7 +630,7 @@ Changed entity "husk.json":
 					field "speed_multiplier": 1.0
 					field "pickup_based_on_chance": true
 					field "can_pickup_any_item": true
-					field "excluded_items": item: "minecraft:glow_ink_sac"
+					field "excluded_items": item "minecraft:glow_ink_sac"
 				component "minecraft:behavior.random_look_around": field "priority": 9
 				component "minecraft:behavior.random_stroll":
 					field "priority": 7
@@ -646,49 +646,49 @@ Changed entity "husk.json":
 				event "minecraft:convert_to_zombie":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:convert_to_zombie"
+							field "add": field "component_groups": component group "minecraft:convert_to_zombie"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
 								filter property "value": "minecraft:is_baby"
-							field "remove": field "component_groups": component group: "minecraft:start_zombie_transformation"
+							field "remove": field "component_groups": component group "minecraft:start_zombie_transformation"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:convert_to_baby_zombie"
+							field "add": field "component_groups": component group "minecraft:convert_to_baby_zombie"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_baby"
-							field "remove": field "component_groups": component group: "minecraft:start_zombie_transformation"
+							field "remove": field "component_groups": component group "minecraft:start_zombie_transformation"
 				event "minecraft:entity_spawned":
 					field "sequence":
 						sequence item 0:
 							field "randomize":
 								randomize item:
 									field "weight": 9500
-									field "add": field "component_groups": component group: "minecraft:zombie_husk_adult"
+									field "add": field "component_groups": component group "minecraft:zombie_husk_adult"
 									field "remove": empty
 								randomize item:
 									field "weight": 425
-									field "add": field "component_groups": component group: "minecraft:zombie_husk_baby"
+									field "add": field "component_groups": component group "minecraft:zombie_husk_baby"
 									field "remove": empty
 								randomize item:
 									field "weight": 75
 									field "add":
 										field "component_groups":
-											component group: "minecraft:zombie_husk_baby"
-											component group: "minecraft:zombie_husk_jockey"
+											component group "minecraft:zombie_husk_baby"
+											component group "minecraft:zombie_husk_jockey"
 									field "remove": empty
 						sequence item 1:
 							field "randomize":
 								randomize item:
 									field "weight": 10
-									field "add": field "component_groups": component group: "minecraft:can_break_doors"
-								randomize item: field "weight": 90
+									field "add": field "component_groups": component group "minecraft:can_break_doors"
+								randomize item field "weight": 90
 				event "minecraft:start_transforming":
-					field "add": field "component_groups": component group: "minecraft:start_zombie_transformation"
-					field "remove": field "component_groups": component group: "minecraft:look_to_start_zombie_transformation"
+					field "add": field "component_groups": component group "minecraft:start_zombie_transformation"
+					field "remove": field "component_groups": component group "minecraft:look_to_start_zombie_transformation"
 				event "minecraft:stop_transforming":
-					field "add": field "component_groups": component group: "minecraft:look_to_start_zombie_transformation"
-					field "remove": field "component_groups": component group: "minecraft:start_zombie_transformation"
+					field "add": field "component_groups": component group "minecraft:look_to_start_zombie_transformation"
+					field "remove": field "component_groups": component group "minecraft:start_zombie_transformation"
 Changed entity "skeleton.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.20.60"
@@ -852,7 +852,7 @@ Changed entity "skeleton.json":
 								filter property "operator": "=="
 								filter property "value": "minecraft:powder_snow"
 							field "event": "got_in_powder_snow"
-				component "minecraft:equip_item": field "excluded_items": item: field "item": "minecraft:banner:15"
+				component "minecraft:equip_item": field "excluded_items": item field "item": "minecraft:banner:15"
 				component "minecraft:equipment": field "table": "loot_tables/entities/skeleton_gear.json"
 				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0"
 				component "minecraft:health":
@@ -1063,10 +1063,10 @@ Changed entity "skeleton.json":
 				component "minecraft:shooter": field "def": "minecraft:arrow"
 				component "minecraft:type_family":
 					field "family":
-						family: "skeleton"
-						family: "undead"
-						family: "monster"
-						family: "mob"
+						family "mob"
+						family "monster"
+						family "skeleton"
+						family "undead"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 4
 					field "entity_types":
@@ -1141,25 +1141,25 @@ Changed entity "skeleton.json":
 					field "attack_interval_max": 3.0
 					field "attack_radius": 15.0
 			field "events":
-				event "become_stray_event": field "add": field "component_groups": component group: "become_stray"
-				event "got_in_powder_snow": field "add": field "component_groups": component group: "in_powder_snow"
+				event "become_stray_event": field "add": field "component_groups": component group "become_stray"
+				event "got_in_powder_snow": field "add": field "component_groups": component group "in_powder_snow"
 				event "got_out_of_powder_snow":
-					field "add": field "component_groups": component group: "got_out_of_powder_snow_environment_sensor"
-					field "remove": field "component_groups": component group: "in_powder_snow"
-				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
+					field "add": field "component_groups": component group "got_out_of_powder_snow_environment_sensor"
+					field "remove": field "component_groups": component group "in_powder_snow"
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group "minecraft:ranged_attack"
 				event "minecraft:melee_mode":
-					field "add": field "component_groups": component group: "minecraft:melee_attack"
+					field "add": field "component_groups": component group "minecraft:melee_attack"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:ranged_attack"
-							component group: "got_out_of_powder_snow_environment_sensor"
+							component group "got_out_of_powder_snow_environment_sensor"
+							component group "minecraft:ranged_attack"
 				event "minecraft:ranged_mode":
-					field "add": field "component_groups": component group: "minecraft:ranged_attack"
+					field "add": field "component_groups": component group "minecraft:ranged_attack"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:melee_attack"
-							component group: "got_out_of_powder_snow_environment_sensor"
-				event "minecraft:spring_trap": field "add": field "component_groups": component group: "minecraft:lightning_immune"
+							component group "got_out_of_powder_snow_environment_sensor"
+							component group "minecraft:melee_attack"
+				event "minecraft:spring_trap": field "add": field "component_groups": component group "minecraft:lightning_immune"
 Changed entity "stray.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.20.60"
@@ -1252,7 +1252,7 @@ Changed entity "stray.json":
 								filter property "operator": "=="
 								filter property "value": false
 							field "event": "minecraft:melee_mode"
-				component "minecraft:equip_item": field "excluded_items": item: field "item": "minecraft:banner:15"
+				component "minecraft:equip_item": field "excluded_items": item field "item": "minecraft:banner:15"
 				component "minecraft:equipment": field "table": "loot_tables/entities/skeleton_gear.json"
 				component "minecraft:experience_reward": field "on_death": "query.last_hit_by_player ? 5 + (query.equipment_count * Math.Random(1,3)) : 0"
 				component "minecraft:health":
@@ -1465,11 +1465,11 @@ Changed entity "stray.json":
 					field "aux_val": 19
 				component "minecraft:type_family":
 					field "family":
-						family: "stray"
-						family: "skeleton"
-						family: "monster"
-						family: "mob"
-						family: "undead"
+						family "mob"
+						family "monster"
+						family "skeleton"
+						family "stray"
+						family "undead"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 4
 					field "entity_types":
@@ -1547,7 +1547,7 @@ Changed entity "stray.json":
 				event "change_to_skeleton":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:revert_to_skeleton"
+							field "add": field "component_groups": component group "minecraft:revert_to_skeleton"
 							field "filters":
 								filter property "test": "is_underground"
 								filter property "value": true
@@ -1556,19 +1556,19 @@ Changed entity "stray.json":
 							field "randomize":
 								randomize item:
 									field "weight": 20
-									field "add": field "component_groups": component group: "minecraft:revert_to_skeleton"
+									field "add": field "component_groups": component group "minecraft:revert_to_skeleton"
 									field "remove": empty
 								randomize item:
 									field "weight": 80
 									field "add": empty
 									field "remove": empty
-				event "minecraft:entity_spawned": field "add": field "component_groups": component group: "minecraft:ranged_attack"
+				event "minecraft:entity_spawned": field "add": field "component_groups": component group "minecraft:ranged_attack"
 				event "minecraft:melee_mode":
-					field "add": field "component_groups": component group: "minecraft:melee_attack"
-					field "remove": field "component_groups": component group: "minecraft:ranged_attack"
+					field "add": field "component_groups": component group "minecraft:melee_attack"
+					field "remove": field "component_groups": component group "minecraft:ranged_attack"
 				event "minecraft:ranged_mode":
-					field "add": field "component_groups": component group: "minecraft:ranged_attack"
-					field "remove": field "component_groups": component group: "minecraft:melee_attack"
+					field "add": field "component_groups": component group "minecraft:ranged_attack"
+					field "remove": field "component_groups": component group "minecraft:melee_attack"
 Changed entity "wind_charge_projectile.json":
 	Changed behavior pack "experimental":
 		Changed field "format_version" from "1.12.0" to "1.20.60".
@@ -1577,8 +1577,8 @@ Changed entity "wind_charge_projectile.json":
 				Total component: 6 (+1, -0)
 				Added component "minecraft:type_family":
 					field "family":
-						family: "wind_charge"
-						family: "wind_charge_projectile"
+						family "wind_charge"
+						family "wind_charge_projectile"
 Changed entity "zombie.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.20.60"
@@ -1631,7 +1631,7 @@ Changed entity "zombie.json":
 					component "minecraft:movement": field "value": 0.23
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "zombie"
+						field "family_types": family "zombie"
 						field "seats":
 							field "position": [0.0, 1.1, -0.35]
 							field "lock_rider_rotation": 0
@@ -1672,7 +1672,7 @@ Changed entity "zombie.json":
 							filter property "operator": "=="
 							filter property "value": true
 						field "event": "minecraft:start_transforming"
-				component "minecraft:equip_item": field "excluded_items": item: field "item": "minecraft:banner:15"
+				component "minecraft:equip_item": field "excluded_items": item field "item": "minecraft:banner:15"
 				component "minecraft:health":
 					field "value": 20
 					field "max": 20
@@ -1875,10 +1875,10 @@ Changed entity "zombie.json":
 							field "priority": 5
 				component "minecraft:type_family":
 					field "family":
-						family: "zombie"
-						family: "undead"
-						family: "monster"
-						family: "mob"
+						family "mob"
+						family "monster"
+						family "undead"
+						family "zombie"
 				component "minecraft:behavior.equip_item": field "priority": 2
 				component "minecraft:behavior.hurt_by_target":
 					field "priority": 1
@@ -1952,7 +1952,7 @@ Changed entity "zombie.json":
 					field "speed_multiplier": 1.0
 					field "pickup_based_on_chance": true
 					field "can_pickup_any_item": true
-					field "excluded_items": item: "minecraft:glow_ink_sac"
+					field "excluded_items": item "minecraft:glow_ink_sac"
 				component "minecraft:behavior.random_look_around": field "priority": 9
 				component "minecraft:behavior.random_stroll":
 					field "priority": 7
@@ -1965,23 +1965,23 @@ Changed entity "zombie.json":
 					field "goal_radius": 1.14
 					field "interval": 20
 			field "events":
-				event "minecraft:as_adult": field "add": field "component_groups": component group: "minecraft:zombie_adult"
-				event "minecraft:as_baby": field "add": field "component_groups": component group: "minecraft:zombie_baby"
+				event "minecraft:as_adult": field "add": field "component_groups": component group "minecraft:zombie_adult"
+				event "minecraft:as_baby": field "add": field "component_groups": component group "minecraft:zombie_baby"
 				event "minecraft:convert_to_drowned":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:convert_to_drowned"
+							field "add": field "component_groups": component group "minecraft:convert_to_drowned"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
 								filter property "value": "minecraft:is_baby"
-							field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
+							field "remove": field "component_groups": component group "minecraft:start_drowned_transformation"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:convert_to_baby_drowned"
+							field "add": field "component_groups": component group "minecraft:convert_to_baby_drowned"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_baby"
-							field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
+							field "remove": field "component_groups": component group "minecraft:start_drowned_transformation"
 				event "minecraft:entity_spawned":
 					field "sequence":
 						sequence item 0:
@@ -1990,33 +1990,33 @@ Changed entity "zombie.json":
 									field "weight": 380
 									field "add":
 										field "component_groups":
-											component group: "minecraft:zombie_adult"
-											component group: "minecraft:can_have_equipment"
+											component group "minecraft:can_have_equipment"
+											component group "minecraft:zombie_adult"
 									field "remove": empty
 								randomize item:
 									field "weight": 17
 									field "add":
 										field "component_groups":
-											component group: "minecraft:zombie_baby"
-											component group: "minecraft:can_have_equipment"
+											component group "minecraft:can_have_equipment"
+											component group "minecraft:zombie_baby"
 									field "remove": empty
 								randomize item:
 									field "weight": 3
 									field "add":
 										field "component_groups":
-											component group: "minecraft:zombie_baby"
-											component group: "minecraft:zombie_jockey"
-											component group: "minecraft:can_have_equipment"
+											component group "minecraft:can_have_equipment"
+											component group "minecraft:zombie_baby"
+											component group "minecraft:zombie_jockey"
 									field "remove": empty
 						sequence item 1:
 							field "randomize":
 								randomize item:
 									field "weight": 10
-									field "add": field "component_groups": component group: "minecraft:can_break_doors"
-								randomize item: field "weight": 90
+									field "add": field "component_groups": component group "minecraft:can_break_doors"
+								randomize item field "weight": 90
 				event "minecraft:start_transforming":
-					field "add": field "component_groups": component group: "minecraft:start_drowned_transformation"
-					field "remove": field "component_groups": component group: "minecraft:look_to_start_drowned_transformation"
+					field "add": field "component_groups": component group "minecraft:start_drowned_transformation"
+					field "remove": field "component_groups": component group "minecraft:look_to_start_drowned_transformation"
 				event "minecraft:stop_transforming":
-					field "add": field "component_groups": component group: "minecraft:look_to_start_drowned_transformation"
-					field "remove": field "component_groups": component group: "minecraft:start_drowned_transformation"
+					field "add": field "component_groups": component group "minecraft:look_to_start_drowned_transformation"
+					field "remove": field "component_groups": component group "minecraft:start_drowned_transformation"

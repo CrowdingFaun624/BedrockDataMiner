@@ -64,7 +64,7 @@ Added entity "armadillo.json":
 								field "breed_event":
 									field "event": "minecraft:entity_born"
 									field "target": "baby"
-						field "breed_items": item: "spider_eye"
+						field "breed_items": item "spider_eye"
 					component "minecraft:behavior.breed":
 						field "priority": 2
 						field "speed_multiplier": 1.0
@@ -101,7 +101,7 @@ Added entity "armadillo.json":
 						field "priority": 3
 						field "speed_multiplier": 1.25
 						field "can_tempt_vertically": true
-						field "items": item: "spider_eye"
+						field "items": item "spider_eye"
 				component group "minecraft:rolled_up":
 					component "minecraft:damage_sensor":
 						field "triggers":
@@ -113,10 +113,10 @@ Added entity "armadillo.json":
 							trigger:
 								field "filters":
 									filter property "any_of":
-										filter: filter property "test": "in_water"
-										filter: filter property "test": "is_panicking"
-										filter: filter property "test": "is_leashed"
-										filter: filter property "test": "is_riding"
+										filter filter property "test": "in_water"
+										filter filter property "test": "is_panicking"
+										filter filter property "test": "is_leashed"
+										filter filter property "test": "is_riding"
 								field "event": "minecraft:relax"
 							trigger:
 								field "filters":
@@ -182,7 +182,7 @@ Added entity "armadillo.json":
 										filter property "value": false
 									filter:
 										filter property "any_of":
-											filter: filter property "test": "on_ground"
+											filter filter property "test": "on_ground"
 											filter:
 												filter property "test": "bool_property"
 												filter property "domain": "minecraft:is_threatened"
@@ -227,7 +227,7 @@ Added entity "armadillo.json":
 										filter property "value": false
 									filter:
 										filter property "any_of":
-											filter: filter property "test": "on_ground"
+											filter filter property "test": "on_ground"
 											filter:
 												filter property "test": "bool_property"
 												filter property "domain": "minecraft:is_threatened"
@@ -279,8 +279,8 @@ Added entity "armadillo.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "armadillo"
-						family: "mob"
+						family "armadillo"
+						family "mob"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.panic":
 					field "priority": 1
@@ -289,13 +289,13 @@ Added entity "armadillo.json":
 				event "minecraft:ageable_grow_up":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:adult"
+							field "add": field "component_groups": component group "minecraft:adult"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:baby"
-									component group: "minecraft:baby_relaxed"
+									component group "minecraft:baby"
+									component group "minecraft:baby_relaxed"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:adult_relaxed"
+							field "add": field "component_groups": component group "minecraft:adult_relaxed"
 							field "filters":
 								filter property "test": "bool_property"
 								filter property "operator": "!="
@@ -313,52 +313,52 @@ Added entity "armadillo.json":
 				event "minecraft:relax":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:relaxed"
+							field "add": field "component_groups": component group "minecraft:relaxed"
 							field "remove":
 								field "component_groups":
-									component group: "minecraft:rolled_up"
-									component group: "minecraft:rolled_up_trying_to_relax"
+									component group "minecraft:rolled_up"
+									component group "minecraft:rolled_up_trying_to_relax"
 							field "set_property":
 								property "minecraft:is_rolled_up": false
 								property "minecraft:is_trying_to_relax": false
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:baby_relaxed"
+							field "add": field "component_groups": component group "minecraft:baby_relaxed"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_baby"
 						sequence item 2:
-							field "add": field "component_groups": component group: "minecraft:adult_relaxed"
+							field "add": field "component_groups": component group "minecraft:adult_relaxed"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
 								filter property "value": "minecraft:is_baby"
 				event "minecraft:roll_up":
-					field "add": field "component_groups": component group: "minecraft:rolled_up"
+					field "add": field "component_groups": component group "minecraft:rolled_up"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:relaxed"
-							component group: "minecraft:baby_relaxed"
-							component group: "minecraft:adult_relaxed"
+							component group "minecraft:adult_relaxed"
+							component group "minecraft:baby_relaxed"
+							component group "minecraft:relaxed"
 					field "set_property": property "minecraft:is_rolled_up": true
 				event "minecraft:spawn_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:adult"
-							component group: "minecraft:adult_relaxed"
-							component group: "minecraft:relaxed"
-							component group: "minecraft:scanning"
+							component group "minecraft:adult"
+							component group "minecraft:adult_relaxed"
+							component group "minecraft:relaxed"
+							component group "minecraft:scanning"
 				event "minecraft:spawn_baby":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:baby"
-							component group: "minecraft:baby_relaxed"
-							component group: "minecraft:relaxed"
-							component group: "minecraft:scanning"
+							component group "minecraft:baby"
+							component group "minecraft:baby_relaxed"
+							component group "minecraft:relaxed"
+							component group "minecraft:scanning"
 				event "minecraft:start_trying_to_relax":
-					field "add": field "component_groups": component group: "minecraft:rolled_up_trying_to_relax"
+					field "add": field "component_groups": component group "minecraft:rolled_up_trying_to_relax"
 					field "set_property": property "minecraft:is_trying_to_relax": true
 				event "minecraft:stop_trying_to_relax":
-					field "remove": field "component_groups": component group: "minecraft:rolled_up_trying_to_relax"
+					field "remove": field "component_groups": component group "minecraft:rolled_up_trying_to_relax"
 					field "set_property": property "minecraft:is_trying_to_relax": false
 				event "minecraft:threat_detected":
 					field "sequence":
@@ -373,7 +373,7 @@ Changed entity "breeze.json":
 	Changed behavior pack "experimental":
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:breeze"
+				Unchanged description "identifier": "minecraft:breeze".
 				Added description "properties":
 					property "minecraft:is_playing_idle_ground_sound":
 						field "type": "bool"
@@ -447,10 +447,10 @@ Changed entity "breeze.json":
 					Changed field "priority" from 5 to 6.
 			Added field "events":
 				event "minecraft:start_playing_idle_ground_sound":
-					field "add": field "component_groups": component group: "minecraft:playing_idle_ground_sound"
+					field "add": field "component_groups": component group "minecraft:playing_idle_ground_sound"
 					field "set_property": property "minecraft:is_playing_idle_ground_sound": true
 				event "minecraft:stop_playing_idle_ground_sound":
-					field "remove": field "component_groups": component group: "minecraft:playing_idle_ground_sound"
+					field "remove": field "component_groups": component group "minecraft:playing_idle_ground_sound"
 					field "set_property": property "minecraft:is_playing_idle_ground_sound": false
 Changed entity "wolf.json":
 	Added behavior pack "experimental":
@@ -482,17 +482,17 @@ Changed entity "wolf.json":
 								field "event": "minecraft:entity_born"
 								field "target": "baby"
 						field "breed_items":
-							item: "chicken"
-							item: "cooked_chicken"
-							item: "beef"
-							item: "cooked_beef"
-							item: "muttonRaw"
-							item: "muttonCooked"
-							item: "porkchop"
-							item: "cooked_porkchop"
-							item: "rabbit"
-							item: "cooked_rabbit"
-							item: "rotten_flesh"
+							item "beef"
+							item "chicken"
+							item "cooked_beef"
+							item "cooked_chicken"
+							item "cooked_porkchop"
+							item "cooked_rabbit"
+							item "muttonCooked"
+							item "muttonRaw"
+							item "porkchop"
+							item "rabbit"
+							item "rotten_flesh"
 					component "minecraft:experience_reward":
 						field "on_bred": "Math.Random(1,7)"
 						field "on_death": "query.last_hit_by_player ? Math.Random(1,3) : 0"
@@ -508,18 +508,18 @@ Changed entity "wolf.json":
 					component "minecraft:on_target_acquired": empty
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "zombie"
+						field "family_types": family "zombie"
 						field "seats": field "position": [0.0, 0.675, -0.1]
 				component group "minecraft:wolf_armorable":
 					component "minecraft:equippable":
 						field "slots":
 							slot:
 								field "slot": 0
-								field "accepted_items": item: "invalid_item"
+								field "accepted_items": item "invalid_item"
 							slot:
 								field "slot": 1
 								field "item": "wolf_armor"
-								field "accepted_items": item: "wolf_armor"
+								field "accepted_items": item "wolf_armor"
 								field "on_equip": field "event": "minecraft:on_armor_equip"
 								field "on_unequip": field "event": "minecraft:on_armor_unequip"
 					component "minecraft:interact":
@@ -594,17 +594,17 @@ Changed entity "wolf.json":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feed_items":
-							item: "chicken"
-							item: "cooked_chicken"
-							item: "beef"
-							item: "cooked_beef"
-							item: "muttonRaw"
-							item: "muttonCooked"
-							item: "porkchop"
-							item: "cooked_porkchop"
-							item: "rabbit"
-							item: "cooked_rabbit"
-							item: "rotten_flesh"
+							item "chicken"
+							item "cooked_chicken"
+							item "beef"
+							item "cooked_beef"
+							item "muttonRaw"
+							item "muttonCooked"
+							item "porkchop"
+							item "cooked_porkchop"
+							item "rabbit"
+							item "cooked_rabbit"
+							item "rotten_flesh"
 						field "grow_up":
 							field "event": "minecraft:ageable_grow_up"
 							field "target": "self"
@@ -645,7 +645,7 @@ Changed entity "wolf.json":
 						field "target": "self"
 					component "minecraft:rideable":
 						field "seat_count": 1
-						field "family_types": family: "zombie"
+						field "family_types": family "zombie"
 						field "seats": field "position": [0.0, 0.675, -0.1]
 					component "minecraft:tameable":
 						field "probability": 0.33
@@ -838,25 +838,25 @@ Changed entity "wolf.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "wolf"
-						family: "mob"
+						family "mob"
+						family "wolf"
 				component "minecraft:behavior.beg":
 					field "priority": 9
 					field "look_distance": 8
 					field "look_time": [2, 4]
 					field "items":
-						item: "bone"
-						item: "porkchop"
-						item: "cooked_porkchop"
-						item: "chicken"
-						item: "cooked_chicken"
-						item: "beef"
-						item: "cooked_beef"
-						item: "rotten_flesh"
-						item: "muttonraw"
-						item: "muttoncooked"
-						item: "rabbit"
-						item: "cooked_rabbit"
+						item "beef"
+						item "bone"
+						item "chicken"
+						item "cooked_beef"
+						item "cooked_chicken"
+						item "cooked_porkchop"
+						item "cooked_rabbit"
+						item "muttoncooked"
+						item "muttonraw"
+						item "porkchop"
+						item "rabbit"
+						item "rotten_flesh"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.hurt_by_target": field "priority": 3
 				component "minecraft:behavior.leap_at_target":
@@ -878,16 +878,16 @@ Changed entity "wolf.json":
 				component "minecraft:behavior.stay_while_sitting": field "priority": 3
 			field "events":
 				event "minecraft:ageable_grow_up":
-					field "add": field "component_groups": component group: "minecraft:wolf_adult"
-					field "remove": field "component_groups": component group: "minecraft:wolf_baby"
+					field "add": field "component_groups": component group "minecraft:wolf_adult"
+					field "remove": field "component_groups": component group "minecraft:wolf_baby"
 				event "minecraft:ageable_set_baby":
-					field "add": field "component_groups": component group: "minecraft:wolf_baby"
-					field "remove": field "component_groups": component group: "minecraft:wolf_adult"
+					field "add": field "component_groups": component group "minecraft:wolf_baby"
+					field "remove": field "component_groups": component group "minecraft:wolf_adult"
 				event "minecraft:become_angry":
-					field "add": field "component_groups": component group: "minecraft:wolf_angry"
-					field "remove": field "component_groups": component group: "minecraft:wolf_wild"
+					field "add": field "component_groups": component group "minecraft:wolf_angry"
+					field "remove": field "component_groups": component group "minecraft:wolf_wild"
 				event "minecraft:become_armorable":
-					field "add": field "component_groups": component group: "minecraft:wolf_armorable"
+					field "add": field "component_groups": component group "minecraft:wolf_armorable"
 					field "set_property": property "minecraft:is_armorable": true
 				event "minecraft:entity_born": field "trigger": "minecraft:spawn_tame_baby"
 				event "minecraft:entity_spawned":
@@ -901,28 +901,28 @@ Changed entity "wolf.json":
 				event "minecraft:on_armor_equip": field "set_property": property "minecraft:has_armor": true
 				event "minecraft:on_armor_unequip": field "set_property": property "minecraft:has_armor": false
 				event "minecraft:on_calm":
-					field "add": field "component_groups": component group: "minecraft:wolf_wild"
-					field "remove": field "component_groups": component group: "minecraft:wolf_angry"
+					field "add": field "component_groups": component group "minecraft:wolf_wild"
+					field "remove": field "component_groups": component group "minecraft:wolf_angry"
 				event "minecraft:on_tame":
-					field "add": field "component_groups": component group: "minecraft:wolf_tame"
-					field "remove": field "component_groups": component group: "minecraft:wolf_wild"
+					field "add": field "component_groups": component group "minecraft:wolf_tame"
+					field "remove": field "component_groups": component group "minecraft:wolf_wild"
 				event "minecraft:spawn_tame_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_adult"
-							component group: "minecraft:wolf_tame"
+							component group "minecraft:wolf_adult"
+							component group "minecraft:wolf_tame"
 				event "minecraft:spawn_tame_baby":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_baby"
-							component group: "minecraft:wolf_tame"
+							component group "minecraft:wolf_baby"
+							component group "minecraft:wolf_tame"
 				event "minecraft:spawn_wild_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_adult"
-							component group: "minecraft:wolf_wild"
+							component group "minecraft:wolf_adult"
+							component group "minecraft:wolf_wild"
 				event "minecraft:spawn_wild_baby":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:wolf_baby"
-							component group: "minecraft:wolf_wild"
+							component group "minecraft:wolf_baby"
+							component group "minecraft:wolf_wild"

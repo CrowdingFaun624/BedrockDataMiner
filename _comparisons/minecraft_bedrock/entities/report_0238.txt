@@ -15,9 +15,9 @@ Added entity "creaking.json":
 						field "client_sync": true
 						field "default": "neutral"
 						field "values":
-							possible property: "neutral"
-							possible property: "hostile_observed"
-							possible property: "hostile_unobserved"
+							possible property "hostile_observed"
+							possible property "hostile_unobserved"
+							possible property "neutral"
 				description "spawn_category": "monster"
 			field "component_groups":
 				component group "minecraft:hostile":
@@ -41,9 +41,9 @@ Added entity "creaking.json":
 					component "minecraft:looked_at":
 						field "search_radius": 24.0
 						field "look_at_locations":
-							location: "head"
-							location: "body"
-							location: "feet"
+							location "head"
+							location "body"
+							location "feet"
 						field "set_target": "never"
 						field "find_players_only": true
 						field "looked_at_cooldown": 0.1
@@ -87,9 +87,9 @@ Added entity "creaking.json":
 					component "minecraft:looked_at":
 						field "search_radius": 12.0
 						field "look_at_locations":
-							location: "head"
-							location: "body"
-							location: "feet"
+							location "head"
+							location "body"
+							location "feet"
 						field "set_target": "once_and_keep_scanning"
 						field "find_players_only": true
 						field "looked_at_cooldown": 0.1
@@ -172,9 +172,9 @@ Added entity "creaking.json":
 				component "minecraft:physics": empty
 				component "minecraft:type_family":
 					field "family":
-						family: "creaking"
-						family: "monster"
-						family: "mob"
+						family "creaking"
+						family "mob"
+						family "monster"
 				component "minecraft:variable_max_auto_step":
 					field "base_value": 1.0625
 					field "jump_prevented_value": 0.5625
@@ -186,9 +186,9 @@ Added entity "creaking.json":
 				event "minecraft:become_hostile":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:hostile"
-							component group: "minecraft:hostile_observed"
-							component group: "minecraft:immobile"
+							component group "minecraft:hostile"
+							component group "minecraft:hostile_observed"
+							component group "minecraft:immobile"
 					field "emit_vibration": field "vibration": "entity_act"
 					field "filters":
 						filter property "test": "enum_property"
@@ -197,15 +197,15 @@ Added entity "creaking.json":
 					field "play_sound": field "sound": "activate"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:neutral"
-							component group: "minecraft:hostile_unobserved"
-							component group: "minecraft:mobile"
+							component group "minecraft:hostile_unobserved"
+							component group "minecraft:mobile"
+							component group "minecraft:neutral"
 					field "set_property": property "minecraft:creaking_state": "hostile_observed"
 				event "minecraft:become_neutral":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:neutral"
-							component group: "minecraft:mobile"
+							component group "minecraft:mobile"
+							component group "minecraft:neutral"
 					field "emit_vibration": field "vibration": "entity_act"
 					field "filters":
 						filter property "test": "enum_property"
@@ -215,30 +215,30 @@ Added entity "creaking.json":
 					field "play_sound": field "sound": "deactivate"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:hostile"
-							component group: "minecraft:hostile_observed"
-							component group: "minecraft:hostile_unobserved"
-							component group: "minecraft:immobile"
+							component group "minecraft:hostile"
+							component group "minecraft:hostile_observed"
+							component group "minecraft:hostile_unobserved"
+							component group "minecraft:immobile"
 					field "reset_target": empty
 					field "set_property": property "minecraft:creaking_state": "neutral"
 				event "minecraft:entity_spawned":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:spawned_by_player"
-							component group: "minecraft:neutral"
-							component group: "minecraft:mobile"
+							component group "minecraft:mobile"
+							component group "minecraft:neutral"
+							component group "minecraft:spawned_by_player"
 				event "minecraft:entity_spawned_by_creaking_heart":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:spawned_by_creaking_heart"
-							component group: "minecraft:neutral"
-							component group: "minecraft:mobile"
+							component group "minecraft:mobile"
+							component group "minecraft:neutral"
+							component group "minecraft:spawned_by_creaking_heart"
 				event "minecraft:on_target_start_looking":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:hostile"
-							component group: "minecraft:hostile_observed"
-							component group: "minecraft:immobile"
+							component group "minecraft:hostile"
+							component group "minecraft:hostile_observed"
+							component group "minecraft:immobile"
 					field "emit_vibration": field "vibration": "entity_act"
 					field "filters":
 						filter property "test": "enum_property"
@@ -247,16 +247,16 @@ Added entity "creaking.json":
 					field "play_sound": field "sound": "freeze"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:neutral"
-							component group: "minecraft:hostile_unobserved"
-							component group: "minecraft:mobile"
+							component group "minecraft:hostile_unobserved"
+							component group "minecraft:mobile"
+							component group "minecraft:neutral"
 					field "set_property": property "minecraft:creaking_state": "hostile_observed"
 				event "minecraft:on_target_stop_looking":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:hostile"
-							component group: "minecraft:hostile_unobserved"
-							component group: "minecraft:mobile"
+							component group "minecraft:hostile"
+							component group "minecraft:hostile_unobserved"
+							component group "minecraft:mobile"
 					field "emit_vibration": field "vibration": "entity_act"
 					field "filters":
 						filter property "test": "enum_property"
@@ -265,22 +265,22 @@ Added entity "creaking.json":
 					field "play_sound": field "sound": "unfreeze"
 					field "remove":
 						field "component_groups":
-							component group: "minecraft:neutral"
-							component group: "minecraft:hostile_observed"
-							component group: "minecraft:immobile"
+							component group "minecraft:hostile_observed"
+							component group "minecraft:immobile"
+							component group "minecraft:neutral"
 					field "set_property": property "minecraft:creaking_state": "hostile_unobserved"
-				event "minecraft:start_swaying": field "add": field "component_groups": component group: "minecraft:swaying"
-				event "minecraft:stop_swaying": field "remove": field "component_groups": component group: "minecraft:swaying"
+				event "minecraft:start_swaying": field "add": field "component_groups": component group "minecraft:swaying"
+				event "minecraft:stop_swaying": field "remove": field "component_groups": component group "minecraft:swaying"
 Changed entity "enderman.json":
 	Changed behavior pack "core":
-		Removed field "use_beta_features" of true.
+		Removed field "use_beta_features": true.
 Changed entity "evocation_illager.json":
 	Changed behavior pack "core":
 		Changed field "format_version" from "1.16.0" to "1.21.50".
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:evocation_illager"
-				Removed description "is_experimental" of false.
+				Unchanged description "identifier": "minecraft:evocation_illager".
+				Removed description "is_experimental": false.
 			Changed field "components":
 				Changed component "minecraft:behavior.avoid_mob_type":
 					Changed field "entity_types":
@@ -304,9 +304,9 @@ Changed entity "evocation_illager.json":
 					Changed field "summon_choices":
 						Changed choice:
 							Changed field "sequence":
-								Changed spell sequence step 0:
-									Unchanged field "shape": "circle"
-									Added field "summon_event" of "minecraft:add_damage_timer".
+								Changed spell sequence step:
+									Unchanged field "shape": "circle".
+									Added field "summon_event": "minecraft:add_damage_timer".
 Changed entity "fox.json":
 	Changed behavior pack "core":
 		Changed field "format_version" from "1.21.30" to "1.21.40".
@@ -314,21 +314,8 @@ Changed entity "fox.json":
 			Changed field "components":
 				Changed component "minecraft:damage_sensor":
 					Changed field "triggers":
-						Total trigger: 1 (+1, -1)
-						Removed trigger:
-							field "on_damage":
-								field "filters":
-									filter property "test": "is_block"
-									filter property "subject": "block"
-									filter property "value": "minecraft:sweet_berry_bush"
-							field "deals_damage": false
-						Added trigger:
-							field "on_damage":
-								field "filters":
-									filter property "test": "is_block"
-									filter property "subject": "block"
-									filter property "value": "minecraft:sweet_berry_bush"
-							field "deals_damage": "no"
+						Changed trigger:
+							Changed field "deals_damage" from false to "no".
 				Changed component "minecraft:shareables":
 					Changed field "items":
 						Total item: 40 (+1, -0)
@@ -357,12 +344,12 @@ Changed entity "ravager.json":
 		Changed field "format_version" from "1.17.20" to "1.21.50".
 		Changed field "minecraft:entity":
 			Changed field "description":
-				Unchanged description "identifier": "minecraft:ravager"
-				Removed description "is_experimental" of false.
+				Unchanged description "identifier": "minecraft:ravager".
+				Removed description "is_experimental": false.
 			Changed field "components":
 				Changed component "minecraft:break_blocks":
 					Changed field "breakable_blocks":
-						Total block: 45 (+7, -31)
+						Total block: 45 (+3, -27)
 						Removed block "acacia_leaves".
 						Removed block "acacia_sapling".
 						Removed block "allium".
@@ -378,28 +365,24 @@ Changed entity "ravager.json":
 						Removed block "jungle_leaves".
 						Removed block "jungle_sapling".
 						Removed block "large_fern".
-						Added block "leaves".
+						Changed block from "oak_leaves" to "leaves".
 						Added block "leaves2".
 						Removed block "lilac".
 						Removed block "lily_of_the_valley".
-						Removed block "oak_leaves".
-						Removed block "oak_sapling".
 						Removed block "orange_tulip".
 						Removed block "oxeye_daisy".
 						Added block "pale_hanging_moss".
 						Removed block "peony".
 						Removed block "pink_tulip".
 						Removed block "poppy".
-						Added block "red_flower".
+						Changed block from "sunflower" to "red_flower".
 						Removed block "red_tulip".
 						Removed block "rose_bush".
-						Added block "sapling".
+						Changed block from "oak_sapling" to "sapling".
 						Removed block "short_grass".
 						Removed block "spruce_leaves".
 						Removed block "spruce_sapling".
-						Removed block "sunflower".
-						Removed block "tall_grass".
-						Added block "tallgrass".
+						Changed block from "tall_grass" to "tallgrass".
 						Removed block "white_tulip".
 Changed entity "sniffer.json":
 	Changed behavior pack "core":
@@ -408,21 +391,20 @@ Changed entity "sniffer.json":
 			Changed field "component_groups":
 				Changed component group "sniffer_search_and_dig":
 					Changed component "minecraft:behavior.random_search_and_dig":
-						Unchanged field "item_table": "loot_tables/gameplay/entities/sniffer_seeds.json"
 						Changed field "target_blocks":
-							Total block: 9 (+2, -1)
+							Total block: 9 (+1, -0)
 							Added block "minecraft:grass".
-							Removed block "minecraft:grass_block".
-							Added block "minecraft:pale_moss_block".
+							Changed block from "minecraft:grass_block" to "minecraft:pale_moss_block".
+						Unchanged field "item_table": "loot_tables/gameplay/entities/sniffer_seeds.json".
 			Changed field "components":
 				Changed component "minecraft:hurt_on_condition":
 					Changed field "damage_conditions":
 						Changed damage condition:
 							Changed field "filters":
-								Unchanged filter property "test": "in_lava"
-								Unchanged filter property "subject": "self"
-								Removed filter property "operator" of "==".
-								Removed filter property "value" of true.
+								Unchanged filter property "test": "in_lava".
+								Unchanged filter property "subject": "self".
+								Removed filter property "operator": "==".
+								Removed filter property "value": true.
 Changed entity "vex.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -438,10 +420,10 @@ Changed entity "vex.json":
 						field "time": [30, 119]
 						field "time_down_event": field "event": "minecraft:add_periodic_damage"
 			Added field "events":
-				event "minecraft:add_damage_timer": field "add": field "component_groups": component group: "minecraft:start_damage_timer"
+				event "minecraft:add_damage_timer": field "add": field "component_groups": component group "minecraft:start_damage_timer"
 				event "minecraft:add_periodic_damage":
-					field "add": field "component_groups": component group: "minecraft:periodic_damage"
-					field "remove": field "component_groups": component group: "minecraft:start_damage_timer"
+					field "add": field "component_groups": component group "minecraft:periodic_damage"
+					field "remove": field "component_groups": component group "minecraft:start_damage_timer"
 Changed entity "vindicator.json":
 	Changed behavior pack "core":
 		Changed field "format_version" from "1.21.0" to "1.21.50".
@@ -458,10 +440,10 @@ Changed entity "vindicator.json":
 											filter property "subject": "other"
 											filter property "operator": "!="
 											filter property "value": "illager"
-									Added filter property "test" of "is_family".
-									Added filter property "subject" of "other".
-									Added filter property "operator" of "!=".
-									Added filter property "value" of "illager".
+									Added filter property "test": "is_family".
+									Added filter property "subject": "other".
+									Added filter property "operator": "!=".
+									Added filter property "value": "illager".
 			Changed field "components":
 				Total component: 33 (+1, -0)
 				Added component "minecraft:behavior.avoid_mob_type":

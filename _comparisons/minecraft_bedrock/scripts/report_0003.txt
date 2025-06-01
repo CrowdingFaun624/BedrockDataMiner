@@ -3,110 +3,110 @@ Difference of "scripts" between "1.16.221" and "1.16.230.50" (beta of "1.17.0").
 Changed behavior pack "vanilla_gametest":
 	Changed script "APITests.js":
 		Total line: 99 (+91, -1)
-		          '''
-		  1   1   import * as GameTest from "GameTest";
-		  2   2   import { BlockLocation, World } from "Minecraft";
-		  3   3   
-		      4 + GameTest.register("APITests", "color_component", (test) => {
-		      5 +   const sheep = test.spawn("minecraft:sheep", new BlockLocation(1, 2, 1));
-		      6 +   let counter = 0;
-		      7 +   test.succeedWhen(() => {
-		      8 +     const colorComponent = sheep.getComponent("minecraft:color");
-		      9 +     const color = colorComponent.value;
-		     10 +     colorComponent.setColor((color + 1) % 16);
-		     11 +     if (++counter != 48) {
-		     12 +       throw "Disco sheep!";
-		     13 +     }
-		     14 +   });
-		     15 + });
-		     16 + 
-		     17 + GameTest.register("APITests", "get_component_on_dead_entity", (test) => {
-		     18 +   const horse = test.spawn("minecraft:horse", new BlockLocation(1, 2, 1));
-		     19 +   horse.kill();
-		     20 +   test.runAfterDelay(40, () => {
-		     21 +     try {
-		     22 +       // This should throw since the entity is dead
-		     23 +       horse.getComponent("minecraft:tamemount").setTamed();
-		     24 +       test.fail();
-		     25 +     } catch (e) {
-		     26 +       test.succeed();
-		     27 +     }
-		     28 +   });
-		     29 + });
-		     30 + 
-		     31 + GameTest.register("APITests", "is_saddled_component", (test) => {
-		     32 +   const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
-		     33 +   // TODO: Give saddle to pig
-		     34 +   test.succeedWhen(() => {
-		     35 +     const isSaddled = pig.getComponent("minecraft:is_saddled") !== undefined;
-		     36 +     if (!isSaddled) {
-		     37 +       throw "Not saddled";
-		     38 +     }
-		     39 +   });
-		     40 + }).tag(GameTest.Tags.suiteDisabled);
-		     41 + 
-		     42 + GameTest.register("APITests", "get_components", (test) => {
-		     43 +   const horse = test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
-		     44 +   test.print("---Start Components---");
-		     45 +   for (const component of horse.getComponents()) {
-		     46 +     test.print(component.getName());
-		     47 +   }
-		     48 +   test.print("---End Components---");
-		     49 +   test.succeed();
-		     50 + });
-		     51 + 
-		     52 + GameTest.register("APITests", "leashable_component", (test) => {
-		     53 +   const pig1 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
-		     54 +   const pig2 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 1));
-		     55 +   const leashable = pig1.getComponent("minecraft:leashable");
-		     56 +   if (leashable) {
-		     57 +     test.print("softDistance: " + leashable.softDistance);
-		     58 +     leashable.leash(pig2);
-		     59 +     test.runAtTickTime(20, () => {
-		     60 +       leashable.unleash();
-		     61 +     });
-		     62 +     test.succeedWhen(() => {
-		     63 +       test.assertEntityPresentInArea("minecraft:item"); // Make sure the lead dropped
-		     64 +     });
-		     65 +   } else {
-		     66 +     test.fail();
-		     67 +   }
-		     68 + });
-		     69 + 
-		     70 + GameTest.register("APITests", "health_component", (test) => {
-		     71 +   const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
-		     72 +   const sheepPos = new BlockLocation(4, 2, 2);
-		     73 +   const sheep = test.spawn(sheepId, sheepPos);
-		     74 +   test.assertEntityInstancePresent(sheep);
-		     75 +   test.pullLever(new BlockLocation(2, 3, 2));
-		     76 +   const healthComponent = sheep.getComponent("minecraft:health");
-		     77 +   if (healthComponent) {
-		     78 +     test.succeedWhen(() => {
-		     79 +       let currentHealth = healthComponent.current;
-		     80 +       if (currentHealth !== 0) {
-		     81 +         throw "Unexpected health";
-		     82 +       }
-		     83 +     });
-		     84 +   } else {
-		     85 +     test.fail();
-		     86 +   }
-		     87 + })
-		     88 +   .maxTicks(200);
-		     89 + 
-		     90 + GameTest.register("APITests", "on_entity_created", (test) => {
-		     91 +   World.addEventListener("onEntityCreated", (entity) => {
-		     92 +     if (entity) {
-		     93 +         test.succeed();
-		     94 +     } else {
-		  4     - GameTest.register("APITests", "on_entity_created", (test) => {
-		     95 +         test.fail("Expected entity");
-		     96 +     }
-		  5     -   World.attachEvent("onEntityCreated", (entity) => {
-		  6     -     test.succeed();
-		  7  97     });
-		  8  98     test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
-		  9  99   });
-		          '''
+		        '''
+		 1  1   import * as GameTest from "GameTest";
+		 2  2   import { BlockLocation, World } from "Minecraft";
+		 3  3   
+		    4 + GameTest.register("APITests", "color_component", (test) => {
+		    5 +   const sheep = test.spawn("minecraft:sheep", new BlockLocation(1, 2, 1));
+		    6 +   let counter = 0;
+		    7 +   test.succeedWhen(() => {
+		    8 +     const colorComponent = sheep.getComponent("minecraft:color");
+		    9 +     const color = colorComponent.value;
+		   10 +     colorComponent.setColor((color + 1) % 16);
+		   11 +     if (++counter != 48) {
+		   12 +       throw "Disco sheep!";
+		   13 +     }
+		   14 +   });
+		   15 + });
+		   16 + 
+		   17 + GameTest.register("APITests", "get_component_on_dead_entity", (test) => {
+		   18 +   const horse = test.spawn("minecraft:horse", new BlockLocation(1, 2, 1));
+		   19 +   horse.kill();
+		   20 +   test.runAfterDelay(40, () => {
+		   21 +     try {
+		   22 +       // This should throw since the entity is dead
+		   23 +       horse.getComponent("minecraft:tamemount").setTamed();
+		   24 +       test.fail();
+		   25 +     } catch (e) {
+		   26 +       test.succeed();
+		   27 +     }
+		   28 +   });
+		   29 + });
+		   30 + 
+		   31 + GameTest.register("APITests", "is_saddled_component", (test) => {
+		   32 +   const pig = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		   33 +   // TODO: Give saddle to pig
+		   34 +   test.succeedWhen(() => {
+		   35 +     const isSaddled = pig.getComponent("minecraft:is_saddled") !== undefined;
+		   36 +     if (!isSaddled) {
+		   37 +       throw "Not saddled";
+		   38 +     }
+		   39 +   });
+		   40 + }).tag(GameTest.Tags.suiteDisabled);
+		   41 + 
+		   42 + GameTest.register("APITests", "get_components", (test) => {
+		   43 +   const horse = test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		   44 +   test.print("---Start Components---");
+		   45 +   for (const component of horse.getComponents()) {
+		   46 +     test.print(component.getName());
+		   47 +   }
+		   48 +   test.print("---End Components---");
+		   49 +   test.succeed();
+		   50 + });
+		   51 + 
+		   52 + GameTest.register("APITests", "leashable_component", (test) => {
+		   53 +   const pig1 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		   54 +   const pig2 = test.spawn("minecraft:pig<minecraft:ageable_grow_up>", new BlockLocation(3, 2, 1));
+		   55 +   const leashable = pig1.getComponent("minecraft:leashable");
+		   56 +   if (leashable) {
+		   57 +     test.print("softDistance: " + leashable.softDistance);
+		   58 +     leashable.leash(pig2);
+		   59 +     test.runAtTickTime(20, () => {
+		   60 +       leashable.unleash();
+		   61 +     });
+		   62 +     test.succeedWhen(() => {
+		   63 +       test.assertEntityPresentInArea("minecraft:item"); // Make sure the lead dropped
+		   64 +     });
+		   65 +   } else {
+		   66 +     test.fail();
+		   67 +   }
+		   68 + });
+		   69 + 
+		   70 + GameTest.register("APITests", "health_component", (test) => {
+		   71 +   const sheepId = "minecraft:sheep<minecraft:ageable_grow_up>";
+		   72 +   const sheepPos = new BlockLocation(4, 2, 2);
+		   73 +   const sheep = test.spawn(sheepId, sheepPos);
+		   74 +   test.assertEntityInstancePresent(sheep);
+		   75 +   test.pullLever(new BlockLocation(2, 3, 2));
+		   76 +   const healthComponent = sheep.getComponent("minecraft:health");
+		   77 +   if (healthComponent) {
+		   78 +     test.succeedWhen(() => {
+		   79 +       let currentHealth = healthComponent.current;
+		   80 +       if (currentHealth !== 0) {
+		   81 +         throw "Unexpected health";
+		   82 +       }
+		   83 +     });
+		   84 +   } else {
+		   85 +     test.fail();
+		   86 +   }
+		   87 + })
+		   88 +   .maxTicks(200);
+		   89 + 
+		   90 + GameTest.register("APITests", "on_entity_created", (test) => {
+		   91 +   World.addEventListener("onEntityCreated", (entity) => {
+		   92 +     if (entity) {
+		   93 +         test.succeed();
+		   94 +     } else {
+		 4    - GameTest.register("APITests", "on_entity_created", (test) => {
+		   95 +         test.fail("Expected entity");
+		   96 +     }
+		 5    -   World.attachEvent("onEntityCreated", (entity) => {
+		 6    -     test.succeed();
+		 7 97     });
+		 8 98     test.spawn("minecraft:horse<minecraft:ageable_grow_up>", new BlockLocation(1, 2, 1));
+		 9 99   });
+		        '''
 	Changed script "BlockTests.js":
 		Total line: 136 (+1, -1)
 		          '''

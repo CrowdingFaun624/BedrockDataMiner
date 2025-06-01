@@ -5,49 +5,41 @@ Changed entity "polar_bear.entity.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
-				Unchanged field "identifier": "minecraft:polar_bear"
-				Added field "scripts" of field "scale": "1.2".
-Changed entity "wither.entity.json":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Changed field "geometry":
-					Total geometry: 2 (+0, -0)
-					Changed geometry "armor" from "geometry.witherBoss.armor" to "geometry.witherBoss.armor.v1.8".
-				Unchanged field "identifier": "minecraft:wither"
-				Added field "min_engine_version" of "1.8.0".
-Added entity "wither.v1.0.entity.json":
+				Unchanged field "identifier": "minecraft:polar_bear".
+				Added field "scripts": field "scale": "1.2".
+Added entity "wither.entity.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "minecraft:client_entity":
 			field "description":
-				field "animation_controllers": animation controller group: animation controller "move": "controller.animation.wither_boss.move"
+				field "animation_controllers": animation controller group animation controller "move": "controller.animation.wither_boss.move"
 				field "animations":
 					animation "look_at_target": "animation.wither_boss.look_at_target"
 					animation "move": "animation.wither_boss.move"
 					animation "scale": "animation.wither_boss.scale"
 				field "geometry":
-					geometry "armor": "geometry.witherBoss.armor"
+					geometry "armor": "geometry.witherBoss.armor.v1.8"
 					geometry "default": "geometry.witherBoss"
 				field "identifier": "minecraft:wither"
 				field "materials":
 					materials "armor": "wither_boss_armor"
 					materials "default": "wither_boss"
+				field "min_engine_version": "1.8.0"
 				field "render_controllers":
-					render controller: "controller.render.wither_boss"
-					render controller: "controller.render.wither_boss_armor"
+					render controller "controller.render.wither_boss"
+					render controller "controller.render.wither_boss_armor"
 				field "scripts":
 					field "pre_animation":
-						script: "variable.base_scale = 2;"
-						script: "variable.swell_clamped = Math.clamp(query.swell_amount, 0.0, 1.0);"
-						script: "variable.wobble = 1.0 + Math.sin(query.swell_amount * 5730) * query.swell_amount * 0.01;"
-						script: "variable.swell_adjustment = Math.pow(variable.swell_clamped, 4);"
-						script: "variable.scale_xz = (1.0 + variable.swell_adjustment * 0.4) * variable.wobble;"
-						script: "variable.scale_y = (1.0 + variable.swell_adjustment * 0.1) / variable.wobble;"
-						script: "variable.body_base_rotation = Math.cos(query.life_time * 114.6);"
-						script: "variable.upper_body_rotation = (0.065 + 0.05 * variable.body_base_rotation) * 180 + query.target_x_rotation;"
-						script: "variable.is_invulnerable = query.invulnerable_ticks > 0.0;"
-						script: "variable.display_normal_skin = (query.invulnerable_ticks <= 0) || ((query.invulnerable_ticks <= 80) && (Math.mod(query.invulnerable_ticks / 5, 2) == 1));"
+						script "variable.base_scale = 2;"
+						script "variable.swell_clamped = Math.clamp(query.swell_amount, 0.0, 1.0);"
+						script "variable.wobble = 1.0 + Math.sin(query.swell_amount * 5730) * query.swell_amount * 0.01;"
+						script "variable.swell_adjustment = Math.pow(variable.swell_clamped, 4);"
+						script "variable.scale_xz = (1.0 + variable.swell_adjustment * 0.4) * variable.wobble;"
+						script "variable.scale_y = (1.0 + variable.swell_adjustment * 0.1) / variable.wobble;"
+						script "variable.body_base_rotation = Math.cos(query.life_time * 114.6);"
+						script "variable.upper_body_rotation = (0.065 + 0.05 * variable.body_base_rotation) * 180 + query.target_x_rotation;"
+						script "variable.is_invulnerable = query.invulnerable_ticks > 0.0;"
+						script "variable.display_normal_skin = (query.invulnerable_ticks <= 0) || ((query.invulnerable_ticks <= 80) && (Math.mod(query.invulnerable_ticks / 5, 2) == 1));"
 					field "scalex": "variable.scale_xz * variable.base_scale"
 					field "scaley": "variable.scale_y * variable.base_scale"
 					field "scalez": "variable.scale_xz * variable.base_scale"
@@ -55,3 +47,4 @@ Added entity "wither.v1.0.entity.json":
 					texture "armor": "textures/entity/wither_boss/wither_armor"
 					texture "default": "textures/entity/wither_boss/wither"
 					texture "invulnerable": "textures/entity/wither_boss/wither_invulnerable"
+Moved entity from "wither.entity.json" to "wither.v1.0.entity.json".

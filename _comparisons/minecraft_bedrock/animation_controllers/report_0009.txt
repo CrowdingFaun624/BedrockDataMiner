@@ -1,20 +1,27 @@
 Difference of "animation_controllers" between "1.9.0.5" (beta of "1.9.0") and "1.10.0.3" (beta of "1.10.0").
 Unable to create data files for 1 file between: "1.9.0"
 
-Total file: 44 (+4, -0)
-Added file "agent.animation_controllers.json":
-	resource pack "core":
-		field "format_version": "1.10.0"
-		field "animation_controllers":
-			animation controller "controller.animation.agent.move":
-				field "states":
-					state "moving":
-						field "animations": animation dict: "move"
-						field "transitions": transition list: transition "swinging_arms": "variable.agent.swinganimationtick > 0"
-					state "swinging_arms":
-						field "animations": animation dict: "swing_arms"
-						field "transitions": transition list: transition "moving": "variable.agent.swinganimationtick <= 0"
-Moved file "armor_stand.json" to "armor_stand.animation_controllers.json".
+Total file: 44 (+9, -5)
+Moved file from "agent.json" to "agent.animation_controllers.json".
+Changed file "agent.animation_controllers.json":
+	Changed resource pack "core":
+		Changed field "format_version" from "1.8.0" to "1.10.0".
+		Changed field "animation_controllers":
+			Changed animation controller "controller.animation.agent.move":
+				Changed field "states":
+					Changed state "moving":
+						Changed field "animations":
+							Total animation dict: 1 (+1, -2)
+							Removed animation dict animation "move": empty.
+							Removed animation dict animation "look_at_target": empty.
+							Added animation dict "move".
+					Changed state "swinging_arms":
+						Changed field "animations":
+							Total animation dict: 1 (+1, -2)
+							Removed animation dict animation "swing_arms": empty.
+							Removed animation dict animation "look_at_target": empty.
+							Added animation dict "swing_arms".
+Moved file from "armor_stand.json" to "armor_stand.animation_controllers.json".
 Changed file "armor_stand.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -30,9 +37,9 @@ Changed file "armor_stand.animation_controllers.json":
 							Total transition list: 1 (+1, -1)
 							Removed transition list transition "default": "(variable.armor_stand.hurt_time - global.frame_alpha) <= 0".
 							Added transition list transition "default": "(variable.armor_stand.hurt_time - query.frame_alpha) <= 0".
-Moved file "bat.json" to "bat.animation_controllers.json".
-Moved file "blaze.json" to "blaze.animation_controllers.json".
-Moved file "cat.json" to "cat.animation_controllers.json".
+Moved file from "bat.json" to "bat.animation_controllers.json".
+Moved file from "blaze.json" to "blaze.animation_controllers.json".
+Moved file from "cat.json" to "cat.animation_controllers.json".
 Changed file "cat.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -58,14 +65,56 @@ Changed file "cat.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
+Removed file "chicken.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.chicken.baby":
+				field "states":
+					state "baby":
+						field "parameters": parameter "query.is_baby"
+						field "animations":
+							animation dict:
+								animation "baby_transform":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+			animation controller "controller.animation.chicken.general": field "states": state "default": field "animations": animation dict animation "general": empty
+			animation controller "controller.animation.chicken.move":
+				field "states":
+					state "default":
+						field "parameters": parameter "query.walk_speed"
+						field "animations":
+							animation dict:
+								animation "move":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+Removed file "cow.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.cow.baby": field "states": state "default": field "animations": animation dict animation "baby_transform": empty
+			animation controller "controller.animation.cow.move":
+				field "states":
+					state "default":
+						field "parameters": parameter "query.walk_speed"
+						field "animations":
+							animation dict:
+								animation "walk":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+							animation dict animation "look_at_target": empty
+			animation controller "controller.animation.cow.setup": field "states": state "default": field "animations": animation dict animation "setup": empty
 Added file "creeper.animation_controllers.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "animation_controllers":
-			animation controller "controller.animation.creeper.head": field "states": state "default": field "animations": animation dict: animation "creeper_head": empty
-			animation controller "controller.animation.creeper.legs": field "states": state "default": field "animations": animation dict: animation "creeper_legs": empty
-			animation controller "controller.animation.creeper.swelling": field "states": state "default": field "animations": animation dict: animation "creeper_swelling": empty
-Moved file "dolphin.json" to "dolphin.animation_controllers.json".
+			animation controller "controller.animation.creeper.head": field "states": state "default": field "animations": animation dict animation "creeper_head": empty
+			animation controller "controller.animation.creeper.legs": field "states": state "default": field "animations": animation dict animation "creeper_legs": empty
+			animation controller "controller.animation.creeper.swelling": field "states": state "default": field "animations": animation dict animation "creeper_swelling": empty
+Moved file from "dolphin.json" to "dolphin.animation_controllers.json".
 Added file "enderman.animation_controllers.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
@@ -74,55 +123,42 @@ Added file "enderman.animation_controllers.json":
 				field "states":
 					state "default":
 						field "animations":
-							animation dict: animation "base_pose": empty
-							animation dict: animation "arms_legs": empty
+							animation dict animation "base_pose": empty
+							animation dict animation "arms_legs": empty
 			animation controller "controller.animation.enderman.carrying":
 				field "states":
 					state "carry":
-						field "animations": animation dict: animation "carrying": empty
-						field "transitions": transition list: transition "default": "!query.is_carrying_block"
-					state "default": field "transitions": transition list: transition "carry": "query.is_carrying_block"
+						field "animations": animation dict animation "carrying": empty
+						field "transitions": transition list transition "default": "!query.is_carrying_block"
+					state "default": field "transitions": transition list transition "carry": "query.is_carrying_block"
 			animation controller "controller.animation.enderman.scary_face":
 				field "states":
-					state "default": field "transitions": transition list: transition "scary": "query.is_angry"
+					state "default": field "transitions": transition list transition "scary": "query.is_angry"
 					state "scary":
-						field "animations": animation dict: animation "scary_face": empty
-						field "transitions": transition list: transition "default": "!query.is_angry"
-Moved file "endermite.json" to "endermite.animation_controllers.json".
-Moved file "evoker.json" to "evoker.animation_controllers.json".
-Moved file "fish.json" to "fish.animation_controllers.json".
-Moved file "ghast.json" to "ghast.animation_controllers.json".
-Moved file "humanoid.json" to "humanoid.animation_controllers.json".
-Moved file "agent.json" to "illager_beast.animation_controllers.json".
-Changed file "illager_beast.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Total animation controller: 2 (+2, -1)
-			Removed animation controller "controller.animation.agent.move":
-				field "states":
-					state "moving":
-						field "animations":
-							animation dict: animation "move": empty
-							animation dict: animation "look_at_target": empty
-						field "transitions": transition list: transition "swinging_arms": "variable.agent.swinganimationtick > 0"
-					state "swinging_arms":
-						field "animations":
-							animation dict: animation "swing_arms": empty
-							animation dict: animation "look_at_target": empty
-						field "transitions": transition list: transition "moving": "variable.agent.swinganimationtick <= 0"
-			Added animation controller "controller.animation.illager_beast.head_movement" of field "states": state "default": field "animations": animation dict: animation "idle_mouth": empty.
-			Added animation controller "controller.animation.illager_beast.move":
+						field "animations": animation dict animation "scary_face": empty
+						field "transitions": transition list transition "default": "!query.is_angry"
+Moved file from "endermite.json" to "endermite.animation_controllers.json".
+Moved file from "evoker.json" to "evoker.animation_controllers.json".
+Moved file from "fish.json" to "fish.animation_controllers.json".
+Moved file from "ghast.json" to "ghast.animation_controllers.json".
+Moved file from "humanoid.json" to "humanoid.animation_controllers.json".
+Added file "illager_beast.animation_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.illager_beast.head_movement": field "states": state "default": field "animations": animation dict animation "idle_mouth": empty
+			animation controller "controller.animation.illager_beast.move":
 				field "states":
 					state "default":
-						field "parameters": parameter: "query.modified_move_speed"
+						field "parameters": parameter "query.modified_move_speed"
 						field "animations":
 							animation dict:
 								animation "walk":
 									item:
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
-							animation dict: animation "look_at_target": empty
-Moved file "iron_golem.json" to "iron_golem.animation_controllers.json".
+							animation dict animation "look_at_target": empty
+Moved file from "iron_golem.json" to "iron_golem.animation_controllers.json".
 Changed file "iron_golem.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -133,7 +169,7 @@ Changed file "iron_golem.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "llama.json" to "llama.animation_controllers.json".
+Moved file from "llama.json" to "llama.animation_controllers.json".
 Changed file "llama.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -144,34 +180,11 @@ Changed file "llama.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "chicken.json" to "magma_cube.animation_controllers.json".
-Changed file "magma_cube.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Total animation controller: 1 (+1, -3)
-			Removed animation controller "controller.animation.chicken.baby":
-				field "states":
-					state "baby":
-						field "parameters": parameter: "query.is_baby"
-						field "animations":
-							animation dict:
-								animation "baby_transform":
-									item:
-										timestamp "0.0": 0.0
-										timestamp "1.0": 1.0
-			Removed animation controller "controller.animation.chicken.general" of field "states": state "default": field "animations": animation dict: animation "general": empty.
-			Removed animation controller "controller.animation.chicken.move":
-				field "states":
-					state "default":
-						field "parameters": parameter: "query.walk_speed"
-						field "animations":
-							animation dict:
-								animation "move":
-									item:
-										timestamp "0.0": 0.0
-										timestamp "1.0": 1.0
-			Added animation controller "controller.animation.magma_cube.general" of field "states": state "default": field "animations": animation dict: animation "move": empty.
-Moved file "mooshroom.json" to "mooshroom.animation_controllers.json".
+Added file "magma_cube.animation_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers": animation controller "controller.animation.magma_cube.general": field "states": state "default": field "animations": animation dict animation "move": empty
+Moved file from "mooshroom.json" to "mooshroom.animation_controllers.json".
 Changed file "mooshroom.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -182,7 +195,7 @@ Changed file "mooshroom.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "ocelot.json" to "ocelot.animation_controllers.json".
+Moved file from "ocelot.json" to "ocelot.animation_controllers.json".
 Changed file "ocelot.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -203,7 +216,7 @@ Changed file "ocelot.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "ocelot_v1.0.json" to "ocelot.animation_controllers.v1.0.json".
+Moved file from "ocelot_v1.0.json" to "ocelot.animation_controllers.v1.0.json".
 Changed file "ocelot.animation_controllers.v1.0.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -224,7 +237,7 @@ Changed file "ocelot.animation_controllers.v1.0.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "panda.json" to "panda.animation_controllers.json".
+Moved file from "panda.json" to "panda.animation_controllers.json".
 Changed file "panda.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -235,101 +248,101 @@ Changed file "panda.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "cow.json" to "parrot.animation_controllers.json".
-Changed file "parrot.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Total animation controller: 2 (+2, -3)
-			Removed animation controller "controller.animation.cow.baby" of field "states": state "default": field "animations": animation dict: animation "baby_transform": empty.
-			Removed animation controller "controller.animation.cow.move":
-				field "states":
-					state "default":
-						field "parameters": parameter: "query.walk_speed"
-						field "animations":
-							animation dict:
-								animation "walk":
-									item:
-										timestamp "0.0": 0.0
-										timestamp "1.0": 1.0
-							animation dict: animation "look_at_target": empty
-			Removed animation controller "controller.animation.cow.setup" of field "states": state "default": field "animations": animation dict: animation "setup": empty.
-			Added animation controller "controller.animation.parrot.move":
+Added file "parrot.animation_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.parrot.move":
 				field "states":
 					state "dancing":
-						field "animations": animation dict: animation "dance": empty
+						field "animations": animation dict animation "dance": empty
 						field "transitions":
-							transition list: transition "flying": "variable.state == 0"
-							transition list: transition "standing": "variable.state == 1"
-							transition list: transition "sitting": "variable.state == 2"
+							transition list transition "flying": "variable.state == 0"
+							transition list transition "standing": "variable.state == 1"
+							transition list transition "sitting": "variable.state == 2"
 					state "flying":
 						field "animations":
-							animation dict: animation "moving": empty
-							animation dict: animation "flying": empty
+							animation dict animation "moving": empty
+							animation dict animation "flying": empty
 						field "transitions":
-							transition list: transition "standing": "variable.state == 1"
-							transition list: transition "sitting": "variable.state == 2"
-							transition list: transition "dancing": "variable.state == 3"
+							transition list transition "standing": "variable.state == 1"
+							transition list transition "sitting": "variable.state == 2"
+							transition list transition "dancing": "variable.state == 3"
 					state "sitting":
-						field "animations": animation dict: animation "sitting": empty
+						field "animations": animation dict animation "sitting": empty
 						field "transitions":
-							transition list: transition "flying": "variable.state == 0"
-							transition list: transition "standing": "variable.state == 1"
-							transition list: transition "dancing": "variable.state == 3"
+							transition list transition "flying": "variable.state == 0"
+							transition list transition "standing": "variable.state == 1"
+							transition list transition "dancing": "variable.state == 3"
 					state "standing":
 						field "animations":
-							animation dict: animation "moving": empty
-							animation dict: animation "standing": empty
+							animation dict animation "moving": empty
+							animation dict animation "standing": empty
 						field "transitions":
-							transition list: transition "flying": "variable.state == 0"
-							transition list: transition "sitting": "variable.state == 2"
-							transition list: transition "dancing": "variable.state == 3"
-			Added animation controller "controller.animation.parrot.setup":
+							transition list transition "flying": "variable.state == 0"
+							transition list transition "sitting": "variable.state == 2"
+							transition list transition "dancing": "variable.state == 3"
+			animation controller "controller.animation.parrot.setup":
 				field "states":
 					state "default":
 						field "animations":
-							animation dict: animation "look_at_target": empty
-							animation dict: animation "base": empty
-Moved file "phantom.json" to "phantom.animation_controllers.json".
-Moved file "pillager.json" to "pillager.animation_controllers.json".
-Moved file "sheep.json" to "polar_bear.animation_controllers.json".
-Changed file "polar_bear.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Total animation controller: 2 (+1, -2)
-			Moved animation controller "controller.animation.sheep.baby" to "controller.animation.polarbear.baby".
-			Added animation controller "controller.animation.polarbear.move":
+							animation dict animation "look_at_target": empty
+							animation dict animation "base": empty
+Moved file from "phantom.json" to "phantom.animation_controllers.json".
+Removed file "pig.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.pig.baby":
+				field "states":
+					state "baby":
+						field "parameters": parameter "query.is_baby"
+						field "animations":
+							animation dict:
+								animation "baby_transform":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+			animation controller "controller.animation.pig.move":
 				field "states":
 					state "default":
-						field "parameters": parameter: "query.modified_move_speed"
+						field "parameters": parameter "query.walk_speed"
 						field "animations":
 							animation dict:
 								animation "walk":
 									item:
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
-							animation dict: animation "move": empty
-							animation dict: animation "look_at_target": empty
-			Removed animation controller "controller.animation.sheep.move":
+							animation dict animation "look_at_target": empty
+			animation controller "controller.animation.pig.setup": field "states": state "default": field "animations": animation dict animation "setup": empty
+Moved file from "pillager.json" to "pillager.animation_controllers.json".
+Added file "polar_bear.animation_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.polarbear.baby":
+				field "states":
+					state "baby":
+						field "parameters": parameter "query.is_baby"
+						field "animations":
+							animation dict:
+								animation "baby_transform":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+			animation controller "controller.animation.polarbear.move":
 				field "states":
 					state "default":
-						field "parameters": parameter: "query.walk_speed"
+						field "parameters": parameter "query.modified_move_speed"
 						field "animations":
 							animation dict:
 								animation "walk":
 									item:
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
-						field "transitions": transition list: transition "grazing": "query.is_grazing"
-					state "grazing":
-						field "animations": animation dict: animation "grazing": empty
-						field "transitions": transition list: transition "default": "!query.is_grazing"
-			Removed animation controller "controller.animation.sheep.setup":
-				field "states":
-					state "default":
-						field "animations":
-							animation dict: animation "setup": empty
-							animation dict: animation "look_at_target": empty
-Moved file "rabbit.json" to "rabbit.animation_controllers.json".
+							animation dict animation "move": empty
+							animation dict animation "look_at_target": empty
+Moved file from "rabbit.json" to "rabbit.animation_controllers.json".
 Added file "sheep.animation_controllers.json":
 	resource pack "core":
 		field "format_version": "1.10.0"
@@ -337,15 +350,49 @@ Added file "sheep.animation_controllers.json":
 			animation controller "controller.animation.sheep.move":
 				field "states":
 					state "default":
-						field "animations": animation dict: animation "walk": "query.modified_move_speed"
-						field "transitions": transition list: transition "grazing": "query.is_grazing"
+						field "animations": animation dict animation "walk": "query.modified_move_speed"
+						field "transitions": transition list transition "grazing": "query.is_grazing"
 					state "grazing":
-						field "animations": animation dict: "grazing"
-						field "transitions": transition list: transition "default": "query.all_animations_finished"
-Moved file "shulker.json" to "shulker.animation_controllers.json".
-Moved file "silverfish.json" to "silverfish.animation_controllers.json".
-Moved file "skeleton.json" to "skeleton.animation_controllers.json".
-Moved file "snow_golem.json" to "snow_golem.animation_controllers.json".
+						field "animations": animation dict "grazing"
+						field "transitions": transition list transition "default": "query.all_animations_finished"
+Removed file "sheep.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.sheep.baby":
+				field "states":
+					state "baby":
+						field "parameters": parameter "query.is_baby"
+						field "animations":
+							animation dict:
+								animation "baby_transform":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+			animation controller "controller.animation.sheep.move":
+				field "states":
+					state "default":
+						field "parameters": parameter "query.walk_speed"
+						field "animations":
+							animation dict:
+								animation "walk":
+									item:
+										timestamp "0.0": 0.0
+										timestamp "1.0": 1.0
+						field "transitions": transition list transition "grazing": "query.is_grazing"
+					state "grazing":
+						field "animations": animation dict animation "grazing": empty
+						field "transitions": transition list transition "default": "!query.is_grazing"
+			animation controller "controller.animation.sheep.setup":
+				field "states":
+					state "default":
+						field "animations":
+							animation dict animation "setup": empty
+							animation dict animation "look_at_target": empty
+Moved file from "shulker.json" to "shulker.animation_controllers.json".
+Moved file from "silverfish.json" to "silverfish.animation_controllers.json".
+Moved file from "skeleton.json" to "skeleton.animation_controllers.json".
+Moved file from "snow_golem.json" to "snow_golem.animation_controllers.json".
 Changed file "snow_golem.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -356,7 +403,7 @@ Changed file "snow_golem.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "snow_golem.v1.0.json" to "snow_golem.animation_controllers.v1.0.json".
+Moved file from "snow_golem.v1.0.json" to "snow_golem.animation_controllers.v1.0.json".
 Changed file "snow_golem.animation_controllers.v1.0.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -367,7 +414,7 @@ Changed file "snow_golem.animation_controllers.v1.0.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "spider.json" to "spider.animation_controllers.json".
+Moved file from "spider.json" to "spider.animation_controllers.json".
 Changed file "spider.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -378,9 +425,9 @@ Changed file "spider.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "squid.json" to "squid.animation_controllers.json".
-Moved file "tripod_camera.json" to "tripod_camera.animation_controllers.json".
-Moved file "turtle.json" to "turtle.animation_controllers.json".
+Moved file from "squid.json" to "squid.animation_controllers.json".
+Moved file from "tripod_camera.json" to "tripod_camera.animation_controllers.json".
+Moved file from "turtle.json" to "turtle.animation_controllers.json".
 Changed file "turtle.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -396,8 +443,8 @@ Changed file "turtle.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "vex.json" to "vex.animation_controllers.json".
-Moved file "villager.json" to "villager.animation_controllers.json".
+Moved file from "vex.json" to "vex.animation_controllers.json".
+Moved file from "villager.json" to "villager.animation_controllers.json".
 Changed file "villager.animation_controllers.json":
 	Changed resource pack "core":
 		Changed field "animation_controllers":
@@ -408,64 +455,62 @@ Changed file "villager.animation_controllers.json":
 							Total parameter: 1 (+1, -1)
 							Removed parameter "query.walk_speed".
 							Added parameter "query.modified_move_speed".
-Moved file "pig.json" to "villager_v2.animation_controllers.json".
-Changed file "villager_v2.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Total animation controller: 4 (+3, -2)
-			Removed animation controller "controller.animation.pig.move":
+Added file "villager_v2.animation_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.villager_v2.baby":
 				field "states":
-					state "default":
-						field "parameters": parameter: "query.walk_speed"
+					state "baby":
+						field "parameters": parameter "query.is_baby"
 						field "animations":
 							animation dict:
-								animation "walk":
+								animation "baby_transform":
 									item:
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
-							animation dict: animation "look_at_target": empty
-			Removed animation controller "controller.animation.pig.setup" of field "states": state "default": field "animations": animation dict: animation "setup": empty.
-			Moved animation controller "controller.animation.pig.baby" to "controller.animation.villager_v2.baby".
-			Added animation controller "controller.animation.villager_v2.general":
+			animation controller "controller.animation.villager_v2.general":
 				field "states":
 					state "default":
 						field "animations":
-							animation dict: animation "general": empty
-							animation dict: animation "look_at_target": empty
-			Added animation controller "controller.animation.villager_v2.move":
+							animation dict animation "general": empty
+							animation dict animation "look_at_target": empty
+			animation controller "controller.animation.villager_v2.move":
 				field "states":
 					state "default":
-						field "parameters": parameter: "query.modified_move_speed"
+						field "parameters": parameter "query.modified_move_speed"
 						field "animations":
 							animation dict:
 								animation "move":
 									item:
 										timestamp "0.0": 0.0
 										timestamp "1.0": 1.0
-						field "transitions": transition list: transition "get_in_bed": "query.is_sleeping"
+						field "transitions": transition list transition "get_in_bed": "query.is_sleeping"
 					state "get_in_bed":
-						field "animations": animation dict: animation "get_in_bed": empty
-						field "transitions": transition list: transition "default": "!query.is_sleeping"
-			Added animation controller "controller.animation.villager_v2.raise_arms":
+						field "animations": animation dict animation "get_in_bed": empty
+						field "transitions": transition list transition "default": "!query.is_sleeping"
+			animation controller "controller.animation.villager_v2.raise_arms":
 				field "states":
-					state "default": field "transitions": transition list: transition "raising": "variable.raise_arms > 0.0"
+					state "default": field "transitions": transition list transition "raising": "variable.raise_arms > 0.0"
 					state "raising":
-						field "animations": animation dict: animation "raise_arms": empty
-						field "transitions": transition list: transition "default": "variable.raise_arms == 0.0"
-Moved file "vindicator.json" to "vindicator.animation_controllers.json".
-Moved file "witch.json" to "witch.animation_controllers.json".
-Moved file "zombie_pigman.v1.0.json" to "wither_boss.animation_controllers.json".
-Changed file "wither_boss.animation_controllers.json":
-	Changed resource pack "core":
-		Changed field "animation_controllers":
-			Total animation controller: 1 (+1, -1)
-			Added animation controller "controller.animation.wither_boss.move":
+						field "animations": animation dict animation "raise_arms": empty
+						field "transitions": transition list transition "default": "variable.raise_arms == 0.0"
+Moved file from "vindicator.json" to "vindicator.animation_controllers.json".
+Moved file from "witch.json" to "witch.animation_controllers.json".
+Added file "wither_boss.animation_controllers.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers":
+			animation controller "controller.animation.wither_boss.move":
 				field "states":
 					state "default":
 						field "animations":
-							animation dict: animation "scale": empty
-							animation dict: animation "move": empty
-							animation dict: animation "look_at_target": empty
-			Removed animation controller "controller.animation.zombie_pigman.look_at.v1.0" of field "states": state "default": field "animations": animation dict: animation "zombie_pigman_look_at": empty.
-Moved file "wither_skeleton.json" to "wither_skeleton.animation_controllers.json".
-Moved file "zombie.json" to "zombie.animation_controllers.json".
+							animation dict animation "scale": empty
+							animation dict animation "move": empty
+							animation dict animation "look_at_target": empty
+Moved file from "wither_skeleton.json" to "wither_skeleton.animation_controllers.json".
+Moved file from "zombie.json" to "zombie.animation_controllers.json".
+Removed file "zombie_pigman.v1.0.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "animation_controllers": animation controller "controller.animation.zombie_pigman.look_at.v1.0": field "states": state "default": field "animations": animation dict animation "zombie_pigman_look_at": empty

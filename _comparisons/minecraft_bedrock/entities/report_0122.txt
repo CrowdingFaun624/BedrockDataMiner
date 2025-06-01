@@ -9,16 +9,16 @@ Changed entity "chicken.json":
 				Changed event "minecraft:entity_spawned":
 					Changed field "randomize":
 						Total randomize item: 2 (+1, -1)
-						Changed randomize item:
-							Removed empty field "remove".
 						Removed randomize item:
 							field "weight": 95
-							field "add": field "component_groups": component group: "minecraft:chicken_adult"
+							field "add": field "component_groups": component group "minecraft:chicken_adult"
 							field "remove": empty
+						Changed randomize item:
+							Removed field "remove": empty.
 						Added randomize item:
 							field "trigger": "minecraft:spawn_adult"
 							field "weight": 95
-				Added event "minecraft:spawn_adult" of field "add": field "component_groups": component group: "minecraft:chicken_adult".
+				Added event "minecraft:spawn_adult": field "add": field "component_groups": component group "minecraft:chicken_adult".
 Changed entity "cow.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -26,14 +26,10 @@ Changed entity "cow.json":
 				Total event: 5 (+1, -0)
 				Changed event "minecraft:entity_spawned":
 					Changed field "randomize":
-						Total randomize item: 2 (+1, -1)
-						Removed randomize item:
-							field "weight": 95
-							field "add": field "component_groups": component group: "minecraft:cow_adult"
-						Added randomize item:
-							field "trigger": "minecraft:spawn_adult"
-							field "weight": 95
-				Added event "minecraft:spawn_adult" of field "add": field "component_groups": component group: "minecraft:cow_adult".
+						Changed randomize item:
+							Added field "trigger": "minecraft:spawn_adult".
+							Removed field "add": field "component_groups": component group "minecraft:cow_adult".
+				Added event "minecraft:spawn_adult": field "add": field "component_groups": component group "minecraft:cow_adult".
 Changed entity "creeper.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.16.0"
@@ -163,9 +159,9 @@ Changed entity "creeper.json":
 						field "target": "self"
 				component "minecraft:type_family":
 					field "family":
-						family: "creeper"
-						family: "monster"
-						family: "mob"
+						family "creeper"
+						family "mob"
+						family "monster"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 3
 					field "entity_types":
@@ -220,35 +216,35 @@ Changed entity "creeper.json":
 					field "priority": 2
 			field "events":
 				event "minecraft:become_charged":
-					field "add": field "component_groups": component group: "minecraft:charged_creeper"
-					field "remove": field "component_groups": component group: "minecraft:exploding"
+					field "add": field "component_groups": component group "minecraft:charged_creeper"
+					field "remove": field "component_groups": component group "minecraft:exploding"
 				event "minecraft:start_exploding":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:exploding"
+							field "add": field "component_groups": component group "minecraft:exploding"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
 								filter property "value": "minecraft:is_charged"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:charged_exploding"
+							field "add": field "component_groups": component group "minecraft:charged_exploding"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_charged"
 				event "minecraft:start_exploding_forced":
 					field "sequence":
 						sequence item 0:
-							field "add": field "component_groups": component group: "minecraft:forced_exploding"
+							field "add": field "component_groups": component group "minecraft:forced_exploding"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "operator": "!="
 								filter property "value": "minecraft:is_charged"
 						sequence item 1:
-							field "add": field "component_groups": component group: "minecraft:forced_charged_exploding"
+							field "add": field "component_groups": component group "minecraft:forced_charged_exploding"
 							field "filters":
 								filter property "test": "has_component"
 								filter property "value": "minecraft:is_charged"
-				event "minecraft:stop_exploding": field "remove": field "component_groups": component group: "minecraft:exploding"
+				event "minecraft:stop_exploding": field "remove": field "component_groups": component group "minecraft:exploding"
 Changed entity "endermite.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.16.0"
@@ -294,11 +290,11 @@ Changed entity "endermite.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "endermite"
-						family: "arthropod"
-						family: "monster"
-						family: "lightweight"
-						family: "mob"
+						family "arthropod"
+						family "endermite"
+						family "lightweight"
+						family "mob"
+						family "monster"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.melee_attack":
 					field "priority": 3
@@ -379,8 +375,8 @@ Added entity "glow_squid.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "squid"
-						family: "mob"
+						family "mob"
+						family "squid"
 				component "minecraft:behavior.squid_dive": field "priority": 2
 				component "minecraft:behavior.squid_flee": field "priority": 2
 				component "minecraft:behavior.squid_idle": field "priority": 2
@@ -395,7 +391,7 @@ Added entity "glow_squid.json":
 							field "remove": empty
 						randomize item:
 							field "weight": 5
-							field "add": field "component_groups": component group: "minecraft:squid_baby"
+							field "add": field "component_groups": component group "minecraft:squid_baby"
 							field "remove": empty
 Added entity "goat.json":
 	behavior pack "experimental":
@@ -539,15 +535,15 @@ Added entity "goat.json":
 					field "can_path_over_water": true
 					field "avoid_water": true
 					field "avoid_damage_blocks": true
-					field "blocks_to_avoid": block: field "name": "minecraft:powder_snow"
+					field "blocks_to_avoid": block field "name": "minecraft:powder_snow"
 				component "minecraft:physics": empty
 				component "minecraft:pushable":
 					field "is_pushable": true
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "goat"
-						family: "animal"
+						family "animal"
+						family "goat"
 				component "minecraft:behavior.float": field "priority": 0
 				component "minecraft:behavior.look_at_player":
 					field "priority": 10
@@ -587,25 +583,25 @@ Added entity "goat.json":
 				component "minecraft:behavior.tempt":
 					field "priority": 4
 					field "speed_multiplier": 1.0
-					field "items": item: "wheat"
+					field "items": item "wheat"
 			field "events":
-				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group: "attack_cooldown"
+				event "attack_cooldown_complete_event": field "remove": field "component_groups": component group "attack_cooldown"
 				event "minecraft:ageable_grow_up":
-					field "add": field "component_groups": component group: "minecraft:goat_adult"
-					field "remove": field "component_groups": component group: "minecraft:goat_baby"
-				event "minecraft:entity_born": field "add": field "component_groups": component group: "minecraft:goat_baby"
+					field "add": field "component_groups": component group "minecraft:goat_adult"
+					field "remove": field "component_groups": component group "minecraft:goat_baby"
+				event "minecraft:entity_born": field "add": field "component_groups": component group "minecraft:goat_baby"
 				event "minecraft:entity_spawned":
 					field "randomize":
 						randomize item:
 							field "weight": 95
-							field "add": field "component_groups": component group: "minecraft:goat_adult"
+							field "add": field "component_groups": component group "minecraft:goat_adult"
 						randomize item:
 							field "weight": 5
-							field "add": field "component_groups": component group: "minecraft:goat_baby"
+							field "add": field "component_groups": component group "minecraft:goat_baby"
 				event "minecraft:entity_transformed":
-					field "add": field "component_groups": component group: "minecraft:goat_adult"
+					field "add": field "component_groups": component group "minecraft:goat_adult"
 					field "remove": empty
-				event "start_event": field "add": field "component_groups": component group: "attack_cooldown"
+				event "start_event": field "add": field "component_groups": component group "attack_cooldown"
 Changed entity "llama.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -617,33 +613,33 @@ Changed entity "llama.json":
 							field "randomize":
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_1"
+									field "add": field "component_groups": component group "minecraft:strength_1"
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_2"
+									field "add": field "component_groups": component group "minecraft:strength_2"
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_3"
+									field "add": field "component_groups": component group "minecraft:strength_3"
 								randomize item:
 									field "weight": 2
-									field "add": field "component_groups": component group: "minecraft:strength_4"
+									field "add": field "component_groups": component group "minecraft:strength_4"
 								randomize item:
 									field "weight": 2
-									field "add": field "component_groups": component group: "minecraft:strength_5"
+									field "add": field "component_groups": component group "minecraft:strength_5"
 						sequence item 1:
 							field "randomize":
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_creamy"
+									field "add": field "component_groups": component group "minecraft:llama_creamy"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_white"
+									field "add": field "component_groups": component group "minecraft:llama_white"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_brown"
+									field "add": field "component_groups": component group "minecraft:llama_brown"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_gray"
+									field "add": field "component_groups": component group "minecraft:llama_gray"
 				Changed event "minecraft:entity_spawned":
 					Changed field "sequence":
 						Total sequence item: 1 (+0, -2)
@@ -654,12 +650,12 @@ Changed entity "llama.json":
 									field "weight": 90
 									field "add":
 										field "component_groups":
-											component group: "minecraft:llama_adult"
-											component group: "minecraft:llama_wild"
+											component group "minecraft:llama_adult"
+											component group "minecraft:llama_wild"
 									field "remove": empty
 								Removed randomize item:
 									field "weight": 10
-									field "add": field "component_groups": component group: "minecraft:llama_baby"
+									field "add": field "component_groups": component group "minecraft:llama_baby"
 									field "remove": empty
 								Added randomize item:
 									field "trigger": "minecraft:spawn_adult"
@@ -671,77 +667,77 @@ Changed entity "llama.json":
 							field "randomize":
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_1"
+									field "add": field "component_groups": component group "minecraft:strength_1"
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_2"
+									field "add": field "component_groups": component group "minecraft:strength_2"
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_3"
+									field "add": field "component_groups": component group "minecraft:strength_3"
 								randomize item:
 									field "weight": 2
-									field "add": field "component_groups": component group: "minecraft:strength_4"
+									field "add": field "component_groups": component group "minecraft:strength_4"
 								randomize item:
 									field "weight": 2
-									field "add": field "component_groups": component group: "minecraft:strength_5"
+									field "add": field "component_groups": component group "minecraft:strength_5"
 						Removed sequence item 2:
 							field "randomize":
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_creamy"
+									field "add": field "component_groups": component group "minecraft:llama_creamy"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_white"
+									field "add": field "component_groups": component group "minecraft:llama_white"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_brown"
+									field "add": field "component_groups": component group "minecraft:llama_brown"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_gray"
+									field "add": field "component_groups": component group "minecraft:llama_gray"
 				Changed event "minecraft:from_wandering_trader":
 					Changed field "sequence":
 						Total sequence item: 2 (+0, -1)
 						Changed sequence item 1:
-							Added field "trigger" of "minecraft:add_attributes".
+							Added field "trigger": "minecraft:add_attributes".
 							Removed field "randomize":
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_1"
+									field "add": field "component_groups": component group "minecraft:strength_1"
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_2"
+									field "add": field "component_groups": component group "minecraft:strength_2"
 								randomize item:
 									field "weight": 32
-									field "add": field "component_groups": component group: "minecraft:strength_3"
+									field "add": field "component_groups": component group "minecraft:strength_3"
 								randomize item:
 									field "weight": 2
-									field "add": field "component_groups": component group: "minecraft:strength_4"
+									field "add": field "component_groups": component group "minecraft:strength_4"
 								randomize item:
 									field "weight": 2
-									field "add": field "component_groups": component group: "minecraft:strength_5"
+									field "add": field "component_groups": component group "minecraft:strength_5"
 						Removed sequence item 2:
 							field "randomize":
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_creamy"
+									field "add": field "component_groups": component group "minecraft:llama_creamy"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_white"
+									field "add": field "component_groups": component group "minecraft:llama_white"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_brown"
+									field "add": field "component_groups": component group "minecraft:llama_brown"
 								randomize item:
 									field "weight": 25
-									field "add": field "component_groups": component group: "minecraft:llama_gray"
+									field "add": field "component_groups": component group "minecraft:llama_gray"
 				Added event "minecraft:spawn_adult":
 					field "trigger": "minecraft:add_attributes"
 					field "add":
 						field "component_groups":
-							component group: "minecraft:llama_adult"
-							component group: "minecraft:llama_wild"
+							component group "minecraft:llama_adult"
+							component group "minecraft:llama_wild"
 				Added event "minecraft:spawn_baby":
 					field "trigger": "minecraft:add_attributes"
-					field "add": field "component_groups": component group: "minecraft:llama_baby"
+					field "add": field "component_groups": component group "minecraft:llama_baby"
 Changed entity "pig.json":
 	Changed behavior pack "core":
 		Changed field "minecraft:entity":
@@ -754,8 +750,8 @@ Changed entity "pig.json":
 							field "weight": 95
 							field "add":
 								field "component_groups":
-									component group: "minecraft:pig_adult"
-									component group: "minecraft:pig_unsaddled"
+									component group "minecraft:pig_adult"
+									component group "minecraft:pig_unsaddled"
 							field "remove": empty
 						Added randomize item:
 							field "trigger": "minecraft:spawn_adult"
@@ -763,8 +759,8 @@ Changed entity "pig.json":
 				Added event "minecraft:spawn_adult":
 					field "add":
 						field "component_groups":
-							component group: "minecraft:pig_adult"
-							component group: "minecraft:pig_unsaddled"
+							component group "minecraft:pig_adult"
+							component group "minecraft:pig_unsaddled"
 Changed entity "rabbit.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.16.0"
@@ -778,9 +774,9 @@ Changed entity "rabbit.json":
 				component group "adult":
 					component "minecraft:breedable":
 						field "breed_items":
-							item: "golden_carrot"
-							item: "carrot"
-							item: "yellow_flower"
+							item "carrot"
+							item "golden_carrot"
+							item "yellow_flower"
 						field "breeds_with":
 							field "mate_type": "minecraft:rabbit"
 							field "baby_type": "minecraft:rabbit"
@@ -798,9 +794,9 @@ Changed entity "rabbit.json":
 					component "minecraft:ageable":
 						field "duration": 1200
 						field "feed_items":
-							item: "golden_carrot"
-							item: "carrot"
-							item: "yellow_flower"
+							item "golden_carrot"
+							item "carrot"
+							item "yellow_flower"
 						field "grow_up":
 							field "event": "grow_up"
 							field "target": "self"
@@ -856,9 +852,9 @@ Changed entity "rabbit.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "rabbit"
-						family: "lightweight"
-						family: "mob"
+						family "lightweight"
+						family "mob"
+						family "rabbit"
 				component "minecraft:behavior.avoid_mob_type":
 					field "priority": 4
 					field "entity_types":
@@ -896,7 +892,7 @@ Changed entity "rabbit.json":
 					field "speed_multiplier": 2.2
 				component "minecraft:behavior.raid_garden":
 					field "priority": 5
-					field "blocks": block: "carrots"
+					field "blocks": block "carrots"
 					field "search_range": 16
 					field "goal_radius": 0.8
 				component "minecraft:behavior.random_stroll":
@@ -908,25 +904,25 @@ Changed entity "rabbit.json":
 					field "priority": 3
 					field "speed_multiplier": 1
 					field "items":
-						item: "golden_carrot"
-						item: "carrot"
-						item: "yellow_flower"
+						item "carrot"
+						item "golden_carrot"
+						item "yellow_flower"
 			field "events":
 				event "grow_up":
-					field "add": field "component_groups": component group: "adult"
-					field "remove": field "component_groups": component group: "baby"
-				event "in_desert": field "add": field "component_groups": component group: "coat_desert"
+					field "add": field "component_groups": component group "adult"
+					field "remove": field "component_groups": component group "baby"
+				event "in_desert": field "add": field "component_groups": component group "coat_desert"
 				event "in_snow":
 					field "randomize":
 						randomize item:
 							field "weight": 80
-							field "add": field "component_groups": component group: "coat_white"
+							field "add": field "component_groups": component group "coat_white"
 						randomize item:
 							field "weight": 20
-							field "add": field "component_groups": component group: "coat_splotched"
+							field "add": field "component_groups": component group "coat_splotched"
 				event "minecraft:entity_born":
 					field "sequence":
-						sequence item 0: field "add": field "component_groups": component group: "baby"
+						sequence item 0: field "add": field "component_groups": component group "baby"
 						sequence item 1:
 							field "filters":
 								filter property "test": "has_component"
@@ -935,15 +931,15 @@ Changed entity "rabbit.json":
 							field "randomize":
 								randomize item:
 									field "weight": 50
-									field "add": field "component_groups": component group: "coat_brown"
+									field "add": field "component_groups": component group "coat_brown"
 								randomize item:
 									field "weight": 40
-									field "add": field "component_groups": component group: "coat_black"
+									field "add": field "component_groups": component group "coat_black"
 								randomize item:
 									field "weight": 10
-									field "add": field "component_groups": component group: "coat_salt"
+									field "add": field "component_groups": component group "coat_salt"
 						sequence item 2:
-							field "add": field "component_groups": component group: "coat_desert"
+							field "add": field "component_groups": component group "coat_desert"
 							field "filters":
 								filter property "test": "is_biome"
 								filter property "value": "desert"
@@ -954,20 +950,20 @@ Changed entity "rabbit.json":
 							field "randomize":
 								randomize item:
 									field "weight": 80
-									field "add": field "component_groups": component group: "coat_white"
+									field "add": field "component_groups": component group "coat_white"
 								randomize item:
 									field "weight": 20
-									field "add": field "component_groups": component group: "coat_splotched"
+									field "add": field "component_groups": component group "coat_splotched"
 				event "minecraft:entity_spawned":
 					field "sequence":
 						sequence item 0:
 							field "randomize":
 								randomize item:
 									field "weight": 3
-									field "add": field "component_groups": component group: "adult"
+									field "add": field "component_groups": component group "adult"
 								randomize item:
 									field "weight": 1
-									field "add": field "component_groups": component group: "baby"
+									field "add": field "component_groups": component group "baby"
 						sequence item 1:
 							field "filters":
 								filter property "test": "has_component"
@@ -976,15 +972,15 @@ Changed entity "rabbit.json":
 							field "randomize":
 								randomize item:
 									field "weight": 50
-									field "add": field "component_groups": component group: "coat_brown"
+									field "add": field "component_groups": component group "coat_brown"
 								randomize item:
 									field "weight": 40
-									field "add": field "component_groups": component group: "coat_black"
+									field "add": field "component_groups": component group "coat_black"
 								randomize item:
 									field "weight": 10
-									field "add": field "component_groups": component group: "coat_salt"
+									field "add": field "component_groups": component group "coat_salt"
 						sequence item 2:
-							field "add": field "component_groups": component group: "coat_desert"
+							field "add": field "component_groups": component group "coat_desert"
 							field "filters":
 								filter property "test": "is_biome"
 								filter property "value": "desert"
@@ -995,10 +991,10 @@ Changed entity "rabbit.json":
 							field "randomize":
 								randomize item:
 									field "weight": 80
-									field "add": field "component_groups": component group: "coat_white"
+									field "add": field "component_groups": component group "coat_white"
 								randomize item:
 									field "weight": 20
-									field "add": field "component_groups": component group: "coat_splotched"
+									field "add": field "component_groups": component group "coat_splotched"
 Changed entity "silverfish.json":
 	Added behavior pack "experimental":
 		field "format_version": "1.16.0"
@@ -1062,11 +1058,11 @@ Changed entity "silverfish.json":
 					field "is_pushable_by_piston": true
 				component "minecraft:type_family":
 					field "family":
-						family: "silverfish"
-						family: "monster"
-						family: "lightweight"
-						family: "mob"
-						family: "arthropod"
+						family "arthropod"
+						family "lightweight"
+						family "mob"
+						family "monster"
+						family "silverfish"
 				component "minecraft:behavior.float": field "priority": 1
 				component "minecraft:behavior.hurt_by_target":
 					field "priority": 1
@@ -1094,11 +1090,11 @@ Changed entity "silverfish.json":
 				component "minecraft:behavior.silverfish_merge_with_stone": field "priority": 5
 			field "events":
 				event "minecraft:become_angry":
-					field "add": field "component_groups": component group: "minecraft:silverfish_angry"
+					field "add": field "component_groups": component group "minecraft:silverfish_angry"
 					field "remove": empty
 				event "minecraft:entity_spawned":
-					field "add": field "component_groups": component group: "minecraft:silverfish_calm"
+					field "add": field "component_groups": component group "minecraft:silverfish_calm"
 					field "remove": empty
 				event "minecraft:on_calm":
-					field "add": field "component_groups": component group: "minecraft:silverfish_calm"
+					field "add": field "component_groups": component group "minecraft:silverfish_calm"
 					field "remove": empty

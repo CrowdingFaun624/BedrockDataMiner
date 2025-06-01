@@ -7,26 +7,25 @@ Changed file "armadillo.animation_controllers.json":
 				Changed field "states":
 					Total state: 6 (+2, -0)
 					Added state "peek":
-						field "animations": animation dict: "peek"
+						field "animations": animation dict "peek"
 						field "transitions":
-							transition list: transition "rolled_up": "variable.is_rolled_up && !variable.is_peeking && query.all_animations_finished"
-							transition list: transition "unroll": "variable.is_rolled_up && variable.is_unrolling && query.all_animations_finished"
-							transition list: transition "unroll_fast": "!variable.is_rolled_up"
+							transition list transition "rolled_up": "variable.is_rolled_up && !variable.is_peeking && query.all_animations_finished"
+							transition list transition "unroll": "variable.is_rolled_up && variable.is_unrolling && query.all_animations_finished"
+							transition list transition "unroll_fast": "!variable.is_rolled_up"
 						field "blend_transition": 0.2
 					Changed state "roll_up":
 						Changed field "transitions":
-							Total transition list: 2 (+1, -1)
-							Removed transition list transition "unroll": "!variable.is_rolled_up".
-							Added transition list transition "unroll_fast": "!variable.is_rolled_up".
-						Added field "blend_transition" of 0.2.
+							Changed transition list:
+								Moved transition from "unroll" to "unroll_fast".
+						Added field "blend_transition": 0.2.
 					Changed state "rolled_up":
 						Changed field "transitions":
-							Total transition list: 3 (+3, -1)
-							Removed transition list transition "unroll": "!variable.is_rolled_up".
+							Total transition list: 3 (+2, -0)
+							Changed transition list:
+								Moved transition from "unroll" to "unroll_fast".
 							Added transition list transition "peek": "variable.is_rolled_up && variable.is_peeking".
 							Added transition list transition "unroll": "variable.is_rolled_up && variable.is_unrolling".
-							Added transition list transition "unroll_fast": "!variable.is_rolled_up".
-						Added field "blend_transition" of 0.2.
+						Added field "blend_transition": 0.2.
 					Changed state "unroll":
 						Changed field "transitions":
 							Total transition list: 2 (+2, -1)
@@ -34,6 +33,6 @@ Changed file "armadillo.animation_controllers.json":
 							Added transition list transition "rolled_up": "variable.is_rolled_up && !variable.is_unrolling".
 							Added transition list transition "default": "!variable.is_rolled_up && query.all_animations_finished".
 					Added state "unroll_fast":
-						field "animations": animation dict: "unroll_fast"
-						field "transitions": transition list: transition "default": "query.all_animations_finished"
+						field "animations": animation dict "unroll_fast"
+						field "transitions": transition list transition "default": "query.all_animations_finished"
 						field "blend_transition": 0.2
