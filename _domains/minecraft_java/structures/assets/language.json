@@ -1,49 +1,51 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "language"
         },
-        "subcomponent": "resource_packs"
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
         },
-        "subcomponent": "files"
+        "value_structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "keys"
+            "structure": "keys"
         }
     },
     "keys": {
         "type": "Dict",
-        "types": "str",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "key",
             "measure_length": true
         },
-        "key_component": "string",
-        "subcomponent": "string"
+        "key_structure": "string",
+        "value_structure": "string"
     },
     "string": {
         "type": "String"

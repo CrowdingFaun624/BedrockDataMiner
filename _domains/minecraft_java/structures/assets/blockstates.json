@@ -1,139 +1,163 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "blockstates"
         },
-        "subcomponent": "resource_packs"
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
         },
-        "subcomponent": "files"
+        "value_structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "root"
+            "structure": "root"
         }
     },
     "blockstate_condition": {
         "type": "Dict",
-        "types": ["str", "list"],
+        "value_types": ["str", "list"],
         "delegate_arguments": {
             "field": "state",
             "measure_length": true
         },
-        "key_component": "string",
-        "subcomponent": {
+        "key_structure": "string",
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "str": "string",
                 "list": "blockstate_conditions"
             }
         }
     },
     "blockstate_conditions": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "condition",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "blockstate_condition"
+        "value_structure": "blockstate_condition"
     },
     "string": {
         "type": "String"
     },
     "root": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "multipart": {"types": "list", "subcomponent": "multipart"},
-            "variants": {"types": "dict", "subcomponent": "variants"}
+            "multipart": {"types": "list", "structure": "multipart"},
+            "variants": {"types": "dict", "structure": "variants"}
         }
     },
     "multipart": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "rule",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "rule"
+        "value_structure": "rule"
     },
     "rule": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "apply": {"types": ["dict", "list"], "subcomponent": {
+            "apply": {"types": ["dict", "list"], "structure": {
                 "type": "Union",
-                "subcomponents": {
+                "substructures": {
                     "dict": "variant",
                     "list": "variants_list"
                 }
             }},
-            "when": {"types": "dict", "subcomponent": "blockstate_condition"}
+            "when": {"types": "dict", "structure": "blockstate_condition"}
         }
     },
     "variants": {
         "type": "Dict",
-        "types": ["dict", "list"],
+        "value_types": ["dict", "list"],
         "delegate_arguments": {
             "field": "variant",
             "measure_length": true
         },
-        "key_component": "string",
-        "subcomponent": "variants_group"
+        "key_structure": "string",
+        "value_structure": "variants_group"
     },
     "variants_list": {
-        "type": "Set",
-        "types": ["dict", "list"],
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["dict", "list"],
         "delegate_arguments": {
             "field": "variant",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "variants_group"
+        "value_structure": "variants_group"
     },
     "variants_group": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": "variant",
             "list": "subvariants"
         }
     },
     "subvariants": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "subvariant",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "variant"
+        "value_structure": "variant"
     },
     "variant": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "model": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "model": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
             "x": {"types": "int"},
             "y": {"types": "int"},
             "uvlock": {"types": "bool"},

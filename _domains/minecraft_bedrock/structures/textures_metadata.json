@@ -1,71 +1,84 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "textures"
         },
-        "types": "dict",
-        "subcomponent": "texture_files"
+        "this_types": "dict",
+        "structure": "texture_files"
     },
     "texture_files": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "texture"
         },
-        "sort": "by_key",
-        "subcomponent": "resource_packs"
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "resource pack"
         },
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "defined_in": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "print_flat": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "metadata"
+            "structure": "metadata"
         }
     },
     "vector_int": {
-        "type": "List",
-        "types": "int",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "int",
         "delegate_arguments": {
+            "field": "item",
             "print_flat": true,
             "print_all": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "vector_int_or_int": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "int": null,
             "list": "vector_int"
         }
     },
     "size_and_position": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "x": {"types": "int"},
             "y": {"types": "int"},
@@ -75,7 +88,9 @@
     },
     "size": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "w": {"types": "int"},
             "h": {"types": "int"}
@@ -84,12 +99,12 @@
     "metadata": {
         "type": "Keymap",
         "keys": {
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "base_size": {"types": "list", "subcomponent": "vector_int"},
-            "nineslice_size": {"types": ["int", "list"], "subcomponent": "vector_int_or_int"},
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "base_size": {"types": "list", "structure": "vector_int"},
+            "nineslice_size": {"types": ["int", "list"], "structure": "vector_int_or_int"},
             "tiled": {"types": "bool"},
-            "meta": {"types": "dict", "subcomponent": "meta"},
-            "frames": {"types": "list", "subcomponent": "frames"}
+            "meta": {"types": "dict", "structure": "meta"},
+            "frames": {"types": "list", "structure": "frames"}
         }
     },
     "meta": {
@@ -99,63 +114,79 @@
             "version": {"types": "str"},
             "image": {"types": "str"},
             "format": {"types": "str"},
-            "size": {"types": "dict", "subcomponent": "size"},
+            "size": {"types": "dict", "structure": "size"},
             "scale": {"types": ["int", "str"]},
-            "frameTags": {"types": "list", "subcomponent": "meta.frame_tags"},
-            "layers": {"types": "list", "subcomponent": "meta.layers"},
-            "slices": {"types": "list", "subcomponent": "meta.slices"}
+            "frameTags": {"types": "list", "structure": "meta.frame_tags"},
+            "layers": {"types": "list", "structure": "meta.layers"},
+            "slices": {"types": "list", "structure": "meta.slices"}
         }
     },
     "meta.frame_tags": {
-        "type": "Set",
-        "types": "null",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "null",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "frame tag"
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "meta.layers": {
-        "type": "Set",
-        "types": "dict",
-        "subcomponent": "meta.layers.layer",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "meta.layers.layer",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "layer"
         }
     },
     "meta.layers.layer": {
         "type": "Keymap",
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 12},
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 12},
             "opacity": {"types": "int"},
             "blendMode": {"types": "str"},
-            "group": {"types": "str", "subcomponent": {"type": "String"}}
+            "group": {"types": "str", "structure": {"type": "String"}}
         }
     },
     "meta.slices": {
-        "type": "Set",
-        "types": "null",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "null",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "slice"
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "frames": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "frame"
         },
-        "subcomponent": "frames.frame"
+        "value_structure": "frames.frame"
     },
     "frames.frame": {
         "type": "Keymap",
         "keys": {
-            "filename": {"types": "str", "subcomponent": {"type": "String"}, "weight": 12, "delegate_arguments": {"always_print": true}},
-            "frame": {"types": "dict", "subcomponent": "size_and_position"},
+            "filename": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 12, "delegate_arguments": {"always_print": true}},
+            "frame": {"types": "dict", "structure": "size_and_position"},
             "rotated": {"types": "bool"},
             "trimmed": {"types": "bool"},
-            "spriteSourceSize": {"types": "dict", "subcomponent": "size_and_position"},
-            "sourceSize": {"types": "dict", "subcomponent": "size"},
+            "spriteSourceSize": {"types": "dict", "structure": "size_and_position"},
+            "sourceSize": {"types": "dict", "structure": "size"},
             "duration": {"types": "int"}
         }
     }

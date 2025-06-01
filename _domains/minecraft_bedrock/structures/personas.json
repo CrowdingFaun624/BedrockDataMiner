@@ -1,51 +1,57 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "personas"
         },
-        "types": "dict",
-        "subcomponent": "personas"
+        "this_types": "dict",
+        "structure": "personas"
     },
     "color_list": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "color",
             "print_all": true,
             "print_flat": true,
             "measure_length": false
         },
-        "types": ["str"],
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "personas": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "persona",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": "file",
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_types": ["dict", "list"],
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": ["dict", "list"],
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": ["dict", "list"],
-            "subcomponent": "persona"
+            "structure": "persona"
         }
     },
     "persona": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": {
                 "type": "Keymap",
                 "keys": {
-                    "appearance": {"types": "list", "subcomponent": "appearance"},
-                    "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+                    "appearance": {"types": "list", "structure": "appearance"},
+                    "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
                     "thumbnailPath": {"types": "str"},
                     "uuid": {"types": "str"}
                 }
@@ -54,17 +60,21 @@
         }
     },
     "appearance": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "appearance",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": {
+        "value_types": ["dict"],
+        "value_structure": {
             "type": "Keymap",
             "keys": {
                 "arm": {"types": "str"},
-                "col": {"types": "list", "subcomponent": "color_list"},
+                "col": {"types": "list", "structure": "color_list"},
                 "id": {"types": "str"},
                 "skcol": {"types": "str"},
                 "skin": {"types": "bool"}

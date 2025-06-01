@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "block_models"
         },
-        "subcomponent": "resource_packs"
+        "structure": "resource_packs"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -13,150 +13,180 @@
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
         },
-        "subcomponent": "files"
+        "value_structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "root"
+            "structure": "root"
         }
     },
     "string": {
         "type": "String"
     },
     "vector_decimal": {
-        "type": "List",
-        "types": "decimal",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "decimal",
         "delegate_arguments": {
             "print_all": true,
             "print_flat": true,
             "field": "component"
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "vector_int": {
-        "type": "List",
-        "types": "int",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "int",
         "delegate_arguments": {
             "print_all": true,
             "print_flat": true,
             "field": "component"
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "root": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "parent": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "parent": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
             "ambientocclusion": {"types": "bool"},
-            "display": {"types": "dict", "subcomponent": "display"},
-            "textures": {"types": "dict", "subcomponent": "textures"},
-            "texture_size": {"types": "list", "subcomponent": "vector_int"},
+            "display": {"types": "dict", "structure": "display"},
+            "textures": {"types": "dict", "structure": "textures"},
+            "texture_size": {"types": "list", "structure": "vector_int"},
             "gui_light": {"types": "str"},
-            "groups": {"types": "list", "subcomponent": "groups"},
-            "elements": {"types": "list", "subcomponent": "elements"}
+            "groups": {"types": "list", "structure": "groups"},
+            "elements": {"types": "list", "structure": "elements"}
         }
     },
     "display": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "thirdperson_righthand": {"types": "dict", "subcomponent": "display.item"},
-            "thirdperson_lefthand": {"types": "dict", "subcomponent": "display.item"},
-            "firstperson_righthand": {"types": "dict", "subcomponent": "display.item"},
-            "firstperson_lefthand": {"types": "dict", "subcomponent": "display.item"},
-            "gui": {"types": "dict", "subcomponent": "display.item"},
-            "head": {"types": "dict", "subcomponent": "display.item"},
-            "ground": {"types": "dict", "subcomponent": "display.item"},
-            "fixed": {"types": "dict", "subcomponent": "display.item"}
+            "thirdperson_righthand": {"types": "dict", "structure": "display.item"},
+            "thirdperson_lefthand": {"types": "dict", "structure": "display.item"},
+            "firstperson_righthand": {"types": "dict", "structure": "display.item"},
+            "firstperson_lefthand": {"types": "dict", "structure": "display.item"},
+            "gui": {"types": "dict", "structure": "display.item"},
+            "head": {"types": "dict", "structure": "display.item"},
+            "ground": {"types": "dict", "structure": "display.item"},
+            "fixed": {"types": "dict", "structure": "display.item"}
         }
     },
     "display.item": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "rotation": {"types": "list", "subcomponent": "vector_decimal"},
-            "translation": {"types": "list", "subcomponent": "vector_decimal"},
-            "scale": {"types": "list", "subcomponent": "vector_decimal"}
+            "rotation": {"types": "list", "structure": "vector_decimal"},
+            "translation": {"types": "list", "structure": "vector_decimal"},
+            "scale": {"types": "list", "structure": "vector_decimal"}
         }
     },
     "textures": {
         "type": "Dict",
-        "types": "str",
-        "sort": "by_key",
+        "value_types": "str",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "texture",
             "measure_length": true
         },
-        "key_component": "string",
-        "subcomponent": "string"
+        "key_structure": "string",
+        "value_structure": "string"
     },
     "groups": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "group",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "group"
+        "value_structure": "group"
     },
     "group": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
-            "origin": {"types": "list", "subcomponent": "vector_int"},
+            "name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "origin": {"types": "list", "structure": "vector_int"},
             "color": {"types": "int"},
-            "children": {"types": "list", "subcomponent": "vector_int"}
+            "children": {"types": "list", "structure": "vector_int"}
         }
     },
     "elements": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "element",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "element"
+        "value_structure": "element"
     },
     "element": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
-            "__comment": {"types": "str", "subcomponent": "string"},
-            "from": {"types": "list", "subcomponent": "vector_decimal"},
-            "to": {"types": "list", "subcomponent": "vector_decimal"},
-            "rotation": {"types": "dict", "subcomponent": "element.rotation"},
+            "name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "__comment": {"types": "str", "structure": "string"},
+            "from": {"types": "list", "structure": "vector_decimal"},
+            "to": {"types": "list", "structure": "vector_decimal"},
+            "rotation": {"types": "dict", "structure": "element.rotation"},
             "shade": {"types": "bool"},
             "light_emission": {"types": "int"},
-            "faces": {"types": "dict", "subcomponent": "faces"}
+            "faces": {"types": "dict", "structure": "faces"}
         }
     },
     "element.rotation": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "origin": {"types": "list", "subcomponent": "vector_decimal"},
+            "origin": {"types": "list", "structure": "vector_decimal"},
             "axis": {"types": "str"},
             "angle": {"types": "decimal"},
             "rescale": {"types": "bool"}
@@ -164,25 +194,27 @@
     },
     "faces": {
         "type": "Keymap",
-        "sort": "by_component_order",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "face",
             "measure_length": true
         },
         "keys": {
-            "down": {"types": "dict", "subcomponent": "face"},
-            "up": {"types": "dict", "subcomponent": "face"},
-            "north": {"types": "dict", "subcomponent": "face"},
-            "south": {"types": "dict", "subcomponent": "face"},
-            "west": {"types": "dict", "subcomponent": "face"},
-            "east": {"types": "dict", "subcomponent": "face"}
+            "down": {"types": "dict", "structure": "face"},
+            "up": {"types": "dict", "structure": "face"},
+            "north": {"types": "dict", "structure": "face"},
+            "south": {"types": "dict", "structure": "face"},
+            "west": {"types": "dict", "structure": "face"},
+            "east": {"types": "dict", "structure": "face"}
         }
     },
     "face": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "uv": {"types": "list", "subcomponent": "vector_decimal"},
+            "uv": {"types": "list", "structure": "vector_decimal"},
             "texture": {"types": "str"},
             "cullface": {"types": "str"},
             "rotation": {"types": "int"},

@@ -1,82 +1,92 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "pieces_meta"
         },
-        "types": "dict",
-        "subcomponent": "pieces"
+        "this_types": "dict",
+        "structure": "pieces"
     },
     "pieces": {
         "type": "Dict",
-        "types": "dict",
-        "subcomponent": "meta_files",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "meta_files",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "piece"
         }
     },
     "meta_files": {
         "type": "Dict",
-        "types": "file",
-        "subcomponent": "cache",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "cache",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "meta file"
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "meta"
+            "structure": "meta"
         }
     },
     "meta": {
         "type": "Keymap",
         "keys": {
             "piece_id": {"types": "str"},
-            "piece_name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "piece_name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
             "piece_type": {"types": "str"},
-            "zone": {"types": "list", "subcomponent": "zones"},
-            "tint_base_color": {"types": "dict", "subcomponent": "tint_base_color"},
-            "tint_color": {"types": "dict", "subcomponent": "tint_base_color"},
+            "zone": {"types": "list", "structure": "zones"},
+            "tint_base_color": {"types": "dict", "structure": "tint_base_color"},
+            "tint_color": {"types": "dict", "structure": "tint_base_color"},
             "body_variant": {"types": "str"},
             "face_clothing_map": {"types": "str"},
             "clothing_map": {"types": "str"},
-            "animation_sources": {"types": "list", "subcomponent": "animation_sources"},
-            "geometry_sources": {"types": "list", "subcomponent": "geometry_sources"},
-            "texture_sources": {"types": "list", "subcomponent": "texture_sources"}
+            "animation_sources": {"types": "list", "structure": "animation_sources"},
+            "geometry_sources": {"types": "list", "structure": "geometry_sources"},
+            "texture_sources": {"types": "list", "structure": "texture_sources"}
         }
     },
     "zones": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "zone",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "String"
         }
     },
     "texture_sources": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "texture source",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "texture_source"
+        "value_structure": "texture_source"
     },
     "texture_source": {
         "type": "Keymap",
         "keys": {
-            "texture": {"types": "str", "subcomponent": {"type": "String"}, "weight": 4, "delegate_arguments": {"always_print": true}},
-            "tint_map": {"types": "str", "subcomponent": {"type": "String"}},
+            "texture": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 4, "delegate_arguments": {"always_print": true}},
+            "tint_map": {"types": "str", "structure": {"type": "String"}},
             "use_face_uv": {"types": "bool"},
             "frames": {"types": "int"},
             "animated": {"types": "bool"}
@@ -84,7 +94,9 @@
     },
     "tint_base_color": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "r_color": {"types": "str"},
             "g_color": {"types": "str"},
@@ -93,35 +105,43 @@
         }
     },
     "animation_sources": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "animation source",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "animation_source"
+        "value_structure": "animation_source"
     },
     "animation_source": {
         "type": "Keymap",
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "weight": 4, "delegate_arguments": {"always_print": true}},
-            "animationFile": {"types": "str", "subcomponent": {"type": "String"}}
+            "name": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 4, "delegate_arguments": {"always_print": true}},
+            "animationFile": {"types": "str", "structure": {"type": "String"}}
         }
     },
     "geometry_sources": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "geometry source",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "geometry_source"
+        "value_structure": "geometry_source"
     },
     "geometry_source": {
         "type": "Keymap",
         "keys": {
             "arm_size": {"types": "str"},
-            "geometry": {"types": "str", "subcomponent": {"type": "String"}, "weight": 3, "delegate_arguments": {"always_print": true}},
+            "geometry": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
             "zone": {"types": "str"},
             "is_face": {"types": "str"}
         }

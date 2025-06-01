@@ -1,33 +1,35 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "resources"
         },
-        "types": "dict",
-        "subcomponent": "resource_packs"
+        "this_types": "dict",
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "file",
-        "sort": "by_key",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "resources_repairable_json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "string": {
@@ -37,28 +39,32 @@
         "type": "Keymap",
         "imports": "categories",
         "keys": {
-            "pack_id": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "pack_id": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
             "name": {"types": "str"},
             "description": {"types": "str"},
             "key_art_path": {"types": "str"},
-            "screenshots": {"types": "list", "subcomponent": "screenshots"},
-            "resources": {"types": "dict", "subcomponent": "categories"},
-            "skins": {"types": "dict", "subcomponent": "skins"}
+            "screenshots": {"types": "list", "structure": "screenshots"},
+            "resources": {"types": "dict", "structure": "categories"},
+            "skins": {"types": "dict", "structure": "skins"}
         }
     },
     "screenshots": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "screenshot",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "screenshot"
+        "value_structure": "screenshot"
     },
     "screenshot": {
         "type": "Keymap",
         "keys": {
-            "path": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}}
+            "path": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}}
         }
     },
     "categories": {
@@ -68,29 +74,29 @@
             "measure_length": true
         },
         "keys": {
-            "models": {"types": "dict", "subcomponent": "resources"},
-            "textures": {"types": "dict", "subcomponent": "resources"},
-            "metas": {"types": "dict", "subcomponent": "resources"}
+            "models": {"types": "dict", "structure": "resources"},
+            "textures": {"types": "dict", "structure": "resources"},
+            "metas": {"types": "dict", "structure": "resources"}
         }
     },
     "resources": {
         "type": "Dict",
-        "types": "str",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "resource",
             "measure_length": true
         },
-        "subcomponent": "string",
-        "key_component": "string"
+        "value_structure": "string",
+        "key_structure": "string"
     },
     "skins": {
         "type": "Dict",
-        "types": "str",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "skin",
             "measure_length": true
         },
-        "subcomponent": "string",
-        "key_component": "string"
+        "value_structure": "string",
+        "key_structure": "string"
     }
 }

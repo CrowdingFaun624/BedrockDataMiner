@@ -1,38 +1,40 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "font_providers"
         },
-        "subcomponent": "resource_packs"
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
         },
-        "subcomponent": "files"
+        "value_structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "root"
+            "structure": "root"
         }
     },
     "string": {
@@ -40,48 +42,53 @@
     },
     "root": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "providers": {"types": "list", "subcomponent": "providers"}
+            "providers": {"types": "list", "structure": "providers"}
         }
     },
     "providers": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "provider",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "provider_switch"
+        "value_structure": "provider_switch"
     },
     "provider_switch": {
         "type": "Switch",
-        "types": "dict",
         "switch_function": {
             "function_name": "get_key",
             "arguments": {
                 "key": "type"
             }
         },
-        "subcomponents": {
-            "bitmap": "provider.bitmap",
-            "legacy_unicode": "provider.legacy_unicode",
-            "reference": "provider.reference",
-            "space": "provider.space",
-            "ttf": "provider.ttf",
-            "unihex": "provider.unihex"
+        "substructures": {
+            "bitmap": {"types": "dict", "structure": "provider.bitmap"},
+            "legacy_unicode": {"types": "dict", "structure": "provider.legacy_unicode"},
+            "reference": {"types": "dict", "structure": "provider.reference"},
+            "space": {"types": "dict", "structure": "provider.space"},
+            "ttf": {"types": "dict", "structure": "provider.ttf"},
+            "unihex": {"types": "dict", "structure": "provider.unihex"}
         }
     },
     "provider_common": {
         "type": "Keymap",
         "keys": {
-            "filter": {"types": "dict", "subcomponent": "filter"}
+            "filter": {"types": "dict", "structure": "filter"}
         }
     },
     "filter": {
         "type": "Keymap",
-        "sort": "by_component_order",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "option"
         },
         "keys": {
@@ -91,121 +98,149 @@
     },
     "provider.bitmap": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["provider_common"],
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "ascent": {"types": "int"},
-            "chars": {"types": "list", "subcomponent": "provider.bitmap:chars"},
-            "file": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "chars": {"types": "list", "structure": "provider.bitmap:chars"},
+            "file": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
             "height": {"types": "int"}
         }
     },
     "provider.bitmap:chars": {
-        "type": "List",
-        "types": "str",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "line",
             "measure_length": true
         },
-        "subcomponent": "string"
+        "value_structure": "string"
     },
     "provider.legacy_unicode": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["provider_common"],
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "template": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
-            "sizes": {"types": "str", "subcomponent": "string"}
+            "template": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "sizes": {"types": "str", "structure": "string"}
         }
     },
     "provider.reference": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["provider_common"],
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "id": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}}
+            "id": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}}
         }
     },
     "provider.space": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["provider_common"],
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "advances": {"types": "dict", "subcomponent": "provider.space:advances"}
+            "advances": {"types": "dict", "structure": "provider.space:advances"}
         }
     },
     "provider.space:advances": {
         "type": "Dict",
-        "types": "int",
-        "sort": "by_key",
+        "value_types": "int",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "character",
             "measure_length": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "provider.ttf": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["provider_common"],
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "file": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
-            "shift": {"types": "list", "subcomponent": "provider.ttf:shift"},
+            "file": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "shift": {"types": "list", "structure": "provider.ttf:shift"},
             "scale": {"types": "int"},
             "oversample": {"types": "int"},
-            "skip": {"types": "list", "subcomponent": "provider.ttf:skip"}
+            "skip": {"types": "list", "structure": "provider.ttf:skip"}
         }
     },
     "provider.ttf:shift": {
-        "type": "List",
-        "types": "int",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "int",
         "delegate_arguments": {
             "field": "shift",
             "print_flat": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "provider.ttf:skip": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "pre_normalized_types": ["list", "str"],
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/normalizers font_providers_normalize_skip"
         },
         "delegate_arguments": {
             "field": "character",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "provider.unihex": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["provider_common"],
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "hex_file": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
-            "size_overrides": {"types": "list", "subcomponent": "provider.unihex:size_overrides"}
+            "hex_file": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "size_overrides": {"types": "list", "structure": "provider.unihex:size_overrides"}
         }
     },
     "provider.unihex:size_overrides": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "range",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "provider.unihex:size_overrides.item"
+        "value_structure": "provider.unihex:size_overrides.item"
     },
     "provider.unihex:size_overrides.item": {
         "type": "Keymap",
-        "sort": "by_component_order",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "print_all": true
         },
         "keys": {

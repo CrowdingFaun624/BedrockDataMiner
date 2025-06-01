@@ -1,54 +1,56 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "pieces_geometry"
         },
-        "types": "dict",
-        "subcomponent": "pieces"
+        "this_types": "dict",
+        "structure": "pieces"
     },
     "pieces": {
         "type": "Dict",
-        "types": "dict",
-        "subcomponent": "geometry_files",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "geometry_files",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "piece"
         }
     },
     "geometry_files": {
         "type": "Dict",
-        "types": "file",
-        "subcomponent": "cache",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "cache",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "geometry file"
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "geometries"
+            "structure": "geometries"
         }
     },
     "geometries": {
         "type": "Dict",
-        "sort": "by_key",
-        "normalizer": {
+        "normalizers": {
             "function_name": "delete_optional_key",
             "arguments": {
                 "key": "format_version"
             }
         },
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "measure_length": true,
             "field": "geometry"
         },
-        "subcomponent": "structures/models/geometry"
+        "value_structure": "structures/models/geometry"
     }
 }

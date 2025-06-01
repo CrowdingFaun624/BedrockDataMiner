@@ -1,30 +1,33 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "gui_sound_definitions"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "sound_event"
+            "structure": "sound_event"
         }
     },
     "sound_event": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "sound event",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "structures/sound_definitions/sound_event_property"
+        "value_types": ["dict"],
+        "value_structure": "structures/sound_definitions/sound_event_property"
     }
 }

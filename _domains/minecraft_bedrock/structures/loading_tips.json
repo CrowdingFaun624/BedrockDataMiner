@@ -1,57 +1,59 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "loading_tips"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_dict_file",
                 "arguments": {
                     "add_defined_in": false
                 }
             },
-            "subcomponent": "resource_packs"
+            "structure": "resource_packs"
         }
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "resource pack"
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "categories"
+        "value_types": ["dict"],
+        "value_structure": "categories"
     },
     "categories": {
         "type": "Dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "category"
         },
-        "types": ["list"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "tips"
+        "value_types": ["list"],
+        "value_structure": "tips"
     },
     "tips": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
+            "sort": "sort_by_value",
+            "show_item_key": false,
             "field": "tip"
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     }
 }

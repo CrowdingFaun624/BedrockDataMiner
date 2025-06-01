@@ -1,58 +1,63 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "skins"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers skins_normalize",
                 "arguments": {
                     "other_keys": ["serialize_name", "localization_name"]
                 }
             },
-            "subcomponent": "skins_file"
+            "structure": "skins_file"
         }
     },
     "skins_file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "serialize_name": {"types": "dict", "subcomponent": "names"},
-            "localization_name": {"types": "dict", "subcomponent": "names"},
-            "skins": {"types": "list", "subcomponent": "skins"}
+            "serialize_name": {"types": "dict", "structure": "names"},
+            "localization_name": {"types": "dict", "structure": "names"},
+            "skins": {"types": "list", "structure": "skins"}
         }
     },
     "names": {
         "type": "Dict",
-        "types": ["str", "list"],
+        "value_types": ["str", "list"],
         "delegate_arguments": {
             "field": "skin pack"
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "str": null,
                 "list": {
-                    "type": "Set",
-                    "types": "str",
+                    "type": "Dict",
+                    "key_weight": 0,
+                    "key_types": "int",
+                    "this_types": "list",
+                    "value_types": "str",
                     "delegate_arguments": {
                         "field": "name",
+            "show_item_key": false,
                         "measure_length": true
                     },
-                    "subcomponent": {
+                    "value_structure": {
                         "type": "String"
                     }
                 }
@@ -60,21 +65,27 @@
         }
     },
     "skins": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "skin"
         },
-        "subcomponent": "skin"
+        "value_structure": "skin"
     },
     "skin": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "cape": {"types": "str", "subcomponent": "string"},
-            "localization_name": {"types": "str", "subcomponent": "string", "weight": 6},
-            "geometry": {"types": "str", "subcomponent": "string"},
-            "texture": {"types": "str", "subcomponent": "string"},
+            "cape": {"types": "str", "structure": "string"},
+            "localization_name": {"types": "str", "structure": "string", "similarity_weight": 6},
+            "geometry": {"types": "str", "structure": "string"},
+            "texture": {"types": "str", "structure": "string"},
             "type": {"types": "str"},
             "defined_in": {"types": "str"}
         }

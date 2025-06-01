@@ -1,61 +1,69 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "images"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
-        "subcomponent": "cache",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "cache",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "file",
             "measure_length": true
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "images"
+            "structure": "images"
         }
     },
     "images": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "bilinear": {"types": "bool"},
-            "textures": {"types": ["list", "dict"], "subcomponent": "textures"}
+            "textures": {"types": ["list", "dict"], "structure": "textures"}
         }
     },
     "textures": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "list": {
-                "type": "Set",
-                "types": ["str", "dict"],
-                "subcomponent": "texture",
+                "type": "Dict",
+                "key_weight": 0,
+                "key_types": "int",
+                "this_types": "list",
+                "value_types": ["str", "dict"],
+                "value_structure": "texture",
                 "delegate_arguments": {
                     "field": "texture",
+            "show_item_key": false,
                     "measure_length": true
                 }
             },
             "dict": {
                 "type": "Dict",
-                "types": ["str", "dict"],
-                "subcomponent": "texture",
-                "sort": "by_key",
-                "key_component": {
+                "value_types": ["str", "dict"],
+                "value_structure": "texture",
+                "key_structure": {
                     "type": "String"
                 },
                 "delegate_arguments": {
+                    "sort": "sort_by_key",
                     "field": "texture",
                     "measure_length": true
                 }
@@ -64,12 +72,12 @@
     },
     "texture": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "str": {"type": "String"},
             "dict": {
                 "type": "Keymap",
                 "keys": {
-                    "texture": {"types": "str", "subcomponent": {"type": "String"}, "weight": 8, "delegate_arguments": {"always_print": true}},
+                    "texture": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 8, "delegate_arguments": {"always_print": true}},
                     "bilinear": {"types": "bool"},
                     "wrap": {"types": "bool"}
                 }

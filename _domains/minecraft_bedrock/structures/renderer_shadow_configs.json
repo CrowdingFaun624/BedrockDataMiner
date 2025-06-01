@@ -1,58 +1,64 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_shadow_configs"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": "shadow_config",
         "keys": {
-            "low": {"types": "dict", "subcomponent": "shadow_config"},
-            "medium": {"types": "dict", "subcomponent": "shadow_config"},
-            "high": {"types": "dict", "subcomponent": "shadow_config"},
-            "ultra": {"types": "dict", "subcomponent": "shadow_config"}
+            "low": {"types": "dict", "structure": "shadow_config"},
+            "medium": {"types": "dict", "structure": "shadow_config"},
+            "high": {"types": "dict", "structure": "shadow_config"},
+            "ultra": {"types": "dict", "structure": "shadow_config"}
         }
     },
     "shadow_config": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "cascade_bias": {"types": "list", "subcomponent": "vector_float"},
-            "cascade_light_quantization_steps": {"types": "list", "subcomponent": "vector_int"},
-            "cascade_pcf_width": {"types": "list", "subcomponent": "vector_float"},
-            "cascade_range": {"types": "list", "subcomponent": "vector_float"},
-            "cascade_resolution": {"types": "list", "subcomponent": "vector_int"},
-            "cascade_slope_bias": {"types": "list", "subcomponent": "vector_float"},
+            "cascade_bias": {"types": "list", "structure": "vector_float"},
+            "cascade_light_quantization_steps": {"types": "list", "structure": "vector_int"},
+            "cascade_pcf_width": {"types": "list", "structure": "vector_float"},
+            "cascade_range": {"types": "list", "structure": "vector_float"},
+            "cascade_resolution": {"types": "list", "structure": "vector_int"},
+            "cascade_slope_bias": {"types": "list", "structure": "vector_float"},
             "cloud_shadow_contribution": {"types": "float"},
             "cloud_shadow_pcf_width": {"types": "float"},
             "cloud_shadow_quantization_steps": {"types": "int"},
             "cloud_shadows": {"types": "bool"},
-            "directional_light_shadow": {"types": "dict", "subcomponent": "shadow_config", "tags": ["outdated"]},
+            "directional_light_shadow": {"types": "dict", "structure": "shadow_config", "tags": ["outdated"]},
             "file": {"types": "str"},
             "max_shadow_distance": {"types": "float"},
             "moon_shadows": {"types": "bool"},
@@ -60,16 +66,16 @@
             "num_cascades": {"types": "int", "tags": ["outdated"]},
             "num_cascade_levels": {"types": "int"},
             "num_variable_cascade_levels": {"types": "int"},
-            "point_light_shadow": {"types": "dict", "subcomponent": "point_light_shadow", "tags": ["outdated"]},
+            "point_light_shadow": {"types": "dict", "structure": "point_light_shadow", "tags": ["outdated"]},
             "shadow_clamp_angle": {"types": "int"},
-            "shadow_range": {"types": "dict", "subcomponent": "shadow_range"},
+            "shadow_range": {"types": "dict", "structure": "shadow_range"},
             "sun_shadows": {"types": "bool"}
         }
     },
     "shadow_range": {
         "type": "Keymap",
-        "sort": "by_component_order",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "print_all": true
         },
         "keys": {
@@ -79,7 +85,9 @@
     },
     "point_light_shadow": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "bias": {"types": "float"},
             "slope_bias": {"types": "float"},
@@ -91,21 +99,29 @@
         }
     },
     "vector_float": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "vector item",
             "measure_length": false
         },
-        "types": ["float"],
-        "subcomponent": null
+        "value_types": ["float"],
+        "value_structure": null
     },
     "vector_int": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "vector item",
             "measure_length": false
         },
-        "types": ["int"],
-        "subcomponent": null
+        "value_types": ["int"],
+        "value_structure": null
     }
 }

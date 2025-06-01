@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "spawn_groups"
         },
-        "types": "dict",
-        "subcomponent": "spawn_groups"
+        "this_types": "dict",
+        "structure": "spawn_groups"
     },
     "empty_dict": {
         "type": "Keymap",
@@ -15,33 +15,39 @@
         "type": "Dict",
         "delegate_arguments": {
             "field": "spawn group",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "spawn_group"
+            "structure": "spawn_group"
         }
     },
     "spawn_group": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "format_version": {"types": "str"},
-            "minecraft:spawn_groups": {"types": "dict", "subcomponent": {
+            "minecraft:spawn_groups": {"types": "dict", "structure": {
                 "type": "Keymap",
-                "sort": "by_component_order",
+                "delegate_arguments": {
+                    "sort": "sort_by_component_order"
+                },
                 "keys": {
-                    "description": {"types": "dict", "subcomponent": "description"},
-                    "conditions": {"types": "list", "subcomponent": "conditions"}
+                    "description": {"types": "dict", "structure": "description"},
+                    "conditions": {"types": "list", "structure": "conditions"}
                 }
             }}
         }
@@ -49,28 +55,34 @@
     "description": {
         "type": "Keymap",
         "keys": {
-            "identifier": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "conditions": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "condition",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "condition"
+        "value_types": ["dict"],
+        "value_structure": "condition"
     },
     "condition": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "minecraft:difficulty_filter": {"types": "dict", "subcomponent": "component.difficulty_filter"},
-            "minecraft:distance_filter": {"types": "dict", "subcomponent": "component.distance_filter"},
-            "minecraft:herd": {"types": "dict", "subcomponent": "component.herd"},
-            "minecraft:mob_event_filter": {"types": "dict", "subcomponent": "component.mob_event_filter"},
-            "minecraft:permute_type": {"types": "list", "subcomponent": "component.permute_type"},
-            "minecraft:spawns_on_surface": {"types": "dict", "subcomponent": "empty_dict"}
+            "minecraft:difficulty_filter": {"types": "dict", "structure": "component.difficulty_filter"},
+            "minecraft:distance_filter": {"types": "dict", "structure": "component.distance_filter"},
+            "minecraft:herd": {"types": "dict", "structure": "component.herd"},
+            "minecraft:mob_event_filter": {"types": "dict", "structure": "component.mob_event_filter"},
+            "minecraft:permute_type": {"types": "list", "structure": "component.permute_type"},
+            "minecraft:spawns_on_surface": {"types": "dict", "structure": "empty_dict"}
         }
     },
     "component.difficulty_filter": {
@@ -108,18 +120,22 @@
         }
     },
     "component.permute_type": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "permute type",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "component.permute_type:item"
+        "value_types": ["dict"],
+        "value_structure": "component.permute_type:item"
     },
     "component.permute_type:item": {
         "type": "Keymap",
         "keys": {
-            "entity_type": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "entity_type": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
             "weight": {"types": "int"}
         }
     }

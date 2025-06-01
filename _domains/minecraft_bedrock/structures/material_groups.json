@@ -1,74 +1,81 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "material_groups"
         },
-        "types": "dict",
-        "subcomponent": "material_groups"
+        "this_types": "dict",
+        "structure": "material_groups"
     },
     "material_groups": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "material group",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["fake_file"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_list_file"
             },
-            "subcomponent": "resource_packs"
+            "structure": "resource_packs"
         }
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["list"],
-        "sort": "by_key",
-        "subcomponent": "material_group"
+        "value_types": ["list"],
+        "value_structure": "material_group"
     },
     "material_group": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "material",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "material"
+        "value_types": ["dict"],
+        "value_structure": "material"
     },
     "material": {
         "type": "Keymap",
         "keys": {
-            "path": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "path": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
             "tag": {"types": "str", "tags": ["outdated"]},
-            "defines": {"types": "list", "subcomponent": "defines", "tags": ["outdated"]},
-            "+defines": {"types": "list", "subcomponent": "defines"}
+            "defines": {"types": "list", "structure": "defines", "tags": ["outdated"]},
+            "+defines": {"types": "list", "structure": "defines"}
         }
     },
     "defines": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "definition",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     }
 }

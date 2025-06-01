@@ -1,33 +1,43 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "bootstrap"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "bootstrap"
+            "structure": "bootstrap"
         }
     },
     "bootstrap": {
         "type": "Keymap",
         "keys": {
-            "profile": {"types": ["dict", "list"], "subcomponent": {
+            "profile": {"types": ["dict", "list"], "structure": {
                 "type": "Union",
-                "subcomponents": {
+                "substructures": {
                     "dict": "profile",
                     "list": {
-                        "type": "List",
-                        "types": "null",
-                        "subcomponent": null
+                        "type": "Dict",
+                        "allow_key_moves": false,
+                        "key_weight": 0,
+                        "key_types": "int",
+                        "this_types": "list",
+                        "value_types": "null",
+                        "delegate_arguments": {
+                            "field": "item"
+                        },
+                        "value_structure": null
                     }
                 }
             }}
@@ -36,19 +46,24 @@
     "profile": {
         "type": "Keymap",
         "keys": {
-            "enabled_groups": {"types": "list", "subcomponent": "group_list"},
+            "enabled_groups": {"types": "list", "structure": "group_list"},
             "min_group_stack_depth": {"types": "int"},
             "headers_enabled": {"types": "bool"}
         }
     },
     "group_list": {
-        "type": "Set",
-        "types": "str",
-        "subcomponent": {
-            "type": "String"
-        },
+        "type": "Dict",
+        "allow_same_key_optimization": false,
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "group"
+        },
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": {
+            "type": "String"
         }
     }
 }

@@ -1,35 +1,42 @@
 {
     "base": {
-        "type": "Base",
-        "types": "file",
+        "type": "StructureBase",
+        "this_types": "dict",
+        "pre_normalized_types": "file",
         "delegate_arguments": {
             "name": "flight_recorder_config"
         },
-        "subcomponent": "cache"
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "xml_serializer",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "configuration"
+            "structure": "configuration"
         }
     },
     "configuration": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "tag": {"types": "str"},
-            "attrib": {"types": "dict", "subcomponent": "configuration.attrib"},
+            "attrib": {"types": "dict", "structure": "configuration.attrib"},
             "text": {"types": "str"},
-            "children": {"types": "list", "subcomponent": "configuration.children"}
+            "children": {"types": "list", "structure": "configuration.children"}
         }
     },
     "configuration.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "version": {"types": "str"},
             "label": {"types": "str"},
@@ -38,257 +45,314 @@
         }
     },
     "configuration.children": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "measure_length": true,
+            "show_item_key": false,
             "field": "child"
         },
-        "subcomponent": "configuration.child_switch"
+        "value_structure": "configuration.child_switch"
     },
     "configuration.child_switch": {
         "type": "Switch",
-        "types": "dict",
         "switch_function": {
             "function_name": "get_key",
             "arguments": {
                 "key": "tag"
             }
         },
-        "subcomponents": {
-            "event": "event",
-            "control": "control"
+        "substructures": {
+            "event": {"types": "dict", "structure": "event"},
+            "control": {"types": "dict", "structure": "control"}
         }
     },
     "event": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "tag": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "attrib": {"types": "dict", "subcomponent": "event.attrib", "delegate_arguments": {"always_print": true}},
+            "attrib": {"types": "dict", "structure": "event.attrib", "delegate_arguments": {"always_print": true}},
             "text": {"types": "str"},
-            "children": {"types": "list", "subcomponent": "event.children"}
+            "children": {"types": "list", "structure": "event.children"}
         }
     },
     "event.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "event.children": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "measure_length": true,
+            "show_item_key": false,
             "field": "setting"
         },
-        "subcomponent": "setting"
+        "value_structure": "setting"
     },
     "setting": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "weight": 0},
-            "attrib": {"types": "dict", "subcomponent": "setting.attrib", "delegate_arguments": {"always_print": true}, "weight": 2},
+            "tag": {"types": "str", "similarity_weight": 0},
+            "attrib": {"types": "dict", "structure": "setting.attrib", "delegate_arguments": {"always_print": true}, "similarity_weight": 2},
             "text": {"types": "str"}
         }
     },
     "setting.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}, "weight": 3},
-            "control": {"types": "str", "subcomponent": {"type": "String"}}
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}, "similarity_weight": 3},
+            "control": {"types": "str", "structure": {"type": "String"}}
         }
     },
     "control": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "weight": 0},
-            "children": {"types": "list", "subcomponent": "control.children"}
+            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
+            "children": {"types": "list", "structure": "control.children"}
         }
     },
     "control.children": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "child",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "control.child_switch"
+        "value_structure": "control.child_switch"
     },
     "control.child_switch": {
         "type": "Switch",
-        "types": "dict",
         "switch_function": {
             "function_name": "get_key",
             "arguments": {
                 "key": "tag"
             }
         },
-        "subcomponents": {
-            "selection": "selection",
-            "condition": "condition",
-            "text": "text",
-            "flag": "flag"
+        "substructures": {
+            "selection": {"types": "dict", "structure": "selection"},
+            "condition": {"types": "dict", "structure": "condition"},
+            "text": {"types": "dict", "structure": "text"},
+            "flag": {"types": "dict", "structure": "flag"}
         }
     },
     "selection": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "weight": 0},
-            "attrib": {"types": "dict", "subcomponent": "selection.attrib", "delegate_arguments": {"always_print": true}},
-            "children": {"types": "list", "subcomponent": "selection.children"}
+            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
+            "attrib": {"types": "dict", "structure": "selection.attrib", "delegate_arguments": {"always_print": true}},
+            "children": {"types": "list", "structure": "selection.children"}
         }
     },
     "selection.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 6},
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 6},
             "default": {"types": "str"},
-            "label": {"types": "str", "subcomponent": {"type": "String"}, "weight": 2}
+            "label": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 2}
         }
     },
     "selection.children": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "measure_length": true,
+            "show_item_key": false,
             "field": "option"
         },
-        "subcomponent": "option"
+        "value_structure": "option"
     },
     "option": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "weight": 0},
-            "attrib": {"types": "dict", "subcomponent": "option.attrib", "weight": 3},
+            "tag": {"types": "str", "similarity_weight": 0},
+            "attrib": {"types": "dict", "structure": "option.attrib", "similarity_weight": 3},
             "text": {"types": "str"}
         }
     },
     "option.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "label": {"types": "str", "subcomponent": {"type": "String"}},
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 3}
+            "label": {"types": "str", "structure": {"type": "String"}},
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 3}
         }
     },
     "condition": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "weight": 0},
-            "attrib": {"types": "dict", "subcomponent": "condition.attrib", "delegate_arguments": {"always_print": true}},
-            "children": {"types": "list", "subcomponent": "condition.children"}
+            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
+            "attrib": {"types": "dict", "structure": "condition.attrib", "delegate_arguments": {"always_print": true}},
+            "children": {"types": "list", "structure": "condition.children"}
         }
     },
     "condition.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 8},
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 8},
             "true": {"types": "str"},
             "false": {"types": "str"}
         }
     },
     "condition.children": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "test",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "condition.child_switch"
+        "value_structure": "condition.child_switch"
     },
     "condition.child_switch": {
         "type": "Switch",
-        "types": "dict",
         "switch_function": {
             "function_name": "get_key",
             "arguments": {
                 "key": "tag"
             }
         },
-        "subcomponents": {
-            "test": "test",
-            "or": "or"
+        "substructures": {
+            "test": {"types": "dict", "structure": "test"},
+            "or": {"types": "dict", "structure": "or"}
         }
     },
     "test": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "weight": 0},
-            "attrib": {"types": "dict", "subcomponent": "test.attrib", "delegate_arguments": {"always_print": true}}
+            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
+            "attrib": {"types": "dict", "structure": "test.attrib", "delegate_arguments": {"always_print": true}}
         }
     },
     "test.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 8},
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 8},
             "operator": {"types": "str"},
             "value": {"types": "str"}
         }
     },
     "or": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "weight": 0},
-            "children": {"types": "list", "subcomponent": "or.children"}
+            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
+            "children": {"types": "list", "structure": "or.children"}
         }
     },
     "or.children": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "test",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "test"
+        "value_structure": "test"
     },
     "text": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "weight": 0},
-            "attrib": {"types": "dict", "subcomponent": "text.attrib", "delegate_arguments": {"always_print": true}, "weight": 4},
+            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
+            "attrib": {"types": "dict", "structure": "text.attrib", "delegate_arguments": {"always_print": true}, "similarity_weight": 4},
             "text": {"types": "str"}
         }
     },
     "text.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 12},
-            "label": {"types": "str", "subcomponent": {"type": "String"}, "weight": 6},
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 12},
+            "label": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 6},
             "contentType": {"types": "str"},
             "minimum": {"types": "str"}
         }
     },
     "flag": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "weight": 0},
-            "attrib": {"types": "dict", "subcomponent": "flag.attrib", "delegate_arguments": {"always_print": true}, "weight": 4},
+            "tag": {"types": "str", "delegate_arguments": {"always_print": true}, "similarity_weight": 0},
+            "attrib": {"types": "dict", "structure": "flag.attrib", "delegate_arguments": {"always_print": true}, "similarity_weight": 4},
             "text": {"types": "str"}
         }
     },
     "flag.attrib": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}, "weight": 3},
-            "label": {"types": "str", "subcomponent": {"type": "String"}}
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}, "similarity_weight": 3},
+            "label": {"types": "str", "structure": {"type": "String"}}
         }
     }
 }

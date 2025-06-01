@@ -1,153 +1,171 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "attachables"
         },
-        "types": "dict",
-        "subcomponent": "attachables"
+        "this_types": "dict",
+        "structure": "attachables"
     },
     "attachables": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "attachable",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers attachables_normalize_old"
             },
-            "subcomponent": "attachable"
+            "structure": "attachable"
         }
     },
     "attachable": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "defined_in": {"types": "list", "subcomponent": "defined_in"}, // for attachables_resource_packs
+            "defined_in": {"types": "list", "structure": "defined_in"}, // for attachables_resource_packs
             "format_version": {"types": "str"},
-            "minecraft:attachable": {"types": "dict", "weight": 42, "subcomponent": {
+            "minecraft:attachable": {"types": "dict", "similarity_weight": 42, "structure": {
                 "type": "Keymap",
                 "keys": {
-                    "description": {"types": "dict", "subcomponent": "description"}
+                    "description": {"types": "dict", "structure": "description"}
                 }
             }}
         }
     },
     "defined_in": {
-        "type": "Set",
-        "types": "str",
-        "subcomponent": null,
+        "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "measure_length": true
-        }
+        },
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": null
     },
     "description": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "identifier": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "item": {"types": "dict", "subcomponent": "items"},
-            "animations": {"types": "dict", "subcomponent": "animations"},
-            "geometry": {"types": "dict", "subcomponent": "geometry"},
-            "materials": {"types": "dict", "subcomponent": "materials"},
-            "render_controllers": {"types": "list", "subcomponent": "render_controllers"},
-            "scripts": {"types": "dict", "subcomponent": "scripts"},
-            "textures": {"types": "dict", "subcomponent": "textures"}
+            "item": {"types": "dict", "structure": "items"},
+            "animations": {"types": "dict", "structure": "animations"},
+            "geometry": {"types": "dict", "structure": "geometry"},
+            "materials": {"types": "dict", "structure": "materials"},
+            "render_controllers": {"types": "list", "structure": "render_controllers"},
+            "scripts": {"types": "dict", "structure": "scripts"},
+            "textures": {"types": "dict", "structure": "textures"}
         }
     },
     "animations": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "animation",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": "by_key",
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "geometry": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "geometry",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": "by_key",
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "items": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "item",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": "by_key",
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "materials": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "material",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": "by_key",
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "render_controllers": {
-        "type": "Set",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "render controller",
-            "measure_length": true
+            "show_item_key": false,
+            "measure_length": true,
+            "sort": "sort_by_value"
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["str"],
+        "value_structure": null
     },
     "scripts": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "situation"
         },
-        "sort": "by_component_order",
         "keys": {
-            "initialize": {"types": "list", "subcomponent": "scripts.list"},
+            "initialize": {"types": "list", "structure": "scripts.list"},
             "parent_setup": {"types": "str"},
-            "pre_animation": {"types": "list", "subcomponent": "scripts.list"},
-            "animate": {"types": "list", "subcomponent": "scripts.list"}
+            "pre_animation": {"types": "list", "structure": "scripts.list"},
+            "animate": {"types": "list", "structure": "scripts.list"}
         }
     },
     "scripts.list": {
-        "type": "Set",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "script",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict", "str"],
-        "subcomponent": {
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["dict", "str"],
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "dict": {
                     "type": "Dict",
-                    "types": ["str"],
+                    "value_types": ["str"],
                     "delegate_arguments": {
+                        "sort": "sort_by_key",
                         "measure_length": true
                     },
-                    "sort": "by_key",
-                    "subcomponent": null
+                    "value_structure": null
                 },
                 "str": null
             }
@@ -157,10 +175,10 @@
         "type": "Dict",
         "delegate_arguments": {
             "field": "texture",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": "by_key",
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     }
 }

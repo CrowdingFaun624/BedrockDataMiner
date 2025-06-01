@@ -1,73 +1,82 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "flipbook_textures"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_list_file"
             },
-            "subcomponent": "resource_packs"
+            "structure": "resource_packs"
         }
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["list"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "flipbook_textures"
+        "value_types": ["list"],
+        "value_structure": "flipbook_textures"
     },
     "flipbook_textures": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "flipbook texture",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "flipbook_texture"
+        "value_types": ["dict"],
+        "value_structure": "flipbook_texture"
     },
     "flipbook_texture": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "atlas_index": {"types": "int", "delegate_arguments": {"always_print": true}},
-            "atlas_tile": {"types": "str", "weight": 8, "subcomponent": {
+            "atlas_tile": {"types": "str", "similarity_weight": 8, "structure": {
                 "type": "String"
             }, "delegate_arguments": {"always_print": true}},
             "atlas_tile_variant": {"types": "int"},
             "blend_frames": {"types": "bool"},
-            "flipbook_texture": {"types": "str", "subcomponent": {
+            "flipbook_texture": {"types": "str", "structure": {
                 "type": "String"
             }},
-            "frames": {"types": "list", "subcomponent": "frames"},
+            "frames": {"types": "list", "structure": "frames"},
             "replicate": {"types": "int"},
             "ticks_per_frame": {"types": "int"}
         }
     },
     "frames": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "frame",
-            "measure_length": true
+            "measure_length": true,
+            "print_flat": true
         },
-        "types": ["int"],
-        "subcomponent": null
+        "value_types": ["int"],
+        "value_structure": null
     }
 }

@@ -1,25 +1,30 @@
 {
     "base": {
-        "type": "Base",
-        "types": "file",
+        "type": "StructureBase",
+        "this_types": "dict",
+        "pre_normalized_types": "file",
         "delegate_arguments": {
             "name": "version_json"
         },
-        "subcomponent": "cache"
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "root"
+            "structure": "root"
         }
     },
     "root": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "id": {"types": "str", "delegate_arguments": {"always_print": true}},
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
@@ -30,17 +35,19 @@
             "mainClass": {"types": "str"},
             "complianceLevel": {"types": "int"},
             "assets": {"types": "str"},
-            "assetIndex": {"types": "dict", "subcomponent": "asset_index"},
-            "downloads": {"types": "dict", "subcomponent": "downloads"},
-            "javaVersion": {"types": "dict", "subcomponent": "java_version"},
-            "logging": {"types": "dict", "subcomponent": "logging"},
-            "arguments": {"types": "dict", "subcomponent": "arguments"},
-            "libraries": {"types": "list", "subcomponent": "libraries"}
+            "assetIndex": {"types": "dict", "structure": "asset_index"},
+            "downloads": {"types": "dict", "structure": "downloads"},
+            "javaVersion": {"types": "dict", "structure": "java_version"},
+            "logging": {"types": "dict", "structure": "logging"},
+            "arguments": {"types": "dict", "structure": "arguments"},
+            "libraries": {"types": "list", "structure": "libraries"}
         }
     },
     "asset_index": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "id": {"types": "str", "delegate_arguments": {"always_print": true}},
             "sha1": {"types": "str", "delegate_arguments": {"always_print": true}},
@@ -51,22 +58,24 @@
     },
     "downloads": {
         "type": "Keymap",
-        "sort": "by_component_order",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "print_all": true,
             "field": "file"
         },
         "keys": {
-            "client": {"types": "dict", "subcomponent": "downloads.file"},
-            "client_mappings": {"types": "dict", "subcomponent": "downloads.file"},
-            "server": {"types": "dict", "subcomponent": "downloads.file"},
-            "server_mappings": {"types": "dict", "subcomponent": "downloads.file"},
-            "windows_server": {"types": "dict", "subcomponent": "downloads.file"}
+            "client": {"types": "dict", "structure": "downloads.file"},
+            "client_mappings": {"types": "dict", "structure": "downloads.file"},
+            "server": {"types": "dict", "structure": "downloads.file"},
+            "server_mappings": {"types": "dict", "structure": "downloads.file"},
+            "windows_server": {"types": "dict", "structure": "downloads.file"}
         }
     },
     "downloads.file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "url": {"types": "str", "delegate_arguments": {"always_print": true}},
             "sha1": {"types": "str"},
@@ -75,7 +84,9 @@
     },
     "java_version": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "component": {"types": "str"},
             "majorVersion": {"types": "int"}
@@ -83,23 +94,29 @@
     },
     "logging": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "client": {"types": "dict", "subcomponent": "logging.client"}
+            "client": {"types": "dict", "structure": "logging.client"}
         }
     },
     "logging.client": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "type": {"types": "str"},
             "argument": {"types": "str"},
-            "file": {"types": "dict", "subcomponent": "logging.client.file"}
+            "file": {"types": "dict", "structure": "logging.client.file"}
         }
     },
     "logging.client.file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "id": {"types": "str", "delegate_arguments": {"always_print": true}},
             "url": {"types": "str", "delegate_arguments": {"always_print": true}},
@@ -109,22 +126,24 @@
     },
     "arguments": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "game": {"types": "list", "subcomponent": "arguments.environment"},
-            "jvm": {"types": "list", "subcomponent": "arguments.environment"}
+            "game": {"types": "list", "structure": "arguments.environment"},
+            "jvm": {"types": "list", "structure": "arguments.environment"}
         }
     },
     "arguments.environment": {
         "type": "Sequence",
-        "types": ["str", "dict"],
+        "value_types": ["str", "dict"],
         "delegate_arguments": {
             "field": "argument",
             "measure_length": true
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "str": {"type": "String"},
                 "dict": "argument"
             }
@@ -132,49 +151,57 @@
     },
     "argument": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "value": {"types": ["str", "list"], "subcomponent": "argument.value"},
-            "rules": {"types": "list", "subcomponent": "rules"}
+            "value": {"types": ["str", "list"], "structure": "argument.value"},
+            "rules": {"types": "list", "structure": "rules"}
         }
     },
     "argument.value": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "str": {"type": "String"},
             "list": {
                 "type": "Sequence",
-                "types": "str",
+                "value_types": "str",
                 "delegate_arguments": {
                     "print_flat": true,
                     "print_all": true
                 },
-                "subcomponent": {"type": "String"}
+                "value_structure": {"type": "String"}
             }
         }
     },
     "rules": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "rule",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "rule"
+        "value_structure": "rule"
     },
     "rule": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "action": {"types": "str"},
-            "features": {"types": "dict", "subcomponent": "rule.features"},
-            "os": {"types": "dict", "subcomponent": "rule.os"}
+            "features": {"types": "dict", "structure": "rule.features"},
+            "os": {"types": "dict", "structure": "rule.os"}
         }
     },
     "rule.features": {
         "type": "Keymap",
-        "sort": "by_component_order",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "feature",
             "measure_length": true
         },
@@ -189,85 +216,104 @@
     },
     "rule.os": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "name": {"types": "str", "delegate_arguments": {"always_print": true}},
-            "version": {"types": "str", "subcomponent": {"type": "String"}},
+            "version": {"types": "str", "structure": {"type": "String"}},
             "arch": {"types": "str"}
         }
     },
     "libraries": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "library",
+            "show_item_key": false,
             "measure_length": true
         },
-        "max_similarity_descendent_depth": 8,
-        "subcomponent": "library"
+        "value_structure": "library"
     },
     "library": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
-            "url": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
-            "downloads": {"types": "dict", "subcomponent": "library.downloads"},
-            "natives": {"types": "dict", "subcomponent": "library.natives"},
-            "extract": {"types": "dict", "subcomponent": "library.extract"},
-            "rules": {"types": "list", "subcomponent": "rules"}
+            "name": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
+            "url": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
+            "downloads": {"types": "dict", "structure": "library.downloads"},
+            "natives": {"types": "dict", "structure": "library.natives"},
+            "extract": {"types": "dict", "structure": "library.extract"},
+            "rules": {"types": "list", "structure": "rules"}
         }
     },
     "library.downloads": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "artifact": {"types": "dict", "subcomponent": "artifact"},
-            "classifiers": {"types": "dict", "subcomponent": "library.downloads.classifiers"}
+            "artifact": {"types": "dict", "structure": "artifact"},
+            "classifiers": {"types": "dict", "structure": "library.downloads.classifiers"}
         }
     },
     "library.downloads.classifiers": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "classifier",
             "measure_length": true
         },
-        "subcomponent": "artifact"
+        "value_structure": "artifact"
     },
     "artifact": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "url": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
-            "path": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
-            "sha1": {"types": "str", "weight": 0},
-            "size": {"types": "int", "weight": 0}
+            "url": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
+            "path": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
+            "sha1": {"types": "str", "similarity_weight": 0},
+            "size": {"types": "int", "similarity_weight": 0}
         }
     },
     "library.natives": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "windows": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
-            "osx": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}},
-            "linux": {"types": "str", "delegate_arguments": {"always_print": true}, "subcomponent": {"type": "String"}}
+            "windows": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
+            "osx": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}},
+            "linux": {"types": "str", "delegate_arguments": {"always_print": true}, "structure": {"type": "String"}}
         }
     },
     "library.extract": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "exclude": {"types": "list", "subcomponent": "library.extract.exclude"}
+            "exclude": {"types": "list", "structure": "library.extract.exclude"}
         }
     },
     "library.extract.exclude": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "path",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {"type": "String"}
+        "value_structure": {"type": "String"}
     }
 }

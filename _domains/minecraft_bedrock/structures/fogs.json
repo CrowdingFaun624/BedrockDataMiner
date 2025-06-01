@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "fogs"
         },
-        "types": "dict",
-        "subcomponent": "fogs"
+        "this_types": "dict",
+        "structure": "fogs"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -13,49 +13,55 @@
     },
     "fogs": {
         "type": "Dict",
-        "types": "dict",
-        "subcomponent": "resource_packs",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "resource_packs",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "fog"
         }
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "file",
-        "subcomponent": "cache",
-        "sort": "by_key",
-        "post_normalizer": {
+        "value_types": "dict",
+        "value_structure": "cache",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "resource pack"
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "fog"
+            "structure": "fog"
         }
     },
     "fog": {
         "type": "Keymap",
         "keys": {
             "format_version": {"types": "str"},
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "minecraft:fog_settings": {"types": "dict", "subcomponent": "fog_settings", "weight": 12}
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "minecraft:fog_settings": {"types": "dict", "structure": "fog_settings", "similarity_weight": 12}
         }
     },
     "defined_in": {
-        "type": "Set",
-        "types": "str",
-        "subcomponent": null,
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": null,
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "measure_length": true,
             "print_all": true
         }
@@ -63,14 +69,14 @@
     "fog_settings": {
         "type": "Keymap",
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "delegate_arguments": {"always_print": true}},
-            "distance": {"types": "dict", "subcomponent": "distance"}
+            "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
+            "distance": {"types": "dict", "structure": "distance"}
         }
     },
     "description": {
         "type": "Keymap",
         "keys": {
-            "identifier": {"types": "str", "subcomponent": {
+            "identifier": {"types": "str", "structure": {
                 "type": "String"
             }, "delegate_arguments": {"always_print": true}}
         }
@@ -78,12 +84,12 @@
     "distance": {
         "type": "Keymap",
         "keys": {
-            "air": {"types": "dict", "subcomponent": "distance.item"},
-            "lava": {"types": "dict", "subcomponent": "distance.item"},
-            "lava_resistance": {"types": "dict", "subcomponent": "distance.item"},
-            "powder_snow": {"types": "dict", "subcomponent": "distance.item"},
-            "water": {"types": "dict", "subcomponent": "distance.item"},
-            "weather": {"types": "dict", "subcomponent": "distance.item"}
+            "air": {"types": "dict", "structure": "distance.item"},
+            "lava": {"types": "dict", "structure": "distance.item"},
+            "lava_resistance": {"types": "dict", "structure": "distance.item"},
+            "powder_snow": {"types": "dict", "structure": "distance.item"},
+            "water": {"types": "dict", "structure": "distance.item"},
+            "weather": {"types": "dict", "structure": "distance.item"}
         }
     },
     "distance.item": {
@@ -93,7 +99,7 @@
             "fog_end": {"types": "decimal"},
             "fog_color": {"types": "str"},
             "render_distance_type": {"types": "str"},
-            "transition_fog": {"types": "dict", "subcomponent": "transition_fog"},
+            "transition_fog": {"types": "dict", "structure": "transition_fog"},
             "min_percent": {"types": "decimal"},
             "min_seconds": {"types": "int"},
             "mid_percent": {"types": "decimal"},
@@ -103,7 +109,7 @@
     "transition_fog": {
         "type": "Keymap",
         "keys": {
-            "init_fog": {"types": "dict", "subcomponent": "distance.item"},
+            "init_fog": {"types": "dict", "structure": "distance.item"},
             "max_seconds": {"types": "int"},
             "mid_percent": {"types": "decimal"},
             "mid_seconds": {"types": "int"},

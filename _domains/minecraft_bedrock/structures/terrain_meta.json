@@ -1,64 +1,77 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "terrain_meta"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "images"
+            "structure": "images"
         }
     },
     "images": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "image",
+            "sort": "sort_by_key",
             "measure_length": true
         },
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "name",
                 "delete": true
             }
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "image"
+        "min_key_similarity_threshold": 0.5,
+        "key_structure": {"type": "String"},
+        "value_types": ["dict"],
+        "value_structure": "image"
     },
     "image": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
-            "additonal_textures": {"types": "list", "subcomponent": "uvs"},
-            "uv": {"types": "dict", "subcomponent": "uv"},
-            "uvs": {"types": "list", "subcomponent": "uvs"}
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "additonal_textures": {"types": "list", "structure": "uvs"},
+            "uv": {"types": "dict", "structure": "uv"},
+            "uvs": {"types": "list", "structure": "uvs"}
         }
     },
     "uvs": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "uv",
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "uv"
+        "value_types": ["dict"],
+        "value_structure": "uv"
     },
     "uv": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_tuple",
             "arguments": {
                 "keys": ["x1", "y1", "x2", "y2", "1", "2"]

@@ -1,87 +1,99 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_platform_configuration"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "platforms"
+            "structure": "platforms"
         }
     },
     "platforms": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "platform",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "platform"
+        "value_types": ["dict"],
+        "value_structure": "platform"
     },
     "platform": {
         "type": "Keymap",
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/normalizers renderer_platform_configurations_normalize_shadow_config"
         },
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "presets": {"types": "list", "subcomponent": "presets"},
-            "bloom_config": {"types": "dict", "subcomponent": "file_link"},
-            "point_light_loding_config": {"types": "dict", "subcomponent": "file_link"},
-            "point_light_shadow_config": {"types": "dict", "subcomponent": "file_link"},
-            "reflection_config": {"types": "dict", "subcomponent": "file_link"},
-            "resolution_config": {"types": "dict", "subcomponent": "file_link"},
-            "shadow_config": {"types": "dict", "subcomponent": "file_link"},
-            "tiers": {"types": "dict", "subcomponent": "tiers"},
-            "volumetric_fog_config": {"types": "dict", "subcomponent": "file_link"},
-            "upscaling_config": {"types": "dict", "subcomponent": "file_link"}
+            "presets": {"types": "list", "structure": "presets"},
+            "bloom_config": {"types": "dict", "structure": "file_link"},
+            "point_light_loding_config": {"types": "dict", "structure": "file_link"},
+            "point_light_shadow_config": {"types": "dict", "structure": "file_link"},
+            "reflection_config": {"types": "dict", "structure": "file_link"},
+            "resolution_config": {"types": "dict", "structure": "file_link"},
+            "shadow_config": {"types": "dict", "structure": "file_link"},
+            "tiers": {"types": "dict", "structure": "tiers"},
+            "volumetric_fog_config": {"types": "dict", "structure": "file_link"},
+            "upscaling_config": {"types": "dict", "structure": "file_link"}
         }
     },
     "file_link": {
         "type": "Keymap",
         "keys": {
-            "file": {"types": "str", "subcomponent": {"type": "String"}}
+            "file": {"types": "str", "structure": {"type": "String"}}
         }
     },
     "presets": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "preset",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "preset"
+        "value_structure": "preset"
     },
     "tiers": {
         "type": "Dict",
-        "types": "list",
+        "value_types": "list",
         "delegate_arguments": {
             "field": "tier",
             "measure_length": true
         },
-        "subcomponent": "presets"
+        "value_structure": "presets"
     },
     "preset": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 4},
-            "lods": {"types": "dict", "subcomponent": "lods"}
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 4},
+            "lods": {"types": "dict", "structure": "lods"}
         }
     },
     "lods": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "shadows": {"types": "str"},
             "point_light_shadows": {"types": "str"},

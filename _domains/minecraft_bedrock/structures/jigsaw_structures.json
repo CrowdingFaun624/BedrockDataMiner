@@ -1,60 +1,66 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "jigsaw_structures"
         },
-        "subcomponent": "files"
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
-        "sort": "by_key",
-        "key_component": {"type": "String"},
+        "key_structure": {"type": "String"},
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "processor",
             "measure_length": true
         },
-        "types": "dict",
-        "subcomponent": "behavior_packs"
+        "value_types": "dict",
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "sort": "by_key",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "behavior pack",
             "measure_length": true
         },
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "structure"
+            "structure": "structure"
         }
     },
     "structure": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "format_version": {"types": "str", "weight": 0},
-            "minecraft:jigsaw": {"types": "dict", "subcomponent": "jigsaw"}
+            "format_version": {"types": "str", "similarity_weight": 0},
+            "minecraft:jigsaw": {"types": "dict", "structure": "jigsaw"}
         }
     },
     "jigsaw": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
-            "biome_filters": {"types": "list", "subcomponent": "biome_filters"},
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
+            "biome_filters": {"types": "list", "structure": "biome_filters"},
             "step": {"types": "str"},
             "terrain_adaptation": {"types": "str"},
             "start_pool": {"types": "str"},
@@ -65,18 +71,24 @@
     },
     "description": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "identifier": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "biome_filters": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "biome filter",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "structures/entities/filter"
+        "value_structure": "structures/entities/filter"
     }
 }

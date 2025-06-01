@@ -1,59 +1,61 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "pieces_lang"
         },
-        "types": "dict",
-        "subcomponent": "pieces"
+        "this_types": "dict",
+        "structure": "pieces"
     },
     "pieces": {
         "type": "Dict",
-        "types": "dict",
-        "subcomponent": "lang_files",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "lang_files",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "piece"
         }
     },
     "lang_files": {
         "type": "Dict",
-        "types": "file",
-        "subcomponent": "cache",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "cache",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "lang file"
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "lang"
+            "structure": "lang"
         }
     },
     "lang": {
         "type": "Dict",
         "delegate_arguments": {
             "measure_length": true,
+            "sort": "sort_by_key",
             "field": "key"
         },
-        "types": "dict",
-        "sort": "by_key",
-        "subcomponent": "key"
+        "value_types": "dict",
+        "value_structure": "key"
     },
     "key": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "language"
         },
-        "sort": "by_component_order",
         "keys": {
-            "en_US": {"types": "str", "subcomponent": {"type": "String"}},
-            "neutral": {"types": "str", "subcomponent": {"type": "String"}}
+            "en_US": {"types": "str", "structure": {"type": "String"}},
+            "neutral": {"types": "str", "structure": {"type": "String"}}
         }
     }
 }

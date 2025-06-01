@@ -1,34 +1,37 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "categories"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers categories_normalize"
             },
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "element",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "sort": "by_key",
-        "subcomponent": "element"
+        "value_structure": "element"
     },
     "element": {
         "type": "Keymap",
@@ -36,89 +39,110 @@
             "passthrough": true
         },
         "keys": {
-            "category": {"types": "dict", "subcomponent": "element.category"},
-            "worlds": {"types": "dict", "subcomponent": "element.worlds"}
+            "category": {"types": "dict", "structure": "element.category"},
+            "worlds": {"types": "dict", "structure": "element.worlds"}
         }
     },
     "element.category": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "child_icon": {"types": "str"},
             "child_title": {"types": "str"},
-            "default_color": {"types": "list", "subcomponent": "color"},
+            "default_color": {"types": "list", "structure": "color"},
             "description": {"types": "str"},
             "icon": {"types": "str"},
-            "interact_color": {"types": "list", "subcomponent": "color"},
+            "interact_color": {"types": "list", "structure": "color"},
             "is_first_page": {"types": "bool"},
             "items_per_row": {"types": "int"},
             "label": {"types": "str"},
             "screenshot": {"types": "str"},
             "screenshot_height_ratio": {"types": "str"},
-            "sub_categories": {"types": "list", "subcomponent": "sub_categories"}
+            "sub_categories": {"types": "list", "structure": "sub_categories"}
         }
     },
     "element.worlds": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "child_icon": {"types": "str"},
-            "child_title": {"types": ["str", "list"], "subcomponent": "label"},
-            "default_color": {"types": "list", "subcomponent": "color"},
+            "child_title": {"types": ["str", "list"], "structure": "label"},
+            "default_color": {"types": "list", "structure": "color"},
             "description": {"types": "str"},
             "icon": {"types": "str"},
-            "interact_color": {"types": "list", "subcomponent": "color"},
-            "label": {"types": ["str", "list"], "subcomponent": "label"},
+            "interact_color": {"types": "list", "structure": "color"},
+            "label": {"types": ["str", "list"], "structure": "label"},
             "screenshot": {"types": "str"},
-            "tags": {"types": "list", "subcomponent": "tags"}
+            "tags": {"types": "list", "structure": "tags"}
         }
     },
     "color": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
+            "field": "item",
             "print_flat": true,
             "print_all": true
         },
-        "types": "float",
-        "subcomponent": null
+        "value_types": "float",
+        "value_structure": null
     },
     "label": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "str": null,
             "list": {
-                "type": "Set",
-                "types": "str",
+                "type": "Dict",
                 "delegate_arguments": {
+                    "show_item_key": false,
                     "field": "parameter"
                 },
-                "subcomponent": {
+                "key_weight": 0,
+                "key_types": "int",
+                "this_types": "list",
+                "value_types": "str",
+                "value_structure": {
                     "type": "String"
                 }
             }
         }
     },
     "sub_categories": {
-        "type": "Set",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "subcategory",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": "str",
-        "subcomponent": {
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": {
             "type": "String"
         }
     },
     "tags": {
-        "type": "Set",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "tags",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": "str",
-        "subcomponent": {
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": {
             "type": "String"
         }
     }

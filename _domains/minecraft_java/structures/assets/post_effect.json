@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "post_effect"
         },
-        "subcomponent": "resource_packs"
+        "structure": "resource_packs"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -13,148 +13,175 @@
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
         },
-        "subcomponent": "files"
+        "value_structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "root"
+            "structure": "root"
         }
     },
     "string": {
         "type": "String"
     },
     "vector_decimal": {
-        "type": "List",
-        "types": "decimal",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "decimal",
         "delegate_arguments": {
             "print_all": true,
             "print_flat": true,
             "field": "component"
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "root": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "targets": {"types": "dict", "subcomponent": "targets"},
-            "passes": {"types": "list", "subcomponent": "passes"}
+            "targets": {"types": "dict", "structure": "targets"},
+            "passes": {"types": "list", "structure": "passes"}
         }
     },
     "targets": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "target",
             "measure_length": true
         },
-        "key_component": "string",
-        "subcomponent": "target"
+        "key_structure": "string",
+        "value_structure": "target"
     },
     "target": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "width": {"types": "int"},
             "height": {"types": "int"}
         }
     },
     "passes": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "pass",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "pass"
+        "value_structure": "pass"
     },
     "pass": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "program": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
-            "inputs": {"types": "list", "subcomponent": "inputs"},
-            "output": {"types": "str", "subcomponent": "string"},
-            "uniforms": {"types": "list", "subcomponent": "uniforms"}
+            "program": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "inputs": {"types": "list", "structure": "inputs"},
+            "output": {"types": "str", "structure": "string"},
+            "uniforms": {"types": "list", "structure": "uniforms"}
         }
     },
     "inputs": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "input",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "input"
+        "value_structure": "input"
     },
     "input": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "sampler_name": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
+            "sampler_name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
             "bilinear": {"types": "bool"},
             "target": {"types": "str"},
             "use_depth_buffer": {"types": "bool"},
-            "location": {"types": "str", "subcomponent": "string"},
+            "location": {"types": "str", "structure": "string"},
             "width": {"types": "int"},
             "height": {"types": "int"}
         }
     },
     "uniforms": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "uniform",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "uniform"
+        "value_structure": "uniform"
     },
     "uniform": {
         "type": "Switch",
-        "types": "dict",
         "switch_function": {
             "function_name": "normalizers/normalizers post_effect_switch"
         },
-        "subcomponents": {
-            "number": "uniform.number",
-            "matrix": "uniform.matrix"
+        "substructures": {
+            "number": {"types": "dict", "structure": "uniform.number"},
+            "matrix": {"types": "dict", "structure": "uniform.matrix"}
         }
     },
     "uniform.number": {
         "type": "Dict",
-        "types": "decimal",
+        "value_types": "decimal",
         "delegate_arguments": {
             "field": "value",
             "measure_length": true
         },
-        "key_component": "string",
-        "subcomponent": null
+        "key_structure": "string",
+        "value_structure": null
     },
     "uniform.matrix": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
-            "values": {"types": "list", "subcomponent": "vector_decimal"},
+            "name": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "values": {"types": "list", "structure": "vector_decimal"},
             "RadiusMultiplier": {"types": "decimal"}
         }
     }

@@ -1,51 +1,54 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_reflection_configs"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": "reflection_config",
         "keys": {
-            "low": {"types": "dict", "subcomponent": "reflection_config"},
-            "medium": {"types": "dict", "subcomponent": "reflection_config"},
-            "high": {"types": "dict", "subcomponent": "reflection_config"},
-            "ultra": {"types": "dict", "subcomponent": "reflection_config"}
+            "low": {"types": "dict", "structure": "reflection_config"},
+            "medium": {"types": "dict", "structure": "reflection_config"},
+            "high": {"types": "dict", "structure": "reflection_config"},
+            "ultra": {"types": "dict", "structure": "reflection_config"}
         }
     },
     "reflection_config": {
         "type": "Keymap",
         "keys": {
             "file": {"types": "str"},
-            "ibl": {"types": "dict", "subcomponent": "ibl"},
-            "probe_regen": {"types": "dict", "subcomponent": "probe_regen"},
-            "ssr": {"types": "dict", "subcomponent": "ssr"},
+            "ibl": {"types": "dict", "structure": "ibl"},
+            "probe_regen": {"types": "dict", "structure": "probe_regen"},
+            "ssr": {"types": "dict", "structure": "ssr"},
             "ssr_enabled": {"types": "bool"}
         }
     },
@@ -54,7 +57,7 @@
         "keys": {
             "far_plane_scaling": {"types": "float"},
             "texture_format": {"types": "str"},
-            "regen_triggers": {"types": "dict", "subcomponent": "regen_triggers"}
+            "regen_triggers": {"types": "dict", "structure": "regen_triggers"}
         }
     },
     "regen_triggers": {

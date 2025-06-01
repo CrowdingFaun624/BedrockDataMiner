@@ -1,85 +1,94 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "item_textures"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers item_textures_normalize"
             },
-            "subcomponent": "items"
+            "structure": "items"
         }
     },
     "items": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "item",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "resource_packs"
+        "value_types": ["dict"],
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "post_normalizer": {
+        "value_types": ["dict"],
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "item"
+        "value_structure": "item"
     },
     "item": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "textures": {"types": ["list", "str"], "subcomponent": "textures_group"}
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "textures": {"types": ["list", "str"], "structure": "textures_group"}
         }
     },
     "defined_in": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "measure_length": true,
+            "sort": "sort_by_value",
             "print_flat": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "textures_group": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "list": "texture_list",
             "str": null
         }
     },
     "texture_list": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "texture",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     }
 }

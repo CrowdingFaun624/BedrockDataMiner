@@ -1,53 +1,54 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "recipes"
         },
-        "types": "dict",
-        "subcomponent": "recipes"
+        "this_types": "dict",
+        "structure": "recipes"
     },
     "recipes": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "recipe",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "max_similarity_descendent_depth": 7,
+        "value_types": ["dict"],
         "min_key_similarity_threshold": 0.50,
-        "subcomponent": "behavior_packs"
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "behavior pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "detect_key_moves": true,
-        "post_normalizer": {
+        "value_types": "dict",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "defined_in": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "behavior pack",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "description": {
         "type": "Keymap",
         "keys": {
-            "identifier": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "item": {
@@ -55,135 +56,157 @@
         "keys": {
             "count": {"types": "int"},
             "data": {"types": "int"},
-            "item": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "item": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
             "tag": {"types": "str"}
         }
     },
     "item_or_str": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": "item",
             "str": null
         }
     },
     "item_list": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "item"
+        "value_types": ["dict"],
+        "value_structure": "item"
     },
     "item_list_or_item": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": "item",
             "list": "item_list"
         }
     },
     "tag_list": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "tag",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "subcomponent": null,
-        "sort": true
+        "value_types": ["str"],
+        "value_structure": null
     },
     "tag_list_or_tag": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "list": "tag_list",
             "str": null
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "recipe"
+            "structure": "recipe"
         }
     },
     "recipe": {
         "type": "Keymap",
-        "normalizer":  {
+        "normalizers":  {
             "function_name": "normalizers/normalizers recipes_fix_old"
         },
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "format_version": {"types": "str"},
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "minecraft:recipe_brewing_container": {"types": "dict", "subcomponent": "recipe.brewing_container"},
-            "minecraft:recipe_brewing_mix": {"types": "dict", "subcomponent": "recipe.brewing_mix"},
-            "minecraft:recipe_furnace": {"types": "dict", "subcomponent": "recipe.furnace"},
-            "minecraft:recipe_material_reduction": {"types": "dict", "subcomponent": "recipe.material_reducer"},
-            "minecraft:recipe_shaped": {"types": "dict", "subcomponent": "recipe.shaped"},
-            "minecraft:recipe_shapeless": {"types": "dict", "subcomponent": "recipe.shapeless"},
-            "minecraft:recipe_smithing_transform": {"types": "dict", "subcomponent": "recipe.smithing_transform"},
-            "minecraft:recipe_smithing_trim": {"types": "dict", "subcomponent": "recipe.smithing_trim"}
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "minecraft:recipe_brewing_container": {"types": "dict", "structure": "recipe.brewing_container"},
+            "minecraft:recipe_brewing_mix": {"types": "dict", "structure": "recipe.brewing_mix"},
+            "minecraft:recipe_furnace": {"types": "dict", "structure": "recipe.furnace"},
+            "minecraft:recipe_material_reduction": {"types": "dict", "structure": "recipe.material_reducer"},
+            "minecraft:recipe_shaped": {"types": "dict", "structure": "recipe.shaped"},
+            "minecraft:recipe_shapeless": {"types": "dict", "structure": "recipe.shapeless"},
+            "minecraft:recipe_smithing_transform": {"types": "dict", "structure": "recipe.smithing_transform"},
+            "minecraft:recipe_smithing_trim": {"types": "dict", "structure": "recipe.smithing_trim"}
         }
     },
     "recipe.brewing_container": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
             "input": {"types": "str"},
             "output": {"types": "str"},
             "reagent": {"types": "str"},
-            "tags": {"types": ["list", "str"], "subcomponent": "tag_list_or_tag"}
+            "tags": {"types": ["list", "str"], "structure": "tag_list_or_tag"}
         }
     },
     "recipe.brewing_mix": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
             "input": {"types": "str"},
             "output": {"types": "str"},
             "reagent": {"types": "str"},
-            "tags": {"types": ["list", "str"], "subcomponent": "tag_list_or_tag"}
+            "tags": {"types": ["list", "str"], "structure": "tag_list_or_tag"}
         }
     },
     "recipe.furnace": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
-            "input": {"types": ["dict", "str"], "subcomponent": "item_or_str"},
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
+            "input": {"types": ["dict", "str"], "structure": "item_or_str"},
             "output": {"types": "str"},
             "priority": {"types": "int"},
-            "tags": {"types": ["list", "str"], "subcomponent": "tag_list_or_tag"},
-            "unlock": {"types": ["dict", "list"], "subcomponent": "recipe:unlock_group"}
+            "tags": {"types": ["list", "str"], "structure": "tag_list_or_tag"},
+            "unlock": {"types": ["dict", "list"], "structure": "recipe:unlock_group"}
         }
     },
     "recipe.material_reducer": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
-            "input": {"types": ["dict", "str"], "subcomponent": "item_or_str"},
-            "output": {"types": "list", "subcomponent": "item_list"},
-            "tags": {"types": ["list", "str"], "subcomponent": "tag_list_or_tag"}
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
+            "input": {"types": ["dict", "str"], "structure": "item_or_str"},
+            "output": {"types": "list", "structure": "item_list"},
+            "tags": {"types": ["list", "str"], "structure": "tag_list_or_tag"}
         }
     },
     "recipe.shaped": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
             "group": {"types": "str"},
-            "key": {"types": "dict", "subcomponent": "recipe.shaped:keys"},
-            "pattern": {"types": "list", "subcomponent": "recipe.shaped:pattern"},
+            "key": {"types": "dict", "structure": "recipe.shaped:keys"},
+            "pattern": {"types": "list", "structure": "recipe.shaped:pattern"},
             "priority": {"types": "int"},
-            "result": {"types": ["dict", "list"], "subcomponent": "item_list_or_item"},
-            "tags": {"types": ["list", "str"], "subcomponent": "tag_list_or_tag"},
-            "unlock": {"types": ["dict", "list"], "subcomponent": "recipe:unlock_group"}
+            "result": {"types": ["dict", "list"], "structure": "item_list_or_item"},
+            "tags": {"types": ["list", "str"], "structure": "tag_list_or_tag"},
+            "unlock": {"types": ["dict", "list"], "structure": "recipe:unlock_group"}
         }
     },
     "recipe.shaped:keys": {
@@ -193,84 +216,101 @@
             "measure_length": true,
             "print_all": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "subcomponent": "item"
+        "value_types": ["dict"],
+        "value_structure": "item"
     },
     "recipe.shaped:pattern": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "line",
             "measure_length": false,
             "print_all": true,
             "print_flat": false
         },
-        "types": ["str"],
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "recipe.shapeless": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
             "group": {"types": "str"},
-            "ingredients": {"types": "list", "subcomponent": "recipe.shapeless:ingredients"},
+            "ingredients": {"types": "list", "structure": "recipe.shapeless:ingredients"},
             "priority": {"types": "int"},
-            "result": {"types": ["dict", "list"], "subcomponent": "item_list_or_item"},
-            "tags": {"types": ["list", "str"], "subcomponent": "tag_list_or_tag"},
-            "unlock": {"types": ["dict", "list"], "subcomponent": "recipe:unlock_group"}
+            "result": {"types": ["dict", "list"], "structure": "item_list_or_item"},
+            "tags": {"types": ["list", "str"], "structure": "tag_list_or_tag"},
+            "unlock": {"types": ["dict", "list"], "structure": "recipe:unlock_group"}
         }
     },
     "recipe.shapeless:ingredients": {
-        "type": "Set",
-        "types": ["dict"],
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["dict"],
         "delegate_arguments": {
             "measure_length": true,
+            "show_item_key": false,
             "print_all": true,
             "field": "ingredient"
         },
-        "subcomponent": "item"
+        "value_structure": "item"
     },
     "recipe.smithing_transform": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "addition": {"types": "str"},
             "base": {"types": "str"},
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
             "result": {"types": "str"},
-            "tags": {"types": ["list", "str"], "subcomponent": "tag_list_or_tag"},
+            "tags": {"types": ["list", "str"], "structure": "tag_list_or_tag"},
             "template": {"types": "str"}
         }
     },
     "recipe.smithing_trim": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "addition": {"types": "dict", "subcomponent": "item"},
-            "base": {"types": "dict", "subcomponent": "item"},
-            "description": {"types": "dict", "subcomponent": "description", "weight": 3, "delegate_arguments": {"always_print": true}},
-            "tags": {"types": ["list", "str"], "subcomponent": "tag_list_or_tag"},
-            "template": {"types": "dict", "subcomponent": "item"}
+            "addition": {"types": "dict", "structure": "item"},
+            "base": {"types": "dict", "structure": "item"},
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
+            "tags": {"types": ["list", "str"], "structure": "tag_list_or_tag"},
+            "template": {"types": "dict", "structure": "item"}
         }
     },
     "recipe:unlock_group": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": {
                 "type": "Keymap",
                 "keys": {
-                    "context": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+                    "context": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
                 }
             },
             "list": {
-                "type": "Set",
+                "type": "Dict",
+                "key_weight": 0,
+                "key_types": "int",
+                "this_types": "list",
                 "delegate_arguments": {
                     "field": "condition",
+            "show_item_key": false,
                     "measure_length": true
                 },
-                "types": ["dict"],
-                "subcomponent": "item"
+                "value_types": ["dict"],
+                "value_structure": "item"
             }
         }
     }

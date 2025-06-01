@@ -1,65 +1,71 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "camera_lists"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "camera list",
             "measure_length": true
         },
-        "subcomponent": "behavior_packs"
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "behavior pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "sort": "by_key",
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "camera_list"
+            "structure": "camera_list"
         }
     },
     "camera_list": {
         "type": "Keymap",
         "keys": {
             "format_version": {"types": "str"},
-            "minecraft:camera_list": {"types": "dict", "weight": 16, "subcomponent": {
+            "minecraft:camera_list": {"types": "dict", "similarity_weight": 16, "structure": {
                 "type": "Keymap",
                 "keys": {
-                    "identifier": {"types": "str", "subcomponent": {"type": "String"}},
-                    "cameras": {"types": "list", "subcomponent": "cameras"}
+                    "identifier": {"types": "str", "structure": {"type": "String"}},
+                    "cameras": {"types": "list", "structure": "cameras"}
                 }
             }}
         }
     },
     "cameras": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "camera",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": {
             "type": "String"
         }
     }

@@ -1,39 +1,42 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "glyph_sizes"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "glyph_sizes_serializer",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Dict",
         "delegate_arguments": {
             "measure_length": true,
+            "sort": "sort_by_key",
             "field": "codepoint"
         },
-        "types": "dict",
-        "detect_key_moves": false,
-        "sort": "by_key",
-        "subcomponent": "range"
+        "value_types": "dict",
+        "allow_key_moves": false,
+        "value_structure": "range"
     },
     "range": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "end"
         },
-        "sort": "by_component_order",
         "keys": {
             "character": {"types": "str", "delegate_arguments": {"always_print": true}},
             "left": {"types": "int"},

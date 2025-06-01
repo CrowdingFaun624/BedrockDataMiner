@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "materials"
         },
-        "types": "dict",
-        "subcomponent": "materials"
+        "this_types": "dict",
+        "structure": "materials"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -15,123 +15,133 @@
         "type": "Dict",
         "delegate_arguments": {
             "field": "material",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "resource_packs"
+        "value_types": ["dict"],
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "detect_key_moves": true,
-        "post_normalizer": {
+        "value_types": "dict",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "material"
+            "structure": "material"
         }
     },
     "material": {
         "type": "Keymap",
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/normalizers materials_normalize_material"
         },
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "version": {"types": "str"},
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "materials": {"types": "dict", "subcomponent": "material.materials"}
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "materials": {"types": "dict", "structure": "material.materials"}
         }
     },
     "defined_in": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "material.materials": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "material",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "min_key_similarity_threshold": 0.5,
-        "key_component": {
+        "value_types": ["dict"],
+        "min_key_similarity_threshold": 0.875,
+        "key_structure": {
             "type": "String"
         },
-        "subcomponent": "material.material"
+        "value_structure": "material.material"
     },
     "material.material": {
         "type": "Keymap",
         "keys": {
-            "+defines": {"types": "list", "subcomponent": "defines"},
-            "+samplerStates": {"types": "list", "subcomponent": "sampler_states"},
-            "+states": {"types": "list", "subcomponent": "states"},
-            "+variants": {"types": "list", "subcomponent": "variants"},
-            "-defines": {"types": "list", "subcomponent": "defines"},
-            "-states": {"types": "list", "subcomponent": "states"},
+            "+defines": {"types": "list", "structure": "defines"},
+            "+samplerStates": {"types": "list", "structure": "sampler_states"},
+            "+states": {"types": "list", "structure": "states"},
+            "+variants": {"types": "list", "structure": "variants"},
+            "-defines": {"types": "list", "structure": "defines"},
+            "-states": {"types": "list", "structure": "states"},
             "alphaDst": {"types": "str"},
             "alphaSrc": {"types": "str", "tags": ["outdated"]},
-            "backFace": {"types": "dict", "subcomponent": "face"},
+            "backFace": {"types": "dict", "structure": "face"},
             "blendDst": {"types": "str"},
             "blendSrc": {"types": "str"},
-            "defines": {"types": "list", "subcomponent": "defines"},
+            "defines": {"types": "list", "structure": "defines"},
             "depthBias": {"types": "decimal"},
             "depthBiasOGL": {"types": "decimal"},
             "depthFunc": {"types": "str"},
             "fragmentShader": {"types": "str"},
-            "frontFace": {"types": "dict", "subcomponent": "face"},
+            "frontFace": {"types": "dict", "structure": "face"},
             "geometryShader": {"types": "str", "tags": ["outdated"]},
             "isAnimatedTexture": {"types": "int"},
             "msaaSupport": {"types": "str"},
             "polygonOffsetLevel": {"types": "decimal", "tags": ["outdated"]},
             "primitiveMode": {"types": "str"},
-            "renderTargetFormats": {"types": "list", "subcomponent": "render_target_formats"},
-            "samplerStates": {"types": "list", "subcomponent": "sampler_states"},
+            "renderTargetFormats": {"types": "list", "structure": "render_target_formats"},
+            "samplerStates": {"types": "list", "structure": "sampler_states"},
             "slopeScaledDepthBias": {"types": "decimal"},
             "slopeScaledDepthBiasOGL": {"types": "decimal"},
-            "states": {"types": "list", "subcomponent": "states"},
+            "states": {"types": "list", "structure": "states"},
             "stencilReadMask": {"types": "int"},
             "stencilRef": {"types": "int"},
             "stencilRefOverride": {"types": "int"},
             "stencilWriteMask": {"types": "int"},
-            "textures": {"types": "list", "subcomponent": "textures", "tags": ["outdated"]},
-            "variants": {"types": "list", "subcomponent": "variants"},
-            "vertexFields": {"types": "list", "subcomponent": "vertex_fields"},
+            "textures": {"types": "list", "structure": "textures", "tags": ["outdated"]},
+            "variants": {"types": "list", "structure": "variants"},
+            "vertexFields": {"types": "list", "structure": "vertex_fields"},
             "vertexShader": {"types": "str"},
             "vrGeometryShader": {"types": "str"}
         }
     },
     "defines": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "definition",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "face": {
         "type": "Keymap",
@@ -144,13 +154,17 @@
         }
     },
     "sampler_states": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "sampler state",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "sampler_states.item"
+        "value_types": ["dict"],
+        "value_structure": "sampler_states.item"
     },
     "sampler_states.item": {
         "type": "Keymap",
@@ -164,71 +178,96 @@
         }
     },
     "render_target_formats": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "format",
             "measure_length": true
         },
-        "types": ["list"],
-        "subcomponent": "render_target_formats.item"
+        "value_types": ["list"],
+        "value_structure": "render_target_formats.item"
     },
     "render_target_formats.item": {
-        "type": "List",
-        "types": ["null"],
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["null"],
         "delegate_arguments": {
+            "field": "item",
             "measure_length": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "states": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "statement",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "textures": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "texture",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "texture"
+        "value_types": ["dict"],
+        "value_structure": "texture"
     },
     "texture": {
         "type": "Keymap",
         "keys": {
             "textureIndex": {"types": "int"},
-            "textureLocation": {"types": "str", "subcomponent": {"type": "String"}},
-            "textureName": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "textureLocation": {"types": "str", "structure": {"type": "String"}},
+            "textureName": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "variants": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "variant",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "material.materials"
+        "value_types": ["dict"],
+        "value_structure": "material.materials"
     },
     "vertex_fields": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "vertex field",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "vertex_fields.item"
+        "value_types": ["dict"],
+        "value_structure": "vertex_fields.item"
     },
     "vertex_fields.item": {
         "type": "Keymap",
         "keys": {
-            "field": {"types": "str", "subcomponent": {"type": "String"}}
+            "field": {"types": "str", "structure": {"type": "String"}}
         }
     }
 }

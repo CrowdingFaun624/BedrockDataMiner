@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "animation_controllers"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -17,117 +17,134 @@
     },
     "files": {
         "type": "Dict",
-        "sort": "by_key",
         "delegate_arguments": {
             "field": "file",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "subcomponent": "resource_packs"
+        "key_weight": 4,
+        "key_structure": {"type": "String", "similarity_function": "normalizers/normalizers remove_file_suffix"},
+        "min_key_similarity_threshold": 0.5,
+        "value_types": "dict",
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "types": ["file"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers animation_controllers_fix_old"
             },
-            "subcomponent": "animation_controllers_file"
+            "structure": "animation_controllers_file"
         }
     },
     "animation_controllers_file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
+            "defined_in": {"types": "list", "structure": "defined_in"},
             "format_version": {"types": "str"},
-            "animation_controllers": {"types": "dict", "subcomponent": "animation_controllers"}
+            "animation_controllers": {"types": "dict", "structure": "animation_controllers", "similarity_weight": 14}
         }
     },
     "defined_in": {
-        "type": "Set",
-        "types": ["str"],
+        "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": null
+        "this_types": "list",
+        "key_weight": 0,
+        "key_types": "int",
+        "value_types": "str",
+        "value_structure": null
     },
     "animation_controllers": {
         "type": "Dict",
-        "types": ["dict"],
         "delegate_arguments": {
             "field": "animation controller",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "min_value_similarity_threshold": 0.9,
-        "sort": "by_key",
-        "subcomponent": "animation_controller"
+        "min_value_similarity_threshold": 0.7,
+        "value_types": "dict",
+        "key_structure": {"type": "String"},
+        "value_structure": "animation_controller"
     },
     "animation_controller": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "initial_state": {"types": "str"},
-            "states": {"types": "dict", "subcomponent": "states"}
+            "states": {"types": "dict", "structure": "states"}
         }
     },
     "states": {
         "type": "Dict",
-        "sort": "by_key",
-        "types": ["dict"],
         "delegate_arguments": {
             "field": "state",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "subcomponent": "state"
+        "min_key_similarity_threshold": 0.4,
+        "value_types": ["dict"],
+        "value_structure": "state"
     },
     "state": {
         "type": "Keymap",
         "keys": {
-            "animations": {"types": ["dict", "list"], "subcomponent": {
+            "animations": {"types": ["dict", "list"], "structure": {
                 "type": "Union",
-                "subcomponents": {
+                "substructures": {
                     "dict": "animations:dict",
                     "list": "animations"
                 }
             }},
             "blend_transition": {"types": "decimal"},
             "blend_via_shortest_path": {"types": "bool"},
-            "parameters": {"types": "list", "subcomponent": "parameters", "tags": ["outdated"]},
-            "particle_effects": {"types": "list", "subcomponent": "particle_effects"},
-            "sound_effects": {"types": "list", "subcomponent": "sound_effects"},
-            "transitions": {"types": "list", "subcomponent": "transitions"}
+            "parameters": {"types": "list", "structure": "parameters", "tags": ["outdated"]},
+            "particle_effects": {"types": "list", "structure": "particle_effects"},
+            "sound_effects": {"types": "list", "structure": "sound_effects"},
+            "transitions": {"types": "list", "structure": "transitions"}
         }
     },
     "animations": {
-        "type": "Set",
-        "types": ["dict", "str"],
+        "type": "Dict",
         "delegate_arguments": {
             "field": "animation dict",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "value_types": ["dict", "str"],
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "dict": "animation",
                 "str": null
             }
@@ -135,14 +152,14 @@
     },
     "animations:dict": {
         "type": "Dict",
-        "types": ["dict", "list"],
         "delegate_arguments": {
             "field": "animation",
             "measure_length": true
         },
-        "subcomponent": {
+        "value_types": ["dict", "list"],
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "dict": "empty",
                 "list": "animation:list"
             }
@@ -150,53 +167,66 @@
     },
     "animation": {
         "type": "Dict",
-        "types": ["list", "str"],
         "delegate_arguments": {
             "field": "animation",
             "measure_length": true
         },
-        "subcomponent": {
+        "value_types": ["list", "str"],
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "list": "animation:list",
                 "str": null
             }
         }
     },
     "animation:list": {
-        "type": "Set",
-        "types": ["dict"],
+        "type": "Dict",
         "delegate_arguments": {
+            "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "animation:list.dict"
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "value_types": "dict",
+        "value_structure": "animation:list.dict"
     },
     "animation:list.dict": {
         "type": "Dict",
-        "types": ["decimal"],
         "delegate_arguments": {
             "field": "timestamp",
             "measure_length": true
         },
-        "subcomponent": null
+        "value_types": "decimal",
+        "value_structure": null
     },
     "parameters": {
-        "type": "Set",
-        "types": ["str"],
+        "type": "Dict",
         "delegate_arguments": {
             "field": "parameter",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": null
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "value_types": "str",
+        "value_structure": {"type": "String"}
     },
     "particle_effects": {
-        "type": "Set",
-        "types": ["dict"],
+        "type": "Dict",
         "delegate_arguments": {
             "field": "particle effect",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "particle_effect"
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "value_types": "dict",
+        "value_structure": "particle_effect"
     },
     "particle_effect": {
         "type": "Keymap",
@@ -206,13 +236,17 @@
         }
     },
     "sound_effects": {
-        "type": "Set",
-        "types": ["dict"],
+        "type": "Dict",
         "delegate_arguments": {
             "field": "sound effect",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "sound_effect"
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "sound_effect"
     },
     "sound_effect": {
         "type": "Keymap",
@@ -221,21 +255,25 @@
         }
     },
     "transitions": {
-        "type": "Set",
-        "types": ["dict"],
+        "type": "Dict",
         "delegate_arguments": {
             "field": "transition list",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "transition"
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "value_types": "dict",
+        "value_structure": "transition"
     },
     "transition": {
         "type": "Dict",
-        "types": ["str"],
         "delegate_arguments": {
             "field": "transition",
             "measure_length": true
         },
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     }
 }

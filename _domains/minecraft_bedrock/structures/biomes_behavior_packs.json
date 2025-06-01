@@ -1,34 +1,35 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "biomes_behavior_packs"
         },
-        "types": "dict",
-        "subcomponent": "biomes"
+        "this_types": "dict",
+        "structure": "biomes"
     },
     "biomes": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "biome",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "detect_key_moves": true,
+        "value_types": ["dict"],
         "min_key_similarity_threshold": 0.25,
         "min_value_similarity_threshold": 0.5,
-        "key_component": {
+        "key_structure": {
             "type": "String"
         },
-        "subcomponent": "resource_packs"
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "subcomponent": "structures/biomes/cache",
-        "types": "file",
-        "sort": "by_key",
-        "post_normalizer": {
+        "value_structure": "structures/biomes/cache",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         }
     }

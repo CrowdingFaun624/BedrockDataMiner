@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "render_controllers"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -15,74 +15,79 @@
         "type": "Dict",
         "delegate_arguments": {
             "field": "file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "sort": "by_key",
+        "value_types": ["dict"],
         "min_key_similarity_threshold": 0.6,
-        "max_similarity_descendent_depth": null,
-        "key_component": {
+        "key_structure": {
             "type": "String",
             "similarity_function": "get_file_stem"
         },
-        "subcomponent": "resource_packs"
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "detect_key_moves": true,
-        "post_normalizer": {
+        "value_types": "dict",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "render_controllers_file"
+            "structure": "render_controllers_file"
         }
     },
     "render_controllers_file": {
         "type": "Keymap",
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/normalizers render_controllers_fix_old"
         },
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "format_version": {"types": "str"},
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "render_controllers": {"types": "dict", "subcomponent": "render_controllers"}
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "render_controllers": {"types": "dict", "structure": "render_controllers"}
         }
     },
     "defined_in": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "render_controllers": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "render controller",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "render_controller"
+        "value_types": ["dict"],
+        "value_structure": "render_controller"
     },
     "color": {
         "type": "Keymap",
@@ -98,154 +103,179 @@
     },
     "render_controller": {
         "type": "Keymap",
-        "normalizer": {
+        "normalizers": {
             "function_name": "delete_optional_key",
             "arguments": {
                 "key": "texures"
             }
         },
         "keys": {
-            "arrays": {"types": "dict", "subcomponent": "arrays"},
-            "color": {"types": "dict", "subcomponent": "color"},
+            "arrays": {"types": "dict", "structure": "arrays"},
+            "color": {"types": "dict", "structure": "color"},
             "filter_lighting": {"types": "bool"},
             "geometry": {"types": "str"},
             "ignore_lighting": {"types": "bool"},
-            "is_hurt_color": {"types": "dict", "subcomponent": "color"},
+            "is_hurt_color": {"types": "dict", "structure": "color"},
             "light_color_multiplier": {"types": "decimal"},
-            "materials": {"types": "list", "subcomponent": "materials"},
-            "on_fire_color": {"types": "dict", "subcomponent": "color"},
-            "overlay_color": {"types": "dict", "subcomponent": "color"},
-            "part_visibility": {"types": ["dict", "list"], "subcomponent": "part_visibility.group"},
+            "materials": {"types": "list", "structure": "materials"},
+            "on_fire_color": {"types": "dict", "structure": "color"},
+            "overlay_color": {"types": "dict", "structure": "color"},
+            "part_visibility": {"types": ["dict", "list"], "structure": "part_visibility.group"},
             "rebuild_animation_matrices": {"types": "bool"},
-            "textures": {"types": "list", "subcomponent": "textures"},
-            "uv_anim": {"types": "dict", "subcomponent": "uv_anim"}
+            "textures": {"types": "list", "structure": "textures"},
+            "uv_anim": {"types": "dict", "structure": "uv_anim"}
         }
     },
     "arrays": {
         "type": "Keymap",
         "keys": {
-            "geometries": {"types": "dict", "subcomponent": "array"},
-            "materials": {"types": "dict", "subcomponent": "array"},
-            "textures": {"types": "dict", "subcomponent": "array"}
+            "geometries": {"types": "dict", "structure": "array"},
+            "materials": {"types": "dict", "structure": "array"},
+            "textures": {"types": "dict", "structure": "array"}
         }
     },
     "array": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "array",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["list"],
-        "sort": "by_key",
-        "subcomponent": "array_list"
+        "value_types": ["list"],
+        "value_structure": "array_list"
     },
     "array_list": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "array item",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "materials": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "material dict",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "material_dict"
+        "value_types": ["dict"],
+        "value_structure": "material_dict"
     },
     "material_dict": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "material",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": "by_key",
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "part_visibility.group": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": "part_visibility_dict",
             "list": "part_visibility"
         }
     },
     "part_visibility": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "part visibility dict",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "min_similarity_threshold": 0.3,
-        "subcomponent": "part_visibility_dict"
+        "value_types": ["dict"],
+        "min_value_similarity_threshold": 0.3,
+        "value_structure": "part_visibility_dict"
     },
     "part_visibility_dict": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "part visibility",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["bool", "int", "str"],
-        "sort": "by_key",
+        "value_types": ["bool", "int", "str"],
         "min_key_similarity_threshold": 0.5,
         "min_value_similarity_threshold": 0.1,
-        "key_weight": 0.9,
-        "value_weight": 0.1,
-        "key_component": {
+        "key_weight": 9,
+        "value_weight": 1,
+        "key_structure": {
             "type": "String"
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "bool": null,
                 "int": null,
                 "str": {
-                    "type": "String"
+                    "type": "String",
+                    "max_square_length": 1000000
                 }
             }
         }
     },
     "textures": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "texture",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "uv_anim": {
         "type": "Keymap",
         "keys": {
-            "offset": {"types": "list", "subcomponent": "uv_anim.offsets"},
-            "scale": {"types": "list", "subcomponent": "uv_anim.scale"}
+            "offset": {"types": "list", "structure": "uv_anim.offsets"},
+            "scale": {"types": "list", "structure": "uv_anim.scale"}
         }
     },
     "uv_anim.offsets": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "expression",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["decimal", "str"],
-        "subcomponent": null
+        "value_types": ["decimal", "str"],
+        "value_structure": null
     },
     "uv_anim.scale": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "range item",
             "measure_length": false,
             "print_flat": true,
             "print_all": true
         },
-        "types": ["decimal"],
-        "subcomponent": null
+        "value_types": ["decimal"],
+        "value_structure": null
     }
 }

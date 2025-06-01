@@ -1,12 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "items_client_offset"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -14,67 +13,77 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers items_client_offset_normalize"
             },
-            "subcomponent": "resource_packs"
+            "structure": "resource_packs"
         }
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "sort": "by_key",
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "items"
+        "value_structure": "items"
     },
     "items": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "item",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "sort": "by_key",
-        "subcomponent": "item"
+        "value_structure": "item"
     },
     "item": {
         "type": "Keymap",
         "keys": {
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "VR_hand_controller_position_adjust": {"types": "list", "subcomponent": "vector_decimal"},
-            "VR_hand_controller_rotation_adjust": {"types": "list", "subcomponent": "vector_decimal"},
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "VR_hand_controller_position_adjust": {"types": "list", "structure": "vector_decimal"},
+            "VR_hand_controller_rotation_adjust": {"types": "list", "structure": "vector_decimal"},
             "VR_hand_controller_scale": {"types": "decimal"}
         }
     },
     "defined_in": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
+            "field": "item",
+            "show_item_key": false,
             "print_flat": true,
             "print_all": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "vector_decimal": {
-        "type": "List",
-        "types": "decimal",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "decimal",
         "delegate_arguments": {
+            "field": "item",
             "print_all": true,
             "print_flat": true
         },
-        "subcomponent": null
+        "value_structure": null
     }
 }

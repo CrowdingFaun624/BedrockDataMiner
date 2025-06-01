@@ -1,86 +1,96 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "structures_nbt"
         },
-        "types": "dict",
-        "subcomponent": "structures"
+        "this_types": "dict",
+        "structure": "structures"
     },
     "structures": {
         "type": "Dict",
         "delegate_arguments": {
             "measure_length": true,
+            "sort": "sort_by_key",
             "field": "structure"
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "behavior_packs"
+        "value_types": ["dict"],
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "behavior pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "normalizer": {
+        "value_types": "TAG_Compound",
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": ["file"],
-        "subcomponent": {
+        "this_types": "TAG_Compound",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!nbt_big",
             "file_types": "file",
             "content_types": "TAG_Compound",
-            "subcomponent": "structure"
+            "structure": "structure"
         }
     },
     "vector_tag_int": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "coordinate",
             "measure_length": false,
             "print_all": true,
             "print_flat": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Int"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Int"],
+        "value_structure": null
     },
     "vector_tag_double": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "coordinate",
             "measure_length": false,
             "print_all": true,
             "print_flat": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Double"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Double"],
+        "value_structure": null
     },
     "structure": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "sort": "by_component_order",
+        "this_types": "TAG_Compound",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "author": {"types": "TAG_String"},
             "DataVersion": {"types": "TAG_Int"},
-            "palette": {"types": "TAG_List", "subcomponent": "palettes"},
-            "size": {"types": "TAG_List", "subcomponent": "vector_tag_int", "delegate_arguments": {"always_print": true}},
+            "palette": {"types": "TAG_List", "structure": "palettes"},
+            "size": {"types": "TAG_List", "structure": "vector_tag_int", "delegate_arguments": {"always_print": true}},
             "version": {"types": "TAG_Int"},
-            "entities": {"types": "TAG_List", "subcomponent": "entities"},
-            "blocks": {"types": ["dict"], "subcomponent": "blocks"}
+            "entities": {"types": "TAG_List", "structure": "entities"},
+            "blocks": {"types": ["dict"], "structure": "blocks"}
         }
     },
     "blocks": {
         "type": "Keymap",
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/volume_normalize_nbt",
             "arguments": {
                 "position_key": "pos",
@@ -93,95 +103,104 @@
         },
         "pre_normalized_types": "TAG_List",
         "keys": {
-            "states": {"types": "dict", "subcomponent": "volume_states"},
-            "data": {"types": "dict", "subcomponent": "volume_additional_data"},
-            "size": {"types": "tuple", "subcomponent": {
-                "type": "List",
+            "states": {"types": "dict", "structure": "volume_states"},
+            "data": {"types": "dict", "structure": "volume_additional_data"},
+            "size": {"types": "tuple", "structure": {
+                "type": "Dict",
+                "allow_key_moves": false,
+                "key_weight": 0,
+                "key_types": "int",
                 "delegate": null,
-                "this_type": "tuple",
-                "types": "int",
-                "subcomponent": null
+                "this_types": "tuple",
+                "value_types": "int",
+                "value_structure": null
             }}
         }
     },
     "volume_states": {
         "type": "Dict",
-        "detect_key_moves": false,
-        "types": "int",
+        "allow_key_moves": false,
+        "value_types": "int",
         "delegate": null,
-        "subcomponent": null
+        "value_structure": null
     },
     "volume_additional_data": {
         "type": "Dict",
-        "detect_key_moves": false,
-        "types": "TAG_Compound",
+        "allow_key_moves": false,
+        "value_types": "TAG_Compound",
         "delegate": null,
-        "subcomponent": "block"
+        "value_structure": "block"
     },
     "block": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "nbt": {"types": "TAG_Compound", "subcomponent": "block_nbt"}
+            "nbt": {"types": "TAG_Compound", "structure": "block_nbt"}
         }
     },
     "entities": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "entity",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "entity"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "entity"
     },
     "entity": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "blockPos": {"types": "TAG_List", "subcomponent": "vector_tag_int"},
-            "nbt": {"types": "TAG_Compound", "subcomponent": "entity_nbt"},
-            "pos": {"types": "TAG_List", "subcomponent": "vector_tag_double"}
+            "blockPos": {"types": "TAG_List", "structure": "vector_tag_int"},
+            "nbt": {"types": "TAG_Compound", "structure": "entity_nbt"},
+            "pos": {"types": "TAG_List", "structure": "vector_tag_double"}
         }
     },
     "palettes": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "palette",
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "palette"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "palette"
     },
     "palette": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "Name": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
-            "Properties": {"types": "TAG_Compound", "subcomponent": "palette_properties"}
+            "Name": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
+            "Properties": {"types": "TAG_Compound", "structure": "palette_properties"}
         }
     },
     "palette_properties": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "property",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "this_type": "TAG_Compound",
-        "types": ["TAG_String"],
-        "sort": "by_key",
-        "detect_key_moves": false,
-        "subcomponent": null
+        "this_types": "TAG_Compound",
+        "value_types": ["TAG_String"],
+        "allow_key_moves": false,
+        "value_structure": null
     },
     "block_nbt": {
         "type": "Keymap",
         "delegate_arguments": {
             "field": "tag",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "this_type": "TAG_Compound",
-        "sort": "by_key",
+        "this_types": "TAG_Compound",
         "keys": {
             "attachement_type": {"types": "TAG_String"},
             "author": {"types": "TAG_String"},
@@ -189,14 +208,14 @@
             "BrewTime": {"types": "TAG_Short"},
             "BurnTime": {"types": "TAG_Short"},
             "Color": {"types": "TAG_String"},
-            "components": {"types": "TAG_Compound", "subcomponent": "nbt:components"},
-            "config": {"types": "TAG_Compound", "subcomponent": "nbt:config"},
-            "CookingTimes": {"types": "TAG_Int_Array", "subcomponent": "nbt:cooking_times"},
-            "CookingTotalTimes": {"types": "TAG_Int_Array", "subcomponent": "nbt:cooking_times"},
+            "components": {"types": "TAG_Compound", "structure": "nbt:components"},
+            "config": {"types": "TAG_Compound", "structure": "nbt:config"},
+            "CookingTimes": {"types": "TAG_Int_Array", "structure": "nbt:cooking_times"},
+            "CookingTotalTimes": {"types": "TAG_Int_Array", "structure": "nbt:cooking_times"},
             "CookTime": {"types": "TAG_Short"},
             "CookTimeTotal": {"types": "TAG_Short"},
             "cooldown_ends_at": {"types": "TAG_Long", "tags": ["outdated"]},
-            "current_mobs": {"types": "TAG_List", "subcomponent": "nbt:current_mobs", "tags": ["outdated"]},
+            "current_mobs": {"types": "TAG_List", "structure": "nbt:current_mobs", "tags": ["outdated"]},
             "Data": {"types": "TAG_Int"},
             "Delay": {"types": "TAG_Short"},
             "final_state": {"types": "TAG_String"},
@@ -204,13 +223,13 @@
             "id": {"types": "TAG_String"},
             "ignoreEntities": {"types": "TAG_Byte"},
             "integrity": {"types": "TAG_Float"},
-            "item": {"types": "TAG_Compound", "subcomponent": "nbt:item"},
+            "item": {"types": "TAG_Compound", "structure": "nbt:item"},
             "Item": {"types": "TAG_String"},
-            "Items": {"types": "TAG_List", "subcomponent": "nbt:items"},
+            "Items": {"types": "TAG_List", "structure": "nbt:items"},
             "joint": {"types": "TAG_String"},
             "last_vibration_frequency": {"types": "TAG_Int", "tags": ["outdated"]},
             "Lock": {"types": "TAG_String"},
-            "loot_tables_to_eject": {"types": "TAG_List", "subcomponent": "nbt:ominous_config.loot_tables_to_eject", "tags": ["outdated"]},
+            "loot_tables_to_eject": {"types": "TAG_List", "structure": "nbt:ominous_config.loot_tables_to_eject", "tags": ["outdated"]},
             "LootTable": {"types": "TAG_String"},
             "LootTableSeed": {"types": "TAG_Long", "tags": ["outdated"]},
             "MaxNearbyEntities": {"types": "TAG_Short"},
@@ -221,26 +240,26 @@
             "mode": {"types": "TAG_String"},
             "name": {"types": "TAG_String"},
             "next_mob_spawns_at": {"types": "TAG_Long", "tags": ["outdated"]},
-            "normal_config": {"types": ["TAG_Compound", "TAG_String"], "subcomponent": "nbt:normal_config"},
-            "ominous_config": {"types": ["TAG_Compound", "TAG_String"], "subcomponent": "nbt:ominous_config"},
+            "normal_config": {"types": ["TAG_Compound", "TAG_String"], "structure": "nbt:normal_config"},
+            "ominous_config": {"types": ["TAG_Compound", "TAG_String"], "structure": "nbt:ominous_config"},
             "OutputSignal": {"types": "TAG_Int"},
-            "Patterns": {"types": "TAG_List", "subcomponent": "nbt:patterns"},
+            "Patterns": {"types": "TAG_List", "structure": "nbt:patterns"},
             "placement_priority": {"types": "TAG_Int"},
             "pool": {"types": "TAG_String"},
             "posX": {"types": "TAG_Int"},
             "posY": {"types": "TAG_Int"},
             "posZ": {"types": "TAG_Int"},
             "powered": {"types": "TAG_Byte"},
-            "RecipesUsed": {"types": "TAG_Compound", "subcomponent": "nbt:recipes_used"},
+            "RecipesUsed": {"types": "TAG_Compound", "structure": "nbt:recipes_used"},
             "RecipesUsedSize": {"types": "TAG_Short"},
-            "registered_players": {"types": "TAG_List", "subcomponent": "nbt:registered_players", "tags": ["outdated"]},
+            "registered_players": {"types": "TAG_List", "structure": "nbt:registered_players", "tags": ["outdated"]},
             "required_player_range": {"types": "TAG_Int", "tags": ["outdated"]},
             "RequiredPlayerRange": {"types": "TAG_Short"},
             "Rot": {"types": "TAG_Byte"},
             "rotation": {"types": "TAG_String"},
             "seed": {"types": "TAG_Long"},
             "selection_priority": {"types": "TAG_Int"},
-            "sherds": {"types": "TAG_List", "subcomponent": "nbt:sherds"},
+            "sherds": {"types": "TAG_List", "structure": "nbt:sherds"},
             "showair": {"types": "TAG_Byte"},
             "showboundingbox": {"types": "TAG_Byte"},
             "simultaneous_mobs": {"types": "TAG_Float", "tags": ["outdated"]},
@@ -249,23 +268,23 @@
             "sizeY": {"types": "TAG_Int"},
             "sizeZ": {"types": "TAG_Int"},
             "SkullType": {"types": "TAG_Byte"},
-            "Slot0": {"types": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
-            "Slot1": {"types": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
-            "Slot2": {"types": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
-            "Slot3": {"types": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
-            "spawn_potentials": {"types": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials", "tags": ["outdated"]},
+            "Slot0": {"types": "TAG_Compound", "structure": "nbt:item", "tags": ["outdated"]},
+            "Slot1": {"types": "TAG_Compound", "structure": "nbt:item", "tags": ["outdated"]},
+            "Slot2": {"types": "TAG_Compound", "structure": "nbt:item", "tags": ["outdated"]},
+            "Slot3": {"types": "TAG_Compound", "structure": "nbt:item", "tags": ["outdated"]},
+            "spawn_potentials": {"types": "TAG_List", "structure": "nbt:normal_config.spawn_potentials", "tags": ["outdated"]},
             "spawn_range": {"types": "TAG_Int", "tags": ["outdated"]},
             "SpawnCount": {"types": "TAG_Short"},
-            "SpawnData": {"types": "TAG_Compound", "subcomponent": "entity_nbt"},
-            "SpawnPotentials": {"types": "TAG_List", "subcomponent": "nbt:spawn_potentials"},
+            "SpawnData": {"types": "TAG_Compound", "structure": "entity_nbt"},
+            "SpawnPotentials": {"types": "TAG_List", "structure": "nbt:spawn_potentials"},
             "SpawnRange": {"types": "TAG_Short"},
             "target": {"types": "TAG_String"},
             "target_cooldown_length": {"types": "TAG_Int", "tags": ["outdated"]},
             "target_pool": {"types": "TAG_String"},
-            "Text1": {"types": "dict", "subcomponent": "nbt:text"},
-            "Text2": {"types": "dict", "subcomponent": "nbt:text"},
-            "Text3": {"types": "dict", "subcomponent": "nbt:text"},
-            "Text4": {"types": "dict", "subcomponent": "nbt:text"},
+            "Text1": {"types": "dict", "structure": "nbt:text"},
+            "Text2": {"types": "dict", "structure": "nbt:text"},
+            "Text3": {"types": "dict", "structure": "nbt:text"},
+            "Text4": {"types": "dict", "structure": "nbt:text"},
             "ticks_between_spawn": {"types": "TAG_Int", "tags": ["outdated"]},
             "total_mobs": {"types": "TAG_Float", "tags": ["outdated"]},
             "total_mobs_added_per_player": {"types": "TAG_Float", "tags": ["outdated"]},
@@ -275,101 +294,115 @@
     },
     "nbt:components": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "minecraft:block_entity_data": {"types": "TAG_Compound", "subcomponent": "block_nbt"},
-            "minecraft:lore": {"types": "TAG_List", "subcomponent": "nbt:components:lore"}
+            "minecraft:block_entity_data": {"types": "TAG_Compound", "structure": "block_nbt"},
+            "minecraft:lore": {"types": "TAG_List", "structure": "nbt:components:lore"}
         }
     },
     "nbt:components:lore": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "line",
             "measure_length": true,
             "print_all": true,
             "print_flat": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_String"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_String"],
+        "value_structure": null
     },
     "nbt:config": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "key_item": {"types": "TAG_Compound", "subcomponent": "nbt:item"},
+            "key_item": {"types": "TAG_Compound", "structure": "nbt:item"},
             "loot_table": {"types": "TAG_String"}
         }
     },
     "nbt:cooking_times": {
-        "type": "Set",
-        "this_type": "TAG_Int_Array",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "TAG_Int_Array",
         "delegate_arguments": {
             "field": "time",
             "measure_length": true
         },
-        "types": ["TAG_Int"],
-        "subcomponent": null
+        "value_types": ["TAG_Int"],
+        "value_structure": null
     },
     "nbt:current_mobs": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "mob",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["null"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["null"],
+        "value_structure": null
     },
     "nbt:items": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:item"
     },
     "nbt:item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "buy": {"types": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
+            "buy": {"types": "TAG_Compound", "structure": "nbt:item", "tags": ["outdated"]},
             "count": {"types": ["TAG_Byte", "TAG_Int"]},
             "Count": {"types": ["TAG_Byte", "TAG_Int"]},
             "Damage": {"types": "TAG_Short"},
-            "id": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
+            "id": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
             "maxUses": {"types": "TAG_Int", "tags": ["outdated"]},
             "rewardExp": {"types": "TAG_Byte", "tags": ["outdated"]},
-            "sell": {"types": "TAG_Compound", "subcomponent": "nbt:item", "tags": ["outdated"]},
+            "sell": {"types": "TAG_Compound", "structure": "nbt:item", "tags": ["outdated"]},
             "Slot": {"types": "TAG_Byte"},
-            "tag": {"types": "TAG_Compound", "subcomponent": "nbt:item.tag"},
+            "tag": {"types": "TAG_Compound", "structure": "nbt:item.tag"},
             "uses": {"types": "TAG_Int", "tags": ["outdated"]}
         }
     },
     "nbt:item.tag": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "Damage": {"types": "TAG_Int"},
-            "ench": {"types": "TAG_List", "subcomponent": "nbt:item.tag.ench"},
+            "ench": {"types": "TAG_List", "structure": "nbt:item.tag.ench"},
             "Potion": {"types": "TAG_String"}
         }
     },
     "nbt:item.tag.ench": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "enchantment",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:item.tag.ench.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:item.tag.ench.item"
     },
     "nbt:item.tag.ench.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "id": {"types": "TAG_Short", "delegate_arguments": {"always_print": true}},
             "lvl": {"types": "TAG_Short"}
@@ -377,15 +410,15 @@
     },
     "nbt:normal_config": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "TAG_String": null,
             "TAG_Compound":{
                 "type": "Keymap",
-                "this_type": "TAG_Compound",
+                "this_types": "TAG_Compound",
                 "keys": {
                     "simultaneous_mobs": {"types": "TAG_Float"},
                     "simultaneous_mobs_added_per_player": {"types": "TAG_Float"},
-                    "spawn_potentials": {"types": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials"},
+                    "spawn_potentials": {"types": "TAG_List", "structure": "nbt:normal_config.spawn_potentials"},
                     "ticks_between_spawn": {"types": "TAG_Int"},
                     "total_mobs": {"types": "TAG_Float"},
                     "total_mobs_added_per_player": {"types": "TAG_Float"}
@@ -394,35 +427,38 @@
         }
     },
     "nbt:normal_config.spawn_potentials": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "entity",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:normal_config.spawn_potentials.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:normal_config.spawn_potentials.item"
     },
     "nbt:normal_config.spawn_potentials.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "data": {"types": "TAG_Compound", "subcomponent": "nbt:normal_config.spawn_potentials.item.data"},
+            "data": {"types": "TAG_Compound", "structure": "nbt:normal_config.spawn_potentials.item.data"},
             "weight": {"types": "TAG_Int"}
         }
     },
     "nbt:normal_config.spawn_potentials.item.data": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "entity": {"types": "TAG_Compound", "subcomponent": "entity_nbt"},
-            "equipment": {"types": "TAG_Compound", "subcomponent": "nbt:normal_config.spawn_potentials.item.data.equipment"},
+            "entity": {"types": "TAG_Compound", "structure": "entity_nbt"},
+            "equipment": {"types": "TAG_Compound", "structure": "nbt:normal_config.spawn_potentials.item.data.equipment"},
             "equipment_loot_table": {"types": "TAG_String"}
         }
     },
     "nbt:normal_config.spawn_potentials.item.data.equipment": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "loot_table": {"types": "TAG_String"},
             "slot_drop_chances": {"types": "TAG_Float"}
@@ -430,51 +466,57 @@
     },
     "nbt:ominous_config": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "TAG_String": null,
             "TAG_Compound": {
                 "type": "Keymap",
-                "this_type": "TAG_Compound",
+                "this_types": "TAG_Compound",
                 "keys": {
-                    "loot_tables_to_eject": {"types": "TAG_List", "subcomponent": "nbt:ominous_config.loot_tables_to_eject"},
+                    "loot_tables_to_eject": {"types": "TAG_List", "structure": "nbt:ominous_config.loot_tables_to_eject"},
                     "simultaneous_mobs": {"types": "TAG_Float"},
-                    "spawn_potentials": {"types": "TAG_List", "subcomponent": "nbt:normal_config.spawn_potentials"},
+                    "spawn_potentials": {"types": "TAG_List", "structure": "nbt:normal_config.spawn_potentials"},
                     "total_mobs": {"types": "TAG_Float"}
                 }
             }
         }
     },
     "nbt:ominous_config.loot_tables_to_eject": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "loot table",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:ominous_config.loot_tables_to_eject.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:ominous_config.loot_tables_to_eject.item"
     },
     "nbt:ominous_config.loot_tables_to_eject.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "data": {"types": "TAG_String"},
             "weight": {"types": "TAG_Int"}
         }
     },
     "nbt:patterns": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "pattern",
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:patterns.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:patterns.item"
     },
     "nbt:patterns.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "Color": {"types": "TAG_Int"},
             "Pattern": {"types": "TAG_String"}
@@ -486,52 +528,61 @@
             "field": "recipe",
             "measure_length": true
         },
-        "this_type": "TAG_Compound",
-        "types": ["TAG_Int"],
-        "subcomponent": null
+        "this_types": "TAG_Compound",
+        "value_types": ["TAG_Int"],
+        "value_structure": null
     },
     "nbt:registered_players": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "player",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["null"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["null"],
+        "value_structure": null
     },
     "nbt:sherds": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "sherd",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_String"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_String"],
+        "value_structure": null
     },
     "nbt:spawn_potentials": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "entity",
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:spawn_potentials.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:spawn_potentials.item"
     },
     "nbt:spawn_potentials.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "Entity": {"types": "TAG_Compound", "subcomponent": "entity_nbt"},
+            "Entity": {"types": "TAG_Compound", "structure": "entity_nbt"},
             "Weight": {"types": "TAG_Int"}
         }
     },
     "nbt:text": {
         "type": "Keymap",
         "pre_normalized_types": "TAG_String",
-        "normalizer": {
+        "normalizers": {
             "function_name": "load_json"
         },
         "keys": {
@@ -540,15 +591,17 @@
     },
     "entity_nbt": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "sort": "by_key",
+        "this_types": "TAG_Compound",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "AbsorptionAmount": {"types": "TAG_Float"},
             "Age": {"types": "TAG_Int"},
             "Air": {"types": "TAG_Short"},
-            "ArmorDropChances": {"types": "TAG_List", "subcomponent": "nbt:armor_drop_chances"},
-            "ArmorItems": {"types": "TAG_List", "subcomponent": "nbt:armor_items"},
-            "Attributes": {"types": "TAG_List", "subcomponent": "nbt:attributes"},
+            "ArmorDropChances": {"types": "TAG_List", "structure": "nbt:armor_drop_chances"},
+            "ArmorItems": {"types": "TAG_List", "structure": "nbt:armor_items"},
+            "Attributes": {"types": "TAG_List", "structure": "nbt:attributes"},
             "CanBreakDoors": {"types": "TAG_Byte", "tags": ["outdated"]},
             "CanPickUpLoot": {"types": "TAG_Byte"},
             "Career": {"types": "TAG_Int"},
@@ -560,28 +613,28 @@
             "FallFlying": {"types": "TAG_Byte"},
             "Fire": {"types": "TAG_Short"},
             "ForcedAge": {"types": "TAG_Int"},
-            "HandDropChances": {"types": "TAG_List", "subcomponent": "nbt:hand_drop_chances"},
-            "HandItems": {"types": "TAG_List", "subcomponent": "nbt:hand_items"},
+            "HandDropChances": {"types": "TAG_List", "structure": "nbt:hand_drop_chances"},
+            "HandItems": {"types": "TAG_List", "structure": "nbt:hand_items"},
             "Health": {"types": "TAG_Float"},
             "HurtByTimestamp": {"types": "TAG_Int"},
             "HurtTime": {"types": "TAG_Short"},
             "id": {"types": "TAG_String"},
-            "Inventory": {"types": "TAG_List", "subcomponent": "nbt:inventory"},
+            "Inventory": {"types": "TAG_List", "structure": "nbt:inventory"},
             "Invulnerable": {"types": "TAG_Byte"},
             "IsBaby": {"types": "TAG_Byte"},
             "IsVillager": {"types": "TAG_Byte"},
             "Leashed": {"types": "TAG_Byte"},
             "LeftHanded": {"types": "TAG_Byte"},
-            "Motion": {"types": "TAG_List", "subcomponent": "vector_tag_double"},
-            "Offers": {"types": "TAG_Compound", "subcomponent": "nbt:offers"},
+            "Motion": {"types": "TAG_List", "structure": "vector_tag_double"},
+            "Offers": {"types": "TAG_Compound", "structure": "nbt:offers"},
             "OnGround": {"types": "TAG_Byte"},
             "PersistenceRequired": {"types": "TAG_Byte"},
             "PortalCooldown": {"types": "TAG_Int"},
-            "Pos": {"types": "TAG_List", "subcomponent": "vector_tag_double"},
+            "Pos": {"types": "TAG_List", "structure": "vector_tag_double"},
             "Size": {"types": "TAG_Int"},
             "Profession": {"types": "TAG_Int"},
             "Riches": {"types": "TAG_Int"},
-            "Rotation": {"types": "TAG_List", "subcomponent": "nbt:rotation"},
+            "Rotation": {"types": "TAG_List", "structure": "nbt:rotation"},
             "UUIDLeast": {"types": "TAG_Long"},
             "UUIDMost": {"types": "TAG_Long"},
             "VillagerProfession": {"types": "TAG_Int", "tags": ["outdated"]},
@@ -589,59 +642,71 @@
         }
     },
     "nbt:armor_drop_chances": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "chance",
             "measure_length": false
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Float"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Float"],
+        "value_structure": null
     },
     "nbt:armor_items": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "armor item",
             "measure_length": false
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:item"
     },
     "nbt:attributes": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "attribute",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:attributes.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:attributes.item"
     },
     "nbt:attributes.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "Base": {"types": "TAG_Double"},
-            "Modifiers": {"types": "TAG_List", "subcomponent": "nbt:attributes.item.modifiers", "tags": ["outdated"]},
-            "Name": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}}
+            "Modifiers": {"types": "TAG_List", "structure": "nbt:attributes.item.modifiers", "tags": ["outdated"]},
+            "Name": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "nbt:attributes.item.modifiers": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "modifier",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:attributes.item.modifiers.modifier"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:attributes.item.modifiers.modifier"
     },
     "nbt:attributes.item.modifiers.modifier": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "Name": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
+            "Name": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
             "Operation": {"types": "TAG_Int"},
             "Amount": {"types": "TAG_Double"},
             "UUIDLeast": {"types": "TAG_Long"},
@@ -649,52 +714,64 @@
         }
     },
     "nbt:hand_drop_chances": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "chance",
             "measure_length": false
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Float"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Float"],
+        "value_structure": null
     },
     "nbt:hand_items": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "hand item",
             "measure_length": false
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:item"
     },
     "nbt:inventory": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "nbt:item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "nbt:item"
     },
     "nbt:offers": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "Recipes": {"types": "TAG_List", "subcomponent": "nbt:items"}
+            "Recipes": {"types": "TAG_List", "structure": "nbt:items"}
         }
     },
     "nbt:rotation": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "axis",
             "print_all": true,
             "print_flat": true,
             "measure_length": false
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Float"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Float"],
+        "value_structure": null
     }
 }

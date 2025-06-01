@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "sdl_layouts"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -13,37 +13,41 @@
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "persona_profile"
+            "structure": "persona_profile"
         }
     },
     "persona_profile": {
         "type": "Keymap",
         "keys": {
-            "result": {"types": "dict", "subcomponent": "result"}
+            "result": {"types": "dict", "structure": "result"}
         }
     },
     "result": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "pageId": {"types": "str"},
             "addToRecentlyViewed": {"types": "bool"},
-            "rows": {"types": "list", "subcomponent": "rows"},
+            "rows": {"types": "list", "structure": "rows"},
             "inventoryVersion": {"types": "str"},
             "screenLayout": {"types": "str"},
             "sidebarLayoutType": {"types": "str"},
@@ -51,26 +55,35 @@
         }
     },
     "rows": {
-        "type": "Set",
-        "types": "dict",
-        "subcomponent": "row",
+        "type": "Dict",
+        "value_types": "dict",
+        "value_structure": "row",
+        "this_types": "list",
+        "key_types": "int",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "row"
         }
     },
     "row": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "controlId": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 7},
-            "components": {"types": "list", "subcomponent": "components"}
+            "controlId": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 7},
+            "components": {"types": "list", "structure": "components"}
         }
     },
     "components": {
-        "type": "Set",
-        "types": "dict",
-        "subcomponent": "component",
+        "type": "Dict",
+        "value_types": "dict",
+        "value_structure": "component",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "component"
         }
     },
@@ -84,23 +97,25 @@
     "common.item_list": {
         "type": "Keymap",
         "keys": {
-            "items": {"types": "list", "subcomponent": "item_list"},
+            "items": {"types": "list", "structure": "item_list"},
             "totalItems": {"types": "int"},
-            "customStoreRowConfiguration": {"types": "dict", "subcomponent": "custom_store_row_configuration"},
+            "customStoreRowConfiguration": {"types": "dict", "structure": "custom_store_row_configuration"},
             "linksTo": {"types": "str"},
-            "linksToInfo": {"types": "dict", "subcomponent": "page"},
-            "offline": {"types": "dict", "subcomponent": "offline"}
+            "linksToInfo": {"types": "dict", "structure": "page"},
+            "offline": {"types": "dict", "structure": "offline"}
         }
     },
     "common.text": {
         "type": "Keymap",
         "keys": {
-            "text": {"types": "dict", "subcomponent": "text"}
+            "text": {"types": "dict", "structure": "text"}
         }
     },
     "custom_store_row_configuration": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "seeAllVisible": {"types": "bool"},
             "maxOffers": {"types": "int"},
@@ -109,13 +124,17 @@
         }
     },
     "item_list": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "value_types": "str",
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
         "delegate_arguments": {
             "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "String"
         }
     },
@@ -127,135 +146,168 @@
     },
     "page": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "linksTo": {"types": "str"},
             "linkType": {"types": "str"},
             "displayType": {"types": "str"},
-            "screenTitle": {"types": "dict", "subcomponent": "page.screen_title"}
+            "screenTitle": {"types": "dict", "structure": "page.screen_title"}
         }
     },
     "page.screen_title": {
         "type": "Keymap",
         "keys": {
             "value": {"types": "str"},
-            "replacements": {"types": "list", "subcomponent": {
-                "type": "List",
-                "types": "null",
-                "subcomponent": null
+            "replacements": {"types": "list", "structure": {
+                "type": "Dict",
+                "allow_key_moves": false,
+                "key_weight": 0,
+                "key_types": "int",
+                "this_types": "list",
+                "delegate_arguments": {
+                    "field": "item"
+                },
+                "value_types": "null",
+                "value_structure": null
             }}
         }
     },
     "text": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "value": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 3},
-            "style": {"types": "dict", "subcomponent": "style"},
-            "replacements": {"types": "list", "subcomponent": "text.replacements"}
+            "value": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 3},
+            "style": {"types": "dict", "structure": "style"},
+            "replacements": {"types": "list", "structure": "text.replacements"}
         }
     },
     "text.replacements": {
-        "type": "Set",
-        "types": "null",
+        "type": "Dict",
+        "value_types": "null",
+        "this_types": "list",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "replacement",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "texture_image": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "type": {"types": "str"},
-            "style": {"types": "dict", "subcomponent": "style"}
+            "style": {"types": "dict", "structure": "style"}
         }
     },
     "style": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "highlightColor": {"types": "list", "subcomponent": "color"},
+            "highlightColor": {"types": "list", "structure": "color"},
             "alignment": {"types": "str"},
-            "textColor": {"types": "list", "subcomponent": "color"},
+            "textColor": {"types": "list", "structure": "color"},
             "font": {"types": "str"},
             "showBackground": {"types": "bool"},
             "showOutline": {"types": "bool"},
             "indent": {"types": "decimal"},
             "buttonWidth": {"types": "decimal"},
-            "color": {"types": "list", "subcomponent": "color"},
+            "color": {"types": "list", "structure": "color"},
             "offerControlIdType": {"types": "str"}
         }
     },
     "color": {
-        "type": "List",
-        "types": "decimal",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "decimal",
         "delegate_arguments": {
             "print_flat": true,
             "print_all": true,
             "field": "channel"
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "component": {
         "type": "Keymap",
-        "sort": "by_component_order",
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_in_value",
             "arguments": {
                 "key": "type"
             }
         },
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "passthrough": true
         },
         "keys": {
-            "appearanceInteractionComp": {"types": "dict", "subcomponent": "component.appearance_interaction"},
-            "characterSelectComp": {"types": "dict", "subcomponent": "component.character_select"},
-            "colorPickerComp": {"types": "dict", "subcomponent": "component.color_picker"},
-            "dispPreviewPieceComp": {"types": "dict", "subcomponent": "component.disp_preview_piece"},
-            "expandedSkinPackComp": {"types": "dict", "subcomponent": "component.expanded_skin_pack"},
-            "headerComp": {"types": "dict", "subcomponent": "component.header"},
-            "itemListComp": {"types": "dict", "subcomponent": "component.item_list"},
-            "openColorPickerComp": {"types": "dict", "subcomponent": "component.open_color_picker"},
-            "openExpandedAppearanceViewComp": {"types": "dict", "subcomponent": "component.open_expanded_appearance_view"},
-            "pagedItemListComp": {"types": "dict", "subcomponent": "component.paged_item_list"},
-            "personaArmSizeComp": {"types": "dict", "subcomponent": "component.persona_arm_size"},
-            "personaHeightComp": {"types": "dict", "subcomponent": "subcomponent.persona_height"},
-            "personaOfferInteractionComp": {"types": "dict", "subcomponent": "component.persona_offer_interaction"},
-            "skinPackListComp": {"types": "dict", "subcomponent": "component.skin_pack_list"},
-            "skinPackOfferInteractionComp": {"types": "dict", "subcomponent": "component.skin_pack_offer_interaction"},
-            "textureComp": {"types": "dict", "subcomponent": "component.texture"}
+            "appearanceInteractionComp": {"types": "dict", "structure": "component.appearance_interaction"},
+            "characterSelectComp": {"types": "dict", "structure": "component.character_select"},
+            "colorPickerComp": {"types": "dict", "structure": "component.color_picker"},
+            "dispPreviewPieceComp": {"types": "dict", "structure": "component.disp_preview_piece"},
+            "expandedSkinPackComp": {"types": "dict", "structure": "component.expanded_skin_pack"},
+            "headerComp": {"types": "dict", "structure": "component.header"},
+            "itemListComp": {"types": "dict", "structure": "component.item_list"},
+            "openColorPickerComp": {"types": "dict", "structure": "component.open_color_picker"},
+            "openExpandedAppearanceViewComp": {"types": "dict", "structure": "component.open_expanded_appearance_view"},
+            "pagedItemListComp": {"types": "dict", "structure": "component.paged_item_list"},
+            "personaArmSizeComp": {"types": "dict", "structure": "component.persona_arm_size"},
+            "personaHeightComp": {"types": "dict", "structure": "subcomponent.persona_height"},
+            "personaOfferInteractionComp": {"types": "dict", "structure": "component.persona_offer_interaction"},
+            "skinPackListComp": {"types": "dict", "structure": "component.skin_pack_list"},
+            "skinPackOfferInteractionComp": {"types": "dict", "structure": "component.skin_pack_offer_interaction"},
+            "textureComp": {"types": "dict", "structure": "component.texture"}
         }
     },
     "component.appearance_interaction": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"]
     },
     "component.character_select": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"],
         "keys": {
-            "characterPage": {"types": "dict", "subcomponent": "page"},
-            "skinsPage": {"types": "dict", "subcomponent": "page"}
+            "characterPage": {"types": "dict", "structure": "page"},
+            "skinsPage": {"types": "dict", "structure": "page"}
         }
     },
     "component.color_picker": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"]
     },
     "component.disp_preview_piece": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"]
     },
     "component.expanded_skin_pack": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"],
         "keys": {
             "isOffline": {"types": "bool"}
@@ -263,65 +315,87 @@
     },
     "component.header": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all", "common.text"]
     },
     "component.item_list": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all", "common.item_list"]
     },
     "component.open_color_picker": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all", "common.item_list"]
     },
     "component.open_expanded_appearance_view": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"]
     },
     "component.paged_item_list": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all", "common.item_list"]
     },
     "component.persona_arm_size": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all", "common.item_list"]
     },
     "subcomponent.persona_height": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all", "common.item_list"]
     },
     "component.persona_offer_interaction": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all", "common.item_list"]
     },
     "component.skin_pack_list": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"],
         "keys": {
             "isOwned": {"types": "bool"},
             "isOffline": {"types": "bool"},
-            "linksToInfo": {"types": "dict", "subcomponent": "page"}
+            "linksToInfo": {"types": "dict", "structure": "page"}
         }
     },
     "component.skin_pack_offer_interaction": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"]
     },
     "component.texture": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": ["common.all"],
         "keys": {
-            "textureImage": {"types": "dict", "subcomponent": "texture_image"}
+            "textureImage": {"types": "dict", "structure": "texture_image"}
         }
     }
 }

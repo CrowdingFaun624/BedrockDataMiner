@@ -1,47 +1,54 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "def_action_test"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "def_action_test"
+            "structure": "def_action_test"
         }
     },
     "def_action_test": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "test"
         },
-        "sort": "by_component_order",
         "keys": {
             "singletest": {"types": "str"},
-            "objecttest": {"types": "dict", "subcomponent": "action"},
-            "listtest": {"types": "dict", "subcomponent": "action"},
-            "arraytest": {"types": "list", "subcomponent": "action_list"},
-            "complex array action": {"types": "list", "subcomponent": "action_list"},
-            "complex array action2": {"types": "list", "subcomponent": "action_list"}
+            "objecttest": {"types": "dict", "structure": "action"},
+            "listtest": {"types": "dict", "structure": "action"},
+            "arraytest": {"types": "list", "structure": "action_list"},
+            "complex array action": {"types": "list", "structure": "action_list"},
+            "complex array action2": {"types": "list", "structure": "action_list"}
         }
     },
     "action_list": {
-        "type": "Set",
-        "types": ["str", "dict"],
+        "type": "Dict",
         "delegate_arguments": {
             "field": "action",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["str", "dict"],
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "str": {
                     "type": "String"
                 },
@@ -51,12 +58,14 @@
     },
     "action": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "prob": {"types": "float"},
             "selector": {"types": "bool"},
             "action": {"types": "str"},
-            "actions": {"types": "list", "subcomponent": "action_list"}
+            "actions": {"types": "list", "structure": "action_list"}
         }
     }
 }

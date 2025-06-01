@@ -1,36 +1,47 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "languages"
         },
-        "types": "dict",
-        "subcomponent": "packs"
+        "this_types": "dict",
+        "structure": "packs"
     },
     "packs": {
         "type": "Dict",
-        "types": "file",
-        "subcomponent": "cache",
-        "sort": "by_key",
-        "post_normalizer": {
+        "value_types": "list",
+        "value_structure": "cache",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "list",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "list",
-            "subcomponent": "languages"
+            "structure": "languages"
         }
     },
     "languages": {
-        "type": "Set",
-        "types": "str",
-        "sort": true,
-        "subcomponent": {
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "delegate_arguments": {
+            "field": "item",
+            "show_item_key": false,
+            "sort": "sort_by_value"
+        },
+        "value_structure": {
             "type": "String"
         }
     }

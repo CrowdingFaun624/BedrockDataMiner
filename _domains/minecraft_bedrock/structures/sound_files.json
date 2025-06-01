@@ -1,105 +1,128 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "sound_files"
         },
-        "types": "dict",
-        "subcomponent": "sound_file"
+        "this_types": "dict",
+        "structure": "sound_file"
     },
     "sound_file": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "sound file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "sort": "by_key",
+        "value_types": "dict",
         "min_value_similarity_threshold": 0.9,
-        "subcomponent": "internal_sound_file"
+        "value_structure": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "this_types": "dict",
+        "pre_normalized_types": ["file", "dict"],
+        "normalizers": {
+            "function_name": "normalizers/normalizers open_file",
+            "arguments": {
+                "serializer": "minecraft_common!serializers/sound_files_serializer"
+            }
+        },
+        "structure": "internal_sound_file"
     },
     "internal_sound_file": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "internal sound file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "sound_property"
+        "value_types": ["dict"],
+        "value_structure": "sound_property"
     },
     "sound_property": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "property"
         },
-        "normalizer": {
+        "normalizers": {
             "function_name": "delete_required_keys",
             "arguments": {
                 "keys": ["_obj", "filepath"]
             }
         },
-        "sort": "by_component_order",
         "keys": {
-            "sha1_hash": {"types": "str", "weight": 16, "delegate_arguments": {"always_print": true}, "required": true, "tags": ["file_hash_tag"]},
+            "sha1_hash": {"types": "str", "similarity_weight": 16, "delegate_arguments": {"always_print": true}, "required": true, "tags": ["file_hash_tag"]},
             "filesize": {"types": "int"},
-            "pictures": {"types": "list", "subcomponent": "pictures"},
-            "tags": {"types": "dict", "subcomponent": "tags"},
-            "_subchunks": {"types": "list", "subcomponent": "subchunks"},
-            "streaminfo": {"types": "dict", "subcomponent": "streaminfo"}
+            "pictures": {"types": "list", "structure": "pictures"},
+            "tags": {"types": "dict", "structure": "tags"},
+            "_subchunks": {"types": "list", "structure": "subchunks"},
+            "streaminfo": {"types": "dict", "structure": "streaminfo"}
         }
     },
     "pictures": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "picture",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["null"],
-        "subcomponent": null
+        "value_types": ["null"],
+        "value_structure": null
     },
     "tags": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "tag type"
         },
-        "sort": "by_key",
         "keys": {
-            "comment": {"types": "list", "subcomponent": "tag"},
-            "encoder": {"types": "list", "subcomponent": "tag"},
-            "title": {"types": "list", "subcomponent": "tag"},
-            "tracknumber": {"types": "list", "subcomponent": "tag"}
+            "comment": {"types": "list", "structure": "tag"},
+            "encoder": {"types": "list", "structure": "tag"},
+            "title": {"types": "list", "structure": "tag"},
+            "tracknumber": {"types": "list", "structure": "tag"}
         }
     },
     "tag": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
+            "sort": "sort_by_value",
+            "show_item_key": false,
             "field": "tag"
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "subchunks": {
-        "type": "Set",
-        "types": ["null"],
-        "subcomponent": null,
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["null"],
+        "value_structure": null,
         "delegate_arguments": {
+            "field": "item",
+            "show_item_key": false,
             "measure_length": true
         }
     },
     "streaminfo": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "property"
         },
-        "sort": "by_key",
         "keys": {
             "_start": {"types": "int"},
             "_size": {"types": "int"},
-            "_version": {"types": "list", "subcomponent": "version"},
+            "_version": {"types": "list", "structure": "version"},
             "_extension_data": {"types": "null"},
             "audio_format": {"types": "str"},
             "bit_depth": {"types": "int"},
@@ -113,12 +136,16 @@
         }
     },
     "version": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "version number",
             "print_flat": true
         },
-        "types": ["int"],
-        "subcomponent": null
+        "value_types": ["int"],
+        "value_structure": null
     }
 }

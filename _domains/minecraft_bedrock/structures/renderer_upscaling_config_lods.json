@@ -1,31 +1,33 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "renderer_upscaling_config_lods"
         },
-        "subcomponent": "files"
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
-        "sort": "by_key",
-        "key_component": {"type": "String"},
+        "key_structure": {"type": "String"},
         "delegate_arguments": {
             "field": "file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
@@ -34,8 +36,8 @@
             "field": "configuration",
             "measure_length": true
         },
-        "types": "dict",
-        "subcomponent": "configuration"
+        "value_types": "dict",
+        "value_structure": "configuration"
     },
     "configuration": {
         "type": "Keymap",

@@ -1,41 +1,43 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "features_behavior_packs"
         },
-        "types": "dict",
-        "subcomponent": "features"
+        "this_types": "dict",
+        "structure": "features"
     },
     "features": {
         "type": "Dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "feature"
         },
-        "types": "dict",
-        "sort": "by_key",
-        "subcomponent": "behavior_packs"
+        "value_types": "dict",
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "behavior pack"
         },
-        "types": "file",
-        "post_normalizer": {
+        "value_types": "dict",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "structures/features/feature"
+            "structure": "structures/features/feature"
         }
     }
 }

@@ -1,37 +1,46 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "camera_blends"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "list",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "list",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "list",
-            "subcomponent": "blends"
+            "structure": "blends"
         }
     },
     "blends": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "blend",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "blend"
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "blend"
     },
     "blend": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "camera_from": {"types": "str", "subcomponent": "string", "weight": 2, "delegate_arguments": {"always_print": true}},
-            "camera_to": {"types": "str", "subcomponent": "string", "weight": 2, "delegate_arguments": {"always_print": true}},
+            "camera_from": {"types": "str", "structure": "string", "similarity_weight": 2, "delegate_arguments": {"always_print": true}},
+            "camera_to": {"types": "str", "structure": "string", "similarity_weight": 2, "delegate_arguments": {"always_print": true}},
             "ease": {"types": "str"},
             "blend_time": {"types": "float"},
             "camera_from_accepts_input": {"types": "bool"},

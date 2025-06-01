@@ -1,11 +1,12 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_deferred_renderer"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -13,25 +14,31 @@
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "deferred_renderer"
+            "structure": "deferred_renderer"
         }
     },
     "deferred_renderer": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "deferred_shading_parameters": {"types": "dict", "subcomponent": "deferred_shading_parameters"},
-            "light_generation_parameters": {"types": "dict", "subcomponent": "light_generation_parameters", "tags": ["outdated"]}
+            "deferred_shading_parameters": {"types": "dict", "structure": "deferred_shading_parameters"},
+            "light_generation_parameters": {"types": "dict", "structure": "light_generation_parameters", "tags": ["outdated"]}
         }
     },
     "deferred_shading_parameters": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "ambient_light_contribution_multiplier": {"types": "decimal", "tags": ["outdated"]},
             "block_light_contribution_multiplier": {"types": "decimal", "tags": ["outdated"]},
@@ -48,7 +55,9 @@
     },
     "light_generation_parameters": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "emission_to_intensity_factor": {"types": "float"}
         }

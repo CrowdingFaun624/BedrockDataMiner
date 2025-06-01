@@ -1,92 +1,136 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "material_bins"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "vector_float": {
-        "type": "List",
-        "types": "float",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "float",
         "delegate_arguments": {
+            "field": "item",
             "print_flat": true,
             "print_all": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "file"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
-            // MaterialBinSerializer returns another file containing many many references to other files.
-            "type": "File",
-            "file_types": "file",
-            "content_types": "file",
-            "subcomponent": {
-                "type": "File",
-                "file_types": "file",
-                "content_types": "dict",
-                "subcomponent": "file"
-            }
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
+            "type": "Condition",
+            "pre_normalized_types": "file",
+            "substructures": [
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "version", "value": "0.9.1"}, "structure": {
+                    "type": "File",
+                    "serializer": "material_bin_serializer_0_9_1",
+                    "file_types": "file",
+                    "content_types": "dict",
+                    "structure": "in_file"
+                }},
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "version", "value": "0.9.0"}, "structure": {
+                    "type": "File",
+                    "serializer": "material_bin_serializer_0_9_0",
+                    "file_types": "file",
+                    "content_types": "dict",
+                    "structure": "in_file"
+                }},
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "version", "value": "0.8.2"}, "structure": {
+                    "type": "File",
+                    "serializer": "material_bin_serializer_0_8_2",
+                    "file_types": "file",
+                    "content_types": "dict",
+                    "structure": "in_file"
+                }},
+                {"types": "dict", "filter": {"type": "EqFilter", "key": "version", "value": "0.6.0"}, "structure": {
+                    "type": "File",
+                    "serializer": "material_bin_serializer_0_6_0",
+                    "file_types": "file",
+                    "content_types": "dict",
+                    "structure": "in_file"
+                }}
+            ]
         }
+    },
+    "in_file": {
+        // MaterialBinSerializer returns another file containing many many references to other files.
+        "type": "File",
+        "serializer": "custom_json",
+        "file_types": "file",
+        "content_types": "dict",
+        "structure": "file"
     },
     "file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "data": {"types": "file", "subcomponent": "cache_main_data_file"},
-            "passes": {"types": "dict", "subcomponent": "passes"}
+            "data": {"types": "dict", "structure": "cache_main_data_file"},
+            "passes": {"types": "dict", "structure": "passes"}
         }
     },
     "cache_main_data_file": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "custom_json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "main_data_file"
+            "structure": "main_data_file"
         }
     },
     "main_data_file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "version": {"types": "int"},
             "encryptionVariant": {"types": "str"},
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "weight": 20, "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 20, "delegate_arguments": {"always_print": true}},
             "hasParentName": {"types": "bool"},
             "parentName": {"types": "str"},
-            "samplerDefinitionMap": {"types": "dict", "subcomponent": "sampler_definition_map", "weight": 0},
-            "propertyFieldMap": {"types": "dict", "subcomponent": "property_field_map", "weight": 0},
+            "samplerDefinitionMap": {"types": "dict", "structure": "sampler_definition_map", "similarity_weight": 0},
+            "propertyFieldMap": {"types": "dict", "structure": "property_field_map", "similarity_weight": 0},
             "formatVersion": {"types": "str"},
-            "passes": {"types": "list", "subcomponent": "passes_list"},
+            "passes": {"types": "list", "structure": "passes_list"},
             "hasName2": {"types": "bool", "tags": ["outdated"]},
             "name2": {"types": "str", "tags": ["outdated"]}
         }
     },
     "sampler_definition_map": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "sampler definition"
         },
-        "subcomponent": "sampler_definition"
+        "value_structure": "sampler_definition"
     },
     "sampler_definition": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "reg": {"types": "int"},
             "access": {"types": ["str", "int"]},
@@ -99,7 +143,7 @@
             "hasUnknownInt": {"types": "bool"},
             "hasUnknownString": {"types": "bool"},
             "hasCustomTypeInfo": {"types": "bool"},
-            "customTypeInfo": {"types": "dict", "subcomponent": "custom_type_info"},
+            "customTypeInfo": {"types": "dict", "structure": "custom_type_info"},
             "unknownBool0": {"types": "bool", "tags": ["outdated"]},
             "unknownBool1": {"types": "bool", "tags": ["outdated"]},
             "unknownByte": {"types": "int"},
@@ -122,127 +166,143 @@
     },
     "property_field_map": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "property field"
         },
-        "subcomponent": "property_field"
+        "value_structure": "property_field"
     },
     "property_field": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "num": {"types": "int"},
             "type": {"types": "int"},
             "hasData": {"types": "bool"},
-            "vectorData": {"types": "list", "subcomponent": "vector_float"}
+            "vectorData": {"types": "list", "structure": "vector_float"}
         }
     },
     "passes_list": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "pass",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "passes": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "pass"
         },
-        "subcomponent": "pass"
+        "value_structure": "pass"
     },
     "pass": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "pass_info": {"types": "file", "subcomponent": "cache_pass_info"},
-            "glsl_files": {"types": "dict", "subcomponent": "glsl_files"}
+            "pass_info": {"types": "dict", "structure": "cache_pass_info"},
+            "glsl_files": {"types": "dict", "structure": "glsl_files"}
         }
     },
     "cache_pass_info": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "pass_info"
+            "structure": "pass_info"
         }
     },
     "glsl_files": {
         "type": "Dict",
-        "types": "file",
-        "key_component": {
+        "value_types": "list",
+        "key_structure": {
             "type": "String"
         },
         "delegate_arguments": {
             "field": "glsl file"
         },
-        "subcomponent": "structures/text_file/cache"
+        "value_structure": "structures/text_file/cache"
     },
     "pass_info": {
         "type": "Keymap",
         "keys": {
             "bitSet": {"types": "str"},
-            "defaultFlagModes": {"types": "dict", "subcomponent": "default_flag_modes"},
+            "defaultFlagModes": {"types": "dict", "structure": "default_flag_modes"},
             "fallback": {"types": "str"},
-            "flagDefaultValues": {"types": "dict", "subcomponent": "flag_values"},
+            "flagDefaultValues": {"types": "dict", "structure": "flag_values"},
             "graphicsProfile": {"types": "int"},
             "hasBitSet": {"types": "bool"},
             "hasBlendMode": {"types": "bool"},
             "hasDefaultBlendMode": {"types": "bool"},
-            "variantList": {"types": "list", "subcomponent": "variant_list"},
+            "variantList": {"types": "list", "structure": "variant_list"},
             "unknownByte0": {"types": "int", "tags": ["outdated"]}
         }
     },
     "default_flag_modes": {
         "type": "Dict",
-        "types": ["str"],
+        "value_types": ["str"],
         "delegate_arguments": {
             "field": "flag mode",
             "measure_length": true
         },
-        "subcomponent": null,
-        "key_component": {
+        "value_structure": null,
+        "key_structure": {
             "type": "String"
         }
     },
     "flag_values": {
         "type": "Dict",
-        "types": ["bool", "str"],
+        "value_types": ["bool", "str"],
         "delegate_arguments": {
             "field": "flag"
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "variant_list": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "variant"
         },
-        "types": "dict",
-        "subcomponent": "variant"
+        "value_types": "dict",
+        "value_structure": "variant"
     },
     "variant": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "isSupported": {"types": "bool"},
-            "flags": {"types": "dict", "subcomponent": "flag_values"},
-            "flagModeList": {"types": "dict", "subcomponent": "flag_mode_list"},
-            "shaderCodes": {"types": "list", "subcomponent": "shader_codes_list"},
+            "flags": {"types": "dict", "structure": "flag_values"},
+            "flagModeList": {"types": "dict", "structure": "flag_mode_list"},
+            "shaderCodes": {"types": "list", "structure": "shader_codes_list"},
             "unknownBool0": {"types": "bool", "tags": ["outdated"]}
         }
     },
     "flag_mode_list": {
         "type": "Dict",
-        "types": "str",
+        "value_types": "str",
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "turn_to_dict",
             "arguments": {
                 "key_key": "key",
@@ -253,60 +313,72 @@
             "field": "flag mode",
             "measure_length": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "shader_codes_list": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "shader_codes"
         },
-        "subcomponent": "shader_codes"
+        "value_structure": "shader_codes"
     },
     "shader_codes": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "platformShaderStage": {"types": "dict", "subcomponent": "platform_shader_stage", "weight": 20},
-            "shaderCode": {"types": "dict", "subcomponent": "shader_code"}
+            "platformShaderStage": {"types": "dict", "structure": "platform_shader_stage", "similarity_weight": 20},
+            "shaderCode": {"types": "dict", "structure": "shader_code"}
         }
     },
     "platform_shader_stage": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "stageName": {"types": "str", "subcomponent": null, "delegate_arguments": {"always_print": true}},
-            "platformName": {"types": "str", "subcomponent": null, "delegate_arguments": {"always_print": true}},
-            "stage": {"types": "str", "subcomponent": null},
-            "platform": {"types": "str", "subcomponent": null},
+            "stageName": {"types": "str", "structure": null, "delegate_arguments": {"always_print": true}},
+            "platformName": {"types": "str", "structure": null, "delegate_arguments": {"always_print": true}},
+            "stage": {"types": "str", "structure": null},
+            "platform": {"types": "str", "structure": null},
             "type": {"types": "str", "tags": ["outdated"]},
             "typeName": {"types": "str", "tags": ["outdated"]}
         }
     },
     "shader_code": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "shaderInputMap": {"types": "dict", "subcomponent": "shader_input_map"},
+            "shaderInputMap": {"types": "dict", "structure": "shader_input_map"},
             "sourceHash": {"types": "int"},
-            "bgfxShaderData": {"types": "dict", "subcomponent": "bgfx_shader_data"},
+            "bgfxShaderData": {"types": "dict", "structure": "bgfx_shader_data"},
             "unknownLong0": {"types": "int", "tags": ["outdated"]}
         }
     },
     "shader_input_map": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "shader input"
         },
-        "subcomponent": "shader_input"
+        "value_structure": "shader_input"
     },
     "shader_input": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "type": {"types": "str"},
-            "attribute": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 12},
+            "attribute": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 12},
             "isPerInstance": {"types": "bool"},
             "hasPrecisionConstraint": {"types": "bool"},
             "hasInterpolationConstraint": {"types": "bool"},
@@ -316,19 +388,21 @@
     },
     "bgfx_shader_data": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "magic": {"types": "int"},
             "hash": {"types": "int"},
-            "uniforms": {"types": "dict", "subcomponent": "uniforms"},
+            "uniforms": {"types": "dict", "structure": "uniforms"},
             "codeFile": {"types": "str"}
         }
     },
     "uniforms": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "name",
@@ -338,11 +412,13 @@
         "delegate_arguments": {
             "field": "uniform"
         },
-        "subcomponent": "uniform"
+        "value_structure": "uniform"
     },
     "uniform": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "type": {"types": "int"},
             "num": {"types": "int"},

@@ -1,50 +1,59 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_light_clustering"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "renderer_light_clustering"
+            "structure": "renderer_light_clustering"
         }
     },
     "renderer_light_clustering": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "cluster_size": {"types": "list", "subcomponent": "vector_int"},
-            "clusterSize": {"types": "list", "subcomponent": "vector_int", "tags": ["outdated"]},
+            "cluster_size": {"types": "list", "structure": "vector_int"},
+            "clusterSize": {"types": "list", "structure": "vector_int", "tags": ["outdated"]},
             "far_plane": {"types": "float"},
             "farPlane": {"types": "float", "tags": ["outdated"]},
             "lights_per_cluster": {"types": "int"},
             "lightsPerCluster": {"types": "int", "tags": ["outdated"]},
-            "NearFar": {"types": "dict", "subcomponent": "near_far", "tags": ["outdated"]}
+            "NearFar": {"types": "dict", "structure": "near_far", "tags": ["outdated"]}
         }
     },
     "vector_int": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "vector item",
             "print_all": true,
             "print_flat": true,
             "measure_length": false
         },
-        "types": ["int"],
-        "subcomponent": null
+        "value_types": ["int"],
+        "value_structure": null
     },
     "near_far": {
         "type": "Keymap",
-        "sort": "by_key",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "print_all": true
         },
         "keys": {

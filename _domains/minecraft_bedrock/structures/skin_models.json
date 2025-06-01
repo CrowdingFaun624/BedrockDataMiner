@@ -1,53 +1,63 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "skin_models"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
-                "function_name": "normalizers/models_model_normalize"
-            },
-            "subcomponent": "files"
+            "normalizers": [
+                {
+                    "function_name": "normalizers/models_model_normalize",
+                    "arguments": {
+                        "serializer": "minecraft_common!serializers/json"
+                    },
+                    "filter": {"type": "EqFilter", "key": "needs_repair", "value": false, "default": true}
+                },
+                {
+                    "function_name": "normalizers/models_model_normalize",
+                    "arguments": {
+                        "serializer": "serializers/skin_geometries_repairable_json"
+                    },
+                    "filter": {"type": "EqFilter", "key": "needs_repair", "value": true}
+                }
+            ],
+            "structure": "files"
         }
     },
     "files": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "types": "dict",
-        "key_component": {
+        "value_types": "dict",
+        "key_structure": {
             "type": "String"
         },
         "min_key_similarity_threshold": 0.9,
-        "subcomponent": "skin_packs"
+        "value_structure": "skin_packs"
     },
     "skin_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "skin pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
+        "value_types": ["dict"],
         // cannot have collapse_resource_packs normalizer
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "structures/models/model"
+        "value_structure": "structures/models/model"
     }
 }

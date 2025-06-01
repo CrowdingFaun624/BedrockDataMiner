@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "biomes_client"
         },
-        "types": "dict",
-        "subcomponent": "resource_packs"
+        "this_types": "dict",
+        "structure": "resource_packs"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -15,52 +15,60 @@
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "sort": "by_key",
-        "post_normalizer": {
+        "value_types": "dict",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "biomes_client_file"
+            "structure": "biomes_client_file"
         }
     },
     "biomes_client_file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "biomes": {"types": "dict", "subcomponent": "biomes"}
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "biomes": {"types": "dict", "structure": "biomes"}
         }
     },
     "defined_in": {
-        "type": "Set",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "print_all": true,
             "measure_length": true
         },
-        "types": ["str"],
-        "subcomponent": null
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["str"],
+        "value_structure": null
     },
     "biomes": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "biome",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "biome"
+        "value_types": ["dict"],
+        "value_structure": "biome"
     },
     "biome": {
         "type": "Keymap",

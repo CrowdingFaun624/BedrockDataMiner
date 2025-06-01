@@ -1,41 +1,69 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "text_packs"
         },
-        "subcomponent": "resource_packs"
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
         },
-        "subcomponent": "files"
+        "value_structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "list",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
         },
-        "key_component": {
+        "key_structure": {
             "type": "String"
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
-            "type": "File",
-            "file_types": "file",
-            "content_types": "list",
-            "subcomponent": "structures/text_file/lines"
+        "this_types": "list",
+        "pre_normalized_types": "file",
+        "structure": {
+            "type": "Condition",
+            "substructures": [
+                {"filter": {"type": "EqFilter", "key": "serializer", "value": "text_serializer"}, "types": "list", "structure": {
+                    "type": "File",
+                    "serializer": "text_serializer",
+                    "file_types": "file",
+                    "content_types": "list",
+                    "structure": "structures/text_file/lines"
+                }},
+                {"filter": {"type": "EqFilter", "key": "serializer", "value": "fsh_serializer"}, "types": "list", "structure": {
+                    "type": "File",
+                    "serializer": "fsh_serializer",
+                    "file_types": "file",
+                    "content_types": "list",
+                    "structure": "structures/text_file/lines"
+                }},
+                {"filter": {"type": "EqFilter", "key": "serializer", "value": "vsh_serializer"}, "types": "list", "structure": {
+                    "type": "File",
+                    "serializer": "vsh_serializer",
+                    "file_types": "file",
+                    "content_types": "list",
+                    "structure": "structures/text_file/lines"
+                }},
+                {"filter": {"type": "EqFilter", "key": "serializer", "value": "glsl_serializer"}, "types": "list", "structure": {
+                    "type": "File",
+                    "serializer": "glsl_serializer",
+                    "file_types": "file",
+                    "content_types": "list",
+                    "structure": "structures/text_file/lines"
+                }}
+            ]
         }
     }
 }

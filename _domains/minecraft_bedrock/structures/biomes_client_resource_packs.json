@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "biomes_client_resource_packs"
         },
-        "types": "dict",
-        "subcomponent": "biomes"
+        "this_types": "dict",
+        "structure": "biomes"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -13,46 +13,48 @@
     },
     "biomes": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "biome",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "sort": "by_key",
-        "subcomponent": "resource_packs"
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "biome"
+            "structure": "biome"
         }
     },
     "biome": {
         "type": "Keymap",
         "keys": {
             "format_version": {"types": "str"},
-            "minecraft:client_biome": {"types": "dict", "weight": 16, "subcomponent": {
+            "minecraft:client_biome": {"types": "dict", "similarity_weight": 16, "structure": {
                 "type": "Keymap",
                 "keys": {
-                    "description": {"types": "dict", "subcomponent": "description", "delegate_arguments": {"always_print": true}},
-                    "components": {"types": "dict", "subcomponent": "components"}
+                    "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
+                    "components": {"types": "dict", "structure": "components"}
                 }
             }}
         }
@@ -60,7 +62,7 @@
     "description": {
         "type": "Keymap",
         "keys": {
-            "identifier": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "components": {
@@ -70,13 +72,13 @@
             "field": "component"
         },
         "keys": {
-            "minecraft:ambient_sounds": {"types": "dict", "subcomponent": "component.ambient_sounds"},
-            "minecraft:biome_music": {"types": "dict", "subcomponent": "component.biome_music"},
-            "minecraft:fog_appearance": {"types": "dict", "subcomponent": "component.fog_appearance"},
-            "minecraft:foliage_appearance": {"types": "dict", "subcomponent": "component.foliage_appearance"},
-            "minecraft:grass_appearance": {"types": "dict", "subcomponent": "component.grass_appearance"},
-            "minecraft:sky_color": {"types": "dict", "subcomponent": "component.sky_color"},
-            "minecraft:water_appearance": {"types": "dict", "subcomponent": "component.water_appearance"}
+            "minecraft:ambient_sounds": {"types": "dict", "structure": "component.ambient_sounds"},
+            "minecraft:biome_music": {"types": "dict", "structure": "component.biome_music"},
+            "minecraft:fog_appearance": {"types": "dict", "structure": "component.fog_appearance"},
+            "minecraft:foliage_appearance": {"types": "dict", "structure": "component.foliage_appearance"},
+            "minecraft:grass_appearance": {"types": "dict", "structure": "component.grass_appearance"},
+            "minecraft:sky_color": {"types": "dict", "structure": "component.sky_color"},
+            "minecraft:water_appearance": {"types": "dict", "structure": "component.water_appearance"}
         }
     },
     "component.ambient_sounds": {
@@ -102,12 +104,12 @@
     "component.foliage_appearance": {
         "type": "Keymap",
         "keys": {
-            "color": {"types": ["str", "dict"], "subcomponent": "component.foliage_appearance:color"}
+            "color": {"types": ["str", "dict"], "structure": "component.foliage_appearance:color"}
         }
     },
     "component.foliage_appearance:color": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "str": null,
             "dict": {
                 "type": "Keymap",
@@ -120,7 +122,7 @@
     "component.grass_appearance": {
         "type": "Keymap",
         "keys": {
-            "color": {"types": ["str", "dict"], "subcomponent": "component.foliage_appearance:color"}
+            "color": {"types": ["str", "dict"], "structure": "component.foliage_appearance:color"}
         }
     },
     "component.sky_color": {

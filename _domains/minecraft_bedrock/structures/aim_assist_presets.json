@@ -1,33 +1,35 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "aim_assist_presets"
         },
-        "subcomponent": "behavior_packs"
+        "structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "types": "file",
-        "sort": "by_key",
         "delegate_arguments": {
             "field": "behavior pack",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "preset"
+            "structure": "preset"
         }
     },
     "string_remove_minecraft": {
@@ -36,44 +38,52 @@
     },
     "preset": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "format_version": {"types": "str", "weight": 0},
-            "minecraft:aim_assist_preset": {"types": "dict", "subcomponent": "aim_assist_preset"}
+            "format_version": {"types": "str", "similarity_weight": 0},
+            "minecraft:aim_assist_preset": {"types": "dict", "structure": "aim_assist_preset"}
         }
     },
     "aim_assist_preset": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "identifier": {"types": "str", "subcomponent": "string_remove_minecraft"},
+            "identifier": {"types": "str", "structure": "string_remove_minecraft"},
             "categories": {"types": "str"},
-            "item_settings": {"types": "dict", "subcomponent": "item_settings"},
+            "item_settings": {"types": "dict", "structure": "item_settings"},
             "default_item_settings": {"types": "str"},
             "hand_settings": {"types": "str"},
-            "exclusion_list": {"types": "list", "subcomponent": "item_list"},
-            "liquid_targeting_list": {"types": "list", "subcomponent": "item_list"}
+            "exclusion_list": {"types": "list", "structure": "item_list"},
+            "liquid_targeting_list": {"types": "list", "structure": "item_list"}
         }
     },
     "item_settings": {
         "type": "Dict",
-        "sort": "by_key",
-        "types": "str",
-        "key_component": "string_remove_minecraft",
-        "subcomponent": "string_remove_minecraft",
         "delegate_arguments": {
             "field": "item",
-            "measure_length": true
-        }
+            "measure_length": true,
+            "sort": "sort_by_key"
+        },
+        "key_structure": "string_remove_minecraft",
+        "value_types": "str",
+        "value_structure": "string_remove_minecraft"
     },
     "item_list": {
-        "type": "Set",
-        "sort": true,
-        "types": "str",
-        "subcomponent": "string_remove_minecraft",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "item",
-            "measure_length": true
-        }
+            "show_item_key": false,
+            "measure_length": true,
+            "sort": "sort_by_value"
+        },
+        "key_weight": 0,
+        "key_types": "int",
+        "value_types": "str",
+        "this_types": "list",
+        "value_structure": "string_remove_minecraft"
     }
 }

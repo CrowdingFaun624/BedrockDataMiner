@@ -1,84 +1,98 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "jigsaw_template_pools"
         },
-        "subcomponent": "files"
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
-        "sort": "by_key",
-        "key_component": {"type": "String"},
+        "key_structure": {"type": "String"},
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "processor",
             "measure_length": true
         },
-        "types": "dict",
-        "subcomponent": "behavior_packs"
+        "value_types": "dict",
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "sort": "by_key",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "behavior pack",
             "measure_length": true
         },
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "format_version": {"types": "str", "weight": 0},
-            "minecraft:template_pool": {"types": "dict", "subcomponent": "template_pool"}
+            "format_version": {"types": "str", "similarity_weight": 0},
+            "minecraft:template_pool": {"types": "dict", "structure": "template_pool"}
         }
     },
     "template_pool": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "delegate_arguments": {"always_print": true}},
-            "elements": {"types": "list", "subcomponent": "elements"}
+            "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
+            "elements": {"types": "list", "structure": "elements"}
         }
     },
     "description": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "identifier": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "elements": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "element",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "elements.item"
+        "value_structure": "elements.item"
     },
     "elements.item": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "weight": {"types": "int"},
-            "element": {"types": "dict", "subcomponent": "element", "delegate_arguments": {"always_print": true}}
+            "element": {"types": "dict", "structure": "element", "delegate_arguments": {"always_print": true}}
         }
     },
     "element": {
@@ -86,23 +100,25 @@
         "delegate_arguments": {
             "passthrough": true
         },
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_in_value",
             "arguments": {
                 "key": "element_type"
             }
         },
         "keys": {
-            "minecraft:single_pool_element": {"types": "dict", "subcomponent": "element.single_pool_element"}
+            "minecraft:single_pool_element": {"types": "dict", "structure": "element.single_pool_element"}
         }
     },
     "element.single_pool_element": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "element_type": {"types": "str"},
-            "location": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
-            "processors": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "location": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "processors": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     }
 }

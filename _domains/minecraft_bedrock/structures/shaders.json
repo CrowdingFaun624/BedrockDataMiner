@@ -1,44 +1,48 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "shaders"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "list",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "file"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "list",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "text_serializer",
             "file_types": "file",
             "content_types": "list",
-            "subcomponent": "lines"
+            "structure": "lines"
         }
     },
     "lines": {
         "type": "Sequence",
+        "max_square_length": 500000,
         "pre_normalized_types": "str",
-        "normalizer": {
+        "normalizers": {
             "function_name": "split_lines"
         },
-        "types": "str",
+        "value_types": "str",
         "delegate": "LongStringDelegate",
         "delegate_arguments": {
             "measure_length": true
         },
-        "subcomponent": {
-            "type": "String"
+        "value_structure": {
+            "type": "String",
+            "max_square_length": 100000
         }
     }
 }

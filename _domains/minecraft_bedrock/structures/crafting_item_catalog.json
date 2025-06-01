@@ -1,100 +1,124 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "crafting_item_catalog"
         },
-        "subcomponent": "behavior_packs"
+        "structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "sort": "by_key",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "behavior pack",
             "measure_length": true
         },
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "format_version": {"types": "str", "weight": 0},
-            "minecraft:crafting_items_catalog": {"types": "dict", "subcomponent": "crafting_items_catalog"}
+            "format_version": {"types": "str", "similarity_weight": 0},
+            "minecraft:crafting_items_catalog": {"types": "dict", "structure": "crafting_items_catalog"}
         }
     },
     "crafting_items_catalog": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "categories": {"types": "list", "subcomponent": "categories"}
+            "categories": {"types": "list", "structure": "categories"}
         }
     },
     "categories": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "category",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "category"
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "category"
     },
     "category": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "category_name": {"types": "str", "subcomponent": {"type": "String"}, "weight": 5, "delegate_arguments": {"always_print": true}},
-            "groups": {"types": "list", "subcomponent": "groups"}
+            "category_name": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 5, "delegate_arguments": {"always_print": true}},
+            "groups": {"types": "list", "structure": "groups"}
         }
     },
     "groups": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "group",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "group"
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "group"
     },
     "group": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "group_identifier": {"types": "dict", "subcomponent": "group_identifier", "delegate_arguments": {"always_print": true}},
-            "items": {"types": "list", "subcomponent": "items_list"}
+            "group_identifier": {"types": "dict", "structure": "group_identifier", "delegate_arguments": {"always_print": true}},
+            "items": {"types": "list", "structure": "items_list"}
         }
     },
     "group_identifier": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "icon": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 2}
+            "icon": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 2}
         }
     },
     "items_list": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": {
             "type": "String"
         }
     }

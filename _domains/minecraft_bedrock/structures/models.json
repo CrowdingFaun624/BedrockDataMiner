@@ -1,128 +1,248 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "models"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "decimal": {
         "type": "TypeAlias",
         "types": ["float", "int"]
     },
     "vector_decimal": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "vector item",
             "print_flat": true,
             "print_all": true
         },
-        "types": ["decimal"],
-        "subcomponent": null
+        "value_types": ["decimal"],
+        "value_structure": null
     },
-    "vector_decimal_or_null": {
+    "number_angle": {
+        "type": "Number",
+        "this_types": "decimal",
+        "normal_value": 22.5
+    },
+    "number_inflate": {
+        "type": "Number",
+        "this_types": "decimal",
+        "normal_value": 0.25
+    },
+    "number_offset": {
+        "type": "Number",
+        "this_types": "decimal",
+        "normal_value": 0.25
+    },
+    "number_origin": {
+        "type": "Number",
+        "this_types": "decimal",
+        "normal_value": 8
+    },
+    "number_pivot": {
+        "type": "Number",
+        "this_types": "decimal",
+        "normal_value": 4
+    },
+    "number_texture_size": {
+        "type": "Number",
+        "this_types": "decimal",
+        "normal_value": 16
+    },
+    "vector_decimal_angle": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_flat": true,
+            "print_all": true
+        },
+        "value_types": ["decimal"],
+        "value_structure": "number_angle"
+    },
+    "vector_decimal_offset": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_flat": true,
+            "print_all": true
+        },
+        "value_types": ["decimal"],
+        "value_structure": "number_offset"
+    },
+    "vector_decimal_origin": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_flat": true,
+            "print_all": true
+        },
+        "value_types": ["decimal"],
+        "value_structure": "number_origin"
+    },
+    "vector_decimal_pivot": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_flat": true,
+            "print_all": true
+        },
+        "value_types": ["decimal"],
+        "value_structure": "number_pivot"
+    },
+    "vector_decimal_angle_or_null": {
         "type": "Union",
-        "subcomponents": {
-            "list": "vector_decimal",
+        "substructures": {
+            "list": "vector_decimal_angle",
             "null": null
         }
     },
     "vector_decimal_list": {
-        "type": "Set",
-        "types": "list",
-        "subcomponent": "vector_decimal",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "list",
+        "value_structure": "vector_decimal",
         "delegate_arguments": {
             "measure_length": true,
+            "show_item_key": false,
             "field": "position"
         }
     },
     "vector_decimal_list_list": {
-        "type": "Set",
-        "types": "list",
-        "subcomponent": "vector_decimal_list",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "list",
+        "value_structure": "vector_decimal_list",
         "delegate_arguments": {
             "measure_length": false, // always 4
+            "show_item_key": false,
             "field": "poly"
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
-                "function_name": "normalizers/models_model_normalize"
-            },
-            "subcomponent": "files"
+            "normalizers": [
+                {
+                    "function_name": "normalizers/models_model_normalize",
+                    "arguments": {
+                        "serializer": "minecraft_common!serializers/json"
+                    },
+                    "filter": {"type": "EqFilter", "key": "needs_repair", "value": false, "default": true}
+                },
+                {
+                    "function_name": "normalizers/models_model_normalize",
+                    "arguments": {
+                        "serializer": "serializers/models_repairable_json"
+                    },
+                    "filter": {"type": "EqFilter", "key": "needs_repair", "value": true}
+                }
+            ],
+            "structure": "files"
         }
     },
     "files": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "key_component": {
-            "type": "String"
+        "key_structure": {
+            "type": "String",
+            "similarity_weight_function": "normalizers/normalizers models_file_similarity_weight"
         },
-        "min_key_similarity_threshold": 0.5,
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "types": "dict",
-        "subcomponent": "resource_packs"
+        "min_key_similarity_threshold": 0.6,
+        "min_value_similarity_threshold": 0.25,
+        "value_types": "dict",
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "normalizer": {
+        "value_types": ["dict"],
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "subcomponent": "model"
+        "value_structure": "model"
     },
     "model": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "format_version": {"types": ["null", "str"]},
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "minecraft:geometry": {"types": "dict", "subcomponent": "geometry"}
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "minecraft:geometry": {"types": "dict", "structure": "geometry"}
         }
     },
     "geometry": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "description": {"types": "dict", "subcomponent": "description", "weight": 5},
-            "bones": {"types": "dict", "subcomponent": "bones"}
+            "description": {"types": "dict", "structure": "description", "similarity_weight": 5},
+            "bones": {"types": "dict", "structure": "bones"}
         }
     },
     "defined_in": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "description": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "identifier": {"types": "str", "subcomponent": {"type": "String"}, "weight": 50, "delegate_arguments": {"always_print": true}},
+            "identifier": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 50, "delegate_arguments": {"always_print": true}},
             "animationArmsDown": {"types": "bool", "tags": ["outdated"]},
             "animationArmsOutFront": {"types": "bool", "tags": ["outdated"]},
             "animationDontShowArmor": {"types": "bool", "tags": ["outdated"]},
@@ -137,95 +257,105 @@
             "META_ModelVersion": {"types": "str", "tags": ["outdated"]},
             "rigtype": {"types": ["null", "str"], "tags": ["outdated"]},
             "rigType": {"types": ["null", "str"], "tags": ["outdated"]},
-            "texture_height": {"types": "decimal"},
-            "texture_width": {"types": "decimal"},
-            "textureheight": {"types": "decimal"},
-            "texturewidth": {"types": "decimal"},
-            "visible_bounds_height": {"types": "decimal"},
-            "visible_bounds_offset": {"types": "list", "subcomponent": "vector_decimal"},
-            "visible_bounds_width": {"types": "decimal"}
+            "texture_height": {"types": "decimal", "structure": "number_texture_size"},
+            "texture_width": {"types": "decimal", "structure": "number_texture_size"},
+            "textureheight": {"types": "decimal", "structure": "number_texture_size"},
+            "texturewidth": {"types": "decimal", "structure": "number_texture_size"},
+            "visible_bounds_height": {"types": "decimal", "structure": "number_offset"},
+            "visible_bounds_offset": {"types": "list", "structure": "vector_decimal_offset"},
+            "visible_bounds_width": {"types": "decimal", "structure": "number_offset"}
         }
     },
     "bones": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "bone",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
+        "value_types": ["dict"],
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "name"
             }
         },
-        "sort": "by_key",
-        "subcomponent": "bone"
+        "key_structure": {
+            "type": "String"
+        },
+        "key_weight": 3,
+        "value_weight": 5,
+        "value_structure": "bone"
     },
     "bone": {
         "type": "Keymap",
-        "normalizer": {
+        "normalizers": {
             "function_name": "delete_required_key",
             "arguments": {
                 "key": "name"
             }
         },
         "keys": {
-            "bind_pose_rotation": {"types": "list", "subcomponent": "vector_decimal"},
+            "bind_pose_rotation": {"types": "list", "structure": "vector_decimal_angle"},
             "binding": {"types": "str"},
-            "cubes": {"types": "list", "subcomponent": "cubes"},
-            "inflate": {"types": "decimal"},
-            "locators": {"types": "dict", "subcomponent": "locators"},
+            "cubes": {"types": "list", "structure": "cubes"},
+            "inflate": {"types": "decimal", "structure": "number_inflate"},
+            "locators": {"types": "dict", "structure": "locators"},
             "material": {"types": "str", "tags": ["outdated"]},
             "META_BoneType": {"types": ["null", "str"], "tags": ["outdated"]},
             "mirror": {"types": ["bool", "str"]},
             "neverRender": {"types": ["bool", "str"]},
             "parent": {"types": ["null", "str"], "delegate_arguments": {"always_print": true}},
-            "pivot": {"types": "list", "subcomponent": "vector_decimal"},
-            "poly_mesh": {"types": "dict", "subcomponent": "poly_mesh"},
-            "pos": {"types": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
-            "pre_rotation": {"types": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "pivot": {"types": "list", "structure": "vector_decimal_pivot"},
+            "poly_mesh": {"types": "dict", "structure": "poly_mesh"},
+            "pos": {"types": "list", "structure": "vector_decimal_pivot", "tags": ["outdated"]},
+            "pre_rotation": {"types": "list", "structure": "vector_decimal", "tags": ["outdated"]},
             "reset": {"types": ["bool", "str"]},
-            "rotation": {"types": ["list", "null"], "subcomponent": "vector_decimal_or_null"},
-            "texture_meshes": {"types": "list", "subcomponent": "texture_meshes"}
+            "rotation": {"types": ["list", "null"], "structure": "vector_decimal_angle_or_null"},
+            "texture_meshes": {"types": "list", "structure": "texture_meshes"}
         }
     },
     "cubes": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "cube",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "cube"
+        "value_types": ["dict"],
+        "value_structure": "cube"
     },
     "cube": {
         "type": "Keymap",
         "keys": {
-            "inflate": {"types": "decimal"},
+            "inflate": {"types": "decimal", "structure": "number_inflate"},
             "mirror": {"types": "bool"},
-            "origin": {"types": "list", "subcomponent": "vector_decimal"},
-            "rotation": {"types": "list", "subcomponent": "vector_decimal"},
-            "pivot": {"types": "list", "subcomponent": "vector_decimal"},
-            "size": {"types": "list", "subcomponent": "vector_decimal"},
-            "uv": {"types": ["dict", "list"], "subcomponent": "uv_group"}
+            "origin": {"types": "list", "structure": "vector_decimal_origin"},
+            "rotation": {"types": "list", "structure": "vector_decimal_angle"},
+            "pivot": {"types": "list", "structure": "vector_decimal_pivot"},
+            "size": {"types": "list", "structure": "vector_decimal_pivot"},
+            "uv": {"types": ["dict", "list"], "structure": "uv_group"}
         }
     },
     "uv_group": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": {
                 "type": "Keymap",
-                "sort": "by_component_order",
+                "delegate_arguments": {
+                    "sort": "sort_by_component_order"
+                },
                 "keys": {
-                    "north": {"types": "dict", "subcomponent": "uv_dict.item"},
-                    "east": {"types": "dict", "subcomponent": "uv_dict.item"},
-                    "south": {"types": "dict", "subcomponent": "uv_dict.item"},
-                    "west": {"types": "dict", "subcomponent": "uv_dict.item"},
-                    "up": {"types": "dict", "subcomponent": "uv_dict.item"},
-                    "down": {"types": "dict", "subcomponent": "uv_dict.item"}
+                    "north": {"types": "dict", "structure": "uv_dict.item"},
+                    "east": {"types": "dict", "structure": "uv_dict.item"},
+                    "south": {"types": "dict", "structure": "uv_dict.item"},
+                    "west": {"types": "dict", "structure": "uv_dict.item"},
+                    "up": {"types": "dict", "structure": "uv_dict.item"},
+                    "down": {"types": "dict", "structure": "uv_dict.item"}
                 }
             },
             "list": "uv_list"
@@ -234,67 +364,79 @@
     "uv_dict.item": {
         "type": "Keymap",
         "keys": {
-            "uv": {"types": "list", "subcomponent": "uv_list"},
-            "uv_size": {"types": "list", "subcomponent": "uv_size"}
+            "uv": {"types": "list", "structure": "uv_list"},
+            "uv_size": {"types": "list", "structure": "uv_size"}
         }
     },
     "uv_size": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "uv size item",
             "print_flat": true,
             "print_all": true
         },
-        "types": ["int"],
-        "subcomponent": null
+        "value_types": ["int"],
+        "value_structure": null
     },
     "uv_list": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "uv item",
             "print_flat": true,
             "print_all": true
         },
-        "types": ["decimal"],
-        "subcomponent": null
+        "value_types": ["decimal"],
+        "value_structure": "number_texture_size"
     },
     "locators": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "locator",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["list"],
-        "sort": "by_key",
-        "subcomponent": "vector_decimal"
+        "value_types": ["list"],
+        "value_structure": "vector_decimal_pivot"
     },
     "poly_mesh": {
         "type": "Keymap",
         "keys": {
             "normalized_uvs": {"types": "bool"},
-            "positions": {"types": "list", "subcomponent": "vector_decimal_list"},
-            "polys": {"types": "list", "subcomponent": "vector_decimal_list_list"},
+            "positions": {"types": "list", "structure": "vector_decimal_list"},
+            "polys": {"types": "list", "structure": "vector_decimal_list_list"},
             "average_normals": {"types": "null"},
-            "uvs": {"types": "list", "subcomponent": "vector_decimal_list"},
-            "normals": {"types": "list", "subcomponent": "vector_decimal_list"}
+            "uvs": {"types": "list", "structure": "vector_decimal_list"},
+            "normals": {"types": "list", "structure": "vector_decimal_list"}
         }
     },
     "texture_meshes": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "texture mesh",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "texture_mesh"
+        "value_types": ["dict"],
+        "value_structure": "texture_mesh"
     },
     "texture_mesh": {
         "type": "Keymap",
         "keys": {
-            "local_pivot": {"types": "list", "subcomponent": "vector_decimal"},
-            "position": {"types": "list", "subcomponent": "vector_decimal"},
-            "rotation": {"types": "list", "subcomponent": "vector_decimal"},
-            "scale": {"types": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "local_pivot": {"types": "list", "structure": "vector_decimal"},
+            "position": {"types": "list", "structure": "vector_decimal"},
+            "rotation": {"types": "list", "structure": "vector_decimal"},
+            "scale": {"types": "list", "structure": "vector_decimal", "tags": ["outdated"]},
             "texture": {"types": "str"}
         }
     }

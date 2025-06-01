@@ -1,112 +1,134 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "structures_mcstructure"
         },
-        "types": "dict",
-        "subcomponent": "structures"
+        "this_types": "dict",
+        "structure": "structures"
     },
     "empty_compound": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {}
     },
     "empty_list": {
-        "type": "Set",
-        "this_type": "TAG_List",
-        "types": ["null"],
-        "subcomponent": null
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "TAG_List",
+        "delegate_arguments": {
+            "show_item_key": false,
+            "field": "item"
+        },
+        "value_types": ["null"],
+        "value_structure": null
     },
     "structures": {
         "type": "Dict",
         "delegate_arguments": {
             "measure_length": true,
+            "sort": "sort_by_key",
             "field": "structure"
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "behavior_packs"
+        "value_types": ["dict"],
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "measure_length": true,
+            "sort": "sort_by_key",
             "field": "behavior pack"
         },
-        "types": ["file"],
-        "normalizer": {
+        "value_types": "TAG_Compound",
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": ["file"],
-        "subcomponent": {
+        "this_types": "TAG_Compound",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!nbt_little",
             "file_types": "file",
             "content_types": "TAG_Compound",
-            "subcomponent": "structure"
+            "structure": "structure"
         }
     },
     "vector_tag_int": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "coordinate",
             "measure_length": false,
             "print_all": true,
             "print_flat": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Int"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Int"],
+        "value_structure": null
     },
     "vector_tag_float": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "coordinate",
             "measure_length": false,
             "print_all": true,
             "print_flat": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Float"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Float"],
+        "value_structure": null
     },
     "structure": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "sort": "by_component_order",
-        "normalizer": {
+        "this_types": "TAG_Compound",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
+        "normalizers": {
             "function_name": "normalizers/structures_mcstructure_normalize"
         },
         "keys": {
             "format_version": {"types": "TAG_Int"},
-            "size": {"types": "TAG_List", "subcomponent": "vector_tag_int", "delegate_arguments": {"always_print": true}},
-            "structure_world_origin": {"types": "TAG_List", "subcomponent": "vector_tag_int"},
-            "structure": {"types": "TAG_Compound", "subcomponent": "structure.structure"}
+            "size": {"types": "TAG_List", "structure": "vector_tag_int", "delegate_arguments": {"always_print": true}},
+            "structure_world_origin": {"types": "TAG_List", "structure": "vector_tag_int"},
+            "structure": {"types": "TAG_Compound", "structure": "structure.structure"}
         }
     },
     "structure.structure": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "sort": "by_component_order",
+        "this_types": "TAG_Compound",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "layers": {"types": "list", "subcomponent": "layers"},
-            "palette": {"types": "TAG_Compound", "subcomponent": "palette"},
-            "entities": {"types": "TAG_List", "subcomponent": "entities"}
+            "layers": {"types": "list", "structure": "layers"},
+            "palette": {"types": "TAG_Compound", "structure": "palette"},
+            "entities": {"types": "TAG_List", "structure": "entities"}
         }
     },
     "layers": {
-        "type": "List",
-        "types": "dict",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "measure_length": true,
             "field": "layer"
         },
-        "subcomponent": "layer"
+        "value_structure": "layer"
     },
     "layer": {
         "type": "Keymap",
@@ -115,70 +137,76 @@
             "field": "block"
         },
         "keys": {
-            "states": {"types": "dict", "subcomponent": "volume_states"},
-            "data": {"types": "dict", "subcomponent": "volume_additional_data"},
-            "size": {"types": "tuple", "subcomponent": {
-                "type": "List",
+            "states": {"types": "dict", "structure": "volume_states"},
+            "data": {"types": "dict", "structure": "volume_additional_data"},
+            "size": {"types": "tuple", "structure": {
+                "type": "Dict",
+                "allow_key_moves": false,
+                "key_weight": 0,
+                "key_types": "int",
                 "delegate": null,
-                "this_type": "tuple",
-                "types": "int",
-                "subcomponent": null
+                "this_types": "tuple",
+                "value_types": "int",
+                "value_structure": null
             }}
         }
     },
     "volume_states": {
         "type": "Dict",
-        "detect_key_moves": false,
-        "types": "int",
+        "allow_key_moves": false,
+        "value_types": "int",
         "delegate": null,
-        "subcomponent": null
+        "value_structure": null
     },
     "volume_additional_data": {
         "type": "Dict",
-        "detect_key_moves": false,
-        "types": "TAG_Compound",
+        "allow_key_moves": false,
+        "value_types": "TAG_Compound",
         "delegate": null,
-        "subcomponent": "block_position_data"
+        "value_structure": "block_position_data"
     },
     "item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "id": {"types": "TAG_String"},
             "Count": {"types": "TAG_Byte"},
-            "Block": {"types": "TAG_Compound", "subcomponent": "block_palette.item"},
+            "Block": {"types": "TAG_Compound", "structure": "block_palette.item"},
             "Damage": {"types": "TAG_Short", "delegate_arguments": {"always_print": true}},
-            "Name": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
+            "Name": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
             "Slot": {"types": "TAG_Byte"},
-            "tag": {"types": "TAG_Compound", "subcomponent": "item.tag"},
+            "tag": {"types": "TAG_Compound", "structure": "item.tag"},
             "WasPickedUp": {"types": "TAG_Byte"}
         }
     },
     "item.tag": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "author": {"types": "TAG_String"},
             "Damage": {"types": "TAG_Int"},
-            "ench": {"types": "TAG_List", "subcomponent": "item.tag.ench"},
+            "ench": {"types": "TAG_List", "structure": "item.tag.ench"},
             "generation": {"types": "TAG_Int"},
-            "pages": {"types": "TAG_List", "subcomponent": "item.tag.pages"},
+            "pages": {"types": "TAG_List", "structure": "item.tag.pages"},
             "RepairCost": {"types": "TAG_Int"},
             "title": {"types": "TAG_String"},
             "xuid": {"types": "TAG_String"}
         }
     },
     "item.tag.ench": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "enchantment",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": {
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": {
             "type": "Keymap",
-            "this_type": "TAG_Compound",
+            "this_types": "TAG_Compound",
             "delegate_arguments": {
                 "print_all": true
             },
@@ -189,59 +217,70 @@
         }
     },
     "item.tag.pages": {
-        "type": "Set",
-        "this_type": "TAG_List",
-        "types": "TAG_Compound",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "TAG_List",
+        "value_types": "TAG_Compound",
         "delegate_arguments": {
             "field": "page",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "Keymap",
-            "this_type": "TAG_Compound",
+            "this_types": "TAG_Compound",
             "keys": {
-                "photoname": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}},
-                "text": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}}
+                "photoname": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}},
+                "text": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}}
             }
         }
     },
     "item_list": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "item"
     },
     "entities": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "entity",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "entity"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "entity"
     },
     "entity": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "sort": "by_key",
+        "this_types": "TAG_Compound",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "Age": {"types": "TAG_Short"},
             "Air": {"types": "TAG_Short"},
-            "Armor": {"types": "TAG_List", "subcomponent": "item_list"},
+            "Armor": {"types": "TAG_List", "structure": "item_list"},
             "AttackTime": {"types": "TAG_Short"},
-            "Attributes": {"types": "TAG_List", "subcomponent": "entity.attributes"},
+            "Attributes": {"types": "TAG_List", "structure": "entity.attributes"},
             "BodyRot": {"types": "TAG_Float"},
             "boundX": {"types": "TAG_Int"},
             "boundY": {"types": "TAG_Int"},
             "boundZ": {"types": "TAG_Int"},
             "BreedCooldown": {"types": "TAG_Int"},
             "canPickupItems": {"types": "TAG_Byte"},
-            "ChestItems": {"types": "TAG_List", "subcomponent": "item_list"},
+            "ChestItems": {"types": "TAG_List", "structure": "item_list"},
             "Chested": {"types": "TAG_Byte"},
             "Color": {"types": "TAG_Byte"},
             "Color2": {"types": "TAG_Byte"},
@@ -250,7 +289,7 @@
             "CustomName": {"types": "TAG_String"},
             "Dead": {"types": "TAG_Byte"},
             "DeathTime": {"types": "TAG_Short"},
-            "definitions": {"types": "TAG_List", "subcomponent": "entity.definitions"},
+            "definitions": {"types": "TAG_List", "structure": "entity.definitions"},
             "DwellingUniqueID": {"types": "TAG_String"},
             "ExecuteOnFirstTick": {"types": "TAG_Byte"},
             "expDropEnabled": {"types": "TAG_Byte"},
@@ -261,11 +300,11 @@
             "Health": {"types": "TAG_Short"},
             "HighTierCuredDiscount": {"types": "TAG_Int"},
             "HomeDimensionId": {"types": "TAG_Int"},
-            "HomePos": {"types": "TAG_List", "subcomponent": "vector_tag_float"},
+            "HomePos": {"types": "TAG_List", "structure": "vector_tag_float"},
             "HurtTime": {"types": "TAG_Short"},
             "identifier": {"types": "TAG_String"},
             "InLove": {"types": "TAG_Int"},
-            "internalComponents": {"types": "TAG_Compound", "subcomponent": "entity.internal_components"},
+            "internalComponents": {"types": "TAG_Compound", "structure": "entity.internal_components"},
             "InventoryVersion": {"types": "TAG_String"},
             "Invulnerable": {"types": "TAG_Byte"},
             "IsAngry": {"types": "TAG_Byte"},
@@ -285,38 +324,38 @@
             "IsSwimming": {"types": "TAG_Byte"},
             "IsTamed": {"types": "TAG_Byte"},
             "IsTrusting": {"types": "TAG_Byte"},
-            "Item": {"types": "TAG_Compound", "subcomponent": "entity.item"},
-            "ItemInHand": {"types": "TAG_Compound", "subcomponent": "item"},
+            "Item": {"types": "TAG_Compound", "structure": "entity.item"},
+            "ItemInHand": {"types": "TAG_Compound", "structure": "item"},
             "LastDimensionId": {"types": "TAG_Int"},
             "LastExecution": {"types": "TAG_Long"},
             "LastOutput": {"types": "TAG_String"},
-            "LastOutputParams": {"types": "TAG_List", "subcomponent": "block_entity_data.last_output_params"},
+            "LastOutputParams": {"types": "TAG_List", "structure": "block_entity_data.last_output_params"},
             "LeasherID": {"types": "TAG_Long"},
             "limitedLife": {"types": "TAG_Int"},
             "LootDropped": {"types": "TAG_Byte"},
             "LoveCause": {"types": "TAG_Long"},
             "LowTierCuredDiscount": {"types": "TAG_Int"},
-            "Mainhand": {"types": "TAG_List", "subcomponent": "item_list"},
+            "Mainhand": {"types": "TAG_List", "structure": "item_list"},
             "MarkVariant": {"types": "TAG_Int"},
-            "Motion": {"types": "TAG_List", "subcomponent": "vector_tag_float"},
+            "Motion": {"types": "TAG_List", "structure": "vector_tag_float"},
             "NaturalSpawn": {"types": "TAG_Byte"},
             "NearbyCuredDiscount": {"types": "TAG_Int"},
             "NearbyCuredDiscountTimeStamp": {"types": "TAG_Int"},
-            "Nuisances": {"types": "TAG_List", "subcomponent": "entity.nuisances"},
-            "Offers": {"types": "TAG_Compound", "subcomponent": "block_entity_data.offers"},
-            "Offhand": {"types": "TAG_List", "subcomponent": "item_list"},
+            "Nuisances": {"types": "TAG_List", "structure": "entity.nuisances"},
+            "Offers": {"types": "TAG_Compound", "structure": "block_entity_data.offers"},
+            "Offhand": {"types": "TAG_List", "structure": "item_list"},
             "OnGround": {"types": "TAG_Byte"},
             "OwnerID": {"types": "TAG_Long"},
             "OwnerNew": {"types": "TAG_Long"},
             "Persistent": {"types": "TAG_Byte"},
             "PortalCooldown": {"types": "TAG_Int"},
-            "Pos": {"types": "TAG_List", "subcomponent": "vector_tag_float"},
-            "Pose": {"types": "TAG_Compound", "subcomponent": "entity.pose"},
+            "Pos": {"types": "TAG_List", "structure": "vector_tag_float"},
+            "Pose": {"types": "TAG_Compound", "structure": "entity.pose"},
             "PreferredProfession": {"types": "TAG_String"},
             "ReactToBell": {"types": "TAG_Byte"},
             "RewardPlayersOnFirstFounding": {"types": "TAG_Byte"},
             "Riches": {"types": "TAG_Int"},
-            "Rotation": {"types": "TAG_List", "subcomponent": "entity.rotation"},
+            "Rotation": {"types": "TAG_List", "structure": "entity.rotation"},
             "Saddled": {"types": "TAG_Byte"},
             "Sheared": {"types": "TAG_Byte"},
             "ShowBottom": {"types": "TAG_Byte"},
@@ -327,7 +366,7 @@
             "StrengthMax": {"types": "TAG_Int"},
             "SuccessCount": {"types": "TAG_Int"},
             "Surface": {"types": "TAG_Byte"},
-            "Tags": {"types": "TAG_List", "subcomponent": "entity.tags"},
+            "Tags": {"types": "TAG_List", "structure": "entity.tags"},
             "TargetID": {"types": "TAG_Long"},
             "TickDelay": {"types": "TAG_Int"},
             "Ticking": {"types": "TAG_Byte"},
@@ -342,18 +381,21 @@
         }
     },
     "entity.attributes": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "attribute",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "entity.attributes.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "entity.attributes.item"
     },
     "entity.attributes.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "Base": {"types": "TAG_Float"},
             "Current": {"types": "TAG_Float"},
@@ -361,24 +403,27 @@
             "DefaultMin": {"types": "TAG_Float"},
             "Max": {"types": "TAG_Float"},
             "Min": {"types": "TAG_Float"},
-            "Modifiers": {"types": "TAG_List", "subcomponent": "entity.attributes.item.modifiers"},
-            "Name": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}}
+            "Modifiers": {"types": "TAG_List", "structure": "entity.attributes.item.modifiers"},
+            "Name": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "entity.attributes.item.modifiers": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "modifier",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": {
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": {
             "type": "Keymap",
-            "this_type": "TAG_Compound",
+            "this_types": "TAG_Compound",
             "keys": {
                 "Amount": {"types": "TAG_Float"},
-                "Name": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
+                "Name": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
                 "Operand": {"types": "TAG_Int"},
                 "Operation": {"types": "TAG_Int"},
                 "UUIDLeast": {"types": "TAG_Long"},
@@ -387,119 +432,136 @@
         }
     },
     "entity.definitions": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "definition",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_String"],
-        "sort": true,
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_String"],
+        "value_structure": null
     },
     "entity.internal_components": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "EntityStorageKeyComponent": {"types": "TAG_Compound", "subcomponent": "entity.internal_components.entity_storage_key_component"}
+            "EntityStorageKeyComponent": {"types": "TAG_Compound", "structure": "entity.internal_components.entity_storage_key_component"}
         }
     },
     "entity.internal_components.entity_storage_key_component": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "StorageKey": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}}
+            "StorageKey": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}}
         }
     },
     "entity.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "Block": {"types": "TAG_Compound", "subcomponent": "block_palette.item"},
+            "Block": {"types": "TAG_Compound", "structure": "block_palette.item"},
             "Count": {"types": "TAG_Byte"},
             "Damage": {"types": "TAG_Short"},
-            "Name": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
+            "Name": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
             "WasPickedUp": {"types": "TAG_Byte"}
         }
     },
     "entity.nuisances": {
-        "type": "Set",
-        "this_type": "TAG_List",
-        "types": "null",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "TAG_List",
+        "value_types": "null",
         "delegate_arguments": {
             "field": "nuisance",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "entity.pose": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "LastSignal": {"types": "TAG_Int"},
             "PoseIndex": {"types": "TAG_Int"}
         }
     },
     "entity.rotation": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "axis",
             "print_all": true,
             "print_flat": true,
             "measure_length": false
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Float"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Float"],
+        "value_structure": null
     },
     "entity.tags": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "tag",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_String"],
-        "sort": true,
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_String"],
+        "value_structure": null
     },
     "palette": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "default": {"types": "TAG_Compound", "subcomponent": "palette.default"}
+            "default": {"types": "TAG_Compound", "structure": "palette.default"}
         }
     },
     "palette.default": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "block_palette": {"types": "TAG_List", "subcomponent": "block_palette"}
+            "block_palette": {"types": "TAG_List", "structure": "block_palette"}
         }
     },
     "block_palette": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "palette",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "block_palette.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "block_palette.item"
     },
     "block_palette.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "name": {"types": "TAG_String", "subcomponent": {"type": "String", "types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
-            "states": {"types": "TAG_Compound", "subcomponent": "block_states"},
+            "name": {"types": "TAG_String", "structure": {"type": "String", "this_types": "TAG_String"}, "delegate_arguments": {"always_print": true}},
+            "states": {"types": "TAG_Compound", "structure": "block_states"},
             "version": {"types": ["TAG_Int", "TAG_Long"]}
         }
     },
     "block_states": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "sort": "by_key",
+        "this_types": "TAG_Compound",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "age": {"types": "TAG_Int"},
             "allow_underwater_bit": {"types": "TAG_Byte"},
@@ -593,57 +655,67 @@
     },
     "block_position_data": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "block_entity_data": {"types": "TAG_Compound", "subcomponent": "block_entity_data"},
-            "tick_delay": {"types": "TAG_List", "subcomponent": "block_position_data.tick_delay"},
-            "tick_queue_data": {"types": "TAG_List", "subcomponent": "block_position_data.tick_queue_data"}
+            "block_entity_data": {"types": "TAG_Compound", "structure": "block_entity_data"},
+            "tick_delay": {"types": "TAG_List", "structure": "block_position_data.tick_delay"},
+            "tick_queue_data": {"types": "TAG_List", "structure": "block_position_data.tick_queue_data"}
         }
     },
     "block_position_data.tick_delay": {
-        "type": "Set",
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
         "delegate_arguments": {
+            "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "block_position_data.tick_delay.item"
+        "value_structure": "block_position_data.tick_delay.item"
     },
     "block_position_data.tick_delay.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "tick_delay": {"types": "TAG_Int"}
         }
     },
     "block_position_data.tick_queue_data": {
-        "type": "Set",
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
         "delegate_arguments": {
+            "field": "item",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "block_position_data.tick_queue_data.item"
+        "value_structure": "block_position_data.tick_queue_data.item"
     },
     "block_position_data.tick_queue_data.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "tick_delay": {"types": "TAG_Int"}
         }
     },
     "block_entity_data": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
-        "sort": "by_key",
+        "this_types": "TAG_Compound",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "animationMode": {"types": "TAG_Byte"},
             "animationSeconds": {"types": "TAG_Float"},
-            "AttachedBlocks": {"types": "TAG_List", "subcomponent": "empty_list"},
+            "AttachedBlocks": {"types": "TAG_List", "structure": "empty_list"},
             "auto": {"types": "TAG_Byte"},
             "Base": {"types": "TAG_Int"},
-            "book": {"types": "TAG_Compound", "subcomponent": "item"},
-            "BreakBlocks": {"types": "TAG_List", "subcomponent": "vector_tag_int"},
+            "book": {"types": "TAG_Compound", "structure": "item"},
+            "BreakBlocks": {"types": "TAG_List", "structure": "vector_tag_int"},
             "color": {"types": ["TAG_Byte", "TAG_Int"]},
             "conditionalMode": {"types": "TAG_Byte"},
             "conditionMet": {"types": "TAG_Byte"},
@@ -665,14 +737,14 @@
             "integrity": {"types": "TAG_Float"},
             "isMovable": {"types": ["TAG_Byte", "TAG_Int"]},
             "isPowered": {"types": "TAG_Byte"},
-            "Item": {"types": "TAG_Compound", "subcomponent": "item"},
+            "Item": {"types": "TAG_Compound", "structure": "item"},
             "ItemDropChance": {"types": "TAG_Float"},
             "ItemRotation": {"types": "TAG_Float"},
-            "Items": {"types": "TAG_List", "subcomponent": "item_list"},
+            "Items": {"types": "TAG_List", "structure": "item_list"},
             "joint": {"types": "TAG_String"},
             "LastExecution": {"types": "TAG_Long"},
             "LastOutput": {"types": "TAG_String"},
-            "LastOutputParams": {"types": "TAG_List", "subcomponent": "block_entity_data.last_output_params"},
+            "LastOutputParams": {"types": "TAG_List", "structure": "block_entity_data.last_output_params"},
             "LastProgress": {"types": "TAG_Float"},
             "LPCommandMode": {"types": "TAG_Int"},
             "LPCondionalMode": {"types": "TAG_Byte"},
@@ -689,7 +761,7 @@
             "PotionType": {"types": "TAG_Short"},
             "powered": {"types": "TAG_Byte"},
             "Progress": {"types": "TAG_Float"},
-            "RecordItem": {"types": "TAG_Compound", "subcomponent": "item"},
+            "RecordItem": {"types": "TAG_Compound", "structure": "item"},
             "redstoneSaveMode": {"types": "TAG_Int"},
             "removeBlocks": {"types": "TAG_Byte"},
             "rotation": {"types": "TAG_Byte"},
@@ -714,7 +786,7 @@
             "TransferCooldown": {"types": "TAG_Int"},
             "Type": {"types": "TAG_Int"},
             "Version": {"types": "TAG_Int"},
-            "VibrationListener": {"types": "TAG_Compound", "subcomponent": "block_entity_data.vibration_listener"},
+            "VibrationListener": {"types": "TAG_Compound", "structure": "block_entity_data.vibration_listener"},
             "x": {"types": "TAG_Int"},
             "xStructureOffset": {"types": "TAG_Int"},
             "xStructureSize": {"types": "TAG_Int"},
@@ -727,39 +799,45 @@
         }
     },
     "block_entity_data.last_output_params": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "parameter",
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_String"],
-        "subcomponent": null
+        "this_types": "TAG_List",
+        "value_types": ["TAG_String"],
+        "value_structure": null
     },
     "block_entity_data.offers": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "Recipes": {"types": "TAG_List", "subcomponent": "block_entity_data.offers:recipes"},
-            "TierExpRequirements": {"types": "TAG_List", "subcomponent": "block_entity_data.offers:tier_exp_requirements"}
+            "Recipes": {"types": "TAG_List", "structure": "block_entity_data.offers:recipes"},
+            "TierExpRequirements": {"types": "TAG_List", "structure": "block_entity_data.offers:tier_exp_requirements"}
         }
     },
     "block_entity_data.offers:recipes": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
         "delegate_arguments": {
             "field": "offer",
+            "show_item_key": false,
             "measure_length": true
         },
-        "this_type": "TAG_List",
-        "types": ["TAG_Compound"],
-        "subcomponent": "block_entity_data.offers:recipes.item"
+        "this_types": "TAG_List",
+        "value_types": ["TAG_Compound"],
+        "value_structure": "block_entity_data.offers:recipes.item"
     },
     "block_entity_data.offers:recipes.item": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
-            "buyA": {"types": "TAG_Compound", "subcomponent": "item"},
-            "buyB": {"types": "TAG_Compound", "subcomponent": "item"},
+            "buyA": {"types": "TAG_Compound", "structure": "item"},
+            "buyB": {"types": "TAG_Compound", "structure": "item"},
             "buyCountA": {"types": "TAG_Int"},
             "buyCountB": {"types": "TAG_Int"},
             "demand": {"types": "TAG_Int"},
@@ -767,39 +845,42 @@
             "priceMultiplierA": {"types": "TAG_Float"},
             "priceMultiplierB": {"types": "TAG_Float"},
             "rewardExp": {"types": "TAG_Byte"},
-            "sell": {"types": "TAG_Compound", "subcomponent": "item"},
+            "sell": {"types": "TAG_Compound", "structure": "item"},
             "tier": {"types": "TAG_Int"},
             "traderExp": {"types": "TAG_Int"},
             "uses": {"types": "TAG_Int"}
         }
     },
     "block_entity_data.offers:tier_exp_requirements": {
-        "type": "List",
-        "this_type": "TAG_List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "TAG_List",
         "delegate_arguments": {
             "field": "requirement",
             "measure_length": true
         },
-        "types": ["TAG_Compound"],
-        "subcomponent": "block_entity_data.offers:tier_exp_requirements.item"
+        "value_types": ["TAG_Compound"],
+        "value_structure": "block_entity_data.offers:tier_exp_requirements.item"
     },
     "block_entity_data.offers:tier_exp_requirements.item": {
         "type": "Dict",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "delegate_arguments": {
             "field": "key",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["TAG_Int"],
-        "sort": "by_key",
-        "subcomponent": null
+        "value_types": ["TAG_Int"],
+        "value_structure": null
     },
     "block_entity_data.vibration_listener": {
         "type": "Keymap",
-        "this_type": "TAG_Compound",
+        "this_types": "TAG_Compound",
         "keys": {
             "event": {"types": "TAG_Int"},
-            "selector": {"types": "TAG_Compound", "subcomponent": "empty_compound"}
+            "selector": {"types": "TAG_Compound", "structure": "empty_compound"}
         }
     }
 }

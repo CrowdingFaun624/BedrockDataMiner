@@ -1,55 +1,71 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "texture_list"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
-                "function_name": "normalizers/normalizers texture_list_normalize"
-            },
-            "subcomponent": "textures"
+            "normalizers": [
+                {
+                    "function_name": "normalizers/normalizers texture_list_normalize",
+                    "arguments": {
+                        "serializer": "lines_serializer"
+                    },
+                    "filter": {"type": "EqFilter", "key": "serializer", "value": "lines_serializer"}
+                },
+                {
+                    "function_name": "normalizers/normalizers texture_list_normalize",
+                    "arguments": {
+                        "serializer": "texture_list_serializer"
+                    },
+                    "filter": {"type": "EqFilter", "key": "serializer", "value": "texture_list_serializer"}
+                }
+            ],
+            "structure": "textures"
         }
     },
     "textures": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "texture",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["list"],
-        "sort": "by_key",
-        "key_component": {
+        "value_types": ["list"],
+        "key_structure": {
             "type": "String"
         },
         "min_key_similarity_threshold": 0.9,
-        "subcomponent": "resource_packs"
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "measure_length": true,
             "print_flat": true,
+            "sort": "sort_by_value",
             "print_all": true
         },
-        "types": ["str"],
-        "normalizer": {
+        "value_types": ["str"],
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_pack_names"
         },
-        "sort": true,
-        "subcomponent": null
+        "value_structure": null
     }
 }

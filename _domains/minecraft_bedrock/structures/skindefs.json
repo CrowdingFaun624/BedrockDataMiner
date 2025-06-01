@@ -1,55 +1,62 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "skindefs"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false,
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers skins_normalize",
                 "arguments": {
                     "other_keys": ["geometry"]
                 }
             },
-            "subcomponent": "skindefs_file"
+            "structure": "skindefs_file"
         }
     },
     "skindefs_file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "geometry": {"types": "dict", "subcomponent": "structures/skins/names"},
-            "skins": {"types": "list", "subcomponent": "skins"}
+            "geometry": {"types": "dict", "structure": "structures/skins/names"},
+            "skins": {"types": "list", "structure": "skins"}
         }
     },
     "skins": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "skin"
         },
-        "subcomponent": "skin"
+        "value_structure": "skin"
     },
     "skin": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "weight": 6},
-            "id": {"types": "str", "subcomponent": {"type": "String"}},
-            "geometry": {"types": "str", "subcomponent": {"type": "String"}},
-            "texture": {"types": "str", "subcomponent": {"type": "String"}},
+            "name": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 6},
+            "id": {"types": "str", "structure": {"type": "String"}},
+            "geometry": {"types": "str", "structure": {"type": "String"}},
+            "texture": {"types": "str", "structure": {"type": "String"}},
             "type": {"types": "str"},
             "defined_in": {"types": "str"}
         }

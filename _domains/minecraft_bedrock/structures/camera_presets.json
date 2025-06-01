@@ -1,81 +1,95 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "camera_presets"
         },
-        "types": "dict",
-        "subcomponent": "camera_presets"
+        "this_types": "dict",
+        "structure": "camera_presets"
     },
     "camera_presets": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "camera preset"
         },
-        "sort": "by_key",
-        "subcomponent": "behavior_packs"
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "types": "file",
-        "post_normalizer": {
+        "value_types": "dict",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "behavior pack",
             "measure_length": true
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "defined_in": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "behavior pack",
+            "show_item_key": false,
             "print_all": true,
             "print_flat": true
         },
-        "subcomponent": null
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": null
     },
     "vector_float": {
-        "type": "List",
-        "types": "float",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "float",
         "delegate_arguments": {
             "field": "axis",
             "print_all": true,
             "print_flat": true
         },
-        "subcomponent": null
+        "value_structure": null
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "camera"
+            "structure": "camera"
         }
     },
     "camera": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "format_version": {"types": "str"},
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
-            "minecraft:camera_preset": {"types": "dict", "weight": 20, "subcomponent": {
+            "defined_in": {"types": "list", "structure": "defined_in"},
+            "minecraft:camera_preset": {"types": "dict", "similarity_weight": 20, "structure": {
                 "type": "Keymap",
-                "sort": "by_component_order",
+                "delegate_arguments": {
+                    "sort": "sort_by_component_order"
+                },
                 "keys": {
-                    "identifier": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+                    "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
                     "inherit_from": {"types": "str", "tags": ["outdated"]},
                     "listener": {"types": "str", "tags": ["outdated"]},
                     "player_effects": {"types": "bool", "tags": ["outdated"]},
-                    "aim_assist": {"types": "dict", "subcomponent": "aim_assist"},
-                    "view_offset": {"types": "list", "subcomponent": "vector_float"},
-                    "entity_offset": {"types": "list", "subcomponent": "vector_float"},
+                    "aim_assist": {"types": "dict", "structure": "aim_assist"},
+                    "view_offset": {"types": "list", "structure": "vector_float"},
+                    "entity_offset": {"types": "list", "structure": "vector_float"},
                     "align_target_and_camera_forward": {"types": "bool"},
                     "radius": {"types": "int"},
                     "pos_x": {"types": "int"},

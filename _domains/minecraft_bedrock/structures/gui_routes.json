@@ -1,113 +1,124 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "gui_routes"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "parent"
+            "structure": "parent"
         }
     },
     "parent": {
         "type": "Keymap",
         "keys": {
-            "routes": {"types": "dict", "subcomponent": "routes"}
+            "routes": {"types": "dict", "structure": "routes"}
         }
     },
     "routes": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "route",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
+        "value_types": ["dict"],
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "fileName"
             }
         },
-        "sort": "by_key",
-        "subcomponent": "route"
+        "value_structure": "route"
     },
     "route": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "defaultRoute": {"types": "str", "subcomponent": {
+            "defaultRoute": {"types": "str", "structure": {
                 "type": "String"
             }},
-            "fileName": {"types": "str", "subcomponent": {
+            "fileName": {"types": "str", "structure": {
                 "type": "String"
             }, "delegate_arguments": {"always_print": true}},
-            "scope": {"types": "list", "subcomponent": "scope"},
-            "supportedRoutes": {"types": "dict", "subcomponent": "supported_routes"}
+            "scope": {"types": "list", "structure": "scope"},
+            "supportedRoutes": {"types": "dict", "structure": "supported_routes"}
         }
     },
     "scope": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "scope",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "supported_routes": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "supported route",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "sort": "by_key",
+        "value_types": ["dict"],
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "route"
             }
         },
-        "key_component": {
+        "key_structure": {
             "type": "String"
         },
-        "subcomponent": "supported_route"
+        "value_structure": "supported_route"
     },
     "supported_route": {
         "type": "Keymap",
         "keys": {
-            "knownEntries": {"types": "list", "subcomponent": "known_entries"},
-            "modes": {"types": "list", "subcomponent": "modes"},
-            "params": {"types": "dict", "subcomponent": "parameters"},
-            "regexp": {"types": "str", "subcomponent": {
+            "knownEntries": {"types": "list", "structure": "known_entries"},
+            "modes": {"types": "list", "structure": "modes"},
+            "params": {"types": "dict", "structure": "parameters"},
+            "regexp": {"types": "str", "structure": {
                 "type": "String"
             }},
-            "route": {"types": "str", "subcomponent": {
+            "route": {"types": "str", "structure": {
                 "type": "String"
             }, "delegate_arguments": {"always_print": true}}
         }
     },
     "known_entries": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "entry",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "known_entry"
+        "value_types": ["dict"],
+        "value_structure": "known_entry"
     },
     "known_entry": {
         "type": "Keymap",
@@ -118,32 +129,35 @@
         }
     },
     "modes": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "mode",
+            "show_item_key": false,
+            "sort": "sort_by_value",
             "measure_length": true
         },
-        "types": ["str"],
-        "sort": true,
-        "subcomponent": null
+        "value_types": ["str"],
+        "value_structure": null
     },
     "parameters": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "parameter",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
+        "value_types": ["dict"],
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "wrap_in_dict",
             "arguments": {
                 "key": "name"
             }
         },
-        "sort": "by_key",
-        "subcomponent": "parameter"
+        "value_structure": "parameter"
     },
     "parameter": {
         "type": "Keymap",
@@ -151,7 +165,7 @@
             "delimiter": {"types": "str"},
             "name": {"types": "str", "delegate_arguments": {"always_print": true}},
             "optional": {"types": "bool"},
-            "pattern": {"types": "str", "subcomponent": {
+            "pattern": {"types": "str", "structure": {
                 "type": "String"
             }},
             "prefix": {"types": "str"},

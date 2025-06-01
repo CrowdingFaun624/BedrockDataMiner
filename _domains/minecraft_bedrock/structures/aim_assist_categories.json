@@ -1,41 +1,45 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "aim_assist_categories"
         },
-        "subcomponent": "behavior_packs"
+        "structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "types": "file",
-        "sort": "by_key",
         "delegate_arguments": {
             "field": "behavior pack",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "format_version": {"types": "str", "weight": 0},
-            "minecraft:aim_assist_categories": {"types": "dict", "subcomponent": "aim_assist_categories"}
+            "format_version": {"types": "str", "similarity_weight": 0},
+            "minecraft:aim_assist_categories": {"types": "dict", "structure": "aim_assist_categories"}
         }
     },
     "string_remove_minecraft": {
@@ -44,47 +48,58 @@
     },
     "aim_assist_categories": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "identifier": {"types": "str", "subcomponent": "string_remove_minecraft", "delegate_arguments": {"always_print": true}},
-            "categories": {"types": "list", "subcomponent": "categories"}
+            "identifier": {"types": "str", "structure": "string_remove_minecraft", "delegate_arguments": {"always_print": true}},
+            "categories": {"types": "list", "structure": "categories", "similarity_weight": 3}
         }
     },
     "categories": {
-        "type": "Set",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "category",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": "dict",
-        "subcomponent": "category"
+        "key_types": "int",
+        "key_weight": 0,
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "category"
     },
     "category": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
+        "min_value_similarity_threshold": 0.4,
         "keys": {
-            "name": {"types": "str", "subcomponent": "string_remove_minecraft", "weight": 10, "delegate_arguments": {"always_print": true}},
+            "name": {"types": "str", "structure": "string_remove_minecraft", "similarity_weight": 10, "delegate_arguments": {"always_print": true}},
             "entity_default": {"types": "int"},
             "block_default": {"types": "int"},
-            "priorities": {"types": "dict", "subcomponent": "priorities"}
+            "priorities": {"types": "dict", "structure": "priorities"}
         }
     },
     "priorities": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "blocks": {"types": "dict", "subcomponent": "priorities.blocks"}
+            "blocks": {"types": "dict", "structure": "priorities.blocks"}
         }
     },
     "priorities.blocks": {
         "type": "Dict",
-        "types": "int",
-        "sort": "by_key",
         "delegate_arguments": {
             "field": "block",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "key_component": "string_remove_minecraft",
-        "subcomponent": null
+        "key_structure": "string_remove_minecraft",
+        "value_types": "int",
+        "value_structure": null
     }
 }

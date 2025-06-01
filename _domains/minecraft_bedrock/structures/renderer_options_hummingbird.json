@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_options_dragon"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
@@ -13,30 +13,34 @@
             "field": "file",
             "measure_length": true
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "pre_normalized_types": ["dict", "list"],
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/normalizers renderer_options_normalize_mappings"
         },
         "keys": {
-            "global_settings": {"types": "dict", "subcomponent": "global_settings"},
-            "shaders": {"types": "list", "subcomponent": "shaders"},
-            "mappings": {"types": "dict", "subcomponent": "mappings"}
+            "global_settings": {"types": "dict", "structure": "global_settings"},
+            "shaders": {"types": "list", "structure": "shaders"},
+            "mappings": {"types": "dict", "structure": "mappings"}
         }
     },
     "global_settings": {
@@ -60,33 +64,43 @@
         }
     },
     "shaders": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "shader",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "shader"
+        "value_structure": "shader"
     },
     "shader": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}, "weight": 4},
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 4},
             "vertexShader": {"types": "str"},
             "fragment_shader": {"types": "str"},
             "fragmentShader": {"types": "str"},
-            "defines": {"types": "list", "subcomponent": "defines"}
+            "defines": {"types": "list", "structure": "defines"}
         }
     },
     "defines": {
-        "type": "Set",
-        "sort": true,
-        "types": "str",
-        "subcomponent": {
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": {
             "type": "String"
         },
         "delegate_arguments": {
+            "sort": "sort_by_value",
+            "show_item_key": false,
             "field": "definition",
             "measure_length": true
         }
@@ -94,20 +108,20 @@
     "mappings": {
         "type": "Dict",
         "pre_normalized_types": "list",
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/normalizers renderer_options_dragon_normalize"
         },
         "delegate_arguments": {
             "field": "mapping",
             "measure_length": true
         },
-        "types": ["str", "null"],
-        "key_component": {
+        "value_types": ["str", "null"],
+        "key_structure": {
             "type": "String"
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "str": {"type": "String"},
                 "null": null
             }

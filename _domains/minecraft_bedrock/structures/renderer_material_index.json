@@ -1,43 +1,52 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_material_index"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "material_index"
+            "structure": "material_index"
         }
     },
     "material_index": {
         "type": "Keymap",
         "keys": {
-            "materials": {"types": "list", "subcomponent": "materials"}
+            "materials": {"types": "list", "structure": "materials"}
         }
     },
     "materials": {
-        "type": "Set",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "material",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["dict"],
-        "subcomponent": "material"
+        "value_types": ["dict"],
+        "value_structure": "material"
     },
     "material": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}},
-            "path": {"types": "str", "subcomponent": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}},
+            "path": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     }
 }

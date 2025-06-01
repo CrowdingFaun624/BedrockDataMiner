@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "cameras"
         },
-        "types": "dict",
-        "subcomponent": "cameras"
+        "this_types": "dict",
+        "structure": "cameras"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -16,92 +16,110 @@
         "keys": {}
     },
     "rotation_decimal": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "axis",
             "print_all": true,
             "print_flat": true,
             "measure_length": false
         },
-        "types": ["decimal"],
-        "subcomponent": null
+        "value_types": ["decimal"],
+        "value_structure": null
     },
     "vector_decimal": {
-        "type": "List",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
         "delegate_arguments": {
             "field": "vector item",
             "print_all": true,
             "print_flat": true,
             "measure_length": false
         },
-        "types": ["decimal"],
-        "subcomponent": null
+        "value_types": ["decimal"],
+        "value_structure": null
     },
     "cameras": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "camera",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "sort": "by_key",
-        "subcomponent": "resource_packs"
+        "value_types": ["dict"],
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "post_normalizer": {
+        "value_types": "dict",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "defined_in": {
-        "type": "Set",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "measure_length": true
         },
-        "types": ["str"],
-        "subcomponent": null
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
+        "value_structure": null
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "camera"
+            "structure": "camera"
         }
     },
     "camera": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
+            "defined_in": {"types": "list", "structure": "defined_in"},
             "format_version": {"types": "str"},
-            "activation_rule": {"types": "dict", "subcomponent": "activation_rule", "tags": ["outdated"]},
-            "blend_in_default": {"types": "dict", "subcomponent": "component.camera_blend_in_default"},
+            "activation_rule": {"types": "dict", "structure": "activation_rule", "tags": ["outdated"]},
+            "blend_in_default": {"types": "dict", "structure": "component.camera_blend_in_default"},
             "faces_player_front": {"types": "bool", "tags": ["outdated"]},
             "far_clipping_plane": {"types": "decimal", "tags": ["outdated"]},
             "field_of_view": {"types": "decimal", "tags": ["outdated"]},
             "near_clipping_plane": {"types": "decimal", "tags": ["outdated"]},
-            "player_rotation_offset": {"types": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "player_rotation_offset": {"types": "list", "structure": "vector_decimal", "tags": ["outdated"]},
             "priority": {"types": "int", "tags": ["outdated"]},
             "render_first_person_objects": {"types": "bool", "tags": ["outdated"]},
             "render_player_model": {"types": "bool", "tags": ["outdated"]},
-            "behaviors": {"types": "dict", "subcomponent": "behaviors", "tags": ["outdated"]},
-            "minecraft:camera_entity": {"types": "dict", "subcomponent": {
+            "behaviors": {"types": "dict", "structure": "behaviors", "tags": ["outdated"]},
+            "minecraft:camera_entity": {"types": "dict", "structure": {
                 "type": "Keymap",
-                "sort": "by_component_order",
+                "delegate_arguments": {
+                    "sort": "sort_by_component_order"
+                },
                 "keys": {
-                    "description": {"types": "dict", "subcomponent": "description"},
-                    "components": {"types": "dict", "subcomponent": "components"}
+                    "description": {"types": "dict", "structure": "description"},
+                    "components": {"types": "dict", "structure": "components"}
                 }
             }}
         }
@@ -123,70 +141,72 @@
         "type": "Keymap",
         "delegate_arguments": {
             "field": "component",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "sort": "by_key",
         "keys": {
-            "minecraft:allow_inside_block": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera": {"types": "dict", "subcomponent": "component.camera"},
-            "minecraft:camera_attach_to_player": {"types": "dict", "subcomponent": "component.camera_attach_to_player"},
-            "minecraft:camera_avoidance": {"types": "dict", "subcomponent": "component.camera_avoidance"},
-            "minecraft:camera_blend_in_default": {"types": "dict", "subcomponent": "component.camera_blend_in_default"},
-            "minecraft:camera_bob": {"types": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
-            "minecraft:camera_direct_look": {"types": "dict", "subcomponent": "component.camera_direct_look"},
-            "minecraft:camera_first_person": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_fixed_boom": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_liquid_offset": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_look_at_player": {"types": "dict", "subcomponent": "component.camera_look_at_player", "tags": ["outdated"]},
-            "minecraft:camera_offset": {"types": "dict", "subcomponent": "component.camera_offset"},
-            "minecraft:camera_option_activation": {"types": "dict", "subcomponent": "component.camera_option_activation"},
-            "minecraft:camera_orbit": {"types": "dict", "subcomponent": "component.camera_orbit"},
-            "minecraft:camera_perspective_option": {"types": "dict", "subcomponent": "component.camera_perspective_option"},
-            "minecraft:camera_player_bob": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_player_sleep_vignette": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_portal_distortion": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_render_first_person_objects": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_render_player_model": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_shake": {"types": "dict", "subcomponent": "component.camera_shake"},
-            "minecraft:camera_sleep_vignette": {"types": "dict", "subcomponent": "empty_dict", "tags": ["outdated"]},
-            "minecraft:camera_sneak_offset": {"types": "dict", "subcomponent": "component.camera_sneak_offset", "tags": ["outdated"]},
-            "minecraft:camera_third_person": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:camera_third_person_boom": {"types": "dict", "subcomponent": "component.camera_third_person_boom"},
-            "minecraft:death_camera_component": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:default_input_camera": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:extend_player_rendering": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:gameplay_affects_fov": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:player_state_affects_rendering": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:redirect_camera_input": {"types": "dict", "subcomponent": "empty_dict"},
-            "minecraft:stationary_camera": {"types": "dict", "subcomponent": "component.stationary_camera"},
-            "minecraft:target": {"types": "dict", "subcomponent": "component.target"},
-            "minecraft:update_player_from_camera": {"types": "dict", "subcomponent": "component.update_player_from_camera"},
-            "minecraft:vr_comfort_move": {"types": "dict", "subcomponent": "empty_dict"}
+            "minecraft:allow_inside_block": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera": {"types": "dict", "structure": "component.camera"},
+            "minecraft:camera_attach_to_player": {"types": "dict", "structure": "component.camera_attach_to_player"},
+            "minecraft:camera_avoidance": {"types": "dict", "structure": "component.camera_avoidance"},
+            "minecraft:camera_blend_in_default": {"types": "dict", "structure": "component.camera_blend_in_default"},
+            "minecraft:camera_bob": {"types": "dict", "structure": "empty_dict", "tags": ["outdated"]},
+            "minecraft:camera_direct_look": {"types": "dict", "structure": "component.camera_direct_look"},
+            "minecraft:camera_first_person": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_fixed_boom": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_liquid_offset": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_look_at_player": {"types": "dict", "structure": "component.camera_look_at_player", "tags": ["outdated"]},
+            "minecraft:camera_offset": {"types": "dict", "structure": "component.camera_offset"},
+            "minecraft:camera_option_activation": {"types": "dict", "structure": "component.camera_option_activation"},
+            "minecraft:camera_orbit": {"types": "dict", "structure": "component.camera_orbit"},
+            "minecraft:camera_perspective_option": {"types": "dict", "structure": "component.camera_perspective_option"},
+            "minecraft:camera_player_bob": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_player_sleep_vignette": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_portal_distortion": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_render_first_person_objects": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_render_player_model": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_shake": {"types": "dict", "structure": "component.camera_shake"},
+            "minecraft:camera_sleep_vignette": {"types": "dict", "structure": "empty_dict", "tags": ["outdated"]},
+            "minecraft:camera_sneak_offset": {"types": "dict", "structure": "component.camera_sneak_offset", "tags": ["outdated"]},
+            "minecraft:camera_third_person": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:camera_third_person_boom": {"types": "dict", "structure": "component.camera_third_person_boom"},
+            "minecraft:death_camera_component": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:default_input_camera": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:extend_player_rendering": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:gameplay_affects_fov": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:player_state_affects_rendering": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:redirect_camera_input": {"types": "dict", "structure": "empty_dict"},
+            "minecraft:stationary_camera": {"types": "dict", "structure": "component.stationary_camera"},
+            "minecraft:target": {"types": "dict", "structure": "component.target"},
+            "minecraft:update_player_from_camera": {"types": "dict", "structure": "component.update_player_from_camera"},
+            "minecraft:vr_comfort_move": {"types": "dict", "structure": "empty_dict"}
         }
     },
     "behaviors": {
         "type": "Keymap",
         "tags": ["outdated"],
         "keys": {
-            "attach": {"types": "dict", "subcomponent": "component.camera_attach_to_player"},
-            "avoidance": {"types": "dict", "subcomponent": "component.camera_avoidance"},
-            "bob": {"types": "dict", "subcomponent": "empty_dict"},
-            "comfort_move": {"types": "dict", "subcomponent": "empty_dict"},
-            "first_person_look": {"types": "dict", "subcomponent": "component.camera_direct_look"},
-            "fly": {"types": "dict", "subcomponent": "component.fly"},
-            "liquid_offset": {"types": "dict", "subcomponent": "empty_dict"},
-            "look_at": {"types": "dict", "subcomponent": "component.camera_look_at_player"},
-            "orbit": {"types": "dict", "subcomponent": "component.camera_orbit"},
-            "portal": {"types": "dict", "subcomponent": "empty_dict"},
-            "ride_rotation": {"types": "dict", "subcomponent": "empty_dict"},
-            "shake": {"types": "dict", "subcomponent": "component.camera_shake"},
-            "sleep": {"types": "dict", "subcomponent": "component.sleep"},
-            "sneak": {"types": "dict", "subcomponent": "component.camera_sneak_offset"}
+            "attach": {"types": "dict", "structure": "component.camera_attach_to_player"},
+            "avoidance": {"types": "dict", "structure": "component.camera_avoidance"},
+            "bob": {"types": "dict", "structure": "empty_dict"},
+            "comfort_move": {"types": "dict", "structure": "empty_dict"},
+            "first_person_look": {"types": "dict", "structure": "component.camera_direct_look"},
+            "fly": {"types": "dict", "structure": "component.fly"},
+            "liquid_offset": {"types": "dict", "structure": "empty_dict"},
+            "look_at": {"types": "dict", "structure": "component.camera_look_at_player"},
+            "orbit": {"types": "dict", "structure": "component.camera_orbit"},
+            "portal": {"types": "dict", "structure": "empty_dict"},
+            "ride_rotation": {"types": "dict", "structure": "empty_dict"},
+            "shake": {"types": "dict", "structure": "component.camera_shake"},
+            "sleep": {"types": "dict", "structure": "component.sleep"},
+            "sneak": {"types": "dict", "structure": "component.camera_sneak_offset"}
         }
     },
     "component.camera": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "far_clipping_plane": {"types": "decimal"},
             "field_of_view": {"types": "decimal"},
@@ -195,28 +215,36 @@
     },
     "component.camera_attach_to_player": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "offset": {"types": "list", "subcomponent": "vector_decimal"}
+            "offset": {"types": "list", "structure": "vector_decimal"}
         }
     },
     "component.camera_avoidance": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "avoidance_rays_vertical": {"types": "list", "subcomponent": "component.camera_avoidance:avoidance_rays_vertical"},
+            "avoidance_rays_vertical": {"types": "list", "structure": "component.camera_avoidance:avoidance_rays_vertical"},
             "relax_distance_smoothing_spring": {"types": "decimal"},
             "distance_constraint_min": {"types": "decimal"}
         }
     },
     "component.camera_avoidance:avoidance_rays_vertical": {
-        "type": "Set",
-        "types": "dict",
-        "subcomponent": "component.camera_avoidance:avoidance_rays_vertical.item",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "ray",
+            "show_item_key": false,
             "measure_length": true
-        }
+        },
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "component.camera_avoidance:avoidance_rays_vertical.item"
     },
     "component.camera_avoidance:avoidance_rays_vertical.item": {
         "type": "Keymap",
@@ -230,7 +258,9 @@
     },
     "component.camera_blend_in_default": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "blend_time": {"types": "decimal"},
             "ease": {"types": "str", "tags": ["outdated"]},
@@ -240,7 +270,9 @@
     },
     "component.camera_direct_look": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "pitch_max": {"types": "decimal"},
             "pitch_min": {"types": "decimal"}
@@ -248,31 +280,39 @@
     },
     "component.camera_look_at_player": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "hard_bounds": {"types": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
-            "soft_bounds": {"types": "list", "subcomponent": "vector_decimal", "tags": ["outdated"]},
+            "hard_bounds": {"types": "list", "structure": "vector_decimal", "tags": ["outdated"]},
+            "soft_bounds": {"types": "list", "structure": "vector_decimal", "tags": ["outdated"]},
             "soft_bounds_smoothing_spring": {"types": "int", "tags": ["outdated"]}
         }
     },
     "component.camera_offset": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "entity": {"types": "list", "subcomponent": "vector_decimal"},
-            "view": {"types": "list", "subcomponent": "vector_decimal"}
+            "entity": {"types": "list", "structure": "vector_decimal"},
+            "view": {"types": "list", "structure": "vector_decimal"}
         }
     },
     "component.camera_option_activation": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "view_mode": {"types": "str"}
         }
     },
     "component.camera_orbit": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "azimuth_smoothing_spring": {"types": "int"},
             "distance_smoothing_spring": {"types": "int"},
@@ -287,14 +327,18 @@
     },
     "component.camera_perspective_option": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "view_mode": {"types": "str"}
         }
     },
     "component.camera_shake": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "amplitude": {"types": "decimal"},
             "frequency": {"types": "decimal"},
@@ -303,7 +347,9 @@
     },
     "component.camera_sneak_offset": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "camera_interpolation_rate": {"types": "decimal", "tags": ["outdated"]},
             "interpolation_rate": {"types": "decimal"},
@@ -313,11 +359,13 @@
     },
     "component.camera_third_person_boom": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "rotation_space": {"types": "str"},
             "starting_radius": {"types": "decimal"},
-            "starting_rot": {"types": "list", "subcomponent": "rotation_decimal"}
+            "starting_rot": {"types": "list", "structure": "rotation_decimal"}
         }
     },
     "component.fly": {
@@ -330,35 +378,41 @@
     "component.sleep": {
         "type": "Keymap",
         "keys": {
-            "offset": {"types": "list", "subcomponent": "vector_decimal"},
-            "pre_rotation_offset": {"types": "list", "subcomponent": "vector_decimal"},
-            "pre_rotation_offset_vr": {"types": "list", "subcomponent": "vector_decimal"},
-            "post_rotation_offset": {"types": "list", "subcomponent": "vector_decimal"}
+            "offset": {"types": "list", "structure": "vector_decimal"},
+            "pre_rotation_offset": {"types": "list", "structure": "vector_decimal"},
+            "pre_rotation_offset_vr": {"types": "list", "structure": "vector_decimal"},
+            "post_rotation_offset": {"types": "list", "structure": "vector_decimal"}
         }
     },
     "component.stationary_camera": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "pos": {"types": "list", "subcomponent": "vector_decimal"},
-            "rot": {"types": "list", "subcomponent": "rotation_decimal"}
+            "pos": {"types": "list", "structure": "vector_decimal"},
+            "rot": {"types": "list", "structure": "rotation_decimal"}
         }
     },
     "component.target": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "continue_targeting": {"types": "bool"},
-            "horizontal_rotation_limit": {"types": "list", "subcomponent": "vector_decimal"},
+            "horizontal_rotation_limit": {"types": "list", "structure": "vector_decimal"},
             "rotation_speed": {"types": "decimal"},
             "snap_to_target": {"types": "bool"},
             "tracking_radius": {"types": "decimal"},
-            "vertical_rotation_limit": {"types": "list", "subcomponent": "vector_decimal"}
+            "vertical_rotation_limit": {"types": "list", "structure": "vector_decimal"}
         }
     },
     "component.update_player_from_camera": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "look_mode": {"types": "str"}
         }

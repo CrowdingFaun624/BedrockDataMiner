@@ -1,38 +1,40 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "equipment"
         },
-        "subcomponent": "resource_packs"
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
         },
-        "subcomponent": "files"
+        "value_structure": "files"
     },
     "files": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "file",
             "measure_length": true
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "root"
+            "structure": "root"
         }
     },
     "string": {
@@ -40,48 +42,58 @@
     },
     "root": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "layers": {"types": "dict", "subcomponent": "layers"}
+            "layers": {"types": "dict", "structure": "layers"}
         }
     },
     "layers": {
         "type": "Keymap",
-        "sort": "by_key",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "body type",
             "measure_length": true
         },
         "keys": {
-            "horse_body": {"types": "list", "subcomponent": "textures"},
-            "humanoid": {"types": "list", "subcomponent": "textures"},
-            "humanoid_leggings": {"types": "list", "subcomponent": "textures"},
-            "llama_body": {"types": "list", "subcomponent": "textures"},
-            "wings": {"types": "list", "subcomponent": "textures"},
-            "wolf_body": {"types": "list", "subcomponent": "textures"}
+            "horse_body": {"types": "list", "structure": "textures"},
+            "humanoid": {"types": "list", "structure": "textures"},
+            "humanoid_leggings": {"types": "list", "structure": "textures"},
+            "llama_body": {"types": "list", "structure": "textures"},
+            "wings": {"types": "list", "structure": "textures"},
+            "wolf_body": {"types": "list", "structure": "textures"}
         }
     },
     "textures": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "texture",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "texture"
+        "value_structure": "texture"
     },
     "texture": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "texture": {"types": "str", "subcomponent": "string", "delegate_arguments": {"always_print": true}},
-            "dyeable": {"types": "dict", "subcomponent": "dyeable"},
+            "texture": {"types": "str", "structure": "string", "delegate_arguments": {"always_print": true}},
+            "dyeable": {"types": "dict", "structure": "dyeable"},
             "use_player_texture": {"types": "bool"}
         }
     },
     "dyeable": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "color_when_undyed": {"types": "int"}
         }

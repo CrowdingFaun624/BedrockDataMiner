@@ -1,30 +1,30 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "attachables_resource_packs"
         },
-        "types": "dict",
-        "subcomponent": "attachables"
+        "this_types": "dict",
+        "structure": "attachables"
     },
     "attachables": {
         "type": "Dict",
-        "types": "dict",
-        "subcomponent": "resource_packs",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "resource_packs",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "attachable"
         }
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "file",
-        "subcomponent": "structures/attachables/cache",
-        "sort": "by_key",
+        "value_types": "dict",
+        "value_structure": "structures/attachables/cache",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "resource pack"
         },
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         }
     }

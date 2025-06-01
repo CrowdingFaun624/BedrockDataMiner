@@ -1,46 +1,52 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_volumetric_fog_configs"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "files": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "file",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["file"],
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_types": "dict",
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "imports": "volumetric_fog_config",
         "keys": {
-            "low": {"types": "dict", "subcomponent": "volumetric_fog_config"},
-            "medium": {"types": "dict", "subcomponent": "volumetric_fog_config"},
-            "high": {"types": "dict", "subcomponent": "volumetric_fog_config"},
-            "ultra": {"types": "dict", "subcomponent": "volumetric_fog_config"}
+            "low": {"types": "dict", "structure": "volumetric_fog_config"},
+            "medium": {"types": "dict", "structure": "volumetric_fog_config"},
+            "high": {"types": "dict", "structure": "volumetric_fog_config"},
+            "ultra": {"types": "dict", "structure": "volumetric_fog_config"}
         }
     },
     "volumetric_fog_config": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
             "file": {"types": "str"},
             "tile_width": {"types": "int"},

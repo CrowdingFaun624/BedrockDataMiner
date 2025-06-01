@@ -1,123 +1,125 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "blocks_client"
         },
-        "pre_normalized_types": "dict",
-        "types": "fake_file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "fake_file",
-        "subcomponent": {
+        "this_types": "dict",
+        "structure": {
             "type": "File",
+            "serializer": null,
             "pre_normalized_types": "dict",
             "file_types": "fake_file",
-            "garbage_collect": false, // other methods will catch the files. This is a fake file and does not matter.
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers blocks_client_normalize"
             },
-            "subcomponent": "block"
+            "structure": "block"
         }
     },
     "block": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "block",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
+        "value_types": ["dict"],
         "min_key_similarity_threshold": 0.2,
         "min_value_similarity_threshold": 0.4,
-        "key_weight": 0.5,
-        "value_weight": 0.5,
-        "sort": "by_key",
-        "key_component": {
+        "key_weight": 1,
+        "value_weight": 1,
+        "key_structure": {
             "type": "String"
         },
-        "subcomponent": "resource_pack"
+        "value_structure": "resource_pack"
     },
     "resource_pack": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "detect_key_moves": true,
-        "sort": "by_key",
+        "value_types": ["dict"],
         "min_value_similarity_threshold": 0.25,
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_dict"
         },
-        "subcomponent": "block_properties"
+        "value_structure": "block_properties"
     },
     "block_properties": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "field": "property"
         },
-        "normalizer": {
+        "normalizers": {
             // https://bugs.mojang.com/browse/MCPE-76182
             "function_name": "delete_optional_key",
             "arguments": {
                 "key": "sounds"
             }
         },
-        "sort": "by_component_order",
         "keys": {
             "ambient_occlusion_exponent": {"types": "float"},
-            "blockshape": {"types": "str", "weight": 4},
+            "blockshape": {"types": "str", "similarity_weight": 4},
             "brightness_gamma": {"types": "float"},
-            "carried_textures": {"types": ["dict", "str"], "subcomponent": "textures_group", "weight": 4},
-            "defined_in": {"types": "list", "subcomponent": "defined_in", "weight": 0},
-            "isotropic": {"types": ["bool", "dict"], "subcomponent": "isotropic_group"},
-            "sound": {"types": "str", "weight": 2},
-            "textures": {"types": ["dict", "str"], "subcomponent": "textures_group", "weight": 4}
+            "carried_textures": {"types": ["dict", "str"], "structure": "textures_group", "similarity_weight": 4},
+            "defined_in": {"types": "list", "structure": "defined_in", "similarity_weight": 0},
+            "isotropic": {"types": ["bool", "dict"], "structure": "isotropic_group"},
+            "sound": {"types": "str", "similarity_weight": 2},
+            "textures": {"types": ["dict", "str"], "structure": "textures_group", "similarity_weight": 4}
         }
     },
     "textures_group": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": "textures",
             "str": "texture"
         }
     },
     "isotropic_group": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "bool": null,
             "dict": "isotropic"
         }
     },
     "defined_in": {
-        "type": "Set",
+        "type": "Dict",
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "print_flat": true
         },
-        "subcomponent": null,
-        "types": ["str"]
+        "allow_same_key_optimization": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["str"],
+        "value_structure": null
     },
     "textures": {
         "type": "Keymap",
         "delegate_arguments": {
             "field": "direction",
+            "sort": "sort_by_component_order",
             "print_all": true
         },
-        "sort": "by_component_order",
         "keys": {
-            "down": {"types": "str", "subcomponent": "texture"},
-            "east": {"types": "str", "subcomponent": "texture"},
-            "north": {"types": "str", "subcomponent": "texture"},
-            "side": {"types": "str", "subcomponent": "texture"},
-            "south": {"types": "str", "subcomponent": "texture"},
-            "up": {"types": "str", "subcomponent": "texture"},
-            "west": {"types": "str", "subcomponent": "texture"}
+            "down": {"types": "str", "structure": "texture"},
+            "east": {"types": "str", "structure": "texture"},
+            "north": {"types": "str", "structure": "texture"},
+            "side": {"types": "str", "structure": "texture"},
+            "south": {"types": "str", "structure": "texture"},
+            "up": {"types": "str", "structure": "texture"},
+            "west": {"types": "str", "structure": "texture"}
         }
     },
     "texture": {
@@ -127,9 +129,9 @@
         "type": "Keymap",
         "delegate_arguments": {
             "field": "direction",
+            "sort": "sort_by_component_order",
             "print_all": true
         },
-        "sort": "by_component_order",
         "keys": {
             "down": {"types": "bool"},
             "up": {"types": "bool"}

@@ -1,70 +1,85 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "watchdogs"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Keymap",
         "keys": {
-            "timers": {"types": "list", "subcomponent": "timers"}
+            "timers": {"types": "list", "structure": "timers"}
         }
     },
     "timers": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "timer",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "timer"
+        "value_structure": "timer"
     },
     "timer": {
         "type": "Keymap",
         "keys": {
-            "timer_label": {"types": "str", "subcomponent": {"type": "String"}, "weight": 4, "delegate_arguments": {"always_print": true}},
-            "timer_name": {"types": "str", "subcomponent": {"type": "String"}, "weight": 4, "delegate_arguments": {"always_print": true}},
+            "timer_label": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 4, "delegate_arguments": {"always_print": true}},
+            "timer_name": {"types": "str", "structure": {"type": "String"}, "similarity_weight": 4, "delegate_arguments": {"always_print": true}},
             "timer_group": {"types": "str"},
-            "watchdogs": {"types": "list", "subcomponent": "watchdogs"}
+            "watchdogs": {"types": "list", "structure": "watchdogs"}
         }
     },
     "watchdogs": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "watchdog",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "watchdog"
+        "value_structure": "watchdog"
     },
     "watchdog": {
         "type": "Keymap",
         "keys": {
-            "execution_budget": {"types": "str", "subcomponent": {"type": "String"}},
-            "overage_actions": {"types": "list", "subcomponent": "actions"}
+            "execution_budget": {"types": "str", "structure": {"type": "String"}},
+            "overage_actions": {"types": "list", "structure": "actions"}
         }
     },
     "actions": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "action",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "String"
         }
     }

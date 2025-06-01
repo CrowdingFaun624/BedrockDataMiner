@@ -1,50 +1,57 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "uniforms"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "uniforms"
+            "structure": "uniforms"
         }
     },
     "uniforms": {
         "type": "Dict",
-        "types": "list",
-        "subcomponent": "uniform",
-        "sort": "by_key",
+        "value_types": "list",
+        "value_structure": "uniform",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "uniform"
         }
     },
     "uniform": {
-        "type": "Set",
-        "types": "dict",
-        "subcomponent": "constant",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "constant",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "constant"
         }
     },
     "constant": {
         "type": "Keymap",
-        "normalizer": {
+        "normalizers": {
             "function_name": "normalizers/normalizers uniforms_normalize"
         },
         "keys": {
-            "Name": {"types": "str", "subcomponent": {
+            "Name": {"types": "str", "structure": {
                 "type": "String"
             }, "delegate_arguments": {
                 "always_print": true
-            }, "weight": 5},
+            }, "similarity_weight": 5},
             "Type": {"types": "str"},
             "Elements": {"types": "int"}
         }

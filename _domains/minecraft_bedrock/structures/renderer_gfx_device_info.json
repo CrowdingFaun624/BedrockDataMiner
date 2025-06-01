@@ -1,44 +1,52 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "renderer_gfx_device_info"
         },
-        "types": "file",
-        "subcomponent": "cache"
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "cards"
+            "structure": "cards"
         }
     },
     "cards": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "card",
             "measure_length": true
         },
-        "subcomponent": "card"
+        "value_structure": "card"
     },
     "card": {
         "type": "Keymap",
         "keys": {
             "MinSpecDriver": {"types": "str"},
-            "VendorID": {"types": "list", "subcomponent": "vendor_id"}
+            "VendorID": {"types": "list", "structure": "vendor_id"}
         }
     },
     "vendor_id": {
-        "type": "List",
-        "types": "int",
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "int",
         "delegate_arguments": {
+            "field": "item",
             "print_flat": true
         },
-        "subcomponent": null
+        "value_structure": null
     }
 }

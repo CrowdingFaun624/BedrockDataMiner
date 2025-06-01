@@ -1,11 +1,11 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "animations"
         },
-        "types": "dict",
-        "subcomponent": "files"
+        "this_types": "dict",
+        "structure": "files"
     },
     "decimal": {
         "type": "TypeAlias",
@@ -13,125 +13,139 @@
     },
     "files": {
         "type": "Dict",
-        "types": ["dict"],
-        "sort": "by_key",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "file",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "detect_key_moves": true,
-        "key_weight": 0.5,
+        "key_weight": 5,
+        "value_weight": 8,
         "min_value_similarity_threshold": 0.3,
-        "max_similarity_descendent_depth": 8,
-        "subcomponent": "resource_packs"
+        "value_structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": ["file"],
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "detect_key_moves": true,
-        "sort": "by_key",
-        "max_similarity_descendent_depth": 8,
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "normalizer": {
+            "normalizers": {
                 "function_name": "normalizers/normalizers animations_fix_old"
             },
-            "subcomponent": "animations_file"
+            "structure": "animations_file"
         }
     },
     "animations_file": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "defined_in": {"types": "list", "subcomponent": "defined_in"},
+            "defined_in": {"types": "list", "structure": "defined_in"},
             "format_version": {"types": "str"},
-            "animations": {"types": "dict", "subcomponent": "animations", "weight": 20}
+            "animations": {"types": "dict", "structure": "animations", "similarity_weight": 20}
         }
     },
     "defined_in": {
-        "type": "Set",
-        "types": ["str"],
+        "type": "Dict",
+        "value_types": ["str"],
         "delegate_arguments": {
             "field": "resource pack",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": null
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_structure": null
     },
     "animations": {
         "type": "Dict",
-        "types": ["dict"],
-        "sort": "by_key",
+        "value_types": ["dict"],
         "delegate_arguments": {
             "field": "animation",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
+        "min_key_similarity_threshold": 0.9,
         "min_value_similarity_threshold": 0.75,
-        "subcomponent": "animation"
+        "key_structure": {"type": "String"},
+        "value_structure": "animation"
     },
     "timestamps_and_vectors_or_vector_or_lerp": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": "timestamps_and_vectors_or_lerp",
             "list": "vector_special"
         }
     },
     "timestamps_and_vectors_or_lerp": {
         "type": "Dict",
-        "types": ["dict", "list"],
-        "detect_key_moves": false,
+        "value_types": ["dict", "list"],
+        "allow_key_moves": false,
         "delegate_arguments": {
             "field": "timestamp",
             "measure_length": true
         },
-        "subcomponent": "vector_or_lerp"
+        "value_structure": "vector_or_lerp"
     },
     "vector_or_lerp": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "dict": "lerp",
             "list": "vector_special"
         }
     },
     "lerp": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "lerp_mode": {"types": "str"},
-            "pre": {"types": "list", "subcomponent": "vector_special"},
-            "post": {"types": "list", "subcomponent": "vector_special"}
+            "pre": {"types": "list", "structure": "vector_special"},
+            "post": {"types": "list", "structure": "vector_special"}
         }
     },
     "vector_special": {
-        "type": "List",
-        "types": ["decimal", "dict", "str"],
+        "type": "Dict",
+        "allow_key_moves": false,
+        "allow_same_key_optimization": true,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["decimal", "dict", "str"],
         "delegate_arguments": {
             "field": "vector item",
             "print_all": true,
             "print_flat": true,
             "measure_length": false
         },
-        "subcomponent": {
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "decimal": null,
                 "dict": {
                     "type": "Keymap",
-                    "sort": "by_component_order",
                     "delegate_arguments": {
+                        "sort": "sort_by_component_order",
                         "print_all": true
                     },
                     "keys": {
@@ -141,50 +155,55 @@
                     }
                 },
                 "str": {
-                    "type": "String"
+                    "type": "String",
+                    "max_square_length": 1000000
                 }
             }
         }
     },
     "animation": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
             "anim_time_update": {"types": "str"},
             "animation_length": {"types": "decimal"},
             "loop": {"types": ["bool", "str"]},
             "override_previous_animation": {"types": "bool"},
             "start_delay": {"types": "str"},
-            "bones": {"types": "dict", "subcomponent": "bones"},
-            "particle_effects": {"types": "dict", "subcomponent": "particle_effects"},
-            "sound_effects": {"types": "dict", "subcomponent": "sound_effects"}
+            "bones": {"types": "dict", "structure": "bones"},
+            "particle_effects": {"types": "dict", "structure": "particle_effects"},
+            "sound_effects": {"types": "dict", "structure": "sound_effects"}
         }
     },
     "bones": {
         "type": "Dict",
         "delegate_arguments": {
             "field": "bone",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "types": ["dict"],
-        "sort": "by_key",
+        "value_types": ["dict"],
         "min_value_similarity_threshold": 0.3,
         "min_key_similarity_threshold": 0.3,
-        "key_weight": 0.3,
-        "value_weight": 0.5,
-        "key_component": {
+        "key_weight": 3,
+        "value_weight": 5,
+        "key_structure": {
             "type": "String"
         },
-        "subcomponent": "bone"
+        "value_structure": "bone"
     },
     "bone": {
         "type": "Keymap",
-        "sort": "by_key",
+        "delegate_arguments": {
+            "sort": "sort_by_key"
+        },
         "keys": {
-            "relative_to": {"types": "dict", "subcomponent": "bone.relative_to"},
-            "rotation": {"types": ["list", "dict"], "subcomponent": "timestamps_and_vectors_or_vector_or_lerp"},
-            "position": {"types": ["list", "dict"], "subcomponent": "timestamps_and_vectors_or_vector_or_lerp"},
-            "scale": {"types": ["decimal", "dict", "list", "str"], "subcomponent": "bone.scale"}
+            "relative_to": {"types": "dict", "structure": "bone.relative_to"},
+            "rotation": {"types": ["list", "dict"], "structure": "timestamps_and_vectors_or_vector_or_lerp"},
+            "position": {"types": ["list", "dict"], "structure": "timestamps_and_vectors_or_vector_or_lerp"},
+            "scale": {"types": ["decimal", "dict", "list", "str"], "structure": "bone.scale"}
         }
     },
     "bone.relative_to": {
@@ -195,7 +214,7 @@
     },
     "bone.scale": {
         "type": "Union",
-        "subcomponents": {
+        "substructures": {
             "decimal": null,
             "dict": "timestamps_and_vectors_or_lerp",
             "list": "vector_special",
@@ -206,12 +225,12 @@
         "type": "Dict",
         "delegate_arguments": {
             "field": "timestamp",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "types": ["dict"],
-        "detect_key_moves": false,
-        "sort": "by_key",
-        "subcomponent": {
+        "value_types": ["dict"],
+        "allow_key_moves": false,
+        "value_structure": {
             "type": "Keymap",
             "keys": {
                 "effect": {"types": "str", "delegate_arguments": {"always_print": true}},
@@ -223,12 +242,12 @@
         "type": "Dict",
         "delegate_arguments": {
             "field": "timestamp",
-            "measure_length": true
+            "measure_length": true,
+            "sort": "sort_by_key"
         },
-        "types": ["dict"],
-        "detect_key_moves": false,
-        "sort": "by_key",
-        "subcomponent": {
+        "value_types": ["dict"],
+        "allow_key_moves": false,
+        "value_structure": {
             "type": "Keymap",
             "keys": {
                 "effect": {"types": "str", "delegate_arguments": {"always_print": true}}

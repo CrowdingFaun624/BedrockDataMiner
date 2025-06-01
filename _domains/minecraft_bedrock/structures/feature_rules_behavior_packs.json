@@ -1,41 +1,44 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "feature_rules_behavior_packs"
         },
-        "types": "dict",
-        "subcomponent": "feature_rules"
+        "this_types": "dict",
+        "structure": "feature_rules"
     },
     "feature_rules": {
         "type": "Dict",
-        "types": "dict",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "feature rule"
         },
-        "sort": "by_key",
-        "subcomponent": "behavior_packs"
+        "key_structure": {"type": "String", "similarity_function": "normalizers/normalizers remove_file_suffix"},
+        "value_structure": "behavior_packs"
     },
     "behavior_packs": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "behavior pack"
         },
-        "post_normalizer": {
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "structures/feature_rules/feature_rule"
+            "structure": "structures/feature_rules/feature_rule"
         }
     }
 }

@@ -1,34 +1,37 @@
 {
     "base": {
-        "type": "Base",
-        "types": "file",
+        "type": "StructureBase",
+        "this_types": "list",
+        "pre_normalized_types": "file",
         "delegate_arguments": {
             "name": "text_packs"
         },
-        "subcomponent": "cache"
+        "structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "list",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "text_serializer",
             "file_types": "file",
             "content_types": "list",
-            "subcomponent": "lines"
+            "structure": "lines"
         }
     },
     "lines": {
         "type": "Sequence",
+        "max_square_length": 1000000000,
         "pre_normalized_types": "str",
-        "normalizer": {
+        "normalizers": {
             "function_name": "split_lines"
         },
-        "max_similarity_ancestor_depth": 0,
-        "types": "str",
+        "value_types": "str",
         "delegate": "LongStringDelegate",
         "delegate_arguments": {
             "measure_length": true
         },
-        "subcomponent": null
+        "value_structure": null
     }
 }

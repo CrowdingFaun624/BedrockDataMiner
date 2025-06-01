@@ -1,46 +1,48 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "ui_global_variables"
         },
-        "types": "dict",
-        "subcomponent": "resource_packs"
+        "this_types": "dict",
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "measure_length": true,
+            "sort": "sort_by_key",
             "field": "resource pack"
         },
-        "sort": "by_key",
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "file"
+            "structure": "file"
         }
     },
     "file": {
         "type": "Dict",
-        "types": ["list", "int", "float"],
-        "key_component": {
+        "value_types": ["list", "int", "float"],
+        "key_structure": {
             "type": "String"
         },
         "delegate_arguments": {
             "field": "variable",
+            "sort": "sort_by_key",
             "measure_length": true
         },
-        "sort": "by_key",
-        "subcomponent": {
+        "value_structure": {
             "type": "Union",
-            "subcomponents": {
+            "substructures": {
                 "list": "vector",
                 "int": null,
                 "float": null
@@ -48,12 +50,17 @@
         }
     },
     "vector": {
-        "type": "List",
-        "types": ["float", "int", "str"],
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": ["float", "int", "str"],
         "delegate_arguments": {
+            "field": "item",
             "print_flat": true,
             "print_all": true
         },
-        "subcomponent": null
+        "value_structure": null
     }
 }

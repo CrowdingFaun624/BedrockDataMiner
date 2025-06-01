@@ -1,66 +1,82 @@
 {
     "base": {
-        "type": "Base",
-        "types": "dict",
+        "type": "StructureBase",
+        "this_types": "dict",
         "delegate_arguments": {
             "name": "gpu_warnlist"
         },
-        "subcomponent": "resource_packs"
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "file",
+        "value_types": "dict",
         "delegate_arguments": {
             "field": "resource pack",
             "measure_length": true
         },
-        "subcomponent": "cache"
+        "value_structure": "cache"
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "dict",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "dict",
-            "subcomponent": "root"
+            "structure": "root"
         }
     },
     "root": {
         "type": "Keymap",
-        "sort": "by_component_order",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
         "keys": {
-            "renderer": {"types": "list", "subcomponent": "renderer"},
-            "version": {"types": "list", "subcomponent": "version"},
-            "vendor": {"types": "list", "subcomponent": "vendor"}
+            "renderer": {"types": "list", "structure": "renderer"},
+            "version": {"types": "list", "structure": "version"},
+            "vendor": {"types": "list", "structure": "vendor"}
         }
     },
     "renderer": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "renderer",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "string"
+        "value_structure": "string"
     },
     "version": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "version",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "string"
+        "value_structure": "string"
     },
     "vendor": {
-        "type": "Set",
-        "types": "str",
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "str",
         "delegate_arguments": {
             "field": "vendor",
+            "show_item_key": false,
             "measure_length": true
         },
-        "subcomponent": "string"
+        "value_structure": "string"
     },
     "string": {
         "type": "String"

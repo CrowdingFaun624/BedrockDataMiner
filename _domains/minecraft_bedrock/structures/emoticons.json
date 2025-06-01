@@ -1,51 +1,57 @@
 {
     "base": {
-        "type": "Base",
+        "type": "StructureBase",
         "delegate_arguments": {
             "name": "emoticons"
         },
-        "types": "dict",
-        "subcomponent": "resource_packs"
+        "this_types": "dict",
+        "structure": "resource_packs"
     },
     "resource_packs": {
         "type": "Dict",
-        "types": "file",
-        "subcomponent": "cache",
-        "post_normalizer": {
+        "value_types": "list",
+        "value_structure": "cache",
+        "post_normalizers": {
             "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
         },
-        "sort": "by_key",
         "delegate_arguments": {
+            "sort": "sort_by_key",
             "field": "resource pack"
         }
     },
     "cache": {
         "type": "Cache",
-        "types": "file",
-        "subcomponent": {
+        "this_types": "list",
+        "pre_normalized_types": "file",
+        "structure": {
             "type": "File",
+            "serializer": "minecraft_common!json",
             "file_types": "file",
             "content_types": "list",
-            "subcomponent": "emoticons"
+            "structure": "emoticons"
         }
     },
     "emoticons": {
-        "type": "Set",
-        "types": "dict",
+        "type": "Dict",
         "delegate_arguments": {
+            "show_item_key": false,
             "field": "emoticon"
         },
-        "subcomponent": "emoticon"
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "value_structure": "emoticon"
     },
     "emoticon": {
         "type": "Keymap",
         "delegate_arguments": {
+            "sort": "sort_by_component_order",
             "print_all": true
         },
-        "sort": "by_component_order",
         "keys": {
-            "name": {"types": "str", "subcomponent": {"type": "String"}},
-            "code": {"types": "str", "weight": 10}
+            "name": {"types": "str", "structure": {"type": "String"}},
+            "code": {"types": "str", "similarity_weight": 10}
         }
     }
 }
