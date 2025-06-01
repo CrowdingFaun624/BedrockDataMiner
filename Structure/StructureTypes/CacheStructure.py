@@ -71,6 +71,10 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure.BranchlessStructure[
     def get_structure(self, data:D, trace: Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None:
         return self.structure
 
+    def get_structure_chain_end(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure | None:
+        # needs to interrupt chain in order to cache.
+        return self
+
     def iter_structures(self) -> Sequence[Structure.Structure]:
         return (self.structure,) if self.structure is not None else ()
 

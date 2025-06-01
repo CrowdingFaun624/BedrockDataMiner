@@ -79,8 +79,8 @@ class KeymapStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStruc
     def allow_key_move(self, key1: Con.Con[K], key2: Con.Con[K], value1: Con.Con[V], value2: Con.Con[V], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> bool:
         if not self.allow_key_moves:
             return False
-        structure1 = self.get_value_structure(key1.data, value1.data, trace, environment[branch1])
-        structure2 = self.get_value_structure(key2.data, value2.data, trace, environment[branch2])
+        structure1 = self.get_value_structure_chain_end(key1, value1, trace, environment[branch1])
+        structure2 = self.get_value_structure_chain_end(key2, value2, trace, environment[branch2])
         return structure1 is structure2
 
     def get_similarity_weight(self, key: Con.Con[K], value: Con.Con[V], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> int:

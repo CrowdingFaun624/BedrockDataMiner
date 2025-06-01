@@ -139,10 +139,10 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         distances = numpy.zeros((len(data2) + 1 - prefix_len - suffix_len, len(data1) + 1 - prefix_len - suffix_len), numpy.float32)
         path = numpy.zeros((len(data2) + 1 - prefix_len - suffix_len, len(data1) + 1 - prefix_len - suffix_len), numpy.int8)
         for x in range(1, len(data1) + 1 - prefix_len - suffix_len):
-            distances[0, x] = x
+            distances[0, x] = x * self.deletion_cost
             path[0, x] = HORIZONTAL
         for y in range(1, len(data2) + 1 - prefix_len - suffix_len):
-            distances[y, 0] = y
+            distances[y, 0] = y * self.addition_cost
             path[y, 0] = VERTICAL
         for y in range(len(data2) - prefix_len - suffix_len):
             for x in range(len(data1) - prefix_len - suffix_len):

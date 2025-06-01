@@ -105,7 +105,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                             similarities.extend(self.get_best_key_value_pair(key, value, index, branch, cumulative_items, cumulative_mapping, SELECTION_FUNCTION, SELECTION_FUNCTION, trace, environment))
                     if previous_length is not ... and previous_length != current_length:
                         any_changes = True # other methods of detecting changes do not account for removals.
-                    similarities.sort(key=lambda item: (1 - item[0], item[2])) # highest similarities are first
+                    similarities.sort(key=(lambda item: (3 - item[3] * 2 - item[4], 1 - item[0], item[2])) if self.allow_same_key_optimization else (lambda item: (1 - item[0], 3 - item[3] * 2 - item[4], item[2]))) # highest similarities are first
                     used_cumulative_indices:set[int] = set()
                     used_current_indices:set[int] = set()
                     for _, cumulative_index, current_index, keys_identical, values_identical, _, _, _, key, value in similarities:
@@ -146,7 +146,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
             for index2, (key2, value2) in enumerate(data2.items()):
                 data2_length += 1
                 similarities.extend(self.get_best_key_value_pair(key2, value2, index2, branch2, data1_list, data1_mapping, lambda key: (branch1, key), lambda value: (branch1, value), trace, environment))
-            similarities.sort(key=lambda item: (1 - item[0], item[2], 2 - item[5] - item[6]))
+            similarities.sort(key=(lambda item: (3 - item[3] * 2 - item[4], 1 - item[0], item[2])) if self.allow_same_key_optimization else (lambda item: (1 - item[0], 3 - item[3] * 2 - item[4], item[2])))
             used_indices1:set[int] = set()
             used_indices2:set[int] = set()
             cumulative_similarity:float = 0.0
@@ -221,9 +221,9 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                 # may be skipped if any similarity does not reach the required threshold.
                 continue
             value_similarity, values_identical = self.get_value_similarity(key1, key2, value1, value2, value_branch, branch2, trace, environment)
-            if value_similarity < self.min_value_similarity_threshold or (key_similarity == self.min_key_similarity_threshold and value_similarity == self.min_value_similarity_threshold):
+            if (value_similarity < self.min_value_similarity_threshold or (key_similarity == self.min_key_similarity_threshold and value_similarity == self.min_value_similarity_threshold)) and not (keys_identical and self.allow_same_key_optimization):
                 continue
-            if not keys_identical and not self.allow_key_move(key1, key2, value1, value2, key_branch, branch2, trace, environment):
+            if not keys_identical and not self.allow_key_move(key1, key2, value1, value2, key_branch, branch2, trace, environment) and not self.allow_same_key_optimization:
                 # may be skipped if the keys are not the same and the key move is disallowed.
                 continue
 
@@ -235,7 +235,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                 (key_similarity * key_weight + value_similarity * value_weight) / (key_weight + value_weight),
                 index_diff, index, keys_identical, values_identical, key_weight, value_weight, similarity_weight, key2, value2,
             ))
-            if (keys_identical or key_weight == 0) and (values_identical or value_weight == 0):
+            if (keys_identical or key_weight == 0) and (values_identical or value_weight == 0 or (keys_identical and self.allow_same_key_optimization)):
                 # cannot get anything better than this.
                 break
         return similarities
