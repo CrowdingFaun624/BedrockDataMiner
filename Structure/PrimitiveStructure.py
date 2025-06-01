@@ -27,7 +27,7 @@ class PrimitiveStructure[D, BO, CO](Structure.Structure[D, SCon.SCon[D], SCon.SD
     def link_primitive_structure(
         self,
         delegate:Delegate.Delegate[SCon.SCon[D], Diff.Diff[SCon.SDon[D]], Self, BO, Any, CO, Any]|None,
-        normalizers:Sequence[Normalizer.Normalizer[D, D]],
+        normalizers:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         tags:set[StructureTag.StructureTag],
         this_types:tuple[type,...],

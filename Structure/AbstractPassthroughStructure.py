@@ -27,8 +27,8 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
 
     def link_passthrough_structure(
         self,
-        normalizers:Sequence[Normalizer.Normalizer[D, D]],
-        post_normalizers:Sequence[Normalizer.Normalizer[D, D]],
+        normalizers:Sequence[Normalizer.Normalizer],
+        post_normalizers:Sequence[Normalizer.Normalizer],
         pre_normalized_types:tuple[type,...],
         tags:set[StructureTag.StructureTag],
     ) -> None:

@@ -4,7 +4,7 @@ import Structure.Filter as Filter
 import Structure.StructureInfo as StructureInfo
 
 
-class Normalizer[IN, OUT]():
+class Normalizer():
     '''Changes data before a Structure looks at it.'''
 
     __slots__ = (
@@ -14,7 +14,7 @@ class Normalizer[IN, OUT]():
         "name",
     )
 
-    def __init__(self, name:str, function:Callable[[IN], OUT], arguments:dict[str,Any]) -> None:
+    def __init__(self, name:str, function:Callable[[Any], Any], arguments:dict[str,Any]) -> None:
         '''
         :name: The Component name of this Normalizer.
         :function: A Callable that modifies the original object and returns nothing.
@@ -41,7 +41,7 @@ class Normalizer[IN, OUT]():
     def link_subcomponents(self, filter:Filter.Filter|None) -> None:
         self.filter = filter
 
-    def __call__(self, data:IN) -> OUT:
+    def __call__(self, data:Any) -> Any:
         '''
         Calls the Normalizer's function.
         :data: The argument of the Normalizer's function.

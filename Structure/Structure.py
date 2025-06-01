@@ -73,7 +73,7 @@ class Structure[A, B:Con.Con, C:Con.Don, D:Con.Don|Diff.Diff, BO, CO]():
         '''
         ...
 
-    def normalizer_pass(self, normalizers:Sequence[Normalizer.Normalizer[A, A]], data:A, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> tuple[A, bool]:
+    def normalizer_pass(self, normalizers:Sequence[Normalizer.Normalizer], data:A, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> tuple[A, bool]:
         data_identity_changed:bool = False
         for normalizer in normalizers:
             if not normalizer.filter_pass(environment.structure_info):
