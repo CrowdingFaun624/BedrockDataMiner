@@ -28,7 +28,7 @@ class GrabSingleFileDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return accessor.read(self.location), self.location
 
-    def get_output(self, file:bytes, file_name:str, environment:DataminerEnvironment.DataminerEnvironment) -> File.File|Any:
+    def get_output(self, file:bytes, file_name:str, environment:DataminerEnvironment.DataminerEnvironment) -> File.File:
         return self.export_file(file, file_name)
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:

@@ -163,7 +163,7 @@ class TagSearcherDataminer(Dataminer.Dataminer):
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[DataPath.DataPath|Any]:
         dependencies = set(self.dependencies)
         all_tags = self.domain.structure_tags
-        printer_environment = environment.get_printer_environment(self.version)
+        printer_environment = environment.get_printer_environment(self.version, self.settings.structure_info)
         tag_dataminer_collections:defaultdict[AbstractDataminerCollection.AbstractDataminerCollection,list[StructureTag.StructureTag]] = defaultdict(lambda: [])
         for tag in self.tag_names:
             if tag not in all_tags:
@@ -175,7 +175,7 @@ class TagSearcherDataminer(Dataminer.Dataminer):
                     tag_dataminer_collections[dataminer_collection].append(all_tags[tag])
         mentioned_tags:defaultdict[str,set[DataPath.DataPath]] = defaultdict(lambda: set())
         for dataminer_collection, tags in tag_dataminer_collections.items():
-            for tag, paths in dataminer_collection.get_tag_paths(self.version, tags, printer_environment).items():
+            for tag, paths in dataminer_collection.get_tag_paths_from_raw(dataminer_collection.get_data_file(self.version), self.version, tags, printer_environment).items():
                 mentioned_tags[tag.name].update(paths)
         output = self.tag_function(mentioned_tags)
 

@@ -1,11 +1,15 @@
-from typing import Any, NotRequired, Required, Sequence, TypedDict, cast
+from types import EllipsisType
+from typing import Any, NotRequired, Required, TypedDict, cast
 
+import Structure.Container as Con
 import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as D
-import Structure.KeymapStructure as KeymapStructure
+import Structure.Difference as Diff
+import Structure.IterableContainer as ICon
+import Structure.SimpleContainer as SCon
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.Trace as Trace
+import Structure.StructureTypes.KeymapStructure as KeymapStructure
 import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ("SoundEventDelegate",)
@@ -18,64 +22,67 @@ class SoundEventTypedDict(TypedDict):
     min_distance: NotRequired[float]
     sounds: Required[dict[str,Any]]
 
+class SoundEventDiffTypedDict(TypedDict):
+    name: Required[Diff.Diff[Con.Don[str]]]
+    category: NotRequired[Diff.Diff[Con.Don[str]]]
+    defined_in: NotRequired[Diff.Diff[ICon.IDon[Diff.Diff[SCon.SDon[int]], Diff.Diff[SCon.SDon[str]], list[str], SCon.SCon[int], SCon.SCon[str]]]]
+    max_distance: NotRequired[Diff.Diff[SCon.SDon[float]]]
+    min_distance: NotRequired[Diff.Diff[SCon.SDon[float]]]
+    sounds: Required[Diff.Diff[ICon.IDon[Diff.Diff[SCon.SDon[str]], Diff.Diff[Con.Don[Any]], dict[str,Any], SCon.SCon[str], Any]]]
 
-class SoundEventDelegate(Delegate.Delegate[str, KeymapStructure.KeymapStructure, str]):
+
+class SoundEventDelegate(Delegate.Delegate[
+    ICon.ICon[SCon.SCon[str], Any, SoundEventTypedDict],
+    ICon.IDon[Diff.Diff[SCon.SDon[str]], Any, SoundEventTypedDict, SCon.SCon[str], Any], # uses this instead of a ICon because SoundEventsDelegate passes in a customized value. The name key messes everything up.
+    KeymapStructure.KeymapStructure[str, Any, SoundEventTypedDict, Any, Any, Any, str, Any, str],
+    str, Any, str, Any,
+]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier()
 
     applies_to = (KeymapStructure.KeymapStructure,)
 
-    def compare_text(self, data:SoundEventTypedDict, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
-        exceptions:list[Trace.ErrorTrace] = []
-        has_changes = False
-        if self.get_structure().sorting_function is not None:
-            data = cast(Any, {key: value for key, value in sorted(data.items(), key=self.get_structure().sorting_function)})
+    def print_comparison(self, data:ICon.IDon[Diff.Diff[SCon.SDon[str]], Any, SoundEventDiffTypedDict, SCon.SCon[str], Any], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str | EllipsisType:
+        data_dict:SoundEventDiffTypedDict = cast(Any, {key.last_value.last_value: value for key, value in data.items()})
 
-        key_structure, new_exceptions = self.get_structure().get_structure("name", data["name"])
-        exceptions.extend(exception.add(self.get_structure().name, "name") for exception in new_exceptions)
-        assert key_structure is not None
-        sound_event_comparison, any_changes, new_exceptions = key_structure.compare_text(data["name"], environment)
-        exceptions.extend(exception.add(self.get_structure().name, "name") for exception in new_exceptions)
-        has_changes = has_changes or any_changes
+        sound_event_comparison = "–"
+        with trace.enter_key("name", data_dict["name"]):
+            key_structure = self.structure.get_value_structure("name", data_dict["name"].last_value.last_value, trace, environment[data_dict["name"].branch_count - 1])
+            assert key_structure is not None
+            sound_event_comparison = key_structure.print_comparison(data_dict["name"], trace, environment)
+        if sound_event_comparison is ...: sound_event_comparison = "–"
 
-        if "category" in data:
-            category_structure, new_exceptions = self.get_structure().get_structure("category", data["category"])
-            exceptions.extend(exception.add(self.get_structure().name, "category") for exception in new_exceptions)
-            assert category_structure is not None
-            category_comparison, any_changes, new_exceptions = category_structure.compare_text(data["category"], environment)
-            exceptions.extend(exception.add(self.get_structure().name, "category") for exception in new_exceptions)
-            has_changes = has_changes or any_changes
-        else:
-            category_comparison = "–"
+        category_comparison = "–"
+        if "category" in data_dict:
+            with trace.enter_key("category", data_dict["category"]):
+                category_structure = self.structure.get_value_structure("category", data_dict["category"].last_value.last_value, trace, environment[data_dict["category"].branch_count - 1])
+                assert category_structure is not None
+                category_comparison = category_structure.print_comparison(data_dict["category"], trace, environment)
 
-        sounds_structure, new_exceptions = self.get_structure().get_structure("sounds", data["sounds"])
-        exceptions.extend(exception.add(self.get_structure().name, "sounds") for exception in new_exceptions)
-        assert sounds_structure is not None
-        sounds_comparison, any_changes, new_exceptions = sounds_structure.compare_text(data["sounds"], environment)
-        has_changes = has_changes or any_changes
+        sounds_comparison = "–"
+        with trace.enter_key("sounds", data_dict["sounds"].last_value.last_value):
+            sounds_structure = self.structure.get_value_structure("sounds", data_dict["sounds"].last_value.last_value, trace, environment[data_dict["sounds"].branch_count - 1])
+            assert sounds_structure is not None
+            sounds_comparison = sounds_structure.print_comparison(data_dict["sounds"].last_value, trace, environment)
 
-        # if "defined_in" in data:
-        #     defined_in_structure, new_exceptions = self.get_structure().get_structure("defined_in", data["defined_in"])
-        #     exceptions.extend(exception.add(self.get_structure().name, "defined_in") for exception in new_exceptions)
-        #     assert defined_in_structure is not None
-        #     defined_in_comparison, any_changes, new_exceptions = defined_in_structure.compare_text(data["defined_in"], environment)
-        #     exceptions.extend(exception.add(self.get_structure().name, "defined_in") for exception in new_exceptions)
-        #     has_changes = has_changes or any_changes
-        # else:
-        #     defined_in_comparison = None
+        # defined_in_comparison = None
+        # if "defined_in" in data_dict:
+        #     with trace.enter_key("defined_in", data_dict["defined_in"].last_value.last_value):
+        #         defined_in_structure = self.structure.get_value_structure("defined_in", data_dict["defined_in"].last_value.last_value, trace, environment[data_dict["defined_in"].branch_count - 1])
+        #         assert defined_in_structure is not None
+        #         defined_in_comparison = defined_in_structure.print_comparison(data_dict["defined_in"].last_value, trace, environment)
+        # if defined_in_comparison is ...: defined_in_comparison = None
 
         other_comparisons:dict[str,str] = {}
-        for key, value in data.items():
-            if D.last_value(key) in {"name", "category", "sounds", "defined_in"}: continue
-            if D.last_value(key) not in {"max_distance", "min_distance"}:
-                exceptions.append(Trace.ErrorTrace(Exceptions.StructureUnrecognizedKeyError(key), self.get_structure().name, key, value))
-            structure, new_exceptions = self.get_structure().get_structure(D.last_value(key), value)
-            exceptions.extend(exception.add(self.get_structure().name, "defined_in") for exception in new_exceptions)
+        for key, value_obj in data_dict.items():
+            value:Diff.Diff[Con.Don[Any]] = cast(Any, value_obj) # stupid type inferer can't tell it's a Diff.
+            if key in {"name", "category", "sounds", "defined_in"}: continue
+            if key not in {"max_distance", "min_distance"}:
+                trace.exception(Exceptions.StructureUnrecognizedKeyError(key))
+            structure = self.structure.get_value_structure(key, value.last_value.last_value, trace, environment[value.branch_count - 1])
             assert structure is not None
-            other_comparison, any_changes, new_exceptions = structure.compare_text(value, environment)
-            exceptions.extend(exception.add(self.get_structure().name, "defined_in") for exception in new_exceptions)
-            has_changes = has_changes or any_changes
-            other_comparisons[D.last_value(key)] = f"({D.last_value(key)} = {other_comparison})"
+            other_comparison = structure.print_comparison(value, trace, environment)
+            other_comparisons[key] = f"({key} = {other_comparison})"
 
         sound_event_column:list[str] = [sound_event_comparison]
         # if defined_in_comparison is not None:
@@ -83,4 +90,4 @@ class SoundEventDelegate(Delegate.Delegate[str, KeymapStructure.KeymapStructure,
         sound_event_column.extend(other_comparisons.values())
 
         output = f"| {"<br>".join(sound_event_column)} || {sounds_comparison} || {category_comparison}"
-        return output, has_changes, exceptions
+        return output

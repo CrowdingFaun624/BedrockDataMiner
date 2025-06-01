@@ -1,5 +1,12 @@
-from typing import (Any, Literal, MutableMapping, MutableSequence, Optional,
-                    TypedDict, cast)
+from typing import (
+    Any,
+    Literal,
+    MutableMapping,
+    MutableSequence,
+    Optional,
+    TypedDict,
+    cast,
+)
 
 import Utilities.Exceptions as Exceptions
 

@@ -8,6 +8,7 @@ import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
 import Domain.Domain as Domain
 import Structure.StructureBase as StructureBase
+import Structure.StructureInfo as StructureInfo
 import Version.Version as Version
 
 
@@ -32,9 +33,18 @@ class CoverageDataminer(AbstractDataminerCollection.AbstractDataminerCollection)
 
         self.file_list_dataminer:AbstractDataminerCollection.AbstractDataminerCollection|None = None
 
-    def link_subcomponents(self, file_list_dataminer:AbstractDataminerCollection.AbstractDataminerCollection, structure: StructureBase.StructureBase) -> None:
+    def link_subcomponents(
+        self,
+        file_list_dataminer:AbstractDataminerCollection.AbstractDataminerCollection,
+        structure: StructureBase.StructureBase,
+        structure_info:StructureInfo.StructureInfo,
+    ) -> None:
         super().link_subcomponents(structure)
         self.file_list_dataminer = file_list_dataminer
+        self.structure_info = structure_info
+
+    def get_structure_info(self, version: Version.Version) -> StructureInfo.StructureInfo:
+        return self.structure_info
 
     def get_dependencies(self, version: Version.Version) -> Iterable[DataminerCollection.DataminerCollection]:
         return (

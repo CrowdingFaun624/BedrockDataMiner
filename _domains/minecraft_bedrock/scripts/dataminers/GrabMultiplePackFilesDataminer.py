@@ -6,6 +6,7 @@ import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
 import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
+import Utilities.File as File
 import Utilities.TypeVerifier as TypeVerifier
 
 __all__ = ("GrabMultiplePackFilesDataminer",)
@@ -114,8 +115,8 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return files
 
-    def get_output(self, files:dict[tuple[str,str,str],bytes], environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,dict[str,Any]]:
-        output:dict[str,dict[str,Any]] = {}
+    def get_output(self, files:dict[tuple[str,str,str],bytes], environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,dict[str,File.File]]:
+        output:dict[str,dict[str,File.File]] = {}
         for (pack_name, relative_name, file_name), file_bytes in files.items():
             file_data = self.export_file(file_bytes, file_name)
             if self.reverse:

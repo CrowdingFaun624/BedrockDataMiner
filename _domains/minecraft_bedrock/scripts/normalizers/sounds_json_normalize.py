@@ -2,7 +2,12 @@
 
 from typing import Any, Mapping, NotRequired, TypedDict
 
+import Domain.Domains as Domains
+import Serializer.Serializer as Serializer
 import Utilities.File as File
+
+domain = Domains.get_domain_from_module(__name__)
+json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer.Serializer)
 
 __all__ = ("sounds_json_normalize",)
 
@@ -134,7 +139,7 @@ def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> File
     file_hashes:list[int] = []
     for pack_name, sounds_json_file in data.items():
         file_hashes.append(hash(sounds_json_file))
-        sounds_json = sounds_json_file.data
+        sounds_json = sounds_json_file.read(json_serializer.get())
         if trace_exists(sounds_json, ("individual_event_sounds",)):
             merge_collection(pack_name, output["individual_event_sounds"], sounds_json["individual_event_sounds"])
         if trace_exists(sounds_json, ("block_sounds",)):
@@ -149,4 +154,4 @@ def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> File
             merge_collection(pack_name, output["interactive_sounds"]["entity_sounds"]["defaults"], sounds_json["interactive_sounds"]["entity_sounds"]["defaults"])
         if trace_exists(sounds_json, ("interactive_sounds", "entity_sounds", "entities")):
             merge_collections(pack_name, output["interactive_sounds"]["entity_sounds"]["entities"], sounds_json["interactive_sounds"]["entity_sounds"]["entities"])
-    return File.FakeFile("combined_sounds_json_file", output, hash(tuple(file_hashes)))
+    return File.FakeFile("combined_sounds_json_file", output, None, hash(tuple(file_hashes)))

@@ -1,22 +1,26 @@
-from typing import Any, Sequence, cast
+from types import EllipsisType
+from typing import Any, cast
 
-import Structure.ObjectStructure as ObjectStructure
-import Structure.PrimitiveStructure as PrimitiveStructure
+import Domain.Domain as Domain
+import Structure.Container as Con
+import Structure.Difference as Diff
 import Structure.Structure as Structure
-import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.Trace as Trace
-import Utilities.Exceptions as Exceptions
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 
-class Delegate[a, b:Structure.Structure|StructureBase.StructureBase, c]():
+class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO, BC, CO, CC]():
     '''
     Object for displaying the output of Structures in different ways.
-    Delegates are a Generic of three TypeVars.
-    The first TypeVar (`a`) is the output of this Delegate.
-    The second TypeVar (`b`) is the Structure types this Delegate works on. It can be a subclass of Structure or StructureBase.
-    The third TypeVar (`c`) is the data that is stored in CacheStructures with this Delegate.
+    Delegates are a Generic of seven TypeVars.\n
+    The first TypeVar (`DC`) is the containerized data that is the input of `print_branch`.\n
+    The second TypeVar (`DD`) is the compared data that is the input of `compare_text`.\n
+    The third TypeVar (`S`) is the Structure types this Delegate works on.\n
+    The fourth TypeVar (`BO`) is the output of `print_branch`.\n
+    The fifth TypeVar (`BC`) is the data from `print_branch` that is stored in CacheStructures.\n
+    The sixth TypeVar (`CO`) is the output of `print_comparison`.\n
+    The seventh TypeVar (`CC`) is the data from `print_comparison` that is stored in CacheStructures.\n
     '''
 
     type_verifier:TypeVerifier.TypeVerifier|None = None
@@ -31,32 +35,24 @@ class Delegate[a, b:Structure.Structure|StructureBase.StructureBase, c]():
     If not present, no checking is done for `keys`.
     '''
 
-    applies_to:tuple[type[StructureBase.StructureBase]|type[Structure.Structure]|type[None],...] = (StructureBase.StructureBase, ObjectStructure.ObjectStructure, PrimitiveStructure.PrimitiveStructure, type(None))
+    applies_to:tuple[type[Structure.Structure]|type[None],...] = (Structure.Structure, type(None))
 
     __slots__ = (
         "structure",
     )
 
-    def __init__(self, structure:b|None, keys:dict[str,Any]) -> None:
+    def __init__(self, structure:S, keys:dict[str,Any]) -> None:
         '''
         :structure: The Structure that this Delegate belongs to. Can only be None if it is used as the default delegate of a StructureBase.
         :keys: Dictionary containing arguments from each key of a Keymap. If it's not a Keymap, the values of the keys dictionary will be empty.
         '''
         self.structure = structure
 
-    def finalize(self) -> None:
+    def finalize(self, domain:"Domain.Domain", trace:Trace.Trace) -> None:
         '''
         Runs during the finalize Component import phase.
         '''
-
-    def get_structure(self) -> b:
-        '''
-        Returns the Structure associated with this Delegate.
-        Raises an AttributeNoneError if it is None.
-        '''
-        if self.structure is None:
-            raise Exceptions.AttributeNoneError("structure", self)
-        return self.structure
+        pass
 
     def __repr__(self) -> str:
         if self.structure is None:
@@ -64,26 +60,42 @@ class Delegate[a, b:Structure.Structure|StructureBase.StructureBase, c]():
         else:
             return f"<{self.__class__.__name__} of {self.structure.__class__.__name__} {self.structure.name}>"
 
-    def cache_store(self, data:a, environment:StructureEnvironment.ComparisonEnvironment|StructureEnvironment.PrinterEnvironment) -> c:
+    def cache_store_branch(self, data:BO, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> BC:
         '''
-        Returns data that is stored in a CacheStructure.
-        When the data is retrieved, `cache_retrieve` is called.
-        :data: Data of the same type that is returned by `compare_text` and `print_text`.
+        Returns data from `print_branch` that is stored in a CacheStructure.
+        When the data is retrieved, `cache_store_branch` is called.
+        :data: Data of the same type that is returned by `print_branch`.
+        :environment: The PrinterEnvironment to use.
+        '''
+        return cast(BC, data)
+
+    def cache_retrieve_branch(self, data:BC, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> BO:
+        '''
+        Given the data that was stored by `cache_store_branch`, returns the original data.
+        :Data: The data stored in the cache that is returned by `cache_store_branch`.
+        :environment: The PrinterEnvironment to use.
+        '''
+        return cast(BO, data)
+
+    def cache_store_comparison(self, data:CO, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> CC:
+        '''
+        Returns data from `print_comparison` that is stored in a CacheStructure.
+        When the data is retrieved, `cache_retrieve_comparison` is called.
+        :data: Data of the same type that is returned by `print_comparison`.
         :environment: The ComparisonEnvironment to use.
         '''
-        return cast(c, data)
+        return cast(CC, data)
 
-    def cache_retrieve(self, data:c, environment:StructureEnvironment.ComparisonEnvironment|StructureEnvironment.PrinterEnvironment) -> a:
+    def cache_retrieve_comparison(self, data:CC, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment|StructureEnvironment.PrinterEnvironment) -> CO:
         '''
-        Given the data that was stored by `cache_store`,
-        returns the original data.
-        :data: The data stored in the cache that is returned by `cache_store`.
+        Given the data that was stored by `cache_store_comparison`, returns the original data.
+        :data: The data stored in the cache that is returned by `cache_store_comparison`.
         :environment: The ComparisonEnvironment to use.
         '''
-        return cast(a, data)
+        return cast(CO, data)
 
-    def compare_text(self, data:Any, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[a, bool, Sequence[Trace.ErrorTrace]]:
+    def print_branch(self, data:DC, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:
         ...
 
-    def print_text(self, data:Any, environment:StructureEnvironment.PrinterEnvironment) -> tuple[a, Sequence[Trace.ErrorTrace]]:
+    def print_comparison(self, data:DD, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> CO|EllipsisType:
         ...

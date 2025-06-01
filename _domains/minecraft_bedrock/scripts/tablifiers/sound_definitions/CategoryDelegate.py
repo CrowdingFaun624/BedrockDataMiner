@@ -1,8 +1,9 @@
-from typing import Sequence
+from types import EllipsisType
+from typing import Any
 
 import _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.PrimitiveDelegate as PrimitiveDelegate
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.Trace as Trace
+import Utilities.Trace as Trace
 
 __all__ = ("CategoryDelegate",)
 
@@ -10,9 +11,7 @@ normal_categories = {"weather", "block", "bucket", "bottle", "ui", "player", "ho
 
 class CategoryDelegate(PrimitiveDelegate.PrimitiveDelegate):
 
-    def print_text(self, data: str, environment: StructureEnvironment.PrinterEnvironment) -> tuple[str, Sequence[Trace.ErrorTrace]]:
+    def print_branch(self, data: Any, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> str | EllipsisType:
         is_valid = data in normal_categories
-        output, exceptions = super().print_text(data, environment)
-        if not is_valid:
-            output = f"– ({output})"
-        return output, exceptions
+        output = super().print_branch(data, trace, environment)
+        return output if is_valid else f"– ({output})"

@@ -1,9 +1,10 @@
-from typing import Any, Sequence
+from types import EllipsisType
+from typing import Any
 
 import Structure.Delegate.Delegate as Delegate
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.Trace as Trace
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 FOOTER = '''
@@ -19,13 +20,17 @@ FOOTER = '''
 
 __all__ = ("BaseDelegate",)
 
-class BaseDelegate(Delegate.Delegate[str,StructureBase.StructureBase,str]):
+class BaseDelegate(Delegate.Delegate[Any, Any, StructureBase.StructureBase[dict[str,dict[Any,Any]], Any, str], Any, Any, str, Any]):
 
     type_verifier = TypeVerifier.TypedDictTypeVerifier()
 
     applies_to = (StructureBase.StructureBase,)
 
-    def compare_text(self, data: Any, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Any, bool, Sequence[Trace.ErrorTrace]]:
-        comparison, has_changes, exceptions = self.get_structure().structure.compare_text(data, environment)
+    def print_comparison(self, data: Any, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str | EllipsisType:
+        if self.structure.structure is None:
+            return FOOTER
+        comparison:str|EllipsisType = self.structure.structure.print_comparison(data, trace, environment)
+        if comparison is ...:
+            return ...
         comparison += FOOTER
-        return comparison, has_changes, exceptions
+        return comparison

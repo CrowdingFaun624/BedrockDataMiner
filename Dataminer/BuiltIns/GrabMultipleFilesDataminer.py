@@ -90,7 +90,7 @@ class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return files
 
-    def get_output(self, files:dict[tuple[str,str],bytes], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,File.File|Any]:
+    def get_output(self, files:dict[tuple[str,str],bytes], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,File.File]:
         return {relative_name: self.export_file(file_bytes, file_name) for (relative_name, file_name), file_bytes in files.items()}
 
     def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:

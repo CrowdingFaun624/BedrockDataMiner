@@ -1,14 +1,22 @@
-from typing import Any, Sequence
+from types import EllipsisType
+from typing import Any
 
-import Structure.Delegate.DefaultDelegate as DefaultDelegate
+import Structure.Container as Con
 import Structure.Delegate.Delegate as Delegate
+import Structure.Delegate.LineDelegate as LineDelegate
+import Structure.Difference as Diff
 import Structure.StructureBase as StructureBase
 import Structure.StructureEnvironment as StructureEnvironment
-import Structure.Trace as Trace
+import Utilities.Trace as Trace
 import Utilities.TypeVerifier as TypeVerifier
 
 
-class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, str]):
+class DefaultBaseDelegate[D](Delegate.Delegate[
+    Con.Con[D],
+    Con.Don[D]|Diff.Diff[Con.Don[D]],
+    StructureBase.StructureBase[D, list[LineDelegate.LineType], list[LineDelegate.LineType]],
+    str, str, str, str,
+]):
 
     applies_to = (StructureBase.StructureBase,)
 
@@ -20,37 +28,54 @@ class DefaultBaseDelegate(Delegate.Delegate[str, StructureBase.StructureBase, st
         "structure_name",
     )
 
-    def __init__(self, structure: StructureBase.StructureBase|None, keys:dict[str,dict[str,Any]], name:str) -> None:
+    def __init__(self, structure: StructureBase.StructureBase[D, list[LineDelegate.LineType], list[LineDelegate.LineType]], keys:dict[str,dict[str,Any]], name:str) -> None:
         super().__init__(structure, keys)
         self.structure_name = name
 
-    def compare_text(self, data: Any, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[str, bool, Sequence[Trace.ErrorTrace]]:
-        exceptions:list[Trace.ErrorTrace] = []
+    def print_branch(self, data: Con.Con[D], trace:Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> str|EllipsisType:
+        version = environment.version
+        header:list[str] = []
+        if version.order_tag.is_development_tag and version.parent is not None:
+            beta_text = f" ({version.order_tag.development_name} of \"{version.parent.name}\")"
+        else:
+            beta_text = ""
+        header.append(f"Addition of \"{self.structure_name}\" at \"{version.name}\"{beta_text}.")
+        header.append("")
+
+        final = header
+        if self.structure.structure is not None:
+            lines = self.structure.structure.print_branch(data, trace, environment)
+            if lines is ...:
+                return ...
+            final.extend("\t" * line[0] + line[1] for line in lines)
+        return "\n".join(final)
+
+    def print_comparison(self, data:Con.Don[D]|Diff.Diff[Con.Don[D]], trace:Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str|EllipsisType:
         version1, version2, versions_between = environment.versions[0], environment.versions[1], environment.versions_between[0]
-        assert version2 is not None
         header:list[str] = []
         beta_texts:list[str] = ["", ""]
         for index, version in enumerate((version1, version2)):
-            if version is not None and version.order_tag.is_development_tag and version.parent is not None:
+            if version.order_tag.is_development_tag and version.parent is not None:
                 beta_texts[index] = f" ({version.order_tag.development_name} of \"{version.parent.name}\")"
-        if version1 is None:
-            header.append(f"Addition of \"{self.structure_name}\"{beta_texts[0]} at \"{version2.name}\"{beta_texts[1]}.")
-        else:
-            header.append(f"Difference of \"{self.structure_name}\" between \"{version1.name}\"{beta_texts[0]} and \"{version2.name}\"{beta_texts[1]}.")
+        header.append(f"Difference of \"{self.structure_name}\" between \"{version1.name}\"{beta_texts[0]} and \"{version2.name}\"{beta_texts[1]}.")
         if len(versions_between) > 0:
             files_word = "file" if len(versions_between) == 1 else "files"
-            between_word = "before" if version1 is None else "between"
             if len(versions_between) > 10:
-                header.append(f"Unable to create data {files_word} for {len(versions_between)} files {between_word}.")
+                header.append(f"Unable to create data {files_word} for {len(versions_between)} files between.")
             elif len(versions_between) <= 10:
-                header.append(f"Unable to create data files for {len(versions_between)} {files_word} {between_word}: {", ".join(f"\"{version.name}\"" for version in versions_between)}")
+                header.append(f"Unable to create data files for {len(versions_between)} {files_word} between: {", ".join(f"\"{version.name}\"" for version in versions_between)}")
         header.append("")
 
-        lines:list[DefaultDelegate.LineType]
-        lines, any_changes, new_exceptions = self.get_structure().structure.compare_text(data, environment)
-        exceptions.extend(new_exceptions)
-
         final = header
-        final.extend("\t" * line[0] + line[1] for line in lines)
-
-        return "\n".join(final), any_changes, exceptions
+        if self.structure.structure is not None:
+            if isinstance(data, Diff.Diff) and data.length == 1:
+                lines = self.structure.structure.print_comparison(data[0], trace, environment)
+            elif isinstance(data, Diff.Diff) and data.length != 1:
+                assert environment.default_delegate is not None
+                lines = environment.default_delegate.print_comparison(data, trace, environment)
+            else:
+                lines = self.structure.structure.print_comparison(data, trace, environment)
+            if lines is ...:
+                return ...
+            final.extend("\t" * line[0] + line[1] for line in lines)
+        return "\n".join(final)

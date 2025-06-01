@@ -1,8 +1,7 @@
-from typing import Any
-
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
 import Downloader.FileAccessor as FileAccessor
+import Utilities.File as File
 import Utilities.TypeVerifier as TypeVerifier
 
 
@@ -18,5 +17,5 @@ class SingleFileDataminer(FileDataminer.FileDataminer):
     def get_coverage(self, file_set: FileDataminer.FileSet, environment: DataminerEnvironment.DataminerEnvironment) -> set[str]:
         return {self.file_name}
 
-    def activate(self, environment: DataminerEnvironment.DataminerEnvironment) -> Any:
+    def activate(self, environment: DataminerEnvironment.DataminerEnvironment) -> File.File:
         return self.export_file(self.get_accessor(FileAccessor.FileAccessor).read(), self.file_name)

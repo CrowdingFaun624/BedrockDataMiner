@@ -9,7 +9,6 @@ import _domains.minecraft_common.scripts.Nbt.DataReader as DataReader
 import _domains.minecraft_common.scripts.Nbt.NbtExceptions as NbtExceptions
 import _domains.minecraft_common.scripts.Nbt.SnbtParser as SnbtParser
 import Component.Types as Types
-import Structure.Difference as D
 import Utilities.CustomJson as CustomJson
 
 NbtJsonTypedDict = TypedDict("NbtJsonTypedDict", {"$special_type": Literal["nbt"], "data": str})
@@ -211,7 +210,6 @@ class TAG_Compound[b: TAG](dict[str,b], TAG):
         return "".join(output)
 
     def should_enquote_key(self, key:str, pattern=re.compile(r'[^a-zA-Z0-9._]').search) -> bool:
-        if isinstance(key, D.Diff): return False
         if len(key) == 0: return True
         return bool(pattern(key))
 

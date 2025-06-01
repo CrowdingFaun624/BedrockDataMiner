@@ -3,9 +3,12 @@ from collections import defaultdict
 from typing import Any, Iterable, Literal, Optional, TypedDict
 
 import Domain.Domains as Domains
+import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier as TypeVerifier
+
+domain = Domains.get_domain_from_module(__name__)
 
 __all__ = (
     "collapse_resource_packs_dict",
@@ -54,7 +57,7 @@ type_verifier = TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier
 
 def get_resource_pack_order() -> list[ResourcePackTypedDict]:
     data = Domains.get_domain_from_module(__name__).data_files["resource_pack_data"].contents
-    type_verifier.base_verify(data)
+    type_verifier.verify_throw(data)
     return data
 
 def get_resource_pack_tag_strings() -> dict[str, str]:
@@ -102,24 +105,25 @@ def collapse_resource_packs_dict[a](data:dict[str,dict[str,a]], add_defined_in:b
                     defined_in_key.append(resource_pack) # type: ignore
     return type(data)(output)
 
-def collapse_resource_packs_dict_file[a](data:dict[str,File.AbstractFile[dict[str,a]]], add_defined_in:bool=True) -> File.FakeFile[dict[str,dict[str,a]]]:
+def collapse_resource_packs_dict_file[a](data:dict[str,File.AbstractFile[dict[str,a]]], add_defined_in:bool=True, serializer:str="minecraft_common!serializers/json") -> File.FakeFile[dict[str,dict[str,a]]]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
     Also adds a "defined_in" tag to each resource pack's properties unless `add_defined_in` is False.'''
     output:defaultdict[str,dict[str,a]] = defaultdict(lambda: {})
     file_hashes:list[int] = []
+    _serializer = domain.script_referenceable.get(serializer, Serializer.Serializer)
     for tag_string, resource_pack_list in get_resource_packs_by_tag(data):
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
         for resource_pack in resource_pack_list:
             file = data[resource_pack]
             file_hashes.append(hash(file))
-            output[tag_string].update(file.data)
+            output[tag_string].update(file.read(_serializer))
             if add_defined_in:
                 defined_in_key = output[tag_string].get("defined_in")
                 if defined_in_key is None:
                     output[tag_string]["defined_in"] = [resource_pack] # type: ignore
                 else:
                     defined_in_key.append(resource_pack) # type: ignore
-    return File.FakeFile("combined_file", type(data)(output), hash(tuple(file_hashes))) # type: ignore
+    return File.FakeFile("combined_file", type(data)(output), None, hash(tuple(file_hashes))) # type: ignore
 
 def collapse_resource_packs_flat[a](data:dict[str,a]) -> dict[str,a]:
     '''Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.'''
@@ -130,19 +134,20 @@ def collapse_resource_packs_flat[a](data:dict[str,a]) -> dict[str,a]:
             output[tag_string] = data[resource_pack]
     return output
 
-def collapse_resource_packs_list_file[a](data:dict[str,File.AbstractFile[list[a]]]) -> File.FakeFile[dict[str,list[a]]]:
+def collapse_resource_packs_list_file[a](data:dict[str,File.AbstractFile[list[a]]], serializer:str="minecraft_common!serializers/json") -> File.FakeFile[dict[str,list[a]]]:
     '''
     Turns keys like {"vanilla", "cartoon"} into resource pack tags, such as {"core", "vanity"}.
     '''
     output:defaultdict[str,list[a]] = defaultdict(lambda: [])
     file_hashes:list[int] = []
+    _serializer = domain.script_referenceable.get(serializer, Serializer.Serializer)
     for tag_string, resource_pack_list in get_resource_packs_by_tag(data):
         resource_pack_list.sort(key=lambda item: resource_pack_order[item])
         for resource_pack in resource_pack_list:
             file = data[resource_pack]
-            output[tag_string].extend(file.data)
+            output[tag_string].extend(file.read(_serializer))
             file_hashes.append(hash(file))
-    return File.FakeFile("combined_file", dict(output), hash(tuple(file_hashes)))
+    return File.FakeFile("combined_file", dict(output), None, hash(tuple(file_hashes)))
 
 def collapse_resource_pack_names(data:list[str]) -> list[str]:
     output:list[str] = []

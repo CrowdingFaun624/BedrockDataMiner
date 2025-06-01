@@ -3,8 +3,7 @@ import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
 import Utilities.Exceptions as Exceptions
 import Utilities.TypeVerifier as TypeVerifier
-from _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer import \
-    PackTypedDict
+from _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer import PackTypedDict
 
 __all__ = ("PiecesDataminer",)
 

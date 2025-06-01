@@ -1,6 +1,11 @@
 from typing import Any, cast
 
+import Domain.Domains as Domains
+import Serializer.Serializer as Serializer
 import Utilities.File as File
+
+domain = Domains.get_domain_from_module(__name__)
+json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer.Serializer)
 
 __all__ = ("ui_normalize",)
 
@@ -26,7 +31,7 @@ def get_namespaces_and_extensions(data:dict[str,File.File[dict[str,dict[str,Any]
     extensions:dict[str,dict[str,tuple[str|None,str|None]]] = {} # {namespace: {subelement: (superelements_namespace, superelement)}}
     file_hashes:list[int] = []
     for file_name, file in data.items():
-        elements = file.data
+        elements = file.read(json_serializer.get())
         file_hashes.append(hash(file))
         namespace = cast(str, elements.pop("namespace"))
         if namespace not in namespaces:
@@ -125,4 +130,4 @@ def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) ->
                 raw_element_name = f"{element_name}@{superclass_namespace}.{superclass_element_name}"
             element_type = element_types[namespace][element_name]
             output[namespace][raw_element_name] = {element_type: element_data}
-    return File.FakeFile("combined_ui_file", output, hash(tuple(file_hashes)))
+    return File.FakeFile("combined_ui_file", output, None, hash(tuple(file_hashes)))

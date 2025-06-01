@@ -1,11 +1,8 @@
-import json
-from pathlib import Path
 from typing import Any, NoReturn
 
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.DataminerSettings as DataminerSettings
 import Downloader.Accessor as Accessor
-import Serializer.Serializer as Serializer
 import Utilities.Exceptions as Exceptions
 import Utilities.File as File
 import Utilities.TypeVerifier as TypeVerifier
@@ -16,8 +13,6 @@ class Dataminer():
 
     parameters:TypeVerifier.TypeVerifier|None = TypeVerifier.TypedDictTypeVerifier()
     '''TypeVerifier for verifying the json arguments of this Dataminer'''
-    serializer_types:dict[str,type[Serializer.Serializer]] = {}
-    '''The keys of Serializers given to this Dataminer's settings must match `serializer_types`.'''
 
     def __init__(self, version:Version.Version, settings:DataminerSettings.DataminerSettings) -> None:
         self.version = version
@@ -25,7 +20,6 @@ class Dataminer():
         self.domain = self.settings.domain
         self.file_name = self.settings.file_name
         self.name = self.settings.name
-        self.serializers = self.settings.serializers
         self.files = set(self.settings.version_file_types)
         self.files_str = {version_file_type.name for version_file_type in self.files}
         self.dependencies = self.settings.dependencies
@@ -67,21 +61,8 @@ class Dataminer():
             raise Exceptions.DataminerAccessorWrongTypeError(self, file_type, accessor_type, options)
         return accessor
 
-    def get_serializer(self, serializer_key:str) -> Serializer.Serializer:
-        serializer = self.serializers.get(serializer_key)
-        if serializer is None:
-            raise Exceptions.DataminerUnrecognizedSerializerError(self, serializer_key)
-        return serializer
-
-    def export_file(self, file_bytes:bytes, file_name:str, serializer_key:str="main") -> File.File|Any:
-        serializer = self.get_serializer(serializer_key)
-        if serializer.store_as_file_default:
-            return File.new_file(file_bytes, file_name, serializer)
-        else:
-            try:
-                return serializer.deserialize(file_bytes)
-            except Exception:
-                raise Exceptions.SerializationFailureError(serializer, file_name, "(in Dataminer.export_file)")
+    def export_file(self, file_bytes:bytes, file_name:str) -> File.File:
+        return File.new_file(file_bytes, file_name)
 
 class NullDataminer(Dataminer):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
