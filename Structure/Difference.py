@@ -51,12 +51,8 @@ class Diff[A: Con.Don]():
             self.branch_count = bundle[-1] + 1
         self.hash = hash(tuple(hashable_material))
         self.bundles = [()] * self.branch_count
-        already_branches:set[int] = set() # Debug code
         for bundle in items.keys():
             for branch in bundle:
-                if branch in already_branches:
-                    raise RuntimeError(f"Duplicate branch {branch}!")
-                already_branches.add(branch)
                 self.bundles[branch] = bundle
 
     def __repr__(self) -> str:
