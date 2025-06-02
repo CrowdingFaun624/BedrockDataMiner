@@ -25,6 +25,7 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure.BranchlessStructure[
         "cache_print_branch",
         "cache_print_comparison",
         "cache_type_check",
+        "cache_versions_for_delegates",
         "delegate",
         "index",
         "removal_threshold",
@@ -34,9 +35,11 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure.BranchlessStructure[
 
     def link_cache_structure(
         self,
+        cache_versions_for_delegates:bool,
         delegate:Delegate.Delegate[Con.Con[D], Con.Don[D]|Diff.Diff[Con.Don[D]], Self, BO, BC, CO, CC]|None,
         removal_threshold:int,
     ) -> None:
+        self.cache_versions_for_delegates = cache_versions_for_delegates
         self.delegate = delegate
         self.removal_threshold = removal_threshold
 
@@ -132,14 +135,14 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure.BranchlessStructure[
 
     def normalize(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> D | EllipsisType:
         with trace.enter(self, self.name, data):
-            hash_function = lambda: environment.domain.type_stuff.hash_data(data)
+            hash_function = lambda: environment.domain.type_stuff.hash_data((data, environment))
             self_super = super()
             return self.cache_function(self.cache_normalize, hash_function, lambda: self_super.normalize(data, trace, environment), lambda output: (output if output is not ... else data), lambda output: output, environment.structure_environment)
         return ...
 
     def containerize(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Con.Con[D] | EllipsisType:
         with trace.enter(self, self.name, data):
-            hash_function = lambda: environment.domain.type_stuff.hash_data(data)
+            hash_function = lambda: environment.domain.type_stuff.hash_data((data, environment))
             self_super = super()
             return self.cache_function(self.cache_containerize, hash_function, lambda: self_super.containerize(data, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return ...
@@ -147,55 +150,58 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure.BranchlessStructure[
     def diffize(self, data: Con.Con[D], bundle: tuple[int, ...], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> Mapping[tuple[int, ...], Con.Don[D]] | EllipsisType:
         with trace.enter(self, self.name, data):
             self_super = super()
-            return self.cache_function(self.cache_diffize, lambda: hash((data, bundle)), lambda: self_super.diffize(data, bundle, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
+            return self.cache_function(self.cache_diffize, lambda: hash((data, bundle, environment)), lambda: self_super.diffize(data, bundle, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return ...
 
     def type_check(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> None:
         with trace.enter(self, self.name, data):
             self_super = super()
-            return self.cache_function(self.cache_type_check, lambda: hash(data), lambda: self_super.type_check(data, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
+            return self.cache_function(self.cache_type_check, lambda: hash((data, environment)), lambda: self_super.type_check(data, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return None
 
     def get_tag_paths(self, data: Con.Con[D], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Sequence[DataPath.DataPath]:
         with trace.enter(self, self.name, data):
             store_function:Callable[[Sequence[DataPath.DataPath]], list[DataPath.DataPath]] = lambda output: [data_path.copy() for data_path in output]
+            hash_function = lambda: hash((data, tag, data_path, environment))
             self_super = super()
-            return self.cache_function(self.cache_get_tag_paths, lambda: hash((data, tag, data_path)), lambda: self_super.get_tag_paths(data, tag, data_path, trace, environment), store_function, store_function, environment.structure_environment)
+            return self.cache_function(self.cache_get_tag_paths, hash_function, lambda: self_super.get_tag_paths(data, tag, data_path, trace, environment), store_function, store_function, environment.structure_environment)
         return ()
 
     def get_referenced_files(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> set[int]:
         with trace.enter(self, self.name, data):
             self_super = super()
-            return self.cache_function(self.cache_get_referenced_files, lambda: hash(data), lambda: self_super.get_referenced_files(data, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
+            return self.cache_function(self.cache_get_referenced_files, lambda: hash((data, environment)), lambda: self_super.get_referenced_files(data, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return set()
 
     def compare(self, datas: tuple[tuple[int, Con.Con[D]], ...], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Con.Don[D]|Diff.Diff[Con.Don[D]] | EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
             self_super = super()
-            return self.cache_function(self.cache_compare, lambda: hash(datas), lambda: self_super.compare(datas, trace, environment), lambda a: a, lambda a: a, environment[-1].structure_environment)
+            return self.cache_function(self.cache_compare, lambda: hash((datas, environment)), lambda: self_super.compare(datas, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return ..., False, False
 
     def get_similarity(self, data1: Con.Con[D], data2: Con.Con[D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
-            hash_function = lambda: hash((data1, data2, branch1, branch2))
+            hash_function = lambda: hash((data1, data2, branch1, branch2, environment))
             self_super = super()
-            return self.cache_function(self.cache_get_similarity, hash_function, lambda: self_super.get_similarity(data1, data2, branch1, branch2, trace, environment), lambda a: a, lambda a: a, environment[branch2].structure_environment)
+            return self.cache_function(self.cache_get_similarity, hash_function, lambda: self_super.get_similarity(data1, data2, branch1, branch2, trace, environment), lambda a: a, lambda a: a, environment.structure_environment)
         return 0.0, False
 
     def print_branch(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.name, data):
             store_function = lambda output: self.delegate_store_branch(output, trace, environment)
             retrieve_function = lambda output: self.delegate_retrieve_branch(output, trace, environment)
+            hash_function = (lambda: hash((data, environment, environment.version))) if self.cache_versions_for_delegates else (lambda: hash((data, environment)))
             self_super = super()
-            return self.cache_function(self.cache_print_branch, lambda: hash(data), lambda: self_super.print_branch(data, trace, environment), store_function, retrieve_function, environment.structure_environment)
+            return self.cache_function(self.cache_print_branch, hash_function, lambda: self_super.print_branch(data, trace, environment), store_function, retrieve_function, environment.structure_environment)
         return ...
 
     def print_comparison(self, data: Con.Don[D] | Diff.Diff[Con.Don[D]], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> CO|EllipsisType:
         with trace.enter(self, self.name, data):
             store_function = lambda output: self.delegate_store_comparison(output, trace, environment)
             retrieve_function = lambda output: self.delegate_retrieve_comparison(output, trace, environment)
+            hash_function = (lambda: hash((data, environment, environment.versions, tuple(tuple(item) for item in environment.versions_between)))) if self.cache_versions_for_delegates else (lambda: hash((data, environment)))
             self_super = super()
-            return self.cache_function(self.cache_print_comparison, lambda: hash(data), lambda: self_super.print_comparison(data, trace, environment), store_function, retrieve_function, environment[-1].structure_environment)
+            return self.cache_function(self.cache_print_comparison, hash_function, lambda: self_super.print_comparison(data, trace, environment), store_function, retrieve_function, environment.structure_environment)
         return ...
 
     def clear_old(self) -> None:

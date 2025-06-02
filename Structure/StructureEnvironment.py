@@ -1,6 +1,7 @@
 import enum
 from typing import TYPE_CHECKING
 
+import Component.Types as Types
 import Structure.StructureInfo as StructureInfo
 import Utilities.Exceptions as Exceptions
 
@@ -34,6 +35,10 @@ class StructureEnvironment():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.environment.name} {"caching" if self.should_cache else "uncaching"}>"
 
+    def __hash__(self) -> int:
+        return hash((self.environment, self.domain))
+
+@Types.register_decorator(None, lambda data, type_stuff: hash(data)) # need this for hashing in CacheStructure
 class PrinterEnvironment():
 
     __slots__ = (
@@ -69,6 +74,10 @@ class PrinterEnvironment():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.version} {self.structure_environment} branch {self.branch}>"
 
+    def __hash__(self) -> int:
+        # self.version is excluded
+        return hash((self.structure_environment, self.structure_info, id(self.default_delegate), self.branch))
+
 class ComparisonEnvironment():
 
     __slots__ = (
@@ -92,8 +101,8 @@ class ComparisonEnvironment():
         self.structure_environment = structure_environment
         self.domain = self.structure_environment.domain
         self.default_delegate = default_delegate
-        self.versions = [version[0] for version in versions]
-        self.structure_infos = [version[1] for version in versions]
+        self.versions = tuple(version[0] for version in versions)
+        self.structure_infos = tuple(version[1] for version in versions)
         self.versions_between = versions_between
         self.printer_environments = [PrinterEnvironment(structure_environment, structure_info, default_delegate, version, branch) for branch, (version, structure_info) in enumerate(versions)]
 
@@ -105,3 +114,7 @@ class ComparisonEnvironment():
             return f"<{self.__class__.__name__} [{", ".join(f"\"{version.name}\"" if version is not None else "None" for version in self.versions)}]>"
         else:
             return f"<{self.__class__.__name__} of {len(self.versions)} versions>"
+
+    def __hash__(self) -> int:
+        # versions are excluded
+        return hash((self.structure_environment, self.structure_infos, id(self.default_delegate)))

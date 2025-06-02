@@ -35,6 +35,11 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
     If not present, no checking is done for `keys`.
     '''
 
+    uses_versions:bool = False
+    '''
+    True if this Delegate uses the Versions in any environments. Used for caching
+    '''
+
     applies_to:tuple[type[Structure.Structure]|type[None],...] = (Structure.Structure, type(None))
 
     __slots__ = (

@@ -46,6 +46,8 @@ class PrimitiveDelegate(Delegate.Delegate[
 
     applies_to = (PrimitiveStructure.PrimitiveStructure,)
 
+    uses_versions = True
+
     def __init__(self, structure: PrimitiveStructure.PrimitiveStructure[Any, str, str], keys: dict[str, Any], code:bool=True) -> None:
         super().__init__(structure, keys)
         self.code = code

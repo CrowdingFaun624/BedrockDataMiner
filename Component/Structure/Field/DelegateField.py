@@ -7,7 +7,6 @@ import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
 import Structure.Delegate.Delegate as Delegate
 import Structure.Structure as Structure
-import Structure.StructureBase as StructureBase
 import Utilities.Exceptions as Exceptions
 import Utilities.Trace as Trace
 
@@ -31,7 +30,7 @@ class OptionalDelegateField(Field.Field):
         self.delegate_type:type[Delegate.Delegate]|None
         self.delegate:Delegate.Delegate|None = None
 
-    def create_delegate(self, structure:"Structure.Structure|StructureBase.StructureBase|None", trace:Trace.Trace, keys:dict[str,Any]|None=None) -> Delegate.Delegate|None:
+    def create_delegate(self, structure:"Structure.Structure|None", trace:Trace.Trace, keys:dict[str,Any]|None=None) -> Delegate.Delegate|None:
         '''
         Returns a Delegate or None.
         :structure: The parent Structure of this Delegate.
@@ -76,6 +75,8 @@ class OptionalDelegateField(Field.Field):
             else:
                 delegate_type = functions.delegate_classes.get(self.delegate_name, source_component)
                 self.delegate_type = delegate_type
+            if self.delegate_type is not None and self.delegate_type.uses_versions:
+                source_component.variable_bools["children_has_version_domains"] = True
             return (), ()
         return (), ()
 

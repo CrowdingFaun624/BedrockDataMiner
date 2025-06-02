@@ -37,6 +37,7 @@ class CacheStructureComponent(BranchlessStructureComponent.BranchlessStructureCo
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_cache_structure(
+                cache_versions_for_delegates=self.variable_bools["children_has_version_domains"],
                 delegate=self.delegate_field.create_delegate(self.final, trace),
                 removal_threshold=self.removal_threshold,
             )

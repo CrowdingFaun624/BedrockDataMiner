@@ -24,6 +24,8 @@ class DefaultBaseDelegate[D](Delegate.Delegate[
         TypeVerifier.TypedDictKeyTypeVerifier("name", True, str),
     )
 
+    uses_versions = True
+
     __slots__ = (
         "structure_name",
     )

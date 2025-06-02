@@ -32,6 +32,8 @@ class SoundsDelegate(Delegate.Delegate[
 
     applies_to = (IterableStructure.IterableStructure,)
 
+    uses_versions = True
+
     def print_comparison(
         self,
         data: ICon.IDon[
