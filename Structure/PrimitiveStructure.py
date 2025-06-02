@@ -94,7 +94,7 @@ class PrimitiveStructure[D, BO, CO](Structure.Structure[D, SCon.SCon[D], SCon.SD
 
     def get_similarity(self, data1: SCon.SCon[D], data2: SCon.SCon[D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
-            return float(is_similar := (data1 is data2 or data1 == data2)), is_similar
+            return float(is_similar := (data1 == data2)), is_similar
         return 0.0, False
 
     def print_branch(self, data: SCon.SCon[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:

@@ -192,16 +192,16 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
 
     def get_similarity(self, data1: Con.Con[D], data2: Con.Con[D], branch1: int, branch2: int, trace: Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
-            if data1 is data2 or data1 == data2:
+            if data1 == data2:
                 return 1.0, True
             structure1 = self.get_substructure_chain_end(data1, trace, environment[branch1])
             if structure1 is None:
-                return float(is_similar := (data1 is data2 or data1 == data2)), is_similar
+                return float(is_similar := (data1 == data2)), is_similar
             structure2 = self.get_substructure_chain_end(data2, trace, environment[branch2])
             if structure1 is structure2:
                 return structure1.get_similarity(data1, data2, branch1, branch2, trace, environment)
             else:
-                return float(is_similar := (data1 is data2 or data1 == data2)), is_similar
+                return float(is_similar := (data1 == data2)), is_similar
         return 0.0, False
 
     def print_branch(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:

@@ -88,4 +88,4 @@ class Don[A](ACon[A]):
         return self._containers[branch]
 
     def __eq__(self, value: object) -> bool:
-        return self.hash == value.hash if isinstance(value, Don) else False
+        return self is value or (self.hash == value.hash if isinstance(value, Don) else False)
