@@ -76,7 +76,8 @@ def main() -> None:
     if domain is not None:
         domain.import_components()
         with lock2:
-            PROGRAM_FUNCTIONS[user_input[1]](domain)
+            if user_input[1] is not None:
+                PROGRAM_FUNCTIONS[user_input[1]](domain)
     FileManager.clear_temp()
 
 if __name__ == "__main__":
