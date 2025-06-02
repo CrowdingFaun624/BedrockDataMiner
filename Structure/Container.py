@@ -73,6 +73,10 @@ class Don[A](ACon[A]):
         # Fun Fact: reversed(Mapping) returns an iterator of values, but reversed(dict) returns an iterator of keys!
         return self._containers[cast(int, next(iter(reversed(self._containers))))].data
 
+    @property
+    def last_container(self) -> Con[A]:
+        return self._containers[cast(int, next(iter(reversed(self._containers))))]
+
     def __getitem__(self, branch: int) -> A:
         return self._containers[branch].data
 

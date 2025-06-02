@@ -1,4 +1,4 @@
-from typing import Mapping
+from typing import Mapping, cast
 
 import Domain.Domain as Domain
 import Structure.Container as Con
@@ -41,6 +41,10 @@ class SDon[A](Con.Don[A]):
 
     def get_con(self, branch:int) -> "SCon[A]":
         return self._containers[branch]
+
+    @property
+    def last_container(self) -> SCon[A]:
+        return self._containers[cast(int, next(iter(reversed(self._containers))))]
 
     def __repr__(self) -> str:
         combined_data:list[tuple[tuple[int,...], SCon[A]]] = []

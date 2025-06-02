@@ -34,7 +34,7 @@ def get_change_branches(diff:Diff.Diff) -> list[int]:
 
 
 class PrimitiveDelegate(Delegate.Delegate[
-    Any,
+    SCon.SCon[Any],
     Diff.Diff[SCon.SDon[Any]],
     PrimitiveStructure.PrimitiveStructure[Any, str, str],
     str, Any, str, Any,
@@ -52,7 +52,7 @@ class PrimitiveDelegate(Delegate.Delegate[
 
     def print_comparison(self, data: Diff.Diff[SCon.SDon[Any]], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str | EllipsisType:
         if data.length == 1:
-            return self.print_branch(data.last_value, trace, environment[data.branch_count - 1])
+            return self.print_branch(data.last_value.last_container, trace, environment[data.branch_count - 1])
         else:
             output:list[str] = []
             change_branches = get_change_branches(data)
@@ -65,14 +65,14 @@ class PrimitiveDelegate(Delegate.Delegate[
                 elif item is ...:
                     output.append(f" {{{{Until|BE {get_version(branch, True, environment)}}}}}")
                 else:
-                    print_output = self.print_branch(item, trace, environment[branch])
+                    print_output = self.print_branch(item.get_con(branch), trace, environment[branch])
                     output.append(f"{print_output} {{{{Upcoming|BE {get_version(branch, True, environment)}}}}}")
             return " ".join(output)
 
-    def print_branch(self, data: Any, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> str | EllipsisType:
-        match data:
+    def print_branch(self, data: SCon.SCon[Any], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> str | EllipsisType:
+        match data.data:
             case bool():
-                output = str(data).lower()
+                output = str(data.data).lower()
             case _:
-                output = str(data)
+                output = str(data.data)
         return f"<code>{output}</code>" if self.code else output

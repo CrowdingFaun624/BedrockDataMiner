@@ -1,4 +1,4 @@
-from typing import Hashable, Iterable, Mapping
+from typing import Hashable, Iterable, Mapping, cast
 
 import Structure.Container as Con
 
@@ -72,6 +72,10 @@ class IDon[K:Hashable, V, D, KC:Hashable, VC](Con.Don[D]):
 
     def get_con(self, branch:int) -> "ICon[KC, VC, D]":
         return self._containers[branch]
+
+    @property
+    def last_container(self) -> ICon[KC, VC, D]:
+        return self._containers[cast(int, next(iter(reversed(self._containers))))]
 
     def items(self) -> Iterable[tuple[K, V]]:
         return self._items.items()

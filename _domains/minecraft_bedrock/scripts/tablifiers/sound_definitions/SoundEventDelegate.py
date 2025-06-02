@@ -42,7 +42,7 @@ class SoundEventDelegate(Delegate.Delegate[
 
     applies_to = (KeymapStructure.KeymapStructure,)
 
-    def print_comparison(self, data:ICon.IDon[Diff.Diff[SCon.SDon[str]], Any, SoundEventDiffTypedDict, SCon.SCon[str], Any], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str | EllipsisType:
+    def print_comparison(self, data:ICon.IDon[Diff.Diff[SCon.SDon[str]], Any, SoundEventTypedDict, SCon.SCon[str], Any], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str | EllipsisType:
         data_dict:SoundEventDiffTypedDict = cast(Any, {key.last_value.last_value: value for key, value in data.items()})
 
         sound_event_comparison = "–"
