@@ -35,7 +35,9 @@ class Con[A](ACon[A]):
 
     data: A # NOTE: `data` is not necessarily accurate when the Container comes from comparison.
 
-    __slots__ = ()
+    __slots__ = (
+        "__weakref__",
+    )
 
     def __hash__(self) -> int: # stupid type system forces me to duplicate method.
         return self.hash

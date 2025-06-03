@@ -1,5 +1,5 @@
 from types import EllipsisType
-from typing import Any, Self, Sequence, cast
+from typing import Any, Container, Self, Sequence, cast
 
 import Domain.Domain as Domain
 import Structure.BranchlessStructure as BranchlessStructure
@@ -38,13 +38,17 @@ class StructureBase[D, BO, CO](BranchlessStructure.BranchlessStructure[D, BO, CO
     def finalize(self) -> None:
         self.cache_substructures = [structure for structure in self.get_descendants(set()) if isinstance(structure, CacheStructure.CacheStructure)]
 
-    def clear_old_caches(self) -> None:
+    def clear_old_caches(self, structure_infos:Container[StructureInfo.StructureInfo]) -> None:
         for cache_structure in self.cache_substructures:
             cache_structure.clear_old()
+        for structure in self.get_descendants(set()):
+            structure.clear_similarity_cache(structure_infos)
 
     def clear_all_caches(self) -> None:
         for cache_structure in self.cache_substructures:
             cache_structure.clear_all()
+        for structure in self.get_descendants(set()):
+            structure.clear_similarity_cache(())
 
     def has_tag(self, tag:StructureTag.StructureTag) -> bool:
         return tag in self.children_tags

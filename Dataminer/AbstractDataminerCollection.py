@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Iterable, Sequence
+from typing import Any, Container, Iterable, Sequence
 
 import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Domain.Domain as Domain
@@ -125,9 +125,9 @@ class AbstractDataminerCollection():
         '''Clears all caches of this DataminerCollection's Structure.'''
         self.structure.clear_all_caches()
 
-    def clear_old_caches(self) -> None:
+    def clear_old_caches(self, structure_infos:Container[StructureInfo.StructureInfo]) -> None:
         '''Clears items from caches of this DataminerCollection's Structure and all of its children that are too old.'''
-        self.structure.clear_old_caches()
+        self.structure.clear_old_caches(structure_infos)
 
     def supports_version(self, version:Version.Version) -> bool:
         return True

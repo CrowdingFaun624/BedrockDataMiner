@@ -6,8 +6,10 @@ import Structure.Container as Con
 import Structure.Difference as Diff
 import Structure.IterableContainer as ICon
 import Structure.IterableStructure as IterableStructure
+import Structure.SimilarityCache as SimilarityCache
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureInfo as StructureInfo
 import Utilities.Exceptions as Exceptions
 import Utilities.Trace as Trace
 
@@ -33,6 +35,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         "key_structure",
         "key_weight",
         "max_square_length",
+        "similarity_cache",
         "substitution_cost",
         "value_structure",
         "value_types",
@@ -60,6 +63,11 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         self.value_structure = value_structure
         self.value_types = value_types
         self.value_weight = value_weight
+
+        self.similarity_cache:SimilarityCache.SimilarityCache[Con.Con[D]] = SimilarityCache.SimilarityCache()
+
+    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+        self.similarity_cache.clear(keep)
 
     def get_key_structure(self, key: K, value: V, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure[K, Con.Con[K], Con.Don[K], Con.Don[K]|Diff.Diff[Con.Don[K]], KBO, KCO]|None:
         return self.key_structure
@@ -106,6 +114,8 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
 
     def get_similarity(self, data1: ICon.ICon[Con.Con[K], Con.Con[V], D], data2: ICon.ICon[Con.Con[K], Con.Con[V], D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
+            if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
+                return output
             data1_list = [((branch1, key), (branch1, value)) for key, value in data1.items()]
             data2_list = list(data2.items())
             prefix_len, suffix_len = self.get_prefix_suffix_len(data1_list, data2_list)
@@ -114,7 +124,8 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
             distances, path = self.get_distances(data1_list, data2_list, branch2, prefix_len, suffix_len, trace, environment)
             levenshtein_distance:float = distances[len(data2_list) - prefix_len - suffix_len, len(data1_list) - prefix_len - suffix_len]
             max_length = max(len(data1_list), len(data2_list))
-            return 1 - (levenshtein_distance / max_length), self.path_implies_identicalness(len(data1_list), len(data2_list), prefix_len, suffix_len, path)
+            output = (1 - (levenshtein_distance / max_length), self.path_implies_identicalness(len(data1_list), len(data2_list), prefix_len, suffix_len, path))
+            return self.similarity_cache.set(output, data1, data2, structure_info1, structure_info2)
         return 0.0, False
 
     def get_prefix_suffix_len(self, data1:list[tuple[tuple[int, Con.Con[K]], tuple[int, Con.Con[V]]]], data2:list[tuple[Con.Con[K], Con.Con[V]]]) -> tuple[int, int]:

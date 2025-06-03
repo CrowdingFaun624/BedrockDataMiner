@@ -2,8 +2,10 @@ from itertools import count, takewhile
 from typing import Callable, Sequence
 
 import Structure.PrimitiveStructure as PrimitiveStructure
+import Structure.SimilarityCache as SimilarityCache
 import Structure.SimpleContainer as SCon
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureInfo as StructureInfo
 import Utilities.Exceptions as Exceptions
 import Utilities.Trace as Trace
 
@@ -12,6 +14,7 @@ class StringStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
 
     __slots__ = (
         "max_square_length",
+        "similarity_cache",
         "similarity_function",
         "similarity_weight_function",
     )
@@ -25,6 +28,11 @@ class StringStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
         self.max_square_length = max_square_length
         self.similarity_function = similarity_function
         self.similarity_weight_function = similarity_weight_function
+
+        self.similarity_cache:SimilarityCache.SimilarityCache[SCon.SCon[D]] = SimilarityCache.SimilarityCache()
+
+    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+        self.similarity_cache.clear(keep)
 
     def get_levenshtein_distance(self, data1:str, data2:str, similarity_weight1:Sequence[int], similarity_weight2:Sequence[int]) -> int:
         prefix_len = sum(1 for i in takewhile(lambda a: a[0] == a[1], zip(data1, data2))) # number of items at start that are the same
@@ -49,15 +57,18 @@ class StringStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
 
     def get_similarity(self, data1: SCon.SCon[D], data2: SCon.SCon[D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
+            if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
+                return output
             data1_str = self.similarity_function(data1)
             data2_str = self.similarity_function(data2)
             similarity_weight1 = self.similarity_weight_function(data1_str)
             similarity_weight2 = self.similarity_weight_function(data2_str)
             if len(data1_str) == 0 and len(data2_str) == 0:
-                return 1.0, True
+                return self.similarity_cache.set((1.0, True), data1, data2, structure_info1, structure_info2)
             elif data1_str == data2_str:
-                return 1.0, data1 == data2 # the one situation where the boolean may not necessarily equal the float.
+                # the one situation where the boolean may not necessarily equal the float.
+                return self.similarity_cache.set((1.0, data1 == data2), data1, data2, structure_info1, structure_info2)
             max_weight = sum(similarity_weight1) + sum(similarity_weight2)
             levenshtein_distance = self.get_levenshtein_distance(data1_str, data2_str, similarity_weight1, similarity_weight2)
-            return 1 - (levenshtein_distance / max_weight), levenshtein_distance == 0
+            return self.similarity_cache.set((1 - (levenshtein_distance / max_weight), levenshtein_distance == 0), data1, data2, structure_info1, structure_info2)
         return 0.0, False

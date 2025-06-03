@@ -5,7 +5,9 @@ import Structure.Container as Con
 import Structure.Difference as Diff
 import Structure.IterableContainer as ICon
 import Structure.IterableStructure as IterableStructure
+import Structure.SimilarityCache as SimilarityCache
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureInfo as StructureInfo
 import Utilities.Trace as Trace
 
 
@@ -49,6 +51,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         "key_moves_ever_allowed",
         "min_key_similarity_threshold",
         "min_value_similarity_threshold",
+        "similarity_cache",
     )
 
     def link_mapping_structure(
@@ -63,6 +66,11 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         '''
         self.min_key_similarity_threshold = min_key_similarity_threshold
         self.min_value_similarity_threshold = min_value_similarity_threshold
+
+        self.similarity_cache:SimilarityCache.SimilarityCache[Con.Con[D]] = SimilarityCache.SimilarityCache()
+
+    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+        self.similarity_cache.clear(keep)
 
     def allow_key_move(self, key1:Con.Con[K], key2:Con.Con[K], value1:Con.Con[V], value2:Con.Con[V], branch1:int, branch2:int, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> bool:
         return True
@@ -139,6 +147,8 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
 
     def get_similarity(self, data1: ICon.ICon[Con.Con[K], Con.Con[V], D], data2: ICon.ICon[Con.Con[K], Con.Con[V], D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, float]:
         with trace.enter(self, self.name, (data1, data2)):
+            if (output := self.similarity_cache.get(data1, data2, structure_info1 := (environment[branch1].structure_info), structure_info2 := (environment[branch2].structure_info))) is not None:
+                return output
             similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con.Con[K], Con.Con[V]]] = []
             data1_list = list(data1.items())
             data1_mapping = {key: (index, branch1) for index, (key, _) in enumerate(data1_list)}
@@ -159,7 +169,8 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                 used_indices2.add(index2)
                 cumulative_similarity += similarity * similarity_weight
                 identical = identical and (keys_identical or key_weight == 0) and (values_identical or value_weight == 0)
-            return (cumulative_similarity / maximum_similarity) if maximum_similarity != 0 else 1.0, identical and cumulative_similarity == maximum_similarity
+            output = (cumulative_similarity / maximum_similarity) if maximum_similarity != 0 else 1.0, identical and cumulative_similarity == maximum_similarity
+            return self.similarity_cache.set(output, data1, data2, structure_info1, structure_info2)
         return 0.0, False
 
     def get_best_key_value_pair[A, B](

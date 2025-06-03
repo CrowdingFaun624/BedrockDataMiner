@@ -6,8 +6,10 @@ import Structure.Container as Con
 import Structure.DataPath as DataPath
 import Structure.Difference as Diff
 import Structure.Normalizer as Normalizer
+import Structure.SimilarityCache as SimilarityCache
 import Structure.Structure as Structure
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureInfo as StructureInfo
 import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
 import Utilities.Trace as Trace
@@ -22,6 +24,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
         "normalizers",
         "post_normalizers",
         "pre_normalized_types",
+        "similarity_cache",
         "tags",
     )
 
@@ -36,6 +39,11 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
         self.post_normalizers = post_normalizers
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
+
+        self.similarity_cache:SimilarityCache.SimilarityCache[Con.Con[D]] = SimilarityCache.SimilarityCache()
+
+    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+        self.similarity_cache.clear(keep)
 
     def get_structure(self, data:D, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None:
         '''
@@ -194,14 +202,16 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
         with trace.enter(self, self.name, (data1, data2)):
             if data1 == data2:
                 return 1.0, True
-            structure1 = self.get_substructure_chain_end(data1, trace, environment[branch1])
+            if (output := self.similarity_cache.get(data1, data2, (environment1 := environment[branch1]).structure_info, (environment2 := environment[branch2]).structure_info)) is not None:
+                return output
+            structure1 = self.get_substructure_chain_end(data1, trace, environment1)
             if structure1 is None:
-                return float(is_similar := (data1 == data2)), is_similar
-            structure2 = self.get_substructure_chain_end(data2, trace, environment[branch2])
+                return self.similarity_cache.set((float(is_similar := (data1 == data2)), is_similar), data1, data2, environment1.structure_info, environment2.structure_info)
+            structure2 = self.get_substructure_chain_end(data2, trace, environment2)
             if structure1 is structure2:
-                return structure1.get_similarity(data1, data2, branch1, branch2, trace, environment)
+                return self.similarity_cache.set(structure1.get_similarity(data1, data2, branch1, branch2, trace, environment), data1, data2, environment1.structure_info, environment2.structure_info)
             else:
-                return float(is_similar := (data1 == data2)), is_similar
+                return self.similarity_cache.set((float(is_similar := (data1 == data2)), is_similar), data1, data2, environment1.structure_info, environment2.structure_info)
         return 0.0, False
 
     def print_branch(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:

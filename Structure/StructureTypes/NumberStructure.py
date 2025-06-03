@@ -2,8 +2,10 @@ from math import exp
 from typing import Callable
 
 import Structure.PrimitiveStructure as PrimitiveStructure
+import Structure.SimilarityCache as SimilarityCache
 import Structure.SimpleContainer as SCon
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureInfo as StructureInfo
 import Utilities.Trace as Trace
 
 
@@ -11,6 +13,7 @@ class NumberStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
 
     __slots__ = (
         "normal_value",
+        "similarity_cache",
         "similarity_function",
     )
 
@@ -22,12 +25,19 @@ class NumberStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
         self.normal_value = normal_value
         self.similarity_function = similarity_function
 
+        self.similarity_cache:SimilarityCache.SimilarityCache[SCon.SCon[D]] = SimilarityCache.SimilarityCache()
+
+    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+        self.similarity_cache.clear(keep)
+
     def get_similarity(self, data1: SCon.SCon[D], data2: SCon.SCon[D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
+            if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
+                return output
             data1_num = self.similarity_function(data1)
             data2_num = self.similarity_function(data2)
             if data1_num == data2_num:
-                return 1.0, True
+                return self.similarity_cache.set((1.0, True), data1, data2, structure_info1, structure_info2)
             # normal curve
-            return exp(-0.5 * ((data1_num - data2_num) / self.normal_value) ** 2), False
+            return self.similarity_cache.set((exp(-0.5 * ((data1_num - data2_num) / self.normal_value) ** 2), False), data1, data2, structure_info1, structure_info2)
         return 0.0, False

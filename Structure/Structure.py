@@ -1,11 +1,12 @@
 from types import EllipsisType
-from typing import Mapping, Sequence
+from typing import Container, Mapping, Sequence
 
 import Structure.Container as Con
 import Structure.DataPath as DataPath
 import Structure.Difference as Diff
 import Structure.Normalizer as Normalizer
 import Structure.StructureEnvironment as StructureEnvironment
+import Structure.StructureInfo as StructureInfo
 import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
 import Utilities.Trace as Trace
@@ -42,6 +43,9 @@ class Structure[A, B:Con.Con, C:Con.Don, D:Con.Don|Diff.Diff, BO, CO]():
         self.children_has_garbage_collection = children_has_garbage_collection
         self.children_has_normalizer = children_has_normalizer
         self.children_tags = children_tags
+
+    def clear_similarity_cache(self, keep:Container[StructureInfo.StructureInfo]) -> None:
+        pass # implemented if the Structure type has a SimilarityCache.
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.full_name}>"

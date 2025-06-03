@@ -25,7 +25,7 @@ def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
             version.get_referenced_files(referenced_files)
             for dataminer_collection in dataminer_collections.values():
                 dataminer_collection.get_referenced_files(version, structure_tags, referenced_files)
-                dataminer_collection.clear_old_caches()
+                dataminer_collection.clear_old_caches({dataminer_collection.get_structure_info(version)})
         for dataminer_collection in dataminer_collections.values():
             dataminer_collection.clear_all_caches()
     existing_files:set[int] = set()
