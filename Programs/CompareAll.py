@@ -86,12 +86,8 @@ def main(domain:Domain.Domain) -> None:
 
     sorted_versions = list(chain.from_iterable(child_versions for child_versions in major_versions.values()))
     exception_holder:dict[str,bool|tuple[Exception,Version.Version|None,Version.Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
-    import time
-    t1 = time.time()
     for dataminer_collection in selected_dataminers:
         compare_all_of(domain, dataminer_collection, sorted_versions, exception_holder)
-    t2 = time.time()
-    print(f"Finished in {t2 - t1} seconds!")
 
     excepted = False
     excepted_threads:list[tuple[str,Version.Version|None,Version.Version|None]] = []
