@@ -1,13 +1,13 @@
 from collections import defaultdict
 from typing import Any, NotRequired, Required, Sequence, TypedDict, cast
 
-import Domain.Domains as Domains
-import Serializer.Serializer as Serializer
-import Structure.SimpleContainer as SCon
-import Utilities.File as File
+from Domain.Domains import get_domain_from_module
+from Serializer.Serializer import Serializer
+from Structure.SimpleContainer import SCon
+from Utilities.File import FakeFile, File
 
-domain = Domains.get_domain_from_module(__name__)
-json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer.Serializer)
+domain = get_domain_from_module(__name__)
+json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
 
 __all__ = (
     "animation_controllers_fix_old",
@@ -138,7 +138,7 @@ def biomes_normalize_old(data:biomes_normalize_old_input_typed_dict|biomes_norma
     del output["minecraft:biome"]["components"]["format_version"]
     return output
 
-def blocks_client_normalize(data:dict[str,File.File[dict[str,Any]]]) -> File.FakeFile[dict[str,dict[str,Any]]]:
+def blocks_client_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
     for pack_name, blocks in data.items():
@@ -149,7 +149,7 @@ def blocks_client_normalize(data:dict[str,File.File[dict[str,Any]]]) -> File.Fak
                 output[block_name] = {}
             output[block_name][pack_name] = block_data
     combined_hash = hash(tuple(file_hashes))
-    return File.FakeFile("combined_blocks_file", output, None, combined_hash)
+    return FakeFile("combined_blocks_file", output, None, combined_hash)
 
 def categories_normalize(data:dict[str,dict[str,str]]) -> dict[str,dict[str,dict[str,str]]]:
     output:dict[str,dict[str,dict[str,str]]] = {}
@@ -192,7 +192,7 @@ def entities_client_fix_old(data:entities_client_fix_old_input_type|entities_cli
 
 item_textures_data_typed_dict = TypedDict("item_textures_data_typed_dict", {"texture_data": dict[str,Any]})
 
-def item_textures_normalize(data:dict[str,File.File[item_textures_data_typed_dict]]) -> File.FakeFile[dict[str,dict[str,Any]]]:
+def item_textures_normalize(data:dict[str,File[item_textures_data_typed_dict]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
     for resource_pack_name, item_textures_file in data.items():
@@ -202,7 +202,7 @@ def item_textures_normalize(data:dict[str,File.File[item_textures_data_typed_dic
             if item not in output:
                 output[item] = {}
             output[item][resource_pack_name] = item_data
-    return File.FakeFile("combined_item_textures_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_item_textures_file", output, None, hash(tuple(file_hashes)))
 
 class ItemClientOffsetItemTypedDict(TypedDict):
     VR_hand_controller_position_adjust: Required[list[float]]
@@ -212,14 +212,14 @@ class ItemClientOffsetItemTypedDict(TypedDict):
 class ItemClientOffsetFileTypedDict(TypedDict):
     render_offsets: Required[dict[str,ItemClientOffsetItemTypedDict]]
 
-def items_client_offset_normalize(data:dict[str,File.File[ItemClientOffsetFileTypedDict]]) -> File.FakeFile[dict[str,dict[str,ItemClientOffsetItemTypedDict]]]:
+def items_client_offset_normalize(data:dict[str,File[ItemClientOffsetFileTypedDict]]) -> FakeFile[dict[str,dict[str,ItemClientOffsetItemTypedDict]]]:
     output:dict[str,dict[str,ItemClientOffsetItemTypedDict]] = {}
     file_hashes:list[int] = []
     for resource_pack_name, file in data.items():
         file_data = file.read(json_serializer.get())
         file_hashes.append(hash(file))
         output[resource_pack_name] = file_data["render_offsets"]
-    return File.FakeFile("combined_items_client_offset_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_items_client_offset_file", output, None, hash(tuple(file_hashes)))
 
 def language_names_normalize(data:list[list[str]]) -> dict[str,str]:
     return dict(data)
@@ -265,7 +265,7 @@ def models_file_similarity_weight(data:str) -> Sequence[int]:
         string_index += len(item) + 1
     return output
 
-def music_definitions_normalize(data:dict[str,File.File[dict[str,Any]]]) -> File.FakeFile[dict[str,dict[str,Any]]]:
+def music_definitions_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     output:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
     for pack_name, music_definitions_file in data.items():
@@ -275,9 +275,9 @@ def music_definitions_normalize(data:dict[str,File.File[dict[str,Any]]]) -> File
             if environment_name not in output:
                 output[environment_name] = {}
             output[environment_name][pack_name] = environment_data
-    return File.FakeFile("combined_music_definitions_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_music_definitions_file", output, None, hash(tuple(file_hashes)))
 
-def normalize_sound_definitions(data:dict[str,File.File[dict[str,Any]]]) -> File.FakeFile[dict[str,dict[str,Any]]]:
+def normalize_sound_definitions(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     # resource packs are always the top level.
     # inside resource pack, it's sometimes wrapped in {"sound_definitions": dict_of_sound_events}
     output:dict[str,dict[str,Any]] = {}
@@ -291,10 +291,10 @@ def normalize_sound_definitions(data:dict[str,File.File[dict[str,Any]]]) -> File
             if event_name not in output:
                 output[event_name] = {}
             output[event_name][pack_name] = event_data
-    return File.FakeFile("combined_sound_definitions_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_sound_definitions_file", output, None, hash(tuple(file_hashes)))
 
-def open_file[A](data:A|File.File[A], serializer:str) -> A|None:
-    if isinstance(data, File.File):
+def open_file[A](data:A|File[A], serializer:str) -> A|None:
+    if isinstance(data, File):
         return data.read(domain.script_referenceable.get(serializer))
 
 packs_normalize_pack_typed_dict = TypedDict("packs_normalize_pack_typed_dict", {"path": str, "name": str})
@@ -357,10 +357,10 @@ def recipes_fix_old(data:dict[str,Any]) -> dict[str,dict[str,Any]]|None:
     del data["type"]
     return output
 
-def remove_minecraft_prefix(data:SCon.SCon[str]) -> str:
+def remove_minecraft_prefix(data:SCon[str]) -> str:
     return data.data.removeprefix("minecraft:")
 
-def remove_file_suffix(data:SCon.SCon[str]) -> str:
+def remove_file_suffix(data:SCon[str]) -> str:
     split_data = data.data.split(".")
     # some file names are like "donkey.v1.2.6.entity.json"; I want to include the v1.2.6.
     if len(indexes := [index for index, item in enumerate(split_data) if item.isdigit()]) > 0:
@@ -393,7 +393,7 @@ class SkinsNormalizeInputTypedDict(TypedDict):
 class SkinsNormalizeOutputTypedDict(TypedDict):
     skins: list[dict[str,Any]]
 
-def skins_normalize(data:dict[str,File.File[SkinsNormalizeInputTypedDict]], other_keys:list[str]) -> File.FakeFile[SkinsNormalizeOutputTypedDict]:
+def skins_normalize(data:dict[str,File[SkinsNormalizeInputTypedDict]], other_keys:list[str]) -> FakeFile[SkinsNormalizeOutputTypedDict]:
     output:SkinsNormalizeOutputTypedDict = {
         "skins": [],
     }
@@ -408,7 +408,7 @@ def skins_normalize(data:dict[str,File.File[SkinsNormalizeInputTypedDict]], othe
             output["skins"].append(skin)
         for other_key in other_keys:
             output[other_key][pack_name] = skins_data[other_key]
-    return File.FakeFile("combined_skins_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_skins_file", output, None, hash(tuple(file_hashes)))
 
 def sound_definitions_make_strings_to_dict(data:Any) -> Any:
     if isinstance(data, str):
@@ -477,7 +477,7 @@ def spawn_rules_normalize_herd(data:dict[str,Any]|list[dict[str,Any]]) -> list[d
     if isinstance(data, dict):
         return [data]
 
-def terrain_textures_normalize(data:dict[str,File.File[dict[str,Any]]]) -> File.FakeFile[dict[str,dict[str,Any]]]:
+def terrain_textures_normalize(data:dict[str,File[dict[str,Any]]]) -> FakeFile[dict[str,dict[str,Any]]]:
     other_keys = {"texture_name": {}, "padding": {}, "num_mip_levels": {}}
     texture_data:dict[str,dict[str,Any]] = {}
     file_hashes:list[int] = []
@@ -493,9 +493,9 @@ def terrain_textures_normalize(data:dict[str,File.File[dict[str,Any]]]) -> File.
             texture_data[terrain][resource_pack_name] = terrain_data
     output = other_keys
     output["texture_data"] = texture_data
-    return File.FakeFile("combined_terrain_textures_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_terrain_textures_file", output, None, hash(tuple(file_hashes)))
 
-def texture_list_normalize(data:dict[str,File.File[list[str]]], serializer:str) -> File.FakeFile[dict[str,list[str]]]:
+def texture_list_normalize(data:dict[str,File[list[str]]], serializer:str) -> FakeFile[dict[str,list[str]]]:
     _serializer = domain.serializers[serializer]
     output:defaultdict[str,list[str]] = defaultdict(lambda: [])
     file_hashes:list[int] = []
@@ -504,7 +504,7 @@ def texture_list_normalize(data:dict[str,File.File[list[str]]], serializer:str) 
         file_hashes.append(hash(textures_file))
         for texture in textures:
             output[texture].append(resource_pack)
-    return File.FakeFile("combined_texture_list_file", dict(output), None, hash(tuple(file_hashes)))
+    return FakeFile("combined_texture_list_file", dict(output), None, hash(tuple(file_hashes)))
 
 def textures_split_lines(data:list[str]|str) -> list[str]|None:
     if isinstance(data, str):

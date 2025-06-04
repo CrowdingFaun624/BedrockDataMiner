@@ -2,14 +2,14 @@ import subprocess
 from typing import Iterator, Optional
 
 import Domain.Domain as Domain
-import Domain.Domains as Domains
-import Utilities.Cache as Cache
-import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
-import Utilities.FileStorage as FileStorage
+from Domain.Domains import get_domain_from_module
+from Utilities.Cache import JsonCache
+from Utilities.Exceptions import DataminerException, message
+from Utilities.FileManager import get_hash_hexdigest, get_temp_file_path
+from Utilities.FileStorage import archive_data, read_archived
 
 
-class SoundFilesExtractionError(Exceptions.DataminerException):
+class SoundFilesExtractionError(DataminerException):
     "Failure to extract from an FSB file."
 
     def __init__(self, exit_code:int, message:Optional[str]=None) -> None:
@@ -22,9 +22,9 @@ class SoundFilesExtractionError(Exceptions.DataminerException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Failed to extract FSB file; returned exit code {self.exit_code}{Exceptions.message(self.message)}"
+        return f"Failed to extract FSB file; returned exit code {self.exit_code}{message(self.message)}"
 
-class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
+class FsbCache(JsonCache[dict[str,dict[str,str]]]):
 
     def __init__(self, domain:"Domain.Domain") -> None:
         domain.data_directory.mkdir(exist_ok=True)
@@ -37,17 +37,17 @@ class FsbCache(Cache.JsonCache[dict[str,dict[str,str]]]):
         self.get()[fsb_hash] = data
         self.write()
 
-fsb_cache = FsbCache(Domains.get_domain_from_module(__name__))
+fsb_cache = FsbCache(get_domain_from_module(__name__))
 
 def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
-    domain = Domains.get_domain_from_module(__name__)
-    fsb_file_hash = FileManager.get_hash_hexdigest(input_file)
+    domain = get_domain_from_module(__name__)
+    fsb_file_hash = get_hash_hexdigest(input_file)
     cache_data = fsb_cache.get().get(fsb_file_hash)
     if cache_data is not None:
-        yield from ((cached_file_path, FileStorage.read_archived(cached_file_hash)) for cached_file_path, cached_file_hash in cache_data.items())
+        yield from ((cached_file_path, read_archived(cached_file_hash)) for cached_file_path, cached_file_hash in cache_data.items())
         return
 
-    temp_directory = FileManager.get_temp_file_path()
+    temp_directory = get_temp_file_path()
     temp_directory.mkdir()
     temp_file = temp_directory.joinpath("fsb.fsb")
     # copying file to temp directory
@@ -66,7 +66,7 @@ def extract_fsb_file(input_file:bytes) -> Iterator[tuple[str,bytes]]:
     for result_file_path in result_file_paths:
         with open(result_file_path, "rb") as f:
             contents = f.read()
-            result_file_hashes[result_file_path.name] = FileStorage.archive_data(contents, result_file_path.name)
+            result_file_hashes[result_file_path.name] = archive_data(contents, result_file_path.name)
             yield result_file_path.name, contents
     fsb_cache.new_item(fsb_file_hash, result_file_hashes)
 

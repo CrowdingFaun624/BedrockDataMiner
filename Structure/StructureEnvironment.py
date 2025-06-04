@@ -1,14 +1,14 @@
 import enum
 from typing import TYPE_CHECKING
 
-import Component.Types as Types
-import Structure.StructureInfo as StructureInfo
-import Utilities.Exceptions as Exceptions
+import Domain.Domain as Domain
+from Component.Types import register_decorator
+from Structure.StructureInfo import StructureInfo
+from Utilities.Exceptions import AttributeNoneError
 
 if TYPE_CHECKING:
-    import Domain.Domain as Domain
-    import Structure.Delegate.Delegate as Delegate
-    import Version.Version as Version
+    from Structure.Delegate.Delegate import Delegate
+    from Version.Version import Version
 
 class EnvironmentType(enum.Enum):
     all_datamining = "all_datamining"
@@ -38,7 +38,7 @@ class StructureEnvironment():
     def __hash__(self) -> int:
         return hash((self.environment, self.domain))
 
-@Types.register_decorator(None, lambda data, type_stuff: hash(data)) # need this for hashing in CacheStructure
+@register_decorator(None, lambda data, type_stuff: hash(data)) # need this for hashing in CacheStructure
 class PrinterEnvironment():
 
     __slots__ = (
@@ -53,9 +53,9 @@ class PrinterEnvironment():
     def __init__(
         self,
         structure_environment:StructureEnvironment,
-        structure_info:StructureInfo.StructureInfo,
-        default_delegate:"Delegate.Delegate|None",
-        version:"Version.Version",
+        structure_info:StructureInfo,
+        default_delegate:"Delegate|None",
+        version:"Version",
         branch:int,
     ) -> None:
         self.structure_environment = structure_environment
@@ -65,10 +65,10 @@ class PrinterEnvironment():
         self.version = version
         self.branch = branch
 
-    def get_version(self) -> "Version.Version":
+    def get_version(self) -> "Version":
         '''Returns this PrinterEnvironment's Version. Raises an error if it is None.'''
         if self.version is None:
-            raise Exceptions.AttributeNoneError("version", self)
+            raise AttributeNoneError("version", self)
         return self.version
 
     def __repr__(self) -> str:
@@ -94,9 +94,9 @@ class ComparisonEnvironment():
     def __init__(
         self,
         structure_environment:StructureEnvironment,
-        default_delegate:"Delegate.Delegate|None",
-        versions:list[tuple["Version.Version",StructureInfo.StructureInfo]],
-        versions_between:list[list["Version.Version"]], # has a length of len(versions) - 1
+        default_delegate:"Delegate|None",
+        versions:list[tuple["Version",StructureInfo]],
+        versions_between:list[list["Version"]], # has a length of len(versions) - 1
     ) -> None:
         self.structure_environment = structure_environment
         self.domain = self.structure_environment.domain

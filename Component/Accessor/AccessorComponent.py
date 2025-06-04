@@ -1,20 +1,25 @@
-from typing import Any, Sequence, cast
+from typing import TYPE_CHECKING, Any, Sequence, cast
 
-import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
-import Component.Capabilities as Capabilities
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentField as ComponentField
-import Component.Field.Field as Field
-import Component.Pattern as Pattern
-import Component.Version.VersionComponent as VersionComponent
-import Component.Version.VersionFileComponent as VersionFileComponent
 import Domain.Domain as Domain
-import Downloader.Accessor as Accessor
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.Accessor.AccessorTypeComponent import (
+    ACCESSOR_TYPE_PATTERN,
+    AccessorTypeComponent,
+)
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.ComponentTyping import AccessorTypedDict
+from Component.Field.ComponentField import ComponentField
+from Component.Field.Field import Field, InlinePermissions
+from Component.Pattern import Pattern
+from Downloader.Accessor import Accessor
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-ACCESSOR_PATTERN:Pattern.Pattern["AccessorComponent"] = Pattern.Pattern("is_accessor")
+if TYPE_CHECKING:
+    from Component.Version.VersionComponent import VersionComponent
+    from Component.Version.VersionFileComponent import VersionFileComponent
+
+ACCESSOR_PATTERN:Pattern["AccessorComponent"] = Pattern("is_accessor")
 
 class AccessorCreator():
 
@@ -30,9 +35,9 @@ class AccessorCreator():
     def __init__(
         self,
         domain:"Domain.Domain",
-        version_file_component:"VersionFileComponent.VersionFileComponent",
-        version_component:"VersionComponent.VersionComponent",
-        accessor_type_field:ComponentField.ComponentField["AccessorTypeComponent.AccessorTypeComponent"],
+        version_file_component:"VersionFileComponent",
+        version_component:"VersionComponent",
+        accessor_type_field:ComponentField["AccessorTypeComponent"],
         arguments:dict[str,Any],
     ) -> None:
         self.domain = domain
@@ -40,9 +45,9 @@ class AccessorCreator():
         self.version_component = version_component
         self.accessor_type_field = accessor_type_field
         self.arguments = arguments
-        self.accessor:Accessor.Accessor|None = None
+        self.accessor:Accessor|None = None
 
-    def create_accessor(self, trace:Trace.Trace) -> Accessor.Accessor|None:
+    def create_accessor(self, trace:Trace) -> Accessor|None:
         if self.accessor is None:
             self.accessor = self.accessor_type_field.subcomponent.final.create_accessor(
                 trace,
@@ -59,14 +64,14 @@ class AccessorCreator():
         del self.version_component
         del self.accessor_type_field
 
-class AccessorComponent(Component.Component[AccessorCreator]):
+class AccessorComponent(Component[AccessorCreator]):
 
     class_name = "Accessor"
-    my_capabilities = Capabilities.Capabilities(is_accessor=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("accessor_type", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("arguments", True, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    my_capabilities = Capabilities(is_accessor=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("accessor_type", True, str),
+        TypedDictKeyTypeVerifier("arguments", True, dict),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (
@@ -74,19 +79,19 @@ class AccessorComponent(Component.Component[AccessorCreator]):
         "accessor_type_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.AccessorTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: AccessorTypedDict) -> Sequence[Field]:
         self.arguments = data["arguments"]
-        self.accessor_type_field = ComponentField.ComponentField(data["accessor_type"], AccessorTypeComponent.ACCESSOR_TYPE_PATTERN, ("accessor_type",), allow_inline=Field.InlinePermissions.reference, assume_component_group="accessor_types")
+        self.accessor_type_field = ComponentField(data["accessor_type"], ACCESSOR_TYPE_PATTERN, ("accessor_type",), allow_inline=InlinePermissions.reference, assume_component_group="accessor_types")
         return (self.accessor_type_field,)
 
-    def create_final(self, trace:Trace.Trace) -> AccessorCreator:
+    def create_final(self, trace:Trace) -> AccessorCreator:
         return AccessorCreator(
             self.domain,
-            cast("VersionFileComponent.VersionFileComponent", self.get_inline_parent()), cast("VersionComponent.VersionComponent", self.get_inline_parent().get_inline_parent()),
+            cast("VersionFileComponent", self.get_inline_parent()), cast("VersionComponent", self.get_inline_parent().get_inline_parent()),
             self.accessor_type_field, self.arguments
         )
 
-    def finalize(self, trace:Trace.Trace) -> None:
+    def finalize(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().finalize(trace)
             self.final.create_accessor(trace) # just test errors

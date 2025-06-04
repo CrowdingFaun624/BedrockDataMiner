@@ -1,29 +1,31 @@
 from typing import Sequence
 
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Version.Field.VersionRangeField as VersionRangeField
-import Component.Version.VersionComponent as VersionComponent
-import Component.VersionTag.VersionTagAutoAssignerComponent as VersionTagAutoAssignerComponent
-import Utilities.TypeVerifier as TypeVerifier
+from Component.ComponentTyping import RangeVersionTagAutoAssignerTypedDict
+from Component.Field.Field import Field
+from Component.Version.Field.VersionRangeField import VersionRangeField
+from Component.Version.VersionComponent import VersionComponent
+from Component.VersionTag.VersionTagAutoAssignerComponent import (
+    VersionTagAutoAssignerComponent,
+)
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent.VersionTagAutoAssignerComponent):
+class RangeVersionTagAutoAssignerComponent(VersionTagAutoAssignerComponent):
 
     class_name = "RangeVersionTagAutoAssigner"
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("newest", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("oldest", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("newest", True, (str, type(None))),
+        TypedDictKeyTypeVerifier("oldest", True, (str, type(None))),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (
         "version_range_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.RangeVersionTagAutoAssignerTypedDict) -> Sequence[Field.Field]:
-        self.version_range_field = VersionRangeField.VersionRangeField(data["oldest"], data["newest"], ("oldest/newest",), ("oldest",), ("newest",))
+    def initialize_fields(self, data: RangeVersionTagAutoAssignerTypedDict) -> Sequence[Field]:
+        self.version_range_field = VersionRangeField(data["oldest"], data["newest"], ("oldest/newest",), ("oldest",), ("newest",))
         return (self.version_range_field,)
 
-    def contains_version(self, version: "VersionComponent.VersionComponent") -> bool:
+    def contains_version(self, version: "VersionComponent") -> bool:
         return version in self.version_range_field

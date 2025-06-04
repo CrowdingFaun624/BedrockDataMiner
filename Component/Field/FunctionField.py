@@ -1,14 +1,14 @@
 from typing import Callable, Sequence
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Field.FieldContainer as FieldContainer
-import Component.ScriptImporter as ScriptImporter
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ComponentTyping import CreateComponentFunction
+from Component.Field.Field import Field
+from Component.Field.FieldContainer import FieldContainer
+from Component.ScriptImporter import ScriptSetSetSet
+from Utilities.Trace import Trace
 
 
-class FunctionField(Field.Field):
+class FunctionField(Field):
 
     __slots__ = (
         "function",
@@ -26,20 +26,20 @@ class FunctionField(Field.Field):
 
     def set_field(
         self,
-        source_component:"Component.Component",
-        components:dict[str,"Component.Component"],
-        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
-        functions:ScriptImporter.ScriptSetSetSet,
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
-    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
+        source_component:"Component",
+        components:dict[str,"Component"],
+        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        functions:ScriptSetSetSet,
+        create_component_function:CreateComponentFunction,
+        trace:Trace,
+    ) -> tuple[Sequence["Component"],Sequence["Component"]]:
         with trace.enter_keys(self.trace_path, self.function_name):
             function = functions.callables.get(self.function_name, source_component)
             self.function = function
             return (), ()
         return (), ()
 
-class OptionalFunctionField(FieldContainer.FieldContainer):
+class OptionalFunctionField(FieldContainer):
 
     __slots__ = (
         "function_field",

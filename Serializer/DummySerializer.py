@@ -1,12 +1,12 @@
 import Domain.Domain as Domain
-import Serializer.Serializer as Serializer
-import Utilities.TypeVerifier as TypeVerifier
+from Serializer.Serializer import Serializer
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class DummySerializer(Serializer.Serializer):
+class DummySerializer(Serializer):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("empty_okay", False, bool),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("empty_okay", False, bool),
     )
 
     def __init__(self, name: str, domain:"Domain.Domain", empty_okay:bool=False) -> None:

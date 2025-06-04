@@ -2,21 +2,21 @@ import enum
 from types import EllipsisType
 from typing import Iterable, Mapping, Sequence
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Pattern as Pattern
-import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
+from Component.Pattern import Pattern
+from Component.ScriptImporter import ScriptSetSetSet
+from Utilities.Trace import Trace
 
 
 def get_options(
-    source_component:"Component.Component",
-    pattern:Pattern.Pattern,
+    source_component:"Component",
+    pattern:Pattern,
     assume_component_group:str|None,
-    local_components:Mapping[str,"Component.Component"],
-    global_components:Mapping[str,Mapping[str,Mapping[str,"Component.Component"]]],
+    local_components:Mapping[str,"Component"],
+    global_components:Mapping[str,Mapping[str,Mapping[str,"Component"]]],
     other_options:Iterable[str]|None,
 ) -> list[str]:
     options:list[str] = []
@@ -56,15 +56,15 @@ class InlinePermissions(enum.Enum):
     reference = 2
     "Only reference Components are allowed."
 
-def choose_component[a: Component.Component](
-        component_data:str|ComponentTyping.ComponentTypedDicts,
-        source_component:"Component.Component",
-        pattern:Pattern.Pattern[a],
-        local_components:Mapping[str,"Component.Component"],
-        global_components:Mapping[str,Mapping[str,Mapping[str,"Component.Component"]]],
-        trace:Trace.Trace,
+def choose_component[a: Component](
+        component_data:str|ComponentTypedDicts,
+        source_component:"Component",
+        pattern:Pattern[a],
+        local_components:Mapping[str,"Component"],
+        global_components:Mapping[str,Mapping[str,Mapping[str,"Component"]]],
+        trace:Trace,
         keys:tuple[str,...],
-        create_component_function:ComponentTyping.CreateComponentFunction,
+        create_component_function:CreateComponentFunction,
         assume_type:str|None,
         assume_component_group:str|None,
         other_options:Iterable[str]|None=None,
@@ -172,13 +172,13 @@ class Field():
 
     def set_field(
         self,
-        source_component:"Component.Component",
-        components:dict[str,"Component.Component"],
-        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
-        functions:"ScriptImporter.ScriptSetSetSet",
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
-    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
+        source_component:"Component",
+        components:dict[str,"Component"],
+        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        functions:"ScriptSetSetSet",
+        create_component_function:CreateComponentFunction,
+        trace:Trace,
+    ) -> tuple[Sequence["Component"],Sequence["Component"]]:
         '''
         Links this Component to other Components. Returns a list of all children Components (including inline Components) as well as a list of all inline Components.
         Fields are not responsible for calling `set_component` on inline Components.
@@ -192,28 +192,28 @@ class Field():
             return (), ()
         return (), ()
 
-    def resolve_create_finals(self, trace:Trace.Trace) -> None:
+    def resolve_create_finals(self, trace:Trace) -> None:
         '''
         Used for setting an attribute of this Field that requires a linked Component to be set.
         Ran during the create_finals stage.
         '''
         ...
 
-    def resolve_link_finals(self, trace:Trace.Trace) -> None:
+    def resolve_link_finals(self, trace:Trace) -> None:
         '''
         Used for setting an attribute of this Field that requires a linked Component to have its final created.
         Ran during the link_finals stage.
         '''
         ...
 
-    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
+    def check(self, source_component:"Component", trace:Trace) -> None:
         '''
         Make sure that this Component's types are all in order; no error could occur.
         :source_component: The Component that owns this Field.
         '''
         ...
 
-    def finalize(self, trace:Trace.Trace) -> None:
+    def finalize(self, trace:Trace) -> None:
         ...
 
     def __repr__(self) -> str:

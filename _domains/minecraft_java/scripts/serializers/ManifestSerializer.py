@@ -1,6 +1,6 @@
 from typing import Any
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 __all__ = ("ManifestSerializer",)
 
@@ -21,7 +21,7 @@ class LineReader():
     def __bool__(self) -> bool:
         return self.offset < len(self.lines)
 
-class ManifestSerializer(Serializer.Serializer):
+class ManifestSerializer(Serializer):
 
     def parse_clump(self, line_reader:LineReader) -> dict[str,str]:
         lines:list[str] = []

@@ -3,17 +3,17 @@ import re
 from math import floor
 from typing import Literal, Protocol, TypedDict, cast
 
-import mutf8
+from mutf8 import decode_modified_utf8  # type: ignore ; Shut up linters.
 
-import _domains.minecraft_common.scripts.Nbt.DataReader as DataReader
 import _domains.minecraft_common.scripts.Nbt.NbtExceptions as NbtExceptions
 import _domains.minecraft_common.scripts.Nbt.SnbtParser as SnbtParser
-import Component.Types as Types
-import Utilities.CustomJson as CustomJson
+from _domains.minecraft_common.scripts.Nbt.DataReader import DataReader
+from Component.Types import register_decorator
+from Utilities.CustomJson import Coder
 
 NbtJsonTypedDict = TypedDict("NbtJsonTypedDict", {"$special_type": Literal["nbt"], "data": str})
 
-class NbtCoder(CustomJson.Coder[NbtJsonTypedDict, "TAG"]):
+class NbtCoder(Coder[NbtJsonTypedDict, "TAG"]):
 
     special_type_name = "nbt"
 
@@ -47,7 +47,7 @@ class IdEnum(enum.IntEnum):
 class TAG(Protocol):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG": ...
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG": ...
 
     def __str__(self) -> str: ...
 
@@ -57,7 +57,7 @@ class TAG(Protocol):
 class TAG_End(TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_End":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_End":
         return cls()
 
     def __str__(self) -> str:
@@ -72,51 +72,51 @@ class TAG_End(TAG):
     def __deepcopy__(self, memo) -> TAG:
         return self
 
-@Types.register_decorator("TAG_Byte", None, json_coder=NbtCoder)
+@register_decorator("TAG_Byte", None, json_coder=NbtCoder)
 class TAG_Byte(int, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Byte":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Byte":
         return cls(data_reader.unpack_tuple("b", 1, endianness))
 
     def __str__(self) -> str:
         return f"{self:d}b"
 
-@Types.register_decorator("TAG_Short", None, json_coder=NbtCoder)
+@register_decorator("TAG_Short", None, json_coder=NbtCoder)
 class TAG_Short(int, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Short":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Short":
         return cls(data_reader.unpack_tuple("h", 2, endianness))
 
     def __str__(self) -> str:
         return f"{self:d}s"
 
-@Types.register_decorator("TAG_Int", None, json_coder=NbtCoder)
+@register_decorator("TAG_Int", None, json_coder=NbtCoder)
 class TAG_Int(int, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Int":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Int":
         return cls(data_reader.unpack_tuple("i", 4, endianness))
 
     def __str__(self) -> str:
         return f"{self:d}"
 
-@Types.register_decorator("TAG_Long", None, json_coder=NbtCoder)
+@register_decorator("TAG_Long", None, json_coder=NbtCoder)
 class TAG_Long(int, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Long":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Long":
         return cls(data_reader.unpack_tuple("q", 8, endianness))
 
     def __str__(self) -> str:
         return f"{self:d}l"
 
-@Types.register_decorator("TAG_Float", None, json_coder=NbtCoder)
+@register_decorator("TAG_Float", None, json_coder=NbtCoder)
 class TAG_Float(float, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Float":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Float":
         return cls(data_reader.unpack_tuple("f", 4, endianness))
 
     def __str__(self) -> str:
@@ -125,11 +125,11 @@ class TAG_Float(float, TAG):
         else:
             return f"{self:f}f"
 
-@Types.register_decorator("TAG_Double", None, json_coder=NbtCoder)
+@register_decorator("TAG_Double", None, json_coder=NbtCoder)
 class TAG_Double(float, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Double":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Double":
         return cls(data_reader.unpack_tuple("d", 8, endianness))
 
     def __str__(self) -> str:
@@ -138,26 +138,26 @@ class TAG_Double(float, TAG):
         else:
             return f"{self:f}"
 
-@Types.register_decorator("TAG_Byte_Array", None, requires_subcomponent=False, can_contain={TAG_Byte}, json_coder=NbtCoder)
+@register_decorator("TAG_Byte_Array", None, requires_subcomponent=False, can_contain={TAG_Byte}, json_coder=NbtCoder)
 class TAG_Byte_Array(list[TAG_Byte], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Byte_Array":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Byte_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(TAG_Byte.from_bytes(data_reader, endianness) for i in range(size))
 
     def __str__(self) -> str:
         return f"[B;{", ".join(str(item) for item in self)}]"
 
-@Types.register_decorator("TAG_String", None, json_coder=NbtCoder)
+@register_decorator("TAG_String", None, json_coder=NbtCoder)
 class TAG_String(str, TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_String":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_String":
         size:int = data_reader.unpack_tuple("H", 2, endianness)
         output2:tuple[bytes] = data_reader.unpack("c" * size, size, endianness)
         try: # because of VibrationTests/event_splash_boat_on_bubble_column.mcstructure in 1.19.40.20
-            return cls(mutf8.decode_modified_utf8(b"".join(output2)))
+            return cls(decode_modified_utf8(b"".join(output2)))
         except UnicodeDecodeError:
             return cls("")
 
@@ -168,11 +168,11 @@ class TAG_String(str, TAG):
         # for DefaultDelegate
         return str(self)
 
-@Types.register_decorator("TAG_List", None, json_coder=NbtCoder)
+@register_decorator("TAG_List", None, json_coder=NbtCoder)
 class TAG_List[b: TAG](list[b], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_List":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_List":
         content_type:int = data_reader.unpack_tuple("b", 1, endianness)
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(cast(b, parse_object_from_bytes(data_reader, content_type, endianness)) for i in range(size))
@@ -180,11 +180,11 @@ class TAG_List[b: TAG](list[b], TAG):
     def __str__(self) -> str:
         return f"[{", ".join(str(item) for item in self)}]"
 
-@Types.register_decorator("TAG_Compound", None, json_coder=NbtCoder)
+@register_decorator("TAG_Compound", None, json_coder=NbtCoder)
 class TAG_Compound[b: TAG](dict[str,b], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Compound":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Compound":
         output:dict[str,b] = {}
         while True:
             key_name, value = parse_compound_item_from_bytes(data_reader, endianness)
@@ -213,22 +213,22 @@ class TAG_Compound[b: TAG](dict[str,b], TAG):
         if len(key) == 0: return True
         return bool(pattern(key))
 
-@Types.register_decorator("TAG_Int_Array", None, requires_subcomponent=False, can_contain={TAG_Int}, json_coder=NbtCoder)
+@register_decorator("TAG_Int_Array", None, requires_subcomponent=False, can_contain={TAG_Int}, json_coder=NbtCoder)
 class TAG_Int_Array(list[TAG_Int], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Int_Array":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Int_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(TAG_Int.from_bytes(data_reader, endianness) for i in range(size))
 
     def __str__(self) -> str:
         return f"[I;{", ".join(str(item) for item in self)}]"
 
-@Types.register_decorator("TAG_Long_Array", None, requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
+@register_decorator("TAG_Long_Array", None, requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
 class TAG_Long_Array(list[TAG_Long], TAG):
 
     @classmethod
-    def from_bytes(cls, data_reader:DataReader.DataReader, endianness:End) -> "TAG_Long_Array":
+    def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Long_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
         return cls(TAG_Long.from_bytes(data_reader, endianness) for i in range(size))
 
@@ -244,7 +244,7 @@ def escape_string(string:str) -> str:
             case _: output.append(char)
     return "".join(output)
 
-def parse_compound_item_from_bytes[b:TAG=TAG](data_reader:DataReader.DataReader, endianness:End) -> tuple[str|None,b]:
+def parse_compound_item_from_bytes[b:TAG=TAG](data_reader:DataReader, endianness:End) -> tuple[str|None,b]:
     content_type:int = data_reader.unpack_tuple("b", 1, endianness)
     if content_type == IdEnum.TAG_End:
         return None, cast(b, TAG_End.from_bytes(data_reader, endianness)) # TAG_End has no name
@@ -252,7 +252,7 @@ def parse_compound_item_from_bytes[b:TAG=TAG](data_reader:DataReader.DataReader,
     value = parse_object_from_bytes(data_reader, content_type, endianness)
     return key_name, cast(b, value)
 
-def parse_object_from_bytes(data_reader:DataReader.DataReader, content_type:int, endianness:End) -> TAG:
+def parse_object_from_bytes(data_reader:DataReader, content_type:int, endianness:End) -> TAG:
     match content_type:
         case IdEnum.TAG_End:        return TAG_End.from_bytes(data_reader, endianness)
         case IdEnum.TAG_Byte:       return TAG_Byte.from_bytes(data_reader, endianness)

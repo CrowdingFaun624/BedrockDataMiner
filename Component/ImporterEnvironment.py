@@ -2,9 +2,9 @@ from pathlib import Path
 from types import EllipsisType
 from typing import Any, Iterable
 
-import Component.Component as Component
 import Domain.Domain as Domain
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Utilities.Trace import Trace
 
 
 class ImporterEnvironment[a]():
@@ -31,7 +31,7 @@ class ImporterEnvironment[a]():
         '''
         return None if self.single_component else {}
 
-    def get_output(self, components:dict[str,Component.Component], name:str, trace:Trace.Trace) -> a|EllipsisType:
+    def get_output(self, components:dict[str,Component], name:str, trace:Trace) -> a|EllipsisType:
         '''
         Given the Component group, return the intended output from the Component group.
         By default, returns the finals of all Components.
@@ -52,7 +52,7 @@ class ImporterEnvironment[a]():
         '''
         ...
 
-    def get_assumed_used_components(self, components:dict[str,Component.Component], name:str, trace:Trace.Trace) -> Iterable[Component.Component]:
+    def get_assumed_used_components(self, components:dict[str,Component], name:str, trace:Trace) -> Iterable[Component]:
         '''
         Returns the Components that are marked as used.
         :components: All Components in his Component group.
@@ -64,7 +64,7 @@ class ImporterEnvironment[a]():
                 return ()
         return ()
 
-    def finalize(self, output:a, other_outputs:dict[str,Any], name:str, trace:Trace.Trace) -> None:
+    def finalize(self, output:a, other_outputs:dict[str,Any], name:str, trace:Trace) -> None:
         '''
         Run any final actions on the output.
         :output: The output that `get_output` returned.
@@ -72,7 +72,7 @@ class ImporterEnvironment[a]():
         '''
         ...
 
-    def check(self, output:a, other_outputs:dict[str,Any], name:str, trace:Trace.Trace) -> None:
+    def check(self, output:a, other_outputs:dict[str,Any], name:str, trace:Trace) -> None:
         '''
         Make sure that this Component's types are all in order; no error could occur.
         :output: The output that `get_output` returned.

@@ -1,12 +1,12 @@
 from types import EllipsisType
 from typing import Any, Hashable, Literal, Self, TypedDict
 
-import Component.Types as Types
-import Utilities.CustomJson as CustomJson
+from Component.Types import register_decorator
+from Utilities.CustomJson import Coder
 
 DataPathJsonTypedDict = TypedDict("DataPathJsonTypedDict", {"$special_type": Literal["data_path"], "root": str, "path_items":list[Any], "embedded_data": Any|None})
 
-class DataPathCoder(CustomJson.Coder[DataPathJsonTypedDict, "DataPath"]):
+class DataPathCoder(Coder[DataPathJsonTypedDict, "DataPath"]):
 
     special_type_name = "data_path"
 
@@ -18,7 +18,7 @@ class DataPathCoder(CustomJson.Coder[DataPathJsonTypedDict, "DataPath"]):
     def encode(cls, data:"DataPath") -> DataPathJsonTypedDict:
         return {"$special_type": "data_path", "path_items": data.path_items, "root": data.root, "embedded_data": data.embedded_data}
 
-@Types.register_decorator(None, ..., json_coder=DataPathCoder)
+@register_decorator(None, ..., json_coder=DataPathCoder)
 class DataPath():
 
     __slots__ = (

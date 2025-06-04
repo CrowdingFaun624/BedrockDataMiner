@@ -1,7 +1,7 @@
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 
-class TextSerializer(Serializer.Serializer[str]):
+class TextSerializer(Serializer[str]):
 
     def deserialize(self, data: bytes) -> str:
         return data.decode()

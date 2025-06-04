@@ -1,13 +1,13 @@
-import datetime
+from datetime import datetime
 from typing import TYPE_CHECKING
 
 import Domain.Domain as Domain
-import Utilities.Exceptions as Exceptions
-import Version.VersionFile as VersionFile
-import Version.VersionTag.VersionTag as VersionTag
+from Utilities.Exceptions import NoOrderVersionTagsFoundError
+from Version.VersionFile import VersionFile
+from Version.VersionTag.VersionTag import VersionTag
 
 if TYPE_CHECKING:
-    import Downloader.Accessor as Accessor
+    from Downloader.Accessor import Accessor
 
 class Version():
 
@@ -29,7 +29,7 @@ class Version():
         "order_tag",
     )
 
-    def __init__(self, name:str, domain:"Domain.Domain", time:datetime.datetime|None, index:int) -> None:
+    def __init__(self, name:str, domain:"Domain.Domain", time:datetime|None, index:int) -> None:
         self.name = name
         self.time = time
         self.index = index
@@ -44,8 +44,8 @@ class Version():
     def link_finals(
         self,
         parent:"Version|None",
-        tags:list[VersionTag.VersionTag],
-        version_files:list[VersionFile.VersionFile],
+        tags:list[VersionTag],
+        version_files:list[VersionFile],
     ) -> None:
         self.parent = parent
         self.tags = tags
@@ -54,18 +54,18 @@ class Version():
         if self.parent is not None:
             self.parent.children.append(self)
 
-        self.tags_dict:dict[str,VersionTag.VersionTag] = {}
-        order_tag:VersionTag.VersionTag|None = None
+        self.tags_dict:dict[str,VersionTag] = {}
+        order_tag:VersionTag|None = None
         for tag in self.tags:
             self.tags_dict[tag.name] = tag
             if order_tag is None and tag.is_order_tag:
                 order_tag = tag
             self.released = self.released and not tag.is_unreleased_tag
         if order_tag is None:
-            raise Exceptions.NoOrderVersionTagsFoundError(self, self.tags)
+            raise NoOrderVersionTagsFoundError(self, self.tags)
         self.order_tag = order_tag
 
-    def get_accessor[a: Accessor.Accessor](self, file_type:str, required_type:type[a]) -> a|None:
+    def get_accessor[a: Accessor](self, file_type:str, required_type:type[a]) -> a|None:
         return self.version_files_dict[file_type].get_accessor(required_type, True)
 
     def get_children_recursive(self) -> list["Version"]:

@@ -1,13 +1,13 @@
-import Component.Component as Component
-import Component.Field.ComponentField as ComponentField
-import Component.Field.FieldContainer as FieldContainer
-import Component.Version.VersionComponent as VersionComponent
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Version.VersionRange as VersionRange
+from Component.Component import Component
+from Component.Field.ComponentField import OptionalComponentField
+from Component.Field.FieldContainer import FieldContainer
+from Component.Version.VersionComponent import VERSION_PATTERN, VersionComponent
+from Utilities.Trace import Trace
+from Version.VersionRange import VersionRange
 
 
-class VersionRangeField(FieldContainer.FieldContainer[ComponentField.OptionalComponentField]):
+class VersionRangeField(FieldContainer[OptionalComponentField]):
 
     __slots__ = (
         "_final",
@@ -22,13 +22,13 @@ class VersionRangeField(FieldContainer.FieldContainer[ComponentField.OptionalCom
         :stop_version_str: The name of the newest Version (exclusive).
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        self.start_version_field = ComponentField.OptionalComponentField(start_version_str, VersionComponent.VERSION_PATTERN, start_path, assume_component_group="versions")
-        self.stop_version_field = ComponentField.OptionalComponentField(stop_version_str, VersionComponent.VERSION_PATTERN, stop_path, assume_component_group="versions")
+        self.start_version_field = OptionalComponentField(start_version_str, VERSION_PATTERN, start_path, assume_component_group="versions")
+        self.stop_version_field = OptionalComponentField(stop_version_str, VERSION_PATTERN, stop_path, assume_component_group="versions")
         self.equals = start_version_str == stop_version_str
-        self._final:VersionRange.VersionRange|None = None
+        self._final:VersionRange|None = None
         super().__init__([self.start_version_field, self.stop_version_field], path)
 
-    def __contains__(self, version:"VersionComponent.VersionComponent") -> bool:
+    def __contains__(self, version:"VersionComponent") -> bool:
         start = self.start_version_field.subcomponent
         stop = self.stop_version_field.subcomponent
         if self.equals:
@@ -44,7 +44,7 @@ class VersionRangeField(FieldContainer.FieldContainer[ComponentField.OptionalCom
         else:
             raise Exceptions.InvalidStateError("logic has failed us")
 
-    def check(self, source_component: Component.Component, trace:Trace.Trace) -> None:
+    def check(self, source_component: Component, trace:Trace) -> None:
         with trace.enter_keys(self.trace_path, (self.start_version_field.subcomponent_data, self.stop_version_field.subcomponent_data)):
             super().check(source_component, trace)
             start_version = self.start_version_field.subcomponent
@@ -56,7 +56,7 @@ class VersionRangeField(FieldContainer.FieldContainer[ComponentField.OptionalCom
         return f"<{self.__class__.__name__} \"{str(self.start_version_field.subcomponent_data)}\"–\"{str(self.stop_version_field.subcomponent_data)}\">"
 
     @property
-    def final(self) -> VersionRange.VersionRange:
+    def final(self) -> VersionRange:
         if self._final is None:
-            self._final = VersionRange.VersionRange(self.start_version_field.map(lambda subcomponent: subcomponent.final), self.stop_version_field.map(lambda subcomponent: subcomponent.final))
+            self._final = VersionRange(self.start_version_field.map(lambda subcomponent: subcomponent.final), self.stop_version_field.map(lambda subcomponent: subcomponent.final))
         return self._final

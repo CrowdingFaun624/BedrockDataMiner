@@ -1,35 +1,37 @@
 from types import EllipsisType
 from typing import Any
 
-import _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.make_all_tags as make_all_tags
-import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.IterableStructure as IterableStructure
-import Structure.SimpleContainer as SCon
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.make_all_tags import (
+    make_all_tags,
+)
+from Structure.Delegate.Delegate import Delegate
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon
+from Structure.IterableStructure import IterableStructure
+from Structure.SimpleContainer import SCon, SDon
+from Structure.StructureEnvironment import ComparisonEnvironment
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictTypeVerifier
 
 __all__ = ("ResourcePackDelegate",)
 
 
-class ResourcePackDelegate(Delegate.Delegate[
-    ICon.ICon[SCon.SCon[str], ICon.ICon[Any, Any, dict[Any, Any]], dict[str,dict[Any, Any]]],
-    Diff.Diff[ICon.IDon[Diff.Diff[SCon.SDon[str]], Diff.Diff[ICon.IDon[Diff.Diff[Any], Diff.Diff[Any], dict[Any, Any], Any, Any]], dict[str,dict[Any, Any]], SCon.SCon[str], ICon.ICon[Any, Any, dict[Any,Any]]]],
-    IterableStructure.IterableStructure[str, dict[Any,Any], dict[str,dict[Any,Any]], Any, Any, Any, str, Any, str],
+class ResourcePackDelegate(Delegate[
+    ICon[SCon[str], ICon[Any, Any, dict[Any, Any]], dict[str,dict[Any, Any]]],
+    Diff[IDon[Diff[SDon[str]], Diff[IDon[Diff[Any], Diff[Any], dict[Any, Any], Any, Any]], dict[str,dict[Any, Any]], SCon[str], ICon[Any, Any, dict[Any,Any]]]],
+    IterableStructure[str, dict[Any,Any], dict[str,dict[Any,Any]], Any, Any, Any, str, Any, str],
     str, Any, str, Any,
 ]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier()
+    type_verifier = TypedDictTypeVerifier()
 
-    applies_to = (IterableStructure.IterableStructure,)
+    applies_to = (IterableStructure,)
 
     def print_comparison(
         self,
-        data: Diff.Diff[ICon.IDon[Diff.Diff[SCon.SDon[str]], Diff.Diff[ICon.IDon[Diff.Diff[Any], Diff.Diff[Any], dict[Any, Any], Any, Any]], dict[str,dict[Any, Any]], SCon.SCon[str], ICon.ICon[Any, Any, dict[Any,Any]]]],
-        trace: Trace.Trace,
-        environment: StructureEnvironment.ComparisonEnvironment
+        data: Diff[IDon[Diff[SDon[str]], Diff[IDon[Diff[Any], Diff[Any], dict[Any, Any], Any, Any]], dict[str,dict[Any, Any]], SCon[str], ICon[Any, Any, dict[Any,Any]]]],
+        trace: Trace,
+        environment: ComparisonEnvironment
     ) -> str | EllipsisType:
         output:list[str] = []
         # sorts data according to tag.

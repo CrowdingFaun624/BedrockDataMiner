@@ -1,7 +1,7 @@
-import Downloader.Accessor as Accessor
+from Downloader.Accessor import Accessor
 
 
-class DummyAccessor(Accessor.Accessor):
+class DummyAccessor(Accessor):
     "Accessor that does nothing."
 
     __slots__ = ()

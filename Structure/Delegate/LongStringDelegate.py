@@ -2,17 +2,20 @@ import math
 from types import EllipsisType
 from typing import Sequence
 
-import Structure.Container as Con
-import Structure.Delegate.DefaultDelegate as DefaultDelegate
-import Structure.Delegate.LineDelegate as LineDelegate
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.IterableStructure as IterableStructure
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Trace as Trace
+from Structure.Container import Con, Don
+from Structure.Delegate.DefaultDelegate import (
+    DefaultDelegate,
+    DefaultDelegateKeysTypedDict,
+)
+from Structure.Delegate.LineDelegate import LineType
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon
+from Structure.IterableStructure import IterableStructure
+from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Utilities.Trace import Trace
 
 
-class LongStringDelegate(DefaultDelegate.DefaultDelegate[int, str, Sequence]):
+class LongStringDelegate(DefaultDelegate[int, str, Sequence]):
 
     __slots__ = (
         "surrounding_line_count",
@@ -20,8 +23,8 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int, str, Sequence]):
 
     def __init__(
         self,
-        structure:IterableStructure.IterableStructure,
-        keys:dict[str,DefaultDelegate.DefaultDelegateKeysTypedDict],
+        structure:IterableStructure,
+        keys:dict[str,DefaultDelegateKeysTypedDict],
         measure_length:bool=False,
         surrounding_line_count:int|None=5,
     ) -> None:
@@ -29,12 +32,12 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int, str, Sequence]):
 
         self.surrounding_line_count = surrounding_line_count
 
-    def print_branch(self, data: ICon.ICon[Con.Con[int], Con.Con[str], Sequence], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> list[LineDelegate.LineType] | EllipsisType:
+    def print_branch(self, data: ICon[Con[int], Con[str], Sequence], trace: Trace, environment: PrinterEnvironment) -> list[LineType] | EllipsisType:
         data_list = list(data.items())
         if len(data_list) == 0:
             return [(0, "empty")]
         else:
-            output:list[LineDelegate.LineType] = []
+            output:list[LineType] = []
             output.append((0, "'''"))
             for index, line in data_list:
                 with trace.enter_key(index, line):
@@ -42,7 +45,7 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int, str, Sequence]):
             output.append((0, "'''"))
             return output
 
-    def get_before_buffer(self, lines_before_buffer:list[tuple[int,LineDelegate.LineType]]) -> tuple[int|None, list[LineDelegate.LineType]]:
+    def get_before_buffer(self, lines_before_buffer:list[tuple[int,LineType]]) -> tuple[int|None, list[LineType]]:
         if self.surrounding_line_count is None:
             output = lines_before_buffer[:]
         elif len(lines_before_buffer) < self.surrounding_line_count:
@@ -52,7 +55,7 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int, str, Sequence]):
         lines_before_buffer.clear()
         return output[0][0] if len(output) > 0 else None, [item[1] for item in output]
 
-    def get_maximum_index_length(self, data:list[tuple[Diff.Diff[Con.Don[int]], Diff.Diff[Con.Don[str]]]]) -> int:
+    def get_maximum_index_length(self, data:list[tuple[Diff[Don[int]], Diff[Don[str]]]]) -> int:
         old_lines = 0
         new_lines = 0
         for index, line in data:
@@ -72,18 +75,18 @@ class LongStringDelegate(DefaultDelegate.DefaultDelegate[int, str, Sequence]):
         return f"{old_index_string if show_old else " " * maximum_index_length} {new_index_string if show_new else " " * maximum_index_length}"
 
     # TODO: now that ICon tracks index changes, change this method to utilize that.
-    def print_comparison(self, data: ICon.IDon[Diff.Diff[Con.Don[int]], Diff.Diff[Con.Don[str]], Sequence, Con.Con[int], Con.Con[str]], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> list[tuple[int, str]] | EllipsisType:
-        output:list[LineDelegate.LineType] = []
+    def print_comparison(self, data: IDon[Diff[Don[int]], Diff[Don[str]], Sequence, Con[int], Con[str]], trace: Trace, environment: ComparisonEnvironment) -> list[tuple[int, str]] | EllipsisType:
+        output:list[LineType] = []
         data_list = list(data.items())
         maximum_index_length = self.get_maximum_index_length(data_list) # determines the amount of spacing.
         # pre-text stuff takes the form of "[index] (+/-) [line]"
         space_count = maximum_index_length * 2 + 4 # space for an index, a space, another index, a space, the +/- indicator, and another space.
         output.append((0, f"{" " * space_count}'''"))
-        change_addition_lines:list[LineDelegate.LineType] = [] # these are needed to store lines. Change lines are printed all at once in order.
-        change_removal_lines :list[LineDelegate.LineType] = [] # so it does additions from changes first and then removals from changes.
+        change_addition_lines:list[LineType] = [] # these are needed to store lines. Change lines are printed all at once in order.
+        change_removal_lines :list[LineType] = [] # so it does additions from changes first and then removals from changes.
         current_length, addition_length, removal_length = 0, 0, 0
-        lines_before_buffer:list[tuple[int,LineDelegate.LineType]] = [] # lines before a change. Cleared each time used.
-        lines_to_add:list[LineDelegate.LineType] = []
+        lines_before_buffer:list[tuple[int,LineType]] = [] # lines before a change. Cleared each time used.
+        lines_to_add:list[LineType] = []
         lines_after_count:int|None = None if self.surrounding_line_count is None else 0
         last_line_index = -1 # controls where the "..." lines appear.
         last_change_line_index = -1 # since change lines are stored and then added out of order, this needs to be stored separately.

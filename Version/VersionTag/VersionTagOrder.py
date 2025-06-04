@@ -1,4 +1,4 @@
-import Version.VersionTag.VersionTag as VersionTag
+from Version.VersionTag.VersionTag import VersionTag
 
 
 class VersionTagOrder():
@@ -17,11 +17,11 @@ class VersionTagOrder():
 
     def link_finals(
         self,
-        order:list[set[VersionTag.VersionTag]],
-        allowed_children:dict[VersionTag.VersionTag,list[VersionTag.VersionTag]],
-        top_level_tag:VersionTag.VersionTag|None,
-        tags_before_top_level_tag:list[VersionTag.VersionTag],
-        tags_after_top_level_tag:list[VersionTag.VersionTag],
+        order:list[set[VersionTag]],
+        allowed_children:dict[VersionTag,list[VersionTag]],
+        top_level_tag:VersionTag|None,
+        tags_before_top_level_tag:list[VersionTag],
+        tags_after_top_level_tag:list[VersionTag],
     ) -> None:
         self.initialized = True
         self.order = order

@@ -2,28 +2,34 @@ from itertools import product
 from typing import Any, Literal, Sequence
 
 import _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer as PacksDataminer
-import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
-import Utilities.File as File
-import Utilities.TypeVerifier as TypeVerifier
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Downloader.DirectoryAccessor import DirectoryAccessor
+from Utilities.File import File
+from Utilities.TypeVerifier import (
+    EnumTypeVerifier,
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+    UnionTypeVerifier,
+)
 
 __all__ = ("GrabMultiplePackFilesDataminer",)
 
 class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
 
-    parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("location", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
-        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", True, TypeVerifier.EnumTypeVerifier(("resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"))),
-        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_packs", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("reverse", False, bool),
+    parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("ignore_suffixes", False, ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
+        TypedDictKeyTypeVerifier("location", True, UnionTypeVerifier(str, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
+        TypedDictKeyTypeVerifier("pack_type", True, EnumTypeVerifier(("resource_packs", "behavior_packs", "skin_packs", "emotes", "pieces"))),
+        TypedDictKeyTypeVerifier("suffixes", False, ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
+        TypedDictKeyTypeVerifier("unrecognized_suffix_okay", False, bool),
+        TypedDictKeyTypeVerifier("find_none_okay", False, bool),
+        TypedDictKeyTypeVerifier("ignore_packs", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("ignore_subdirectories", False, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
+        TypedDictKeyTypeVerifier("ignore_files", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("reverse", False, bool),
     )
 
     def initialize(
@@ -50,10 +56,10 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
         self.ignore_files:set[str] = set(ignore_files) if ignore_files is not None else set()
         self.reverse = reverse
 
-    def get_packs(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[PacksDataminer.PackTypedDict]:
+    def get_packs(self, environment:DataminerEnvironment) -> list[PacksDataminer.PackTypedDict]:
         return environment.dependency_data.get(self.pack_type, self)
 
-    def get_coverage(self, file_set:FileDataminer.FileSet, environment:DataminerEnvironment.DataminerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataminer.FileSet, environment:DataminerEnvironment) -> set[str]:
         packs = (pack["path"] for pack in self.get_packs(environment) if pack["name"] not in self.ignore_packs)
         output:set[str] = set()
         for pack, location in product(packs, self.location):
@@ -76,7 +82,7 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return output
 
-    def get_files(self, packs:list[PacksDataminer.PackTypedDict], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str,str],bytes]:
+    def get_files(self, packs:list[PacksDataminer.PackTypedDict], accessor:DirectoryAccessor, environment:DataminerEnvironment) -> dict[tuple[str,str,str],bytes]:
         '''
         Returns a dict with of pack name, path relative to base, file name to the file's contents.
         '''
@@ -115,8 +121,8 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return files
 
-    def get_output(self, files:dict[tuple[str,str,str],bytes], environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,dict[str,File.File]]:
-        output:dict[str,dict[str,File.File]] = {}
+    def get_output(self, files:dict[tuple[str,str,str],bytes], environment:DataminerEnvironment) -> dict[str,dict[str,File]]:
+        output:dict[str,dict[str,File]] = {}
         for (pack_name, relative_name, file_name), file_bytes in files.items():
             file_data = self.export_file(file_bytes, file_name)
             if self.reverse:
@@ -129,9 +135,9 @@ class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
                 output[relative_name][pack_name] = file_data
         return output
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
+    def activate(self, environment:DataminerEnvironment) -> Any:
         packs = environment.dependency_data.get(self.pack_type, self)
-        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
+        accessor = self.get_accessor(DirectoryAccessor)
         files = self.get_files(packs, accessor, environment)
         output = self.get_output(files, environment)
         return output

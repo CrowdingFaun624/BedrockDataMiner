@@ -1,9 +1,9 @@
-import datetime
+from datetime import datetime
 from typing import TYPE_CHECKING, Any, BinaryIO, TypedDict
 
-import Downloader.Accessor as Accessor
-import Downloader.FileAccessor as FileAccessor
-import Utilities.TypeVerifier as TypeVerifier
+from Downloader.Accessor import Accessor
+from Downloader.FileAccessor import FileAccessor
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 if TYPE_CHECKING:
     import requests
@@ -14,14 +14,14 @@ class InstanceArgumentsTypedDict(TypedDict):
 class PropagatedArgumentsTypedDict(TypedDict):
     location: str
 
-class DownloadAccessor(FileAccessor.FileAccessor):
+class DownloadAccessor(FileAccessor):
 
-    propagated_parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", True, str),
+    propagated_parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("location", True, str),
     )
     
-    instance_parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("url", True, str),
+    instance_parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("url", True, str),
     )
 
     __slots__ = (
@@ -30,7 +30,7 @@ class DownloadAccessor(FileAccessor.FileAccessor):
         "url",
     )
 
-    def prepare_for_install(self, instance_arguments:InstanceArgumentsTypedDict, class_arguments:dict[str,Any], propagated_arguments:PropagatedArgumentsTypedDict, linked_accessors:dict[str,Accessor.Accessor]) -> None:
+    def prepare_for_install(self, instance_arguments:InstanceArgumentsTypedDict, class_arguments:dict[str,Any], propagated_arguments:PropagatedArgumentsTypedDict, linked_accessors:dict[str,Accessor]) -> None:
         version_directory = self.version.version_directory
         location = version_directory.joinpath(propagated_arguments["location"])
         self.location = location
@@ -48,7 +48,7 @@ class DownloadAccessor(FileAccessor.FileAccessor):
         if (log := self.domain.logs.get("download_log")) is not None and log.supports_type(log, dict):
             log.write({
                 "version": self.version.name,
-                "time": datetime.datetime.now().isoformat(),
+                "time": datetime.now().isoformat(),
                 "status_code": response.status_code,
                 "headers": {key: value for key, value in response.headers.items()},
                 "url": response.url,

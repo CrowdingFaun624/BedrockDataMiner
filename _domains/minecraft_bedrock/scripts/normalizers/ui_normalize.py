@@ -1,11 +1,11 @@
 from typing import Any, cast
 
-import Domain.Domains as Domains
-import Serializer.Serializer as Serializer
-import Utilities.File as File
+from Domain.Domains import get_domain_from_module
+from Serializer.Serializer import Serializer
+from Utilities.File import FakeFile, File
 
-domain = Domains.get_domain_from_module(__name__)
-json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer.Serializer)
+domain = get_domain_from_module(__name__)
+json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
 
 __all__ = ("ui_normalize",)
 
@@ -26,7 +26,7 @@ def parse_element_name(raw_element_name:str, namespace:str) -> tuple[str,str|Non
         superclass_namespace, superclass_element_name = None, None
     return element_name, superclass_namespace, superclass_element_name
 
-def get_namespaces_and_extensions(data:dict[str,File.File[dict[str,dict[str,Any]]]]) -> tuple[dict[str,dict[str,dict[str,Any]]], dict[str,dict[str,tuple[str|None,str|None]]], list[int]]:
+def get_namespaces_and_extensions(data:dict[str,File[dict[str,dict[str,Any]]]]) -> tuple[dict[str,dict[str,dict[str,Any]]], dict[str,dict[str,tuple[str|None,str|None]]], list[int]]:
     namespaces:dict[str,dict[str,dict[str,Any]]] = {} # {namespace: {element_name: element_data}}
     extensions:dict[str,dict[str,tuple[str|None,str|None]]] = {} # {namespace: {subelement: (superelements_namespace, superelement)}}
     file_hashes:list[int] = []
@@ -108,8 +108,8 @@ def parse_elements(namespaces:dict[str,dict[str,dict[str,Any]]], element_types:d
         for element_name, element_data in elements.items():
             parse_element(element_data, element_types, element_name, namespace)
 
-def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) -> File.FakeFile[dict[str,dict[str,dict[str,Any]]]]:
-    files:dict[str,File.File[dict[str,dict[str,Any]]]] = {}
+def ui_normalize(data:dict[str,dict[str,File[dict[str,dict[str,Any]]]]]) -> FakeFile[dict[str,dict[str,dict[str,Any]]]]:
+    files:dict[str,File[dict[str,dict[str,Any]]]] = {}
     for resource_pack, resource_pack_files in data.items():
         if len(common_files := (set(files) & set(resource_pack_files))) > 0:
             continue
@@ -130,4 +130,4 @@ def ui_normalize(data:dict[str,dict[str,File.File[dict[str,dict[str,Any]]]]]) ->
                 raw_element_name = f"{element_name}@{superclass_namespace}.{superclass_element_name}"
             element_type = element_types[namespace][element_name]
             output[namespace][raw_element_name] = {element_type: element_data}
-    return File.FakeFile("combined_ui_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_ui_file", output, None, hash(tuple(file_hashes)))

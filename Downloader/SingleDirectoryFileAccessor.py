@@ -1,22 +1,22 @@
 from typing import Any, BinaryIO, TypedDict
 
-import Downloader.DirectoryAccessor as DirectoryAccessor
-import Downloader.FileAccessor as FileAccessor
-import Utilities.TypeVerifier as TypeVerifier
+from Downloader.DirectoryAccessor import DirectoryAccessor
+from Downloader.FileAccessor import FileAccessor
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
 class LinkedAccessorsTypedDict(TypedDict):
-    directory: DirectoryAccessor.DirectoryAccessor
+    directory: DirectoryAccessor
 
 class InstanceArgumentsTypedDict(TypedDict):
     file_name: str
 
-class SingleDirectoryFileAccessor(FileAccessor.FileAccessor):
+class SingleDirectoryFileAccessor(FileAccessor):
 
-    instance_parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
+    instance_parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("file_name", True, str),
     )
-    linked_accessors = {"directory": DirectoryAccessor.DirectoryAccessor}
+    linked_accessors = {"directory": DirectoryAccessor}
 
     __slots__ = (
         "directory_accessor",

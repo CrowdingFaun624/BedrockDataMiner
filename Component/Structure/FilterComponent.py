@@ -1,22 +1,26 @@
 from typing import Sequence
 
-import Component.Capabilities as Capabilities
-import Component.Component as Component
 import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentListField as ComponentListField
-import Component.Field.Field as Field
-import Component.Pattern as Pattern
 import Structure.Filter as Filter
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.Field.ComponentListField import ComponentListField
+from Component.Field.Field import Field
+from Component.Pattern import Pattern
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
-FILTER_PATTERN:Pattern.Pattern["FilterComponent"] = Pattern.Pattern("is_filter")
+FILTER_PATTERN:Pattern["FilterComponent"] = Pattern("is_filter")
 
-class FilterComponent[A: Filter.Filter](Component.Component[A]):
+class FilterComponent[A: Filter.Filter](Component[A]):
 
-    my_capabilities = Capabilities.Capabilities(is_filter=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    my_capabilities = Capabilities(is_filter=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("type", False, str),
     )
     filter_class:type[A]
 
@@ -24,11 +28,11 @@ class FilterComponent[A: Filter.Filter](Component.Component[A]):
 
 class ValueFilterComponent[A: Filter.ValueFilter](FilterComponent[A]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("default", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("key", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("value", True, object),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("default", False, bool),
+        TypedDictKeyTypeVerifier("key", True, str),
+        TypedDictKeyTypeVerifier("value", True, object),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (
@@ -37,13 +41,13 @@ class ValueFilterComponent[A: Filter.ValueFilter](FilterComponent[A]):
         "value",
     )
 
-    def initialize_fields(self, data: ComponentTyping.ValueFilterTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.ValueFilterTypedDict) -> Sequence[Field]:
         self.default = data.get("default", False)
         self.key = data["key"]
         self.value = data["value"]
         return ()
 
-    def create_final(self, trace:Trace.Trace) -> Filter.ValueFilter:
+    def create_final(self, trace:Trace) -> Filter.ValueFilter:
         return self.filter_class(
             name=self.name,
             key=self.key,
@@ -53,20 +57,20 @@ class ValueFilterComponent[A: Filter.ValueFilter](FilterComponent[A]):
 
 class KeyFilterComponent[A: Filter.KeyFilter](FilterComponent[A]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("key", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("key", True, str),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (
         "key",
     )
 
-    def initialize_fields(self, data: ComponentTyping.KeyFilterTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: ComponentTyping.KeyFilterTypedDict) -> Sequence[Field]:
         self.key = data["key"]
         return ()
 
-    def create_final(self, trace:Trace.Trace) -> A:
+    def create_final(self, trace:Trace) -> A:
         return self.filter_class(
             name=self.name,
             key=self.key,
@@ -74,25 +78,25 @@ class KeyFilterComponent[A: Filter.KeyFilter](FilterComponent[A]):
 
 class MetaFilterComponent[A: Filter.MetaFilter](FilterComponent[A]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("subfilters", True, TypeVerifier.ListTypeVerifier((dict, str), list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("subfilters", True, ListTypeVerifier((dict, str), list)),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (
         "subfilters_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.MetaFilterTypedDict) -> Sequence[Field.Field]:
-        self.subfilters_field = ComponentListField.ComponentListField(data["subfilters"], FILTER_PATTERN, ("subfilters",))
+    def initialize_fields(self, data: ComponentTyping.MetaFilterTypedDict) -> Sequence[Field]:
+        self.subfilters_field = ComponentListField(data["subfilters"], FILTER_PATTERN, ("subfilters",))
         return (self.subfilters_field,)
 
-    def create_final(self, trace:Trace.Trace) -> A:
+    def create_final(self, trace:Trace) -> A:
         return self.filter_class(
             name=self.name,
         )
 
-    def link_finals(self, trace:Trace.Trace) -> None:
+    def link_finals(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_subcomponents(

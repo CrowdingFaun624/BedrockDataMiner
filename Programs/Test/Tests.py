@@ -6,16 +6,16 @@ import Programs.Test.DataminerClassesTest as DataminerClassesTest
 import Programs.Test.DataminerCollectionTest as DataminerCollectionTest
 import Programs.Test.DataminerSettingsTest as DataminerSettingsTest
 import Programs.Test.StructureTest as StructureTest
-import Programs.Test.TestUtil as TestUtil
-import Utilities.UserInput as UserInput
+from Programs.Test.TestUtil import create_test_function
+from Utilities.UserInput import input_single
 
 
 def main(domain:Domain.Domain) -> None:
     tests:dict[str,Callable[[Domain.Domain],None]] = {
         "check_all_structure_types": CheckAllStructureTypes.check_all_structure_types,
-        "dataminer_classes": TestUtil.create_test_function(DataminerClassesTest.DataminerClassPlan),
-        "dataminer_collections": TestUtil.create_test_function(DataminerCollectionTest.DataminerCollectionPlan),
-        "dataminer_settings": TestUtil.create_test_function(DataminerSettingsTest.DataminerSettingsPlan),
-        "structures": TestUtil.create_test_function(StructureTest.StructurePlan),
+        "dataminer_classes": create_test_function(DataminerClassesTest.DataminerClassPlan),
+        "dataminer_collections": create_test_function(DataminerCollectionTest.DataminerCollectionPlan),
+        "dataminer_settings": create_test_function(DataminerSettingsTest.DataminerSettingsPlan),
+        "structures": create_test_function(StructureTest.StructurePlan),
     }
-    UserInput.input_single(tests, "test", show_options=True, close_enough=True)(domain)
+    input_single(tests, "test", show_options=True, close_enough=True)(domain)

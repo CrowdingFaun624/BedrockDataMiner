@@ -1,6 +1,6 @@
 from typing import Hashable, Iterable, Mapping, cast
 
-import Structure.Container as Con
+from Structure.Container import Con, Don
 
 
 def icon_from_list[K, V, D](items:Iterable[tuple[K, V]], data:D) -> "ICon[K, V, D]":
@@ -29,7 +29,7 @@ def idon_from_list[K, V, D, KC, VC](items:Iterable[tuple[K, V]], containers:Mapp
     items_hash = hash(tuple(hashable_stuff))
     return IDon(containers, items_dict, items_hash)
 
-class ICon[K:Hashable, V, D](Con.Con[D]):
+class ICon[K:Hashable, V, D](Con[D]):
 
     __slots__ = (
         "_items",
@@ -57,7 +57,7 @@ class ICon[K:Hashable, V, D](Con.Con[D]):
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self._items}>"
 
-class IDon[K:Hashable, V, D, KC:Hashable, VC](Con.Don[D]):
+class IDon[K:Hashable, V, D, KC:Hashable, VC](Don[D]):
 
     __slots__ = (
         "_containers",

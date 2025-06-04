@@ -1,13 +1,13 @@
 from typing import TYPE_CHECKING, Literal, overload
 
-import Downloader.Accessor as Accessor
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Version.VersionFileType as VersionFileType
+from Downloader.Accessor import Accessor
+from Utilities.Exceptions import VersionFileNoAccessorsError
+from Utilities.Trace import Trace
+from Version.VersionFileType import VersionFileType
 
 if TYPE_CHECKING:
-    import Component.Accessor.AccessorComponent as AccessorComponent
-    import Version.Version as Version
+    from Component.Accessor.AccessorComponent import AccessorCreator
+    from Version.Version import Version
 
 class VersionFile():
 
@@ -21,22 +21,22 @@ class VersionFile():
 
     def link_finals(
         self,
-        version:"Version.Version",
-        version_file_type:VersionFileType.VersionFileType,
-        accessors:list["AccessorComponent.AccessorCreator"],
+        version:"Version",
+        version_file_type:VersionFileType,
+        accessors:list["AccessorCreator"],
     ) -> None:
         self.name = version_file_type.name
         self.version = version
         self.version_file_type = version_file_type
         self.accessor_creators = accessors
-        self._accessors:list[Accessor.Accessor]|None = None
+        self._accessors:list[Accessor]|None = None
 
     @property
-    def accessors(self) -> list[Accessor.Accessor]:
+    def accessors(self) -> list[Accessor]:
         if self._accessors is None:
             # has potential to be None due to errors. These errors are handled
             # elsewhere
-            self._accessors = [accessor for accessor_creator in self.accessor_creators if (accessor := accessor_creator.create_accessor(Trace.Trace())) is not None]
+            self._accessors = [accessor for accessor_creator in self.accessor_creators if (accessor := accessor_creator.create_accessor(Trace())) is not None]
         return self._accessors
 
     def __repr__(self) -> str:
@@ -47,12 +47,12 @@ class VersionFile():
         return len(self.accessor_creators) > 0
 
     @overload
-    def get_accessor[a: Accessor.Accessor](self, required_type:type[a], none_okay:Literal[True]) -> a|None: ...
+    def get_accessor[a: Accessor](self, required_type:type[a], none_okay:Literal[True]) -> a|None: ...
     @overload
-    def get_accessor[a: Accessor.Accessor](self, required_type:type[a], none_okay:Literal[False]) -> a: ...
+    def get_accessor[a: Accessor](self, required_type:type[a], none_okay:Literal[False]) -> a: ...
     @overload
-    def get_accessor[a: Accessor.Accessor](self, required_type:type[a]) -> a: ...
-    def get_accessor[a: Accessor.Accessor](self, required_type:type[a]=Accessor.Accessor, none_okay:bool=False) -> a|None:
+    def get_accessor[a: Accessor](self, required_type:type[a]) -> a: ...
+    def get_accessor[a: Accessor](self, required_type:type[a]=Accessor, none_okay:bool=False) -> a|None:
         '''
         Returns the first Accessor of this VersionFile that meets the requirements.
         :required_type: Type of the Accessor.
@@ -65,4 +65,4 @@ class VersionFile():
             if none_okay:
                 return None
             else:
-                raise Exceptions.VersionFileNoAccessorsError(self)
+                raise VersionFileNoAccessorsError(self)

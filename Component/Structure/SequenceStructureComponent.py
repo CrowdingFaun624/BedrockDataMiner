@@ -1,17 +1,22 @@
 from typing import Sequence
 
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentField as ComponentField
-import Component.Field.Field as Field
-import Component.Structure.Field.TypeListField as TypeListField
-import Component.Structure.IterableStructureComponent as IterableStructureComponent
-import Component.Structure.StructureComponent as StructureComponent
-import Structure.StructureTypes.SequenceStructure as SequenceStructure
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.ComponentTyping import SequenceStructureTypedDict
+from Component.Field.ComponentField import OptionalComponentField
+from Component.Field.Field import Field
+from Component.Structure.Field.TypeListField import TypeListField
+from Component.Structure.IterableStructureComponent import IterableStructureComponent
+from Component.Structure.StructureComponent import STRUCTURE_COMPONENT_PATTERN
+from Structure.StructureTypes.SequenceStructure import SequenceStructure
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+    UnionTypeVerifier,
+)
 
 
-class SequenceStructureComponent(IterableStructureComponent.IterableStructureComponent[SequenceStructure.SequenceStructure]):
+class SequenceStructureComponent(IterableStructureComponent[SequenceStructure]):
 
     __slots__ = (
         "addition_cost",
@@ -28,20 +33,20 @@ class SequenceStructureComponent(IterableStructureComponent.IterableStructureCom
     class_name = "Sequence"
     default_this_types_name = "list"
     default_key_types_name = "int"
-    structure_type = SequenceStructure.SequenceStructure
-    type_verifier = IterableStructureComponent.IterableStructureComponent.type_verifier.extend(TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("addition_cost", False, float),
-        TypeVerifier.TypedDictKeyTypeVerifier("deletion_cost", False, float),
-        TypeVerifier.TypedDictKeyTypeVerifier("key_structure", False, (str, dict, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("key_weight", False, (int, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("max_square_length", False, int),
-        TypeVerifier.TypedDictKeyTypeVerifier("substitution_cost", False, float),
-        TypeVerifier.TypedDictKeyTypeVerifier("value_structure", True, (str, dict, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("value_types", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
-        TypeVerifier.TypedDictKeyTypeVerifier("value_weight", False, int),
+    structure_type = SequenceStructure
+    type_verifier = IterableStructureComponent.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("addition_cost", False, float),
+        TypedDictKeyTypeVerifier("deletion_cost", False, float),
+        TypedDictKeyTypeVerifier("key_structure", False, (str, dict, type(None))),
+        TypedDictKeyTypeVerifier("key_weight", False, (int, type(None))),
+        TypedDictKeyTypeVerifier("max_square_length", False, int),
+        TypedDictKeyTypeVerifier("substitution_cost", False, float),
+        TypedDictKeyTypeVerifier("value_structure", True, (str, dict, type(None))),
+        TypedDictKeyTypeVerifier("value_types", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("value_weight", False, int),
     ))
 
-    def initialize_fields(self, data: ComponentTyping.SequenceStructureTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: SequenceStructureTypedDict) -> Sequence[Field]:
         fields = list(super().initialize_fields(data))
 
         self.addition_cost = data.get("addition_cost", 1.0)
@@ -51,15 +56,15 @@ class SequenceStructureComponent(IterableStructureComponent.IterableStructureCom
         self.substitution_cost = data.get("substitution_cost", 4.0)
         self.value_weight = data.get("value_weight", self.structure_type.VALUE_WEIGHT)
 
-        self.key_structure_field = ComponentField.OptionalComponentField(data.get("key_structure", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("key_structure",))
+        self.key_structure_field = OptionalComponentField(data.get("key_structure", None), STRUCTURE_COMPONENT_PATTERN, ("key_structure",))
         self.key_types_field.verify_with(self.key_structure_field)
-        self.value_structure_field = ComponentField.OptionalComponentField(data["value_structure"], StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("value_structure",))
-        self.value_types_field = TypeListField.TypeListField(data["value_types"], ("value_Types",)).verify_with(self.value_structure_field)
+        self.value_structure_field = OptionalComponentField(data["value_structure"], STRUCTURE_COMPONENT_PATTERN, ("value_structure",))
+        self.value_types_field = TypeListField(data["value_types"], ("value_Types",)).verify_with(self.value_structure_field)
 
         fields.extend((self.key_structure_field, self.value_structure_field, self.value_types_field))
         return fields
 
-    def link_finals(self, trace: Trace.Trace) -> None:
+    def link_finals(self, trace: Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_sequence_structure(

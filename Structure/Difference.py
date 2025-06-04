@@ -1,10 +1,10 @@
 from types import EllipsisType
 from typing import Hashable, Mapping
 
-import Structure.Container as Con
+from Structure.Container import Don
 
 
-class Diff[A: Con.Don]():
+class Diff[A: Don]():
     '''
     Object that tracks potential differences.
     '''

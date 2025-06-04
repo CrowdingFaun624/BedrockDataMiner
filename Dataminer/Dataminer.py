@@ -1,20 +1,20 @@
 from typing import Any, NoReturn
 
-import Dataminer.DataminerEnvironment as DataminerEnvironment
-import Dataminer.DataminerSettings as DataminerSettings
-import Downloader.Accessor as Accessor
 import Utilities.Exceptions as Exceptions
-import Utilities.File as File
-import Utilities.TypeVerifier as TypeVerifier
-import Version.Version as Version
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Dataminer.DataminerSettings import DataminerSettings
+from Downloader.Accessor import Accessor
+from Utilities.File import File, new_file
+from Utilities.TypeVerifier import TypedDictTypeVerifier, TypeVerifier
+from Version.Version import Version
 
 
 class Dataminer():
 
-    parameters:TypeVerifier.TypeVerifier|None = TypeVerifier.TypedDictTypeVerifier()
+    parameters:TypeVerifier|None = TypedDictTypeVerifier()
     '''TypeVerifier for verifying the json arguments of this Dataminer'''
 
-    def __init__(self, version:Version.Version, settings:DataminerSettings.DataminerSettings) -> None:
+    def __init__(self, version:Version, settings:DataminerSettings) -> None:
         self.version = version
         self.settings = settings
         self.domain = self.settings.domain
@@ -41,11 +41,11 @@ class Dataminer():
         '''`DataminerSettings.__init__(**kwargs)` -> `Dataminer.initialize(**kwargs)`.'''
         pass
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
+    def activate(self, environment:DataminerEnvironment) -> Any:
         '''Makes the dataminer get the file. Returns the output.'''
         raise Exceptions.DataminerLacksActivateError(self)
 
-    def get_accessor[a: Accessor.Accessor](self, accessor_type:type[a]=Accessor.Accessor, file_type:str|None=None) -> a:
+    def get_accessor[a: Accessor](self, accessor_type:type[a]=Accessor, file_type:str|None=None) -> a:
         if file_type is not None and file_type not in self.files_str:
             options:list[str] = [version_file_type.name for version_file_type in self.files if self.version.get_accessor(version_file_type.name, accessor_type) is not None]
             raise Exceptions.DataminerFileTypePermissionError(self, file_type, options)
@@ -61,8 +61,8 @@ class Dataminer():
             raise Exceptions.DataminerAccessorWrongTypeError(self, file_type, accessor_type, options)
         return accessor
 
-    def export_file(self, file_bytes:bytes, file_name:str) -> File.File:
-        return File.new_file(file_bytes, file_name)
+    def export_file(self, file_bytes:bytes, file_name:str) -> File:
+        return new_file(file_bytes, file_name)
 
 class NullDataminer(Dataminer):
     '''Returned when a dataminer collection has no dataminer for a data type.'''
@@ -70,7 +70,7 @@ class NullDataminer(Dataminer):
     def initialize(self, **kwargs) -> None:
         raise Exceptions.NullDataminerMethodError(self, self.initialize)
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> NoReturn:
+    def activate(self, environment:DataminerEnvironment) -> NoReturn:
         raise Exceptions.NullDataminerMethodError(self, self.activate)
 
     def get_accessor(self, file_type:str) -> NoReturn:

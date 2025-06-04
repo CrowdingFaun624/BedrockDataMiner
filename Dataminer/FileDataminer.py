@@ -1,8 +1,8 @@
 import bisect
 from typing import Callable, Iterable
 
-import Dataminer.Dataminer as Dataminer
-import Dataminer.DataminerEnvironment as DataminerEnvironment
+from Dataminer.Dataminer import Dataminer
+from Dataminer.DataminerEnvironment import DataminerEnvironment
 
 location_value_function:Callable[[str,str],tuple[bool,str]] = lambda key, value: (len(value) == 0 or value.endswith("/"), "location does not end in \"/\"")
 location_item_function:Callable[[str],tuple[bool,str]] = lambda item: (len(item) == 0 or item.endswith("/"), "location does not end in \"/\"")
@@ -27,9 +27,9 @@ class FileSet():
     def file_exists(self, file:str) -> bool:
         return file in self.file_set
 
-class FileDataminer(Dataminer.Dataminer):
+class FileDataminer(Dataminer):
 
-    def get_coverage(self, file_set:FileSet, environment:DataminerEnvironment.DataminerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileSet, environment:DataminerEnvironment) -> set[str]:
         '''
         Must be overridden by subclasses of FileDataminer.
         Returns the set of file paths this Dataminer would return if it were

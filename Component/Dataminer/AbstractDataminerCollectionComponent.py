@@ -1,14 +1,14 @@
-import Component.Capabilities as Capabilities
-import Component.Component as Component
-import Component.Pattern as Pattern
-import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.Pattern import Pattern
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 
-ABSTRACT_DATAMINER_COLLECTION_PATTERN:Pattern.Pattern["AbstractDataminerCollectionComponent"] = Pattern.Pattern("is_dataminer_collection")
+ABSTRACT_DATAMINER_COLLECTION_PATTERN:Pattern["AbstractDataminerCollectionComponent"] = Pattern("is_dataminer_collection")
 
-class AbstractDataminerCollectionComponent[a: AbstractDataminerCollection.AbstractDataminerCollection](Component.Component[a]):
+class AbstractDataminerCollectionComponent[a: AbstractDataminerCollection](Component[a]):
 
     class_name = "AbstractDataminerCollection"
-    my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
+    my_capabilities = Capabilities(is_dataminer_collection=True)
 
     disabled:bool = False
 

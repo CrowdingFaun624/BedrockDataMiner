@@ -1,23 +1,25 @@
 import re
 from types import EllipsisType
-from typing import Any, Mapping, Sequence
+from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
-import Component.Capabilities as Capabilities
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Utilities.Exceptions import AttributeNoneError, ComponentInvalidNameError
+from Utilities.Trace import Trace
+
+if TYPE_CHECKING:
+    from Component.Capabilities import Capabilities
+    from Component.ComponentTyping import CreateComponentFunction
+    from Component.Field.Field import Field
+    from Component.ScriptImporter import ScriptSetSetSet
+    from Utilities.TypeVerifier import TypedDictTypeVerifier
 
 INVALID_NAME_REGEXP = re.compile(r"[\@\\\/\s\{\}\[\]\(\)\"\!]")
 
 class Component[a]():
 
     class_name:str = "Component"
-    my_capabilities:Capabilities.Capabilities
-    type_verifier:TypeVerifier.TypedDictTypeVerifier
+    my_capabilities:"Capabilities"
+    type_verifier:"TypedDictTypeVerifier"
     script_referenceable:bool = False
     '''
     If the final of this Component may be accessed directly by Scripts.
@@ -38,13 +40,13 @@ class Component[a]():
         "variable_sets",
     )
 
-    def __init__(self, data:Any, name:str, domain:"Domain.Domain", component_group:str, index:int|None, trace:Trace.Trace) -> None:
+    def __init__(self, data:Any, name:str, domain:"Domain.Domain", component_group:str, index:int|None, trace:Trace) -> None:
         self.name = name
         self.domain = domain
         self.component_group = component_group
         self.index = index
         if INVALID_NAME_REGEXP.match(name):
-            trace.exception(Exceptions.ComponentInvalidNameError(self))
+            trace.exception(ComponentInvalidNameError(self))
             return
 
         self.links_to_other_components:list[Component] = []
@@ -54,30 +56,30 @@ class Component[a]():
         self.inline_parent:Component|None = None
         self.variable_bools, self.variable_sets = self.get_propagated_variables()
 
-        self.fields:Sequence["Field.Field"] = self.initialize_fields(data)
+        self.fields:Sequence["Field"] = self.initialize_fields(data)
         for field in self.fields:
             field.set_domain(self.domain)
 
-    def initialize_fields(self, data:Any) -> Sequence["Field.Field"]:
+    def initialize_fields(self, data:Any) -> Sequence["Field"]:
         return ()
 
     def get_index(self) -> int:
         "Returns the index of this Component in the Component group. Raises an error if it doesn't have an index."
         if self.index is None:
-            raise Exceptions.AttributeNoneError("index", self)
+            raise AttributeNoneError("index", self)
         return self.index
 
     def get_inline_parent(self) -> "Component":
         "Returns the parent of this Component if it is an inline Component. If it isn't, an error is raised."
         if self.inline_parent is None:
-            raise Exceptions.AttributeNoneError("inline_parent", self)
+            raise AttributeNoneError("inline_parent", self)
         return self.inline_parent
 
     def get_inline_component_name(self, path:tuple[str,...]) -> str:
         output = self.name + "".join(f"({item})" for item in path)
         return output
 
-    def get_all_descendants(self, memo:set["Component"], trace:Trace.Trace) -> list["Component"]:
+    def get_all_descendants(self, memo:set["Component"], trace:Trace) -> list["Component"]:
         '''
         Returns a list of the Component, its childern, its grandchildren, and so on.
         :memo: The set of all Components already added to the list, ensuring no duplicates or infinite loops.
@@ -98,16 +100,16 @@ class Component[a]():
             component.parents.append(self)
 
     @classmethod
-    def verify_arguments(cls, data:Mapping[str,Any], trace:Trace.Trace) -> bool:
+    def verify_arguments(cls, data:Mapping[str,Any], trace:Trace) -> bool:
         return cls.type_verifier.verify(data, trace)
 
     def set_component(
         self,
         components:dict[str,"Component"],
         global_components:dict[str,dict[str,dict[str,"Component"]]],
-        functions:ScriptImporter.ScriptSetSetSet,
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
+        functions:"ScriptSetSetSet",
+        create_component_function:"CreateComponentFunction",
+        trace:Trace,
     ) -> None:
         '''Links this Component to other Components'''
         with trace.enter(self, self.name, ...):
@@ -119,7 +121,7 @@ class Component[a]():
             for inline_component in self.inline_components:
                 inline_component.set_component(components, global_components, functions, create_component_function, trace)
 
-    def create_final_component(self, trace:Trace.Trace) -> a|EllipsisType:
+    def create_final_component(self, trace:Trace) -> a|EllipsisType:
         '''Creates this Component's final Structure or StructureBase, if applicable.'''
         with trace.enter(self, self.name, ...):
             for field in self.fields:
@@ -129,7 +131,7 @@ class Component[a]():
             return self.create_final(trace)
         return ...
 
-    def create_final(self, trace:Trace.Trace) -> a:
+    def create_final(self, trace:Trace) -> a:
         '''
         Method overridden by subclasses. Returns the Component's object.
 
@@ -137,7 +139,7 @@ class Component[a]():
         '''
         ...
 
-    def link_finals(self, trace:Trace.Trace) -> None:
+    def link_finals(self, trace:Trace) -> None:
         '''Links this Component's final object to other final objects.'''
         with trace.enter(self, self.name, ...):
             for field in self.fields:
@@ -145,7 +147,7 @@ class Component[a]():
             for inline_component in self.inline_components:
                 inline_component.link_finals(trace)
 
-    def check(self, trace:Trace.Trace) -> None:
+    def check(self, trace:Trace) -> None:
         '''Make sure that this Component's types are all in order; no error could occur.'''
         with trace.enter(self, self.name, ...):
             for field in self.fields:
@@ -153,7 +155,7 @@ class Component[a]():
             for inline_component in self.inline_components:
                 inline_component.check(trace)
 
-    def finalize(self, trace:Trace.Trace) -> None:
+    def finalize(self, trace:Trace) -> None:
         '''Used to call on the structure once all structures and components are guaranteed to be linked.'''
         with trace.enter(self, self.name, ...):
             for field in self.fields:
@@ -164,7 +166,7 @@ class Component[a]():
     def get_propagated_variables(self) -> tuple[dict[str,bool], dict[str,set]]:
         return {}, {}
 
-    def propagate_variables(self, trace:Trace.Trace) -> bool:
+    def propagate_variables(self, trace:Trace) -> bool:
         with trace.enter(self, self.name, ...):
             has_changed = False
             # bools

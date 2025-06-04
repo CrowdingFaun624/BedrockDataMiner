@@ -1,10 +1,10 @@
 import bisect
 from typing import BinaryIO, Sequence
 
-import Downloader.Accessor as Accessor
+from Downloader.Accessor import Accessor
 
 
-class DirectoryAccessor(Accessor.Accessor):
+class DirectoryAccessor(Accessor):
 
     __slots__ = ()
 

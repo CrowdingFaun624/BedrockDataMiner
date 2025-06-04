@@ -1,10 +1,10 @@
 import json
 from typing import Any
 
-import Serializer.JsonSerializer as JsonSerializer
+from Serializer.JsonSerializer import JsonSerializer
 
 
-class CustomJsonSerializer(JsonSerializer.JsonSerializer):
+class CustomJsonSerializer(JsonSerializer):
     '''
     Serializer for JSON files.
     '''

@@ -2,15 +2,15 @@ from types import EllipsisType
 from typing import Any, cast
 
 import Domain.Domain as Domain
-import Structure.Container as Con
-import Structure.Difference as Diff
-import Structure.Structure as Structure
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Structure.Container import Con, Don
+from Structure.Difference import Diff
+from Structure.Structure import Structure
+from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypeVerifier
 
 
-class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO, BC, CO, CC]():
+class Delegate[DC:Con, DD:Don|Diff, S:Structure|None, BO, BC, CO, CC]():
     '''
     Object for displaying the output of Structures in different ways.
     Delegates are a Generic of seven TypeVars.\n
@@ -23,13 +23,13 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
     The seventh TypeVar (`CC`) is the data from `print_comparison` that is stored in CacheStructures.\n
     '''
 
-    type_verifier:TypeVerifier.TypeVerifier|None = None
+    type_verifier:TypeVerifier|None = None
     '''
     TypeVerifier used to verify the parameters of this Delegate.
     If not present, will use the function signature of `__init__`.
     '''
 
-    key_type_verifier:TypeVerifier.TypeVerifier|None = None
+    key_type_verifier:TypeVerifier|None = None
     '''
     TypeVerifier used to verify each value in `keys` of this Delegate.
     If not present, no checking is done for `keys`.
@@ -40,7 +40,7 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
     True if this Delegate uses the Versions in any environments. Used for caching
     '''
 
-    applies_to:tuple[type[Structure.Structure]|type[None],...] = (Structure.Structure, type(None))
+    applies_to:tuple[type[Structure]|type[None],...] = (Structure, type(None))
 
     __slots__ = (
         "structure",
@@ -53,7 +53,7 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
         '''
         self.structure = structure
 
-    def finalize(self, domain:"Domain.Domain", trace:Trace.Trace) -> None:
+    def finalize(self, domain:"Domain.Domain", trace:Trace) -> None:
         '''
         Runs during the finalize Component import phase.
         '''
@@ -65,7 +65,7 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
         else:
             return f"<{self.__class__.__name__} of {self.structure.__class__.__name__} {self.structure.name}>"
 
-    def cache_store_branch(self, data:BO, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> BC:
+    def cache_store_branch(self, data:BO, trace:Trace, environment:PrinterEnvironment) -> BC:
         '''
         Returns data from `print_branch` that is stored in a CacheStructure.
         When the data is retrieved, `cache_store_branch` is called.
@@ -74,7 +74,7 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
         '''
         return cast(BC, data)
 
-    def cache_retrieve_branch(self, data:BC, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> BO:
+    def cache_retrieve_branch(self, data:BC, trace:Trace, environment:PrinterEnvironment) -> BO:
         '''
         Given the data that was stored by `cache_store_branch`, returns the original data.
         :Data: The data stored in the cache that is returned by `cache_store_branch`.
@@ -82,7 +82,7 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
         '''
         return cast(BO, data)
 
-    def cache_store_comparison(self, data:CO, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> CC:
+    def cache_store_comparison(self, data:CO, trace:Trace, environment:ComparisonEnvironment) -> CC:
         '''
         Returns data from `print_comparison` that is stored in a CacheStructure.
         When the data is retrieved, `cache_retrieve_comparison` is called.
@@ -91,7 +91,7 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
         '''
         return cast(CC, data)
 
-    def cache_retrieve_comparison(self, data:CC, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment|StructureEnvironment.PrinterEnvironment) -> CO:
+    def cache_retrieve_comparison(self, data:CC, trace:Trace, environment:ComparisonEnvironment) -> CO:
         '''
         Given the data that was stored by `cache_store_comparison`, returns the original data.
         :data: The data stored in the cache that is returned by `cache_store_comparison`.
@@ -99,8 +99,8 @@ class Delegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None, BO,
         '''
         return cast(CO, data)
 
-    def print_branch(self, data:DC, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:
+    def print_branch(self, data:DC, trace:Trace, environment:PrinterEnvironment) -> BO|EllipsisType:
         ...
 
-    def print_comparison(self, data:DD, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data:DD, trace:Trace, environment:ComparisonEnvironment) -> CO|EllipsisType:
         ...

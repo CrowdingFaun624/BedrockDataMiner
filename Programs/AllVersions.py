@@ -2,12 +2,12 @@ import traceback
 
 import Dataminer.Dataminers as Dataminers
 import Domain.Domain as Domain
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Exceptions as Exceptions
-import Version.Version as Version
+from Structure.StructureEnvironment import EnvironmentType, StructureEnvironment
+from Utilities.Exceptions import DataminersFailureError
+from Version.Version import Version
 
 
-def datamine_version(version:Version.Version, domain:Domain.Domain, print_messages:bool=True) -> None:
+def datamine_version(version:Version, domain:Domain.Domain, print_messages:bool=True) -> None:
     dataminers = Dataminers.get_dataminable_dataminers(version, domain)
     already_files = set(Dataminers.currently_has_data_files_from(version, domain))
     needed_files = [dataminer for dataminer in dataminers if dataminer not in already_files]
@@ -17,7 +17,7 @@ def datamine_version(version:Version.Version, domain:Domain.Domain, print_messag
         return # All of this Version's data files are already there.
     if print_messages:
         print(f"Started \"{version.name}\".")
-    structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining, domain)
+    structure_environment = StructureEnvironment(EnvironmentType.all_datamining, domain)
     failure_dataminers = Dataminers.run(version, needed_files, structure_environment)
     if len(failure_dataminers) > 0:
         for failed_dataminer, exception in failure_dataminers:
@@ -25,7 +25,7 @@ def datamine_version(version:Version.Version, domain:Domain.Domain, print_messag
             if exception is not None:
                 traceback.print_exception(exception)
         print()
-        raise Exceptions.DataminersFailureError(version, [dataminer_tuple[0] for dataminer_tuple in failure_dataminers])
+        raise DataminersFailureError(version, [dataminer_tuple[0] for dataminer_tuple in failure_dataminers])
     if not version.latest:
         for version_file in version.version_files:
             for accessor in version_file.accessors:

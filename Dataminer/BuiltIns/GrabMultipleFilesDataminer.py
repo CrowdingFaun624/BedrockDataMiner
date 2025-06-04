@@ -1,23 +1,27 @@
 from typing import Any
 
-import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.DirectoryAccessor as DirectoryAccessor
 import Utilities.Exceptions as Exceptions
-import Utilities.File as File
-import Utilities.TypeVerifier as TypeVerifier
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Downloader.DirectoryAccessor import DirectoryAccessor
+from Utilities.File import File
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
 
 class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
 
-    parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_suffixes", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("location", True, str, function=FileDataminer.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("suffixes", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("unrecognized_suffix_okay", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_subdirectories", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_files", False, TypeVerifier.ListTypeVerifier(str, list)),
+    parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("ignore_suffixes", False, ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
+        TypedDictKeyTypeVerifier("location", True, str, function=FileDataminer.location_value_function),
+        TypedDictKeyTypeVerifier("suffixes", False, ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
+        TypedDictKeyTypeVerifier("unrecognized_suffix_okay", False, bool),
+        TypedDictKeyTypeVerifier("find_none_okay", False, bool),
+        TypedDictKeyTypeVerifier("ignore_subdirectories", False, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
+        TypedDictKeyTypeVerifier("ignore_files", False, ListTypeVerifier(str, list)),
     )
 
     def initialize(
@@ -38,7 +42,7 @@ class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
         self.ignore_subdirectories = ignore_subdirectories
         self.ignore_files:set[str] = set(ignore_files) if ignore_files is not None else set()
 
-    def get_coverage(self, file_set:FileDataminer.FileSet, environment:DataminerEnvironment.DataminerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataminer.FileSet, environment:DataminerEnvironment) -> set[str]:
         output:set[str] = set()
         for file_name in file_set.get_files_in(self.location):
             relative_name = file_name.removeprefix(self.location)
@@ -58,7 +62,7 @@ class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return output
 
-    def get_files(self, path_base:str, accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
+    def get_files(self, path_base:str, accessor:DirectoryAccessor, environment:DataminerEnvironment) -> dict[tuple[str,str],bytes]:
         files:dict[tuple[str,str],bytes] = {}
         for file_name in accessor.get_files_in(path_base):
             should_store_file = True
@@ -90,11 +94,11 @@ class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
             raise Exceptions.DataminerNothingFoundError(self)
         return files
 
-    def get_output(self, files:dict[tuple[str,str],bytes], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,File.File]:
+    def get_output(self, files:dict[tuple[str,str],bytes], accessor:DirectoryAccessor, environment:DataminerEnvironment) -> dict[str,File]:
         return {relative_name: self.export_file(file_bytes, file_name) for (relative_name, file_name), file_bytes in files.items()}
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
+    def activate(self, environment:DataminerEnvironment) -> Any:
+        accessor = self.get_accessor(DirectoryAccessor)
         files = self.get_files(self.location, accessor, environment)
         output = self.get_output(files, accessor, environment)
         return output

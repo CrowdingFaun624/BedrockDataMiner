@@ -1,17 +1,17 @@
 from typing import TYPE_CHECKING, Any
 
 import Domain.Domain as Domain
-import Utilities.TypeVerifier as TypeVerifier
+from Utilities.TypeVerifier import TypedDictTypeVerifier, TypeVerifier
 
 if TYPE_CHECKING:
-    import Version.Version as Version
+    from Version.Version import Version
 
 class Accessor():
 
     linked_accessors:dict[str, type["Accessor"]] = {}
-    instance_parameters:TypeVerifier.TypedDictTypeVerifier = TypeVerifier.TypedDictTypeVerifier()
-    propagated_parameters:TypeVerifier.TypedDictTypeVerifier = TypeVerifier.TypedDictTypeVerifier()
-    class_parameters:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
+    instance_parameters:TypedDictTypeVerifier = TypedDictTypeVerifier()
+    propagated_parameters:TypedDictTypeVerifier = TypedDictTypeVerifier()
+    class_parameters:TypeVerifier = TypedDictTypeVerifier()
 
     __slots__ = (
         "accessor_type_name",
@@ -19,7 +19,7 @@ class Accessor():
         "version",
     )
 
-    def __init__(self, name:str, version:"Version.Version", domain:"Domain.Domain", instance_arguments:dict[str,Any], class_arguments:dict[str,Any], propagated_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
+    def __init__(self, name:str, version:"Version", domain:"Domain.Domain", instance_arguments:dict[str,Any], class_arguments:dict[str,Any], propagated_arguments:dict[str,Any], linked_accessors:dict[str,"Accessor"]) -> None:
         '''
         :version: Version object this accessor is based on.
         :location: File location to the directory containing extracted files.

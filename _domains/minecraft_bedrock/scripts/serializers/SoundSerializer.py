@@ -1,14 +1,16 @@
 import enum
 from typing import Any, Optional, TypedDict
 
-import _domains.minecraft_bedrock.scripts.serializers.EvilFSBExtractor as EvilFSBExtractor
-import Serializer.Serializer as Serializer
-import Utilities.Exceptions as Exceptions
-import Utilities.FileManager as FileManager
+from _domains.minecraft_bedrock.scripts.serializers.EvilFSBExtractor import (
+    extract_fsb_file,
+)
+from Serializer.Serializer import Serializer
+from Utilities.Exceptions import DataminerException, EmptyFileError, message
+from Utilities.FileManager import get_hash_hexdigest
 
 __all__ = ("SoundSerializer",)
 
-class SoundFilesMetadataError(Exceptions.DataminerException):
+class SoundFilesMetadataError(DataminerException):
     "audio_metadata failed to extract the sound file."
 
     def __init__(self, message:Optional[str]=None) -> None:
@@ -18,7 +20,7 @@ class SoundFilesMetadataError(Exceptions.DataminerException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"audio_metadata failed to extract a file{Exceptions.message(self.message)}"
+        return f"audio_metadata failed to extract a file{message(self.message)}"
 
 class SoundFilesTagsTypedDict(TypedDict):
     comment: list[str]
@@ -52,14 +54,14 @@ class SoundFilesTypedDict(TypedDict):
 def get_metadata(file:bytes) -> SoundFilesTypedDict:
     import audio_metadata
     if len(file) == 0:
-        raise Exceptions.EmptyFileError()
+        raise EmptyFileError()
     try:
         metadata = audio_metadata.loads(file)
-    except Exception as e:
+    except Exception:
         raise SoundFilesMetadataError()
     info = serialize(metadata)
 
-    info["sha1_hash"] = FileManager.get_hash_hexdigest(file)
+    info["sha1_hash"] = get_hash_hexdigest(file)
     return info
 
 def serialize(data:Any) -> Any:
@@ -81,13 +83,13 @@ def serialize(data:Any) -> Any:
         except Exception:
             return f"Unencodable object \"{data.__class__.__name__}\""
 
-class SoundSerializer(Serializer.Serializer[dict[str,dict[str,SoundFilesTypedDict]],]):
+class SoundSerializer(Serializer[dict[str,dict[str,SoundFilesTypedDict]],]):
 
     can_contain_subfiles = True
 
     def deserialize(self, data: bytes) -> dict[str,SoundFilesTypedDict]:
         if data[:3] == b"FSB": # it's an FSB file
-            wav_files = EvilFSBExtractor.extract_fsb_file(data)
+            wav_files = extract_fsb_file(data)
             return {wav_file_name: get_metadata(wave_file_data) for wav_file_name, wave_file_data in wav_files}
         else:
             return {"main": get_metadata(data)}

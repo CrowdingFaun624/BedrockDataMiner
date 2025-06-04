@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import Downloader.AccessorType as AccessorType
+    from Downloader.AccessorType import AccessorType
 
 class VersionFileType():
 
@@ -24,7 +24,7 @@ class VersionFileType():
 
     def link_finals(
         self,
-        allowed_accessor_types:list["AccessorType.AccessorType"],
+        allowed_accessor_types:list["AccessorType"],
     ) -> None:
         self.allowed_accessor_types = allowed_accessor_types
 

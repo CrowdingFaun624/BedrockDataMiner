@@ -1,15 +1,15 @@
 from types import EllipsisType
 from typing import Any, NotRequired, Required, TypedDict
 
-import Structure.Container as Con
-import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.SimpleContainer as SCon
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureTypes.KeymapStructure as KeymapStructure
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Structure.Container import Con, Don
+from Structure.Delegate.Delegate import Delegate
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon
+from Structure.SimpleContainer import SCon, SDon
+from Structure.StructureEnvironment import ComparisonEnvironment
+from Structure.StructureTypes.KeymapStructure import KeymapStructure
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictTypeVerifier
 
 __all__ = ("SoundPropertiesDelegate",)
 
@@ -36,18 +36,18 @@ PROPERTY_ORDER = {key: index for index, key in enumerate((
     "exclude_from_pocket_platforms",
 ))}
 
-class SoundPropertiesDelegate(Delegate.Delegate[
-    ICon.ICon[SCon.SCon[str], Con.Con[Any], SoundPropertiesTypedDict],
-    ICon.IDon[Diff.Diff[SCon.SDon[str]], Diff.Diff[Con.Don[Any]], SoundPropertiesTypedDict, SCon.SCon[str], Con.Con[Any]],
-    KeymapStructure.KeymapStructure[str, Any, SoundPropertiesTypedDict, Any, str, Any, str, Any, str],
+class SoundPropertiesDelegate(Delegate[
+    ICon[SCon[str], Con[Any], SoundPropertiesTypedDict],
+    IDon[Diff[SDon[str]], Diff[Don[Any]], SoundPropertiesTypedDict, SCon[str], Con[Any]],
+    KeymapStructure[str, Any, SoundPropertiesTypedDict, Any, str, Any, str, Any, str],
     str, Any, str, Any,
 ]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier()
+    type_verifier = TypedDictTypeVerifier()
 
-    applies_to = (KeymapStructure.KeymapStructure,)
+    applies_to = (KeymapStructure,)
 
-    def print_comparison(self, data: ICon.IDon[Diff.Diff[SCon.SDon[str]], Diff.Diff[Con.Don[Any]], SoundPropertiesTypedDict, SCon.SCon[str], Con.Con[Any]], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str | EllipsisType:
+    def print_comparison(self, data: IDon[Diff[SDon[str]], Diff[Don[Any]], SoundPropertiesTypedDict, SCon[str], Con[Any]], trace: Trace, environment: ComparisonEnvironment) -> str | EllipsisType:
         output:list[str] = []
         data_dict = {key.last_value: value for key, value in sorted(data.items(), key=lambda item: PROPERTY_ORDER[item[0].last_value.last_value])}
         key_structure = self.structure.key_structure

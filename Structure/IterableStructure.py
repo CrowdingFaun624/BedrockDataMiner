@@ -1,25 +1,30 @@
 from types import EllipsisType
 from typing import Any, Callable, Hashable, Mapping, Self, Sequence
 
-import Structure.Container as Con
-import Structure.DataPath as DataPath
-import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.Normalizer as Normalizer
-import Structure.SimpleContainer as SCon
-import Structure.Structure as Structure
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureTag as StructureTag
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Structure.Container import Con, Don
+from Structure.DataPath import DataPath
+from Structure.Delegate.Delegate import Delegate
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon, icon_from_list, idon_from_list
+from Structure.Normalizer import Normalizer
+from Structure.SimpleContainer import SCon
+from Structure.Structure import Structure
+from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Structure.StructureTag import StructureTag
+from Utilities.Exceptions import (
+    AttributeNoneError,
+    StructureNoManipulationFunctionError,
+    StructureRequiredKeyMissingError,
+    StructureTypeError,
+)
+from Utilities.Trace import Trace
 
 
-class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.Structure[
+class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
     D,
-    ICon.ICon[Con.Con[K], Con.Con[V], D],
-    ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]],
-    ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]],
+    ICon[Con[K], Con[V], D],
+    IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]],
+    IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]],
     BO, CO,
 ]):
     '''
@@ -40,14 +45,14 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
 
     def link_iterable_structure(
         self,
-        delegate:Delegate.Delegate[ICon.ICon[Con.Con[K], Con.Con[V], D], ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]], Self, BO, Any, CO, Any]|None,
+        delegate:Delegate[ICon[Con[K], Con[V], D], IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], Self, BO, Any, CO, Any]|None,
         key_function:Callable[[K], str],
         key_types:tuple[type,...],
-        normalizers:Sequence[Normalizer.Normalizer],
-        post_normalizers:Sequence[Normalizer.Normalizer],
+        normalizers:Sequence[Normalizer],
+        post_normalizers:Sequence[Normalizer],
         pre_normalized_types:tuple[type,...],
         required_keys:set[str],
-        tags:set[StructureTag.StructureTag],
+        tags:set[StructureTag],
         this_types:tuple[type,...],
     ) -> None:
         self.delegate = delegate
@@ -60,47 +65,47 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
         self.tags = tags
         self.this_types = this_types
 
-    def get_key_structure(self, key:K, value:V, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Structure.Structure[K, Con.Con[K], Con.Don[K], Con.Don[K]|Diff.Diff[Con.Don[K]], KBO, KCO]|None:
+    def get_key_structure(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None:
         '''
         Returns a Structure that can act on the key of the Iterable of this Structure or None.
         '''
         ...
 
-    def get_value_structure(self, key:K, value:V, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Structure.Structure[V, Con.Con[V], Con.Don[V], Con.Don[V]|Diff.Diff[Con.Don[V]], VBO, VCO]|None:
+    def get_value_structure(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None:
         '''
         Returns a Structure that can act on the value of the Iterable of this Structure or None.
         '''
         ...
 
-    def get_key_structure_chain_end(self, key:Con.Con[K], value:Con.Con[V], trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Structure.Structure|None:
+    def get_key_structure_chain_end(self, key:Con[K], value:Con[V], trace:Trace, environment:PrinterEnvironment) -> Structure|None:
         if (structure := self.get_key_structure(key.data, value.data, trace, environment)) is None:
             return None
         else:
             return structure.get_structure_chain_end(key, trace, environment)
 
-    def get_value_structure_chain_end(self, key:Con.Con[K], value:Con.Con[V], trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Structure.Structure|None:
+    def get_value_structure_chain_end(self, key:Con[K], value:Con[V], trace:Trace, environment:PrinterEnvironment) -> Structure|None:
         if (structure := self.get_value_structure(key.data, value.data, trace, environment)) is None:
             return None
         else:
             return structure.get_structure_chain_end(value, trace, environment)
 
-    def get_value_types(self, key:K, value:V, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> tuple[type,...]:
+    def get_value_types(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> tuple[type,...]:
         '''
         Returns the types that this specific value can be.
         '''
         ...
 
-    def get_value_tags(self, key:K, value:V, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> set[StructureTag.StructureTag]|None:
+    def get_value_tags(self, key:K, value:V, trace:Trace, environment:PrinterEnvironment) -> set[StructureTag]|None:
         '''
         Returns the StructureTags associated with the given value.
         Return an empty set or None if there are no associated StructureTags.
         '''
         return None
 
-    def normalize(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> D|EllipsisType:
+    def normalize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> D|EllipsisType:
         with trace.enter(self, self.name, data):
             if not isinstance(data, self.pre_normalized_types):
-                trace.exception(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
+                trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
                 return ...
 
             data, pre_data_identity_changed = self.normalizer_pass(self.normalizers, data, trace, environment)
@@ -121,39 +126,39 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
             return data if pre_data_identity_changed or post_data_identity_changed else ...
         return ...
 
-    def normalize_item[A](self, item:A, structure:Structure.Structure[A, Con.Con[A], Con.Don[A], Con.Don[A]|Diff.Diff[Con.Don[A]], Any, Any]|None, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> A|None:
+    def normalize_item[A](self, item:A, structure:Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None, trace:Trace, environment:PrinterEnvironment) -> A|None:
         if structure is not None and structure.children_has_normalizer:
             normalizer_output = structure.normalize(item, trace, environment)
             if normalizer_output is not ...:
                 return normalizer_output
         return None
 
-    def normalize_set_item(self, data:D, key:K, value:V, normalized_key:K|None, normalized_value:V|None, setitem_function:Callable[[D, K, V], None]|None, popitem_function:Callable[[D, K], V]|None, trace:Trace.Trace) -> None:
+    def normalize_set_item(self, data:D, key:K, value:V, normalized_key:K|None, normalized_value:V|None, setitem_function:Callable[[D, K, V], None]|None, popitem_function:Callable[[D, K], V]|None, trace:Trace) -> None:
         if normalized_key is None and normalized_value is None:
             pass
         elif normalized_key is None and normalized_value is not None:
             if setitem_function is None:
-                trace.exception(Exceptions.StructureNoManipulationFunctionError("setitem", type(data), "so values cannot be changed"))
+                trace.exception(StructureNoManipulationFunctionError("setitem", type(data), "so values cannot be changed"))
             else:
                 setitem_function(data, key, normalized_value)
         elif normalized_key is not None and normalized_value is None:
             if popitem_function is None or setitem_function is None:
                 text = "popitem" if setitem_function is not None else ("setitem" if popitem_function is not None else "setitem or popitem")
-                trace.exception(Exceptions.StructureNoManipulationFunctionError(text, type(data), "so keys cannot be changed"))
+                trace.exception(StructureNoManipulationFunctionError(text, type(data), "so keys cannot be changed"))
             else:
                 popitem_function(data, key)
                 setitem_function(data, normalized_key, value)
         elif normalized_key is not None and normalized_value is not None:
             if popitem_function is None or setitem_function is None:
                 text = "popitem" if setitem_function is not None else ("setitem" if popitem_function is not None else "setitem or popitem")
-                trace.exception(Exceptions.StructureNoManipulationFunctionError(text, type(data), "so keys cannot be changed"))
+                trace.exception(StructureNoManipulationFunctionError(text, type(data), "so keys cannot be changed"))
             else:
                 popitem_function(data, key)
                 setitem_function(data, normalized_key, normalized_value)
 
-    def containerize(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> ICon.ICon[Con.Con[K], Con.Con[V], D]|EllipsisType:
+    def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> ICon[Con[K], Con[V], D]|EllipsisType:
         with trace.enter(self, self.name, data):
-            containers:list[tuple[Con.Con[K], Con.Con[V]]] = []
+            containers:list[tuple[Con[K], Con[V]]] = []
             for key, value in environment.domain.type_stuff.iterate_data(data):
                 with trace.enter_key(key, value):
                     key_structure = self.get_key_structure(key, value, trace, environment)
@@ -162,25 +167,25 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
                     value_container = self.containerize_item(value, value_structure, trace, environment)
                     if key_container is not ... and value_container is not ...:
                         containers.append((key_container, value_container))
-            return ICon.icon_from_list(containers, data)
+            return icon_from_list(containers, data)
         return ...
 
-    def containerize_item[A](self, item:A, structure:Structure.Structure[A, Con.Con[A], Con.Don[A], Con.Don[A]|Diff.Diff[Con.Don[A]], Any, Any]|None, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Con.Con[A]|EllipsisType:
+    def containerize_item[A](self, item:A, structure:Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None, trace:Trace, environment:PrinterEnvironment) -> Con[A]|EllipsisType:
         if structure is None:
-            return SCon.SCon(item, environment.domain)
+            return SCon(item, environment.domain)
         else:
             return structure.containerize(item, trace, environment)
 
     def diffize(
         self,
-        data: ICon.ICon[Con.Con[K], Con.Con[V], D],
+        data: ICon[Con[K], Con[V], D],
         bundle: tuple[int, ...],
-        trace: Trace.Trace,
-        environment: StructureEnvironment.ComparisonEnvironment,
-    ) -> Mapping[tuple[int, ...], ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]]] | EllipsisType:
+        trace: Trace,
+        environment: ComparisonEnvironment,
+    ) -> Mapping[tuple[int, ...], IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]]] | EllipsisType:
         # this method was very annoying.
         with trace.enter(self, self.name, data):
-            diffed_items:list[Mapping[tuple[int,...], tuple[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]]]]] = []
+            diffed_items:list[Mapping[tuple[int,...], tuple[Diff[Don[K]], Diff[Don[V]]]]] = []
             current_length:int = 0
             for undiffed_key, undiffed_value in data.items(): # weird names because of lambda expressions.
                 with trace.enter_key(undiffed_key, undiffed_value):
@@ -189,23 +194,23 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
                     diffed_value = self.diffize_item(undiffed_value, bundle, lambda branch: self.get_value_structure_chain_end(undiffed_key, undiffed_value, trace, environment[branch]), trace, environment)
                     diffed_items.append(self.combine_key_value(diffed_key, diffed_value, bundle))
             if current_length == 0: # If `data` is an empty ICon, then the above for loop will do nothing, leading eventually to a Diff with no items (bad).
-                return {bundle: ICon.idon_from_list([], {branch: data for branch in bundle})}
+                return {bundle: idon_from_list([], {branch: data for branch in bundle})}
             else:
-                return {local_bundle: ICon.idon_from_list(items, {branch: data for branch in local_bundle}) for local_bundle, items in self.combine_bundles(diffed_items, bundle).items()}
+                return {local_bundle: idon_from_list(items, {branch: data for branch in local_bundle}) for local_bundle, items in self.combine_bundles(diffed_items, bundle).items()}
         return ...
 
     def diffize_item[A](
         self,
-        item:Con.Con[A],
+        item:Con[A],
         bundle:tuple[int,...],
-        structure_function:Callable[[int], Structure.Structure[A, Con.Con[A], Con.Don[A], Con.Don[A]|Diff.Diff[Con.Don[A]], Any, Any]|None],
-        trace:Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment,
-    ) -> dict[tuple[int,...], Con.Don[A]]:
+        structure_function:Callable[[int], Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None],
+        trace:Trace,
+        environment:ComparisonEnvironment,
+    ) -> dict[tuple[int,...], Don[A]]:
         structures = [(branch, structure := structure_function(branch)) for branch in bundle]
-        structure_bundles:list[tuple[tuple[int,...], Structure.Structure[A, Con.Con[A], Con.Don[A], Con.Don[A]|Diff.Diff[Con.Don[A]], Any, Any]|None]] = []
+        structure_bundles:list[tuple[tuple[int,...], Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None]] = []
         current_bundle:list[int] = []
-        current_structure:Structure.Structure[A, Con.Con[A], Con.Don[A], Con.Don[A]|Diff.Diff[Con.Don[A]], BO, CO]|None|EllipsisType = ...
+        current_structure:Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], BO, CO]|None|EllipsisType = ...
         for branch, structure in structures:
             if current_structure is ... or structure is current_structure:
                 current_bundle.append(branch)
@@ -215,7 +220,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
             current_structure = structure
         assert current_structure is not ...
         structure_bundles.append((tuple(current_bundle), current_structure))
-        output:dict[tuple[int,...], Con.Don[A]] = {}
+        output:dict[tuple[int,...], Don[A]] = {}
         for local_bundle, structure in structure_bundles:
             if structure is None:
                 output[local_bundle] = item.as_don(local_bundle)
@@ -244,9 +249,9 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
                         output[bundle_map[branch]].append(item)
         return output
 
-    def combine_key_value(self, key_diff:Mapping[tuple[int,...], Con.Don[K]], value_diff:Mapping[tuple[int,...], Con.Don[V]], top_bundle:tuple[int,...]) -> Mapping[tuple[int,...], tuple[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]]]]:
+    def combine_key_value(self, key_diff:Mapping[tuple[int,...], Don[K]], value_diff:Mapping[tuple[int,...], Don[V]], top_bundle:tuple[int,...]) -> Mapping[tuple[int,...], tuple[Diff[Don[K]], Diff[Don[V]]]]:
         bundle_ends:set[int] = {bundle[-1] for item_diff in (key_diff, value_diff) for bundle in item_diff}
-        output:dict[tuple[int,...], tuple[dict[tuple[int,...], Con.Don[K]], dict[tuple[int,...], Con.Don[V]]]] = {} # lists are one-item (if not one-item, broken; help)
+        output:dict[tuple[int,...], tuple[dict[tuple[int,...], Don[K]], dict[tuple[int,...], Don[V]]]] = {} # lists are one-item (if not one-item, broken; help)
         bundle_map:dict[int,tuple[int,...]] = {}
         current_bundle:list[int] = []
         for branch in top_bundle:
@@ -263,9 +268,9 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
             for branch in bundle:
                 if branch in bundle_ends:
                     output[bundle_map[branch]][1][bundle] = value
-        return {bundle: (Diff.Diff(key_list, False), Diff.Diff(value_list, False)) for bundle, (key_list, value_list) in output.items()}
+        return {bundle: (Diff(key_list, False), Diff(value_list, False)) for bundle, (key_list, value_list) in output.items()}
 
-    def type_check(self, data: ICon.ICon[Con.Con[K], Con.Con[V], D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> None:
+    def type_check(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> None:
         with trace.enter(self, self.name, data):
             self.type_check_item(data.data, self.this_types, "Data", trace)
             required_keys:set[str] = self.required_keys.copy()
@@ -276,17 +281,17 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
                     self.type_check_item(value.data, value_types, "Value", trace)
                     required_keys.discard(self.key_function(key.data))
             if len(required_keys) != 0:
-                trace.exception(Exceptions.StructureRequiredKeyMissingError(self, key))
+                trace.exception(StructureRequiredKeyMissingError(self, key))
 
-    def type_check_item(self, item:object, types:tuple[type,...], label:str, trace:Trace.Trace) -> None:
+    def type_check_item(self, item:object, types:tuple[type,...], label:str, trace:Trace) -> None:
         if not isinstance(item, types):
-            trace.exception(Exceptions.StructureTypeError(types, type(item), label))
+            trace.exception(StructureTypeError(types, type(item), label))
 
-    def get_tag_paths(self, data: ICon.ICon[Con.Con[K], Con.Con[V], D], tag:StructureTag.StructureTag, data_path: DataPath.DataPath, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Sequence[DataPath.DataPath]:
+    def get_tag_paths(self, data: ICon[Con[K], Con[V], D], tag:StructureTag, data_path: DataPath, trace: Trace, environment: PrinterEnvironment) -> Sequence[DataPath]:
         with trace.enter(self, self.name, data):
             if tag not in self.children_tags:
                 return ()
-            output:list[DataPath.DataPath] = []
+            output:list[DataPath] = []
             if tag in self.tags:
                 output.extend(data_path.copy(key).embed(value) for key, value in data.items())
             for key, value in data.items():
@@ -300,7 +305,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
             return output
         return () # error occurred
 
-    def get_referenced_files(self, data: ICon.ICon[Con.Con[K], Con.Con[V], D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> set[int]:
+    def get_referenced_files(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> set[int]:
         with trace.enter(self, self.name, data):
             output:set[int] = set()
             if not self.children_has_garbage_collection: return set()
@@ -315,23 +320,23 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
             return output
         return set()
 
-    def print_branch(self, data: ICon.ICon[Con.Con[K], Con.Con[V], D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:
+    def print_branch(self, data: ICon[Con[K], Con[V], D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.name, data):
             if self.delegate is None:
-                raise Exceptions.AttributeNoneError("delegate", self)
+                raise AttributeNoneError("delegate", self)
             return self.delegate.print_branch(data, trace, environment)
         return ...
 
-    def print_comparison(self, data: ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data: IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
         with trace.enter(self, self.name, data):
             if self.delegate is None:
-                raise Exceptions.AttributeNoneError("delegate", self)
+                raise AttributeNoneError("delegate", self)
             return self.delegate.print_comparison(data, trace, environment)
         return ...
 
     # the below methods are utility methods for use in multiple subclasses.
 
-    def get_key_similarity(self, key1:Con.Con[K], key2:Con.Con[K], value1:Con.Con[V], value2:Con.Con[V], branch1:int, branch2:int, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
+    def get_key_similarity(self, key1:Con[K], key2:Con[K], value1:Con[V], value2:Con[V], branch1:int, branch2:int, trace:Trace, environment:ComparisonEnvironment) -> tuple[float, bool]:
         if key1 == key2:
             return 1.0, True
 
@@ -350,7 +355,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
             return float(is_similar := (key1 == key2)), is_similar
         return structure1_chain_end.get_similarity(key1, key2, branch1, branch2, trace, environment)
 
-    def get_value_similarity(self, key1:Con.Con[K], key2:Con.Con[K], value1:Con.Con[V], value2:Con.Con[V], branch1:int, branch2:int, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
+    def get_value_similarity(self, key1:Con[K], key2:Con[K], value1:Con[V], value2:Con[V], branch1:int, branch2:int, trace:Trace, environment:ComparisonEnvironment) -> tuple[float, bool]:
         if value1 == value2:
             return 1.0, True
 
@@ -371,11 +376,11 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
 
     def assemble_output(
         self,
-        cumulative_items:list[tuple[list[tuple[list[int], Con.Con[K]]], list[tuple[list[int], Con.Con[V]]]]],
-        trace:Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment,
-    ) -> tuple[list[tuple[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]]]], bool]:
-        output:list[tuple[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]]]] = []
+        cumulative_items:list[tuple[list[tuple[list[int], Con[K]]], list[tuple[list[int], Con[V]]]]],
+        trace:Trace,
+        environment:ComparisonEnvironment,
+    ) -> tuple[list[tuple[Diff[Don[K]], Diff[Don[V]]]], bool]:
+        output:list[tuple[Diff[Don[K]], Diff[Don[V]]]] = []
         internal_changes = False
         for key_diff, value_diff in cumulative_items:
             simple_key_map = {branch: key for bundle, key in key_diff for branch in bundle}
@@ -388,12 +393,12 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
 
     def get_item_diff[A](
         self,
-        item_diff:list[tuple[list[int], Con.Con[A]]],
-        structure_function:Callable[[Con.Con[A], int],Structure.Structure[A, Con.Con[A], Con.Don[A], Con.Don[A]|Diff.Diff[Con.Don[A]], Any, Any]|None],
-        trace:Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment,
-    ) -> tuple[Diff.Diff[Con.Don[A]], bool]: # Diff and if the Diff has any internal changes.
-        structure_bundles:list[tuple[Structure.Structure[A, Con.Con[A], Con.Don[A], Con.Don[A]|Diff.Diff[Con.Don[A]], Any, Any]|None, list[tuple[tuple[int,...], Con.Con[A]]]]] = []
+        item_diff:list[tuple[list[int], Con[A]]],
+        structure_function:Callable[[Con[A], int],Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None],
+        trace:Trace,
+        environment:ComparisonEnvironment,
+    ) -> tuple[Diff[Don[A]], bool]: # Diff and if the Diff has any internal changes.
+        structure_bundles:list[tuple[Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], Any, Any]|None, list[tuple[tuple[int,...], Con[A]]]]] = []
         for bundle, item in item_diff:
             previous_structure, previous_bundles = structure_bundles[-1] if len(structure_bundles) != 0 else (..., [])
             structure = structure_function(item, bundle[-1])
@@ -403,7 +408,7 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
             else:
                 structure_bundles.append((structure, [(tuple(bundle), item)]))
         internal_changes:bool = False
-        advanced_diff:dict[tuple[int,...], Con.Don[A]] = {}
+        advanced_diff:dict[tuple[int,...], Don[A]] = {}
         for structure, bundles in structure_bundles:
             if structure is None:
                 advanced_diff.update((bundle, item.as_don(bundle)) for bundle, item in bundles)
@@ -418,10 +423,10 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure.
                 internal_changes = internal_changes or any_internal_changes
                 if comparison_output is ...:
                     continue
-                elif isinstance(comparison_output, Diff.Diff):
+                elif isinstance(comparison_output, Diff):
                     advanced_diff.update(comparison_output.items)
                 else:
                     # if comparison_output is an IDon, then any change becomes an internal change.
                     internal_changes = internal_changes or any_changes
                     advanced_diff[tuple(branch for bundle, _ in bundles for branch in bundle)] = comparison_output
-        return Diff.Diff(advanced_diff, internal_changes), internal_changes
+        return Diff(advanced_diff, internal_changes), internal_changes

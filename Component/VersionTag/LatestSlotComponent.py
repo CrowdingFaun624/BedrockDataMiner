@@ -1,20 +1,20 @@
-import Component.Capabilities as Capabilities
-import Component.Component as Component
-import Component.Pattern as Pattern
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.Pattern import Pattern
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-LATEST_SLOT_PATTERN:Pattern.Pattern["LatestSlotComponent"] = Pattern.Pattern("is_latest_slot")
+LATEST_SLOT_PATTERN:Pattern["LatestSlotComponent"] = Pattern("is_latest_slot")
 
-class LatestSlotComponent(Component.Component[str]):
+class LatestSlotComponent(Component[str]):
 
     class_name = "LatestSlot"
-    my_capabilities = Capabilities.Capabilities(is_latest_slot=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    my_capabilities = Capabilities(is_latest_slot=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = ()
 
-    def create_final(self, trace:Trace.Trace) -> str:
+    def create_final(self, trace:Trace) -> str:
         return self.name

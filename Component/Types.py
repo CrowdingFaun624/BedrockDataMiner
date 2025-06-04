@@ -4,11 +4,11 @@ from types import EllipsisType
 from typing import Any, Callable, Iterable
 
 import Domain.Domain as Domain
-import Domain.Domains as Domains
-import Utilities.CustomJson as CustomJson
-import Utilities.Exceptions as Exceptions
 import Utilities.Scripts as Scripts
-import Utilities.TypeUtilities as TypeUtilities
+from Domain.Domains import domains, get_domain_name_from_module
+from Utilities.CustomJson import Coder
+from Utilities.Exceptions import ImportOrderError
+from Utilities.TypeUtilities import TypeDict, TypeSet
 
 
 class NoCoder():
@@ -46,37 +46,37 @@ class TypeStuff():
 
     def __init__(
         self,
-        domain:"Domain.Domain|None",
+        domain:"Domain|None",
         linked_type_stuffs:list["TypeStuff"]|None=None,
         default_types:dict[str,type]|None=None,
-        requires_subcomponent_types:TypeUtilities.TypeSet|None=None,
-        sortable_types:TypeUtilities.TypeSet|None=None,
-        mutually_sortable:defaultdict[str,TypeUtilities.TypeSet]|None=None,
-        file_types:TypeUtilities.TypeSet|None=None,
-        string_types:TypeUtilities.TypeSet|None=None,
-        containment_types:TypeUtilities.TypeDict[object, TypeUtilities.TypeSet]|None=None,
-        hash_type_table:TypeUtilities.TypeDict[Any,Callable[[Any, "TypeStuff"],int]]|None=None,
-        iterate_table:TypeUtilities.TypeDict[Any, Callable[[Any], Iterable[tuple[Any, Any]]]]|None=None,
-        setitem_table:TypeUtilities.TypeDict[Any, Callable[[Any, Any, Any], None]]|None=None,
-        popitem_table:TypeUtilities.TypeDict[Any, Callable[[Any, Any],Any]]|None=None,
-        json_encoders:TypeUtilities.TypeDict[object, type[CustomJson.Coder]]|None=None,
-        json_decoders:dict[str,type[CustomJson.Coder]]|None=None,
+        requires_subcomponent_types:TypeSet|None=None,
+        sortable_types:TypeSet|None=None,
+        mutually_sortable:defaultdict[str,TypeSet]|None=None,
+        file_types:TypeSet|None=None,
+        string_types:TypeSet|None=None,
+        containment_types:TypeDict[object, TypeSet]|None=None,
+        hash_type_table:TypeDict[Any,Callable[[Any, "TypeStuff"],int]]|None=None,
+        iterate_table:TypeDict[Any, Callable[[Any], Iterable[tuple[Any, Any]]]]|None=None,
+        setitem_table:TypeDict[Any, Callable[[Any, Any, Any], None]]|None=None,
+        popitem_table:TypeDict[Any, Callable[[Any, Any],Any]]|None=None,
+        json_encoders:TypeDict[object, type[Coder]]|None=None,
+        json_decoders:dict[str,type[Coder]]|None=None,
     ) -> None:
         self.domain = domain
         self.linked_type_stuffs = [] if linked_type_stuffs is None else linked_type_stuffs
         self.default_types:dict[str,type] = {} if default_types is None else default_types
-        self.requires_subcomponent_types = TypeUtilities.TypeSet() if requires_subcomponent_types is None else requires_subcomponent_types
-        self.sortable_types = TypeUtilities.TypeSet() if sortable_types is None else sortable_types
-        self.mutually_sortable:defaultdict[str,TypeUtilities.TypeSet] = defaultdict(lambda: TypeUtilities.TypeSet()) if mutually_sortable is None else mutually_sortable
-        self.file_types = TypeUtilities.TypeSet() if file_types is None else file_types
-        self.string_types = TypeUtilities.TypeSet() if string_types is None else string_types
-        self.containment_types:TypeUtilities.TypeDict[object, TypeUtilities.TypeSet] = TypeUtilities.TypeDict() if containment_types is None else containment_types
-        self.hash_type_table:TypeUtilities.TypeDict[Any,Callable[[Any, TypeStuff],int]] = TypeUtilities.TypeDict() if hash_type_table is None else hash_type_table
-        self.iterate_table:TypeUtilities.TypeDict[Any,Callable[[Any], Iterable[tuple[Any, Any]]]] = TypeUtilities.TypeDict() if iterate_table is None else iterate_table
-        self.setitem_table:TypeUtilities.TypeDict[Any, Callable[[Any, Any, Any], None]] = TypeUtilities.TypeDict() if setitem_table is None else setitem_table
-        self.popitem_table:TypeUtilities.TypeDict[Any, Callable[[Any, Any],Any]] = TypeUtilities.TypeDict() if popitem_table is None else popitem_table
-        self.json_encoders:TypeUtilities.TypeDict[object, type[CustomJson.Coder]] = TypeUtilities.TypeDict() if json_encoders is None else json_encoders
-        self.json_decoders:dict[str,type[CustomJson.Coder]] = {} if json_decoders is None else json_decoders
+        self.requires_subcomponent_types = TypeSet() if requires_subcomponent_types is None else requires_subcomponent_types
+        self.sortable_types = TypeSet() if sortable_types is None else sortable_types
+        self.mutually_sortable:defaultdict[str,TypeSet] = defaultdict(lambda: TypeSet()) if mutually_sortable is None else mutually_sortable
+        self.file_types = TypeSet() if file_types is None else file_types
+        self.string_types = TypeSet() if string_types is None else string_types
+        self.containment_types:TypeDict[object, TypeSet] = TypeDict() if containment_types is None else containment_types
+        self.hash_type_table:TypeDict[Any,Callable[[Any, TypeStuff],int]] = TypeDict() if hash_type_table is None else hash_type_table
+        self.iterate_table:TypeDict[Any,Callable[[Any], Iterable[tuple[Any, Any]]]] = TypeDict() if iterate_table is None else iterate_table
+        self.setitem_table:TypeDict[Any, Callable[[Any, Any, Any], None]] = TypeDict() if setitem_table is None else setitem_table
+        self.popitem_table:TypeDict[Any, Callable[[Any, Any],Any]] = TypeDict() if popitem_table is None else popitem_table
+        self.json_encoders:TypeDict[object, type[Coder]] = TypeDict() if json_encoders is None else json_encoders
+        self.json_decoders:dict[str,type[Coder]] = {} if json_decoders is None else json_decoders
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.domain.name if self.domain is not None else "primary"}>"
@@ -166,7 +166,7 @@ def register_decorator[T](
     is_file:bool=False,
     is_string:bool=False,
     can_contain:set[type]|None=None,
-    json_coder:type[CustomJson.Coder]|NoCoder|None=None,
+    json_coder:type[Coder]|NoCoder|None=None,
 ) -> Callable[[type[T]],type[T]]:
     '''
     Makes a type referrable to via Components. If a type subclasses a type
@@ -220,7 +220,7 @@ def register_type[T](
     is_file:bool=False,
     is_string:bool=False,
     can_contain:set[type]|None=None,
-    json_coder:type[CustomJson.Coder]|NoCoder|None=None,
+    json_coder:type[Coder]|NoCoder|None=None,
 ) -> None:
     '''
     Makes a type referrable to via Components. If a type subclasses a type
@@ -244,10 +244,10 @@ def register_type[T](
     :can_contain: If present, Components will only let this type contain these types.
     :json_coder: Coder used to convert the type to JSON and vice versa.
     '''
-    domain_name = Domains.get_domain_name_from_module(_type.__module__)
+    domain_name = get_domain_name_from_module(_type.__module__)
     if domain_name is None and Scripts.has_imported_scripts.has_imported_scripts:
-        raise Exceptions.ImportOrderError(_type.__module__)
-    type_stuff = primary_type_stuff if domain_name is None else Domains.domains[domain_name].type_stuff
+        raise ImportOrderError(_type.__module__)
+    type_stuff = primary_type_stuff if domain_name is None else domains[domain_name].type_stuff
     type_stuffs = type_stuff.get_cascading_dependencies(set())
     for type_stuff in type_stuffs:
         if name is not None:
@@ -276,7 +276,7 @@ def register_type[T](
         if is_string:
             type_stuff.string_types.add(_type)
         if can_contain is not None:
-            type_stuff.containment_types[_type] = TypeUtilities.TypeSet(can_contain)
+            type_stuff.containment_types[_type] = TypeSet(can_contain)
         if isinstance(json_coder, NoCoder):
             type_stuff.json_encoders.add_not(_type)
         elif json_coder is not None:

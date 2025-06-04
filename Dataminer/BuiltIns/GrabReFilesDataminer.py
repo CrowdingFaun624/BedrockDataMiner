@@ -1,26 +1,26 @@
 import re
 from typing import Any
 
-import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
-import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Downloader.DirectoryAccessor as DirectoryAccessor
-import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier as TypeVerifier
+from Dataminer.BuiltIns.GrabMultipleFilesDataminer import GrabMultipleFilesDataminer
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Downloader.DirectoryAccessor import DirectoryAccessor
+from Utilities.Exceptions import DataminerNothingFoundError
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class GrabReFilesDataminer(GrabMultipleFilesDataminer.GrabMultipleFilesDataminer):
+class GrabReFilesDataminer(GrabMultipleFilesDataminer):
 
-    parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("directory", True, str, function=FileDataminer.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("pattern", True, str)
+    parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("directory", True, str, function=FileDataminer.location_value_function),
+        TypedDictKeyTypeVerifier("pattern", True, str)
     )
 
     def initialize(self, directory:str, pattern:str) -> None:
         self.directory = directory
         self.pattern = re.compile(pattern)
 
-    def get_coverage(self, file_set:FileDataminer.FileSet, environment:DataminerEnvironment.DataminerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileDataminer.FileSet, environment:DataminerEnvironment) -> set[str]:
         start_index = len(self.directory)
         output = {
             file_name
@@ -28,21 +28,21 @@ class GrabReFilesDataminer(GrabMultipleFilesDataminer.GrabMultipleFilesDataminer
             if self.pattern.fullmatch(file_name, start_index)
         }
         if len(output) == 0:
-            raise Exceptions.DataminerNothingFoundError(self)
+            raise DataminerNothingFoundError(self)
         return output
 
-    def get_files(self, accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
+    def get_files(self, accessor:DirectoryAccessor, environment:DataminerEnvironment) -> dict[tuple[str,str],bytes]:
         output:dict[tuple[str,str],bytes] = {}
         for file_name in accessor.get_files_in(self.directory):
             if self.pattern.fullmatch(file_name, len(self.directory)):
                 relative_name = file_name.removeprefix(self.directory)
                 output[relative_name, file_name] = accessor.read(file_name)
         if len(output) == 0:
-            raise Exceptions.DataminerNothingFoundError(self)
+            raise DataminerNothingFoundError(self)
         return output
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
+    def activate(self, environment:DataminerEnvironment) -> Any:
+        accessor = self.get_accessor(DirectoryAccessor)
         files = self.get_files(accessor, environment)
         output = self.get_output(files, accessor, environment)
         return output

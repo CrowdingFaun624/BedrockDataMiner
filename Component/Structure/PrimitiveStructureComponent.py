@@ -1,11 +1,13 @@
-import Component.Structure.AbstractPrimitiveStructureComponent as AbstractPrimitiveStructureComponent
-import Structure.PrimitiveStructure as PrimitiveStructure
+from Component.Structure.AbstractPrimitiveStructureComponent import (
+    AbstractPrimitiveStructureComponent,
+)
+from Structure.PrimitiveStructure import PrimitiveStructure
 
 
-class PrimitiveStructureComponent(AbstractPrimitiveStructureComponent.AbstractPrimitiveStructureComponent[PrimitiveStructure.PrimitiveStructure]):
+class PrimitiveStructureComponent(AbstractPrimitiveStructureComponent[PrimitiveStructure]):
 
     class_name = "Primitive"
-    structure_type = PrimitiveStructure.PrimitiveStructure
+    structure_type = PrimitiveStructure
 
     __slots__ = ()
 

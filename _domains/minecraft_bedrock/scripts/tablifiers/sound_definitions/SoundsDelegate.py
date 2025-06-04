@@ -1,50 +1,55 @@
 from types import EllipsisType
 from typing import Any
 
-import _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.PrimitiveDelegate as PrimitiveDelegate
-import _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.SoundPropertiesDelegate as SoundPropertiesDelegate
-import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.IterableStructure as IterableStructure
-import Structure.SimpleContainer as SCon
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.PrimitiveDelegate import (
+    get_change_branches,
+    get_version,
+)
+from _domains.minecraft_bedrock.scripts.tablifiers.sound_definitions.SoundPropertiesDelegate import (
+    SoundPropertiesTypedDict,
+)
+from Structure.Delegate.Delegate import Delegate
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon
+from Structure.IterableStructure import IterableStructure
+from Structure.SimpleContainer import SCon, SDon
+from Structure.StructureEnvironment import ComparisonEnvironment
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictTypeVerifier
 
 __all__ = ("SoundsDelegate",)
 
 
-class SoundsDelegate(Delegate.Delegate[
-    ICon.ICon[SCon.SCon[int], ICon.ICon[SCon.SCon[str], Any, SoundPropertiesDelegate.SoundPropertiesTypedDict], list[SoundPropertiesDelegate.SoundPropertiesTypedDict]],
-    ICon.IDon[
-        Diff.Diff[SCon.SDon[int]],
-        Diff.Diff[ICon.IDon[Diff.Diff[SCon.SDon[str]], Diff.Diff[Any], SoundPropertiesDelegate.SoundPropertiesTypedDict, SCon.SCon[str], Any]],
-        list[SoundPropertiesDelegate.SoundPropertiesTypedDict],
-        SCon.SCon[int],
-        ICon.ICon[SCon.SCon[str], Any, SoundPropertiesDelegate.SoundPropertiesTypedDict]
+class SoundsDelegate(Delegate[
+    ICon[SCon[int], ICon[SCon[str], Any, SoundPropertiesTypedDict], list[SoundPropertiesTypedDict]],
+    IDon[
+        Diff[SDon[int]],
+        Diff[IDon[Diff[SDon[str]], Diff[Any], SoundPropertiesTypedDict, SCon[str], Any]],
+        list[SoundPropertiesTypedDict],
+        SCon[int],
+        ICon[SCon[str], Any, SoundPropertiesTypedDict]
     ],
-    IterableStructure.IterableStructure[int, SoundPropertiesDelegate.SoundPropertiesTypedDict, list[SoundPropertiesDelegate.SoundPropertiesTypedDict], Any, Any, Any, str, Any, str],
+    IterableStructure[int, SoundPropertiesTypedDict, list[SoundPropertiesTypedDict], Any, Any, Any, str, Any, str],
     str, Any, str, Any,
 ]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier()
+    type_verifier = TypedDictTypeVerifier()
 
-    applies_to = (IterableStructure.IterableStructure,)
+    applies_to = (IterableStructure,)
 
     uses_versions = True
 
     def print_comparison(
         self,
-        data: ICon.IDon[
-            Diff.Diff[SCon.SDon[int]],
-            Diff.Diff[ICon.IDon[Diff.Diff[SCon.SDon[str]], Diff.Diff[Any], SoundPropertiesDelegate.SoundPropertiesTypedDict, SCon.SCon[str], Any]],
-            list[SoundPropertiesDelegate.SoundPropertiesTypedDict],
-            SCon.SCon[int],
-            ICon.ICon[SCon.SCon[str], Any, SoundPropertiesDelegate.SoundPropertiesTypedDict]
+        data: IDon[
+            Diff[SDon[int]],
+            Diff[IDon[Diff[SDon[str]], Diff[Any], SoundPropertiesTypedDict, SCon[str], Any]],
+            list[SoundPropertiesTypedDict],
+            SCon[int],
+            ICon[SCon[str], Any, SoundPropertiesTypedDict]
         ],
-        trace: Trace.Trace,
-        environment: StructureEnvironment.ComparisonEnvironment
+        trace: Trace,
+        environment: ComparisonEnvironment
     ) -> str | EllipsisType:
         output:list[str] = []
         for index, item in data.items():
@@ -52,17 +57,17 @@ class SoundsDelegate(Delegate.Delegate[
                 if item.length == 1:
                     upcoming_note = ""
                 else:
-                    change_branches = PrimitiveDelegate.get_change_branches(item)
+                    change_branches = get_change_branches(item)
                     upcoming_notes:list[str] = []
                     for branch_index, branch in enumerate(change_branches):
                         value = item.get(branch)
                         if branch == 0:
                             assert value is not ...
-                            upcoming_notes.append(f"{{{{Until|BE {PrimitiveDelegate.get_version(change_branches[branch_index + 1], True, environment)}}}}}")
+                            upcoming_notes.append(f"{{{{Until|BE {get_version(change_branches[branch_index + 1], True, environment)}}}}}")
                         elif item is ...:
-                            upcoming_notes.append(f"{{{{Until|BE {PrimitiveDelegate.get_version(branch, True, environment)}}}}}")
+                            upcoming_notes.append(f"{{{{Until|BE {get_version(branch, True, environment)}}}}}")
                         else:
-                            upcoming_notes.append(f"{{{{Upcoming|BE {PrimitiveDelegate.get_version(branch, True, environment)}}}}}")
+                            upcoming_notes.append(f"{{{{Upcoming|BE {get_version(branch, True, environment)}}}}}")
                     upcoming_note = f" {" ".join(upcoming_notes)}"
                 structure = self.structure.get_value_structure(index.last_value.last_value, item.last_value.last_value, trace, environment[item.branch_count - 1])
                 assert structure is not None

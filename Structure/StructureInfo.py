@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING, Any, Sequence
 import Domain.Domain as Domain
 
 if TYPE_CHECKING:
-    import Structure.Filter as Filter
-    import Structure.Structure as Structure
+    from Structure.Filter import Filter
+    from Structure.Structure import Structure
 
 
 class StructureInfo():
@@ -25,9 +25,9 @@ class StructureInfo():
         self.domain = domain
         self.parent_name = parent_name
         self.hash = domain.type_stuff.hash_data(data)
-        self.evaluations:dict["Structure.Structure",int|None] = {}
+        self.evaluations:dict["Structure",int|None] = {}
 
-    def evaluate(self, structure:"Structure.Structure", filters:Sequence["Filter.Filter|None"]) -> int|None:
+    def evaluate(self, structure:"Structure", filters:Sequence["Filter|None"]) -> int|None:
         if (cached_output := self.evaluations.get(structure)) is not None:
             return cached_output
         for index, filter in enumerate(filters):

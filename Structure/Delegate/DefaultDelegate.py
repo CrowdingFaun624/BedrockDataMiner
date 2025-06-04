@@ -4,44 +4,44 @@ from typing import Any, Callable, Hashable, NotRequired, TypedDict, cast
 
 import Component.ComponentFunctions as ComponentFunctions
 import Domain.Domain as Domain
-import Structure.Container as Con
-import Structure.Delegate.LineDelegate as LineDelegate
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.IterableStructure as IterableStructure
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureTypes.KeymapStructure as KeymapStructure
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Structure.Container import Con, Don
+from Structure.Delegate.LineDelegate import LineDelegate, LineType
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon
+from Structure.IterableStructure import IterableStructure
+from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Structure.StructureTypes.KeymapStructure import KeymapStructure
+from Utilities.Exceptions import StructureCannotPrintFlatError
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
 class DefaultDelegateKeysTypedDict(TypedDict):
     always_print: NotRequired[bool]
 
-class DefaultDelegate[K:Hashable, V, D](LineDelegate.LineDelegate[
-    ICon.ICon[Con.Con[K], Con.Con[V], D],
-    ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]],
-    IterableStructure.IterableStructure[K, V, D, list[LineDelegate.LineType], list[LineDelegate.LineType], list[LineDelegate.LineType], list[LineDelegate.LineType], list[LineDelegate.LineType], list[LineDelegate.LineType]],
+class DefaultDelegate[K:Hashable, V, D](LineDelegate[
+    ICon[Con[K], Con[V], D],
+    IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]],
+    IterableStructure[K, V, D, list[LineType], list[LineType], list[LineType], list[LineType], list[LineType], list[LineType]],
 ]):
 
     # NOTE: This class assumes that all diffs are of length 2
 
-    applies_to = (IterableStructure.IterableStructure,)
+    applies_to = (IterableStructure,)
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("field", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("measure_length", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("passthrough", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_all", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("print_flat", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("show_item_key", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("enquote_strings", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("sort", False, (str, type(None))),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("field", False, str),
+        TypedDictKeyTypeVerifier("measure_length", False, bool),
+        TypedDictKeyTypeVerifier("passthrough", False, bool),
+        TypedDictKeyTypeVerifier("print_all", False, bool),
+        TypedDictKeyTypeVerifier("print_flat", False, bool),
+        TypedDictKeyTypeVerifier("show_item_key", False, bool),
+        TypedDictKeyTypeVerifier("enquote_strings", False, bool),
+        TypedDictKeyTypeVerifier("sort", False, (str, type(None))),
     )
 
-    key_type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("always_print", False, bool),
+    key_type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("always_print", False, bool),
     )
 
     __slots__ = (
@@ -58,7 +58,7 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate.LineDelegate[
 
     def __init__(
         self,
-        structure:IterableStructure.IterableStructure,
+        structure:IterableStructure,
         keys:dict[str,DefaultDelegateKeysTypedDict],
         field:str="field",
         measure_length:bool=False,
@@ -78,8 +78,8 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate.LineDelegate[
         self.always_print_keys = {key for key, value in keys.items() if value.get("always_print", False)}
         self.keys_order = {key: index for index, key in enumerate(keys.keys())}
 
-    def finalize(self, domain:"Domain.Domain", trace:Trace.Trace) -> None:
-        self.key_function = self.structure.key_function if isinstance(self.structure, KeymapStructure.KeymapStructure) else None
+    def finalize(self, domain:"Domain.Domain", trace:Trace) -> None:
+        self.key_function = self.structure.key_function if isinstance(self.structure, KeymapStructure) else None
         if self.sorting_function_name is None:
             self.sorting_function = None
         else:
@@ -93,8 +93,8 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate.LineDelegate[
     def get_compare_text_key_str(self, index:K) -> K|None:
         return index if self.show_item_key else None
 
-    def print_branch(self, data:ICon.ICon[Con.Con[K], Con.Con[V], D], trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> list[LineDelegate.LineType]|EllipsisType:
-        output:list[LineDelegate.LineType] = []
+    def print_branch(self, data:ICon[Con[K], Con[V], D], trace:Trace, environment:PrinterEnvironment) -> list[LineType]|EllipsisType:
+        output:list[LineType] = []
         items_str:list[str] = [] # print_flat only
         data_list = list(data.items())
         if self.sorting_function is not None:
@@ -106,15 +106,15 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate.LineDelegate[
                 if self.print_flat and len(value_output) == 1:
                     items_str.append(value_output[0][1])
                 elif self.print_flat and len(value_output) != 1:
-                    trace.exception(Exceptions.StructureCannotPrintFlatError())
+                    trace.exception(StructureCannotPrintFlatError())
                 else:
                     self.print_single(key_output, value_output, output, add_punctuation=False)
         if self.print_flat:
             return [(0, "[" + ", ".join(items_str) + "]")]
         return output
 
-    def print_comparison(self, data:ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]], trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> list[LineDelegate.LineType]|EllipsisType:
-        output:list[LineDelegate.LineType] = []
+    def print_comparison(self, data:IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], trace:Trace, environment:ComparisonEnvironment) -> list[LineType]|EllipsisType:
+        output:list[LineType] = []
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
         data_list = list(data.items())
@@ -123,7 +123,7 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate.LineDelegate[
         for key_diff, value_diff in data_list:
             with trace.enter_key(key_diff, value_diff):
                 can_print_print_all = True # if the print_all thing is overridden for whatever reason.
-                key_output_representation:Callable[[],list[LineDelegate.LineType]|None]
+                key_output_representation:Callable[[],list[LineType]|None]
 
                 # each of the below if statements must set both `key_output_representation` and `key_representation`.
                 if not self.show_item_key:

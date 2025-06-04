@@ -1,40 +1,50 @@
-from typing import Sequence, cast
+from typing import TYPE_CHECKING, Sequence, cast
 
-import Component.Capabilities as Capabilities
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
-import Component.Dataminer.DataminerCollectionComponent as DataminerCollectionComponent
-import Component.Field.ComponentField as ComponentField
-import Component.Field.ComponentListField as ComponentListField
-import Component.Field.Field as Field
-import Component.Field.FieldListField as FieldListField
-import Component.Field.ScriptedClassField as ScriptedClassField
-import Component.Pattern as Pattern
-import Component.Version.VersionComponent as VersionComponent
-import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
-import Dataminer.Dataminer as Dataminer
-import Dataminer.DataminerSettings as DataminerSettings
-import Structure.StructureInfo as StructureInfo
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.ComponentTyping import DataminerSettingsTypedDict
+from Component.Dataminer.AbstractDataminerCollectionComponent import (
+    ABSTRACT_DATAMINER_COLLECTION_PATTERN,
+)
+from Component.Field.ComponentField import ComponentField, OptionalComponentField
+from Component.Field.ComponentListField import ComponentListField
+from Component.Field.Field import Field, InlinePermissions
+from Component.Field.FieldListField import FieldListField
+from Component.Field.ScriptedClassField import OptionalScriptedClassField
+from Component.Pattern import Pattern
+from Component.Version.VersionComponent import VERSION_PATTERN
+from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
+from Dataminer.Dataminer import NullDataminer
+from Dataminer.DataminerSettings import DataminerSettings
+from Structure.StructureInfo import StructureInfo
+from Utilities.Exceptions import DataminerCollectionFileError
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
-DATAMINER_SETTINGS_PATTERN:Pattern.Pattern["DataminerSettingsComponent"] = Pattern.Pattern("is_dataminer_settings")
+if TYPE_CHECKING:
+    from Component.Dataminer.DataminerCollectionComponent import (
+        DataminerCollectionComponent,
+    )
 
-class DataminerSettingsComponent(Component.Component[DataminerSettings.DataminerSettings]):
+DATAMINER_SETTINGS_PATTERN:Pattern["DataminerSettingsComponent"] = Pattern("is_dataminer_settings")
+
+class DataminerSettingsComponent(Component[DataminerSettings]):
 
     class_name = "DataminerSettings"
-    my_capabilities = Capabilities.Capabilities(is_dataminer_settings=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("arguments", False, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("dependencies", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("files", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("name", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("new", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("old", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure_info", False, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    my_capabilities = Capabilities(is_dataminer_settings=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("arguments", False, dict),
+        TypedDictKeyTypeVerifier("dependencies", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("files", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("name", True, (str, type(None))),
+        TypedDictKeyTypeVerifier("new", True, (str, type(None))),
+        TypedDictKeyTypeVerifier("old", True, (str, type(None))),
+        TypedDictKeyTypeVerifier("structure_info", False, dict),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (
@@ -48,35 +58,35 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
         "structure_info",
     )
 
-    def initialize_fields(self, data: ComponentTyping.DataminerSettingsTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: DataminerSettingsTypedDict) -> Sequence[Field]:
         self.files_field_exists = "files" in data
         self.arguments = data.get("arguments", {})
         self.structure_info = data.get("structure_info", {})
 
-        self.new_field = ComponentField.OptionalComponentField(data["new"], VersionComponent.VERSION_PATTERN, ("new",), assume_component_group="versions")
-        self.old_field = ComponentField.OptionalComponentField(data["old"], VersionComponent.VERSION_PATTERN, ("old",), assume_component_group="versions")
-        self.files_field = ComponentListField.ComponentListField(data.get("files", ()), VersionFileTypeComponent.VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
-        self.dataminer_field = ScriptedClassField.OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=Dataminer.NullDataminer)
-        self.dependencies_field = FieldListField.FieldListField([
-            ComponentField.ComponentField(
+        self.new_field = OptionalComponentField(data["new"], VERSION_PATTERN, ("new",), assume_component_group="versions")
+        self.old_field = OptionalComponentField(data["old"], VERSION_PATTERN, ("old",), assume_component_group="versions")
+        self.files_field = ComponentListField(data.get("files", ()), VERSION_FILE_TYPE_PATTERN, ("files",), allow_inline=InlinePermissions.reference, assume_component_group="version_file_types")
+        self.dataminer_field = OptionalScriptedClassField(data["name"], lambda script_set_set_set: script_set_set_set.dataminer_classes, ("name",), default=NullDataminer)
+        self.dependencies_field = FieldListField([
+            ComponentField(
                 dependency_name,
-                AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN,
+                ABSTRACT_DATAMINER_COLLECTION_PATTERN,
                 ("dependencies", str(index)),
-                allow_inline=Field.InlinePermissions.reference
+                allow_inline=InlinePermissions.reference
             ) for index, dependency_name in enumerate(data.get("dependencies", ()))
         ], ("dependencies",))
         return (self.new_field, self.old_field, self.files_field, self.dataminer_field, self.dependencies_field)
 
-    def create_final(self, trace:Trace.Trace) -> DataminerSettings.DataminerSettings:
-        return DataminerSettings.DataminerSettings(
+    def create_final(self, trace:Trace) -> DataminerSettings:
+        return DataminerSettings(
             kwargs=self.arguments,
             domain=self.domain
         )
 
-    def link_finals(self, trace:Trace.Trace) -> None:
+    def link_finals(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
-            parent = cast("DataminerCollectionComponent.DataminerCollectionComponent", self.get_inline_parent())
+            parent = cast("DataminerCollectionComponent", self.get_inline_parent())
             self.final.link_subcomponents(
                 trace,
                 file_name=parent.file_name,
@@ -86,16 +96,16 @@ class DataminerSettingsComponent(Component.Component[DataminerSettings.Dataminer
                 dependencies=list(self.dependencies_field.map(lambda dataminer_collection_component: dataminer_collection_component.subcomponent.final)),
                 start_version=self.old_field.map(lambda subcomponent: subcomponent.final),
                 end_version=self.new_field.map(lambda subcomponent: subcomponent.final),
-                structure_info=StructureInfo.StructureInfo(self.structure_info, self.domain, repr(self)),
+                structure_info=StructureInfo(self.structure_info, self.domain, repr(self)),
                 version_file_types=list(self.files_field.map(lambda version_file_type_field: version_file_type_field.final))
             )
 
-    def check(self, trace:Trace.Trace) -> None:
+    def check(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().check(trace)
             if self.dataminer_field.exists:
                 if not self.files_field_exists:
-                    trace.exception(Exceptions.DataminerCollectionFileError(False, "when \"name\" is not null"))
+                    trace.exception(DataminerCollectionFileError(False, "when \"name\" is not null"))
             else:
                 if self.files_field_exists:
-                    trace.exception(Exceptions.DataminerCollectionFileError(True, "when \"name\" is null"))
+                    trace.exception(DataminerCollectionFileError(True, "when \"name\" is null"))

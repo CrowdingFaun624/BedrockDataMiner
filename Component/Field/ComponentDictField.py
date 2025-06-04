@@ -1,16 +1,16 @@
 from itertools import starmap
 from typing import Callable, Iterator, Sequence
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Pattern as Pattern
-import Component.ScriptImporter as ScriptImporter
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
+from Component.Field.Field import Field, InlinePermissions, choose_component
+from Component.Pattern import Pattern
+from Component.ScriptImporter import ScriptSetSetSet
+from Utilities.Trace import Trace
 
 
-class ComponentDictField[a:Component.Component](Field.Field):
+class ComponentDictField[a:Component](Field):
     '''A link to multiple other Components.'''
 
     __slots__ = (
@@ -26,11 +26,11 @@ class ComponentDictField[a:Component.Component](Field.Field):
 
     def __init__(
         self,
-        subcomponents_data:dict[str,str|ComponentTyping.ComponentTypedDicts]|dict[str,str]|dict[str,ComponentTyping.ComponentTypedDicts],
-        pattern:Pattern.Pattern[a],
+        subcomponents_data:dict[str,str|ComponentTypedDicts]|dict[str,str]|dict[str,ComponentTypedDicts],
+        pattern:Pattern[a],
         path:tuple[str,...],
         *,
-        allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,
+        allow_inline:InlinePermissions=InlinePermissions.mixed,
         assume_type:str|None=None,
         assume_component_group:str|None=None,
     ) -> None:
@@ -54,19 +54,19 @@ class ComponentDictField[a:Component.Component](Field.Field):
 
     def set_field(
         self,
-        source_component:"Component.Component",
-        components:dict[str,"Component.Component"],
-        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
-        functions:ScriptImporter.ScriptSetSetSet,
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
+        source_component:"Component",
+        components:dict[str,"Component"],
+        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        functions:ScriptSetSetSet,
+        create_component_function:CreateComponentFunction,
+        trace:Trace,
     ) -> tuple[Sequence[a],Sequence[a]]:
         with trace.enter_keys(self.trace_path, self.subcomponents_data):
             self.subcomponents = {}
             inline_components:list[a] = []
             for key, subcomponent_data in self.subcomponents_data.items():
                 with trace.enter_key(key, subcomponent_data):
-                    subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
+                    subcomponent, is_inline = choose_component(subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
                     self.has_reference_components = self.has_reference_components or not is_inline
                     self.has_inline_components = self.has_inline_components or is_inline
                     if subcomponent is ...:
@@ -77,12 +77,12 @@ class ComponentDictField[a:Component.Component](Field.Field):
             return tuple(self.subcomponents.values()), inline_components
         return (), ()
 
-    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
+    def check(self, source_component:"Component", trace:Trace) -> None:
         with trace.enter_keys(self.trace_path, self.subcomponents_data):
             super().check(source_component, trace)
-            if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
+            if self.has_reference_components and self.allow_inline is InlinePermissions.inline:
                 trace.exception(Exceptions.ReferenceComponentError(source_component, self))
-            if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
+            if self.has_inline_components and self.allow_inline is InlinePermissions.reference:
                 trace.exception(Exceptions.InlineComponentError(source_component, self))
 
     def for_each[b](self, function:Callable[[str, a],b]) -> None:
@@ -100,7 +100,7 @@ class ComponentDictField[a:Component.Component](Field.Field):
         '''
         return zip(self.subcomponents.keys(), starmap(function, self.subcomponents.items()))
 
-    def check_coverage[b](self, get_final_function:Callable[[a],b], linked_requirements:dict[str,type[b]], trace:Trace.Trace) -> None:
+    def check_coverage[b](self, get_final_function:Callable[[a],b], linked_requirements:dict[str,type[b]], trace:Trace) -> None:
         '''
         :get_final_function: A function that turns the Components referenced in this Field into their finals.
         :linked_requirements: The dictionary that verifies the validity of this Field's Components.
@@ -119,7 +119,7 @@ class ComponentDictField[a:Component.Component](Field.Field):
                     if required_type is not None and not isinstance(linked_object, required_type):
                         Exceptions.LinkedComponentTypeError(key, required_type, linked_object)
 
-    def check_coverage_types[b](self, get_final_function:Callable[[a],type[b]], linked_requirements:dict[str,type[b]], trace:Trace.Trace) -> None:
+    def check_coverage_types[b](self, get_final_function:Callable[[a],type[b]], linked_requirements:dict[str,type[b]], trace:Trace) -> None:
         '''
         :get_final_function: A function that turns the Components referenced in this Field into their finals.
         :linked_requirements: The dictionary that verifies the validity of this Field's Components.

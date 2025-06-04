@@ -1,12 +1,12 @@
 from typing import TYPE_CHECKING, Any, cast
 
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureInfo as StructureInfo
 import Utilities.Exceptions as Exceptions
+from Structure.StructureEnvironment import PrinterEnvironment, StructureEnvironment
+from Structure.StructureInfo import StructureInfo
 
 if TYPE_CHECKING:
-    import Dataminer.Dataminer as Dataminer
-    import Version.Version as Version
+    from Dataminer.Dataminer import Dataminer
+    from Version.Version import Version
 
 class DataminerDependencies():
     "Controls the dependencies of Dataminers."
@@ -21,7 +21,7 @@ class DataminerDependencies():
         '''
         self.data = data
 
-    def get(self, dataminer_name:str, dataminer:"Dataminer.Dataminer") -> Any:
+    def get(self, dataminer_name:str, dataminer:"Dataminer") -> Any:
         '''
         Returns the data associated with the given DataminerCollection name for this Version.
         Raises a DataminerUnregisteredDependencyError if the DataminerCollection is not listed as a dependency for this Dataminer.
@@ -33,7 +33,7 @@ class DataminerDependencies():
             raise Exceptions.DataminerUnrecognizedDependencyError(dataminer, dataminer_name, list(self.data.keys()))
         return cast(Any, output)
 
-    def get_default[a](self, dataminer_name:str, dataminer:"Dataminer.Dataminer", default:a) -> Any|a:
+    def get_default[a](self, dataminer_name:str, dataminer:"Dataminer", default:a) -> Any|a:
         '''
         Returns the data associated with the given DataminerCollection name for this Version, or `default` if the DataminerCollection exists but has no data for this Version.
         Raises a DataminerUnregisteredDependencyError if the DataminerCollection is not listed as a dependency for this Dataminer.
@@ -67,7 +67,7 @@ class DataminerEnvironment():
     def __init__(
         self,
         dependency_data:DataminerDependencies,
-        structure_environment:StructureEnvironment.StructureEnvironment,
+        structure_environment:StructureEnvironment,
     ) -> None:
         self.dependency_data = dependency_data
         self.structure_environment = structure_environment
@@ -75,5 +75,5 @@ class DataminerEnvironment():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {self.dependency_data} {self.structure_environment}>"
 
-    def get_printer_environment(self, version:"Version.Version", structure_info:StructureInfo.StructureInfo) -> StructureEnvironment.PrinterEnvironment:
-        return StructureEnvironment.PrinterEnvironment(self.structure_environment, structure_info, None, version, 0)
+    def get_printer_environment(self, version:"Version", structure_info:StructureInfo) -> PrinterEnvironment:
+        return PrinterEnvironment(self.structure_environment, structure_info, None, version, 0)

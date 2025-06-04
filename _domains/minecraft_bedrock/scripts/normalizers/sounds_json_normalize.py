@@ -2,12 +2,12 @@
 
 from typing import Any, Mapping, NotRequired, TypedDict
 
-import Domain.Domains as Domains
-import Serializer.Serializer as Serializer
-import Utilities.File as File
+from Domain.Domains import get_domain_from_module
+from Serializer.Serializer import Serializer
+from Utilities.File import FakeFile, File
 
-domain = Domains.get_domain_from_module(__name__)
-json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer.Serializer)
+domain = get_domain_from_module(__name__)
+json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
 
 __all__ = ("sounds_json_normalize",)
 
@@ -105,7 +105,7 @@ def trace_exists(object:Mapping[str,Any], trace:tuple[str,...]) -> bool:
         else: return False
     return True
 
-def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> File.FakeFile[MySoundsJsonTypedDict]:
+def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]]) -> FakeFile[MySoundsJsonTypedDict]:
     output:MySoundsJsonTypedDict = {
         "individual_event_sounds": {
             "base": {},
@@ -154,4 +154,4 @@ def sounds_json_normalize(data:dict[str,File.File[SoundsJsonTypedDict]]) -> File
             merge_collection(pack_name, output["interactive_sounds"]["entity_sounds"]["defaults"], sounds_json["interactive_sounds"]["entity_sounds"]["defaults"])
         if trace_exists(sounds_json, ("interactive_sounds", "entity_sounds", "entities")):
             merge_collections(pack_name, output["interactive_sounds"]["entity_sounds"]["entities"], sounds_json["interactive_sounds"]["entity_sounds"]["entities"])
-    return File.FakeFile("combined_sounds_json_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_sounds_json_file", output, None, hash(tuple(file_hashes)))

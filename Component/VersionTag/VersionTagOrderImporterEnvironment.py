@@ -3,24 +3,24 @@ from itertools import chain
 from pathlib import Path
 from typing import Any, Iterable
 
-import Component.ComponentTyping as ComponentTyping
-import Component.ImporterEnvironment as ImporterEnvironment
-import Component.VersionTag.VersionTagOrderComponent as VersionTagOrderComponent
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Version.VersionTag.VersionTag as VersionTag
-import Version.VersionTag.VersionTagOrder as VersionTagOrder
+from Component.ComponentTyping import VersionTagOrderTypedDict
+from Component.ImporterEnvironment import ImporterEnvironment
+from Component.VersionTag.VersionTagOrderComponent import VersionTagOrderComponent
+from Utilities.Trace import Trace
+from Version.VersionTag.VersionTag import VersionTag
+from Version.VersionTag.VersionTagOrder import VersionTagOrder
 
 
-class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment[VersionTagOrder.VersionTagOrder]):
+class VersionTagOrderImporterEnvironment(ImporterEnvironment[VersionTagOrder]):
 
-    assume_type = VersionTagOrderComponent.VersionTagOrderComponent.class_name
+    assume_type = VersionTagOrderComponent.class_name
 
     single_component = True
 
     __slots__ = ()
 
-    def get_default_contents(self) -> ComponentTyping.VersionTagOrderTypedDict:
+    def get_default_contents(self) -> VersionTagOrderTypedDict:
         return {
             "allowed_children": {},
             "order": [],
@@ -35,13 +35,13 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
     def get_component_group_name(self, file_path: Path) -> str:
         return "version_tags_order"
 
-    def check(self, output: VersionTagOrder.VersionTagOrder, other_outputs: dict[str, Any], name:str, trace:Trace.Trace) -> None:
+    def check(self, output: VersionTagOrder, other_outputs: dict[str, Any], name:str, trace:Trace) -> None:
         with trace.enter(self, name, ...):
-            version_tags:dict[str,VersionTag.VersionTag] = other_outputs[self.domain.name]["version_tags"]
+            version_tags:dict[str,VersionTag] = other_outputs[self.domain.name]["version_tags"]
             order_version_tags = [version_tag for version_tag in version_tags.values() if version_tag.is_order_tag]
             # all tags in output are guaranteed to be order tags because VersionTagOrderComponent made sure of it.
 
-            order_tags_used:Counter[VersionTag.VersionTag] = Counter(
+            order_tags_used:Counter[VersionTag] = Counter(
                 order_tag
                 for order_set in output.order
                 for order_tag in order_set
@@ -61,14 +61,14 @@ class VersionTagOrderImporterEnvironment(ImporterEnvironment.ImporterEnvironment
             )
             for key_tag, children in allowed_children.items():
                 with trace.enter_key(key_tag, children):
-                    already_children:set[VersionTag.VersionTag] = set()
+                    already_children:set[VersionTag] = set()
                     for child in children:
                         if child in already_children:
                             trace.exception(Exceptions.DuplicateVersionTagOrderError(child, ("allowed_children", key_tag.name)))
                         already_children.add(child)
 
             if output.top_level_tag is not None:
-                top_level_tags_used:Counter[VersionTag.VersionTag] = Counter(chain((output.top_level_tag,), output.tags_before_top_level_tag, output.tags_after_top_level_tag))
+                top_level_tags_used:Counter[VersionTag] = Counter(chain((output.top_level_tag,), output.tags_before_top_level_tag, output.tags_after_top_level_tag))
                 trace.exceptions(
                     Exceptions.NotAllOrderTagsUsedError(tag, "order") if times_used == 0
                     else Exceptions.DuplicateVersionTagOrderError(tag, "order")

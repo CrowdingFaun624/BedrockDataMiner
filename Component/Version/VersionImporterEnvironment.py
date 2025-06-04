@@ -1,22 +1,22 @@
-import datetime
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Iterable, cast
 
-import Component.Component as Component
-import Component.ImporterEnvironment as ImporterEnvironment
-import Component.Version.VersionComponent as VersionComponent
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Version.Version as Version
-import Version.VersionFileType as VersionFileType
-import Version.VersionTag.VersionTag as VersionTag
-import Version.VersionTag.VersionTagOrder as VersionTagOrder
+from Component.Component import Component
+from Component.ImporterEnvironment import ImporterEnvironment
+from Component.Version.VersionComponent import VersionComponent
+from Utilities.Trace import Trace
+from Version.Version import Version
+from Version.VersionFileType import VersionFileType
+from Version.VersionTag.VersionTag import VersionTag
+from Version.VersionTag.VersionTagOrder import VersionTagOrder
 
 
-class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,Version.Version]]):
+class VersionImporterEnvironment(ImporterEnvironment[dict[str,Version]]):
 
-    assume_type = VersionComponent.VersionComponent.class_name
+    assume_type = VersionComponent.class_name
 
     __slots__ = ()
 
@@ -26,15 +26,15 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
     def get_component_group_name(self, file_path: Path) -> str:
         return "versions"
 
-    def get_assumed_used_components(self, components:dict[str,Component.Component], name:str, trace:Trace.Trace) -> Iterable[Component.Component]:
+    def get_assumed_used_components(self, components:dict[str,Component], name:str, trace:Trace) -> Iterable[Component]:
         with trace.enter(self, name, ...):
             return components.values()
         return ()
 
-    def finalize(self, output:dict[str, Version.Version], other_outputs:dict[str,Any], name:str, trace:Trace.Trace) -> None:
+    def finalize(self, output:dict[str, Version], other_outputs:dict[str,Any], name:str, trace:Trace) -> None:
         with trace.enter(self, name, ...):
-            version_tags:dict[str,VersionTag.VersionTag] = other_outputs[self.domain.name]["version_tags"]
-            latest_tags:defaultdict[str,set[VersionTag.VersionTag]] = defaultdict(lambda: set())
+            version_tags:dict[str,VersionTag] = other_outputs[self.domain.name]["version_tags"]
+            latest_tags:defaultdict[str,set[VersionTag]] = defaultdict(lambda: set())
             for version_tag in version_tags.values():
                 if version_tag.latest_slot is not None:
                     latest_tags[version_tag.latest_slot].add(version_tag)
@@ -64,11 +64,11 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                 if has_directory: continue
                 version.version_directory.mkdir()
 
-    def check(self, output: dict[str, Version.Version], other_outputs: dict[str, Any], name:str, trace:Trace.Trace) -> None:
+    def check(self, output: dict[str, Version], other_outputs: dict[str, Any], name:str, trace:Trace) -> None:
         with trace.enter(self, name, ...):
             super().check(output, other_outputs, name, trace)
-            version_tag_ordering:VersionTagOrder.VersionTagOrder = other_outputs[self.domain.name]["version_tags_order"]
-            version_tags:dict[str,VersionTag.VersionTag] = other_outputs[self.domain.name]["version_tags"]
+            version_tag_ordering:VersionTagOrder = other_outputs[self.domain.name]["version_tags_order"]
+            version_tags:dict[str,VersionTag] = other_outputs[self.domain.name]["version_tags"]
             ORDERING_TAGS = [version_tag for version_tag in version_tags.values() if version_tag.is_order_tag]
             ORDER = version_tag_ordering.order
             ALLOWED_CHILDREN = version_tag_ordering.allowed_children
@@ -76,7 +76,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
             BEFORE_TAGS = version_tag_ordering.tags_before_top_level_tag
             AFTER_TAGS = version_tag_ordering.tags_after_top_level_tag
 
-            top_level_versions:list[Version.Version] = [] # versions with no parents
+            top_level_versions:list[Version] = [] # versions with no parents
             for version in output.values():
                 with trace.enter_key(version, ...):
                     if (order_tag_count := sum(order_tag in version.tags for order_tag in ORDERING_TAGS)) != 1:
@@ -84,11 +84,11 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                     if version.parent is None:
                         top_level_versions.append(version)
 
-            top_level_childrens:list[Version.Version] = []
+            top_level_childrens:list[Version] = []
             for version in top_level_versions:
                 top_level_childrens.extend(version.get_children_recursive())
             if len(set(top_level_childrens)) != len(top_level_childrens):
-                already_seen_versions:set[Version.Version] = set()
+                already_seen_versions:set[Version] = set()
                 for version in top_level_childrens:
                     with trace.enter_key(version, ...):
                         if version in already_seen_versions: trace.exception(Exceptions.VersionChildOfMultipleTopLevelVersionsError(version))
@@ -108,7 +108,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                 if child.order_tag not in ALLOWED_CHILDREN[version.order_tag]
             )
 
-            def order_contains_at_index(ordering_tag:VersionTag.VersionTag) -> bool:
+            def order_contains_at_index(ordering_tag:VersionTag) -> bool:
                 order_at_index = ORDER[order_index]
                 if isinstance(order_at_index, set):
                     return ordering_tag in order_at_index
@@ -126,8 +126,8 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
                                 break
                         if order_index >= len(ORDER): break
                         # after this while loop, `order_index` must be a value such that child.ordering_tag == or in ORDER[order_index].
-            versions_without_timezone:dict[Version.Version, datetime.datetime] = {}
-            version_with_timezone:tuple[Version.Version, datetime.datetime]|None = None
+            versions_without_timezone:dict[Version, datetime] = {}
+            version_with_timezone:tuple[Version, datetime]|None = None
             for version in output.values():
                 if version.time is not None:
                     if version.time.tzinfo is None:
@@ -159,7 +159,7 @@ class VersionImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[st
 
             # some VersionFiles cannot exist if an unreleased VersionTag exists on the Version.
             # some VersionFileTypes require a VersionFile to exist on every Version.
-            version_file_types = cast(dict[str,VersionFileType.VersionFileType], other_outputs[self.domain.name]["version_file_types"])
+            version_file_types = cast(dict[str,VersionFileType], other_outputs[self.domain.name]["version_file_types"])
             required_version_file_types = {version_file_type_name: version_file_type for version_file_type_name, version_file_type in version_file_types.items() if version_file_type.must_exist}
             trace.exceptions(
                 Exceptions.UnreleasedDownloadableVersionError(version, version_file)

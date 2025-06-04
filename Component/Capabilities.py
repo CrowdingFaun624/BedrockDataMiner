@@ -1,4 +1,4 @@
-import Utilities.Exceptions as Exceptions
+from Utilities.Exceptions import UnrecognizedCapabilityError
 
 ALLOWED_CAPABILITIES = set((
     "has_importable_keys", # i.e. Keymap's importable keys
@@ -30,7 +30,7 @@ class Capabilities():
     def __init__(self, **capabilities:bool) -> None:
         for capability in capabilities.keys():
             if capability not in ALLOWED_CAPABILITIES:
-                raise Exceptions.UnrecognizedCapabilityError(capability)
+                raise UnrecognizedCapabilityError(capability)
         for capability in ALLOWED_CAPABILITIES:
             if capability not in capabilities:
                 capabilities[capability] = False

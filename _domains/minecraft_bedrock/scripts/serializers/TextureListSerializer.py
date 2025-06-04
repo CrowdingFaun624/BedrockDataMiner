@@ -1,10 +1,10 @@
 import json
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 __all__ = ("TextureListSerializer",)
 
-class TextureListSerializer(Serializer.Serializer):
+class TextureListSerializer(Serializer):
     '''
     I have made a situation in which two different formats must
     be squeezed into the same Serializer. oops.

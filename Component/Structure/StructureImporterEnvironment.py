@@ -1,32 +1,32 @@
 from pathlib import Path
 from typing import Iterable
 
-import Component.Component as Component
-import Component.ImporterEnvironment as ImporterEnvironment
-import Component.Structure.StructureBaseComponent as StructureBaseComponent
-import Structure.StructureBase as StructureBase
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ImporterEnvironment import ImporterEnvironment
+from Component.Structure.StructureBaseComponent import StructureBaseComponent
+from Structure.StructureBase import StructureBase
+from Utilities.Exceptions import BaseComponentCountError
+from Utilities.Trace import Trace
 
 
-class StructureImporterEnvironment(ImporterEnvironment.ImporterEnvironment[StructureBase.StructureBase]):
+class StructureImporterEnvironment(ImporterEnvironment[StructureBase]):
 
     __slots__ = ()
 
-    def get_base_component(self, components:dict[str,Component.Component], name:str) -> StructureBaseComponent.StructureBaseComponent:
-        base_components:dict[str,StructureBaseComponent.StructureBaseComponent] = {
+    def get_base_component(self, components:dict[str,Component], name:str) -> StructureBaseComponent:
+        base_components:dict[str,StructureBaseComponent] = {
             component_name: component
             for component_name, component in components.items()
-            if isinstance(component, StructureBaseComponent.StructureBaseComponent)
+            if isinstance(component, StructureBaseComponent)
         }
         if len(base_components) != 1:
-            raise Exceptions.BaseComponentCountError(name, list(base_components.values()))
+            raise BaseComponentCountError(name, list(base_components.values()))
         return next(iter(base_components.values()))
 
-    def get_output(self, components: dict[str,Component.Component], name: str, trace:Trace.Trace) -> StructureBase.StructureBase:
+    def get_output(self, components: dict[str,Component], name: str, trace:Trace) -> StructureBase:
         return self.get_base_component(components, name).final
 
-    def get_assumed_used_components(self, components: dict[str, Component.Component], name:str, trace:Trace.Trace) -> Iterable[Component.Component]:
+    def get_assumed_used_components(self, components: dict[str, Component], name:str, trace:Trace) -> Iterable[Component]:
         with trace.enter(self, name, ...):
             return (self.get_base_component(components, name),)
         return ()

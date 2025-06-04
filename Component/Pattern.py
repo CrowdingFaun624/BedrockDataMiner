@@ -1,11 +1,11 @@
 from typing import TypeIs
 
-import Component.Capabilities as Capabilties
-import Component.Component as Component
-import Utilities.Exceptions as Exceptions
+from Component.Capabilities import ALLOWED_CAPABILITIES
+from Component.Component import Component
+from Utilities.Exceptions import UnrecognizedCapabilityError
 
 
-class Pattern[a: "Component.Component"]():
+class Pattern[a: "Component"]():
 
     __slots__ = (
         "capability",
@@ -16,12 +16,12 @@ class Pattern[a: "Component.Component"]():
         '''
         :capabilities: The capability that is matched.
         '''
-        if capability not in Capabilties.ALLOWED_CAPABILITIES:
-            raise Exceptions.UnrecognizedCapabilityError(capability)
+        if capability not in ALLOWED_CAPABILITIES:
+            raise UnrecognizedCapabilityError(capability)
         self.capability = capability
         self.matching_components:set[int]|None = None
 
-    def contains(self, component:"Component.Component") -> TypeIs[a]:
+    def contains(self, component:"Component") -> TypeIs[a]:
         if self.matching_components is None:
             import Component.ComponentTypes as ComponentTypes
             self.matching_components = set(

@@ -1,17 +1,17 @@
 from itertools import count, takewhile
 from types import EllipsisType
-from typing import TYPE_CHECKING, Hashable, Sequence
+from typing import TYPE_CHECKING, Container, Hashable, Sequence
 
-import Structure.Container as Con
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.IterableStructure as IterableStructure
-import Structure.SimilarityCache as SimilarityCache
-import Structure.Structure as Structure
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureInfo as StructureInfo
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Structure.Container import Con, Don
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon, idon_from_list
+from Structure.IterableStructure import IterableStructure
+from Structure.SimilarityCache import SimilarityCache
+from Structure.Structure import Structure
+from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Structure.StructureInfo import StructureInfo
+from Utilities.Exceptions import SequenceTooLongError
+from Utilities.Trace import Trace
 
 if TYPE_CHECKING:
     import numpy
@@ -24,7 +24,7 @@ DIAGONAL_SUBSTITUTION_KEY = 4 # &
 DIAGONAL_SUBSTITUTION_VALUE = 5 # ^
 DIAGONAL_SUBSTITUTION_BOTH = 6 # \
 
-class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStructure.IterableStructure[K, V, D, KBO, KCO, VBO, VCO, BO, CO]):
+class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStructure[K, V, D, KBO, KCO, VBO, VCO, BO, CO]):
 
     KEY_WEIGHT = 2
     VALUE_WEIGHT = 8
@@ -46,11 +46,11 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         self,
         addition_cost:float,
         deletion_cost:float,
-        key_structure:Structure.Structure[K, Con.Con[K], Con.Don[K], Con.Don[K]|Diff.Diff[Con.Don[K]], KBO, KCO]|None,
+        key_structure:Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None,
         key_weight:int,
         max_square_length:int,
         substitution_cost:float,
-        value_structure:Structure.Structure[V, Con.Con[V], Con.Don[V], Con.Don[V]|Diff.Diff[Con.Don[V]], VBO, VCO]|None,
+        value_structure:Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None,
         value_types:tuple[type,...],
         value_weight:int,
     ) -> None:
@@ -64,22 +64,22 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         self.value_types = value_types
         self.value_weight = value_weight
 
-        self.similarity_cache:SimilarityCache.SimilarityCache[Con.Con[D]] = SimilarityCache.SimilarityCache()
+        self.similarity_cache:SimilarityCache[Con[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
         self.similarity_cache.clear(keep)
 
-    def get_key_structure(self, key: K, value: V, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure[K, Con.Con[K], Con.Don[K], Con.Don[K]|Diff.Diff[Con.Don[K]], KBO, KCO]|None:
+    def get_key_structure(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None:
         return self.key_structure
 
-    def get_value_structure(self, key: K, value: V, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure[V, Con.Con[V], Con.Don[V], Con.Don[V]|Diff.Diff[Con.Don[V]], VBO, VCO]|None:
+    def get_value_structure(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None:
         return self.value_structure
 
-    def get_value_types(self, key: K, value: V, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> tuple[type, ...]:
+    def get_value_types(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> tuple[type, ...]:
         return self.value_types
 
-    def iter_structures(self) -> Sequence[Structure.Structure]:
-        output:list[Structure.Structure] = []
+    def iter_structures(self) -> Sequence[Structure]:
+        output:list[Structure] = []
         if self.key_structure is not None:
             output.append(self.key_structure)
         if self.value_structure is not None:
@@ -88,31 +88,31 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
 
     def compare(
         self,
-        datas:tuple[tuple[int, ICon.ICon[Con.Con[K], Con.Con[V], D]], ...],
-        trace: Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment
-    ) -> tuple[ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]] | EllipsisType, bool, bool]:
+        datas:tuple[tuple[int, ICon[Con[K], Con[V], D]], ...],
+        trace: Trace,
+        environment:ComparisonEnvironment
+    ) -> tuple[IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]] | EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
             any_changes:bool = False
-            cumulative_items:list[tuple[list[tuple[list[int], Con.Con[K]]], list[tuple[list[int], Con.Con[V]]]]] = []
+            cumulative_items:list[tuple[list[tuple[list[int], Con[K]]], list[tuple[list[int], Con[V]]]]] = []
             first_branch = datas[0][0]
             for branch2, data2 in datas:
                 if branch2 != first_branch:
-                    data1_list:list[tuple[tuple[int, Con.Con[K]], tuple[int, Con.Con[V]]]] = [((key[-1][0][-1], key[-1][1]), (value[-1][0][-1], value[-1][1])) for key, value in cumulative_items]
+                    data1_list:list[tuple[tuple[int, Con[K]], tuple[int, Con[V]]]] = [((key[-1][0][-1], key[-1][1]), (value[-1][0][-1], value[-1][1])) for key, value in cumulative_items]
                     data2_list = list(data2.items())
                     prefix_len, suffix_len = self.get_prefix_suffix_len(data1_list, data2_list)
                     if (len(data1_list) - prefix_len - suffix_len) * (len(data2_list) - prefix_len - suffix_len) > self.max_square_length:
-                        raise Exceptions.SequenceTooLongError(self, len(data1_list), len(data2_list))
+                        raise SequenceTooLongError(self, len(data1_list), len(data2_list))
                     distances, path = self.get_distances(data1_list, data2_list, branch2, prefix_len, suffix_len, trace, environment)
                     cumulative_items, has_changes = self.retrace_path(cumulative_items, data2_list, branch2, prefix_len, suffix_len, path)
                     any_changes = any_changes or has_changes
                 else:
                     cumulative_items.extend(([([branch2], key)], [([branch2], value)]) for key, value in data2.items())
             assembled_output, any_internal_changes = self.assemble_output(cumulative_items, trace, environment)
-            return ICon.idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_internal_changes
+            return idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_internal_changes
         return ..., False, False
 
-    def get_similarity(self, data1: ICon.ICon[Con.Con[K], Con.Con[V], D], data2: ICon.ICon[Con.Con[K], Con.Con[V], D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
+    def get_similarity(self, data1: ICon[Con[K], Con[V], D], data2: ICon[Con[K], Con[V], D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
             if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
                 return output
@@ -120,7 +120,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
             data2_list = list(data2.items())
             prefix_len, suffix_len = self.get_prefix_suffix_len(data1_list, data2_list)
             if (len(data1_list) - prefix_len - suffix_len) * (len(data2_list) - prefix_len - suffix_len) > self.max_square_length:
-                raise Exceptions.SequenceTooLongError(self, len(data1_list), len(data2_list))
+                raise SequenceTooLongError(self, len(data1_list), len(data2_list))
             distances, path = self.get_distances(data1_list, data2_list, branch2, prefix_len, suffix_len, trace, environment)
             levenshtein_distance:float = distances[len(data2_list) - prefix_len - suffix_len, len(data1_list) - prefix_len - suffix_len]
             max_length = max(len(data1_list), len(data2_list))
@@ -128,7 +128,7 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
             return self.similarity_cache.set(output, data1, data2, structure_info1, structure_info2)
         return 0.0, False
 
-    def get_prefix_suffix_len(self, data1:list[tuple[tuple[int, Con.Con[K]], tuple[int, Con.Con[V]]]], data2:list[tuple[Con.Con[K], Con.Con[V]]]) -> tuple[int, int]:
+    def get_prefix_suffix_len(self, data1:list[tuple[tuple[int, Con[K]], tuple[int, Con[V]]]], data2:list[tuple[Con[K], Con[V]]]) -> tuple[int, int]:
         prefix_len = sum(1 for i in takewhile(lambda items: items[0][0][1] == items[1][0] and items[0][1][1] == items[1][1], zip(data1, data2)))
         # number of items at start that are the same
         shorter_length = min(len(data1), len(data2))
@@ -138,13 +138,13 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
 
     def get_distances(
         self,
-        data1:list[tuple[tuple[int, Con.Con[K]], tuple[int, Con.Con[V]]]],
-        data2:list[tuple[Con.Con[K], Con.Con[V]]],
+        data1:list[tuple[tuple[int, Con[K]], tuple[int, Con[V]]]],
+        data2:list[tuple[Con[K], Con[V]]],
         branch2:int,
         prefix_len:int,
         suffix_len:int,
-        trace:Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment,
+        trace:Trace,
+        environment:ComparisonEnvironment,
     ) -> tuple["numpy.ndarray[tuple[int, int], numpy.dtype[numpy.float32]]", "numpy.ndarray[tuple[int, int], numpy.dtype[numpy.int8]]"]:
         import numpy
         distances = numpy.zeros((len(data2) + 1 - prefix_len - suffix_len, len(data1) + 1 - prefix_len - suffix_len), numpy.float32)
@@ -166,11 +166,11 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
         y:int,
         prefix_len:int,
         branch2:int,
-        data1:list[tuple[tuple[int, Con.Con[K]], tuple[int, Con.Con[V]]]],
-        data2:list[tuple[Con.Con[K], Con.Con[V]]],
+        data1:list[tuple[tuple[int, Con[K]], tuple[int, Con[V]]]],
+        data2:list[tuple[Con[K], Con[V]]],
         distances:"numpy.ndarray[tuple[int, int], numpy.dtype[numpy.float32]]",
-        trace:Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment,
+        trace:Trace,
+        environment:ComparisonEnvironment,
     ) -> tuple[float, int]: # cost, path
         deletion_cost:float = distances[y + 1, x] + self.deletion_cost
         addition_cost:float = distances[y, x + 1] + self.addition_cost
@@ -195,17 +195,17 @@ class SequenceStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableSt
 
     def retrace_path(
         self,
-        cumulative_items:list[tuple[list[tuple[list[int], Con.Con[K]]], list[tuple[list[int], Con.Con[V]]]]],
-        data2:list[tuple[Con.Con[K], Con.Con[V]]],
+        cumulative_items:list[tuple[list[tuple[list[int], Con[K]]], list[tuple[list[int], Con[V]]]]],
+        data2:list[tuple[Con[K], Con[V]]],
         branch2:int,
         prefix_len:int,
         suffix_len:int,
         path:"numpy.ndarray[tuple[int, int], numpy.dtype[numpy.int8]]",
-    ) -> tuple[list[tuple[list[tuple[list[int], Con.Con[K]]], list[tuple[list[int], Con.Con[V]]]]], bool]:
+    ) -> tuple[list[tuple[list[tuple[list[int], Con[K]]], list[tuple[list[int], Con[V]]]]], bool]:
         any_changes:bool = False
         x = len(cumulative_items) - prefix_len - suffix_len # data1 index
         y = len(data2) - prefix_len - suffix_len # data2 index
-        output:list[tuple[list[tuple[list[int], Con.Con[K]]], list[tuple[list[int], Con.Con[V]]]]] = []
+        output:list[tuple[list[tuple[list[int], Con[K]]], list[tuple[list[int], Con[V]]]]] = []
         # output is the same structure as `cumulative_items`. By the end of this algorithm, it should contain all information
         # from `cumulative_items` and `data2`.
         if suffix_len != 0:

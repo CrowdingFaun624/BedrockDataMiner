@@ -1,21 +1,30 @@
 from itertools import batched
 from typing import Sequence
 
-import Component.ComponentTyping as ComponentTyping
-import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
-import Component.Dataminer.DataminerSettingsComponent as DataminerSettingsComponent
-import Component.Field.ComponentField as ComponentField
-import Component.Field.Field as Field
-import Component.Field.FieldListField as FieldListField
-import Component.Structure.StructureBaseComponent as StructureBaseComponent
-import Dataminer.DataminerCollection as DataminerCollection
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
-import Version.Version as Version
+from Component.ComponentTyping import DataminerCollectionTypedDict
+from Component.Dataminer.AbstractDataminerCollectionComponent import (
+    AbstractDataminerCollectionComponent,
+)
+from Component.Dataminer.DataminerSettingsComponent import (
+    DATAMINER_SETTINGS_PATTERN,
+    DataminerSettingsComponent,
+)
+from Component.Field.ComponentField import ComponentField
+from Component.Field.Field import Field, InlinePermissions
+from Component.Field.FieldListField import FieldListField
+from Component.Structure.StructureBaseComponent import STRUCTURE_BASE_PATTERN
+from Dataminer.DataminerCollection import DataminerCollection
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
+from Version.Version import Version
 
 
-class DataminerCollectionComponent(AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent[DataminerCollection.DataminerCollection]):
+class DataminerCollectionComponent(AbstractDataminerCollectionComponent[DataminerCollection]):
 
     __slots__ = (
         "comparing_disabled",
@@ -26,41 +35,41 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
     )
 
     class_name = "DataminerCollection"
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("dataminers", True, TypeVerifier.ListTypeVerifier(dict, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("disabled", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
+        TypedDictKeyTypeVerifier("dataminers", True, ListTypeVerifier(dict, list)),
+        TypedDictKeyTypeVerifier("disabled", False, bool),
+        TypedDictKeyTypeVerifier("file_name", True, str),
+        TypedDictKeyTypeVerifier("structure", True, str),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
-    def initialize_fields(self, data: ComponentTyping.DataminerCollectionTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: DataminerCollectionTypedDict) -> Sequence[Field]:
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
 
-        self.structure_field = ComponentField.ComponentField(data["structure"], StructureBaseComponent.STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=Field.InlinePermissions.reference)
-        self.dataminer_settings_field = FieldListField.FieldListField([
-            ComponentField.ComponentField(
+        self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=InlinePermissions.reference)
+        self.dataminer_settings_field = FieldListField([
+            ComponentField(
                 dataminer_settings_data,
-                DataminerSettingsComponent.DATAMINER_SETTINGS_PATTERN,
+                DATAMINER_SETTINGS_PATTERN,
                 ("dataminers", str(index)),
-                allow_inline=Field.InlinePermissions.inline,
-                assume_type=DataminerSettingsComponent.DataminerSettingsComponent.class_name,
+                allow_inline=InlinePermissions.inline,
+                assume_type=DataminerSettingsComponent.class_name,
             ) for index, dataminer_settings_data in enumerate(data["dataminers"])
         ], ("dataminers",))
         return (self.structure_field, self.dataminer_settings_field)
 
-    def create_final(self, trace:Trace.Trace) -> DataminerCollection.DataminerCollection:
-        return DataminerCollection.DataminerCollection(
+    def create_final(self, trace:Trace) -> DataminerCollection:
+        return DataminerCollection(
             file_name=self.file_name,
             name=self.name,
             domain=self.domain,
             comparing_disabled=self.comparing_disabled,
         )
 
-    def link_finals(self, trace:Trace.Trace) -> None:
+    def link_finals(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_subcomponents(
@@ -68,13 +77,13 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent.Abstract
                 dataminer_settings=list(self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.subcomponent.final))
             )
 
-    def check(self, trace:Trace.Trace) -> None:
+    def check(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().check(trace)
             dataminer_settings_components = self.dataminer_settings_field.map(lambda dataminer_settings_field: dataminer_settings_field.subcomponent)
 
             # ending DataminerSettings must have null versions on corresponding versions; middle ones cannot be null.
-            used_versions:list[Version.Version] = []
+            used_versions:list[Version] = []
             for index, dataminer_settings_component in enumerate(dataminer_settings_components):
                 with trace.enter_key(index, dataminer_settings_component):
                     new_version = dataminer_settings_component.new_field.map(lambda subcomponent: subcomponent.final)

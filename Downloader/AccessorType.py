@@ -1,12 +1,12 @@
 from typing import TYPE_CHECKING, Any
 
 import Domain.Domain as Domain
-import Downloader.Accessor as Accessor
-import Utilities.Trace as Trace
-import Version.VersionFileType as VersionFileType
+from Downloader.Accessor import Accessor
+from Utilities.Trace import Trace
+from Version.VersionFileType import VersionFileType
 
 if TYPE_CHECKING:
-    import Version.Version as Version
+    from Version.Version import Version
 
 class AccessorType():
 
@@ -22,7 +22,7 @@ class AccessorType():
         self.name = name
         self.class_arguments = class_arguments
         self.propagated_arguments = propagated_arguments
-        self.accessor_class:type[Accessor.Accessor]
+        self.accessor_class:type[Accessor]
         self.linked_accessor_types:dict[str,AccessorType]
 
     def __repr__(self) -> str:
@@ -30,7 +30,7 @@ class AccessorType():
 
     def link_finals(
         self,
-        accessor_class:type[Accessor.Accessor],
+        accessor_class:type[Accessor],
         get_linked_accessor_types:dict[str,"AccessorType"],
     ) -> None:
         self.accessor_class = accessor_class
@@ -38,20 +38,20 @@ class AccessorType():
 
     def create_accessor(
         self,
-        trace:Trace.Trace,
-        version:"Version.Version",
+        trace:Trace,
+        version:"Version",
         domain:"Domain.Domain",
-        file_type:VersionFileType.VersionFileType,
+        file_type:VersionFileType,
         instance_arguments:dict[str,Any],
         higher_propagated_arguments:dict[str,Any]|None=None,
-    ) -> Accessor.Accessor|None:
+    ) -> Accessor|None:
         with trace.enter(self, self.name, ...):
             if higher_propagated_arguments is None:
                 higher_propagated_arguments = {}
             propagated_arguments = higher_propagated_arguments.copy()
             propagated_arguments.update(self.propagated_arguments)
 
-            linked_accessors:dict[str,Accessor.Accessor] = {}
+            linked_accessors:dict[str,Accessor] = {}
             for key, accessor_type in self.linked_accessor_types.items():
                 with trace.enter_key(key, accessor_type):
                     subaccessor = accessor_type.create_accessor(trace, version, domain, file_type, instance_arguments, propagated_arguments)

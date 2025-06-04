@@ -1,41 +1,41 @@
 import traceback
 from typing import Iterable, Sequence
 
-import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
-import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Domain.Domain as Domain
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.UserInput as UserInput
-import Version.Version as Version
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+from Dataminer.DataminerEnvironment import DataminerDependencies, DataminerEnvironment
+from Structure.StructureEnvironment import EnvironmentType, StructureEnvironment
+from Utilities.UserInput import input_multi
+from Version.Version import Version
 
 
-def get_dataminable_dataminers(version:Version.Version, domain:Domain.Domain) -> Iterable[AbstractDataminerCollection.AbstractDataminerCollection]:
+def get_dataminable_dataminers(version:Version, domain:Domain.Domain) -> Iterable[AbstractDataminerCollection]:
     '''
     Returns the names of all data files that this Version supports.
     :version: The version to test.
     '''
     return (dataminer for dataminer in domain.dataminer_collections.values() if dataminer.supports_version(version))
 
-def currently_has_data_files_from(version:Version.Version, domain:Domain.Domain) -> Iterable[AbstractDataminerCollection.AbstractDataminerCollection]:
+def currently_has_data_files_from(version:Version, domain:Domain.Domain) -> Iterable[AbstractDataminerCollection]:
     return (dataminer for dataminer in domain.dataminer_collections.values() if dataminer.get_data_file_path(version).exists())
 
-def get_dataminer_order(version:Version.Version, unordered_dataminers:Sequence[AbstractDataminerCollection.AbstractDataminerCollection]) -> list[AbstractDataminerCollection.AbstractDataminerCollection]:
+def get_dataminer_order(version:Version, unordered_dataminers:Sequence[AbstractDataminerCollection]) -> list[AbstractDataminerCollection]:
     '''
     Sorts the dataminers such that they can be completed in order. Does not change the original list.
     :unordered_dataminers: The unordered list of DataminerCollections to sort.
     '''
-    ordered_dataminers:list[AbstractDataminerCollection.AbstractDataminerCollection] = []
-    already_added:set[AbstractDataminerCollection.AbstractDataminerCollection] = set()
+    ordered_dataminers:list[AbstractDataminerCollection] = []
+    already_added:set[AbstractDataminerCollection] = set()
     for dataminer in unordered_dataminers:
         if dataminer not in already_added:
             resolve_dataminer_order(ordered_dataminers, already_added, dataminer, version)
     return ordered_dataminers
 
 def resolve_dataminer_order(
-    dataminers:list[AbstractDataminerCollection.AbstractDataminerCollection],
-    already_added:set[AbstractDataminerCollection.AbstractDataminerCollection],
-    current_dataminer:AbstractDataminerCollection.AbstractDataminerCollection,
-    version:Version.Version
+    dataminers:list[AbstractDataminerCollection],
+    already_added:set[AbstractDataminerCollection],
+    current_dataminer:AbstractDataminerCollection,
+    version:Version
 ) -> None:
     for dependency in current_dataminer.get_dependencies(version):
         if dependency not in already_added:
@@ -44,13 +44,13 @@ def resolve_dataminer_order(
     already_added.add(current_dataminer)
 
 def run(
-        version:Version.Version,
-        dataminer_collections:Sequence[AbstractDataminerCollection.AbstractDataminerCollection],
-        structure_environment:StructureEnvironment.StructureEnvironment,
+        version:Version,
+        dataminer_collections:Sequence[AbstractDataminerCollection],
+        structure_environment:StructureEnvironment,
         *,
         recalculate_everything:bool=False,
         print_messages:bool=False
-    ) -> list[tuple[AbstractDataminerCollection.AbstractDataminerCollection, Exception|None]]:
+    ) -> list[tuple[AbstractDataminerCollection, Exception|None]]:
     '''
     Runs and stores the output of multiple Dataminers. Returns the DataminerCollections that it failed to datamine and the corresponding exception.
     :version: The Version to run the Dataminers on.
@@ -63,7 +63,7 @@ def run(
     for dataminer in dataminer_collections:
         dataminer.remove_data_file(version)
     dataminer_order = get_dataminer_order(version, dataminer_collections)
-    dataminer_environment = DataminerEnvironment.DataminerEnvironment(DataminerEnvironment.DataminerDependencies({}), structure_environment)
+    dataminer_environment = DataminerEnvironment(DataminerDependencies({}), structure_environment)
     if recalculate_everything:
         for dataminer in dataminer_order:
             dataminer.remove_data_file(version)
@@ -75,7 +75,7 @@ def run(
                 dataminer_environment.dependency_data.set_item(dataminer_order[i].name, dataminer_order[i].get_data_file(version))
                 del dataminer_order[i]
             else: i += 1
-    failure_dataminers:list[tuple[AbstractDataminerCollection.AbstractDataminerCollection, Exception|None]] = []
+    failure_dataminers:list[tuple[AbstractDataminerCollection, Exception|None]] = []
     failure_dataminers_set:set[str] = set()
     for dataminer_collection in dataminer_order:
         try:
@@ -100,20 +100,20 @@ def run(
 
 def user_interface(domain:Domain.Domain) -> None:
     version_names = domain.versions
-    versions = UserInput.input_multi(version_names, "version", allow_select_all=True)
+    versions = input_multi(version_names, "version", allow_select_all=True)
     selectable_dataminer_collections = {
         dataminer_collection.name: dataminer_collection
         for dataminer_collection in domain.dataminer_collections.values()
         if any(dataminer_collection.supports_version(version) for version in versions)
     }
-    dataminer_collections = UserInput.input_multi(selectable_dataminer_collections, "dataminer collection", allow_select_all=True, show_options_first_time=True, close_enough=True)
+    dataminer_collections = input_multi(selectable_dataminer_collections, "dataminer collection", allow_select_all=True, show_options_first_time=True, close_enough=True)
 
     if len(versions) > 1:
-        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.all_datamining, domain)
+        structure_environment = StructureEnvironment(EnvironmentType.all_datamining, domain)
     else:
-        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.datamining, domain)
+        structure_environment = StructureEnvironment(EnvironmentType.datamining, domain)
     recalculate_everything = False # if all dependencies should be recalculated too
-    cannot_datamine:list[Version.Version] = []
+    cannot_datamine:list[Version] = []
     for version in versions:
         filtered_dataminers = [dataminer for dataminer in dataminer_collections if dataminer.supports_version(version)]
         failure_dataminers = run(version, filtered_dataminers, structure_environment, recalculate_everything=recalculate_everything, print_messages=True)

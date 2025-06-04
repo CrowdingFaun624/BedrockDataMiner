@@ -1,15 +1,17 @@
 from typing import Sequence
 
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Structure.BranchlessStructureComponent as BranchlessStructureComponent
-import Component.Structure.Field.DelegateField as DelegateField
-import Structure.StructureTypes.CacheStructure as CacheStructure
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.ComponentTyping import CacheStructureTypedDict
+from Component.Field.Field import Field
+from Component.Structure.BranchlessStructureComponent import (
+    BranchlessStructureComponent,
+)
+from Component.Structure.Field.DelegateField import OptionalDelegateField
+from Structure.StructureTypes.CacheStructure import CacheStructure
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 
-class CacheStructureComponent(BranchlessStructureComponent.BranchlessStructureComponent[CacheStructure.CacheStructure]):
+class CacheStructureComponent(BranchlessStructureComponent[CacheStructure]):
 
     __slots__ = (
         "delegate_field",
@@ -17,23 +19,23 @@ class CacheStructureComponent(BranchlessStructureComponent.BranchlessStructureCo
     )
 
     class_name = "Cache"
-    structure_type = CacheStructure.CacheStructure
-    type_verifier = BranchlessStructureComponent.BranchlessStructureComponent.type_verifier.extend(TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("removal_threshold", False, int),
-        TypeVerifier.TypedDictKeyTypeVerifier("delegate", False, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", False, dict),
+    structure_type = CacheStructure
+    type_verifier = BranchlessStructureComponent.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("removal_threshold", False, int),
+        TypedDictKeyTypeVerifier("delegate", False, (str, type(None))),
+        TypedDictKeyTypeVerifier("delegate_arguments", False, dict),
     ))
 
-    def initialize_fields(self, data: ComponentTyping.CacheStructureTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: CacheStructureTypedDict) -> Sequence[Field]:
         fields = list(super().initialize_fields(data))
         self.removal_threshold = data.get("removal_threshold", 10)
 
-        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.delegate_field = OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
 
         fields.append(self.delegate_field)
         return fields
 
-    def link_finals(self, trace: Trace.Trace) -> None:
+    def link_finals(self, trace: Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_cache_structure(

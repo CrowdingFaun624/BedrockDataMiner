@@ -2,10 +2,10 @@ from typing import Any
 
 import pyjson5
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 
-class JsonSerializer(Serializer.Serializer[Any]):
+class JsonSerializer(Serializer[Any]):
     '''
     Serializer for JSON files.
     '''

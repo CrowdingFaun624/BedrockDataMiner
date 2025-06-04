@@ -1,11 +1,17 @@
 from typing import Iterable, Literal, Sequence, TypedDict
 
 import _domains.minecraft_bedrock.scripts.normalizers.collapse_resource_packs as collapse_resource_packs
-import Dataminer.Dataminer as Dataminer
-import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier as TypeVerifier
+from Dataminer.Dataminer import Dataminer
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Utilities.Exceptions import DataminerNothingFoundError
+from Utilities.TypeVerifier import (
+    EnumTypeVerifier,
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+    UnionTypeVerifier,
+)
 
 __all__ = ("PacksDataminer",)
 
@@ -15,15 +21,15 @@ class PackTypedDict(TypedDict):
 
 pack_order = collapse_resource_packs.resource_pack_order
 
-class PacksDataminer(Dataminer.Dataminer):
+class PacksDataminer(Dataminer):
 
-    parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("directory", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
-        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", True, TypeVerifier.EnumTypeVerifier({"resource", "behavior", "skin", "emote", "piece"})),
-        TypeVerifier.TypedDictKeyTypeVerifier("subdirectory", False, str, function=FileDataminer.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("require_subdirectory", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("name_starts_with", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("care_about_packs_existing", False, bool)
+    parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("directory", True, UnionTypeVerifier(str, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
+        TypedDictKeyTypeVerifier("pack_type", True, EnumTypeVerifier({"resource", "behavior", "skin", "emote", "piece"})),
+        TypedDictKeyTypeVerifier("subdirectory", False, str, function=FileDataminer.location_value_function),
+        TypedDictKeyTypeVerifier("require_subdirectory", False, bool),
+        TypedDictKeyTypeVerifier("name_starts_with", False, str),
+        TypedDictKeyTypeVerifier("care_about_packs_existing", False, bool)
     )
 
     def initialize(
@@ -69,7 +75,7 @@ class PacksDataminer(Dataminer.Dataminer):
                     path = f"{directory}{name}/"
                 packs.append({"name": name, "path": path})
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[PackTypedDict]:
+    def activate(self, environment:DataminerEnvironment) -> list[PackTypedDict]:
         file_list:dict[str,str] = environment.dependency_data.get("all_files", self)
         packs:list[PackTypedDict] = []
         pack_names:set[str] = set()
@@ -85,7 +91,7 @@ class PacksDataminer(Dataminer.Dataminer):
         if len(unrecognized_packs) > 0 and self.care_about_packs_existing:
             raise collapse_resource_packs.UnrecognizedPackError(sorted(unrecognized_packs), self.pack_type, self)
         if len(packs) == 0:
-            raise Exceptions.DataminerNothingFoundError(self)
+            raise DataminerNothingFoundError(self)
         if self.care_about_packs_existing:
             packs.sort(key=lambda pack: pack_order[pack["name"]])
         return packs

@@ -2,11 +2,15 @@ from types import EllipsisType
 from typing import Any
 
 import Domain.Domain as Domain
-import Structure.Structure as Structure
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureInfo as StructureInfo
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Structure.Structure import Structure
+from Structure.StructureEnvironment import (
+    ComparisonEnvironment,
+    EnvironmentType,
+    StructureEnvironment,
+)
+from Structure.StructureInfo import StructureInfo
+from Utilities.Exceptions import StructureError
+from Utilities.Trace import Trace
 
 
 def try_open_json(data_string:str, domain:"Domain.Domain") -> Any|EllipsisType:
@@ -33,7 +37,7 @@ def parse_data(data_string:str, domain:"Domain.Domain") -> Any:
         raise RuntimeError()
     return data
 
-def ensure_not_ellipsis[A](data:A|EllipsisType, trace:Trace.Trace, structure:Structure.Structure, domain:"Domain.Domain") -> A:
+def ensure_not_ellipsis[A](data:A|EllipsisType, trace:Trace, structure:Structure, domain:"Domain.Domain") -> A:
     texts:list[str] = trace.stringify()
     if len(texts) > 0:
         if (log := domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
@@ -42,18 +46,18 @@ def ensure_not_ellipsis[A](data:A|EllipsisType, trace:Trace.Trace, structure:Str
         for text in texts:
             print(text)
     if len(texts) > 0 or data is ...:
-        raise Exceptions.StructureError(structure)
+        raise StructureError(structure)
     return data
 
 def main(domain:"Domain.Domain") -> None:
     version = domain.versions[next(reversed(domain.versions))]
     structure_name = input("Structure full name: ")
-    structure = domain.script_referenceable.get(structure_name, Structure.Structure)
+    structure = domain.script_referenceable.get(structure_name, Structure)
     data1 = parse_data(input("Normalized data 1: "), domain)
     data2 = parse_data(input("Normalized data 2: "), domain)
-    trace = Trace.Trace()
-    structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.similarity_testing, domain)
-    environment = StructureEnvironment.ComparisonEnvironment(structure_environment, None, [(version, StructureInfo.StructureInfo({}, domain, ""))], [])
+    trace = Trace()
+    structure_environment = StructureEnvironment(EnvironmentType.similarity_testing, domain)
+    environment = ComparisonEnvironment(structure_environment, None, [(version, StructureInfo({}, domain, ""))], [])
     containerized_data1 = ensure_not_ellipsis(structure.containerize(data1, trace, environment[0]), trace, structure, domain)
     containerized_data2 = ensure_not_ellipsis(structure.containerize(data2, trace, environment[0]), trace, structure, domain)
     similarity, identical = ensure_not_ellipsis(structure.get_similarity(containerized_data1, containerized_data2, 0, 0, trace, environment), trace, structure, domain)

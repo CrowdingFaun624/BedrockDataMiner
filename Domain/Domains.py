@@ -15,9 +15,11 @@ def get_domain_name_from_module(module_name:str) -> str|None:
     module_split = module_name.split(".", maxsplit=2)
     return module_split[1] if module_split[0] == "_domains" else None
 
-import Domain.Domain as Domain
-import Utilities.FileManager as FileManager
+domains:dict[str,"Domain.Domain"] = {}
 
-domains:dict[str,Domain.Domain] = {directory.name: Domain.Domain(directory.name) for directory in FileManager.DOMAINS_DIRECTORY.iterdir() if directory.joinpath("domain.json").exists()}
+import Domain.Domain as Domain
+from Utilities.FileManager import DOMAINS_DIRECTORY
+
+domains.update((directory.name, Domain.Domain(directory.name)) for directory in DOMAINS_DIRECTORY.iterdir() if directory.joinpath("domain.json").exists())
 for domain in domains.values():
     domain.link_domains(domains)

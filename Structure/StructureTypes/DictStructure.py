@@ -1,14 +1,14 @@
 from typing import Hashable, Sequence
 
-import Structure.Container as Con
-import Structure.Difference as Diff
-import Structure.Structure as Structure
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureTypes.MappingStructure as MappingStructure
-import Utilities.Trace as Trace
+from Structure.Container import Con, Don
+from Structure.Difference import Diff
+from Structure.Structure import Structure
+from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Structure.StructureTypes.MappingStructure import MappingStructure
+from Utilities.Trace import Trace
 
 
-class DictStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStructure.MappingStructure[K, V, D, KBO, KCO, VBO, VCO, BO, CO]):
+class DictStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStructure[K, V, D, KBO, KCO, VBO, VCO, BO, CO]):
 
     MIN_KEY_SIMILARITY_THRESHOLD = 0.0
     MIN_VALUE_SIMILARITY_THRESHOLD = 0.5
@@ -28,9 +28,9 @@ class DictStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStructu
         self,
         allow_key_moves:bool,
         allow_same_key_optimization:bool,
-        key_structure:Structure.Structure[K, Con.Con[K], Con.Don[K], Con.Don[K]|Diff.Diff[Con.Don[K]], KBO, KCO]|None,
+        key_structure:Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None,
         key_weight:int,
-        value_structure:Structure.Structure[V, Con.Con[V], Con.Don[V], Con.Don[V]|Diff.Diff[Con.Don[V]], VBO, VCO]|None,
+        value_structure:Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None,
         value_types:tuple[type, ...],
         value_weight:int,
     ) -> None:
@@ -43,26 +43,26 @@ class DictStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](MappingStructu
         self.value_types = value_types
         self.value_weight = value_weight
 
-    def get_key_structure(self, key: K, value: V, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure[K, Con.Con[K], Con.Don[K], Con.Don[K]|Diff.Diff[Con.Don[K]], KBO, KCO]|None:
+    def get_key_structure(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> Structure[K, Con[K], Don[K], Don[K]|Diff[Don[K]], KBO, KCO]|None:
         return self.key_structure
 
-    def get_value_structure(self, key: K, value: V, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure[V, Con.Con[V], Con.Don[V], Con.Don[V]|Diff.Diff[Con.Don[V]], VBO, VCO]|None:
+    def get_value_structure(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> Structure[V, Con[V], Don[V], Don[V]|Diff[Don[V]], VBO, VCO]|None:
         return self.value_structure
 
-    def get_value_types(self, key: K, value: V, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> tuple[type, ...]:
+    def get_value_types(self, key: K, value: V, trace: Trace, environment: PrinterEnvironment) -> tuple[type, ...]:
         return self.value_types
 
-    def allow_key_move(self, key1: Con.Con[K], key2: Con.Con[K], value1: Con.Con[V], value2: Con.Con[V], branch1:int, branch2:int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> bool:
+    def allow_key_move(self, key1: Con[K], key2: Con[K], value1: Con[V], value2: Con[V], branch1:int, branch2:int, trace: Trace, environment: ComparisonEnvironment) -> bool:
         return self.allow_key_moves
 
-    def get_key_weight(self, key: Con.Con[K], value: Con.Con[V], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> int:
+    def get_key_weight(self, key: Con[K], value: Con[V], trace: Trace, environment: ComparisonEnvironment) -> int:
         return self.key_weight
 
-    def get_value_weight(self, key: Con.Con[K], value: Con.Con[V], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> int:
+    def get_value_weight(self, key: Con[K], value: Con[V], trace: Trace, environment: ComparisonEnvironment) -> int:
         return self.value_weight
 
-    def iter_structures(self) -> Sequence[Structure.Structure]:
-        output:list[Structure.Structure] = []
+    def iter_structures(self) -> Sequence[Structure]:
+        output:list[Structure] = []
         if self.key_structure is not None:
             output.append(self.key_structure)
         if self.value_structure is not None:

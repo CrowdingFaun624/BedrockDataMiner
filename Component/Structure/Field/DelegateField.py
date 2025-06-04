@@ -1,17 +1,17 @@
 from typing import Any, Sequence
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.ScriptImporter as ScriptImporter
 import Domain.Domain as Domain
-import Structure.Delegate.Delegate as Delegate
-import Structure.Structure as Structure
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ComponentTyping import CreateComponentFunction
+from Component.Field.Field import Field
+from Component.ScriptImporter import ScriptSetSetSet
+from Structure.Delegate.Delegate import Delegate
+from Structure.Structure import Structure
+from Utilities.Exceptions import InapplicableDelegateError
+from Utilities.Trace import Trace
 
 
-class OptionalDelegateField(Field.Field):
+class OptionalDelegateField(Field):
 
     __slots__ = (
         "arguments",
@@ -27,10 +27,10 @@ class OptionalDelegateField(Field.Field):
         self.arguments = arguments
         self.domain = domain
 
-        self.delegate_type:type[Delegate.Delegate]|None
-        self.delegate:Delegate.Delegate|None = None
+        self.delegate_type:type[Delegate]|None
+        self.delegate:Delegate|None = None
 
-    def create_delegate(self, structure:"Structure.Structure|None", trace:Trace.Trace, keys:dict[str,Any]|None=None) -> Delegate.Delegate|None:
+    def create_delegate(self, structure:"Structure|None", trace:Trace, keys:dict[str,Any]|None=None) -> Delegate|None:
         '''
         Returns a Delegate or None.
         :structure: The parent Structure of this Delegate.
@@ -54,7 +54,7 @@ class OptionalDelegateField(Field.Field):
             if keys is None:
                 keys = {}
             if not ((structure is not None and structure.any_delegate_works) or isinstance(structure, delegate_type.applies_to)):
-                trace.exception(Exceptions.InapplicableDelegateError(delegate_type, structure, delegate_type.applies_to))
+                trace.exception(InapplicableDelegateError(delegate_type, structure, delegate_type.applies_to))
                 return None
             self.delegate = delegate_type(structure, keys, **self.arguments)
             return self.delegate
@@ -62,13 +62,13 @@ class OptionalDelegateField(Field.Field):
 
     def set_field(
         self,
-        source_component:"Component.Component",
-        components:dict[str,"Component.Component"],
-        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
-        functions:ScriptImporter.ScriptSetSetSet,
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
-    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
+        source_component:"Component",
+        components:dict[str,"Component"],
+        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        functions:ScriptSetSetSet,
+        create_component_function:CreateComponentFunction,
+        trace:Trace,
+    ) -> tuple[Sequence["Component"],Sequence["Component"]]:
         with trace.enter_keys(self.trace_path, (self.delegate_name, self.arguments)):
             if self.delegate_name is None:
                 self.delegate_type = None
@@ -80,7 +80,7 @@ class OptionalDelegateField(Field.Field):
             return (), ()
         return (), ()
 
-    def finalize(self, trace:Trace.Trace) -> None:
+    def finalize(self, trace:Trace) -> None:
         with trace.enter_keys(self.trace_path, (self.delegate_name, self.arguments)):
             if self.delegate is not None:
                 self.delegate.finalize(self.domain, trace)

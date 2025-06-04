@@ -1,6 +1,6 @@
-import cssbeautifier.css.beautifier as beautifier
+from cssbeautifier.css.beautifier import beautify
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 __all__ = ("CssSerializer",)
 
@@ -29,10 +29,10 @@ def fix_indent(line:str) -> str:
         line = line.replace("    ", "\t", 1)
     return line
 
-class CssSerializer(Serializer.Serializer):
+class CssSerializer(Serializer):
 
     def deserialize(self, data: bytes) -> str:
-        beautified_css = beautifier.beautify(data.decode())
+        beautified_css = beautify(data.decode())
         lines = beautified_css.split("\n")
         output = "\n".join(fix_indent(line) for line in lines if line != "")
         return output

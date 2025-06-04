@@ -1,15 +1,15 @@
 from typing import Literal, TypedDict
 
-import Component.Types as Types
 import Domain.Domain as Domain
-import Serializer.Serializer as Serializer
-import Utilities.CustomJson as CustomJson
 import Utilities.Exceptions as Exceptions
-import Utilities.FileStorage as FileStorage
+from Component.Types import register_decorator
+from Serializer.Serializer import Serializer
+from Utilities.CustomJson import Coder
+from Utilities.FileStorage import archive_data, read_archived
 
 FileJsonTypedDict = TypedDict("FileJsonTypedDict", {"$special_type": Literal["file"], "hash": str, "name": str})
 
-class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
+class FileCoder(Coder[FileJsonTypedDict, "File"]):
 
     special_type_name = "file"
 
@@ -23,7 +23,7 @@ class FileCoder(CustomJson.Coder[FileJsonTypedDict, "File"]):
         return {"$special_type": "file", "hash": hash_int_to_str(data.hash), "name": data.display_name}
 
 def new_file(data:bytes, file_name:str) -> "File":
-    return File(file_name, hash_str_to_int(FileStorage.archive_data(data, file_name)))
+    return File(file_name, hash_str_to_int(archive_data(data, file_name)))
 
 def hash_int_to_str(hash_int:int) -> str:
     '''Assumes hash length of 40'''
@@ -32,7 +32,7 @@ def hash_int_to_str(hash_int:int) -> str:
 def hash_str_to_int(hash_str:str) -> int:
     return int(hash_str, base=16)
 
-@Types.register_decorator("abstract_file", ..., is_file=True)
+@register_decorator("abstract_file", ..., is_file=True)
 class AbstractFile[a]():
 
     __slots__ = (
@@ -44,13 +44,13 @@ class AbstractFile[a]():
         self.display_name = display_name
         self.hash = data_hash
 
-    def read(self, serializer:Serializer.Serializer|None) -> a:
+    def read(self, serializer:Serializer|None) -> a:
         ...
 
-    def set_data(self, serializer:Serializer.Serializer|None, data:a) -> None:
+    def set_data(self, serializer:Serializer|None, data:a) -> None:
         ...
 
-    def del_data(self, serializer:Serializer.Serializer|None) -> None:
+    def del_data(self, serializer:Serializer|None) -> None:
         ...
 
     def __eq__(self, other:"AbstractFile") -> bool:
@@ -62,7 +62,7 @@ class AbstractFile[a]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} \"{self.display_name}\" hash {hash_int_to_str(self.hash)}>"
 
-@Types.register_decorator("file", None, json_coder=FileCoder)
+@register_decorator("file", None, json_coder=FileCoder)
 class File[a](AbstractFile[a]):
 
     __slots__ = (
@@ -73,15 +73,15 @@ class File[a](AbstractFile[a]):
     def __init__(self, display_name:str, data_hash:int) -> None:
         super().__init__(display_name, data_hash)
         self._bytes:bytes|None = None
-        self._data:dict[Serializer.Serializer,a] = {}
+        self._data:dict[Serializer,a] = {}
 
     @property
     def bytes(self) -> bytes:
         if self._bytes is None:
-            self._bytes = FileStorage.read_archived(hash_int_to_str(self.hash))
+            self._bytes = read_archived(hash_int_to_str(self.hash))
         return self._bytes
 
-    def read(self, serializer:Serializer.Serializer|None) -> a:
+    def read(self, serializer:Serializer|None) -> a:
         # installs data without returning anything.
         if serializer is None:
             raise Exceptions.SerializerNoneError(self)
@@ -95,7 +95,7 @@ class File[a](AbstractFile[a]):
         except Exception:
             raise Exceptions.SerializationFailureError(serializer, self.display_name)
 
-    def set_data(self, serializer:Serializer.Serializer|None, data:a) -> None:
+    def set_data(self, serializer:Serializer|None, data:a) -> None:
         # modifies data, and *does not* change the hash of this File.
         if serializer is None:
             raise Exceptions.SerializerNoneError(self)
@@ -103,14 +103,13 @@ class File[a](AbstractFile[a]):
             raise Exceptions.SerializerEllipsisError(self, None)
         self._data[serializer] = data
 
-    def del_data(self, serializer:Serializer.Serializer|None) -> None:
+    def del_data(self, serializer:Serializer|None) -> None:
         # in case you want to clear up memory or something.
         if serializer is None:
             raise Exceptions.SerializerNoneError(self)
         del self._data[serializer]
 
-
-@Types.register_decorator("fake_file", None)
+@register_decorator("fake_file", None)
 class FakeFile[a](AbstractFile[a]):
     '''Similar to a File, but it can be created anywhere and using any hash/data.'''
 
@@ -118,21 +117,21 @@ class FakeFile[a](AbstractFile[a]):
         "_data"
     )
 
-    def __init__(self, display_name: str, data:a, serializer:Serializer.Serializer|None, data_hash: int) -> None:
+    def __init__(self, display_name: str, data:a, serializer:Serializer|None, data_hash: int) -> None:
         super().__init__(display_name, data_hash)
         if data is ...:
             raise Exceptions.SerializerEllipsisError(self, serializer)
         self._data = {serializer: data}
 
-    def read(self, serializer: Serializer.Serializer|None) -> a:
+    def read(self, serializer: Serializer|None) -> a:
         if (output := self._data.get(serializer, ...)) is ...:
             raise Exceptions.FileWrongSerializerError(self, list(self._data.keys()), serializer)
         return output
 
-    def set_data(self, serializer: Serializer.Serializer|None, data: a) -> None:
+    def set_data(self, serializer: Serializer|None, data: a) -> None:
         if data is ...:
             raise Exceptions.SerializerEllipsisError(self, serializer)
         self._data[serializer] = data
 
-    def del_data(self, serializer: Serializer.Serializer|None) -> None:
+    def del_data(self, serializer: Serializer|None) -> None:
         del self._data[serializer]

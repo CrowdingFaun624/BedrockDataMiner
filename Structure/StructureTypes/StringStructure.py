@@ -1,16 +1,16 @@
 from itertools import count, takewhile
-from typing import Callable, Sequence
+from typing import Callable, Container, Sequence
 
-import Structure.PrimitiveStructure as PrimitiveStructure
-import Structure.SimilarityCache as SimilarityCache
-import Structure.SimpleContainer as SCon
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureInfo as StructureInfo
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Structure.PrimitiveStructure import PrimitiveStructure
+from Structure.SimilarityCache import SimilarityCache
+from Structure.SimpleContainer import SCon
+from Structure.StructureEnvironment import ComparisonEnvironment
+from Structure.StructureInfo import StructureInfo
+from Utilities.Exceptions import SequenceTooLongError
+from Utilities.Trace import Trace
 
 
-class StringStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO]):
+class StringStructure[D, BO, CO](PrimitiveStructure[D, BO, CO]):
 
     __slots__ = (
         "max_square_length",
@@ -22,16 +22,16 @@ class StringStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
     def link_string_structure(
         self,
         max_square_length:int,
-        similarity_function:Callable[[SCon.SCon[D]], str],
+        similarity_function:Callable[[SCon[D]], str],
         similarity_weight_function:Callable[[str],Sequence[int]],
     ) -> None:
         self.max_square_length = max_square_length
         self.similarity_function = similarity_function
         self.similarity_weight_function = similarity_weight_function
 
-        self.similarity_cache:SimilarityCache.SimilarityCache[SCon.SCon[D]] = SimilarityCache.SimilarityCache()
+        self.similarity_cache:SimilarityCache[SCon[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
         self.similarity_cache.clear(keep)
 
     def get_levenshtein_distance(self, data1:str, data2:str, similarity_weight1:Sequence[int], similarity_weight2:Sequence[int]) -> int:
@@ -40,7 +40,7 @@ class StringStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
         suffix_len = sum(1 for i in takewhile(lambda a: a[0] < shorter_length - prefix_len and a[1] == a[2], zip(count(), reversed(data1), reversed(data2)))) # number of items at end that are the same unless that line is included in prefix_len.
         distances:list[list[int]] = [[0] * (len(data1) + 1 - prefix_len - suffix_len) for y in range(len(data2) + 1 - prefix_len - suffix_len)]
         if (len(data1) - prefix_len - suffix_len) * (len(data2) - prefix_len - suffix_len) > self.max_square_length:
-            raise Exceptions.SequenceTooLongError(self, len(data1), len(data2))
+            raise SequenceTooLongError(self, len(data1), len(data2))
 
         for x in range(1, len(data1) + 1 - prefix_len - suffix_len):
             distances[0][x] = distances[0][x - 1] + similarity_weight1[x + prefix_len - 1]
@@ -55,7 +55,7 @@ class StringStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
                 )
         return distances[len(data2) - prefix_len - suffix_len][len(data1) - prefix_len - suffix_len]
 
-    def get_similarity(self, data1: SCon.SCon[D], data2: SCon.SCon[D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
+    def get_similarity(self, data1: SCon[D], data2: SCon[D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
             if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
                 return output

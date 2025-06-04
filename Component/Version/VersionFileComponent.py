@@ -1,30 +1,36 @@
-from typing import Sequence, cast
+from typing import TYPE_CHECKING, Sequence, cast
 
-import Component.Accessor.AccessorComponent as AccessorComponent
-import Component.Capabilities as Capabilities
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentField as ComponentField
-import Component.Field.ComponentListField as ComponentListField
-import Component.Field.Field as Field
-import Component.Pattern as Pattern
-import Component.Version.VersionComponent as VersionComponent
-import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
-import Version.VersionFile as VersionFile
+from Component.Accessor.AccessorComponent import ACCESSOR_PATTERN, AccessorComponent
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.ComponentTyping import VersionFileTypedDict
+from Component.Field.ComponentField import ComponentField
+from Component.Field.ComponentListField import ComponentListField
+from Component.Field.Field import Field, InlinePermissions
+from Component.Pattern import Pattern
+from Component.Version.VersionFileTypeComponent import VERSION_FILE_TYPE_PATTERN
+from Utilities.Exceptions import VersionFileInvalidAccessorError
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
+from Version.VersionFile import VersionFile
 
-VERSION_FILE_PATTERN:Pattern.Pattern["VersionFileComponent"] = Pattern.Pattern("is_version_file")
+if TYPE_CHECKING:
+    from Component.Version.VersionComponent import VersionComponent
 
-class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
+VERSION_FILE_PATTERN:Pattern["VersionFileComponent"] = Pattern("is_version_file")
+
+class VersionFileComponent(Component[VersionFile]):
 
     class_name = "VersionFile"
-    my_capabilities = Capabilities.Capabilities(is_version_file=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("accessors", True, TypeVerifier.ListTypeVerifier(dict, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("version_file_type", True, str),
+    my_capabilities = Capabilities(is_version_file=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("accessors", True, ListTypeVerifier(dict, list)),
+        TypedDictKeyTypeVerifier("type", False, str),
+        TypedDictKeyTypeVerifier("version_file_type", True, str),
     )
 
     __slots__ = (
@@ -32,30 +38,30 @@ class VersionFileComponent(Component.Component[VersionFile.VersionFile]):
         "version_file_type_field",
     )
 
-    def initialize_fields(self, data: ComponentTyping.VersionFileTypedDict) -> Sequence[Field.Field]:
-        self.version_file_type_field = ComponentField.ComponentField(data["version_file_type"], VersionFileTypeComponent.VERSION_FILE_TYPE_PATTERN, ("version_file_type",), allow_inline=Field.InlinePermissions.reference, assume_component_group="version_file_types")
-        self.accessors_field = ComponentListField.ComponentListField(data["accessors"], AccessorComponent.ACCESSOR_PATTERN, ("accessors",), allow_inline=Field.InlinePermissions.inline, assume_type=AccessorComponent.AccessorComponent.class_name)
+    def initialize_fields(self, data: VersionFileTypedDict) -> Sequence[Field]:
+        self.version_file_type_field = ComponentField(data["version_file_type"], VERSION_FILE_TYPE_PATTERN, ("version_file_type",), allow_inline=InlinePermissions.reference, assume_component_group="version_file_types")
+        self.accessors_field = ComponentListField(data["accessors"], ACCESSOR_PATTERN, ("accessors",), allow_inline=InlinePermissions.inline, assume_type=AccessorComponent.class_name)
         return (self.version_file_type_field, self.accessors_field)
 
-    def create_final(self, trace:Trace.Trace) -> VersionFile.VersionFile:
-        return VersionFile.VersionFile()
+    def create_final(self, trace:Trace) -> VersionFile:
+        return VersionFile()
 
-    def link_finals(self, trace:Trace.Trace) -> None:
+    def link_finals(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
-            version = cast("VersionComponent.VersionComponent", self.get_inline_parent()).final
+            version = cast("VersionComponent", self.get_inline_parent()).final
             self.final.link_finals(
                 version=version,
                 version_file_type=self.version_file_type_field.subcomponent.final,
                 accessors=list(self.accessors_field.map(lambda accessor_component: accessor_component.final)),
             )
 
-    def check(self, trace:Trace.Trace) -> None:
+    def check(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().check(trace)
             allowed_accessors = set(self.version_file_type_field.subcomponent.allowed_accessor_types_field.subcomponents)
             trace.exceptions(
-                Exceptions.VersionFileInvalidAccessorError(self.final, accessor.name)
+                VersionFileInvalidAccessorError(self.final, accessor.name)
                 for accessor in self.accessors_field.subcomponents
                 if accessor.accessor_type_field.subcomponent not in allowed_accessors
             )

@@ -1,15 +1,15 @@
 from math import exp
-from typing import Callable
+from typing import Callable, Container
 
-import Structure.PrimitiveStructure as PrimitiveStructure
-import Structure.SimilarityCache as SimilarityCache
-import Structure.SimpleContainer as SCon
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureInfo as StructureInfo
-import Utilities.Trace as Trace
+from Structure.PrimitiveStructure import PrimitiveStructure
+from Structure.SimilarityCache import SimilarityCache
+from Structure.SimpleContainer import SCon
+from Structure.StructureEnvironment import ComparisonEnvironment
+from Structure.StructureInfo import StructureInfo
+from Utilities.Trace import Trace
 
 
-class NumberStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO]):
+class NumberStructure[D, BO, CO](PrimitiveStructure[D, BO, CO]):
 
     __slots__ = (
         "normal_value",
@@ -20,17 +20,17 @@ class NumberStructure[D, BO, CO](PrimitiveStructure.PrimitiveStructure[D, BO, CO
     def link_number_structure(
         self,
         normal_value:float, # normal_value > 0
-        similarity_function:Callable[[SCon.SCon[D]], float],
+        similarity_function:Callable[[SCon[D]], float],
     ) -> None:
         self.normal_value = normal_value
         self.similarity_function = similarity_function
 
-        self.similarity_cache:SimilarityCache.SimilarityCache[SCon.SCon[D]] = SimilarityCache.SimilarityCache()
+        self.similarity_cache:SimilarityCache[SCon[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
         self.similarity_cache.clear(keep)
 
-    def get_similarity(self, data1: SCon.SCon[D], data2: SCon.SCon[D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
+    def get_similarity(self, data1: SCon[D], data2: SCon[D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
             if (output := self.similarity_cache.get(data1, data2, structure_info1 := environment[branch1].structure_info, structure_info2 := environment[branch2].structure_info)) is not None:
                 return output

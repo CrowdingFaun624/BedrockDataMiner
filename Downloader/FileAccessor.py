@@ -1,9 +1,9 @@
 from typing import BinaryIO
 
-import Downloader.Accessor as Accessor
+from Downloader.Accessor import Accessor
 
 
-class FileAccessor(Accessor.Accessor):
+class FileAccessor(Accessor):
 
     __slots__ = ()
 

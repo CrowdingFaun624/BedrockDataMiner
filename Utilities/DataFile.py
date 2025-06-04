@@ -3,7 +3,7 @@ from typing import Any
 
 import pyjson5 as pyjson5
 
-import Utilities.Exceptions as Exceptions
+from Utilities.Exceptions import DataFileNothingToWriteError
 
 
 class DataFile():
@@ -40,7 +40,7 @@ class DataFile():
         if obj is not ...:
             self._contents = obj
         elif not self.has_read_contents:
-            raise Exceptions.DataFileNothingToWriteError(self)
+            raise DataFileNothingToWriteError(self)
         with open(self.file_path, "wt") as f:
             pyjson5.dump(self._contents, f)
 

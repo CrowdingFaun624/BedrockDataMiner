@@ -2,7 +2,7 @@ import enum
 from typing import Any, Callable, Container, Hashable, Mapping, Sequence
 
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Utilities.Trace import Trace
 
 
 class TraceItemType(enum.Enum):
@@ -35,13 +35,13 @@ class TypeVerifier[A]():
     def get_data_type(self) -> type|tuple[type,...]:
         ...
 
-    def verify(self, data:A, trace:Trace.Trace) -> bool: ... # returns True if there are new exceptions.
+    def verify(self, data:A, trace:Trace) -> bool: ... # returns True if there are new exceptions.
 
     def verify_throw(self, data:A, trace_items:tuple[Any,...]|None=None) -> None:
         '''
         Verifies data and immediately raises any exceptions.
         '''
-        trace = Trace.Trace()
+        trace = Trace()
         if trace_items is None:
             trace_items = ("data",)
         with trace.enter_keys(trace_items, data):
@@ -84,7 +84,7 @@ class DictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
     def get_data_type(self) -> type | tuple[type, ...]:
         return self.data_type
 
-    def verify(self, data: Mapping[K, V], trace:Trace.Trace) -> bool:
+    def verify(self, data: Mapping[K, V], trace:Trace) -> bool:
         if not isinstance(data, self.data_type):
             trace.exception(Exceptions.TypeVerificationTypeError(self.get_type_str(self.data_type), type(data)))
             return True
@@ -157,7 +157,7 @@ class TypedDictKeyTypeVerifier[K: Hashable, V](TypeVerifier[tuple[K, V]]):
     def get_data_type(self) -> type | tuple[type, ...]:
         return self.value_type.get_data_type() if isinstance(self.value_type, TypeVerifier) else self.value_type
 
-    def verify(self, data:tuple[K, V], trace:Trace.Trace) -> bool:
+    def verify(self, data:tuple[K, V], trace:Trace) -> bool:
         key, value = data
         if isinstance(self.value_type, TypeVerifier):
             if self.value_type.verify(value, trace):
@@ -203,7 +203,7 @@ class TypedDictTypeVerifier[K: Hashable, V](TypeVerifier[Mapping[K, V]]):
     def get_data_type(self) -> type | tuple[type, ...]:
         return self.data_type
 
-    def verify(self, data: Mapping[Any, Any], trace:Trace.Trace) -> bool:
+    def verify(self, data: Mapping[Any, Any], trace:Trace) -> bool:
         if not isinstance(data, self.data_type):
             trace.exception(Exceptions.TypeVerificationTypeError(self.get_type_str(self.data_type), type(data)))
             return True
@@ -292,7 +292,7 @@ class ListTypeVerifier[I](TypeVerifier[Sequence[I]]):
     def get_data_type(self) -> type | tuple[type, ...]:
         return self.data_type
 
-    def verify(self, data: Sequence[I], trace:Trace.Trace) -> bool:
+    def verify(self, data: Sequence[I], trace:Trace) -> bool:
         if not isinstance(data, self.data_type):
             trace.exception(Exceptions.TypeVerificationTypeError(self.get_type_str(self.data_type), type(data)))
             return True
@@ -344,7 +344,7 @@ class EnumTypeVerifier[I](TypeVerifier[I]):
                 data_types_list.append(type(option))
         return data_types_list[0] if len(data_types_list) == 0 else tuple(data_types_list)
 
-    def verify(self, data: I, trace:Trace.Trace) -> bool:
+    def verify(self, data: I, trace:Trace) -> bool:
         if data not in self.options:
             trace.exception(Exceptions.TypeVerificationEnumError(self.options, data))
             return True
@@ -383,11 +383,11 @@ class UnionTypeVerifier[I](TypeVerifier[I]):
                     data_types_list.append(data_type)
         return data_types_list[0] if len(data_types_list) == 0 else tuple(data_types_list)
 
-    def verify(self, data: I, trace: Trace.Trace) -> bool:
-        subtraces:list[Trace.Trace] = [] # Union expects exceptions to exist. It only needs some of them.
+    def verify(self, data: I, trace: Trace) -> bool:
+        subtraces:list[Trace] = [] # Union expects exceptions to exist. It only needs some of them.
         for type_verifier, is_type_verifier in zip(self.types, self.types_are_type_verifiers):
             if isinstance(type_verifier, TypeVerifier):
-                subtrace = Trace.Trace()
+                subtrace = Trace()
                 if not type_verifier.verify(data, subtrace):
                     return False
                 else:

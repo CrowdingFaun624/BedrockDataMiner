@@ -5,53 +5,81 @@ from typing import Any, Iterable, Sequence, cast
 
 import pyjson5 as json
 
-import Component.Accessor.AccessorTypeImporterEnvironment as AccessorTypeImporterEnvironment
-import Component.Component as Component
-import Component.ComponentTypes as ComponentTypes
-import Component.ComponentTyping as ComponentTyping
-import Component.Dataminer.DataminerImporterEnvironment as DataminerImporterEnvironment
-import Component.ImporterEnvironment as ImporterEnvironment
-import Component.Log.LogImporterEnvironment as LogImporterEnvironment
-import Component.ScriptImporter as ScriptImporter
-import Component.Serializer.SerializerImporterEnvironment as SerializerImporterEnvironment
-import Component.Structure.StructureImporterEnvironment as StructureImporterEnvironment
-import Component.Structure.StructureTagImporterEnvironment as StructureTagImporterEnvironment
-import Component.Tablifier.TablifierImporterEnvironment as TablifierImporterEnvironment
-import Component.Version.VersionFileTypeImporterEnvironment as VersionFileTypeImporterEnvironment
-import Component.Version.VersionImporterEnvironment as VersionImporterEnvironment
-import Component.VersionTag.LatestSlotImporterEnvironment as LatestSlotImporterEnvironment
-import Component.VersionTag.VersionTagImporterEnvironment as VersionTagImporterEnvironment
-import Component.VersionTag.VersionTagOrderImporterEnvironment as VersionTagOrderImporterEnvironment
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
-
-importer_environment_types:tuple[type[ImporterEnvironment.ImporterEnvironment],...] = (
-    AccessorTypeImporterEnvironment.AccessorTypeImporterEnvironment,
-    DataminerImporterEnvironment.DataminerImporterEnvironment,
-    LatestSlotImporterEnvironment.LatestSlotImporterEnvironment,
-    LogImporterEnvironment.LogImporterEnvironment,
-    SerializerImporterEnvironment.SerializerImporterEnvironment,
-    StructureImporterEnvironment.StructureImporterEnvironment,
-    StructureTagImporterEnvironment.StructureTagImporterEnvironment,
-    TablifierImporterEnvironment.TablifierImporterEnvironment,
-    VersionFileTypeImporterEnvironment.VersionFileTypeImporterEnvironment,
-    VersionImporterEnvironment.VersionImporterEnvironment,
-    VersionTagImporterEnvironment.VersionTagImporterEnvironment,
-    VersionTagOrderImporterEnvironment.VersionTagOrderImporterEnvironment,
+from Component.Accessor.AccessorTypeImporterEnvironment import (
+    AccessorTypeImporterEnvironment,
+)
+from Component.Component import Component
+from Component.ComponentTypes import component_types
+from Component.ComponentTyping import (
+    ComponentGroupFileType,
+    ComponentTypedDicts,
+    CreateComponentFunction,
+)
+from Component.Dataminer.DataminerImporterEnvironment import (
+    DataminerImporterEnvironment,
+)
+from Component.ImporterEnvironment import ImporterEnvironment
+from Component.Log.LogImporterEnvironment import LogImporterEnvironment
+from Component.ScriptImporter import ScriptSetSetSet
+from Component.Serializer.SerializerImporterEnvironment import (
+    SerializerImporterEnvironment,
+)
+from Component.Structure.StructureImporterEnvironment import (
+    StructureImporterEnvironment,
+)
+from Component.Structure.StructureTagImporterEnvironment import (
+    StructureTagImporterEnvironment,
+)
+from Component.Tablifier.TablifierImporterEnvironment import (
+    TablifierImporterEnvironment,
+)
+from Component.Version.VersionFileTypeImporterEnvironment import (
+    VersionFileTypeImporterEnvironment,
+)
+from Component.Version.VersionImporterEnvironment import VersionImporterEnvironment
+from Component.VersionTag.LatestSlotImporterEnvironment import (
+    LatestSlotImporterEnvironment,
+)
+from Component.VersionTag.VersionTagImporterEnvironment import (
+    VersionTagImporterEnvironment,
+)
+from Component.VersionTag.VersionTagOrderImporterEnvironment import (
+    VersionTagOrderImporterEnvironment,
+)
+from Utilities.Trace import Trace, TraceType
+from Utilities.TypeVerifier import (
+    DictTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
 )
 
-component_types_dict:dict[str,type[Component.Component]] = {component_type.class_name: component_type for component_type in ComponentTypes.component_types}
+importer_environment_types:tuple[type[ImporterEnvironment],...] = (
+    AccessorTypeImporterEnvironment,
+    DataminerImporterEnvironment,
+    LatestSlotImporterEnvironment,
+    LogImporterEnvironment,
+    SerializerImporterEnvironment,
+    StructureImporterEnvironment,
+    StructureTagImporterEnvironment,
+    TablifierImporterEnvironment,
+    VersionFileTypeImporterEnvironment,
+    VersionImporterEnvironment,
+    VersionTagImporterEnvironment,
+    VersionTagOrderImporterEnvironment,
+)
 
-component_group_type_verifier = TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.TypedDictTypeVerifier(
-    TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+component_types_dict:dict[str,type[Component]] = {component_type.class_name: component_type for component_type in component_types}
+
+component_group_type_verifier = DictTypeVerifier(dict, str, TypedDictTypeVerifier(
+    TypedDictKeyTypeVerifier("type", False, str),
     loose=True
 ))
 
-def print_exceptions(domain:"Domain.Domain", trace:Trace.Trace) -> None:
+def print_exceptions(domain:"Domain.Domain", trace:Trace) -> None:
     texts:list[str] = trace.stringify()
-    failed_component_groups:set[str] = {name() for (object, name, data, trace_type) in trace.objects if trace_type is Trace.TraceType.object and isinstance(object, ImporterEnvironment.ImporterEnvironment)}
+    failed_component_groups:set[str] = {name() for (object, name, data, trace_type) in trace.objects if trace_type is TraceType.object and isinstance(object, ImporterEnvironment)}
     with open(domain.component_log_file, "wb") as f:
         f.write("\n".join(texts).encode())
     if len(texts) > 0:
@@ -59,8 +87,8 @@ def print_exceptions(domain:"Domain.Domain", trace:Trace.Trace) -> None:
             print(text)
         raise Exceptions.ComponentParseError(sorted(failed_component_groups), len(texts))
 
-def get_inline_component_function(domain:"Domain.Domain", trace:Trace.Trace) -> ComponentTyping.CreateComponentFunction:
-    def create_inline_component(component_data:ComponentTyping.ComponentTypedDicts, parent_component:Component.Component, assume_type:str|None, path:tuple[str,...]) -> Component.Component|EllipsisType:
+def get_inline_component_function(domain:"Domain.Domain", trace:Trace) -> CreateComponentFunction:
+    def create_inline_component(component_data:ComponentTypedDicts, parent_component:Component, assume_type:str|None, path:tuple[str,...]) -> Component|EllipsisType:
         component_name = parent_component.get_inline_component_name(path)
         component_type_str = component_data.get("type", assume_type)
         if component_type_str is None:
@@ -77,9 +105,9 @@ def get_inline_component_function(domain:"Domain.Domain", trace:Trace.Trace) -> 
         return component
     return create_inline_component
 
-def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, importer_environment:ImporterEnvironment.ImporterEnvironment, domain:"Domain.Domain", trace:Trace.Trace) -> dict[str,Component.Component]:
+def create_components(name:str, data:ComponentGroupFileType, importer_environment:ImporterEnvironment, domain:"Domain.Domain", trace:Trace) -> dict[str,Component]:
     '''Returns a dict of all Components in the Component group.'''
-    components:dict[str,Component.Component] = {}
+    components:dict[str,Component] = {}
     for index, (component_name, component_data) in enumerate(data.items()):
         with trace.enter(component_name, component_name, component_data): # substitute actual Component for its name, since it's not created yet.
             component_type_str = component_data.get("type", importer_environment.assume_type)
@@ -96,7 +124,7 @@ def create_components(name:str, data:ComponentTyping.ComponentGroupFileType, imp
             components[component_name] = component
     return components
 
-def get_file(path:Path, importer_environment:ImporterEnvironment.ImporterEnvironment) -> ComponentTyping.ComponentGroupFileType:
+def get_file(path:Path, importer_environment:ImporterEnvironment) -> ComponentGroupFileType:
     try:
         with open(path, "rt") as f:
             return json.decode_io(f) # type: ignore[reportArgumentType] # stupid types are almost the same but not quite
@@ -106,9 +134,9 @@ def get_file(path:Path, importer_environment:ImporterEnvironment.ImporterEnviron
         else:
             raise Exceptions.ImporterEnvironmentFileNotFoundError(path, importer_environment)
 
-def propagate_variables(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain:"Domain.Domain", trace:Trace.Trace) -> None:
-    all_components_flat:list[Component.Component] = []
-    all_components_flat_memo:set[Component.Component] = set()
+def propagate_variables(all_components:dict[str,dict[str,dict[str,Component]]], domain:"Domain.Domain", trace:Trace) -> None:
+    all_components_flat:list[Component] = []
+    all_components_flat_memo:set[Component] = set()
     for domain_components in all_components.values():
         for name, components in domain_components.items():
             with trace.enter(name, name, components):
@@ -128,10 +156,10 @@ def propagate_variables(all_components:dict[str,dict[str,dict[str,Component.Comp
                     components_queue.append(parent_component)
     print_exceptions(domain, trace)
 
-def create_all_components(domains:Sequence["Domain.Domain"], trace:Trace.Trace) -> tuple[dict[str,dict[str,dict[str,Component.Component]]], dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]]]:
-    all_components:dict[str,dict[str,dict[str,Component.Component]]] = {}
-    already_paths:dict[Path,ImporterEnvironment.ImporterEnvironment] = {}
-    importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]] = {}
+def create_all_components(domains:Sequence["Domain.Domain"], trace:Trace) -> tuple[dict[str,dict[str,dict[str,Component]]], dict[str,dict[str,ImporterEnvironment]]]:
+    all_components:dict[str,dict[str,dict[str,Component]]] = {}
+    already_paths:dict[Path,ImporterEnvironment] = {}
+    importer_environments:dict[str,dict[str,ImporterEnvironment]] = {}
     for domain in domains:
         importer_environments[domain.name] = {}
         all_components[domain.name] = {}
@@ -148,7 +176,7 @@ def create_all_components(domains:Sequence["Domain.Domain"], trace:Trace.Trace) 
                     already_paths[file_path] = importer_environment
                     components_data = get_file(file_path, importer_environment)
                     if importer_environment.single_component:
-                        components_data = cast(ComponentTyping.ComponentGroupFileType, {"": components_data})
+                        components_data = cast(ComponentGroupFileType, {"": components_data})
                     if component_group_type_verifier.verify(components_data, trace):
                         # avoid creating Component group with wonky component group.
                         continue
@@ -159,8 +187,8 @@ def create_all_components(domains:Sequence["Domain.Domain"], trace:Trace.Trace) 
 def get_imports(domains:Sequence["Domain.Domain"]) -> dict[str,Sequence[str]]:
     return {domain.name: domain.dependencies_str for domain in domains}
 
-def set_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain_imports:dict[str,Sequence[str]], functions:dict[str,ScriptImporter.ScriptSetSetSet], domain_list:Sequence["Domain.Domain"], trace:Trace.Trace) -> None:
-    domains:dict[str,Domain.Domain] = {domain.name: domain for domain in domain_list}
+def set_components(all_components:dict[str,dict[str,dict[str,Component]]], domain_imports:dict[str,Sequence[str]], functions:dict[str,ScriptSetSetSet], domain_list:Sequence["Domain.Domain"], trace:Trace) -> None:
+    domains:dict[str,Domain] = {domain.name: domain for domain in domain_list}
     for domain_name, domain_components in all_components.items():
         create_inline_component = get_inline_component_function(domains[domain_name], trace)
         script_set_set_set = functions[domain_name]
@@ -173,7 +201,7 @@ def set_components(all_components:dict[str,dict[str,dict[str,Component.Component
                     component.set_component(components, imports, script_set_set_set, create_inline_component, trace)
     print_exceptions(domain_list[-1], trace)
 
-def create_finals(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain:"Domain.Domain", trace:Trace.Trace) -> None:
+def create_finals(all_components:dict[str,dict[str,dict[str,Component]]], domain:"Domain.Domain", trace:Trace) -> None:
     for domain_components in all_components.values():
         for name, components in domain_components.items():
             with trace.enter(name, name, components):
@@ -184,7 +212,7 @@ def create_finals(all_components:dict[str,dict[str,dict[str,Component.Component]
                     component.final = component_output
     print_exceptions(domain, trace)
 
-def link_finals(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain:"Domain.Domain", trace:Trace.Trace) -> None:
+def link_finals(all_components:dict[str,dict[str,dict[str,Component]]], domain:"Domain.Domain", trace:Trace) -> None:
     for domain_components in all_components.values():
         for name, components in domain_components.items():
             with trace.enter(name, name, components):
@@ -192,7 +220,7 @@ def link_finals(all_components:dict[str,dict[str,dict[str,Component.Component]]]
                     component.link_finals(trace)
     print_exceptions(domain, trace)
 
-def check_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain:"Domain.Domain", trace:Trace.Trace) -> None:
+def check_components(all_components:dict[str,dict[str,dict[str,Component]]], domain:"Domain.Domain", trace:Trace) -> None:
     for domain_components in all_components.values():
         for name, components in domain_components.items():
             with trace.enter(name, name, components):
@@ -200,7 +228,7 @@ def check_components(all_components:dict[str,dict[str,dict[str,Component.Compone
                     component.check(trace)
     print_exceptions(domain, trace)
 
-def finalize_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], domain:"Domain.Domain", trace:Trace.Trace) -> None:
+def finalize_components(all_components:dict[str,dict[str,dict[str,Component]]], domain:"Domain.Domain", trace:Trace) -> None:
     for domain_components in all_components.values():
         for name, components in domain_components.items():
             with trace.enter(name, name, components):
@@ -208,7 +236,7 @@ def finalize_components(all_components:dict[str,dict[str,dict[str,Component.Comp
                     component.finalize(trace)
     print_exceptions(domain, trace)
 
-def get_outputs(all_components:dict[str,dict[str,dict[str,Component.Component]]], importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]], domain:"Domain.Domain", trace:Trace.Trace) -> dict[str,dict[str,Any]]:
+def get_outputs(all_components:dict[str,dict[str,dict[str,Component]]], importer_environments:dict[str,dict[str,ImporterEnvironment]], domain:"Domain.Domain", trace:Trace) -> dict[str,dict[str,Any]]:
     output:dict[str,dict[str,Any]] = {}
     for domain_name, domain_components in all_components.items():
         suboutput:dict[str,Any] = {}
@@ -220,7 +248,7 @@ def get_outputs(all_components:dict[str,dict[str,dict[str,Component.Component]]]
     return output
 
 def get_script_referenceable(
-    all_components:dict[str,dict[str,dict[str,Component.Component]]],
+    all_components:dict[str,dict[str,dict[str,Component]]],
     primary_domain:"Domain.Domain"
 ) -> None:
     objects:dict[str,dict[str,dict[str,Any|EllipsisType]]] = {}
@@ -232,9 +260,9 @@ def get_script_referenceable(
                 objects[domain_name][component_group_name][component.name] = component.final if component.script_referenceable else ...
     primary_domain.script_referenceable.update_objects(objects)
 
-def check_for_unused_components(all_components:dict[str,dict[str,dict[str,Component.Component]]], importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]], domain:"Domain.Domain", trace:Trace.Trace) -> None:
-    visited_nodes:set[Component.Component] = set()
-    unvisited_nodes:list[Component.Component] = []
+def check_for_unused_components(all_components:dict[str,dict[str,dict[str,Component]]], importer_environments:dict[str,dict[str,ImporterEnvironment]], domain:"Domain.Domain", trace:Trace) -> None:
+    visited_nodes:set[Component] = set()
+    unvisited_nodes:list[Component] = []
     for domain_name, domain_components in all_components.items():
         for name, components in domain_components.items():
             unvisited_nodes.extend(importer_environments[domain_name][name].get_assumed_used_components(components, name, trace))
@@ -248,7 +276,7 @@ def check_for_unused_components(all_components:dict[str,dict[str,dict[str,Compon
             if neighbor not in visited_nodes
         )
         visited_nodes.add(unvisited_node)
-    unused_components:Iterable[Component.Component] = (
+    unused_components:Iterable[Component] = (
         component
         for domain_components in all_components.values()
         for components in domain_components.values()
@@ -258,28 +286,28 @@ def check_for_unused_components(all_components:dict[str,dict[str,dict[str,Compon
     for unused_component in unused_components:
         print(f"Warning: Unused component: {unused_component}")
 
-def finalize_importer_environments(output:dict[str,dict[str,Any]], importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]], domain:"Domain.Domain", trace:Trace.Trace) -> None:
+def finalize_importer_environments(output:dict[str,dict[str,Any]], importer_environments:dict[str,dict[str,ImporterEnvironment]], domain:"Domain.Domain", trace:Trace) -> None:
     for domain_name, domain_outputs in output.items():
         for name, component_group_output in domain_outputs.items():
             importer_environments[domain_name][name].finalize(component_group_output, output, name, trace)
     print_exceptions(domain, trace)
 
-def check_importer_environments(output:dict[str,dict[str,Any]], importer_environments:dict[str,dict[str,ImporterEnvironment.ImporterEnvironment]], domain:"Domain.Domain", trace:Trace.Trace) -> None:
+def check_importer_environments(output:dict[str,dict[str,Any]], importer_environments:dict[str,dict[str,ImporterEnvironment]], domain:"Domain.Domain", trace:Trace) -> None:
     for domain_name, domain_outputs in output.items():
         for name, component_group_output in domain_outputs.items():
             importer_environments[domain_name][name].check(component_group_output, output, name, trace)
     print_exceptions(domain, trace)
 
-def get_all_functions(domain_list:Sequence["Domain.Domain"], domain_imports:dict[str,Sequence[str]]) -> dict[str,ScriptImporter.ScriptSetSetSet]:
+def get_all_functions(domain_list:Sequence["Domain.Domain"], domain_imports:dict[str,Sequence[str]]) -> dict[str,ScriptSetSetSet]:
     domains:dict[str,"Domain.Domain"] = {domain.name: domain for domain in domain_list}
     domain_dependencies:Iterable[tuple["Domain.Domain", Iterable["Domain.Domain"]]] = ((domains[domain], (domains[dependency] for dependency in dependencies)) for domain, dependencies in domain_imports.items())
-    return {domain.name: ScriptImporter.ScriptSetSetSet(domain, dependencies) for domain, dependencies in domain_dependencies}
+    return {domain.name: ScriptSetSetSet(domain, dependencies) for domain, dependencies in domain_dependencies}
 
 def parse_all_component_groups(domains:Sequence["Domain.Domain"]) -> dict[str,dict[str,Any]]:
     '''
     :domain: A Domain and its dependencies. The primary Domain goes last.
     '''
-    trace = Trace.Trace()
+    trace = Trace()
     all_components, importer_environments = create_all_components(domains, trace)
     domain_imports = get_imports(domains)
     functions = get_all_functions(domains, domain_imports)

@@ -1,23 +1,23 @@
 from typing import Any, Iterator, TypedDict, cast
 
-import Domain.Domains as Domains
-import Serializer.Serializer as Serializer
-import Utilities.File as File
+from Domain.Domains import get_domain_from_module
+from Serializer.Serializer import Serializer
+from Utilities.File import AbstractFile, FakeFile, File
 
-domain = Domains.get_domain_from_module(__name__)
-json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer.Serializer)
+domain = get_domain_from_module(__name__)
+json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
 
 __all__ = ("items_normalize",)
 
 class ItemsFileFormat(TypedDict):
     items: dict[str,dict[str,Any]]
 
-type OldType = dict[str,File.File[ItemsFileFormat|list[dict[str,str]]]]
+type OldType = dict[str,File[ItemsFileFormat|list[dict[str,str]]]]
 
-type NewType = dict[str,dict[str,File.File[Any]]]
+type NewType = dict[str,dict[str,File[Any]]]
 
 def is_old_format(data:OldType|NewType) -> bool:
-    return isinstance(list(data.values())[0], File.AbstractFile)
+    return isinstance(list(data.values())[0], AbstractFile)
 
 def iterator_old(data:OldType) -> Iterator[tuple[str,str,Any, int]]:
     for resource_pack_name, file in data.items():
@@ -35,7 +35,7 @@ def iterator_new(data:NewType) -> Iterator[tuple[str,str,Any,int]]:
         for resource_pack_name, file in resource_packs.items():
             yield item_name, resource_pack_name, file.read(json_serializer.get()), hash(file)
 
-def items_normalize(data:OldType|NewType) -> File.FakeFile[dict[str,dict[str,Any]]]:
+def items_normalize(data:OldType|NewType) -> FakeFile[dict[str,dict[str,Any]]]:
     iterator:Iterator[tuple[str,str,Any,int]] = iterator_old(cast(OldType, data)) if is_old_format(data) else iterator_new(cast(NewType, data))
     # item name, resource pack, item data; return is file hashes
     output:dict[str,dict[str,Any]] = {}
@@ -48,4 +48,4 @@ def items_normalize(data:OldType|NewType) -> File.FakeFile[dict[str,dict[str,Any
         if item_name not in output:
             output[item_name] = {}
         output[item_name][resource_pack_name] = item_data
-    return File.FakeFile("combined_items_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_items_file", output, None, hash(tuple(file_hashes)))

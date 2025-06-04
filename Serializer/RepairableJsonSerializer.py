@@ -1,14 +1,19 @@
 from typing import Any, NotRequired, Required, TypedDict
 
 import Domain.Domain as Domain
-import Serializer.JsonSerializer as JsonSerializer
-import Utilities.TypeVerifier as TypeVerifier
+from Serializer.JsonSerializer import JsonSerializer
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+    TypeVerifier,
+)
 
 
 class Condition():
 
     name:str
-    type_verifier:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
+    type_verifier:TypeVerifier = TypedDictTypeVerifier()
 
     # stupid freaking linter won't accept it when it's dict[str,Any], dict[Any,Any], or TypedDict.
     def __init__(self, data:Any, trace:list[Any]|None=None) -> None:
@@ -41,8 +46,8 @@ class ContentConditionTypedDict(TypedDict):
 
 class ContentCondition(Condition):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("content", True, str),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("content", True, str),
     )
 
     def __init__(self, data: ContentConditionTypedDict, trace:list[Any]|None=None) -> None:
@@ -75,8 +80,8 @@ class MetaConditionTypedDict(TypedDict):
 
 class MetaCondition(Condition):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("conditions", True, TypeVerifier.ListTypeVerifier(dict, list))
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("conditions", True, ListTypeVerifier(dict, list))
     )
 
     def __init__(self, data: MetaConditionTypedDict, trace:list[Any]|None=None) -> None:
@@ -120,7 +125,7 @@ def parse_condition(data:dict[Any,Any], trace:list[Any]|None=None) -> Condition:
 class Action():
 
     name:str
-    type_verifier:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
+    type_verifier:TypeVerifier = TypedDictTypeVerifier()
 
     def __init__(self, data:Any, trace:list[Any]|None=None) -> None:
         self.type_verifier.verify_throw(data, tuple(trace) if trace is not None else ())
@@ -132,8 +137,8 @@ class ContentActionTypedDict(TypedDict):
 
 class ContentAction(Action):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("content", True, str),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("content", True, str),
     )
 
     def __init__(self, data: ContentActionTypedDict, trace: list[Any] | None = None) -> None:
@@ -183,10 +188,10 @@ class ReplaceSomeActionTypedDict(TypedDict):
 class ReplaceSomeAction(Action):
 
     name = "replace_some"
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("count", False, int),
-        TypeVerifier.TypedDictKeyTypeVerifier("new_content", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("old_content", True, str),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("count", False, int),
+        TypedDictKeyTypeVerifier("new_content", True, str),
+        TypedDictKeyTypeVerifier("old_content", True, str),
     )
 
     def __init__(self, data: ReplaceSomeActionTypedDict, trace: list[Any] | None = None) -> None:
@@ -204,8 +209,8 @@ class SequenceActionTypedDict(TypedDict):
 class SequenceAction(Action):
 
     name = "sequence"
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("actions", True, TypeVerifier.ListTypeVerifier(dict, list)),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("actions", True, ListTypeVerifier(dict, list)),
     )
 
     def __init__(self, data: Any, trace: list[Any] | None = None) -> None:
@@ -258,13 +263,13 @@ class Rule():
     def has_exception_condition(self) -> bool:
         return self.condition.has_exception_condition()
 
-class RepairableJsonSerializer(JsonSerializer.JsonSerializer):
+class RepairableJsonSerializer(JsonSerializer):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("empty_okay", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("rules", True, TypeVerifier.ListTypeVerifier(TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("condition", True, dict),
-            TypeVerifier.TypedDictKeyTypeVerifier("action", True, dict)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("empty_okay", False, bool),
+        TypedDictKeyTypeVerifier("rules", True, ListTypeVerifier(TypedDictTypeVerifier(
+            TypedDictKeyTypeVerifier("condition", True, dict),
+            TypedDictKeyTypeVerifier("action", True, dict)
         ), list))
     )
 

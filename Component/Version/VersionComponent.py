@@ -1,46 +1,54 @@
-import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any, Sequence
 
-import Component.Capabilities as Capabilities
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentField as ComponentField
-import Component.Field.ComponentListField as ComponentListField
-import Component.Field.Field as Field
-import Component.Pattern as Pattern
-import Component.Version.Field.VersionTagListField as VersionTagListField
-import Component.Version.VersionFileComponent as VersionFileComponent
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
-import Version.Version as Version
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.ComponentTyping import VersionFileTypedDict, VersionTypedDict
+from Component.Field.ComponentField import OptionalComponentField
+from Component.Field.ComponentListField import ComponentListField
+from Component.Field.Field import Field, InlinePermissions
+from Component.Pattern import Pattern
+from Component.Version.Field.VersionTagListField import VersionTagListField
+from Component.Version.VersionFileComponent import (
+    VERSION_FILE_PATTERN,
+    VersionFileComponent,
+)
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    DictTypeVerifier,
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
+from Version.Version import Version
 
 
-def compare_to_now(time:datetime.datetime) -> bool:
+def compare_to_now(time:datetime) -> bool:
     # this is only for making sure the time isn't significantly ahead of now,
     # so it doesn't need to be that accurate
     if time.tzinfo is None:
-        return time > datetime.datetime.now()
+        return time > datetime.now()
     else:
         # pretends user is in UTC and adds 1 day.
-        return time > datetime.datetime.now().replace(tzinfo=datetime.timezone.utc)+datetime.timedelta(days=1)
+        return time > datetime.now().replace(tzinfo=timezone.utc)+timedelta(days=1)
 
-VERSION_PATTERN:Pattern.Pattern["VersionComponent"] = Pattern.Pattern("is_version")
+VERSION_PATTERN:Pattern["VersionComponent"] = Pattern("is_version")
 
-class VersionComponent(Component.Component[Version.Version]):
+class VersionComponent(Component[Version]):
 
     class_name = "Version"
-    my_capabilities = Capabilities.Capabilities(is_version=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("files", True, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.DictTypeVerifier(dict, str, TypeVerifier.DictTypeVerifier(dict, str, object)))),
-        TypeVerifier.TypedDictKeyTypeVerifier("parent", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", True, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("time", True, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    my_capabilities = Capabilities(is_version=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("files", True, DictTypeVerifier(dict, str, DictTypeVerifier(dict, str, DictTypeVerifier(dict, str, object)))),
+        TypedDictKeyTypeVerifier("parent", True, (str, type(None))),
+        TypedDictKeyTypeVerifier("tags", True, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("time", True, (str, type(None))),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     @classmethod
-    def normalize_files(cls, files:dict[str,dict[str,Any]]) -> list[ComponentTyping.VersionFileTypedDict]:
+    def normalize_files(cls, files:dict[str,dict[str,Any]]) -> list[VersionFileTypedDict]:
         "Converts the files key in versions.json into a format more suitable for inline Components."
         return [{
             "version_file_type": version_file_key,
@@ -57,23 +65,23 @@ class VersionComponent(Component.Component[Version.Version]):
         "time",
     )
 
-    def initialize_fields(self, data:ComponentTyping.VersionTypedDict) -> Sequence[Field.Field]:
-        self.time = datetime.datetime.fromisoformat(data["time"]) if data["time"] is not None else None
+    def initialize_fields(self, data:VersionTypedDict) -> Sequence[Field]:
+        self.time = datetime.fromisoformat(data["time"]) if data["time"] is not None else None
 
-        self.parent_field = ComponentField.OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",), allow_inline=Field.InlinePermissions.reference, assume_component_group="versions")
-        self.tags_field = VersionTagListField.VersionTagListField(data["tags"], ("tags",), self)
-        self.files_field = ComponentListField.ComponentListField(self.normalize_files(data["files"]), VersionFileComponent.VERSION_FILE_PATTERN, ("files",), allow_inline=Field.InlinePermissions.inline, assume_type=VersionFileComponent.VersionFileComponent.class_name)
+        self.parent_field = OptionalComponentField(data["parent"], VERSION_PATTERN, ("parent",), allow_inline=InlinePermissions.reference, assume_component_group="versions")
+        self.tags_field = VersionTagListField(data["tags"], ("tags",), self)
+        self.files_field = ComponentListField(self.normalize_files(data["files"]), VERSION_FILE_PATTERN, ("files",), allow_inline=InlinePermissions.inline, assume_type=VersionFileComponent.class_name)
         return (self.parent_field, self.tags_field, self.files_field)
 
-    def create_final(self, trace:Trace.Trace) -> Version.Version:
-        return Version.Version(
+    def create_final(self, trace:Trace) -> Version:
+        return Version(
             name=self.name,
             domain=self.domain,
             time=self.time,
             index=self.get_index(),
         )
 
-    def link_finals(self, trace:Trace.Trace) -> None:
+    def link_finals(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_finals(
@@ -82,7 +90,7 @@ class VersionComponent(Component.Component[Version.Version]):
                 version_files=list(self.files_field.map(lambda version_file_component: version_file_component.final)),
             )
 
-    def check(self, trace:Trace.Trace) -> None:
+    def check(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().check(trace)
             parent_component = self.parent_field.subcomponent

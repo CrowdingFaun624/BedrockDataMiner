@@ -1,16 +1,16 @@
 from typing import Any, Self
 
-import Component.Component as Component
-import Component.Field.ComponentField as ComponentField
-import Component.Field.Field as Field
-import Component.Structure.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeUtilities as TypeUtilities
+from Component.Component import Component
+from Component.Field.ComponentField import ComponentField, OptionalComponentField
+from Component.Field.Field import Field
+from Component.Structure.StructureComponent import StructureComponent
+from Utilities.Trace import Trace
+from Utilities.TypeUtilities import TypeSet
 
-type VerifyComponentType = ComponentField.ComponentField[StructureComponent.StructureComponent]|ComponentField.OptionalComponentField[StructureComponent.StructureComponent]
+type VerifyComponentType = ComponentField[StructureComponent]|OptionalComponentField[StructureComponent]
 
-class AbstractTypeField(Field.Field):
+class AbstractTypeField(Field):
 
     __slots__ = (
         "contained_by_field",
@@ -30,7 +30,7 @@ class AbstractTypeField(Field.Field):
         self.subcomponent_data = subcomponent_data
         self.final_types:tuple[type,...]|None = None # used as cached value in `types` property.
         self.verify_with_component:VerifyComponentType|None=None
-        self.must_be_types:TypeUtilities.TypeSet|None = None
+        self.must_be_types:TypeSet|None = None
         self.must_be_fail_message:str|None = None
         self.contained_by_field:AbstractTypeField|None = None
         self.default_fields:list[AbstractTypeField] = []
@@ -52,7 +52,7 @@ class AbstractTypeField(Field.Field):
                 self.final_types = self._types
         return self.final_types
 
-    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
+    def check(self, source_component:"Component", trace:Trace) -> None:
         with trace.enter_keys(self.trace_path, self.subcomponent_data):
             super().check(source_component, trace)
             if self.verify_with_component is not None:
@@ -82,7 +82,7 @@ class AbstractTypeField(Field.Field):
                     if component_type not in containment_types
                 )
 
-    def resolve_link_finals(self, trace:Trace.Trace) -> None:
+    def resolve_link_finals(self, trace:Trace) -> None:
         '''
         Resolves all TypeAliases into types.
         Cannot be called before all TypeAliases are set.
@@ -106,7 +106,7 @@ class AbstractTypeField(Field.Field):
         self.verify_with_component = component_field
         return self
 
-    def must_be(self, types:TypeUtilities.TypeSet, *, fail_message:str|None=None) -> Self:
+    def must_be(self, types:TypeSet, *, fail_message:str|None=None) -> Self:
         '''
         Makes this TypeField check that all of its types are a member of `types`.
         :types: The tuple of types that this TypeField must be.

@@ -1,7 +1,7 @@
 from typing import Mapping, cast
 
 import Domain.Domain as Domain
-import Structure.Container as Con
+from Structure.Container import Con, Don
 
 
 def sdon_from_bundles[A](bundles:Mapping[tuple[int,...],A], domain:"Domain.Domain") -> "SDon[A]":
@@ -11,7 +11,7 @@ def sdon_from_bundles[A](bundles:Mapping[tuple[int,...],A], domain:"Domain.Domai
         containers.update((branch, container) for branch in bundle)
     return SDon(containers)
 
-class SCon[A](Con.Con[A]):
+class SCon[A](Con[A]):
 
     __slots__ = (
         "data",
@@ -28,7 +28,7 @@ class SCon[A](Con.Con[A]):
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} {repr(self.data)}>"
 
-class SDon[A](Con.Don[A]):
+class SDon[A](Don[A]):
 
     __slots__ = (
         "_containers",

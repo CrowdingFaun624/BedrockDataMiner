@@ -1,18 +1,16 @@
-from typing import Callable, Self, Sequence, cast
+from typing import Callable, Sequence, cast
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Field.FieldContainer as FieldContainer
-import Component.Pattern as Pattern
-import Component.ScriptImporter as ScriptImporter
-import Component.Structure.Field.AbstractTypeField as AbstractTypeField
-import Component.Structure.StructureComponent as StructureComponent
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
+from Component.Field.Field import Field, InlinePermissions, choose_component
+from Component.Field.FieldContainer import FieldContainer
+from Component.Pattern import Pattern
+from Component.ScriptImporter import ScriptSetSetSet
+from Utilities.Trace import Trace
 
 
-class ComponentField[a: Component.Component](Field.Field):
+class ComponentField[a: Component](Field):
     '''A link to another Component.'''
 
     __slots__ = (
@@ -28,11 +26,11 @@ class ComponentField[a: Component.Component](Field.Field):
 
     def __init__(
         self,
-        subcomponent_data:str|ComponentTyping.ComponentTypedDicts,
-        pattern:Pattern.Pattern[a],
+        subcomponent_data:str|ComponentTypedDicts,
+        pattern:Pattern[a],
         path:tuple[str,...],
         *,
-        allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,
+        allow_inline:InlinePermissions=InlinePermissions.mixed,
         assume_type:str|None=None,
         assume_component_group:str|None=None,
     ) -> None:
@@ -56,15 +54,15 @@ class ComponentField[a: Component.Component](Field.Field):
 
     def set_field(
         self,
-        source_component:"Component.Component",
-        components:dict[str,"Component.Component"],
-        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
-        functions:ScriptImporter.ScriptSetSetSet,
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
+        source_component:"Component",
+        components:dict[str,"Component"],
+        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        functions:ScriptSetSetSet,
+        create_component_function:CreateComponentFunction,
+        trace:Trace,
     ) -> tuple[Sequence[a],Sequence[a]]:
         with trace.enter_keys(self.trace_path, self.subcomponent_data):
-            subcomponent, is_inline = Field.choose_component(self.subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
+            subcomponent, is_inline = choose_component(self.subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
             if subcomponent is ...:
                 return (), ()
             self.subcomponent = subcomponent
@@ -73,15 +71,15 @@ class ComponentField[a: Component.Component](Field.Field):
             return (self.subcomponent,), ((self.subcomponent,) if is_inline else ())
         return (), ()
 
-    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
+    def check(self, source_component:"Component", trace:Trace) -> None:
         with trace.enter_keys(self.trace_path, ...):
             super().check(source_component, trace)
-            if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
+            if self.has_reference_components and self.allow_inline is InlinePermissions.inline:
                 trace.exception(Exceptions.ReferenceComponentError(source_component, self, cast(str, self.subcomponent_data)))
-            if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
-                trace.exception(Exceptions.InlineComponentError(source_component, self, cast(ComponentTyping.ComponentTypedDicts, self.subcomponent_data)))
+            if self.has_inline_components and self.allow_inline is InlinePermissions.reference:
+                trace.exception(Exceptions.InlineComponentError(source_component, self, cast(ComponentTypedDicts, self.subcomponent_data)))
 
-class OptionalComponentField[a: Component.Component](FieldContainer.FieldContainer):
+class OptionalComponentField[a: Component](FieldContainer):
 
     __slots__ = (
         "component_field",
@@ -89,11 +87,11 @@ class OptionalComponentField[a: Component.Component](FieldContainer.FieldContain
 
     def __init__(
             self,
-            subcomponent_data:str|ComponentTyping.ComponentTypedDicts|None,
-            pattern:Pattern.Pattern[a],
+            subcomponent_data:str|ComponentTypedDicts|None,
+            pattern:Pattern[a],
             path:tuple[str,...],
             *,
-            allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,
+            allow_inline:InlinePermissions=InlinePermissions.mixed,
             assume_type:str|None=None,
             assume_component_group:str|None=None,
         ) -> None:
@@ -117,7 +115,7 @@ class OptionalComponentField[a: Component.Component](FieldContainer.FieldContain
         return None if self.component_field is None else function(self.component_field.subcomponent)
 
     @property
-    def subcomponent_data(self) -> str|ComponentTyping.ComponentTypedDicts|None:
+    def subcomponent_data(self) -> str|ComponentTypedDicts|None:
         return None if self.component_field is None else self.component_field.subcomponent_data
 
     @property

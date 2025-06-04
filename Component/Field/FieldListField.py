@@ -1,10 +1,10 @@
 from typing import Callable, Iterator, MutableSequence
 
-import Component.Field.Field as Field
-import Component.Field.FieldContainer as FieldContainer
+from Component.Field.Field import Field
+from Component.Field.FieldContainer import FieldContainer
 
 
-class FieldListField[a: Field.Field](FieldContainer.FieldContainer[a]):
+class FieldListField[a: Field](FieldContainer[a]):
     '''
     Field that contains other Fields.
     '''

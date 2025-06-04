@@ -1,34 +1,38 @@
 from typing import Sequence
 
-import Component.Capabilities as Capabilities
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Pattern as Pattern
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.ComponentTyping import TypeAliasTypedDict
+from Component.Field.Field import Field
+from Component.Pattern import Pattern
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
-TYPE_ALIAS_PATTERN:Pattern.Pattern["TypeAliasComponent"] = Pattern.Pattern("is_type_alias")
+TYPE_ALIAS_PATTERN:Pattern["TypeAliasComponent"] = Pattern("is_type_alias")
 
-class TypeAliasComponent(Component.Component[tuple[type,...]]):
+class TypeAliasComponent(Component[tuple[type,...]]):
 
     class_name = "TypeAlias"
-    my_capabilities = Capabilities.Capabilities(is_type_alias=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("types", True, TypeVerifier.ListTypeVerifier(str, list)),
+    my_capabilities = Capabilities(is_type_alias=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("type", False, str),
+        TypedDictKeyTypeVerifier("types", True, ListTypeVerifier(str, list)),
     )
 
     __slots__ = (
         "types_strs",
     )
 
-    def initialize_fields(self, data: ComponentTyping.TypeAliasTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: TypeAliasTypedDict) -> Sequence[Field]:
         self.types_strs = data["types"]
         return ()
 
-    def create_final(self, trace:Trace.Trace) -> tuple[type,...]:
+    def create_final(self, trace:Trace) -> tuple[type,...]:
         final:list[type] = []
         already_types:set[str] = set()
         default_types = self.domain.type_stuff.default_types

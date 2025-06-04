@@ -1,14 +1,14 @@
 from pathlib import Path
 from typing import Iterable
 
-import Component.ImporterEnvironment as ImporterEnvironment
-import Component.Version.VersionFileTypeComponent as VersionFileTypeComponent
-import Version.VersionFileType as VersionFileType
+from Component.ImporterEnvironment import ImporterEnvironment
+from Component.Version.VersionFileTypeComponent import VersionFileTypeComponent
+from Version.VersionFileType import VersionFileType
 
 
-class VersionFileTypeImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,VersionFileType.VersionFileType]]):
+class VersionFileTypeImporterEnvironment(ImporterEnvironment[dict[str,VersionFileType]]):
 
-    assume_type = VersionFileTypeComponent.VersionFileTypeComponent.class_name
+    assume_type = VersionFileTypeComponent.class_name
 
     __slots__ = ()
 

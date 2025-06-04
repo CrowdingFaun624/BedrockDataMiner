@@ -1,14 +1,14 @@
 from pathlib import Path
 from typing import Iterable
 
-import Component.Accessor.AccessorTypeComponent as AccessorTypeComponent
-import Component.ImporterEnvironment as ImporterEnvironment
-import Downloader.AccessorType as AccessorType
+from Component.Accessor.AccessorTypeComponent import AccessorTypeComponent
+from Component.ImporterEnvironment import ImporterEnvironment
+from Downloader.AccessorType import AccessorType
 
 
-class AccessorTypeImporterEnvironment(ImporterEnvironment.ImporterEnvironment[dict[str,AccessorType.AccessorType]]):
+class AccessorTypeImporterEnvironment(ImporterEnvironment[dict[str,AccessorType]]):
 
-    assume_type = AccessorTypeComponent.AccessorTypeComponent.class_name
+    assume_type = AccessorTypeComponent.class_name
 
     __slots__ = ()
 

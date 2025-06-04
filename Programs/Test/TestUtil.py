@@ -1,9 +1,9 @@
 from collections import defaultdict
 from typing import TYPE_CHECKING, Callable, Hashable
 
-import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Domain.Domain as Domain
-import Version.Version as Version
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+from Version.Version import Version
 
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
@@ -48,7 +48,7 @@ class Plan[a: Hashable]():
     Plural string labeling this Plan's object.
     '''
 
-    def __init__(self, versions:list[Version.Version], all_dataminer_collections:list[AbstractDataminerCollection.AbstractDataminerCollection], version_objects:dict[Version.Version,set[a]], domain:"Domain.Domain") -> None:
+    def __init__(self, versions:list[Version], all_dataminer_collections:list[AbstractDataminerCollection], version_objects:dict[Version,set[a]], domain:"Domain.Domain") -> None:
         '''
         :versions: The Versions which support all of the same objects.
         :all_dataminer_collections: A list of every DataminerCollection.
@@ -74,7 +74,7 @@ class Plan[a: Hashable]():
         ...
 
     @classmethod
-    def get_obj(cls, dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection, version:Version.Version) -> a:
+    def get_obj(cls, dataminer_collection:AbstractDataminerCollection, version:Version) -> a:
         '''
         Gets this Plan's object from a DataminerCollection and Version.
         :dataminer_collection: The DataminerCollection associated with the object.
@@ -105,7 +105,7 @@ def create_test_function[a: Hashable](plan_type:type[Plan[a]]) -> Callable[[Doma
 def test[a: Hashable](plan_type:type[Plan[a]], domain:Domain.Domain) -> None:
     versions = domain.versions
     dataminer_collections = list(domain.dataminer_collections.values())
-    version_objects:dict[Version.Version,set[a]] = {}
+    version_objects:dict[Version,set[a]] = {}
     all_objects_set:set[a] = set()
     for version in versions.values():
         version_objects[version] = set()
@@ -116,7 +116,7 @@ def test[a: Hashable](plan_type:type[Plan[a]], domain:Domain.Domain) -> None:
                 all_objects_set.add(object)
     all_objects = sorted(all_objects_set, key=plan_type.sort)
 
-    versions_bitboard:dict[Version.Version,int] = {
+    versions_bitboard:dict[Version,int] = {
         version: sum(
             1 << index if object in version_objects[version] else 0
             for index, object in enumerate(all_objects)
@@ -124,7 +124,7 @@ def test[a: Hashable](plan_type:type[Plan[a]], domain:Domain.Domain) -> None:
         for version in versions.values()
         if len(version_objects[version]) > 0
     }
-    unique_versions:defaultdict[int,list[Version.Version]] = defaultdict(lambda: [])
+    unique_versions:defaultdict[int,list[Version]] = defaultdict(lambda: [])
     for version, bits in versions_bitboard.items():
         unique_versions[bits].append(version)
 

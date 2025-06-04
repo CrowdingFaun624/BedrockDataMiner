@@ -1,20 +1,20 @@
 from types import EllipsisType
 from typing import Sequence
 
-import Serializer.Serializer as Serializer
-import Structure.AbstractPassthroughStructure as AbstractPassthroughStructure
-import Structure.Container as Con
-import Structure.Difference as Diff
-import Structure.Normalizer as Normalizer
-import Structure.SimpleContainer as SCon
-import Structure.Structure as Structure
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Exceptions as Exceptions
-import Utilities.File as File
-import Utilities.Trace as Trace
+from Serializer.Serializer import Serializer
+from Structure.AbstractPassthroughStructure import AbstractPassthroughStructure
+from Structure.Container import Con, Don
+from Structure.Difference import Diff
+from Structure.Normalizer import Normalizer
+from Structure.SimpleContainer import SCon
+from Structure.Structure import Structure
+from Structure.StructureEnvironment import PrinterEnvironment
+from Utilities.Exceptions import StructureTypeError
+from Utilities.File import AbstractFile
+from Utilities.Trace import Trace
 
 
-class FileStructure[D, BO, CO](AbstractPassthroughStructure.AbstractPassthroughStructure[File.AbstractFile[D], D, BO, CO]):
+class FileStructure[D, BO, CO](AbstractPassthroughStructure[AbstractFile[D], D, BO, CO]):
 
     __slots__ = (
         "content_types",
@@ -27,29 +27,29 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure.AbstractPassthroughS
         self,
         content_types:tuple[type,...],
         file_types:tuple[type,...],
-        serializer:Serializer.Serializer|None,
-        structure:Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None,
+        serializer:Serializer|None,
+        structure:Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None,
     ) -> None:
         self.content_types = content_types
         self.file_types = file_types
         self.serializer = serializer
         self.structure = structure
 
-    def get_structure(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None:
+    def get_structure(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
         return self.structure
 
-    def iter_structures(self) -> Sequence[Structure.Structure]:
+    def iter_structures(self) -> Sequence[Structure]:
         return (self.structure,) if self.structure is not None else ()
 
-    def normalize(self, data: File.AbstractFile[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> File.AbstractFile[D]|EllipsisType:
+    def normalize(self, data: AbstractFile[D], trace: Trace, environment: PrinterEnvironment) -> AbstractFile[D]|EllipsisType:
         with trace.enter(self, self.name, data):
             if not isinstance(data, self.pre_normalized_types):
-                trace.exception(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
+                trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
                 return ...
 
             data, pre_data_identity_changed = self.normalizer_pass(self.normalizers, data, environment)
             if not isinstance(data, self.file_types):
-                trace.exception(Exceptions.StructureTypeError(self.file_types, type(data), "Data", "(after normalizer pass)"))
+                trace.exception(StructureTypeError(self.file_types, type(data), "Data", "(after normalizer pass)"))
 
             structure = self.get_structure(data.read(self.serializer), trace, environment)
             if structure is not None and structure.children_has_normalizer:
@@ -60,17 +60,17 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure.AbstractPassthroughS
 
             data, post_data_identity_changed = self.normalizer_pass(self.post_normalizers, data, environment)
             if not isinstance(data, self.file_types):
-                trace.exception(Exceptions.StructureTypeError(self.file_types, type(data), "Data", "(after post-normalizer pass)"))
+                trace.exception(StructureTypeError(self.file_types, type(data), "Data", "(after post-normalizer pass)"))
 
             return data if pre_data_identity_changed or post_data_identity_changed else ...
         return ...
 
-    def normalizer_pass(self, normalizers: Sequence[Normalizer.Normalizer], data: File.AbstractFile[D], environment: StructureEnvironment.PrinterEnvironment) -> tuple[File.AbstractFile[D], bool]:
+    def normalizer_pass(self, normalizers: Sequence[Normalizer], data: AbstractFile[D], environment: PrinterEnvironment) -> tuple[AbstractFile[D], bool]:
         data_identity_changed:bool = False
         for normalizer in normalizers:
             if not normalizer.filter_pass(environment.structure_info):
                 continue
-            if isinstance(data, File.AbstractFile):
+            if isinstance(data, AbstractFile):
                 normalizer_output = normalizer(data.read(self.serializer))
                 if normalizer_output is not None:
                     # no need to set `data_identity_changed`
@@ -82,15 +82,15 @@ class FileStructure[D, BO, CO](AbstractPassthroughStructure.AbstractPassthroughS
                     data = normalizer_output
         return data, data_identity_changed
 
-    def containerize(self, data: File.AbstractFile[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Con.Con[D] | EllipsisType:
+    def containerize(self, data: AbstractFile[D], trace: Trace, environment: PrinterEnvironment) -> Con[D] | EllipsisType:
         with trace.enter(self, self.name, data):
             structure = self.get_structure(data.read(self.serializer), trace, environment)
             if structure is None:
-                return SCon.SCon(data.read(self.serializer), environment.domain)
+                return SCon(data.read(self.serializer), environment.domain)
             else:
                 return structure.containerize(data.read(self.serializer), trace, environment)
         return ...
 
-    def type_check_extra(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> None:
+    def type_check_extra(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> None:
         if not isinstance(data.data, self.content_types):
-            trace.exception(Exceptions.StructureTypeError(self.content_types, type(data.data), "Data"))
+            trace.exception(StructureTypeError(self.content_types, type(data.data), "Data"))

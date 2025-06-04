@@ -1,21 +1,21 @@
 from types import EllipsisType
 
-import Structure.AbstractPassthroughStructure as AbstractPassthroughStructure
-import Structure.Container as Con
-import Structure.SimpleContainer as SCon
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Structure.AbstractPassthroughStructure import AbstractPassthroughStructure
+from Structure.Container import Con
+from Structure.SimpleContainer import SCon
+from Structure.StructureEnvironment import PrinterEnvironment
+from Utilities.Exceptions import StructureTypeError
+from Utilities.Trace import Trace
 
 
-class PassthroughStructure[D, BO, CO](AbstractPassthroughStructure.AbstractPassthroughStructure[D, D, BO, CO]):
+class PassthroughStructure[D, BO, CO](AbstractPassthroughStructure[D, D, BO, CO]):
 
     __slots__ = ()
 
-    def normalize(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> D|EllipsisType:
+    def normalize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> D|EllipsisType:
         with trace.enter(self, self.name, data):
             if not isinstance(data, self.pre_normalized_types):
-                trace.exception(Exceptions.StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
+                trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
                 return ...
 
             data, pre_data_identity_changed = self.normalizer_pass(self.normalizers, data, trace, environment)
@@ -32,11 +32,11 @@ class PassthroughStructure[D, BO, CO](AbstractPassthroughStructure.AbstractPasst
             return data if pre_data_identity_changed or post_data_identity_changed else ...
         return ...
 
-    def containerize(self, data: D, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Con.Con[D] | EllipsisType:
+    def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> Con[D] | EllipsisType:
         with trace.enter(self, self.name, data):
             structure = self.get_structure(data, trace, environment)
             if structure is None:
-                return SCon.SCon(data, environment.domain)
+                return SCon(data, environment.domain)
             else:
                 return structure.containerize(data, trace, environment)
         return ...

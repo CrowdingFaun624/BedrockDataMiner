@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-import Structure.StructureInfo as StructureInfo
+from Structure.StructureInfo import StructureInfo
 
 if TYPE_CHECKING:
     from _typeshed import (
@@ -23,7 +23,7 @@ class Filter():
     def link_subcomponents(self) -> None:
         pass
 
-    def filter(self, structure_info:StructureInfo.StructureInfo) -> bool:
+    def filter(self, structure_info:StructureInfo) -> bool:
         ...
 
     def __repr__(self) -> str:
@@ -43,7 +43,7 @@ class ValueFilter[A](Filter):
         self.value = value
         self.default = default
 
-    def filter(self, structure_info:StructureInfo.StructureInfo) -> bool:
+    def filter(self, structure_info:StructureInfo) -> bool:
         value = structure_info.get(self.key, ...)
         if value is ...:
             return self.default
@@ -75,40 +75,40 @@ class KeyFilter(Filter):
 
 class KeyPresentFilter(KeyFilter):
 
-    def filter(self, structure_info: StructureInfo.StructureInfo) -> bool:
+    def filter(self, structure_info: StructureInfo) -> bool:
         return self.key in structure_info
 
 class KeyNotPresentFilter(KeyFilter):
 
-    def filter(self, structure_info: StructureInfo.StructureInfo) -> bool:
+    def filter(self, structure_info: StructureInfo) -> bool:
         return self.key not in structure_info
 
 class AndFilter(MetaFilter):
 
     __slots__ = ()
 
-    def filter(self, structure_info: StructureInfo.StructureInfo) -> bool:
+    def filter(self, structure_info: StructureInfo) -> bool:
         return all(subfilter.filter(structure_info) for subfilter in self.subfilters)
 
 class OrFilter(MetaFilter):
 
     __slots__ = ()
 
-    def filter(self, structure_info: StructureInfo.StructureInfo) -> bool:
+    def filter(self, structure_info: StructureInfo) -> bool:
         return any(subfilter.filter(structure_info) for subfilter in self.subfilters)
 
 class NandFilter(MetaFilter):
 
     __slots__ = ()
 
-    def filter(self, structure_info: StructureInfo.StructureInfo) -> bool:
+    def filter(self, structure_info: StructureInfo) -> bool:
         return not all(subfilter.filter(structure_info) for subfilter in self.subfilters)
 
 class NorFilter(MetaFilter):
 
     __slots__ = ()
 
-    def filter(self, structure_info: StructureInfo.StructureInfo) -> bool:
+    def filter(self, structure_info: StructureInfo) -> bool:
         return not any(subfilter.filter(structure_info) for subfilter in self.subfilters)
 
 class EqFilter[A](ValueFilter[A]):

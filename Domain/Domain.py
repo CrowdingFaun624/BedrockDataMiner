@@ -3,96 +3,101 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, NotRequired, Sequence, TypedDict
 
-import Component.ComponentFunctions as ComponentFunctions
-import Component.Importer as Importer
 import Component.ScriptImporter as ScriptImporter
-import Component.ScriptReferenceable as ScriptReferenceable
-import Component.Types as Types
-import Dataminer.BuiltIns.AllFilesDataminer as AllFilesDataminer
-import Dataminer.BuiltIns.GrabMultipleFilesDataminer as GrabMultipleFilesDataminer
-import Dataminer.BuiltIns.GrabReFilesDataminer as GrabReFilesDataminer
-import Dataminer.BuiltIns.GrabSingleFileDataminer as GrabSingleFileDataminer
-import Dataminer.BuiltIns.SingleFileDataminer as SingleFileDataminer
-import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
-import Dataminer.Dataminer as Dataminer
-import Domain.LibFiles as LibFiles
-import Downloader.Accessor as Accessor
-import Downloader.DownloadAccessor as DownloadAccessor
-import Downloader.DummyAccessor as DummyAccessor
-import Downloader.SingleDirectoryFileAccessor as SingleDirectoryFileAccessor
-import Downloader.StoredAccessor as StoredAccessor
-import Downloader.ZipAccessor as ZipAccessor
-import Serializer.CustomJsonSerializer as CustomJsonSerializer
-import Serializer.DummySerializer as DummySerializer
-import Serializer.JsonSerializer as JsonSerializer
-import Serializer.LinesSerializer as LinesSerializer
-import Serializer.RepairableJsonSerializer as RepairableJsonSerializer
-import Serializer.Serializer as Serializer
-import Serializer.TextSerializer as TextSerializer
-import Structure.Delegate.DefaultBaseDelegate as DefaultBaseDelegate
-import Structure.Delegate.DefaultDelegate as DefaultDelegate
-import Structure.Delegate.Delegate as Delegate
-import Structure.Delegate.LongStringDelegate as LongStringDelegate
-import Structure.Delegate.PrimitiveDelegate as PrimitiveDelegate
 import Utilities.CustomJson as CustomJson
-import Utilities.DataFile as DataFile
 import Utilities.FileManager as FileManager
-import Utilities.Scripts as Scripts
-import Utilities.TypeVerifier as TypeVerifier
-import Version.VersionProvider.LatestVersionProvider as LatestVersionProvider
-import Version.VersionProvider.VersionProvider as VersionProvider
+from Component.ComponentFunctions import functions
+from Component.Importer import parse_all_component_groups
+from Component.ScriptImporter import ScriptSet
+from Component.ScriptReferenceable import ScriptReferenceable
+from Component.Types import TypeStuff, primary_type_stuff
+from Dataminer.BuiltIns.AllFilesDataminer import AllFilesDataminer
+from Dataminer.BuiltIns.GrabMultipleFilesDataminer import GrabMultipleFilesDataminer
+from Dataminer.BuiltIns.GrabReFilesDataminer import GrabReFilesDataminer
+from Dataminer.BuiltIns.GrabSingleFileDataminer import GrabSingleFileDataminer
+from Dataminer.BuiltIns.SingleFileDataminer import SingleFileDataminer
+from Dataminer.BuiltIns.TagSearcherDataminer import TagSearcherDataminer
+from Dataminer.Dataminer import Dataminer
+from Domain.LibFiles import LibFiles
+from Downloader.Accessor import Accessor
+from Downloader.DownloadAccessor import DownloadAccessor
+from Downloader.DummyAccessor import DummyAccessor
+from Downloader.SingleDirectoryFileAccessor import SingleDirectoryFileAccessor
+from Downloader.StoredAccessor import StoredAccessor
+from Downloader.ZipAccessor import ZipAccessor
+from Serializer.CustomJsonSerializer import CustomJsonSerializer
+from Serializer.DummySerializer import DummySerializer
+from Serializer.JsonSerializer import JsonSerializer
+from Serializer.LinesSerializer import LinesSerializer
+from Serializer.RepairableJsonSerializer import RepairableJsonSerializer
+from Serializer.Serializer import Serializer
+from Serializer.TextSerializer import TextSerializer
+from Structure.Delegate.DefaultBaseDelegate import DefaultBaseDelegate
+from Structure.Delegate.DefaultDelegate import DefaultDelegate
+from Structure.Delegate.Delegate import Delegate
+from Structure.Delegate.LongStringDelegate import LongStringDelegate
+from Structure.Delegate.PrimitiveDelegate import PrimitiveDelegate
+from Utilities.DataFile import DataFile
+from Utilities.Scripts import Scripts
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
+from Version.VersionProvider.LatestVersionProvider import LatestVersionProvider
+from Version.VersionProvider.VersionProvider import VersionProvider
 
 if TYPE_CHECKING:
-    import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
-    import Downloader.AccessorType as AccessorType
-    import Serializer.Serializer as Serializer
-    import Structure.StructureBase as StructureBase
-    import Structure.StructureTag as StructureTag
-    import Tablifier.Tablifier as Tablifier
-    import Utilities.Log as Log
-    import Version.Version as Version
-    import Version.VersionFileType as VersionFileType
-    import Version.VersionTag.VersionTag as VersionTag
-    import Version.VersionTag.VersionTagOrder as VersionTagOrder
+    from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+    from Downloader.AccessorType import AccessorType
+    from Serializer.Serializer import Serializer
+    from Structure.StructureBase import StructureBase
+    from Structure.StructureTag import StructureTag
+    from Tablifier.Tablifier import Tablifier
+    from Utilities.Log import Log
+    from Version.Version import Version
+    from Version.VersionFileType import VersionFileType
+    from Version.VersionTag.VersionTag import VersionTag
+    from Version.VersionTag.VersionTagOrder import VersionTagOrder
 
-BUILT_IN_ACCESSOR_CLASSES:dict[str,type[Accessor.Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
-    DownloadAccessor.DownloadAccessor,
-    DummyAccessor.DummyAccessor,
-    SingleDirectoryFileAccessor.SingleDirectoryFileAccessor,
-    StoredAccessor.StoredAccessor,
-    ZipAccessor.ZipAccessor,
+BUILT_IN_ACCESSOR_CLASSES:dict[str,type[Accessor]] = {accessor_class.__name__: accessor_class for accessor_class in [
+    DownloadAccessor,
+    DummyAccessor,
+    SingleDirectoryFileAccessor,
+    StoredAccessor,
+    ZipAccessor,
 ]}
 
-BUILT_IN_DATAMINER_CLASSES:dict[str,type[Dataminer.Dataminer]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
-    Dataminer.Dataminer,
-    AllFilesDataminer.AllFilesDataminer,
-    GrabMultipleFilesDataminer.GrabMultipleFilesDataminer,
-    GrabReFilesDataminer.GrabReFilesDataminer,
-    GrabSingleFileDataminer.GrabSingleFileDataminer,
-    SingleFileDataminer.SingleFileDataminer,
-    TagSearcherDataminer.TagSearcherDataminer,
+BUILT_IN_DATAMINER_CLASSES:dict[str,type[Dataminer]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
+    Dataminer,
+    AllFilesDataminer,
+    GrabMultipleFilesDataminer,
+    GrabReFilesDataminer,
+    GrabSingleFileDataminer,
+    SingleFileDataminer,
+    TagSearcherDataminer,
 ]}
 
-BUILT_IN_DELEGATE_CLASSES:dict[str,type[Delegate.Delegate]] = {delegate_type.__name__: delegate_type for delegate_type in [
-    Delegate.Delegate,
-    DefaultDelegate.DefaultDelegate,
-    DefaultBaseDelegate.DefaultBaseDelegate,
-    LongStringDelegate.LongStringDelegate,
-    PrimitiveDelegate.PrimitiveDelegate,
+BUILT_IN_DELEGATE_CLASSES:dict[str,type[Delegate]] = {delegate_type.__name__: delegate_type for delegate_type in [
+    Delegate,
+    DefaultDelegate,
+    DefaultBaseDelegate,
+    LongStringDelegate,
+    PrimitiveDelegate,
 ]}
 
-BUILT_IN_SERIALIZER_CLASSES:dict[str,type[Serializer.Serializer]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
-    CustomJsonSerializer.CustomJsonSerializer,
-    DummySerializer.DummySerializer,
-    JsonSerializer.JsonSerializer,
-    LinesSerializer.LinesSerializer,
-    RepairableJsonSerializer.RepairableJsonSerializer,
-    Serializer.Serializer,
-    TextSerializer.TextSerializer,
+BUILT_IN_SERIALIZER_CLASSES:dict[str,type[Serializer]] = {dataminer_class.__name__: dataminer_class for dataminer_class in [
+    CustomJsonSerializer,
+    DummySerializer,
+    JsonSerializer,
+    LinesSerializer,
+    RepairableJsonSerializer,
+    Serializer,
+    TextSerializer,
 ]}
 
-BUILT_IN_VERSION_PROVIDER_CLASSES:dict[str,type[VersionProvider.VersionProvider]] = {version_provider_class.__name__: version_provider_class for version_provider_class in [
-    LatestVersionProvider.LatestVersionProvider,
+BUILT_IN_VERSION_PROVIDER_CLASSES:dict[str,type[VersionProvider]] = {version_provider_class.__name__: version_provider_class for version_provider_class in [
+    LatestVersionProvider,
 ]}
 
 class DomainManifestTypedDict(TypedDict):
@@ -190,18 +195,18 @@ class Domain():
         self.dependencies:list[Domain]
         self.read_manifest()
 
-        self.accessor_types:dict[str,"AccessorType.AccessorType"]
-        self.dataminer_collections:dict[str,"AbstractDataminerCollection.AbstractDataminerCollection"]
+        self.accessor_types:dict[str,"AccessorType"]
+        self.dataminer_collections:dict[str,"AbstractDataminerCollection"]
         self.latest_slots:list[str]
-        self.logs:dict[str,"Log.Log"]
-        self.serializers:dict[str,"Serializer.Serializer"]
-        self.structures:dict[str,"StructureBase.StructureBase"]
-        self.structure_tags:dict[str,"StructureTag.StructureTag"]
-        self.tablifiers:dict[str,"Tablifier.Tablifier"]
-        self.version_file_types:dict[str,"VersionFileType.VersionFileType"]
-        self.version_tags_order:"VersionTagOrder.VersionTagOrder"
-        self.version_tags:dict[str,"VersionTag.VersionTag"]
-        self.versions:dict[str,"Version.Version"]
+        self.logs:dict[str,"Log"]
+        self.serializers:dict[str,"Serializer"]
+        self.structures:dict[str,"StructureBase"]
+        self.structure_tags:dict[str,"StructureTag"]
+        self.tablifiers:dict[str,"Tablifier"]
+        self.version_file_types:dict[str,"VersionFileType"]
+        self.version_tags_order:"VersionTagOrder"
+        self.version_tags:dict[str,"VersionTag"]
+        self.versions:dict[str,"Version"]
 
         self.data_files = self._get_data_files()
         '''
@@ -209,18 +214,18 @@ class Domain():
         '''
         self.json_decoder:             type[json.JSONDecoder]
         self.json_encoder:             type[json.JSONEncoder]
-        self.scripts:                  Scripts.Scripts
-        self.callables:                ScriptImporter.ScriptSet[Callable]
-        self.accessor_classes:         ScriptImporter.ScriptSet[type[Accessor.Accessor]]
-        self.dataminer_classes:        ScriptImporter.ScriptSet[type[Dataminer.Dataminer]]
-        self.delegate_classes:         ScriptImporter.ScriptSet[type[Delegate.Delegate]]
-        self.serializer_classes:       ScriptImporter.ScriptSet[type[Serializer.Serializer]]
-        self.version_provider_classes: ScriptImporter.ScriptSet[type[VersionProvider.VersionProvider]]
+        self.scripts:                  Scripts
+        self.callables:                ScriptSet[Callable]
+        self.accessor_classes:         ScriptSet[type[Accessor]]
+        self.dataminer_classes:        ScriptSet[type[Dataminer]]
+        self.delegate_classes:         ScriptSet[type[Delegate]]
+        self.serializer_classes:       ScriptSet[type[Serializer]]
+        self.version_provider_classes: ScriptSet[type[VersionProvider]]
 
-        self.lib_files = LibFiles.LibFiles(self)
-        self.type_stuff = Types.TypeStuff(self)
-        self.type_stuff.extend(Types.primary_type_stuff)
-        self.script_referenceable:ScriptReferenceable.ScriptReferenceable = ScriptReferenceable.ScriptReferenceable(self)
+        self.lib_files = LibFiles(self)
+        self.type_stuff = TypeStuff(self)
+        self.type_stuff.extend(primary_type_stuff)
+        self.script_referenceable:ScriptReferenceable = ScriptReferenceable(self)
 
     def get_cascading_dependencies(self, memo:set["Domain"]) -> Sequence["Domain"]:
         if self not in memo:
@@ -234,10 +239,10 @@ class Domain():
     def read_manifest(self) -> None:
         with open(self.domain_file, "rt") as f:
             file:DomainManifestTypedDict = json.load(f)
-        TypeVerifier.TypedDictTypeVerifier(
-            TypeVerifier.TypedDictKeyTypeVerifier("aliases", False, TypeVerifier.ListTypeVerifier(str, list)),
-            TypeVerifier.TypedDictKeyTypeVerifier("is_library", False, bool),
-            TypeVerifier.TypedDictKeyTypeVerifier("dependencies", False, TypeVerifier.ListTypeVerifier(str, list)),
+        TypedDictTypeVerifier(
+            TypedDictKeyTypeVerifier("aliases", False, ListTypeVerifier(str, list)),
+            TypedDictKeyTypeVerifier("is_library", False, bool),
+            TypedDictKeyTypeVerifier("dependencies", False, ListTypeVerifier(str, list)),
         ).verify_throw(file, (self,))
         self.is_library = file.get("is_library", False)
         self.aliases = file.get("aliases", ())
@@ -253,21 +258,21 @@ class Domain():
         all_domains = self.get_cascading_dependencies(set())
         for domain in all_domains:
             domain.import_scripts()
-        all_component_groups = Importer.parse_all_component_groups(all_domains)
+        all_component_groups = parse_all_component_groups(all_domains)
         for domain in all_domains:
             domain.set_values(all_component_groups[domain.name])
 
     def import_scripts(self) -> None:
         # update TypeStuffs
-        self.scripts = Scripts.Scripts(self)
+        self.scripts = Scripts(self)
         self.json_decoder = CustomJson.get_special_decoder(self)
         self.json_encoder = CustomJson.get_special_encoder(self)
-        self.callables = ScriptImporter.import_scripted_objects("normalizers/", self, ComponentFunctions.functions, callable, "callable")
-        self.accessor_classes = ScriptImporter.import_scripted_types("accessors/", self, BUILT_IN_ACCESSOR_CLASSES, Accessor.Accessor)
-        self.dataminer_classes = ScriptImporter.import_scripted_types("dataminers/", self, BUILT_IN_DATAMINER_CLASSES, Dataminer.Dataminer)
-        self.delegate_classes = ScriptImporter.import_scripted_types("delegates", self, BUILT_IN_DELEGATE_CLASSES, Delegate.Delegate)
-        self.serializer_classes = ScriptImporter.import_scripted_types("serializers/", self, BUILT_IN_SERIALIZER_CLASSES, Serializer.Serializer)
-        self.version_provider_classes = ScriptImporter.import_scripted_types("version_providers", self, BUILT_IN_VERSION_PROVIDER_CLASSES, VersionProvider.VersionProvider)
+        self.callables = ScriptImporter.import_scripted_objects("normalizers/", self, functions, callable, "callable")
+        self.accessor_classes = ScriptImporter.import_scripted_types("accessors/", self, BUILT_IN_ACCESSOR_CLASSES, Accessor)
+        self.dataminer_classes = ScriptImporter.import_scripted_types("dataminers/", self, BUILT_IN_DATAMINER_CLASSES, Dataminer)
+        self.delegate_classes = ScriptImporter.import_scripted_types("delegates", self, BUILT_IN_DELEGATE_CLASSES, Delegate)
+        self.serializer_classes = ScriptImporter.import_scripted_types("serializers/", self, BUILT_IN_SERIALIZER_CLASSES, Serializer)
+        self.version_provider_classes = ScriptImporter.import_scripted_types("version_providers", self, BUILT_IN_VERSION_PROVIDER_CLASSES, VersionProvider)
 
     def set_values(self, component_groups:dict[str,Any]) -> None:
         self.accessor_types = component_groups["accessor_types"]
@@ -283,9 +288,9 @@ class Domain():
         self.version_tags = component_groups["version_tags"]
         self.versions = component_groups["versions"]
 
-    def _get_data_files(self) -> dict[str,DataFile.DataFile]:
+    def _get_data_files(self) -> dict[str,DataFile]:
         if self.data_directory.exists():
-            return {path.stem: DataFile.DataFile(path) for path in self.data_directory.iterdir()}
+            return {path.stem: DataFile(path) for path in self.data_directory.iterdir()}
         else:
             return {}
 

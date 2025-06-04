@@ -1,10 +1,10 @@
 from typing import TypedDict
 
-import Dataminer.Dataminer as Dataminer
-import Dataminer.DataminerEnvironment as DataminerEnvironment
-import Dataminer.FileDataminer as FileDataminer
-import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier as TypeVerifier
+from Dataminer.Dataminer import Dataminer
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Dataminer.FileDataminer import location_value_function
+from Utilities.Exceptions import DataminerNothingFoundError
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 __all__ = ("PacksDataminer",)
 
@@ -12,10 +12,10 @@ class PackTypedDict(TypedDict):
     name: str
     path: str
 
-class PacksDataminer(Dataminer.Dataminer):
+class PacksDataminer(Dataminer):
 
-    parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", True, str, FileDataminer.location_value_function),
+    parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("location", True, str, location_value_function),
     )
 
     def initialize(
@@ -24,7 +24,7 @@ class PacksDataminer(Dataminer.Dataminer):
     ) -> None:
         self.location = location
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[PackTypedDict]:
+    def activate(self, environment:DataminerEnvironment) -> list[PackTypedDict]:
         dependencies = self.dependencies
         assert len(self.dependencies) == 1
         file_list:dict[str,str] = environment.dependency_data.get(dependencies[0].name, self)
@@ -39,5 +39,5 @@ class PacksDataminer(Dataminer.Dataminer):
             pack_names.add(name)
             packs.append({"name": name, "path": f"{self.location}{name}/"})
         if len(packs) == 0:
-            raise Exceptions.DataminerNothingFoundError(self)
+            raise DataminerNothingFoundError(self)
         return packs

@@ -1,10 +1,10 @@
 from itertools import chain
 from typing import Any, Callable, Iterable, TypeIs
 
-import Component.Component as Component
 import Domain.Domain as Domain
 import Utilities.Exceptions as Exceptions
-import Utilities.Scripts as Scripts
+from Component.Component import Component
+from Utilities.Scripts import Script
 
 
 class ScriptSet[a]():
@@ -23,10 +23,10 @@ class ScriptSet[a]():
     def __init__(
         self,
         domain:"Domain.Domain",
-        domain_scripts:dict[tuple[str,str],Scripts.Script[Any]],
-        all_scripts:dict[tuple[str,str],Scripts.Script[a]],
-        scripts_by_name:dict[str,Scripts.Script],
-        scripts_by_file:dict[str,Scripts.Script],
+        domain_scripts:dict[tuple[str,str],Script[Any]],
+        all_scripts:dict[tuple[str,str],Script[a]],
+        scripts_by_name:dict[str,Script],
+        scripts_by_file:dict[str,Script],
         built_in_objects:dict[str,a],
         folder:str,
         type_name:str,
@@ -103,10 +103,10 @@ class ScriptSetSet[a]():
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} of {self.domain.name} in \"{next(iter(self.script_sets.values())).folder}\">"
 
-    def get_options(self, source:"Component.Component") -> list[str]:
+    def get_options(self, source:"Component") -> list[str]:
         return list(chain.from_iterable(script_set.get_options(source.domain) for script_set in self.script_sets.values()))
 
-    def get(self, key:str, source:"Component.Component") -> a:
+    def get(self, key:str, source:"Component") -> a:
         if len(split_key := key.split("!", maxsplit=1)) == 2:
             domain_name, subkey = split_key
             if (script_set := self.script_sets.get(domain_name)) is None:
@@ -158,9 +158,9 @@ def import_scripted_objects[a](folder:str, domain:"Domain.Domain", built_in_obje
     :required_type: Type that Python scripts must export.
     '''
     scripts = domain.scripts.scripts
-    all_scripts:dict[tuple[str,str],Scripts.Script[a]] = {}
-    scripts_by_file_name:dict[str,Scripts.Script[a]] = {}
-    scripts_by_object_name:dict[str,Scripts.Script[a]] = {}
+    all_scripts:dict[tuple[str,str],Script[a]] = {}
+    scripts_by_file_name:dict[str,Script[a]] = {}
+    scripts_by_object_name:dict[str,Script[a]] = {}
     double_file_names:set[str] = set()
     double_object_names:set[str] = set()
     for (file_name, object_name), script in scripts.items():
@@ -178,9 +178,9 @@ def import_scripted_types[a](folder:str, domain:"Domain.Domain", built_in_classe
     :required_superclass: Type that Python scripts must export.
     '''
     scripts = domain.scripts.scripts
-    all_scripts:dict[tuple[str,str],Scripts.Script[type[a]]] = {}
-    scripts_by_file_name:dict[str,Scripts.Script[type[a]]] = {}
-    scripts_by_object_name:dict[str,Scripts.Script[type[a]]] = {}
+    all_scripts:dict[tuple[str,str],Script[type[a]]] = {}
+    scripts_by_file_name:dict[str,Script[type[a]]] = {}
+    scripts_by_object_name:dict[str,Script[type[a]]] = {}
     double_file_names:set[str] = set()
     double_object_names:set[str] = set()
     for (file_name, object_name), script in scripts.items():

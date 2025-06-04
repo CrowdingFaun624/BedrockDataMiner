@@ -1,13 +1,13 @@
 from typing import Any
 
 import Domain.Domain as Domain
-import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier as TypeVerifier
+from Utilities.Exceptions import SerializerMethodNonexistentError
+from Utilities.TypeVerifier import TypeVerifier
 
 
 class Serializer[a]():
 
-    type_verifier:TypeVerifier.TypeVerifier = TypeVerifier.TypedDictTypeVerifier()
+    type_verifier:TypeVerifier = TypeVerifier()
     '''
     TypeVerifier for verifying the arguments of this Serializer
     '''
@@ -38,4 +38,4 @@ class Serializer[a]():
         Converts a file into an object. Will be called when retrieving the file
         from file storage.
         '''
-        raise Exceptions.SerializerMethodNonexistentError(self, self.deserialize)
+        raise SerializerMethodNonexistentError(self, self.deserialize)

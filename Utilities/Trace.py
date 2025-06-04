@@ -3,7 +3,7 @@ import traceback
 from types import EllipsisType, NoneType, TracebackType
 from typing import Any, Callable, Iterable, Self
 
-import Utilities.Exceptions as Exceptions
+from Utilities.Exceptions import TypeVerificationFailedError, TypeVerifierException
 
 
 class TraceType(enum.Enum):
@@ -137,9 +137,9 @@ class Trace():
         for error_trace in self._exceptions:
             exception = error_trace.exception
             match exception:
-                case Exceptions.TypeVerificationFailedError(): # completely useless.
+                case TypeVerificationFailedError(): # completely useless.
                     continue
-                case Exceptions.TypeVerifierException(): # Trace of TypeVerificationExceptions are useless and space-hungry.
+                case TypeVerifierException(): # Trace of TypeVerificationExceptions are useless and space-hungry.
                     exception_string = str(exception)
                 case _:
                     exception_string = "".join(traceback.format_exception(error_trace.exception)).rstrip()

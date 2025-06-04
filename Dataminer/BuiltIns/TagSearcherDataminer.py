@@ -3,13 +3,13 @@ import re
 from collections import defaultdict
 from typing import Any, Callable
 
-import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
-import Dataminer.Dataminer as Dataminer
-import Dataminer.DataminerEnvironment as DataminerEnvironment
-import Structure.DataPath as DataPath
-import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier as TypeVerifier
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+from Dataminer.Dataminer import Dataminer
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Structure.DataPath import DataPath
+from Structure.StructureTag import StructureTag
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 TAG_CHARACTERS = re.compile(r"[^\s\\\+\*\?\[\]\(\)\{\}\=\!\<\>\|\-\/\~]") # using exclusive because of multitudinous language characters
 # valid tag characters are a-zA-Z0-9, _, ., and non-ascii not-whitespace characters
@@ -51,7 +51,7 @@ class DataReader():
     def is_at_last_index(self) -> bool:
         return self.position == len(self.data)
 
-def parse_tag(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath.DataPath]]], set[DataPath.DataPath]], str]:
+def parse_tag(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath]]], set[DataPath]], str]:
     letters:list[str] = []
     while True:
         letter = data.read()
@@ -88,7 +88,7 @@ def parse_whitespace(data:DataReader) -> None:
     while data.read() == " ": pass
     data.back()
 
-def parse_expression(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]], set[DataPath.DataPath|Any]], set[str]]:
+def parse_expression(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath|Any]]], set[DataPath|Any]], set[str]]:
     parse_whitespace(data)
     character = data.read(1, 1)
     if re.match(TAG_CHARACTERS, character):
@@ -133,7 +133,7 @@ def parse_expression(data:DataReader) -> tuple[Callable[[dict[str, set[DataPath.
     else:
         raise Exceptions.TagSearcherParseError(data, f"Unexpected character \"{character}\"")
 
-def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]], set[DataPath.DataPath|Any]], set[str]]:
+def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath|Any]]], set[DataPath|Any]], set[str]]:
     data = DataReader(string)
     output = parse_expression(data)
     if not data.is_at_last_index():
@@ -141,30 +141,30 @@ def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath.DataPath|Any]]],
     return output
 
 
-class TagSearcherDataminer(Dataminer.Dataminer):
+class TagSearcherDataminer(Dataminer):
 
-    parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("sort_output", True, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("none_okay", False, bool),
+    parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("tags", True, str),
+        TypedDictKeyTypeVerifier("sort_output", True, bool),
+        TypedDictKeyTypeVerifier("none_okay", False, bool),
     )
 
     @classmethod
     def manipulate_arguments(cls, arguments: dict[str, Any]) -> None:
         arguments["tag_function"], arguments["tag_names"] = parse(arguments["tags"])
 
-    def initialize(self, tags:str, tag_function:Callable[[dict[str, set[DataPath.DataPath|Any]]], set[DataPath.DataPath|Any]], tag_names:set[str], sort_output:bool, none_okay:bool=False) -> None:
+    def initialize(self, tags:str, tag_function:Callable[[dict[str, set[DataPath|Any]]], set[DataPath|Any]], tag_names:set[str], sort_output:bool, none_okay:bool=False) -> None:
         self.tags = tags
         self.tag_function = tag_function
         self.tag_names = tag_names
         self.sort_output = sort_output
         self.none_okay = none_okay
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[DataPath.DataPath|Any]:
+    def activate(self, environment:DataminerEnvironment) -> list[DataPath|Any]:
         dependencies = set(self.dependencies)
         all_tags = self.domain.structure_tags
         printer_environment = environment.get_printer_environment(self.version, self.settings.structure_info)
-        tag_dataminer_collections:defaultdict[AbstractDataminerCollection.AbstractDataminerCollection,list[StructureTag.StructureTag]] = defaultdict(lambda: [])
+        tag_dataminer_collections:defaultdict[AbstractDataminerCollection,list[StructureTag]] = defaultdict(lambda: [])
         for tag in self.tag_names:
             if tag not in all_tags:
                 raise Exceptions.UnrecognizedStructureTagError(self.tags, tag, list(all_tags.keys()))
@@ -173,7 +173,7 @@ class TagSearcherDataminer(Dataminer.Dataminer):
                     if dataminer_collection not in dependencies:
                         raise Exceptions.TagSearcherDependencyError(self, all_tags[tag], dataminer_collection)
                     tag_dataminer_collections[dataminer_collection].append(all_tags[tag])
-        mentioned_tags:defaultdict[str,set[DataPath.DataPath]] = defaultdict(lambda: set())
+        mentioned_tags:defaultdict[str,set[DataPath]] = defaultdict(lambda: set())
         for dataminer_collection, tags in tag_dataminer_collections.items():
             for tag, paths in dataminer_collection.get_tag_paths_from_raw(dataminer_collection.get_data_file(self.version), self.version, tags, printer_environment).items():
                 mentioned_tags[tag.name].update(paths)

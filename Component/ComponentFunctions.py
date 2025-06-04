@@ -1,14 +1,14 @@
 import json
 from typing import TYPE_CHECKING, Any, Callable, Sized
 
-import Structure.Container as Con
-import Structure.Difference as Diff
-import Structure.SimpleContainer as SCon
+from Structure.Container import Con, Don
+from Structure.Difference import Diff
+from Structure.SimpleContainer import SCon
 
 if TYPE_CHECKING:
     from _typeshed import SupportsRichComparison
 
-type sort_item = tuple[Con.Con|Con.Don|Diff.Diff[Con.Don], Con.Con|Con.Don|Diff.Diff[Con.Don]]
+type sort_item = tuple[Con|Don|Diff[Don], Con|Don|Diff[Don]]
 type key_function = Callable[["SupportsRichComparison"], str]
 type sort_inner_function = Callable[[sort_item],"SupportsRichComparison"]
 type sort_function = Callable[[key_function, dict[str,int]], sort_inner_function]
@@ -44,11 +44,11 @@ def sort_by_component_order(key_function:key_function, keys_order:dict[str,int])
     def sort(item:sort_item) -> "SupportsRichComparison":
         key, value = item
         match key:
-            case Con.Con():
+            case Con():
                 return keys_order.get(key_function(key.data), 0)
-            case Con.Don():
+            case Don():
                 return keys_order.get(key_function(key.last_value), 0)
-            case Diff.Diff():
+            case Diff():
                 return keys_order.get(key_function(key.last_value.last_value), 0)
     return sort
 
@@ -56,11 +56,11 @@ def sort_by_key(key_function:key_function, keys_order:dict[str,int]) -> sort_inn
     def sort(item:sort_item) -> "SupportsRichComparison":
         key, value = item
         match key:
-            case Con.Con():
+            case Con():
                 return key.data
-            case Con.Don():
+            case Don():
                 return key.last_value
-            case Diff.Diff():
+            case Diff():
                 return key.last_value.last_value
     return sort
 
@@ -68,11 +68,11 @@ def sort_by_value(key_function:key_function, keys_order:dict[str,int]) -> sort_i
     def sort(item:sort_item) -> "SupportsRichComparison":
         key, value = item
         match value:
-            case Con.Con():
+            case Con():
                 return value.data
-            case Con.Don():
+            case Don():
                 return value.last_value
-            case Diff.Diff():
+            case Diff():
                 return value.last_value.last_value
     return sort
 
@@ -122,7 +122,7 @@ def parse_number(data:str) -> int|float:
 def split_lines(data:str, keep_ends:bool=False) -> list[str]:
     return data.splitlines(keep_ends)
 
-def get_file_stem(data:SCon.SCon[str]) -> str:
+def get_file_stem(data:SCon[str]) -> str:
     return data.data.split("/")[-1].split(".", 1)[0]
 
 functions:dict[str,Callable] = {

@@ -1,17 +1,17 @@
 from types import EllipsisType
 from typing import Any
 
-import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as Diff
-import Structure.PrimitiveStructure as PrimitiveStructure
-import Structure.SimpleContainer as SCon
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Structure.Delegate.Delegate import Delegate
+from Structure.Difference import Diff
+from Structure.PrimitiveStructure import PrimitiveStructure
+from Structure.SimpleContainer import SCon, SDon
+from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 __all__ = ("PrimitiveDelegate",)
 
-def get_version(branch:int, get_parent:bool, environment:StructureEnvironment.ComparisonEnvironment) -> str:
+def get_version(branch:int, get_parent:bool, environment:ComparisonEnvironment) -> str:
     version = environment.versions[branch]
     assert version is not None
     if get_parent and version.order_tag.is_development_tag:
@@ -19,7 +19,7 @@ def get_version(branch:int, get_parent:bool, environment:StructureEnvironment.Co
         assert version is not None
     return version.name
 
-def get_change_branches(diff:Diff.Diff) -> list[int]:
+def get_change_branches(diff:Diff) -> list[int]:
     previous_bundle:Any = None
     output:list[int] = []
     for branch, bundle in enumerate(diff.bundles):
@@ -33,26 +33,26 @@ def get_change_branches(diff:Diff.Diff) -> list[int]:
     return output
 
 
-class PrimitiveDelegate(Delegate.Delegate[
-    SCon.SCon[Any],
-    Diff.Diff[SCon.SDon[Any]],
-    PrimitiveStructure.PrimitiveStructure[Any, str, str],
+class PrimitiveDelegate(Delegate[
+    SCon[Any],
+    Diff[SDon[Any]],
+    PrimitiveStructure[Any, str, str],
     str, Any, str, Any,
 ]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("code", False, bool),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("code", False, bool),
     )
 
-    applies_to = (PrimitiveStructure.PrimitiveStructure,)
+    applies_to = (PrimitiveStructure,)
 
     uses_versions = True
 
-    def __init__(self, structure: PrimitiveStructure.PrimitiveStructure[Any, str, str], keys: dict[str, Any], code:bool=True) -> None:
+    def __init__(self, structure: PrimitiveStructure[Any, str, str], keys: dict[str, Any], code:bool=True) -> None:
         super().__init__(structure, keys)
         self.code = code
 
-    def print_comparison(self, data: Diff.Diff[SCon.SDon[Any]], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str | EllipsisType:
+    def print_comparison(self, data: Diff[SDon[Any]], trace: Trace, environment: ComparisonEnvironment) -> str | EllipsisType:
         if data.length == 1:
             return self.print_branch(data.last_value.last_container, trace, environment[data.branch_count - 1])
         else:
@@ -71,7 +71,7 @@ class PrimitiveDelegate(Delegate.Delegate[
                     output.append(f"{print_output} {{{{Upcoming|BE {get_version(branch, True, environment)}}}}}")
             return " ".join(output)
 
-    def print_branch(self, data: SCon.SCon[Any], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> str | EllipsisType:
+    def print_branch(self, data: SCon[Any], trace: Trace, environment: PrinterEnvironment) -> str | EllipsisType:
         match data.data:
             case bool():
                 output = str(data.data).lower()

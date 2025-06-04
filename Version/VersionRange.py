@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import Utilities.Exceptions as Exceptions
 
 if TYPE_CHECKING:
-    import Version.Version as Version
+    from Version.Version import Version
 
 class VersionRange():
     '''Used for detecting if a Version is within a range of versions.
@@ -16,7 +16,7 @@ class VersionRange():
         "stop",
     )
 
-    def __init__(self, start:"Version.Version|None", stop:"Version.Version|None") -> None:
+    def __init__(self, start:"Version|None", stop:"Version|None") -> None:
         self.start = start if start is not None else None
         self.stop = stop if stop is not None else None
         self.equals = self.start == self.stop and self.start is not None
@@ -29,7 +29,7 @@ class VersionRange():
     def __repr__(self) -> str:
         return f"<VersionRange \"{str(self.start)}\"–\"{str(self.stop)}\">"
 
-    def __contains__(self, version:"Version.Version") -> bool:
+    def __contains__(self, version:"Version") -> bool:
         if self.equals:
             return version == self.start
         elif self.start is None and self.stop is None:

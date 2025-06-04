@@ -1,15 +1,15 @@
 from typing import Any, BinaryIO, Sequence, TypedDict
 
-import Downloader.DirectoryAccessor as DirectoryAccessor
+from Downloader.DirectoryAccessor import DirectoryAccessor
 
 __all__ = ("SubDirectoryAccessor",)
 
 class LinkedAccessorsTypedDict(TypedDict):
-    superdirectory: DirectoryAccessor.DirectoryAccessor
+    superdirectory: DirectoryAccessor
 
-class SubDirectoryAccessor(DirectoryAccessor.DirectoryAccessor):
+class SubDirectoryAccessor(DirectoryAccessor):
 
-    linked_accessors = {"superdirectory": DirectoryAccessor.DirectoryAccessor}
+    linked_accessors = {"superdirectory": DirectoryAccessor}
 
     __slots__ = (
         "_file_list",

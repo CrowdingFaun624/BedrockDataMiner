@@ -1,7 +1,7 @@
-import Component.Types as Types
+from Component.Types import register_decorator
 
 
-@Types.register_decorator(None, ...)
+@register_decorator(None, ...)
 class StructureTag():
 
     __slots__ = (

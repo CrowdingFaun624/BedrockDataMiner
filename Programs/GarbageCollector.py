@@ -2,11 +2,11 @@ import gzip
 from typing import Callable
 
 import Domain.Domain as Domain
-import Domain.Domains as Domains
-import Utilities.File as File
-import Utilities.FileManager as FileManager
 import Utilities.FileStorage as FileStorage
-import Utilities.UserInput as UserInput
+from Domain.Domains import domains
+from Utilities.File import hash_int_to_str, hash_str_to_int
+from Utilities.FileManager import FILE_STORAGE_OBJECTS_DIRECTORY, OUTPUT_DIRECTORY
+from Utilities.UserInput import input_single
 
 
 def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
@@ -29,19 +29,19 @@ def garbage_collect(domains:list[Domain.Domain]) -> set[int]:
         for dataminer_collection in dataminer_collections.values():
             dataminer_collection.clear_all_caches()
     existing_files:set[int] = set()
-    for folder in FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.iterdir():
+    for folder in FILE_STORAGE_OBJECTS_DIRECTORY.iterdir():
         for file in folder.iterdir():
-            existing_files.add(File.hash_str_to_int(file.name))
+            existing_files.add(hash_str_to_int(file.name))
     unused_files = existing_files - referenced_files
     return unused_files
 
 def archive_unused(unused_hashes:set[int]) -> None:
     index:list[str] = []
-    index_file = FileManager.OUTPUT_DIRECTORY.joinpath("index.txt")
-    output_directory = FileManager.OUTPUT_DIRECTORY.joinpath("objects")
+    index_file = OUTPUT_DIRECTORY.joinpath("index.txt")
+    output_directory = OUTPUT_DIRECTORY.joinpath("objects")
     output_directory.mkdir()
     for unused_hash in unused_hashes:
-        hash_string = File.hash_int_to_str(unused_hash)
+        hash_string = hash_int_to_str(unused_hash)
         if (is_zipped := FileStorage.index.get().get(hash_string)) is None:
             continue
         index.append(f"{hash_string} {int(is_zipped)}")
@@ -61,14 +61,14 @@ def clean_index(unused_hashes:set[int]) -> None:
     FileStorage.remove_index_values_without_associated_file()
 
 def print_all(unused_hashes:set[int]) -> None:
-    string_hashes = sorted(File.hash_int_to_str(unused_hash) for unused_hash in unused_hashes)
+    string_hashes = sorted(hash_int_to_str(unused_hash) for unused_hash in unused_hashes)
     print("\n".join(string_hashes))
 
 def remove(unused_hashes:set[int]) -> None:
     while True:
         if input("Are you sure you want to continue? (y/ctrl+C): ") == "y":
             break
-    for unused_hash in (File.hash_int_to_str(unused_hash) for unused_hash in unused_hashes):
+    for unused_hash in (hash_int_to_str(unused_hash) for unused_hash in unused_hashes):
         FileStorage.delete_item(unused_hash)
     FileStorage.index.write()
     FileStorage.remove_index_values_without_associated_file()
@@ -76,22 +76,22 @@ def remove(unused_hashes:set[int]) -> None:
 def print_stats(unused_hashes:set[int]) -> None:
     file_count = sum(
         1
-        for folder in FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.iterdir()
+        for folder in FILE_STORAGE_OBJECTS_DIRECTORY.iterdir()
         for file in folder.iterdir()
     )
     total_storage_bytes = sum(
         file.stat().st_size
-        for folder in FileManager.FILE_STORAGE_OBJECTS_DIRECTORY.iterdir()
+        for folder in FILE_STORAGE_OBJECTS_DIRECTORY.iterdir()
         for file in folder.iterdir()
     )
-    unused_storage_bytes = sum(FileStorage.get_file_path(File.hash_int_to_str(unused_hash)).stat().st_size for unused_hash in unused_hashes)
+    unused_storage_bytes = sum(FileStorage.get_file_path(hash_int_to_str(unused_hash)).stat().st_size for unused_hash in unused_hashes)
     print(f"Found {len(unused_hashes)} unused files ({100*len(unused_hashes)/file_count:.2f}% of total) worth {unused_storage_bytes} bytes ({100*unused_storage_bytes/total_storage_bytes:.2f}% of total).")
 
 def main(domain:Domain.Domain) -> None:
-    domains = list(Domains.domains.values())
-    domains.remove(domain)
-    domains.insert(0, domain) # put selected Domain first.
-    unused_files:set[int] = garbage_collect(domains)
+    domains_list = list(domains.values())
+    domains_list.remove(domain)
+    domains_list.insert(0, domain) # put selected Domain first.
+    unused_files:set[int] = garbage_collect(domains_list)
     exit_now = [False]
     functions:dict[str,Callable[[set[int]],None]] = {
         "archive_unused": archive_unused,
@@ -102,4 +102,4 @@ def main(domain:Domain.Domain) -> None:
         "stats": print_stats,
     }
     while not exit_now[0]:
-        UserInput.input_single(functions, "program", show_options=True, close_enough=True)(unused_files)
+        input_single(functions, "program", show_options=True, close_enough=True)(unused_files)

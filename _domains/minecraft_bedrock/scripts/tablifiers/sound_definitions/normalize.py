@@ -1,11 +1,11 @@
-import Domain.Domains as Domains
-import Serializer.Serializer as Serializer
-import Utilities.File as File
+from Domain.Domains import get_domain_from_module
+from Serializer.Serializer import Serializer
+from Utilities.File import File
 
 __all__ = ("normalize",)
 
-domain = Domains.get_domain_from_module(__name__)
-json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer.Serializer)
+domain = get_domain_from_module(__name__)
+json_serializer = domain.script_referenceable.get_future("minecraft_common!serializers/json", Serializer)
 
-def normalize[a](data:dict[str,File.File[a]]) -> dict[str,a]:
+def normalize[a](data:dict[str,File[a]]) -> dict[str,a]:
     return {key: value.read(json_serializer.get()) for key, value in data.items()}

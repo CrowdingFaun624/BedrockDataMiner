@@ -2,18 +2,22 @@ import json
 from pathlib import Path
 from typing import Any, Container, Iterable, Sequence
 
-import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Domain.Domain as Domain
-import Structure.Container as Con
-import Structure.DataPath as DataPath
-import Structure.StructureBase as StructureBase
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureInfo as StructureInfo
-import Structure.StructureTag as StructureTag
 import Utilities.Exceptions as Exceptions
-import Utilities.File as File
-import Utilities.Trace as Trace
-import Version.Version as Version
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Structure.Container import Con
+from Structure.DataPath import DataPath
+from Structure.StructureBase import StructureBase
+from Structure.StructureEnvironment import (
+    EnvironmentType,
+    PrinterEnvironment,
+    StructureEnvironment,
+)
+from Structure.StructureInfo import StructureInfo
+from Structure.StructureTag import StructureTag
+from Utilities.File import hash_str_to_int
+from Utilities.Trace import Trace
+from Version.Version import Version
 
 
 class AbstractDataminerCollection():
@@ -24,12 +28,12 @@ class AbstractDataminerCollection():
         self.domain = domain
         self.comparing_disabled = comparing_disabled
 
-    def link_subcomponents(self, structure:StructureBase.StructureBase) -> None:
-        self.structure:StructureBase.StructureBase = structure
+    def link_subcomponents(self, structure:StructureBase) -> None:
+        self.structure:StructureBase = structure
 
-    def datamine(self, version:Version.Version, environment:DataminerEnvironment.DataminerEnvironment) -> Any: ...
+    def datamine(self, version:Version, environment:DataminerEnvironment) -> Any: ...
 
-    def store(self, version:Version.Version, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
+    def store(self, version:Version, environment:DataminerEnvironment) -> Any:
         '''Makes the DataminerCollection get the file. Returns the output and stores it in a file.'''
         data = self.datamine(version, environment)
         if data is None or data is ...:
@@ -43,9 +47,9 @@ class AbstractDataminerCollection():
 
         return self.get_data_file(version) # since the normalizing immediately before may modify it.
 
-    def get_dependencies(self, version:Version.Version) -> Iterable["AbstractDataminerCollection"]: ...
+    def get_dependencies(self, version:Version) -> Iterable["AbstractDataminerCollection"]: ...
 
-    def get_data_file(self, version:Version.Version, non_exist_ok:bool=False) -> Any:
+    def get_data_file(self, version:Version, non_exist_ok:bool=False) -> Any:
         '''Opens the data file if it exists, and raises an error if it doesn't, or returns None if `non_exist_ok` is True'''
         data_path = version.data_directory.joinpath(self.file_name)
         if not data_path.exists():
@@ -56,29 +60,29 @@ class AbstractDataminerCollection():
         with open(data_path, "rt") as f:
             return json.load(f, cls=self.domain.json_decoder)
 
-    def remove_data_file(self, version:Version.Version) -> None:
+    def remove_data_file(self, version:Version) -> None:
         data_path = version.data_directory.joinpath(self.file_name)
         if data_path.exists():
             data_path.unlink()
 
-    def has_tag(self, tag:StructureTag.StructureTag) -> bool:
+    def has_tag(self, tag:StructureTag) -> bool:
         '''
         Returns True if the given tag could potentially be in this Version.
         :tag: The tag to test for.
         '''
         return self.structure.has_tag(tag)
 
-    def get_tag_paths_from_raw(self, data:Any, version:Version.Version, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment) -> dict[StructureTag.StructureTag,Sequence[DataPath.DataPath]]:
+    def get_tag_paths_from_raw(self, data:Any, version:Version, tags:list[StructureTag], environment:PrinterEnvironment) -> dict[StructureTag,Sequence[DataPath]]:
         if not self.supports_version(version):
             return {tag: () for tag in tags}
         return self.structure.get_tag_paths_from_raw(data, tags, version, environment)
 
-    def get_tag_paths_from_containerized(self, data:Con.Con, version:Version.Version, tags:list[StructureTag.StructureTag], environment:StructureEnvironment.PrinterEnvironment) -> dict[StructureTag.StructureTag,Sequence[DataPath.DataPath]]:
+    def get_tag_paths_from_containerized(self, data:Con, version:Version, tags:list[StructureTag], environment:PrinterEnvironment) -> dict[StructureTag,Sequence[DataPath]]:
         if not self.supports_version(version):
             return {tag: () for tag in tags}
         return self.structure.get_tag_paths_from_containerized(data, tags, version, environment)
 
-    def print_initial(self, version:Version.Version, environment:StructureEnvironment.StructureEnvironment, *, store:bool=True) -> str:
+    def print_initial(self, version:Version, environment:StructureEnvironment, *, store:bool=True) -> str:
         version_data = self.get_data_file(version)
         structure_info = self.get_structure_info(version)
         report = self.structure.initial_report(version_data, version, structure_info, environment)
@@ -88,10 +92,10 @@ class AbstractDataminerCollection():
 
     def compare(
         self,
-        version1:Version.Version,
-        version2:Version.Version,
-        versions_between:list[Version.Version],
-        environment:StructureEnvironment.StructureEnvironment,
+        version1:Version,
+        version2:Version,
+        versions_between:list[Version],
+        environment:StructureEnvironment,
         *,
         store:bool=True,
     ) -> str:
@@ -106,10 +110,10 @@ class AbstractDataminerCollection():
             self.structure.store(report, self.name)
         return report
 
-    def get_structure_info(self, version:Version.Version) -> StructureInfo.StructureInfo:
+    def get_structure_info(self, version:Version) -> StructureInfo:
         ...
 
-    def check_types(self, version:Version.Version, environment:StructureEnvironment.PrinterEnvironment) -> None:
+    def check_types(self, version:Version, environment:PrinterEnvironment) -> None:
         if not self.supports_version(version):
             return
         data = self.get_data_file(version)
@@ -125,34 +129,34 @@ class AbstractDataminerCollection():
         '''Clears all caches of this DataminerCollection's Structure.'''
         self.structure.clear_all_caches()
 
-    def clear_old_caches(self, structure_infos:Container[StructureInfo.StructureInfo]) -> None:
+    def clear_old_caches(self, structure_infos:Container[StructureInfo]) -> None:
         '''Clears items from caches of this DataminerCollection's Structure and all of its children that are too old.'''
         self.structure.clear_old_caches(structure_infos)
 
-    def supports_version(self, version:Version.Version) -> bool:
+    def supports_version(self, version:Version) -> bool:
         return True
 
-    def get_data_file_path(self, version:Version.Version) -> Path:
+    def get_data_file_path(self, version:Version) -> Path:
         return version.data_directory.joinpath(self.file_name)
 
-    def get_referenced_files(self, version:Version.Version, structure_tags:dict[str,StructureTag.StructureTag], referenced_files:set[int]) -> None:
-        structure_environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.garbage_collection, self.domain)
+    def get_referenced_files(self, version:Version, structure_tags:dict[str,StructureTag], referenced_files:set[int]) -> None:
+        structure_environment = StructureEnvironment(EnvironmentType.garbage_collection, self.domain)
         data_file = self.get_data_file(version, non_exist_ok=True)
         if data_file is None: return
         structure = self.structure
         file_tags = [structure_tag for structure_tag in structure_tags.values() if structure_tag.is_file]
         if structure.children_has_garbage_collection or structure.has_tags(file_tags):
             structure_info = self.get_structure_info(version)
-            environment = StructureEnvironment.PrinterEnvironment(structure_environment, structure_info, None, version, 0)
+            environment = PrinterEnvironment(structure_environment, structure_info, None, version, 0)
             containerized_data = structure.get_containerized_from_raw(data_file, version, environment)
-            trace = Trace.Trace()
+            trace = Trace()
             structure.get_referenced_files(containerized_data, trace, environment) # this is necessary just in case files appear only after normalization
             structure.print_exception_list(trace, (version,))
             for file_tag, paths in self.get_tag_paths_from_containerized(containerized_data, version, file_tags, environment).items(): # this is necessary just in case files are referenced only by a hash that isn't used.
                 for data_path in paths:
                     match data_path.embedded_data:
                         case str():
-                            referenced_files.add(File.hash_str_to_int(data_path.embedded_data))
+                            referenced_files.add(hash_str_to_int(data_path.embedded_data))
                         case int():
                             referenced_files.add(data_path.embedded_data)
                         case _:

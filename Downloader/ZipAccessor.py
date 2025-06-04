@@ -1,16 +1,16 @@
 import zipfile
 from typing import Any, BinaryIO, Sequence, TypedDict
 
-import Downloader.DirectoryAccessor as DirectoryAccessor
-import Downloader.FileAccessor as FileAccessor
+from Downloader.DirectoryAccessor import DirectoryAccessor
+from Downloader.FileAccessor import FileAccessor
 
 
 class LinkedAccessorsTypedDict(TypedDict):
-    file: FileAccessor.FileAccessor
+    file: FileAccessor
 
-class ZipAccessor(DirectoryAccessor.DirectoryAccessor):
+class ZipAccessor(DirectoryAccessor):
 
-    linked_accessors = {"file": FileAccessor.FileAccessor}
+    linked_accessors = {"file": FileAccessor}
 
     __slots__ = (
         "_file_list",

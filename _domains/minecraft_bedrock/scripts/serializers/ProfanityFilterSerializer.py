@@ -1,10 +1,10 @@
-import base64
+from base64 import b64decode
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 __all__ = ("ProfanityFilterSerializer",)
 
-class ProfanityFilterSerializer(Serializer.Serializer[list[str]]):
+class ProfanityFilterSerializer(Serializer[list[str]]):
 
     def deserialize(self, data: bytes) -> list[str]:
-        return base64.b64decode(data).decode().splitlines()
+        return b64decode(data).decode().splitlines()

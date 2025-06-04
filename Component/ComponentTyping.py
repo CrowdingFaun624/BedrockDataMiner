@@ -1,7 +1,7 @@
 from types import EllipsisType
 from typing import Any, Callable, Literal, NotRequired, Required, TypedDict
 
-import Component.Component as Component
+from Component.Component import Component
 
 
 class AccessorTypedDict(TypedDict):
@@ -299,4 +299,4 @@ type ComponentTypedDicts = \
     VersionTypedDict
 
 type ComponentGroupFileType = dict[str,ComponentTypedDicts]
-type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component.Component",str|None,tuple[str,...]],"Component.Component|EllipsisType"]
+type CreateComponentFunction = Callable[[ComponentTypedDicts,"Component",str|None,tuple[str,...]],"Component|EllipsisType"]

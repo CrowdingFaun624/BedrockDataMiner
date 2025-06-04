@@ -1,21 +1,21 @@
 from itertools import pairwise
 from types import EllipsisType
-from typing import Any, Callable, Mapping, Sequence
+from typing import Any, Callable, Container, Mapping, Sequence
 
-import Structure.Container as Con
-import Structure.DataPath as DataPath
-import Structure.Difference as Diff
-import Structure.Normalizer as Normalizer
-import Structure.SimilarityCache as SimilarityCache
-import Structure.Structure as Structure
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureInfo as StructureInfo
-import Structure.StructureTag as StructureTag
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Structure.Container import Con, Don
+from Structure.DataPath import DataPath
+from Structure.Difference import Diff
+from Structure.Normalizer import Normalizer
+from Structure.SimilarityCache import SimilarityCache
+from Structure.Structure import Structure
+from Structure.StructureEnvironment import ComparisonEnvironment, PrinterEnvironment
+from Structure.StructureInfo import StructureInfo
+from Structure.StructureTag import StructureTag
+from Utilities.Exceptions import InvalidStateError
+from Utilities.Trace import Trace
 
 
-class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]):
+class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]):
     '''
     Passes data through by choosing a particular Structure.
     '''
@@ -30,45 +30,45 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
 
     def link_passthrough_structure(
         self,
-        normalizers:Sequence[Normalizer.Normalizer],
-        post_normalizers:Sequence[Normalizer.Normalizer],
+        normalizers:Sequence[Normalizer],
+        post_normalizers:Sequence[Normalizer],
         pre_normalized_types:tuple[type,...],
-        tags:set[StructureTag.StructureTag],
+        tags:set[StructureTag],
     ) -> None:
         self.normalizers = normalizers
         self.post_normalizers = post_normalizers
         self.pre_normalized_types = pre_normalized_types
         self.tags = tags
 
-        self.similarity_cache:SimilarityCache.SimilarityCache[Con.Con[D]] = SimilarityCache.SimilarityCache()
+        self.similarity_cache:SimilarityCache[Con[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
         self.similarity_cache.clear(keep)
 
-    def get_structure(self, data:D, trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None:
+    def get_structure(self, data:D, trace:Trace, environment:PrinterEnvironment) -> Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None:
         '''
         Returns a Structure that can act on the same data as this Structure or None.
         '''
         ...
 
-    def get_structure_chain_end(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure|None:
+    def get_structure_chain_end(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> Structure|None:
         with trace.enter(self, self.name, data):
             structure = self.get_structure(data.data, trace, environment)
             return structure.get_structure_chain_end(data, trace, environment) if structure is not None else None
 
-    def get_substructure_chain_end(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Structure.Structure|None:
+    def get_substructure_chain_end(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> Structure|None:
         substructure = self.get_structure(data.data, trace, environment)
         if substructure is None:
             return None
         else:
             return substructure.get_structure_chain_end(data, trace, environment)
 
-    def diffize(self, data: Con.Con[D], bundle: tuple[int, ...], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> Mapping[tuple[int,...],Con.Don[D]]|EllipsisType:
+    def diffize(self, data: Con[D], bundle: tuple[int, ...], trace: Trace, environment: ComparisonEnvironment) -> Mapping[tuple[int,...],Don[D]]|EllipsisType:
         with trace.enter(self, self.name, data):
             structures = [(branch, self.get_structure(data.data, trace, environment[branch])) for branch in bundle]
-            structure_bundles:list[tuple[tuple[int,...], Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None]] = []
+            structure_bundles:list[tuple[tuple[int,...], Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None]] = []
             current_bundle:list[int] = []
-            current_structure:Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None|EllipsisType = ...
+            current_structure:Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None|EllipsisType = ...
             for branch, structure in structures:
                 if current_structure is ... or structure is current_structure:
                     current_bundle.append(branch)
@@ -78,7 +78,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
                 current_structure = structure
             assert current_structure is not ...
             structure_bundles.append((tuple(current_bundle), current_structure))
-            output:dict[tuple[int,...], Con.Don[D]] = {}
+            output:dict[tuple[int,...], Don[D]] = {}
             for local_bundle, structure in structure_bundles:
                 if structure is None:
                     output[local_bundle] = data.as_don(local_bundle)
@@ -90,21 +90,21 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
             return output
         return ...
 
-    def type_check(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> None:
+    def type_check(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> None:
         with trace.enter(self, self.name, data):
             self.type_check_extra(data, trace, environment)
             structure = self.get_structure(data.data, trace, environment)
             if structure is not None:
                 structure.type_check(data, trace, environment)
 
-    def type_check_extra(self, data:Con.Con[D], trace:Trace.Trace, environment:StructureEnvironment.PrinterEnvironment) -> None:
+    def type_check_extra(self, data:Con[D], trace:Trace, environment:PrinterEnvironment) -> None:
         ...
 
-    def get_tag_paths(self, data: Con.Con[D], tag: StructureTag.StructureTag, data_path: DataPath.DataPath, trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> Sequence[DataPath.DataPath]:
+    def get_tag_paths(self, data: Con[D], tag: StructureTag, data_path: DataPath, trace: Trace, environment: PrinterEnvironment) -> Sequence[DataPath]:
         with trace.enter(self, self.name, data):
             if tag not in self.children_tags:
                 return ()
-            output:list[DataPath.DataPath] = []
+            output:list[DataPath] = []
             if tag in self.tags:
                 output.append(data_path.copy(...).embed(data))
             structure = self.get_structure(data.data, trace, environment)
@@ -113,7 +113,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
             return output
         return ()
 
-    def get_referenced_files(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> set[int]:
+    def get_referenced_files(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> set[int]:
         with trace.enter(self, self.name, data):
             output:set[int] = set()
             if not self.children_has_garbage_collection: return set()
@@ -123,12 +123,12 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
             return output
         return set()
 
-    def compare(self, datas: tuple[tuple[int, Con.Con[D]], ...], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[Con.Don[D]|Diff.Diff[Con.Don[D]]|EllipsisType, bool, bool]:
+    def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]]|EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
             structures = {branch: (data, self.get_substructure_chain_end(data, trace, environment[branch])) for branch, data in datas}
 
             bundles:list[tuple[int,...]] = []
-            last_structure:Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None|EllipsisType = ...
+            last_structure:Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None|EllipsisType = ...
             current_bundle:list[int] = []
             for branch, (data, structure) in structures.items():
                 if last_structure is ... or last_structure is structure:
@@ -139,7 +139,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
                 last_structure = structure
             bundles.append(tuple(current_bundle))
 
-            bundle_comparisons:dict[tuple[int,...],Con.Don[D]] = {}
+            bundle_comparisons:dict[tuple[int,...],Don[D]] = {}
             any_changes:bool = False
             any_internal_changes:bool = False
             for bundle in bundles:
@@ -161,20 +161,20 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
                 if comparison is ...:
                     # error has occurred in `structure.compare`
                     continue
-                elif isinstance(comparison, Diff.Diff):
+                elif isinstance(comparison, Diff):
                     bundle_comparisons.update(comparison.items)
                 else:
                     bundle_comparisons[bundle] = comparison
 
-            return Diff.Diff(bundle_comparisons, any_internal_changes), any_changes, any_internal_changes
+            return Diff(bundle_comparisons, any_internal_changes), any_changes, any_internal_changes
         return ..., False, False
 
     def get_consecutive_similarities(
         self,
-        local_datas:tuple[tuple[int,Con.Con[D]],...],
-        trace:Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment,
-    ) -> list[tuple[int, int, Con.Con[D], Con.Con[D], tuple[float, bool]]]:
+        local_datas:tuple[tuple[int,Con[D]],...],
+        trace:Trace,
+        environment:ComparisonEnvironment,
+    ) -> list[tuple[int, int, Con[D], Con[D], tuple[float, bool]]]:
         return [
             (
                 branch1,
@@ -186,8 +186,8 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
             for (branch1, data1), (branch2, data2) in pairwise(local_datas)
         ]
 
-    def get_without_structure_comparison(self, consecutive_similarities:list[tuple[int, int, Con.Con[D], Con.Con[D], tuple[float, bool]]]) -> dict[tuple[int,...], Con.Don[D]]:
-        bundles:dict[tuple[int,...], Con.Don[D]] = {}
+    def get_without_structure_comparison(self, consecutive_similarities:list[tuple[int, int, Con[D], Con[D], tuple[float, bool]]]) -> dict[tuple[int,...], Don[D]]:
+        bundles:dict[tuple[int,...], Don[D]] = {}
         current_bundle:list[int] = [consecutive_similarities[0][0]] # start with the first branch because it won't be added otherwise.
         for branch1, branch2, data1, data2, (_, identical) in consecutive_similarities:
             if identical:
@@ -198,7 +198,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
         bundles[tuple(current_bundle)] = data2.as_don((branch2,))
         return bundles
 
-    def get_similarity(self, data1: Con.Con[D], data2: Con.Con[D], branch1: int, branch2: int, trace: Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> tuple[float, bool]:
+    def get_similarity(self, data1: Con[D], data2: Con[D], branch1: int, branch2: int, trace: Trace, environment:ComparisonEnvironment) -> tuple[float, bool]:
         with trace.enter(self, self.name, (data1, data2)):
             if data1 == data2:
                 return 1.0, True
@@ -214,32 +214,32 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
                 return self.similarity_cache.set((float(is_similar := (data1 == data2)), is_similar), data1, data2, environment1.structure_info, environment2.structure_info)
         return 0.0, False
 
-    def print_branch(self, data: Con.Con[D], trace: Trace.Trace, environment: StructureEnvironment.PrinterEnvironment) -> BO|EllipsisType:
+    def print_branch(self, data: Con[D], trace: Trace, environment: PrinterEnvironment) -> BO|EllipsisType:
         with trace.enter(self, self.name, data):
             structure = self.get_structure(data.data, trace, environment)
-            printer:Callable[[Con.Con[D], Trace.Trace, StructureEnvironment.PrinterEnvironment]]
+            printer:Callable[[Con[D], Trace, PrinterEnvironment]]
             if structure is not None:
                 printer = structure.print_branch
             elif environment.default_delegate is not None:
                 printer = environment.default_delegate.print_branch
             else:
-                raise Exceptions.InvalidStateError(self)
+                raise InvalidStateError(self)
             return printer(data, trace, environment)
         return ...
 
-    def print_comparison(self, data: Con.Don[D] | Diff.Diff[Con.Don[D]], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data: Don[D] | Diff[Don[D]], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
         with trace.enter(self, self.name, data):
             return self.get_comparison_printer(data, trace, environment)(data, trace, environment)
         return ...
 
     def get_comparison_printer(
         self,
-        data: Con.Don[D] | Diff.Diff[Con.Don[D]],
-        trace: Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment,
-    ) -> Callable[[Con.Don[D]|Diff.Diff[Con.Don[D]], Trace.Trace, StructureEnvironment.ComparisonEnvironment], Any]:
-        if isinstance(data, Con.Don):
-            structure:Structure.Structure[D, Con.Con[D], Con.Don[D], Con.Don[D]|Diff.Diff[Con.Don[D]], BO, CO]|None|EllipsisType = ...
+        data: Don[D] | Diff[Don[D]],
+        trace: Trace,
+        environment:ComparisonEnvironment,
+    ) -> Callable[[Don[D]|Diff[Don[D]], Trace, ComparisonEnvironment], Any]:
+        if isinstance(data, Don):
+            structure:Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None|EllipsisType = ...
             for branch in data.iter_branches():
                 new_structure = self.get_substructure_chain_end(data.get_con(branch), trace, environment[branch])
                 if structure is ...:
@@ -249,10 +249,10 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure.Structure[C, Con.Con[
             else: # if structures obtained from all branches are the same.
                 if structure is not None and structure is not ...: # an error occurred.
                     return structure.print_comparison
-        if isinstance(data, Diff.Diff) and data.length == 1 and\
+        if isinstance(data, Diff) and data.length == 1 and\
             len(set((structures := [self.get_substructure_chain_end(data[branch].get_con(branch), trace, environment[branch]) for branch in range(data.branch_count)]))) == 1 and structures[0] is not None:
             # if all structures are the same and not None.
             return structures[0].print_comparison
         if environment.default_delegate is not None:
             return environment.default_delegate.print_comparison
-        raise Exceptions.InvalidStateError(self)
+        raise InvalidStateError(self)

@@ -1,9 +1,9 @@
 from collections import defaultdict
 from typing import Any, NotRequired, TypedDict, cast
 
-import Domain.Domains as Domains
-import Serializer.Serializer as Serializer
-import Utilities.File as File
+from Domain.Domains import get_domain_from_module
+from Serializer.Serializer import Serializer
+from Utilities.File import FakeFile, File
 
 __all__ = ("models_model_normalize",)
 
@@ -42,12 +42,12 @@ model_file_type2 = dict[str,model2_model_typed_dict]
 
 output_typed_dict = TypedDict("output_typed_dict", {"minecraft:geometry": geometry_typed_dict, "format_version": str})
 
-domain = Domains.get_domain_from_module(__name__)
+domain = get_domain_from_module(__name__)
 
-def models_model_normalize(data:dict[str,dict[str,File.File[model_file_type1|model_file_type2]]], serializer:str) -> File.FakeFile[dict[str,dict[str,output_typed_dict]]]:
+def models_model_normalize(data:dict[str,dict[str,File[model_file_type1|model_file_type2]]], serializer:str) -> FakeFile[dict[str,dict[str,output_typed_dict]]]:
     output:dict[str,dict[str,output_typed_dict]] = defaultdict(lambda: {})
     file_hashes:list[int] = []
-    _serializer = domain.script_referenceable.get(serializer, Serializer.Serializer)
+    _serializer = domain.script_referenceable.get(serializer, Serializer)
     for model_file_name, resource_packs in data.items():
         for resource_pack_name, model_file in resource_packs.items():
             file_hashes.append(hash(model_file))
@@ -79,4 +79,4 @@ def models_model_normalize(data:dict[str,dict[str,File.File[model_file_type1|mod
                         "format_version": format_version,
                         "minecraft:geometry": model_data,
                     }
-    return File.FakeFile("combined_models_file", output, None, hash(tuple(file_hashes)))
+    return FakeFile("combined_models_file", output, None, hash(tuple(file_hashes)))

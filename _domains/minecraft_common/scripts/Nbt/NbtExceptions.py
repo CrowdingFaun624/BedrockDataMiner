@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-import _domains.minecraft_common.scripts.Nbt.SnbtParser as SnbtParser
-import Utilities.Exceptions as Exceptions
+from Utilities.Exceptions import message
 
+if TYPE_CHECKING:
+    from _domains.minecraft_common.scripts.Nbt.SnbtParser import Reader
 
 class NbtException(Exception):
     "Abstract Exception class for errors relating to NBT."
@@ -23,7 +24,7 @@ class CompoundDuplicateKeyError(NbtParseException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"A TAG_Compound has a duplicate key \"{self.key}\"{Exceptions.message(self.message)}"
+        return f"A TAG_Compound has a duplicate key \"{self.key}\"{message(self.message)}"
 
 class InvalidNbtContentType(NbtParseException):
     "An NBT tag has an invalid content type."
@@ -38,8 +39,8 @@ class InvalidNbtContentType(NbtParseException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"Invalid NBT content type {self.content_type}{Exceptions.message(self.message)}"
+        return f"Invalid NBT content type {self.content_type}{message(self.message)}"
 
 class SnbtParseError(NbtException):
-    def __init__(self, message:str, reader:"SnbtParser.Reader", other_exceptions:list["SnbtParseError"]|None=None) -> None:
+    def __init__(self, message:str, reader:"Reader", other_exceptions:list["SnbtParseError"]|None=None) -> None:
         super().__init__(message, reader.position, reader.stack, other_exceptions)

@@ -2,7 +2,7 @@ import struct
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    import _domains.minecraft_common.scripts.Nbt.NbtTypes as NbtTypes
+    from _domains.minecraft_common.scripts.Nbt.NbtTypes import End
 
 
 class DataReader():
@@ -19,11 +19,11 @@ class DataReader():
         self.position += amount
         return output
 
-    def unpack(self, format:str, amount:int, endianness:"NbtTypes.End") -> tuple[Any,...]:
+    def unpack(self, format:str, amount:int, endianness:"End") -> tuple[Any,...]:
         format = (endianness.value + format) if endianness is not None else format
         return struct.unpack(format, self.read(amount))
 
-    def unpack_tuple(self, format:str, amount:int, endianness:"NbtTypes.End") -> Any:
+    def unpack_tuple(self, format:str, amount:int, endianness:"End") -> Any:
         format = (endianness.value + format) if endianness is not None else format
         # duplicated because this function is called a zillion times
         # and we don't need the extra function slowing it down.

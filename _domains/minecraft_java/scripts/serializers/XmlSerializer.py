@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Any, NotRequired, TypedDict
 
 import defusedxml.ElementTree as defusedxml
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 if TYPE_CHECKING:
     from xml.etree.ElementTree import Element
@@ -16,7 +16,7 @@ class ElementTypedDict(TypedDict):
     children: NotRequired[list["ElementTypedDict"]]
     tail: NotRequired[str]
 
-class XmlSerializer(Serializer.Serializer):
+class XmlSerializer(Serializer):
 
     def encode_xml_element(self, data:"Element") -> ElementTypedDict:
         output:ElementTypedDict = {

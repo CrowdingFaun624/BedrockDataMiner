@@ -1,17 +1,17 @@
 from types import EllipsisType, NoneType
 from typing import Any, Sequence
 
-import Structure.Container as Con
-import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as Diff
-import Structure.Structure as Structure
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Structure.Container import Con, Don
+from Structure.Delegate.Delegate import Delegate
+from Structure.Difference import Diff
+from Structure.Structure import Structure
+from Structure.StructureEnvironment import PrinterEnvironment
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
 type LineType = tuple[int,str]
 
-class LineDelegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None](Delegate.Delegate[DC, DD, S, list[LineType], list[LineType], list[LineType], list[LineType]]):
+class LineDelegate[DC:Con, DD:Don|Diff, S:Structure|None](Delegate[DC, DD, S, list[LineType], list[LineType], list[LineType], list[LineType]]):
 
     __slots__ = (
         "enquote_strings",
@@ -19,8 +19,8 @@ class LineDelegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None]
         "passthrough",
     )
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("enquote_strings", False, bool),
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("enquote_strings", False, bool),
     )
 
     def __init__(self, structure: S, keys: dict[str, Any], field:str, enquote_strings:bool=True, passthrough:bool=False) -> NoneType:
@@ -31,10 +31,10 @@ class LineDelegate[DC:Con.Con, DD:Con.Don|Diff.Diff, S:Structure.Structure|None]
 
     def get_item_output[A](
         self,
-        item:Con.Con[A]|EllipsisType,
-        structure:Structure.Structure[A, Con.Con[A], Con.Don[A], Con.Don[A]|Diff.Diff[Con.Don[A]], list[LineType], list[LineType]]|None,
-        trace:Trace.Trace,
-        environment:StructureEnvironment.PrinterEnvironment,
+        item:Con[A]|EllipsisType,
+        structure:Structure[A, Con[A], Don[A], Don[A]|Diff[Don[A]], list[LineType], list[LineType]]|None,
+        trace:Trace,
+        environment:PrinterEnvironment,
     ) -> list[LineType]:
         if item is ...:
             return []

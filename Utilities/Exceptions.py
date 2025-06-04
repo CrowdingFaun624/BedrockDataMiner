@@ -1,45 +1,43 @@
-import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Container, Literal, Optional, Sequence
 
 if TYPE_CHECKING:
-    import Component.Capabilities as Capabilities
-    import Component.Component as Component
-    import Component.ComponentTyping as ComponentTyping
-    import Component.Field.Field as Field
-    import Component.ImporterEnvironment as ImporterEnvironment
-    import Component.Pattern as Pattern
-    import Component.Structure.StructureBaseComponent as StructureBaseComponent
-    import Component.Version.Field.VersionRangeField as VersionRangeField
-    import Component.Version.VersionComponent as VersionComponent
-    import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
-    import Dataminer.BuiltIns.TagSearcherDataminer as TagSearcherDataminer
-    import Dataminer.Dataminer as Dataminer
-    import Dataminer.DataminerEnvironment as DataminerEnvironment
-    import Dataminer.DataminerSettings as DataminerSettings
-    import Downloader.Accessor as Accessor
-    import Serializer.Serializer as Serializer
-    import Structure.DataPath as DataPath
-    import Structure.Delegate.Delegate as Delegate
-    import Structure.Normalizer as Normalizer
-    import Structure.Structure as Structure
-    import Structure.StructureBase as StructureBase
-    import Structure.StructureInfo as StructureInfo
-    import Structure.StructureTag as StructureTag
-    import Tablifier.Tablifier as Tablifier
-    import Utilities.Cache as Cache
-    import Utilities.DataFile as DataFile
-    import Utilities.File as File
-    import Utilities.Log as Log
-    import Utilities.Scripts as Scripts
-    import Utilities.Trace as Trace
-    import Utilities.TypeUtilities as TypeUtilities
-    import Utilities.TypeVerifier as TypeVerifier
-    import Version.Version as Version
-    import Version.VersionFile as VersionFile
-    import Version.VersionFileType as VersionFileType
-    import Version.VersionRange as VersionRange
-    import Version.VersionTag.VersionTag as VersionTag
+    from Component.Capabilities import Capabilities
+    from Component.Component import Component
+    from Component.ComponentTyping import ComponentTypedDicts
+    from Component.Field.Field import Field
+    from Component.ImporterEnvironment import ImporterEnvironment
+    from Component.Pattern import Pattern
+    from Component.Structure.StructureBaseComponent import StructureBaseComponent
+    from Component.Version.Field.VersionRangeField import VersionRangeField
+    from Component.Version.VersionComponent import VersionComponent
+    from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+    from Dataminer.BuiltIns.TagSearcherDataminer import DataReader
+    from Dataminer.Dataminer import Dataminer, NullDataminer
+    from Dataminer.DataminerEnvironment import DataminerDependencies
+    from Dataminer.DataminerSettings import DataminerSettings
+    from Downloader.Accessor import Accessor
+    from Serializer.Serializer import Serializer
+    from Structure.DataPath import DataPath
+    from Structure.Delegate.Delegate import Delegate
+    from Structure.Normalizer import Normalizer
+    from Structure.Structure import Structure
+    from Structure.StructureInfo import StructureInfo
+    from Structure.StructureTag import StructureTag
+    from Tablifier.Tablifier import Tablifier
+    from Utilities.Cache import Cache
+    from Utilities.DataFile import DataFile
+    from Utilities.File import AbstractFile, File
+    from Utilities.Log import Log
+    from Utilities.Scripts import Script
+    from Utilities.TypeUtilities import TypeSet
+    from Utilities.TypeVerifier import TypedDictTypeVerifier, TypeVerifier
+    from Version.Version import Version
+    from Version.VersionFile import VersionFile
+    from Version.VersionFileType import VersionFileType
+    from Version.VersionRange import VersionRange
+    from Version.VersionTag.VersionTag import VersionTag
 
 def message[a](message:a|None, no_message:str="!", yes_message:str=" %s!", stringify_function:Callable[[a],str]|None=None) -> str:
     if stringify_function is None:
@@ -173,7 +171,7 @@ class CacheException(Exception):
 class CacheCannotWriteError(CacheException):
     "Attempted to write to a Cache that cannot be written to."
 
-    def __init__(self, cache:"Cache.Cache", message:Optional[str]=None) -> None:
+    def __init__(self, cache:"Cache", message:Optional[str]=None) -> None:
         '''
         :cache: The Cache that cannot be written to.
         :message: Additional text to place after the main message.
@@ -188,7 +186,7 @@ class CacheCannotWriteError(CacheException):
 class CacheDeserializeError(CacheException):
     "Attempted to write a Cache that has no `deserialize` method defined."
 
-    def __init__(self, cache:"Cache.Cache", message:Optional[str]=None) -> None:
+    def __init__(self, cache:"Cache", message:Optional[str]=None) -> None:
         '''
         :cache: The Cache with no `deserialize` method.
         :message: Additional text to place after the main message.
@@ -203,7 +201,7 @@ class CacheDeserializeError(CacheException):
 class CacheFileNotFoundError(CacheException):
     "Attempted to open a Cache that has no `get_default_content` method and no existing file."
 
-    def __init__(self, cache:"Cache.Cache", message:Optional[str]=None) -> None:
+    def __init__(self, cache:"Cache", message:Optional[str]=None) -> None:
         '''
         :cache: The Cache with no `get_default_content` method.
         :message: Additional text to place after the main message.
@@ -221,7 +219,7 @@ class ComponentException(Exception):
 class BaseComponentCountError(ComponentException):
     "There is an invalid number of BaseComponents."
 
-    def __init__(self, structure_name:str, base_components:list["StructureBaseComponent.StructureBaseComponent"], message:Optional[str]=None) -> None:
+    def __init__(self, structure_name:str, base_components:list["StructureBaseComponent"], message:Optional[str]=None) -> None:
         '''
         :structure_name: The name of the Structure with an invalid count of BaseComponents.
         :base_components: The list of BaseComponents.
@@ -253,7 +251,7 @@ class ComponentDuplicateTypeError(ComponentException):
 class ComponentInvalidNameError(ComponentException):
     "A Component's name is invalid."
 
-    def __init__(self, component:"Component.Component", invalid_names:Optional[list[str]]=None, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component", invalid_names:Optional[list[str]]=None, message:Optional[str]=None) -> None:
         '''
         :component: The Component with an invalid name.
         :invalid_names: A list of names that this Component cannot have.
@@ -273,7 +271,7 @@ class ComponentInvalidVersionRangeException(ComponentException):
 class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
     "The new/old Version of the first/last sub-Component is not None."
 
-    def __init__(self, actual_value:"Version.Version", is_first:bool, message:Optional[str]=None) -> None:
+    def __init__(self, actual_value:"Version", is_first:bool, message:Optional[str]=None) -> None:
         '''
         :actual_value: The value that is present in the new Version instead of None.
         :is_first: Whether this DataminerSettings is the newest one or not.
@@ -290,7 +288,7 @@ class ComponentVersionRangeExists(ComponentInvalidVersionRangeException):
 class ComponentVersionRangeGap(ComponentInvalidVersionRangeException):
     "There is a gap in a Components's sub-Components' Versions."
 
-    def __init__(self, new_version:"Version.Version", old_version:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(self, new_version:"Version", old_version:"Version", message:Optional[str]=None) -> None:
         '''
         :new_version: The Version or the Version's name on the newer side of the gap.
         :old_version: The Version or the Version's name on the older side of the gap.
@@ -323,7 +321,7 @@ class ComponentVersionRangeMissing(ComponentInvalidVersionRangeException):
 class ComponentMismatchedTypesError(ComponentException):
     "The types of one Component and the types of another do not match."
 
-    def __init__(self, component1:"Component.Component", component1_types:list[type], component2:"Component.Component", component2_types:list[type], message:Optional[str]=None) -> None:
+    def __init__(self, component1:"Component", component1_types:list[type], component2:"Component", component2_types:list[type], message:Optional[str]=None) -> None:
         '''
         :component1: The first Component or a string representing it.
         :component1_types: The types allowed by the first Component.
@@ -395,7 +393,7 @@ class ComponentTypeContainmentError(ComponentException):
 class ComponentTypeInvalidTypeError(ComponentException):
     "A Component has a value in a TypeField that is not allowed."
 
-    def __init__(self, observed_type:type, allowed_types:"TypeUtilities.TypeSet", message:Optional[str]=None) -> None:
+    def __init__(self, observed_type:type, allowed_types:"TypeSet", message:Optional[str]=None) -> None:
         '''
         :observed_type: The type that is not allowed.
         :allowed_types: The set of types that this TypeField must be.
@@ -429,7 +427,7 @@ class ComponentTypeMissingError(ComponentException):
 class ComponentTypeRequiresComponentError(ComponentException):
     "A Component has a type that requires a Component but has no Component."
 
-    def __init__(self, component:"Component.Component|str", accepted_type:type, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component|str", accepted_type:type, message:Optional[str]=None) -> None:
         '''
         :component: The Component referencing the type or a string representing it.
         :accepted_type: The type requiring a Component.
@@ -461,7 +459,7 @@ class ComponentUnrecognizedTypeError(ComponentException):
 class ImporterEnvironmentNameCollisionError(ComponentException):
     "Two Component groups have the same name."
 
-    def __init__(self, name:str, importer_environment1:"ImporterEnvironment.ImporterEnvironment", importer_environment2:"ImporterEnvironment.ImporterEnvironment", message:Optional[str]=None) -> None:
+    def __init__(self, name:str, importer_environment1:"ImporterEnvironment", importer_environment2:"ImporterEnvironment", message:Optional[str]=None) -> None:
         '''
         :name: The name of the duplicate Component group.
         :importer_environment1: The ImporterEnvironment that produced the first Component group with this name.
@@ -480,7 +478,7 @@ class ImporterEnvironmentNameCollisionError(ComponentException):
 class ImporterEnvironmentFileNotFoundError(ComponentException):
     "An ImporterEnvironment refers to a file that does not exist and has no default content"
 
-    def __init__(self, path:Path, importer_environment:"ImporterEnvironment.ImporterEnvironment", message:Optional[str]=None) -> None:
+    def __init__(self, path:Path, importer_environment:"ImporterEnvironment", message:Optional[str]=None) -> None:
         '''
         :path: The Path the ImporterEnvironment refers to that does not exist.
         :importer_environment: The ImporterEnvironment that refers to the Path.
@@ -494,7 +492,7 @@ class ImporterEnvironmentFileNotFoundError(ComponentException):
 class ImporterEnvironmentPathCollisionError(ComponentException):
     "Two Component groups come from the same file."
 
-    def __init__(self, path:Path, importer_environment1:"ImporterEnvironment.ImporterEnvironment", importer_environment2:"ImporterEnvironment.ImporterEnvironment", message:Optional[str]=None) -> None:
+    def __init__(self, path:Path, importer_environment1:"ImporterEnvironment", importer_environment2:"ImporterEnvironment", message:Optional[str]=None) -> None:
         '''
         :path: The path of the duplicate Component group.
         :importer_environment1: The ImporterEnvironment that produced the first Component group with this path.
@@ -513,7 +511,7 @@ class ImporterEnvironmentPathCollisionError(ComponentException):
 class InlineComponentError(ComponentException):
     "An inline Component exists where it is not allowed."
 
-    def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_data:Optional["ComponentTyping.ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component", field:"Field", subcomponent_data:Optional["ComponentTypedDicts"]=None, message:Optional[str]=None) -> None:
         '''
         :component: The Component with the disallowed inline subcomponent.
         :field: The Field with the disallowed inline subcomponent.
@@ -532,7 +530,7 @@ class InlineComponentError(ComponentException):
 class InvalidComponentError(ComponentException):
     "The referenced Component has the wrong properties."
 
-    def __init__(self, component:"Component.Component", key:str|None, required_properties:"Pattern.Pattern", actual_capabilities:"Capabilities.Capabilities", options:list[str]|None, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component", key:str|None, required_properties:"Pattern", actual_capabilities:"Capabilities", options:list[str]|None, message:Optional[str]=None) -> None:
         '''
         :component: The Component that is being referenced.
         :key: The key used to reference the Component.
@@ -651,7 +649,7 @@ class MalformedComponentReferenceError(ComponentException):
 class ReferenceComponentError(ComponentException):
     "A reference Component exists where it is not allowed."
 
-    def __init__(self, component:"Component.Component", field:"Field.Field", subcomponent_name:Optional[str]=None, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component", field:"Field", subcomponent_name:Optional[str]=None, message:Optional[str]=None) -> None:
         '''
         :component: The Component with the disallowed inline subcomponent.
         :field: The Field with the disallowed inline subcomponent.
@@ -798,7 +796,7 @@ class DataFileException(Exception):
 class DataFileNothingToWriteError(DataFileException):
     "Called `write` on a DataFile without any content."
 
-    def __init__(self, source:"DataFile.DataFile", message:Optional[str]=None) -> None:
+    def __init__(self, source:"DataFile", message:Optional[str]=None) -> None:
         '''
         :source: The DataFile that has nothing to write.
         :message: Additional text to place after the main message.
@@ -816,7 +814,7 @@ class DataminerException(Exception):
 class DataminerAccessorWrongTypeError(DataminerException):
     "The assumed type of an Accessor is not its actual type."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", file_type:str, accessor_type:type["Accessor.Accessor"], options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", file_type:str, accessor_type:type["Accessor"], options:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer that attempted to access its Accessor.
         :file_type: The name of the VersionFile that has the wrong Accessor type.
@@ -837,7 +835,7 @@ class DataminerAccessorWrongTypeError(DataminerException):
 class DataminerCannotKnowFileTypeError(DataminerException):
     "Attempted to access a Dataminer's VersionFileTypes with no key, but there are too many VersionFileTypes."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", count:int, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", count:int, message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer with too many VersionFileTypes.
         :count: The number of VersionFileTypes.
@@ -869,7 +867,7 @@ class DataminerCollectionFileError(DataminerException):
 class DataminerDependencyOverwriteError(DataminerException):
     "Attempted to set an item of a DataminerDependencies object that already exists."
 
-    def __init__(self, dataminer_dependencies:"DataminerEnvironment.DataminerDependencies", dependency_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_dependencies:"DataminerDependencies", dependency_name:str, message:Optional[str]=None) -> None:
         '''
         :dataminer_dependencies: The DataminerDependencies that had an item overwritten.
         :dependency_name: The dependency that was overwritten.
@@ -886,7 +884,7 @@ class DataminerDependencyOverwriteError(DataminerException):
 class DataminerDuplicateFileNameError(DataminerException):
     "Two DataminerCollections have the same file name."
 
-    def __init__(self, file_name:str, dataminers:list["AbstractDataminerCollection.AbstractDataminerCollection"], message:Optional[str]=None) -> None:
+    def __init__(self, file_name:str, dataminers:list["AbstractDataminerCollection"], message:Optional[str]=None) -> None:
         '''
         :file_name: The file name shared by all of the DataminerCollections.
         :dataminers: The DataminerCollections that share the same file name.
@@ -903,7 +901,7 @@ class DataminerDuplicateFileNameError(DataminerException):
 class DataminerFileTypePermissionError(DataminerException):
     "A Dataminer attempted to access a VersionFileType it has no permissions to use."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", file_type_name:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", file_type_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer that attempted to access a VersionFileType without permission.
         :file_type_name: The name of the VersionFileType it attempted to access.
@@ -922,7 +920,7 @@ class DataminerFileTypePermissionError(DataminerException):
 class DataminerLacksActivateError(DataminerException):
     "A Dataminer did not override the activate function."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer that is missing the activate function.
         :message: Additional text to place after the main message.
@@ -937,7 +935,7 @@ class DataminerLacksActivateError(DataminerException):
 class DataminerNoFileTypeError(DataminerException):
     "A Dataminer has no linked VersionFileTypes and should."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer with no VersionFileTypes specified.
         :message: Additional text to place after the main message.
@@ -952,7 +950,7 @@ class DataminerNoFileTypeError(DataminerException):
 class DataminerNothingFoundError(DataminerException):
     "This Dataminer found nothing."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer that failed to find anything.
         :message: Additional text to place after the main message.
@@ -967,7 +965,7 @@ class DataminerNothingFoundError(DataminerException):
 class DataminerNullReturnError(DataminerException):
     "The Dataminer's activate method has returned None."
 
-    def __init__(self, dataminer:"AbstractDataminerCollection.AbstractDataminerCollection", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"AbstractDataminerCollection", message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer whose activate method returned None.
         :message: Additional text to place after the main message.
@@ -982,7 +980,7 @@ class DataminerNullReturnError(DataminerException):
 class DataminerSettingsImporterLoopError(DataminerException):
     "A DataminerSettings has an import loop."
 
-    def __init__(self, dataminer_settings:"DataminerSettings.DataminerSettings", loop_items:Sequence[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer_settings:"DataminerSettings", loop_items:Sequence[str], message:Optional[str]=None) -> None:
         '''
         :dataminer_settings: The initial DataminerSettings containing the loop.
         :loop_items: A list of DataminerCollection names contained in the loop.
@@ -999,7 +997,7 @@ class DataminerSettingsImporterLoopError(DataminerException):
 class DataminersFailureError(DataminerException):
     "Multiple Dataminers failed to activate."
 
-    def __init__(self, version:"Version.Version", dataminer_collections:list["AbstractDataminerCollection.AbstractDataminerCollection"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", dataminer_collections:list["AbstractDataminerCollection"], message:Optional[str]=None) -> None:
         '''
         :version: The Version for which datamining failed.
         :dataminer_collections: The DataminerCollections that failed to activate on this Version.
@@ -1016,7 +1014,7 @@ class DataminersFailureError(DataminerException):
 class DataminerUnrecognizedDependencyError(DataminerException):
     "A dependency does not exist."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", dependency_name:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", dependency_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer attempting to access the dependency.
         :dependency_name: The name of the DataminerCollection that does not exist.
@@ -1035,7 +1033,7 @@ class DataminerUnrecognizedDependencyError(DataminerException):
 class DataminerUnrecognizedSuffixError(DataminerException):
     "A file suffix is unrecognized."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", path:str, recognized_suffixes:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", path:str, recognized_suffixes:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer that found the unrecognized suffix.
         :path: The path containing the unrecognized suffix.
@@ -1054,7 +1052,7 @@ class DataminerUnrecognizedSuffixError(DataminerException):
 class DataminerUnregisteredDependencyError(DataminerException):
     "The dependency exists, but is not listed as a dependency by this Dataminer."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", dependency_name:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", dependency_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer attempting to access the dependency.
         :dependency_name: The name of the DataminerCollection that is unregistered.
@@ -1073,7 +1071,7 @@ class DataminerUnregisteredDependencyError(DataminerException):
 class MissingDataFileError(DataminerException):
     "The data file for this DataminerCollection is missing."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer|DataminerSettings.DataminerSettings|AbstractDataminerCollection.AbstractDataminerCollection", file_name:str, version:Optional["Version.Version"], message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer|DataminerSettings|AbstractDataminerCollection", file_name:str, version:Optional["Version"], message:Optional[str]=None) -> None:
         '''
         :dataminer_collection: The Dataminer, DataminerSettings, or DataminerCollection that is missing its file.
         :file_name: The name of the file that's missing.
@@ -1092,7 +1090,7 @@ class MissingDataFileError(DataminerException):
 class NullDataminerMethodError(DataminerException):
     "An invalid exception has been called on a NullDataminer."
 
-    def __init__(self, dataminer:"Dataminer.NullDataminer", method:Callable, message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"NullDataminer", method:Callable, message:Optional[str]=None) -> None:
         '''
         :dataminer: The NullDataminer that an invalid method was called on.
         :method: The method that was called on the NullDataminer.
@@ -1109,7 +1107,7 @@ class NullDataminerMethodError(DataminerException):
 class TagSearcherDependencyError(DataminerException):
     "A tag exists in a Dataminer that is not a dependency of this one."
 
-    def __init__(self, dataminer:"Dataminer.Dataminer", tag:"StructureTag.StructureTag", dataminer_collection:"AbstractDataminerCollection.AbstractDataminerCollection", message:Optional[str]=None) -> None:
+    def __init__(self, dataminer:"Dataminer", tag:"StructureTag", dataminer_collection:"AbstractDataminerCollection", message:Optional[str]=None) -> None:
         '''
         :dataminer: The Dataminer that attempted to access the tag.
         :tag: The tag that was found in an inaccessible DataminerCollection.
@@ -1128,7 +1126,7 @@ class TagSearcherDependencyError(DataminerException):
 class TagSearcherParseError(DataminerException):
     "Failed to parse a TagSearcher expression."
 
-    def __init__(self, data_reader:"TagSearcherDataminer.DataReader", reason:str, message:Optional[str]=None) -> None:
+    def __init__(self, data_reader:"DataReader", reason:str, message:Optional[str]=None) -> None:
         '''
         :data_reader: The DataReader object used to read the expression.
         :reason: The reason for the error.
@@ -1150,9 +1148,9 @@ class InapplicableDelegateError(DelegateException):
 
     def __init__(
         self,
-        delegate_type:type["Delegate.Delegate"],
-        structure:"Structure.Structure|StructureBase.StructureBase",
-        allowed_types:tuple[type["Structure.Structure|StructureBase.StructureBase|None"], ...],
+        delegate_type:type["Delegate"],
+        structure:"Structure",
+        allowed_types:tuple[type["Structure|None"], ...],
         message:Optional[str]=None,
     ) -> None:
         '''
@@ -1176,7 +1174,7 @@ class LogException(Exception):
 class LogInvalidFileError(LogException):
     "Attempted to create a Log with an invalid file path."
 
-    def __init__(self, log:"Log.Log", path:Path, message:Optional[str]=None) -> None:
+    def __init__(self, log:"Log", path:Path, message:Optional[str]=None) -> None:
         '''
         :log: The Log with the invalid file path.
         :path: The invalid path.
@@ -1193,7 +1191,7 @@ class LogInvalidFileError(LogException):
 class LogWriteTypeError(LogException):
     "Attempted to write to a Log with an invalid type for the Log's LogType."
 
-    def __init__(self, log:"Log.Log", write_type:type, allowed_types:tuple[type,...], message:Optional[str]=None) -> None:
+    def __init__(self, log:"Log", write_type:type, allowed_types:tuple[type,...], message:Optional[str]=None) -> None:
         '''
         :log: The Log that attempted to write to.
         :write_type: The type that was given to `Log.write`.
@@ -1275,7 +1273,7 @@ class ScriptNameCollideError(ScriptException):
 class ScriptGeneralityError(ScriptException):
     "Cannot use a Script key because it could refer to multiple objects"
 
-    def __init__(self, script_name:str, potential_meanings:list["Scripts.Script"], options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, script_name:str, potential_meanings:list["Script"], options:list[str], message:Optional[str]=None) -> None:
         '''
         :script_name: The key used to access the ScriptSet.
         :potential_meanings: The Scripts that `script_name` could refer to.
@@ -1370,7 +1368,7 @@ class UnrecognizedScriptObjectNameError(ScriptException):
 class WrongScriptError(ScriptException):
     "Attempted to import a Script that exists, but cannot be used in this situation."
 
-    def __init__(self, key:str, script:"Scripts.Script", type_name:str, options:list[str], message:Optional[str]=None) -> None:
+    def __init__(self, key:str, script:"Script", type_name:str, options:list[str], message:Optional[str]=None) -> None:
         '''
         :key: The key used to access the Script.
         :script: The Script that cannot be used in this situation.
@@ -1415,7 +1413,7 @@ class SerializerException(Exception):
 class FileWrongSerializerError(SerializerException):
     "A File cannot be read with the given Serializer."
 
-    def __init__(self, file:"File.AbstractFile", serializers:list["Serializer.Serializer|None"], serializer:"Serializer.Serializer|None", message:Optional[str]=None) -> None:
+    def __init__(self, file:"AbstractFile", serializers:list["Serializer|None"], serializer:"Serializer|None", message:Optional[str]=None) -> None:
         '''
         :file: The File without the correct Serializer.
         :serializers: The Serializers that the File does have.
@@ -1434,7 +1432,7 @@ class FileWrongSerializerError(SerializerException):
 class SerializerEllipsisError(SerializerException):
     "A Serializer returned an Ellipsis object."
 
-    def __init__(self, file:"File.AbstractFile", serializer:"Serializer.Serializer|None", message:Optional[str]=None) -> None:
+    def __init__(self, file:"AbstractFile", serializer:"Serializer|None", message:Optional[str]=None) -> None:
         '''
         :file: The File that was read using the Serializer.
         :serializer: The Serializer that returned an Ellipsis object.
@@ -1454,7 +1452,7 @@ class SerializerEllipsisError(SerializerException):
 class SerializationFailureError(SerializerException):
     "A Serializer failed to serialize."
 
-    def __init__(self, serializer:"Serializer.Serializer", file_name:str, message:Optional[str]=None) -> None:
+    def __init__(self, serializer:"Serializer", file_name:str, message:Optional[str]=None) -> None:
         '''
         :serializer: The Serializer that failed to serialize.
         :file_name: The name of the File that failed to be serialized.
@@ -1471,7 +1469,7 @@ class SerializationFailureError(SerializerException):
 class SerializerMethodNonexistentError(SerializerException):
     "A Serializer's method does not exist and was called."
 
-    def __init__(self, serializer:"Serializer.Serializer", method:Callable, message:Optional[str]=None) -> None:
+    def __init__(self, serializer:"Serializer", method:Callable, message:Optional[str]=None) -> None:
         '''
         :serializer: The Serializer missing a method.
         :method: The method that was called and is missing.
@@ -1488,7 +1486,7 @@ class SerializerMethodNonexistentError(SerializerException):
 class SerializerNoneError(SerializerException):
     "Attempted to read a File without using a Serializer."
 
-    def __init__(self, file:"File.File", message:Optional[str]=None) -> None:
+    def __init__(self, file:"File", message:Optional[str]=None) -> None:
         '''
         :file: The File that was read without a Serializer.
         :message: Additional text to place after the main message.
@@ -1506,7 +1504,7 @@ class StructureException(Exception):
 class ConditionStructureFilterError(StructureException):
     "A ConditionStructure encountered StructureInfo that fits none of its filters."
 
-    def __init__(self, structure:"Structure.Structure", structure_info:"StructureInfo.StructureInfo", message:Optional[str]=None) -> None:
+    def __init__(self, structure:"Structure", structure_info:"StructureInfo", message:Optional[str]=None) -> None:
         '''
         :structure: The Structure that encountered StructureInfo that fits none of its filters.
         :structure_info: The StructureInfo that fits no filter.
@@ -1522,7 +1520,7 @@ class ConditionStructureFilterError(StructureException):
 class SwitchStructureError(StructureException):
     "A SwitchStructure's switch function returned a value that is not in its switches."
 
-    def __init__(self, return_value:str, options:list[str], switch_structure:"Structure.Structure", message:Optional[str]=None) -> None:
+    def __init__(self, return_value:str, options:list[str], switch_structure:"Structure", message:Optional[str]=None) -> None:
         '''
         :return_value: The value that the SwitchStructure's switch function returned.
         :options: The values that the SwitchStructure expects the return value to be.
@@ -1541,7 +1539,7 @@ class SwitchStructureError(StructureException):
 class InvalidFileHashType(StructureException):
     "An is_file StructureTag references data that cannot be interpreted as a file hash."
 
-    def __init__(self, version:"Version.Version", structure_tag:"StructureTag.StructureTag", data_path:"DataPath.DataPath", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", structure_tag:"StructureTag", data_path:"DataPath", message:Optional[str]=None) -> None:
         '''
         :version: The Version that has the invalid file hash.
         :structure_tag: The StructureTag that has the invalid file hash.
@@ -1559,7 +1557,7 @@ class InvalidFileHashType(StructureException):
 class NormalizerEllipsisError(StructureException):
     "A Normalizer returned Ellipsis."
 
-    def __init__(self, normalizer:"Normalizer.Normalizer", message:Optional[str]=None) -> None:
+    def __init__(self, normalizer:"Normalizer", message:Optional[str]=None) -> None:
         super().__init__(normalizer, message)
         self.normalizer = normalizer
         self.message = message
@@ -1570,7 +1568,7 @@ class NormalizerEllipsisError(StructureException):
 class SequenceTooLongError(StructureException):
     "A StringStructure or SequenceStructure cannot compare or get similarity of data because it is too long."
 
-    def __init__(self, structure:"Structure.Structure", len1:int, len2:int, message:Optional[str]=None) -> None:
+    def __init__(self, structure:"Structure", len1:int, len2:int, message:Optional[str]=None) -> None:
         '''
         :structure: The StringStructure or SequenceStructure with the too-long data.
         :len1: The length of the first data.
@@ -1617,7 +1615,7 @@ class StructureCannotPrintFlatError(StructureException):
 class StructureError(StructureException):
     "A StructureBase has failed."
 
-    def __init__(self, structure_base:"Structure.Structure", message:Optional[str]=None) -> None:
+    def __init__(self, structure_base:"Structure", message:Optional[str]=None) -> None:
         '''
         :structure_base: The StructureBase that failed.
         :message: Additional text to place after the main message.
@@ -1649,7 +1647,7 @@ class StructureNoManipulationFunctionError(StructureException):
 class StructureRequiredKeyMissingError(StructureException):
     "A required key is missing."
 
-    def __init__(self, structure:"Structure.Structure", key:Any, message:Optional[str]=None) -> None:
+    def __init__(self, structure:"Structure", key:Any, message:Optional[str]=None) -> None:
         '''
         :structure: The Structure that should have the key.
         :key: The required key that is missing from the data.
@@ -1741,7 +1739,7 @@ class TablifierException(Exception):
 class TablifierError(StructureException):
     "A Tablifier has failed."
 
-    def __init__(self, tablifier:"Tablifier.Tablifier", message:Optional[str]=None) -> None:
+    def __init__(self, tablifier:"Tablifier", message:Optional[str]=None) -> None:
         '''
         :tablifier: The Tablifier that failed.
         :message: Additional text to place after the main message.
@@ -1759,7 +1757,7 @@ class TypeVerifierException(Exception):
 class TypedDictTypeVerifierKeysOverlapError(TypeVerifierException):
     "Attempted to extend a TypedDictTypeVerifier with another TypedDictTypeVerifier that shares its same keys!"
 
-    def __init__(self, type_verifier:"TypeVerifier.TypedDictTypeVerifier", other:"TypeVerifier.TypedDictTypeVerifier", keys_overlap:list[str]) -> None:
+    def __init__(self, type_verifier:"TypedDictTypeVerifier", other:"TypedDictTypeVerifier", keys_overlap:list[str]) -> None:
         super().__init__(type_verifier, other, keys_overlap)
         self.type_verifier = type_verifier
         self.other = other
@@ -1771,7 +1769,7 @@ class TypedDictTypeVerifierKeysOverlapError(TypeVerifierException):
 class TypeVerificationFailedError(TypeVerifierException):
     "Type verification failed."
 
-    def __init__(self, type_verifier:"TypeVerifier.TypeVerifier", message:Optional[str]=None) -> None:
+    def __init__(self, type_verifier:"TypeVerifier", message:Optional[str]=None) -> None:
         '''
         :type_verifier: The base TypeVerifier on which base_verify was called.
         :message: Additional text to place after the main message.
@@ -1852,7 +1850,7 @@ class VersionException(Exception):
 class DuplicateVersionTagOrderError(VersionException):
     "There are two VersionTags with the same name in VersionTagOrder"
 
-    def __init__(self, tag:"VersionTag.VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
+    def __init__(self, tag:"VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
         '''
         :tag: The VersionTag that is dulicated.
         :key: The key(s) in version_tags_order.json that has the duplicate VersionTag.
@@ -1869,7 +1867,7 @@ class DuplicateVersionTagOrderError(VersionException):
 class InvalidParentVersionError(VersionException):
     "A Version has an invalid parent Version."
 
-    def __init__(self, version:"Version.Version", parent:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", parent:"Version", message:Optional[str]=None) -> None:
         '''
         :version: The Version with an invalid parent Version.
         :parent: The parent of this Version.
@@ -1886,7 +1884,7 @@ class InvalidParentVersionError(VersionException):
 class InvalidVersionTimeError(VersionException):
     "A Version has an invalid time."
 
-    def __init__(self, version:"Version.Version", time:datetime.date|datetime.datetime, reason:str, message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", time:date|datetime, reason:str, message:Optional[str]=None) -> None:
         '''
         :version: The Version with an invalid time.
         :time: The time that is invalid.
@@ -1905,7 +1903,7 @@ class InvalidVersionTimeError(VersionException):
 class NoOrderVersionTagsFoundError(VersionException):
     "No ordering VersionTags were found."
 
-    def __init__(self, version:"Version.Version", version_tags:list["VersionTag.VersionTag"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", version_tags:list["VersionTag"], message:Optional[str]=None) -> None:
         '''
         :version: The Version with no ordering tags.
         :version_tags: The list of VersionTags containing no ordering tags.
@@ -1922,7 +1920,7 @@ class NoOrderVersionTagsFoundError(VersionException):
 class NotAllOrderTagsUsedError(VersionException):
     "Not all ordering VersionTags were used."
 
-    def __init__(self, tag:"VersionTag.VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
+    def __init__(self, tag:"VersionTag", key:str|tuple[str,...], message:Optional[str]=None) -> None:
         '''
         :tag: The VersionTag that is missing.
         :key: Which key(s) in version_tags_order.json has a missing VersionTag.
@@ -1939,7 +1937,7 @@ class NotAllOrderTagsUsedError(VersionException):
 class NotAnOrderTagError(VersionException):
     "The VersionTag is not an ordering tag."
 
-    def __init__(self, tag:"VersionTag.VersionTag", message:Optional[str]=None) -> None:
+    def __init__(self, tag:"VersionTag", message:Optional[str]=None) -> None:
         '''
         :tag: The VersionTag that is not an ordering tag.
         :message: Additional text to place after the main message.
@@ -1954,7 +1952,7 @@ class NotAnOrderTagError(VersionException):
 class UnreleasedDownloadableVersionError(VersionException):
     "A Version has the unreleased tag and has a method for downloading."
 
-    def __init__(self, version:"Version.Version", version_file:"VersionFile.VersionFile", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", version_file:"VersionFile", message:Optional[str]=None) -> None:
         '''
         :version: The Version with an unreleased tag and a method for downloading.
         :version_file: The VersionFile that cannot exist when the Version is unreleased.
@@ -1971,7 +1969,7 @@ class UnreleasedDownloadableVersionError(VersionException):
 class VersionChildError(VersionException):
     "The parent Version's ordering tag and child Version's ordering tag cannot go together."
 
-    def __init__(self, parent_version:"Version.Version", parent_tag:"VersionTag.VersionTag", child_version:"Version.Version", child_tag:"VersionTag.VersionTag", message:Optional[str]=None) -> None:
+    def __init__(self, parent_version:"Version", parent_tag:"VersionTag", child_version:"Version", child_tag:"VersionTag", message:Optional[str]=None) -> None:
         '''
         :parent_version: The parent Version.
         :parent_tag: The ordering VersionTag of the parent Version.
@@ -1992,7 +1990,7 @@ class VersionChildError(VersionException):
 class VersionChildOfMultipleTopLevelVersionsError(VersionException):
     "The Version is a child of multiple top-level Versions."
 
-    def __init__(self, version:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", message:Optional[str]=None) -> None:
         '''
         :version: The Version that is a child of multiple top-level Versions.
         :message: Additional text to place after the main message.
@@ -2007,7 +2005,7 @@ class VersionChildOfMultipleTopLevelVersionsError(VersionException):
 class VersionChildOrderError(VersionException):
     "The Version's children are in an invalid order."
 
-    def __init__(self, version:"Version.Version", child_tags:list["VersionTag.VersionTag"], error_child:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", child_tags:list["VersionTag"], error_child:"Version", message:Optional[str]=None) -> None:
         '''
         :version: The Version with children in an invalid order.
         :child_tags: The ordering VersionTags of each of the Version's children.
@@ -2026,7 +2024,7 @@ class VersionChildOrderError(VersionException):
 class VersionOrderingTagsError(VersionException):
     "The Version has none or too many ordering VersionTags."
 
-    def __init__(self, version:"Version.Version", count:int, tags:list["VersionTag.VersionTag"], message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", count:int, tags:list["VersionTag"], message:Optional[str]=None) -> None:
         '''
         :version: The Version that has an invalid number of ordering VersionTags.
         :count: The number of ordering VersionTags this Version has.
@@ -2045,7 +2043,7 @@ class VersionOrderingTagsError(VersionException):
 class VersionOrderSequenceError(VersionException):
     "A Version is before or after a tag that it shouldn't be."
 
-    def __init__(self, parent_version:"Version.Version", parent_tag:"VersionTag.VersionTag", child_version:"Version.Version", child_tag:"VersionTag.VersionTag", time_text:Literal["before", "after"], message:Optional[str]=None) -> None:
+    def __init__(self, parent_version:"Version", parent_tag:"VersionTag", child_version:"Version", child_tag:"VersionTag", time_text:Literal["before", "after"], message:Optional[str]=None) -> None:
         '''
         :parent_version: The parent Version.
         :parent_tag: The ordering VersionTag of the parent Version.
@@ -2068,7 +2066,7 @@ class VersionOrderSequenceError(VersionException):
 class VersionOutOfRangeError(VersionException):
     "The Version is not in a VersionRange."
 
-    def __init__(self, version:"Version.Version", version_range:Optional["VersionRange.VersionRange"]=None, message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", version_range:Optional["VersionRange"]=None, message:Optional[str]=None) -> None:
         '''
         :version: The Version that is not within the VersionRange.
         :version_range: The VersionRange that the Version does not fall within.
@@ -2087,9 +2085,9 @@ class VersionRangeOrderError(VersionException):
 
     def __init__(
         self,
-        version_range:"VersionRange.VersionRange|VersionRangeField.VersionRangeField",
-        start_version:"Version.Version|VersionComponent.VersionComponent",
-        stop_version:"Version.Version|VersionComponent.VersionComponent",
+        version_range:"VersionRange|VersionRangeField",
+        start_version:"Version|VersionComponent",
+        stop_version:"Version|VersionComponent",
         message:Optional[str]=None
     ) -> None:
         '''
@@ -2127,7 +2125,7 @@ class VersionTagExclusivePropertyError(VersionException):
 class VersionTimeTravelError(VersionException):
     "A Version's children are not in order chronologically."
 
-    def __init__(self, previous_child:"Version.Version", previous_time:datetime.datetime, current_child:"Version.Version", current_time:datetime.datetime, parent:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(self, previous_child:"Version", previous_time:datetime, current_child:"Version", current_time:datetime, parent:"Version", message:Optional[str]=None) -> None:
         '''
         :previous_child: The child earlier in the children but chronologically after the current child.
         :previous_time: The time of the previous child.
@@ -2150,7 +2148,7 @@ class VersionTimeTravelError(VersionException):
 class VersionTimezoneError(VersionException):
     "A Version has no timezone in its time but should."
 
-    def __init__(self, version:"Version.Version", time:datetime.datetime, version_with_timezone:"Version.Version", timezone_time:datetime.datetime, message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", time:datetime, version_with_timezone:"Version", timezone_time:datetime, message:Optional[str]=None) -> None:
         '''
         :version: The Version without timezone info.
         :time: The time of the Version.
@@ -2171,7 +2169,7 @@ class VersionTimezoneError(VersionException):
 class VersionTopLevelError(VersionException):
     "A Version is a top-level Version but has no top-level VersionTag."
 
-    def __init__(self, version:"Version.Version", top_level_tag:"VersionTag.VersionTag", message:Optional[str]=None) -> None:
+    def __init__(self, version:"Version", top_level_tag:"VersionTag", message:Optional[str]=None) -> None:
         '''
         :version: The top-level Version missing the top-level VersionTag.
         :top_level_tag: The top-level VersionTag.
@@ -2191,7 +2189,7 @@ class VersionFileException(Exception):
 class RequiredVersionFileTypeMissingError(VersionFileException):
     "A requied VersionFileType is not present."
 
-    def __init__(self, file_type:"VersionFileType.VersionFileType", version:"Version.Version", message:Optional[str]=None) -> None:
+    def __init__(self, file_type:"VersionFileType", version:"Version", message:Optional[str]=None) -> None:
         '''
         :file_type: The VersionFileType that is required but missing.
         :version: The Version that is missing the VersionFileType.
@@ -2208,7 +2206,7 @@ class RequiredVersionFileTypeMissingError(VersionFileException):
 class VersionFileInvalidAccessorError(VersionFileException):
     "The VersionFile has an invalid Accessor."
 
-    def __init__(self, version_file:"VersionFile.VersionFile", accessor_str:str, message:Optional[str]=None) -> None:
+    def __init__(self, version_file:"VersionFile", accessor_str:str, message:Optional[str]=None) -> None:
         '''
         :version_file: The VersionFile with an invalid Accessor.
         :accessor_str: The name of the Accessor.
@@ -2225,7 +2223,7 @@ class VersionFileInvalidAccessorError(VersionFileException):
 class VersionFileNoAccessorsError(VersionFileException):
     "The VersionFile has no Accessors."
 
-    def __init__(self, version_file:"VersionFile.VersionFile", message:Optional[str]=None) -> None:
+    def __init__(self, version_file:"VersionFile", message:Optional[str]=None) -> None:
         '''
         :version_file: The VersionFile with no available Accessors.
         :message: Additional text to place after the main message.

@@ -1,43 +1,43 @@
 import traceback
 from itertools import chain
 
-import Dataminer.AbstractDataminerCollection as AbstractDataminerCollection
 import Domain.Domain as Domain
-import Structure.StructureEnvironment as StructureEnvironment
-import Utilities.Exceptions as Exceptions
-import Utilities.UserInput as UserInput
-import Version.Version as Version
+from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
+from Structure.StructureEnvironment import EnvironmentType, StructureEnvironment
+from Utilities.Exceptions import StructuresCompareFailureError
+from Utilities.UserInput import input_multi
+from Version.Version import Version
 
 
 def initial_print(
-    version:Version.Version,
-    dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
+    version:Version,
+    dataminer_collection:AbstractDataminerCollection,
     domain:"Domain.Domain",
 ) -> None:
-    environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing, domain)
+    environment = StructureEnvironment(EnvironmentType.comparing, domain)
     dataminer_collection.print_initial(version, environment)
 
 def compare(
-    version1:Version.Version,
-    version2:Version.Version,
-    dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
-    undataminable_versions_between:list[Version.Version],
+    version1:Version,
+    version2:Version,
+    dataminer_collection:AbstractDataminerCollection,
+    undataminable_versions_between:list[Version],
     domain:"Domain.Domain",
 ) -> None:
-    environment = StructureEnvironment.StructureEnvironment(StructureEnvironment.EnvironmentType.comparing, domain)
+    environment = StructureEnvironment(EnvironmentType.comparing, domain)
     dataminer_collection.compare(version1, version2, undataminable_versions_between, environment)
 
 def compare_all_of(
         domain:Domain.Domain,
-        dataminer_collection:AbstractDataminerCollection.AbstractDataminerCollection,
-        versions:list[Version.Version],
-        exception_holder:dict[str,tuple[Exception,Version.Version|None,Version.Version|None]|bool],
+        dataminer_collection:AbstractDataminerCollection,
+        versions:list[Version],
+        exception_holder:dict[str,tuple[Exception,Version|None,Version|None]|bool],
     ) -> None:
     previous_successful_version = None; version = None
     try:
         version = None
         previous_successful_version = None # The last Version that can be datamined for this file.
-        undataminable_versions_between:list[Version.Version] = []
+        undataminable_versions_between:list[Version] = []
         domain.comparisons_directory.mkdir(exist_ok=True)
         comparison_parent = domain.comparisons_directory.joinpath(dataminer_collection.name)
         if not comparison_parent.exists():
@@ -69,7 +69,7 @@ def compare_all_of(
         dataminer_collection.clear_all_caches()
 
 def main(domain:Domain.Domain) -> None:
-    selected_dataminers = UserInput.input_multi(
+    selected_dataminers = input_multi(
         {dataminer_name: dataminer_collection for dataminer_name, dataminer_collection in domain.dataminer_collections.items() if not dataminer_collection.comparing_disabled},
         "dataminer", allow_select_all=True, show_options_first_time=True, close_enough=True)
     versions = domain.versions
@@ -78,19 +78,19 @@ def main(domain:Domain.Domain) -> None:
     major_tags = {tag for tag in version_tags.values() if tag.is_major_tag}
     minor_tags_before = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.tags_before_top_level_tag}
     minor_tags_after  = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.tags_after_top_level_tag}
-    major_versions:dict[Version.Version,list[Version.Version]] = {version: [] for version in versions.values() if version.order_tag in major_tags}
+    major_versions:dict[Version,list[Version]] = {version: [] for version in versions.values() if version.order_tag in major_tags}
     for major_version, child_versions in major_versions.items():
         child_versions.extend(child for child in major_version.children if child.order_tag in minor_tags_before)
         child_versions.append(major_version)
         child_versions.extend(child for child in major_version.children if child.order_tag in minor_tags_after)
 
     sorted_versions = list(chain.from_iterable(child_versions for child_versions in major_versions.values()))
-    exception_holder:dict[str,bool|tuple[Exception,Version.Version|None,Version.Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
+    exception_holder:dict[str,bool|tuple[Exception,Version|None,Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
     for dataminer_collection in selected_dataminers:
         compare_all_of(domain, dataminer_collection, sorted_versions, exception_holder)
 
     excepted = False
-    excepted_threads:list[tuple[str,Version.Version|None,Version.Version|None]] = []
+    excepted_threads:list[tuple[str,Version|None,Version|None]] = []
     for dataminer_name, completion in exception_holder.items():
         if isinstance(completion, tuple):
             excepted_threads.append((dataminer_name, completion[1], completion[2]))
@@ -101,6 +101,6 @@ def main(domain:Domain.Domain) -> None:
     if excepted:
         for structure_name, previous_version, version in excepted_threads:
             print(f"\"{structure_name}\" excepted between Versions \"{previous_version}\" and \"{version}\"")
-        raise Exceptions.StructuresCompareFailureError([structure_name for structure_name, previous_version, version in excepted_threads])
+        raise StructuresCompareFailureError([structure_name for structure_name, previous_version, version in excepted_threads])
     else:
         print("Compared all versions.")

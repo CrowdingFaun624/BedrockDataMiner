@@ -1,35 +1,35 @@
 from typing import Sequence
 
-import Component.Capabilities as Capabilities
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Pattern as Pattern
-import Structure.StructureTag as StructureTag
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.Capabilities import Capabilities
+from Component.Component import Component
+from Component.ComponentTyping import StructureTagTypedDict
+from Component.Field.Field import Field
+from Component.Pattern import Pattern
+from Structure.StructureTag import StructureTag
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifier
 
-TAG_PATTERN:Pattern.Pattern["StructureTagComponent"] = Pattern.Pattern("is_structure_tag")
+TAG_PATTERN:Pattern["StructureTagComponent"] = Pattern("is_structure_tag")
 
-class StructureTagComponent(Component.Component[StructureTag.StructureTag]):
+class StructureTagComponent(Component[StructureTag]):
 
     class_name = "StructureTag"
-    my_capabilities = Capabilities.Capabilities(is_structure_tag=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("is_file", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    my_capabilities = Capabilities(is_structure_tag=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("is_file", False, bool),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (
         "is_file",
     )
 
-    def initialize_fields(self, data: ComponentTyping.StructureTagTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: StructureTagTypedDict) -> Sequence[Field]:
         self.is_file = data.get("is_file", False)
         return ()
 
-    def create_final(self, trace:Trace.Trace) -> StructureTag.StructureTag:
-        return StructureTag.StructureTag(
+    def create_final(self, trace:Trace) -> StructureTag:
+        return StructureTag(
             name=self.name,
             is_file=self.is_file,
         )

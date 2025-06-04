@@ -1,23 +1,28 @@
 from itertools import product
 from typing import Any, Sequence
 
-import _domains.minecraft_java.scripts.dataminers.PacksDataminer as PacksDataminer
-import Dataminer.DataminerEnvironment as DataminerEnvironment
-import Dataminer.FileDataminer as FileDataminer
-import Downloader.DirectoryAccessor as DirectoryAccessor
-import Utilities.Exceptions as Exceptions
-import Utilities.File as File
-import Utilities.TypeVerifier as TypeVerifier
+from _domains.minecraft_java.scripts.dataminers.PacksDataminer import PackTypedDict
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Dataminer.FileDataminer import FileDataminer, FileSet
+from Downloader.DirectoryAccessor import DirectoryAccessor
+from Utilities.Exceptions import DataminerNothingFoundError
+from Utilities.File import File
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+    UnionTypeVerifier,
+)
 
 __all__ = ("GrabPackFileDataminer",)
 
-class GrabPackFileDataminer(FileDataminer.FileDataminer):
+class GrabPackFileDataminer(FileDataminer):
 
-    parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("location", True, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
-        TypeVerifier.TypedDictKeyTypeVerifier("pack_type", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("find_none_okay", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("insert_file_name", False, str),
+    parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("location", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("pack_type", True, str),
+        TypedDictKeyTypeVerifier("find_none_okay", False, bool),
+        TypedDictKeyTypeVerifier("insert_file_name", False, str),
     )
 
     def initialize(self, location:str|Sequence[str], pack_type:str, find_none_okay:bool=False, insert_file_name:str|None=None) -> None:
@@ -26,7 +31,7 @@ class GrabPackFileDataminer(FileDataminer.FileDataminer):
         self.find_none_okay = find_none_okay
         self.insert_file_name = insert_file_name
 
-    def get_coverage(self, file_set:FileDataminer.FileSet, environment: DataminerEnvironment.DataminerEnvironment) -> set[str]:
+    def get_coverage(self, file_set:FileSet, environment: DataminerEnvironment) -> set[str]:
         packs = (pack["path"] for pack in self.get_packs(environment))
         output:set[str] = set()
         for pack, location in product(packs, self.location):
@@ -34,13 +39,13 @@ class GrabPackFileDataminer(FileDataminer.FileDataminer):
             if file_set.file_exists(file_name):
                 output.add(file_name)
         if len(output) == 0 and not self.find_none_okay:
-            raise Exceptions.DataminerNothingFoundError(self)
+            raise DataminerNothingFoundError(self)
         return output
 
-    def get_packs(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[PacksDataminer.PackTypedDict]:
+    def get_packs(self, environment:DataminerEnvironment) -> list[PackTypedDict]:
         return environment.dependency_data.get(self.pack_type, self)
 
-    def get_files(self, packs:list[PacksDataminer.PackTypedDict], accessor:DirectoryAccessor.DirectoryAccessor, environment:DataminerEnvironment.DataminerEnvironment) -> dict[tuple[str,str],bytes]:
+    def get_files(self, packs:list[PackTypedDict], accessor:DirectoryAccessor, environment:DataminerEnvironment) -> dict[tuple[str,str],bytes]:
         '''
         Returns a dictionary of the pack the the files are in and the file's name to the file's contents.
         '''
@@ -50,17 +55,17 @@ class GrabPackFileDataminer(FileDataminer.FileDataminer):
             if accessor.file_exists(path):
                 files[pack["name"], path] = accessor.read(path)
         if len(files) == 0 and not self.find_none_okay:
-            raise Exceptions.DataminerNothingFoundError(self)
+            raise DataminerNothingFoundError(self)
         return files
 
-    def get_output(self, files:dict[tuple[str,str],bytes], environment:DataminerEnvironment.DataminerEnvironment) -> dict[str,File.File|Any]:
+    def get_output(self, files:dict[tuple[str,str],bytes], environment:DataminerEnvironment) -> dict[str,File|Any]:
         if self.insert_file_name is None:
             return {pack_name: self.export_file(file_content, file_name) for (pack_name, file_name), file_content in files.items()}
         else:
             return {self.insert_file_name: {pack_name: self.export_file(file_content, file_name) for (pack_name, file_name), file_content in files.items()}}
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> Any:
-        accessor = self.get_accessor(DirectoryAccessor.DirectoryAccessor)
+    def activate(self, environment:DataminerEnvironment) -> Any:
+        accessor = self.get_accessor(DirectoryAccessor)
         packs = self.get_packs(environment)
         files = self.get_files(packs, accessor, environment)
         output = self.get_output(files, environment)

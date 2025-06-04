@@ -1,15 +1,15 @@
 from typing import Any, Callable, Iterator, Sequence, cast
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Pattern as Pattern
-import Component.ScriptImporter as ScriptImporter
 import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ComponentTyping import ComponentTypedDicts, CreateComponentFunction
+from Component.Field.Field import Field, InlinePermissions, choose_component
+from Component.Pattern import Pattern
+from Component.ScriptImporter import ScriptSetSetSet
+from Utilities.Trace import Trace
 
 
-class ComponentListField[a:Component.Component](Field.Field):
+class ComponentListField[a:Component](Field):
     '''A link to multiple other Components.'''
 
     __slots__ = (
@@ -25,11 +25,11 @@ class ComponentListField[a:Component.Component](Field.Field):
 
     def __init__(
         self,
-        subcomponents_data:Sequence[str|ComponentTyping.ComponentTypedDicts]|str|ComponentTyping.ComponentTypedDicts,
-        pattern:Pattern.Pattern[a],
+        subcomponents_data:Sequence[str|ComponentTypedDicts]|str|ComponentTypedDicts,
+        pattern:Pattern[a],
         path:tuple[str,...],
         *,
-        allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed,
+        allow_inline:InlinePermissions=InlinePermissions.mixed,
         assume_type:str|None=None,
         assume_component_group:str|None=None,
     ) -> None:
@@ -43,7 +43,7 @@ class ComponentListField[a:Component.Component](Field.Field):
         '''
         super().__init__(path)
         # I wouldn't have to use a cast here if it would get the hint and actually say that it's Sequence[str|ComponentTyping.ComponentTypedDicts] instead of tuple[ComponentTypedDicts|str]|Sequence[ComponentTypedDicts|str]
-        self.subcomponents_data:Sequence[str|ComponentTyping.ComponentTypedDicts] = cast(Any, (subcomponents_data,)) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
+        self.subcomponents_data:Sequence[str|ComponentTypedDicts] = cast(Any, (subcomponents_data,)) if isinstance(subcomponents_data, (str, dict)) else subcomponents_data
         self.subcomponents:list[a]
         self.pattern = pattern
         self.allow_inline = allow_inline
@@ -54,19 +54,19 @@ class ComponentListField[a:Component.Component](Field.Field):
 
     def set_field(
         self,
-        source_component:"Component.Component",
-        components:dict[str,"Component.Component"],
-        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
-        functions:ScriptImporter.ScriptSetSetSet,
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
+        source_component:"Component",
+        components:dict[str,"Component"],
+        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        functions:ScriptSetSetSet,
+        create_component_function:CreateComponentFunction,
+        trace:Trace,
     ) -> tuple[Sequence[a],Sequence[a]]:
         with trace.enter_keys(self.trace_path, self.subcomponents_data):
             self.subcomponents = []
             inline_components:list[a] = []
             for index, subcomponent_data in enumerate(self.subcomponents_data):
                 with trace.enter_key(index, subcomponent_data):
-                    subcomponent, is_inline = Field.choose_component(subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
+                    subcomponent, is_inline = choose_component(subcomponent_data, source_component, self.pattern, components, global_components, trace, self.trace_path, create_component_function, self.assume_type, self.assume_component_group)
                     self.has_reference_components = self.has_reference_components or not is_inline
                     self.has_inline_components = self.has_inline_components or is_inline
                     if subcomponent is ...:
@@ -77,12 +77,12 @@ class ComponentListField[a:Component.Component](Field.Field):
             return self.subcomponents, inline_components
         return (), ()
 
-    def check(self, source_component:"Component.Component", trace:Trace.Trace) -> None:
+    def check(self, source_component:"Component", trace:Trace) -> None:
         with trace.enter_keys(self.trace_path, self.subcomponents_data):
             super().check(source_component, trace)
-            if self.has_reference_components and self.allow_inline is Field.InlinePermissions.inline:
+            if self.has_reference_components and self.allow_inline is InlinePermissions.inline:
                 trace.exception(Exceptions.ReferenceComponentError(source_component, self))
-            if self.has_inline_components and self.allow_inline is Field.InlinePermissions.reference:
+            if self.has_inline_components and self.allow_inline is InlinePermissions.reference:
                 trace.exception(Exceptions.InlineComponentError(source_component, self))
 
     def extend(self, new_components:Sequence[a]) -> None:

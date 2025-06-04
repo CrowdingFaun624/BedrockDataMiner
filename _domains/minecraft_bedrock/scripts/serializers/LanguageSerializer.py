@@ -1,7 +1,7 @@
 from itertools import takewhile
 from typing import Iterable, NotRequired, TypedDict
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 __all__ = ("LanguageSerializer",)
 
@@ -9,7 +9,7 @@ class LanguageObject(TypedDict):
     value: str
     comment: NotRequired[str]
 
-class LanguageSerializer(Serializer.Serializer[dict[str,LanguageObject]]):
+class LanguageSerializer(Serializer[dict[str,LanguageObject]]):
 
     empty_okay = True
 

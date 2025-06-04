@@ -1,16 +1,16 @@
 from typing import Self, Sequence
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentListField as ComponentListField
-import Component.Field.Field as Field
-import Component.ScriptImporter as ScriptImporter
-import Component.Structure.StructureTagComponent as StructureTagComponent
-import Structure.StructureTag as StructureTag
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ComponentTyping import CreateComponentFunction
+from Component.Field.ComponentListField import ComponentListField
+from Component.Field.Field import InlinePermissions
+from Component.ScriptImporter import ScriptSetSetSet
+from Component.Structure.StructureTagComponent import TAG_PATTERN, StructureTagComponent
+from Structure.StructureTag import StructureTag
+from Utilities.Trace import Trace
 
 
-class TagListField(ComponentListField.ComponentListField["StructureTagComponent.StructureTagComponent"]):
+class TagListField(ComponentListField["StructureTagComponent"]):
 
     __slots__ = (
         "_finals",
@@ -23,20 +23,20 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         :subcomponents_strs: The names of the TagComponents this Field refers to.
         :path: A list of strings and/or integers that represent, in order from shallowest to deepest, the path through keys/indexes to get to this value.
         '''
-        super().__init__(subcomponents_strs, StructureTagComponent.TAG_PATTERN, path, allow_inline=Field.InlinePermissions.reference, assume_component_group="structure_tags")
-        self.tag_sets:list[set["StructureTagComponent.StructureTagComponent"]] = []
+        super().__init__(subcomponents_strs, TAG_PATTERN, path, allow_inline=InlinePermissions.reference, assume_component_group="structure_tags")
+        self.tag_sets:list[set["StructureTagComponent"]] = []
         self.import_from_field:TagListField|None = None
-        self._finals:set[StructureTag.StructureTag]|None = None
+        self._finals:set[StructureTag]|None = None
 
     def set_field(
         self,
-        source_component:"Component.Component",
-        components:dict[str,"Component.Component"],
-        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
-        functions:ScriptImporter.ScriptSetSetSet,
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
-    ) -> tuple[Sequence["StructureTagComponent.StructureTagComponent"],Sequence["StructureTagComponent.StructureTagComponent"]]:
+        source_component:"Component",
+        components:dict[str,"Component"],
+        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        functions:ScriptSetSetSet,
+        create_component_function:CreateComponentFunction,
+        trace:Trace,
+    ) -> tuple[Sequence["StructureTagComponent"],Sequence["StructureTagComponent"]]:
         with trace.enter_keys(self.trace_path, self.subcomponents_data):
             subcomponents, inline_components = super().set_field(source_component, components, global_components, functions, create_component_function, trace)
             if self.import_from_field is not None:
@@ -55,7 +55,7 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         self.import_from_field = tag_list_field
         return self
 
-    def add_to_tag_set(self, tag_set:set["StructureTagComponent.StructureTagComponent"]) -> Self:
+    def add_to_tag_set(self, tag_set:set["StructureTagComponent"]) -> Self:
         '''
         Makes this TagListField add its tags to the given tag set.
         :tag_set: The set of StructureTags to add to.
@@ -64,7 +64,7 @@ class TagListField(ComponentListField.ComponentListField["StructureTagComponent.
         return self
 
     @property
-    def finals(self) -> set[StructureTag.StructureTag]:
+    def finals(self) -> set[StructureTag]:
         '''
         Returns the `final` attribute of all tags in this TagListField.
         Can only be called after `set_field`.

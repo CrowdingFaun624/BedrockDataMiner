@@ -1,6 +1,6 @@
 from typing import NotRequired, TypedDict
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 __all__ = ("GlyphSizesSerializer",)
 
@@ -9,7 +9,7 @@ class RangeTypedDict(TypedDict):
     left: int
     right: int
 
-class GlyphSizesSerializer(Serializer.Serializer[dict[str,RangeTypedDict]]):
+class GlyphSizesSerializer(Serializer[dict[str,RangeTypedDict]]):
 
     def deserialize(self, data: bytes) -> dict[str,RangeTypedDict]:
         output:dict[str,RangeTypedDict] = {}

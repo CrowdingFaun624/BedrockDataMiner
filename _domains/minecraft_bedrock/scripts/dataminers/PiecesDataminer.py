@@ -1,18 +1,22 @@
-import Dataminer.Dataminer as Dataminer
-import Dataminer.DataminerEnvironment as DataminerEnvironment
 import Dataminer.FileDataminer as FileDataminer
-import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier as TypeVerifier
 from _domains.minecraft_bedrock.scripts.dataminers.PacksDataminer import PackTypedDict
+from Dataminer.Dataminer import Dataminer
+from Dataminer.DataminerEnvironment import DataminerEnvironment
+from Utilities.Exceptions import DataminerNothingFoundError
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
 __all__ = ("PiecesDataminer",)
 
-class PiecesDataminer(Dataminer.Dataminer):
+class PiecesDataminer(Dataminer):
 
-    parameters = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("base_directory", True, str, function=FileDataminer.location_value_function),
-        TypeVerifier.TypedDictKeyTypeVerifier("subdirectories", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
-        TypeVerifier.TypedDictKeyTypeVerifier("ignore_directories", False, TypeVerifier.ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
+    parameters = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("base_directory", True, str, function=FileDataminer.location_value_function),
+        TypedDictKeyTypeVerifier("subdirectories", False, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
+        TypedDictKeyTypeVerifier("ignore_directories", False, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),
     )
 
     def initialize(self, base_directory:str, subdirectories:list[str]|None=None, ignore_directories:list[str]|None=None) -> None:
@@ -21,7 +25,7 @@ class PiecesDataminer(Dataminer.Dataminer):
         self.subdirectories.append("")
         self.ignore_directories = ignore_directories
 
-    def activate(self, environment:DataminerEnvironment.DataminerEnvironment) -> list[PackTypedDict]:
+    def activate(self, environment:DataminerEnvironment) -> list[PackTypedDict]:
         file_list:dict[str,str] = environment.dependency_data.get("all_files", self)
         pieces:list[PackTypedDict] = []
         pieces_names:set[str] = set()
@@ -40,5 +44,5 @@ class PiecesDataminer(Dataminer.Dataminer):
                 break
 
         if len(pieces) == 0:
-            raise Exceptions.DataminerNothingFoundError(self)
+            raise DataminerNothingFoundError(self)
         return pieces

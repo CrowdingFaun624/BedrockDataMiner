@@ -4,9 +4,9 @@ from types import ModuleType
 from typing import Any, Callable, Iterable
 
 import Domain.Domain as Domain
-import Utilities.Exceptions as Exceptions
-import Utilities.TypeVerifier as TypeVerifier
-import Utilities.UserInput as UserInput
+from Utilities.Exceptions import ScriptNameCollideError
+from Utilities.TypeVerifier import ListTypeVerifier
+from Utilities.UserInput import input_single
 
 
 class HasImportedScripts():
@@ -30,7 +30,7 @@ def iter_dir(path:Path, prepension:str="") -> Iterable[tuple[Path,str]]:
     for subpath in path.iterdir():
         if subpath.is_file():
             if subpath.stem in already_stems:
-                raise Exceptions.ScriptNameCollideError(already_stems[subpath.stem], subpath)
+                raise ScriptNameCollideError(already_stems[subpath.stem], subpath)
             already_stems[subpath.stem] = subpath
             yield (subpath, prepension + subpath.stem)
         else:
@@ -60,7 +60,7 @@ class Script[a]():
 class Scripts():
     '''Collection of scripts.'''
 
-    all_type_verifier = TypeVerifier.ListTypeVerifier(str, (list, tuple))
+    all_type_verifier = ListTypeVerifier(str, (list, tuple))
 
     __slots__ = (
         "domain",
@@ -94,8 +94,8 @@ class Scripts():
 def main(domain:"Domain.Domain") -> None:
     user_script:Script|None = None
     script_files = {item: item for item in sorted(set(file_name for file_name, object_name in domain.scripts.scripts))}
-    user_file = UserInput.input_single(script_files, "file from the scripts directory", show_options_first_time=True, close_enough=True)
+    user_file = input_single(script_files, "file from the scripts directory", show_options_first_time=True, close_enough=True)
     file_objects = {object_name: script for (file_name, object_name), script in domain.scripts.scripts.items() if file_name == user_file}
-    user_script = UserInput.input_single(file_objects, f"object from \"{user_file}\"", show_options_first_time=True, close_enough=True)
+    user_script = input_single(file_objects, f"object from \"{user_file}\"", show_options_first_time=True, close_enough=True)
     output = user_script()
     print(output)

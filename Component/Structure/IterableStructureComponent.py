@@ -1,20 +1,28 @@
 from typing import Any, Sequence
 
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentListField as ComponentListField
-import Component.Field.Field as Field
-import Component.Field.FunctionField as FunctionField
-import Component.Structure.Field.DelegateField as DelegateField
-import Component.Structure.Field.TagListField as TagListField
-import Component.Structure.Field.TypeListField as TypeListField
-import Component.Structure.NormalizerComponent as NormalizerComponent
-import Component.Structure.StructureComponent as StructureComponent
-import Structure.IterableStructure as IterableStructure
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.ComponentTyping import IterableStructureTypedDict
+from Component.Field.ComponentListField import ComponentListField
+from Component.Field.Field import Field
+from Component.Field.FunctionField import FunctionField
+from Component.Structure.Field.DelegateField import OptionalDelegateField
+from Component.Structure.Field.TagListField import TagListField
+from Component.Structure.Field.TypeListField import TypeListField
+from Component.Structure.NormalizerComponent import (
+    NORMALIZER_PATTERN,
+    NormalizerComponent,
+)
+from Component.Structure.StructureComponent import StructureComponent
+from Structure.IterableStructure import IterableStructure
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+    UnionTypeVerifier,
+)
 
 
-class IterableStructureComponent[a: IterableStructure.IterableStructure](StructureComponent.StructureComponent[a]):
+class IterableStructureComponent[a: IterableStructure](StructureComponent[a]):
 
     __slots__ = (
         "delegate_field",
@@ -31,37 +39,37 @@ class IterableStructureComponent[a: IterableStructure.IterableStructure](Structu
 
     default_this_types_name:str # default of `this_types` field.
     default_key_types_name:str # default of `key_types` field.
-    type_verifier = StructureComponent.StructureComponent.type_verifier.extend(TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("delegate", False, (str, type(None))),
-        TypeVerifier.TypedDictKeyTypeVerifier("delegate_arguments", False, dict),
-        TypeVerifier.TypedDictKeyTypeVerifier("key_function", False, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("key_types", False, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
-        TypeVerifier.TypedDictKeyTypeVerifier("normalizers", False, TypeVerifier.UnionTypeVerifier(str, dict, TypeVerifier.ListTypeVerifier((str, dict), list))),
-        TypeVerifier.TypedDictKeyTypeVerifier("post_normalizers", False, TypeVerifier.UnionTypeVerifier(str, dict, TypeVerifier.ListTypeVerifier((str, dict), list))),
-        TypeVerifier.TypedDictKeyTypeVerifier("pre_normalized_types", False, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
-        TypeVerifier.TypedDictKeyTypeVerifier("required_keys", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("tags", False, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
-        TypeVerifier.TypedDictKeyTypeVerifier("this_types", False, TypeVerifier.UnionTypeVerifier(str, TypeVerifier.ListTypeVerifier(str, list))),
+    type_verifier = StructureComponent.type_verifier.extend(TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("delegate", False, (str, type(None))),
+        TypedDictKeyTypeVerifier("delegate_arguments", False, dict),
+        TypedDictKeyTypeVerifier("key_function", False, str),
+        TypedDictKeyTypeVerifier("key_types", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("normalizers", False, UnionTypeVerifier(str, dict, ListTypeVerifier((str, dict), list))),
+        TypedDictKeyTypeVerifier("post_normalizers", False, UnionTypeVerifier(str, dict, ListTypeVerifier((str, dict), list))),
+        TypedDictKeyTypeVerifier("pre_normalized_types", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("required_keys", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("tags", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
+        TypedDictKeyTypeVerifier("this_types", False, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
     ))
 
-    def initialize_fields(self, data: ComponentTyping.IterableStructureTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: IterableStructureTypedDict) -> Sequence[Field]:
         fields = list(super().initialize_fields(data))
 
         self.required_keys:Sequence[str] = data.get("required_keys", ())
         self.delegate_keys:dict[str,Any]|None = None
 
-        self.delegate_field = DelegateField.OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
-        self.key_function_field = FunctionField.FunctionField(data.get("key_function", "identity"), ("key_function",))
-        self.key_types_field = TypeListField.TypeListField(data.get("key_types", self.default_key_types_name), ("key_types",))
-        self.normalizers_field = ComponentListField.ComponentListField(data.get("normalizers", ()), NormalizerComponent.NORMALIZER_PATTERN, ("normalizers",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.post_normalizers_field = ComponentListField.ComponentListField(data.get("post_normalizers", ()), NormalizerComponent.NORMALIZER_PATTERN, ("post_normalizers",), assume_type=NormalizerComponent.NormalizerComponent.class_name)
-        self.tags_field = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
-        self.this_types_field = TypeListField.TypeListField(data.get("this_types", self.default_this_types_name), ("this_types",)).add_to_set(self.my_type)
-        self.pre_normalized_types_field = TypeListField.TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",)).default_to(self.this_types_field)
+        self.delegate_field = OptionalDelegateField(data.get("delegate", "DefaultDelegate"), data.get("delegate_arguments", {}), self.domain, ("delegate",))
+        self.key_function_field = FunctionField(data.get("key_function", "identity"), ("key_function",))
+        self.key_types_field = TypeListField(data.get("key_types", self.default_key_types_name), ("key_types",))
+        self.normalizers_field = ComponentListField(data.get("normalizers", ()), NORMALIZER_PATTERN, ("normalizers",), assume_type=NormalizerComponent.class_name)
+        self.post_normalizers_field = ComponentListField(data.get("post_normalizers", ()), NORMALIZER_PATTERN, ("post_normalizers",), assume_type=NormalizerComponent.class_name)
+        self.tags_field = TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(self.children_tags)
+        self.this_types_field = TypeListField(data.get("this_types", self.default_this_types_name), ("this_types",)).add_to_set(self.my_type)
+        self.pre_normalized_types_field = TypeListField(data.get("pre_normalized_types", ()), ("pre_normalized_types",)).default_to(self.this_types_field)
         fields.extend((self.delegate_field, self.key_function_field, self.key_types_field, self.normalizers_field, self.post_normalizers_field, self.pre_normalized_types_field, self.tags_field, self.this_types_field))
         return fields
 
-    def link_finals(self, trace: Trace.Trace) -> None:
+    def link_finals(self, trace: Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_iterable_structure(

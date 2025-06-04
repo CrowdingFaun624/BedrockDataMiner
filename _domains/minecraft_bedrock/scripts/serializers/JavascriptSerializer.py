@@ -1,6 +1,6 @@
-import jsbeautifier
+from jsbeautifier import beautify
 
-import Serializer.Serializer as Serializer
+from Serializer.Serializer import Serializer
 
 __all__ = ("JavascriptSerializer",)
 
@@ -29,10 +29,10 @@ def fix_indent(line:str) -> str:
         line = line.replace("    ", "\t", 1)
     return line
 
-class JavascriptSerializer(Serializer.Serializer):
+class JavascriptSerializer(Serializer):
 
     def deserialize(self, data: bytes) -> str:
-        beautified_js = jsbeautifier.beautify(data.decode())
+        beautified_js = beautify(data.decode())
         lines = beautified_js.split("\n")
         output = "\n".join(fix_indent(line) for line in lines if line != "")
         return output

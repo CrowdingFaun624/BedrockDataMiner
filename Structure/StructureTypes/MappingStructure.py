@@ -1,14 +1,14 @@
 from types import EllipsisType
-from typing import Callable, Hashable, Iterable, Mapping, Sequence
+from typing import Callable, Container, Hashable, Iterable, Mapping, Sequence
 
-import Structure.Container as Con
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.IterableStructure as IterableStructure
-import Structure.SimilarityCache as SimilarityCache
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureInfo as StructureInfo
-import Utilities.Trace as Trace
+from Structure.Container import Con, Don
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon, idon_from_list
+from Structure.IterableStructure import IterableStructure
+from Structure.SimilarityCache import SimilarityCache
+from Structure.StructureEnvironment import ComparisonEnvironment
+from Structure.StructureInfo import StructureInfo
+from Utilities.Trace import Trace
 
 
 def special_enumerate[A](iterable:Sequence[A], start_index:int) -> Iterable[tuple[int,A]]:
@@ -39,7 +39,7 @@ def special_enumerate[A](iterable:Sequence[A], start_index:int) -> Iterable[tupl
         else: # right_iterator and left_iterator have equal length; no more items to yield.
             return
 
-class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStructure.IterableStructure[K, V, D, KBO, KCO, VBO, VCO, BO, CO]):
+class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStructure[K, V, D, KBO, KCO, VBO, VCO, BO, CO]):
 
     MIN_KEY_SIMILARITY_THRESHOLD = 0.5
     MIN_VALUE_SIMILARITY_THRESHOLD = 0.5
@@ -67,45 +67,45 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         self.min_key_similarity_threshold = min_key_similarity_threshold
         self.min_value_similarity_threshold = min_value_similarity_threshold
 
-        self.similarity_cache:SimilarityCache.SimilarityCache[Con.Con[D]] = SimilarityCache.SimilarityCache()
+        self.similarity_cache:SimilarityCache[Con[D]] = SimilarityCache()
 
-    def clear_similarity_cache(self, keep: SimilarityCache.Container[StructureInfo.StructureInfo]) -> Trace.NoneType:
+    def clear_similarity_cache(self, keep: Container[StructureInfo]) -> None:
         self.similarity_cache.clear(keep)
 
-    def allow_key_move(self, key1:Con.Con[K], key2:Con.Con[K], value1:Con.Con[V], value2:Con.Con[V], branch1:int, branch2:int, trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> bool:
+    def allow_key_move(self, key1:Con[K], key2:Con[K], value1:Con[V], value2:Con[V], branch1:int, branch2:int, trace:Trace, environment:ComparisonEnvironment) -> bool:
         return True
 
-    def get_similarity_weight(self, key:Con.Con[K], value:Con.Con[V], trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> int:
+    def get_similarity_weight(self, key:Con[K], value:Con[V], trace:Trace, environment:ComparisonEnvironment) -> int:
         '''
         Returns the weight of the key-value pair in similarity calculations.
         '''
         return 1
 
-    def get_key_weight(self, key:Con.Con[K], value:Con.Con[V], trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> int:
+    def get_key_weight(self, key:Con[K], value:Con[V], trace:Trace, environment:ComparisonEnvironment) -> int:
         return 1
 
-    def get_value_weight(self, key:Con.Con[K], value:Con.Con[V], trace:Trace.Trace, environment:StructureEnvironment.ComparisonEnvironment) -> int:
+    def get_value_weight(self, key:Con[K], value:Con[V], trace:Trace, environment:ComparisonEnvironment) -> int:
         return 1
 
     def compare(
         self,
-        datas: tuple[tuple[int, ICon.ICon[Con.Con[K], Con.Con[V], D]], ...],
-        trace: Trace.Trace,
-        environment: StructureEnvironment.ComparisonEnvironment,
-    ) -> tuple[ICon.IDon[Diff.Diff[Con.Don[K]], Diff.Diff[Con.Don[V]], D, Con.Con[K], Con.Con[V]]|EllipsisType, bool, bool]:
+        datas: tuple[tuple[int, ICon[Con[K], Con[V], D]], ...],
+        trace: Trace,
+        environment: ComparisonEnvironment,
+    ) -> tuple[IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]]|EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
             SELECTION_FUNCTION = lambda key: (key[-1][0][-1], key[-1][1])
             any_changes:bool = False
             # first set is keys in older data and not in newer data; second set is keys in newer data and not in older data.
-            cumulative_items:list[tuple[list[tuple[list[int], Con.Con[K]]], list[tuple[list[int], Con.Con[V]]]]] = [] # basically the output
-            cumulative_mapping:dict[Con.Con[K], tuple[int, int]] = {} # maps keys to index in cumulative_items and branch. Items are overwritten frequently.
+            cumulative_items:list[tuple[list[tuple[list[int], Con[K]]], list[tuple[list[int], Con[V]]]]] = [] # basically the output
+            cumulative_mapping:dict[Con[K], tuple[int, int]] = {} # maps keys to index in cumulative_items and branch. Items are overwritten frequently.
             previous_length:int|EllipsisType = ...
             first_branch = datas[0][0]
             for branch, data in datas:
-                similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con.Con[K], Con.Con[V]]] = []
+                similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]] = []
                 current_length:int = 0
                 if branch != first_branch:
-                    unassigned_indices:dict[int,tuple[Con.Con[K],Con.Con[V]]] = {} # key-value pairs that were not similar to anything, and will become new additions.
+                    unassigned_indices:dict[int,tuple[Con[K],Con[V]]] = {} # key-value pairs that were not similar to anything, and will become new additions.
                     for index, (key, value) in enumerate(data.items()):
                         with trace.enter_key(key, value):
                             current_length += 1
@@ -142,14 +142,14 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                     current_length = len(cumulative_items)
                 previous_length = current_length
             assembled_output, any_internal_changes = self.assemble_output(cumulative_items, trace, environment)
-            return ICon.idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_internal_changes
+            return idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_internal_changes
         return ..., False, False
 
-    def get_similarity(self, data1: ICon.ICon[Con.Con[K], Con.Con[V], D], data2: ICon.ICon[Con.Con[K], Con.Con[V], D], branch1: int, branch2: int, trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> tuple[float, float]:
+    def get_similarity(self, data1: ICon[Con[K], Con[V], D], data2: ICon[Con[K], Con[V], D], branch1: int, branch2: int, trace: Trace, environment: ComparisonEnvironment) -> tuple[float, float]:
         with trace.enter(self, self.name, (data1, data2)):
             if (output := self.similarity_cache.get(data1, data2, structure_info1 := (environment[branch1].structure_info), structure_info2 := (environment[branch2].structure_info))) is not None:
                 return output
-            similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con.Con[K], Con.Con[V]]] = []
+            similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]] = []
             data1_list = list(data1.items())
             data1_mapping = {key: (index, branch1) for index, (key, _) in enumerate(data1_list)}
             data2_length:int = 0
@@ -175,17 +175,17 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
 
     def get_best_key_value_pair[A, B](
         self,
-        key2:Con.Con[K],
-        value2:Con.Con[V],
+        key2:Con[K],
+        value2:Con[V],
         index:int,
         branch2:int,
         key_value_pairs:list[tuple[A, B]],
-        key_value_map:Mapping[Con.Con[K], tuple[int, int]],
-        key_function:Callable[[A], tuple[int, Con.Con[K]]],
-        value_function:Callable[[B], tuple[int, Con.Con[V]]],
-        trace:Trace.Trace,
-        environment:StructureEnvironment.ComparisonEnvironment,
-    ) -> list[tuple[float, int, int, bool, bool, int, int, int, Con.Con[K], Con.Con[V]]]:
+        key_value_map:Mapping[Con[K], tuple[int, int]],
+        key_function:Callable[[A], tuple[int, Con[K]]],
+        value_function:Callable[[B], tuple[int, Con[V]]],
+        trace:Trace,
+        environment:ComparisonEnvironment,
+    ) -> list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]]:
         '''
         :key2: The newest key.
         :value2: The newest value.
@@ -197,7 +197,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         :value_function: Function called on the second item of each item of `key_value_pairs`, returning its branch and value.
         :return: A list of similarity, index1, index2, key similarity, value similarity, key2, and value2.
         '''
-        similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con.Con[K], Con.Con[V]]] = []
+        similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]] = []
         index_branch = key_value_map.get(key2)
         if (skip_same_key := index_branch is not None):
             # this block is for detecting when a key is the same to avoid the big loop below.

@@ -8,14 +8,14 @@ from typing import (
     cast,
 )
 
-import Utilities.Exceptions as Exceptions
+from Utilities.Exceptions import StructureException, message
 
 __all__ = ("volume_normalize_nbt",)
 
 LAYER_CHARACTERS_DEFAULT_MAX = len("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+={[}];:'<,>./?αβγδεζηθικλμνξπρσςτυφχψωΓΔΘΛΞΠΣΦΨΩБбгДдËëЖжЗзИиЙйЛлФфЦцЧчШшЩщЪъЫыЬьЭэЮюЯя")
 
 
-class VolumeStructureMissingKeyError(Exceptions.StructureException):
+class VolumeStructureMissingKeyError(StructureException):
     "The VolumeStructure is missing its position or state key."
 
     def __init__(self, key_type:Literal["Position", "State"], key:str, block:int, message:Optional[str]=None) -> None:
@@ -32,9 +32,9 @@ class VolumeStructureMissingKeyError(Exceptions.StructureException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"{self.key_type} key \"{self.key}\" is missing in block {self.block}{Exceptions.message(self.message)}"
+        return f"{self.key_type} key \"{self.key}\" is missing in block {self.block}{message(self.message)}"
 
-class VolumeStructureInvalidKeyError(Exceptions.StructureException):
+class VolumeStructureInvalidKeyError(StructureException):
     "The position or state of a VolumeStructure is invalid."
 
     def __init__(self, key_type:Literal["Position", "State"], value:Any, block:int, message:str="is invalid") -> None:

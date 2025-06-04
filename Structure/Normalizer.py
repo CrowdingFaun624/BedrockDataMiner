@@ -1,7 +1,7 @@
 from typing import Any, Callable
 
-import Structure.Filter as Filter
-import Structure.StructureInfo as StructureInfo
+from Structure.Filter import Filter
+from Structure.StructureInfo import StructureInfo
 
 
 class Normalizer():
@@ -23,7 +23,7 @@ class Normalizer():
         self.name = name
         self.function = function
         self.arguments = arguments
-        self.filter:Filter.Filter|None = None
+        self.filter:Filter|None = None
 
     def __repr__(self) -> str:
         function_name:str|None
@@ -38,7 +38,7 @@ class Normalizer():
         else:
             return f"<{self.__class__.__name__} {self.name} {function_name}>"
 
-    def link_subcomponents(self, filter:Filter.Filter|None) -> None:
+    def link_subcomponents(self, filter:Filter|None) -> None:
         self.filter = filter
 
     def __call__(self, data:Any) -> Any:
@@ -48,7 +48,7 @@ class Normalizer():
         '''
         return self.function(data, **self.arguments)
 
-    def filter_pass(self, structure_info:StructureInfo.StructureInfo) -> bool:
+    def filter_pass(self, structure_info:StructureInfo) -> bool:
         if self.filter is None:
             return True
         else:

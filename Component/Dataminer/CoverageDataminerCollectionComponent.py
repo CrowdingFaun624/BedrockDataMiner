@@ -1,33 +1,40 @@
 import re
 from typing import Sequence
 
-import Component.Capabilities as Capabilities
-import Component.ComponentTyping as ComponentTyping
-import Component.Dataminer.AbstractDataminerCollectionComponent as AbstractDataminerCollectionComponent
-import Component.Field.ComponentField as ComponentField
-import Component.Field.Field as Field
-import Component.Structure.StructureBaseComponent as StructureBaseComponent
-import Dataminer.CoverageDataminer as CoverageDataminer
-import Structure.StructureInfo as StructureInfo
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Component.Capabilities import Capabilities
+from Component.ComponentTyping import CoverageDataminerCollectionTypedDict
+from Component.Dataminer.AbstractDataminerCollectionComponent import (
+    ABSTRACT_DATAMINER_COLLECTION_PATTERN,
+    AbstractDataminerCollectionComponent,
+)
+from Component.Field.ComponentField import ComponentField
+from Component.Field.Field import Field, InlinePermissions
+from Component.Structure.StructureBaseComponent import STRUCTURE_BASE_PATTERN
+from Dataminer.CoverageDataminer import CoverageDataminer
+from Structure.StructureInfo import StructureInfo
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import (
+    ListTypeVerifier,
+    TypedDictKeyTypeVerifier,
+    TypedDictTypeVerifier,
+)
 
 
-class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.AbstractDataminerCollectionComponent[CoverageDataminer.CoverageDataminer]):
+class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[CoverageDataminer]):
 
     class_name = "CoverageDataminerCollection"
-    my_capabilities = Capabilities.Capabilities(is_dataminer_collection=True)
-    type_verifier = TypeVerifier.TypedDictTypeVerifier(
-        TypeVerifier.TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("disabled", False, bool),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_list_dataminer", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("file_name", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("remove_files", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("remove_regex", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("remove_prefixes", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("remove_suffixes", False, TypeVerifier.ListTypeVerifier(str, list)),
-        TypeVerifier.TypedDictKeyTypeVerifier("structure", True, str),
-        TypeVerifier.TypedDictKeyTypeVerifier("type", False, str),
+    my_capabilities = Capabilities(is_dataminer_collection=True)
+    type_verifier = TypedDictTypeVerifier(
+        TypedDictKeyTypeVerifier("comparing_disabled", False, bool),
+        TypedDictKeyTypeVerifier("disabled", False, bool),
+        TypedDictKeyTypeVerifier("file_list_dataminer", True, str),
+        TypedDictKeyTypeVerifier("file_name", True, str),
+        TypedDictKeyTypeVerifier("remove_files", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("remove_regex", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("remove_prefixes", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("remove_suffixes", False, ListTypeVerifier(str, list)),
+        TypedDictKeyTypeVerifier("structure", True, str),
+        TypedDictKeyTypeVerifier("type", False, str),
     )
 
     __slots__ = (
@@ -43,7 +50,7 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
         "structure_info",
     )
 
-    def initialize_fields(self, data: ComponentTyping.CoverageDataminerCollectionTypedDict) -> Sequence[Field.Field]:
+    def initialize_fields(self, data: CoverageDataminerCollectionTypedDict) -> Sequence[Field]:
         self.file_name = data["file_name"]
         self.comparing_disabled = data.get("comparing_disabled", False)
         self.disabled = data.get("disabled", False)
@@ -53,12 +60,12 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
         self.remove_suffixes = data.get("remove_suffixes", [])
         self.structure_info = data.get("structure_info", {})
 
-        self.file_list_dataminer_field = ComponentField.ComponentField(data["file_list_dataminer"], AbstractDataminerCollectionComponent.ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("file_list_dataminer",), allow_inline=Field.InlinePermissions.reference, assume_component_group="dataminer_collections")
-        self.structure_field = ComponentField.ComponentField(data["structure"], StructureBaseComponent.STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=Field.InlinePermissions.reference)
+        self.file_list_dataminer_field = ComponentField(data["file_list_dataminer"], ABSTRACT_DATAMINER_COLLECTION_PATTERN, ("file_list_dataminer",), allow_inline=InlinePermissions.reference, assume_component_group="dataminer_collections")
+        self.structure_field = ComponentField(data["structure"], STRUCTURE_BASE_PATTERN, ("structure",), allow_inline=InlinePermissions.reference)
         return (self.file_list_dataminer_field, self.structure_field)
 
-    def create_final(self, trace:Trace.Trace) -> CoverageDataminer.CoverageDataminer:
-        return CoverageDataminer.CoverageDataminer(
+    def create_final(self, trace:Trace) -> CoverageDataminer:
+        return CoverageDataminer(
             file_name=self.file_name,
             name=self.name,
             domain=self.domain,
@@ -69,11 +76,11 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent.
             remove_suffixes=self.remove_suffixes,
         )
 
-    def link_finals(self, trace:Trace.Trace) -> None:
+    def link_finals(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):
             super().link_finals(trace)
             self.final.link_subcomponents(
                 file_list_dataminer=self.file_list_dataminer_field.subcomponent.final,
                 structure=self.structure_field.subcomponent.final,
-                structure_info=StructureInfo.StructureInfo(self.structure_info, self.domain, repr(self))
+                structure_info=StructureInfo(self.structure_info, self.domain, repr(self))
             )

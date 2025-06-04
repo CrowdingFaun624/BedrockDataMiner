@@ -1,17 +1,17 @@
 from typing import Self
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.ComponentField as ComponentField
-import Component.Field.Field as Field
-import Component.Field.FieldContainer as FieldContainer
-import Component.Structure.Field.TagListField as TagListField
-import Component.Structure.Field.TypeListField as TypeListField
-import Component.Structure.StructureComponent as StructureComponent
-import Component.Structure.StructureTagComponent as StructureTagComponent
+from Component.Component import Component
+from Component.ComponentTyping import KeymapStructureKeyTypedDict
+from Component.Field.ComponentField import OptionalComponentField
+from Component.Field.Field import Field, InlinePermissions
+from Component.Field.FieldContainer import FieldContainer
+from Component.Structure.Field.TagListField import TagListField
+from Component.Structure.Field.TypeListField import TypeListField
+from Component.Structure.StructureComponent import STRUCTURE_COMPONENT_PATTERN
+from Component.Structure.StructureTagComponent import StructureTagComponent
 
 
-class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
+class KeymapKeyField(FieldContainer[Field]):
 
     __slots__ = (
         "allow_inline",
@@ -28,7 +28,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         "value_weight",
     )
 
-    def __init__(self, data:ComponentTyping.KeymapStructureKeyTypedDict, key:str, tag_set:set["StructureTagComponent.StructureTagComponent"], path:tuple[str,...], source_component:"Component.Component", *, allow_inline:Field.InlinePermissions=Field.InlinePermissions.mixed) -> None:
+    def __init__(self, data:KeymapStructureKeyTypedDict, key:str, tag_set:set["StructureTagComponent"], path:tuple[str,...], source_component:"Component", *, allow_inline:InlinePermissions=InlinePermissions.mixed) -> None:
         '''
         :data: A dictionary containing the keys data.
         :key: The key that this Field corresponds to.
@@ -46,15 +46,15 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.similarity_weight = data.get("similarity_weight", 1)
         self.value_weight = data.get("weight", None)
 
-        self.subcomponent_field = ComponentField.OptionalComponentField(data.get("structure", None), StructureComponent.STRUCTURE_COMPONENT_PATTERN, ("structure",), allow_inline=allow_inline)
-        self.tags_field:TagListField.TagListField = TagListField.TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(tag_set)
-        self.types_field = TypeListField.TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), ("types",)).verify_with(self.subcomponent_field)
+        self.subcomponent_field = OptionalComponentField(data.get("structure", None), STRUCTURE_COMPONENT_PATTERN, ("structure",), allow_inline=allow_inline)
+        self.tags_field = TagListField(data.get("tags", ()), ("tags",)).add_to_tag_set(tag_set)
+        self.types_field = TypeListField(data["types"] if isinstance(data["types"], list) else (data["types"]), ("types",)).verify_with(self.subcomponent_field)
 
-        self.tags_for_all_field:TagListField.TagListField|None = None
+        self.tags_for_all_field:TagListField|None = None
 
         self.fields.extend((self.types_field, self.subcomponent_field, self.tags_field))
 
-    def add_tag_fields(self, tag_fields:TagListField.TagListField) -> Self:
+    def add_tag_fields(self, tag_fields:TagListField) -> Self:
         '''
         Makes this KeymapKeyField extend its own tags_field when `set_field` is called.
         :tag_fields: The list of ComponentFields to add from.
@@ -62,7 +62,7 @@ class KeymapKeyField(FieldContainer.FieldContainer[Field.Field]):
         self.tags_field.import_from(tag_fields)
         return self
 
-    def add_to_tag_set(self, tag_set:set["StructureTagComponent.StructureTagComponent"]) -> None:
+    def add_to_tag_set(self, tag_set:set["StructureTagComponent"]) -> None:
         '''
         Makes this KeymapKeyField add its tags (in string form) to the given tag set.
         :tag_set: The set of strings to add to.

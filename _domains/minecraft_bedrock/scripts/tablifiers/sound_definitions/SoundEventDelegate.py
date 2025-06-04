@@ -1,16 +1,16 @@
 from types import EllipsisType
 from typing import Any, NotRequired, Required, TypedDict, cast
 
-import Structure.Container as Con
-import Structure.Delegate.Delegate as Delegate
-import Structure.Difference as Diff
-import Structure.IterableContainer as ICon
-import Structure.SimpleContainer as SCon
-import Structure.StructureEnvironment as StructureEnvironment
-import Structure.StructureTypes.KeymapStructure as KeymapStructure
-import Utilities.Exceptions as Exceptions
-import Utilities.Trace as Trace
-import Utilities.TypeVerifier as TypeVerifier
+from Structure.Container import Don
+from Structure.Delegate.Delegate import Delegate
+from Structure.Difference import Diff
+from Structure.IterableContainer import ICon, IDon
+from Structure.SimpleContainer import SCon, SDon
+from Structure.StructureEnvironment import ComparisonEnvironment
+from Structure.StructureTypes.KeymapStructure import KeymapStructure
+from Utilities.Exceptions import StructureUnrecognizedKeyError
+from Utilities.Trace import Trace
+from Utilities.TypeVerifier import TypedDictTypeVerifier
 
 __all__ = ("SoundEventDelegate",)
 
@@ -23,26 +23,26 @@ class SoundEventTypedDict(TypedDict):
     sounds: Required[dict[str,Any]]
 
 class SoundEventDiffTypedDict(TypedDict):
-    name: Required[Diff.Diff[Con.Don[str]]]
-    category: NotRequired[Diff.Diff[Con.Don[str]]]
-    defined_in: NotRequired[Diff.Diff[ICon.IDon[Diff.Diff[SCon.SDon[int]], Diff.Diff[SCon.SDon[str]], list[str], SCon.SCon[int], SCon.SCon[str]]]]
-    max_distance: NotRequired[Diff.Diff[SCon.SDon[float]]]
-    min_distance: NotRequired[Diff.Diff[SCon.SDon[float]]]
-    sounds: Required[Diff.Diff[ICon.IDon[Diff.Diff[SCon.SDon[str]], Diff.Diff[Con.Don[Any]], dict[str,Any], SCon.SCon[str], Any]]]
+    name: Required[Diff[Don[str]]]
+    category: NotRequired[Diff[Don[str]]]
+    defined_in: NotRequired[Diff[IDon[Diff[SDon[int]], Diff[SDon[str]], list[str], SCon[int], SCon[str]]]]
+    max_distance: NotRequired[Diff[SDon[float]]]
+    min_distance: NotRequired[Diff[SDon[float]]]
+    sounds: Required[Diff[IDon[Diff[SDon[str]], Diff[Don[Any]], dict[str,Any], SCon[str], Any]]]
 
 
-class SoundEventDelegate(Delegate.Delegate[
-    ICon.ICon[SCon.SCon[str], Any, SoundEventTypedDict],
-    ICon.IDon[Diff.Diff[SCon.SDon[str]], Any, SoundEventTypedDict, SCon.SCon[str], Any], # uses this instead of a ICon because SoundEventsDelegate passes in a customized value. The name key messes everything up.
-    KeymapStructure.KeymapStructure[str, Any, SoundEventTypedDict, Any, Any, Any, str, Any, str],
+class SoundEventDelegate(Delegate[
+    ICon[SCon[str], Any, SoundEventTypedDict],
+    IDon[Diff[SDon[str]], Any, SoundEventTypedDict, SCon[str], Any], # uses this instead of a ICon because SoundEventsDelegate passes in a customized value. The name key messes everything up.
+    KeymapStructure[str, Any, SoundEventTypedDict, Any, Any, Any, str, Any, str],
     str, Any, str, Any,
 ]):
 
-    type_verifier = TypeVerifier.TypedDictTypeVerifier()
+    type_verifier = TypedDictTypeVerifier()
 
-    applies_to = (KeymapStructure.KeymapStructure,)
+    applies_to = (KeymapStructure,)
 
-    def print_comparison(self, data:ICon.IDon[Diff.Diff[SCon.SDon[str]], Any, SoundEventTypedDict, SCon.SCon[str], Any], trace: Trace.Trace, environment: StructureEnvironment.ComparisonEnvironment) -> str | EllipsisType:
+    def print_comparison(self, data:IDon[Diff[SDon[str]], Any, SoundEventTypedDict, SCon[str], Any], trace: Trace, environment: ComparisonEnvironment) -> str | EllipsisType:
         data_dict:SoundEventDiffTypedDict = cast(Any, {key.last_value.last_value: value for key, value in data.items()})
 
         sound_event_comparison = "–"
@@ -75,10 +75,10 @@ class SoundEventDelegate(Delegate.Delegate[
 
         other_comparisons:dict[str,str] = {}
         for key, value_obj in data_dict.items():
-            value:Diff.Diff[Con.Don[Any]] = cast(Any, value_obj) # stupid type inferer can't tell it's a Diff.
+            value:Diff[Don[Any]] = cast(Any, value_obj) # stupid type inferer can't tell it's a Diff.
             if key in {"name", "category", "sounds", "defined_in"}: continue
             if key not in {"max_distance", "min_distance"}:
-                trace.exception(Exceptions.StructureUnrecognizedKeyError(key))
+                trace.exception(StructureUnrecognizedKeyError(key))
             structure = self.structure.get_value_structure(key, value.last_value.last_value, trace, environment[value.branch_count - 1])
             assert structure is not None
             other_comparison = structure.print_comparison(value, trace, environment)

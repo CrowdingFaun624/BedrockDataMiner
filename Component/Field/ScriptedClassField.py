@@ -1,14 +1,14 @@
 from typing import Callable, Sequence
 
-import Component.Component as Component
-import Component.ComponentTyping as ComponentTyping
-import Component.Field.Field as Field
-import Component.Field.FieldContainer as FieldContainer
-import Component.ScriptImporter as ScriptImporter
-import Utilities.Trace as Trace
+from Component.Component import Component
+from Component.ComponentTyping import CreateComponentFunction
+from Component.Field.Field import Field
+from Component.Field.FieldContainer import FieldContainer
+from Component.ScriptImporter import ScriptSetSet, ScriptSetSetSet
+from Utilities.Trace import Trace
 
 
-class ScriptedClassField[A](Field.Field):
+class ScriptedClassField[A](Field):
 
     __slots__ = (
         "class_name",
@@ -16,7 +16,7 @@ class ScriptedClassField[A](Field.Field):
         "scripted_objects_function",
     )
 
-    def __init__(self, class_name:str, scripted_objects:Callable[[ScriptImporter.ScriptSetSetSet],ScriptImporter.ScriptSetSet[A]], path: tuple[str,...]) -> None:
+    def __init__(self, class_name:str, scripted_objects:Callable[[ScriptSetSetSet],ScriptSetSet[A]], path: tuple[str,...]) -> None:
         '''
         :class_name: The name of the scripted object.
         :scripted_objects: A function that returns the desired attribute of the Domain's ScriptSetSetSet.
@@ -30,26 +30,26 @@ class ScriptedClassField[A](Field.Field):
 
     def set_field(
         self,
-        source_component:"Component.Component",
-        components:dict[str,"Component.Component"],
-        global_components:dict[str,dict[str,dict[str,"Component.Component"]]],
-        functions:"ScriptImporter.ScriptSetSetSet",
-        create_component_function:ComponentTyping.CreateComponentFunction,
-        trace:Trace.Trace,
-    ) -> tuple[Sequence["Component.Component"],Sequence["Component.Component"]]:
+        source_component:"Component",
+        components:dict[str,"Component"],
+        global_components:dict[str,dict[str,dict[str,"Component"]]],
+        functions:"ScriptSetSetSet",
+        create_component_function:CreateComponentFunction,
+        trace:Trace,
+    ) -> tuple[Sequence["Component"],Sequence["Component"]]:
         with trace.enter_keys(self.trace_path, self.class_name):
             self.object_class = self.scripted_objects_function(functions).get(self.class_name, source_component)
             return (), ()
         return (), ()
 
-class OptionalScriptedClassField[A, B](FieldContainer.FieldContainer):
+class OptionalScriptedClassField[A, B](FieldContainer):
 
     __slots__ = (
         "default",
         "scripted_class_field",
     )
 
-    def __init__(self, class_name:str|None, scripted_objects:Callable[[ScriptImporter.ScriptSetSetSet],ScriptImporter.ScriptSetSet[A]], path: tuple[str,...], *, default:B=None) -> None:
+    def __init__(self, class_name:str|None, scripted_objects:Callable[[ScriptSetSetSet],ScriptSetSet[A]], path: tuple[str,...], *, default:B=None) -> None:
         '''
         :class_name: The name of the scripted object or None.
         :scripted_objects: A function that returns the desired attribute of the Domain's ScriptSetSetSet.
