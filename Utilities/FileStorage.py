@@ -81,8 +81,13 @@ def archive_data(data:bytes, file_name:str) -> str:
         else:
             destination.write(data)
 
-    if file_hash not in index.get():
-        index.write_new_line((file_hash, zipped))
+    try:
+        if file_hash not in index.get():
+            index.write_new_line((file_hash, zipped))
+    except Exception:
+        # if the index is not written to, then the file system is considered corrupted.
+        archived_path.unlink()
+        raise
 
     return file_hash
 
