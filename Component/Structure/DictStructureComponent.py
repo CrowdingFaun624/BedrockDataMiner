@@ -68,7 +68,7 @@ class DictStructureComponent(MappingStructureComponent[DictStructure]):
             super().link_finals(trace)
             self.final.link_dict_structure(
                 allow_key_moves=self.allow_key_moves,
-                allow_same_key_optimization=self.allow_same_key_optimization if self.allow_same_key_optimization is not None else self.value_weight == 0 or not self.allow_key_moves or all(issubclass(key_type, str) for key_type in self.key_types_field.types),
+                allow_same_key_optimization=self.allow_same_key_optimization if self.allow_same_key_optimization is not None else self.value_weight == 0 or not self.allow_key_moves or all(issubclass(this_type, dict) for this_type in self.this_types_field.types),
                 key_structure=self.key_structure_field.map(lambda subcomponent: subcomponent.final),
                 key_weight=self.key_weight,
                 value_structure=self.value_structure_field.map(lambda subcomponent: subcomponent.final),
