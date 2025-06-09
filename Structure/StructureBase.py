@@ -134,10 +134,10 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
             return "", False
         comparison = self.ensure_not_ellipsis(comparison, trace, (version1, version2))
         if self.delegate is None:
-            return cast(str, self.ensure_not_ellipsis(self.print_comparison(comparison, trace, comparison_environment), trace, (version1, version2))), has_changes
+            return cast(str, self.ensure_not_ellipsis(self.print_comparison(comparison, (0, 1), trace, comparison_environment), trace, (version1, version2))), has_changes
         else:
             with trace.enter(self, self.name, (containerized_data1, containerized_data2)):
-                return self.ensure_not_ellipsis(self.delegate.print_comparison(comparison, trace, comparison_environment), trace, (version1, version2)), has_changes
+                return self.ensure_not_ellipsis(self.delegate.print_comparison(comparison, (0, 1), trace, comparison_environment), trace, (version1, version2)), has_changes
             return "", False
 
     def normalize_from_raw(self, data:D, trace:Trace, environment:PrinterEnvironment) -> D:

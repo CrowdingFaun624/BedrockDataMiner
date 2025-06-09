@@ -109,6 +109,9 @@ class ComparisonEnvironment():
     def __getitem__(self, branch:int) -> "PrinterEnvironment":
         return self.printer_environments[branch]
 
+    def __len__(self) -> int:
+        return len(self.versions)
+
     def __repr__(self) -> str:
         if len(self.versions) <= 5:
             return f"<{self.__class__.__name__} [{", ".join(f"\"{version.name}\"" if version is not None else "None" for version in self.versions)}]>"

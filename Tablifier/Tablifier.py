@@ -341,8 +341,8 @@ class Tablifier():
                 print("Test passed.")
         if test is None:
             if self.structure.delegate is None:
-                output = self.ensure_not_ellipsis(self.structure.print_comparison(comparison, trace, comparison_environment), trace, versions, domain)
+                output = self.ensure_not_ellipsis(self.structure.print_comparison(comparison, tuple(range(len(comparison_environment))), trace, comparison_environment), trace, versions, domain)
             else:
-                output = self.ensure_not_ellipsis(self.structure.delegate.print_comparison(comparison, trace, comparison_environment), trace, versions, domain)
+                output = self.ensure_not_ellipsis(self.structure.delegate.print_comparison(comparison, tuple(range(len(comparison_environment))), trace, comparison_environment), trace, versions, domain)
             with open(self.path, "wt", encoding="UTF8") as f:
                 f.write(output)

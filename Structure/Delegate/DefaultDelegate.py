@@ -113,7 +113,7 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
             return [(0, "[" + ", ".join(items_str) + "]")]
         return output
 
-    def print_comparison(self, data:IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], trace:Trace, environment:ComparisonEnvironment) -> list[LineType]|EllipsisType:
+    def print_comparison(self, data:IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> list[LineType]|EllipsisType:
         output:list[LineType] = []
         current_length, addition_length, removal_length = 0, 0, 0
         size_changed = False
@@ -136,7 +136,7 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
                     # key_structure cannot be None because if it were None, `key_diff.contains_diff` must be False.
                     if key_structure is None:
                         continue
-                    key_output = key_structure.print_comparison(key_diff[1], trace, environment)
+                    key_output = key_structure.print_comparison(key_diff[1], bundle, trace, environment)
                     if key_output is ...:
                         continue
                     self.print_single(None, key_output, output, message="Moved ")
@@ -173,7 +173,7 @@ class DefaultDelegate[K:Hashable, V, D](LineDelegate[
                     # value_structure cannot be None because if it were None, `value_diff.contains_diff` must be False.
                     if value_structure is None:
                         continue
-                    value_output = value_structure.print_comparison(value_diff[1], trace, environment)
+                    value_output = value_structure.print_comparison(value_diff[1], bundle, trace, environment)
                     if value_output is ...:
                         continue
                     self.print_single(key_output_representation(), value_output, output, message="Changed ", allow_single_line=False)

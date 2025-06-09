@@ -82,7 +82,7 @@ class Delegate[DC:Con, DD:Don|Diff, S:Structure|None, BO, BC, CO, CC]():
         '''
         return cast(BO, data)
 
-    def cache_store_comparison(self, data:CO, trace:Trace, environment:ComparisonEnvironment) -> CC:
+    def cache_store_comparison(self, data:CO, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CC:
         '''
         Returns data from `print_comparison` that is stored in a CacheStructure.
         When the data is retrieved, `cache_retrieve_comparison` is called.
@@ -91,7 +91,7 @@ class Delegate[DC:Con, DD:Don|Diff, S:Structure|None, BO, BC, CO, CC]():
         '''
         return cast(CC, data)
 
-    def cache_retrieve_comparison(self, data:CC, trace:Trace, environment:ComparisonEnvironment) -> CO:
+    def cache_retrieve_comparison(self, data:CC, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CO:
         '''
         Given the data that was stored by `cache_store_comparison`, returns the original data.
         :data: The data stored in the cache that is returned by `cache_store_comparison`.
@@ -102,5 +102,5 @@ class Delegate[DC:Con, DD:Don|Diff, S:Structure|None, BO, BC, CO, CC]():
     def print_branch(self, data:DC, trace:Trace, environment:PrinterEnvironment) -> BO|EllipsisType:
         ...
 
-    def print_comparison(self, data:DD, trace:Trace, environment:ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data:DD, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CO|EllipsisType:
         ...

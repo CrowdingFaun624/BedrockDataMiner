@@ -27,7 +27,7 @@ class PrimitiveDelegate[DC:Con, DD:Don|Diff[Don]](LineDelegate[DC, DD, Primitive
     def print_branch(self, data: DC, trace: Trace, environment: PrinterEnvironment) -> list[LineType] | EllipsisType:
         return [(0, self.stringify(data.data))]
 
-    def print_comparison(self, data: DD, trace: Trace, environment: ComparisonEnvironment) -> list[tuple[int, str]] | EllipsisType:
+    def print_comparison(self, data: DD, bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> list[tuple[int, str]] | EllipsisType:
         if isinstance(data, Don):
             return [(0, self.stringify(data.last_value))]
         elif data.get(0) is ...:

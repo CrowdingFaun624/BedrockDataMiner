@@ -327,11 +327,11 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
             return self.delegate.print_branch(data, trace, environment)
         return ...
 
-    def print_comparison(self, data: IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data: IDon[Diff[Don[K]], Diff[Don[V]], D, Con[K], Con[V]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
         with trace.enter(self, self.name, data):
             if self.delegate is None:
                 raise AttributeNoneError("delegate", self)
-            return self.delegate.print_comparison(data, trace, environment)
+            return self.delegate.print_comparison(data, bundle, trace, environment)
         return ...
 
     # the below methods are utility methods for use in multiple subclasses.

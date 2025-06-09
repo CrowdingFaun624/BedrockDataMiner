@@ -161,6 +161,7 @@ class VolumeDelegate(LineDelegate[
     def compare_text_block(
         self,
         position:tuple[int,int,int],
+        bundle:tuple[int,...],
         block_data:Diff[IDon[Diff[Any], Diff[Any], MutableMapping[Any, Any], Any, Any]],
         trace:Trace,
         environment:ComparisonEnvironment,
@@ -168,7 +169,7 @@ class VolumeDelegate(LineDelegate[
         output:list[LineType] = []
         any_changes:bool
         if block_data.contains_diffs:  # because two total branches are assumed, if this is True, `value_diff` has only one bundle with both branches.
-            substructure_output = self.substructure.print_comparison(block_data.last_value, trace, environment)
+            substructure_output = self.substructure.print_comparison(block_data.last_value, bundle, trace, environment)
             if substructure_output is ...:
                 return [], False
             self.print_single(None, substructure_output, output, message="Changed ", post_message=f" at {", ".join(map(str, position))}")
@@ -188,7 +189,7 @@ class VolumeDelegate(LineDelegate[
             any_changes = False
         return output, any_changes
 
-    def print_comparison(self, data: ICon[Diff[Don[Any]], Diff[Any], DataTypedDict], trace: Trace, environment: ComparisonEnvironment) -> list[tuple[int, str]] | EllipsisType:
+    def print_comparison(self, data: ICon[Diff[Don[Any]], Diff[Any], DataTypedDict], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> list[tuple[int, str]] | EllipsisType:
         data_dict = {key.last_value.last_value: value for key, value in data.items()}
         size_container:IDon[Diff[SDon[int]], Diff[SDon[int]], tuple[int,int,int], SCon[int], SCon[int]] = data_dict["size"].last_value
         size:tuple[Diff[SDon[int]],...] = tuple(value for value in size_container.values())
@@ -211,7 +212,7 @@ class VolumeDelegate(LineDelegate[
 
                 block_data = additional_data.get(position)
                 if block_data is not None:
-                    block_data_comparison, block_data_has_changes = self.compare_text_block(position, block_data, trace, environment)
+                    block_data_comparison, block_data_has_changes = self.compare_text_block(position, bundle, block_data, trace, environment)
                     if block_data_has_changes:
                         block_data_comparisons[position[1]].append(block_data_comparison)
                 else:

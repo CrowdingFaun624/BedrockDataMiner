@@ -145,7 +145,7 @@ class Structure[A, B:Con, C:Don, D:Don|Diff, BO, CO]():
         '''
         return ...
 
-    def print_comparison(self, data:D, trace:Trace, environment:ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data:D, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CO|EllipsisType:
         '''
         Prints a comparison of data. Returns an Ellipsis if there was an error.
         '''

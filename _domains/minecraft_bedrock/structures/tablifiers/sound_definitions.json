@@ -20,7 +20,7 @@
             {
                 "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_dict",
                 "arguments": {
-                    "add_defined_in": true
+                    "add_defined_in": false
                 }
             },
             {
@@ -33,13 +33,7 @@
         "type": "Dict",
         "value_types": "dict",
         "delegate": "tablifiers/sound_definitions/SoundEventsDelegate",
-        "key_structure": {
-            "type": "String",
-            "delegate": null // controlled by `sound_event`
-        },
-        "normalizers": {
-            "function_name": "tablifiers/sound_definitions/add_name"
-        },
+        "key_structure": "string",
         "value_structure": "sound_event"
     },
     "sound_event": {
@@ -56,20 +50,10 @@
         "keys": {
             "name": {"types": "str", "similarity_weight": 0, "structure": "string"},
             "category": {"types": "str", "structure": "category"},
-            "defined_in": {"types": "list", "structure": "defined_in"},
             "max_distance": {"types": "float", "structure": "make_float"},
             "min_distance": {"types": "float", "structure": "make_float"},
             "sounds": {"types": "list", "structure": "sounds"}
         }
-    },
-    "defined_in": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "value_types": "str",
-        "delegate": "tablifiers/sound_definitions/DefinedInDelegate",
-        "value_structure": "string"
     },
     "sounds": {
         "type": "Dict",
@@ -115,14 +99,14 @@
         "this_types": "str",
         "delegate": "tablifiers/sound_definitions/CategoryDelegate",
         "delegate_arguments": {
-            "code": true
+            "code": false
         }
     },
     "string": {
         "type": "String",
         "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
         "delegate_arguments": {
-            "code": true
+            "code": false
         }
     },
     "not_code_string": {
@@ -138,7 +122,7 @@
         "this_types": "str",
         "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
         "delegate_arguments": {
-            "code": true
+            "code": false
         }
     },
     "make_float": {
@@ -146,7 +130,7 @@
         "this_types": "float",
         "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
         "delegate_arguments": {
-            "code": true
+            "code": false
         },
         "pre_normalized_types": ["float", "int"],
         "normalizers": {
@@ -158,7 +142,7 @@
         "this_types": "int",
         "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
         "delegate_arguments": {
-            "code": true
+            "code": false
         }
     },
     "bool": {
@@ -166,7 +150,7 @@
         "this_types": "bool",
         "delegate": "tablifiers/sound_definitions/PrimitiveDelegate",
         "delegate_arguments": {
-            "code": true
+            "code": false
         }
     }
 }

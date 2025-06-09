@@ -24,7 +24,7 @@ class DefinedInDelegate(Delegate[
 
     applies_to = (IterableStructure,)
 
-    def print_comparison(self, data: IDon[Diff[SDon[int]], Diff[SDon[str]], list[str], SCon[int], SCon[str]], trace: Trace, environment: ComparisonEnvironment) -> str | EllipsisType:
+    def print_comparison(self, data: IDon[Diff[SDon[int]], Diff[SDon[str]], list[str], SCon[int], SCon[str]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> str | EllipsisType:
         output:list[str] = []
         for index, item in data.items():
             with trace.enter_key(index, item):
@@ -32,7 +32,7 @@ class DefinedInDelegate(Delegate[
                 assert item.length == 1 # no shallow changes allowed.
                 structure = self.structure.get_value_structure(index.last_value.last_value, item.last_value.last_value, trace, environment[item.branch_count - 1])
                 assert structure is not None
-                structure_output = structure.print_comparison(item.last_value, trace, environment)
+                structure_output = structure.print_comparison(item.last_value, bundle, trace, environment)
                 if structure_output is ...:
                     continue
                 output.append(structure_output)

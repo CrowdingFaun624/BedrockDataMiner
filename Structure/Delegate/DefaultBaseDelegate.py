@@ -52,7 +52,7 @@ class DefaultBaseDelegate[D](Delegate[
             final.extend("\t" * line[0] + line[1] for line in lines)
         return "\n".join(final)
 
-    def print_comparison(self, data:Don[D]|Diff[Don[D]], trace:Trace, environment: ComparisonEnvironment) -> str|EllipsisType:
+    def print_comparison(self, data:Don[D]|Diff[Don[D]], bundle:tuple[int,...], trace:Trace, environment: ComparisonEnvironment) -> str|EllipsisType:
         version1, version2, versions_between = environment.versions[0], environment.versions[1], environment.versions_between[0]
         header:list[str] = []
         beta_texts:list[str] = ["", ""]
@@ -71,12 +71,12 @@ class DefaultBaseDelegate[D](Delegate[
         final = header
         if self.structure.structure is not None:
             if isinstance(data, Diff) and data.length == 1:
-                lines = self.structure.structure.print_comparison(data[0], trace, environment)
+                lines = self.structure.structure.print_comparison(data[0], bundle, trace, environment)
             elif isinstance(data, Diff) and data.length != 1:
                 assert environment.default_delegate is not None
-                lines = environment.default_delegate.print_comparison(data, trace, environment)
+                lines = environment.default_delegate.print_comparison(data, bundle, trace, environment)
             else:
-                lines = self.structure.structure.print_comparison(data, trace, environment)
+                lines = self.structure.structure.print_comparison(data, bundle, trace, environment)
             if lines is ...:
                 return ...
             final.extend("\t" * line[0] + line[1] for line in lines)

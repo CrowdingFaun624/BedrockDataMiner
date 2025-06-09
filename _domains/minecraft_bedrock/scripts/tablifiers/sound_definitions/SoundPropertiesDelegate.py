@@ -47,7 +47,7 @@ class SoundPropertiesDelegate(Delegate[
 
     applies_to = (KeymapStructure,)
 
-    def print_comparison(self, data: IDon[Diff[SDon[str]], Diff[Don[Any]], SoundPropertiesTypedDict, SCon[str], Con[Any]], trace: Trace, environment: ComparisonEnvironment) -> str | EllipsisType:
+    def print_comparison(self, data: IDon[Diff[SDon[str]], Diff[Don[Any]], SoundPropertiesTypedDict, SCon[str], Con[Any]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> str | EllipsisType:
         output:list[str] = []
         data_dict = {key.last_value: value for key, value in sorted(data.items(), key=lambda item: PROPERTY_ORDER[item[0].last_value.last_value])}
         key_structure = self.structure.key_structure
@@ -57,7 +57,8 @@ class SoundPropertiesDelegate(Delegate[
                 structure = self.structure.get_value_structure(key.last_value, value.last_value.last_value, trace, environment[value.branch_count - 1])
                 assert structure is not None
 
-                comparison = structure.print_comparison(value, trace, environment)
+                new_bundle = tuple(branch for bundle in value.items.keys() for branch in bundle)
+                comparison = structure.print_comparison(value, new_bundle, trace, environment)
                 if comparison is ...:
                     continue
                 if key.last_value == "name":

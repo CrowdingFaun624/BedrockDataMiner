@@ -227,9 +227,9 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Do
             return printer(data, trace, environment)
         return ...
 
-    def print_comparison(self, data: Don[D] | Diff[Don[D]], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data: Don[D] | Diff[Don[D]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
         with trace.enter(self, self.name, data):
-            return self.get_comparison_printer(data, trace, environment)(data, trace, environment)
+            return self.get_comparison_printer(data, trace, environment)(data, bundle, trace, environment)
         return ...
 
     def get_comparison_printer(
@@ -237,7 +237,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Do
         data: Don[D] | Diff[Don[D]],
         trace: Trace,
         environment:ComparisonEnvironment,
-    ) -> Callable[[Don[D]|Diff[Don[D]], Trace, ComparisonEnvironment], Any]:
+    ) -> Callable[[Don[D]|Diff[Don[D]], tuple[int,...], Trace, ComparisonEnvironment], Any]:
         if isinstance(data, Don):
             structure:Structure[D, Con[D], Don[D], Don[D]|Diff[Don[D]], BO, CO]|None|EllipsisType = ...
             for branch in data.iter_branches():

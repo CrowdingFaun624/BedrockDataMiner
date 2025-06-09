@@ -121,19 +121,19 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
         else:
             return cast(BO, output)
 
-    def delegate_store_comparison(self, output:CO, trace:Trace, environment:ComparisonEnvironment) -> CC:
+    def delegate_store_comparison(self, output:CO, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CC:
         if self.delegate is not None:
-            return self.delegate.cache_store_comparison(output, trace, environment)
+            return self.delegate.cache_store_comparison(output, bundle, trace, environment)
         elif environment.default_delegate is not None:
-            return environment.default_delegate.cache_store_comparison(output, trace, environment)
+            return environment.default_delegate.cache_store_comparison(output, bundle, trace, environment)
         else:
             return cast(CC, output)
 
-    def delegate_retrieve_comparison(self, output:CC, trace:Trace, environment:ComparisonEnvironment) -> CO:
+    def delegate_retrieve_comparison(self, output:CC, bundle:tuple[int,...], trace:Trace, environment:ComparisonEnvironment) -> CO:
         if self.delegate is not None:
-            return self.delegate.cache_retrieve_comparison(output, trace, environment)
+            return self.delegate.cache_retrieve_comparison(output, bundle, trace, environment)
         elif environment.default_delegate is not None:
-            return environment.default_delegate.cache_retrieve_comparison(output, trace, environment)
+            return environment.default_delegate.cache_retrieve_comparison(output, bundle, trace, environment)
         else:
             return cast(CO, output)
 
@@ -199,13 +199,13 @@ class CacheStructure[D, BO, BC, CO, CC](BranchlessStructure[D, BO, CO]):
             return self.cache_function(self.cache_print_branch, hash_function, lambda: self_super.print_branch(data, trace, environment), store_function, retrieve_function, environment.structure_environment)
         return ...
 
-    def print_comparison(self, data: Don[D] | Diff[Don[D]], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data: Don[D] | Diff[Don[D]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
         with trace.enter(self, self.name, data):
-            store_function = lambda output: self.delegate_store_comparison(output, trace, environment)
-            retrieve_function = lambda output: self.delegate_retrieve_comparison(output, trace, environment)
-            hash_function = (lambda: hash((data, environment, environment.versions, tuple(tuple(item) for item in environment.versions_between)))) if self.cache_versions_for_delegates else (lambda: hash((data, environment)))
+            store_function = lambda output: self.delegate_store_comparison(output, bundle, trace, environment)
+            retrieve_function = lambda output: self.delegate_retrieve_comparison(output, bundle, trace, environment)
+            hash_function = (lambda: hash((data, bundle, environment, environment.versions, tuple(tuple(item) for item in environment.versions_between)))) if self.cache_versions_for_delegates else (lambda: hash((data, environment, bundle)))
             self_super = super()
-            return self.cache_function(self.cache_print_comparison, hash_function, lambda: self_super.print_comparison(data, trace, environment), store_function, retrieve_function, environment.structure_environment)
+            return self.cache_function(self.cache_print_comparison, hash_function, lambda: self_super.print_comparison(data, bundle, trace, environment), store_function, retrieve_function, environment.structure_environment)
         return ...
 
     def clear_old(self) -> None:

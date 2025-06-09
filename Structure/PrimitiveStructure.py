@@ -109,14 +109,14 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
             return printer(data, trace, environment)
         return ...
 
-    def print_comparison(self, data: Diff[SDon[D]], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
+    def print_comparison(self, data: Diff[SDon[D]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> CO|EllipsisType:
         with trace.enter(self, self.name, data):
-            printer:Callable[[Diff[SDon[D]], Trace, ComparisonEnvironment], Any]
+            printer:Callable[[Diff[SDon[D]], tuple[int,...], Trace, ComparisonEnvironment], Any]
             if self.delegate is not None:
                 printer = self.delegate.print_comparison
             elif environment.default_delegate is not None:
                 printer = environment.default_delegate.print_comparison
             else:
                 raise InvalidStateError(self)
-            return printer(data, trace, environment)
+            return printer(data, bundle, trace, environment)
         return ...

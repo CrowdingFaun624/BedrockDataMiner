@@ -60,9 +60,7 @@ class MaterialBinSerializer(Serializer[OutputTypedDict,]):
 
     can_contain_subfiles = True
 
-    def __init__(self, name: str, domain:Domain.Domain, version:str) -> None:
-        super().__init__(name, domain)
-        # self.cached_data:dict[str,str]|None = None
+    def initialize(self, version:str) -> None:
         self.version = version
         assert not any(char in self.version for char in "\\/:*?\"<>|")
 

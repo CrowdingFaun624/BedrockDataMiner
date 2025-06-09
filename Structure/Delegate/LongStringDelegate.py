@@ -75,7 +75,7 @@ class LongStringDelegate(DefaultDelegate[int, str, Sequence]):
         return f"{old_index_string if show_old else " " * maximum_index_length} {new_index_string if show_new else " " * maximum_index_length}"
 
     # TODO: now that ICon tracks index changes, change this method to utilize that.
-    def print_comparison(self, data: IDon[Diff[Don[int]], Diff[Don[str]], Sequence, Con[int], Con[str]], trace: Trace, environment: ComparisonEnvironment) -> list[tuple[int, str]] | EllipsisType:
+    def print_comparison(self, data: IDon[Diff[Don[int]], Diff[Don[str]], Sequence, Con[int], Con[str]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> list[tuple[int, str]] | EllipsisType:
         output:list[LineType] = []
         data_list = list(data.items())
         maximum_index_length = self.get_maximum_index_length(data_list) # determines the amount of spacing.
