@@ -38,14 +38,14 @@ def parse_data(data_string:str, domain:"Domain.Domain") -> Any:
     return data
 
 def ensure_not_ellipsis[A](data:A|EllipsisType, trace:Trace, structure:Structure, domain:"Domain.Domain") -> A:
-    texts:list[str] = trace.stringify()
-    if len(texts) > 0:
+    texts:list[str] = list(trace.stringify())
+    if trace.has_exceptions:
         if (log := domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
-            log.write(f"-------- {len(texts)} EXCEPTIONS IN {structure.full_name} --------\n\n")
+            log.write(f"-------- {trace.exception_count} EXCEPTIONS IN {structure.full_name} --------\n\n")
             log.write("\n".join(texts))
         for text in texts:
             print(text)
-    if len(texts) > 0 or data is ...:
+    if data is ... or trace.has_exceptions:
         raise StructureError(structure)
     return data
 

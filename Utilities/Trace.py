@@ -1,7 +1,7 @@
 import enum
 import traceback
 from types import EllipsisType, NoneType, TracebackType
-from typing import Any, Callable, Iterable, Self
+from typing import Any, Callable, Iterable, Iterator, Self
 
 from Utilities.Exceptions import TypeVerificationFailedError, TypeVerifierException
 
@@ -129,11 +129,18 @@ class Trace():
     def __len__(self) -> int:
         return len(self._exceptions)
 
-    def stringify(self) -> list[str]:
+    @property
+    def has_exceptions(self) -> bool:
+        return any(not isinstance(error_trace.exception, (TypeVerificationFailedError, TypeVerifierException)) for error_trace in self._exceptions)
+
+    @property
+    def exception_count(self) -> int:
+        return sum(not isinstance(error_trace.exception, (TypeVerificationFailedError, TypeVerifierException)) for error_trace in self._exceptions)
+
+    def stringify(self) -> Iterator[str]:
         '''
         Turns each stored Exception into a fancy, formatted string.
         '''
-        output:list[str] = []
         for error_trace in self._exceptions:
             exception = error_trace.exception
             match exception:
@@ -143,8 +150,7 @@ class Trace():
                     exception_string = str(exception)
                 case _:
                     exception_string = "".join(traceback.format_exception(error_trace.exception)).rstrip()
-            output.append(f"{error_trace.exception.__class__.__name__} at {stringify_trace(error_trace.trace)}{f" from data {str(error_trace.trace[-1][2])}" if error_trace.trace[-1][2] is not ... else ""}:{"\n" if exception_string.count("\n") > 0 else " "}{exception_string}")
-        return output
+            yield f"{error_trace.exception.__class__.__name__} at {stringify_trace(error_trace.trace)}{f" from data {str(error_trace.trace[-1][2])}" if error_trace.trace[-1][2] is not ... else ""}:{"\n" if exception_string.count("\n") > 0 else " "}{exception_string}"
 
 class ErrorTrace():
 

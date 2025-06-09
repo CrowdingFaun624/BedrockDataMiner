@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from functools import cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Container, Literal, Optional, Sequence
 
@@ -51,7 +52,8 @@ def message_bool(display_switch:bool, false_message:str|Callable[[],str]="", tru
     else:
         return true_message() if callable(true_message) else true_message
 
-def get_nearest(_str:str, options:list[str]) -> str|None:
+@cache
+def get_nearest(_str:str, options:frozenset[str]) -> str|None:
     min_option:str|None = None
     min_distance:float|None = None
     second_min_distance:float|None = None
@@ -109,7 +111,7 @@ def get_nearest(_str:str, options:list[str]) -> str|None:
         return min_option
 
 def nearest_message(value:str, options:list[str]) -> str:
-    nearest = get_nearest(value, options)
+    nearest = get_nearest(value, frozenset(options))
     if nearest is None:
         return ""
     else:
@@ -1085,7 +1087,7 @@ class MissingDataFileError(DataminerException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"File {self.file_name} of {self.dataminer}{message(self.version, "", "of Version \"%s\"", lambda version: version.name)} is missing{message(self.message)}"
+        return f"File {self.file_name} of {self.dataminer}{message(self.version, "", " of Version \"%s\"", lambda version: version.name)} is missing{message(self.message)}"
 
 class NullDataminerMethodError(DataminerException):
     "An invalid exception has been called on a NullDataminer."

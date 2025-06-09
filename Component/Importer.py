@@ -78,7 +78,7 @@ component_group_type_verifier = DictTypeVerifier(dict, str, TypedDictTypeVerifie
 ))
 
 def print_exceptions(domain:"Domain.Domain", trace:Trace) -> None:
-    texts:list[str] = trace.stringify()
+    texts:list[str] = list(trace.stringify())
     failed_component_groups:set[str] = {name() for (object, name, data, trace_type) in trace.objects if trace_type is TraceType.object and isinstance(object, ImporterEnvironment)}
     with open(domain.component_log_file, "wb") as f:
         f.write("\n".join(texts).encode())

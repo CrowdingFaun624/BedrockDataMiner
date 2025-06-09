@@ -64,10 +64,10 @@ class StructureBase[D, BO, CO](BranchlessStructure[D, BO, CO]):
         '''
         Prints all exceptions and traces in list and raises an exception at the end if the list has any items.
         '''
-        texts:list[str] = trace.stringify()
-        if len(texts) > 0:
+        texts:list[str] = list(trace.stringify())
+        if trace.has_exceptions > 0:
             if (log := self.domain.logs.get("structure_log")) is not None and log.supports_type(log, str):
-                log.write(f"-------- {len(texts)} EXCEPTIONS IN {self.full_name} ON {", ".join(version.name for version in versions)} --------\n\n")
+                log.write(f"-------- {trace.exception_count} EXCEPTIONS IN {self.full_name} ON {", ".join(version.name for version in versions)} --------\n\n")
                 log.write("\n".join(texts))
             for text in texts:
                 print(text)
