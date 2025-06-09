@@ -9,6 +9,8 @@ class CustomJsonSerializer(JsonSerializer):
     Serializer for JSON files.
     '''
 
+    __slots__ = ()
+
     can_contain_subfiles = True
 
     def deserialize(self, data: bytes) -> Any:

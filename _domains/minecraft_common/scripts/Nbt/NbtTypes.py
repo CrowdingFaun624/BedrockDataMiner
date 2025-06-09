@@ -15,6 +15,7 @@ NbtJsonTypedDict = TypedDict("NbtJsonTypedDict", {"$special_type": Literal["nbt"
 
 class NbtCoder(Coder[NbtJsonTypedDict, "TAG"]):
 
+    __slots__ = ()
     special_type_name = "nbt"
 
     @classmethod
@@ -46,6 +47,8 @@ class IdEnum(enum.IntEnum):
 
 class TAG(Protocol):
 
+    __slots__ = ()
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG": ...
 
@@ -55,6 +58,8 @@ class TAG(Protocol):
         return f"<{self.__class__.__name__} {str(self)}>"
 
 class TAG_End(TAG):
+
+    __slots__ = ()
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_End":
@@ -75,6 +80,8 @@ class TAG_End(TAG):
 @register_decorator("TAG_Byte", None, json_coder=NbtCoder)
 class TAG_Byte(int, TAG):
 
+    __slots__ = ()
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Byte":
         return cls(data_reader.unpack_tuple("b", 1, endianness))
@@ -84,6 +91,8 @@ class TAG_Byte(int, TAG):
 
 @register_decorator("TAG_Short", None, json_coder=NbtCoder)
 class TAG_Short(int, TAG):
+
+    __slots__ = ()
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Short":
@@ -95,6 +104,8 @@ class TAG_Short(int, TAG):
 @register_decorator("TAG_Int", None, json_coder=NbtCoder)
 class TAG_Int(int, TAG):
 
+    __slots__ = ()
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Int":
         return cls(data_reader.unpack_tuple("i", 4, endianness))
@@ -105,6 +116,8 @@ class TAG_Int(int, TAG):
 @register_decorator("TAG_Long", None, json_coder=NbtCoder)
 class TAG_Long(int, TAG):
 
+    __slots__ = ()
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Long":
         return cls(data_reader.unpack_tuple("q", 8, endianness))
@@ -114,6 +127,8 @@ class TAG_Long(int, TAG):
 
 @register_decorator("TAG_Float", None, json_coder=NbtCoder)
 class TAG_Float(float, TAG):
+
+    __slots__ = ()
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Float":
@@ -128,6 +143,8 @@ class TAG_Float(float, TAG):
 @register_decorator("TAG_Double", None, json_coder=NbtCoder)
 class TAG_Double(float, TAG):
 
+    __slots__ = ()
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Double":
         return cls(data_reader.unpack_tuple("d", 8, endianness))
@@ -141,6 +158,8 @@ class TAG_Double(float, TAG):
 @register_decorator("TAG_Byte_Array", None, requires_subcomponent=False, can_contain={TAG_Byte}, json_coder=NbtCoder)
 class TAG_Byte_Array(list[TAG_Byte], TAG):
 
+    __slots__ = ()
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Byte_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
@@ -151,6 +170,8 @@ class TAG_Byte_Array(list[TAG_Byte], TAG):
 
 @register_decorator("TAG_String", None, json_coder=NbtCoder)
 class TAG_String(str, TAG):
+
+    __slots__ = ()
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_String":
@@ -171,6 +192,8 @@ class TAG_String(str, TAG):
 @register_decorator("TAG_List", None, json_coder=NbtCoder)
 class TAG_List[b: TAG](list[b], TAG):
 
+    __slots__ = ()
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_List":
         content_type:int = data_reader.unpack_tuple("b", 1, endianness)
@@ -182,6 +205,8 @@ class TAG_List[b: TAG](list[b], TAG):
 
 @register_decorator("TAG_Compound", None, json_coder=NbtCoder)
 class TAG_Compound[b: TAG](dict[str,b], TAG):
+
+    __slots__ = ()
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Compound":
@@ -216,6 +241,8 @@ class TAG_Compound[b: TAG](dict[str,b], TAG):
 @register_decorator("TAG_Int_Array", None, requires_subcomponent=False, can_contain={TAG_Int}, json_coder=NbtCoder)
 class TAG_Int_Array(list[TAG_Int], TAG):
 
+    __slots__ = ()
+
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Int_Array":
         size:int = data_reader.unpack_tuple("i", 4, endianness)
@@ -226,6 +253,8 @@ class TAG_Int_Array(list[TAG_Int], TAG):
 
 @register_decorator("TAG_Long_Array", None, requires_subcomponent=False, can_contain={TAG_Float}, json_coder=NbtCoder)
 class TAG_Long_Array(list[TAG_Long], TAG):
+
+    __slots__ = ()
 
     @classmethod
     def from_bytes(cls, data_reader:DataReader, endianness:End) -> "TAG_Long_Array":

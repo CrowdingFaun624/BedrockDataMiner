@@ -36,6 +36,12 @@ class VolumeDelegate(LineDelegate[
     KeymapStructure[Any, Any, DataTypedDict, Any, Any, Any, Any, list[LineType], list[LineType]],
 ]):
 
+    __slots__ = (
+        "layer_characters",
+        "print_additional_data",
+        "substructure",
+    )
+
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("field", False, str),
         TypedDictKeyTypeVerifier("layer_characters", False, str, lambda key, value: (len(value) == len(set(value)), "all characters must be unique")),

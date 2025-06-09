@@ -15,6 +15,11 @@ __all__ = ("MyGrabMultipleFilesDataminer",)
 
 class MyGrabMultipleFilesDataminer(GrabMultipleFilesDataminer):
 
+    __slots__ = (
+        "insert_pack",
+        "reverse",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("ignore_suffixes", False, ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
         TypedDictKeyTypeVerifier("location", True, str, function=FileDataminer.location_value_function),

@@ -20,6 +20,9 @@ if TYPE_CHECKING:
 class StructurePlan(Plan[StructureBase]):
 
     label = "Structures"
+    __slots__ = (
+        "structures",
+    )
 
     def __init__(
         self,

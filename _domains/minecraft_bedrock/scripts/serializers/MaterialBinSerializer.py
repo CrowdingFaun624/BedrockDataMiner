@@ -24,6 +24,8 @@ class OutputTypedDict(TypedDict):
 
 class MaterialBinCache(LinesCache[dict[str,dict[str,str]], tuple[str,str,str]]):
 
+    __slots__ = ()
+
     def __init__(self, domain:Domain.Domain) -> None:
         domain.data_directory.mkdir(exist_ok=True)
         super().__init__(domain.data_directory.joinpath("material_bin_cache.txt"))
@@ -53,6 +55,10 @@ class MaterialBinCache(LinesCache[dict[str,dict[str,str]], tuple[str,str,str]]):
 material_bin_cache = MaterialBinCache(get_domain_from_module(__name__))
 
 class MaterialBinSerializer(Serializer[OutputTypedDict,]):
+
+    __slots__ = (
+        "version",
+    )
 
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("version", True, str),

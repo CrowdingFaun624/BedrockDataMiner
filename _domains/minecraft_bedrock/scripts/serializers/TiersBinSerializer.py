@@ -8,5 +8,7 @@ __all__ = ("TiersBinSerializer",)
 
 class TiersBinSerializer(Serializer[Any]):
 
+    __slots__ = ()
+
     def deserialize(self, data: bytes) -> Any:
         return json.loads(b64decode(data.decode()).decode())

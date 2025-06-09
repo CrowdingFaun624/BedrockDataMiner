@@ -99,6 +99,8 @@ class Cache[T]():
 
 class JsonCache[T](Cache[T]):
 
+    __slots__ = ()
+
     decoder:type[json.JSONDecoder] = json.JSONDecoder
 
     encoder:type[json.JSONEncoder] = json.JSONEncoder
@@ -110,6 +112,8 @@ class JsonCache[T](Cache[T]):
         return json.dumps(data, cls=self.encoder).encode("UTF8")
 
 class LinesCache[T, W](Cache[T]):
+
+    __slots__ = ()
 
     def serialize_line(self, data:W) -> str:
         '''

@@ -32,6 +32,10 @@ __all__ = ("MediaSerializer",)
 
 class MediaSerializerCache(LinesCache[dict[str,OutputTypedDict], tuple[str, OutputTypedDict]]):
 
+    __slots__ = (
+        "domain",
+    )
+
     def __init__(self, domain:Domain.Domain) -> None:
         domain.data_directory.mkdir(exist_ok=True)
         super().__init__(domain.data_directory.joinpath("exiftool_cache.txt"))
@@ -53,6 +57,10 @@ class MediaSerializerCache(LinesCache[dict[str,OutputTypedDict], tuple[str, Outp
 media_serializer_cache = MediaSerializerCache(get_domain_from_module(__name__))
 
 class MediaSerializer(Serializer):
+
+    __slots__ = (
+        "cached_data",
+    )
 
     empty_okay = False
 

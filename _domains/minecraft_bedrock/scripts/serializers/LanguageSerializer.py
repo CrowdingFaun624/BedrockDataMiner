@@ -9,6 +9,7 @@ RIGHT_WHITESPACE = "#" + LEFT_WHITESPACE
 
 class LanguageSerializer(Serializer[dict[str,str]]):
 
+    __slots__ = ()
     empty_okay = True
 
     def combine_lines(self, lines:list[str]) -> list[str]:

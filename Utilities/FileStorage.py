@@ -22,6 +22,8 @@ class FileStorageIndex(LinesCache[dict[str,bool], tuple[str,bool]]):
     Cache of a dictionary of hex strings to zippability.
     '''
 
+    __slots__ = ()
+
     def __init__(self) -> None:
         super().__init__(FILE_STORAGE_INDEX_FILE)
 

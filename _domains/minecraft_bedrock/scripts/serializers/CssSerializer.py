@@ -31,6 +31,8 @@ def fix_indent(line:str) -> str:
 
 class CssSerializer(Serializer):
 
+    __slots__ = ()
+
     def deserialize(self, data: bytes) -> str:
         beautified_css = beautify(data.decode())
         lines = beautified_css.split("\n")

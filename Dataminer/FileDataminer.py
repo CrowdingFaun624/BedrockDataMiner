@@ -10,6 +10,11 @@ suffix_function:Callable[[str],tuple[bool,str]] = lambda item: (item.startswith(
 
 class FileSet():
 
+    __slots__ = (
+        "files",
+        "file_set",
+    )
+
     def __init__(self, files:Iterable[str]) -> None:
         self.files = sorted(files) # must be sorted for bisection
         self.file_set = set(files)
@@ -28,6 +33,8 @@ class FileSet():
         return file in self.file_set
 
 class FileDataminer(Dataminer):
+
+    __slots__ = ()
 
     def get_coverage(self, file_set:FileSet, environment:DataminerEnvironment) -> set[str]:
         '''

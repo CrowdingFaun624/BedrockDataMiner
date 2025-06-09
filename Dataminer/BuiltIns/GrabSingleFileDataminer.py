@@ -10,6 +10,10 @@ from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifi
 
 class GrabSingleFileDataminer(FileDataminer):
 
+    __slots__ = (
+        "location",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("location", True, str),
     )

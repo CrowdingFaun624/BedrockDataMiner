@@ -5,6 +5,8 @@ from Version.VersionProvider.VersionProvider import VersionProvider
 
 class LatestVersionProvider(VersionProvider):
 
+    __slots__ = ()
+
     def get_most_recent_version(self, all_versions:list[Version], index:int, supports_dataminer_collection:AbstractDataminerCollection) -> Version|None:
         for i in range(index, -1, -1):
             version = all_versions[i]

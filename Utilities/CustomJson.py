@@ -7,6 +7,8 @@ import Utilities.Exceptions as Exceptions
 
 class Coder[A, B]():
 
+    __slots__ = ()
+
     special_type_name:str
 
     @classmethod
@@ -18,6 +20,8 @@ class Coder[A, B]():
 def get_special_encoder(domain:"Domain.Domain") -> type[json.JSONEncoder]:
 
     class SpecialEncoder(json.JSONEncoder):
+
+        __slots__ = ()
 
         def default(self, data:Any) -> Any:
             if (coder := domain.type_stuff.json_encoders.get(type(data))) is not None:
@@ -38,6 +42,8 @@ def get_special_decoder(domain:"Domain.Domain") -> type[json.JSONDecoder]:
             raise Exceptions.InvalidSpecialTypeError(data["$special_type"])
 
     class SpecialDecoder(json.JSONDecoder):
+
+        __slots__ = ()
 
         def __init__(self) -> None:
             super().__init__(object_hook=decoder_function)

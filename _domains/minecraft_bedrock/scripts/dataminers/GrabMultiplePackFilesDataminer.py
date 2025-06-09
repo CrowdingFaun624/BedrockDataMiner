@@ -19,6 +19,19 @@ __all__ = ("GrabMultiplePackFilesDataminer",)
 
 class GrabMultiplePackFilesDataminer(FileDataminer.FileDataminer):
 
+    __slots__ = (
+        "find_none_okay",
+        "ignore_files",
+        "ignore_packs",
+        "ignore_subdirectories",
+        "ignore_suffixes",
+        "location",
+        "pack_type",
+        "reverse",
+        "suffixes",
+        "unrecognized_suffix_okay",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("ignore_suffixes", False, ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
         TypedDictKeyTypeVerifier("location", True, UnionTypeVerifier(str, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),

@@ -9,6 +9,11 @@ __all__ = ("MyGrabSingleFileDataminer",)
 
 class MyGrabSingleFileDataminer(GrabSingleFileDataminer):
 
+    __slots__ = (
+        "insert_file_name",
+        "insert_pack",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("location", True, str),
         TypedDictKeyTypeVerifier("insert_pack", False, str),

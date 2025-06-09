@@ -7,6 +7,10 @@ from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifi
 
 class SingleFileDataminer(FileDataminer):
 
+    __slots__ = (
+        "file_name",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("file_name", True, str),
     )

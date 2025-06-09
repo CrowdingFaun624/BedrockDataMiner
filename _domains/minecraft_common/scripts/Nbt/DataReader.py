@@ -7,6 +7,11 @@ if TYPE_CHECKING:
 
 class DataReader():
 
+    __slots__ = (
+        "data",
+        "position",
+    )
+
     def __init__(self, data:bytes) -> None:
         self.data = data
         self.position = 0

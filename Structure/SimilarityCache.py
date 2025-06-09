@@ -7,7 +7,11 @@ from Structure.StructureInfo import StructureInfo
 
 
 class SimilarityCache[A: Con]():
-    
+
+    __slots__ = (
+        "cache",
+    )
+
     def __init__(self) -> None:
         # weird data structure because WeakRefs are weird and special.
         self.cache:dict[tuple[StructureInfo, StructureInfo], WeakKeyDictionary[A, WeakKeyDictionary[A, tuple[float, bool]]]]\

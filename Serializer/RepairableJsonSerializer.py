@@ -11,6 +11,7 @@ from Utilities.TypeVerifier import (
 
 class Condition():
 
+    __slots__ = ()
     name:str
     type_verifier:TypeVerifier = TypedDictTypeVerifier()
 
@@ -25,6 +26,7 @@ class Condition():
 
 class AlwaysCondition(Condition):
 
+    __slots__ = ()
     name = "always"
 
     def match(self, data: bytes, is_exception:bool) -> bool:
@@ -32,6 +34,7 @@ class AlwaysCondition(Condition):
 
 class ExceptionCondition(Condition):
 
+    __slots__ = ()
     name = "exception"
 
     def match(self, data: bytes, is_exception: bool) -> bool:
@@ -45,6 +48,10 @@ class ContentConditionTypedDict(TypedDict):
 
 class ContentCondition(Condition):
 
+    __slots__ = (
+        "content",
+    )
+
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("content", True, str),
     )
@@ -55,6 +62,7 @@ class ContentCondition(Condition):
 
 class MatchCondition(ContentCondition):
 
+    __slots__ = ()
     name = "match"
 
     def match(self, data: bytes, is_exception:bool) -> bool:
@@ -62,6 +70,7 @@ class MatchCondition(ContentCondition):
 
 class SuffixCondition(ContentCondition):
 
+    __slots__ = ()
     name = "suffix"
 
     def match(self, data: bytes, is_exception:bool) -> bool:
@@ -69,6 +78,7 @@ class SuffixCondition(ContentCondition):
 
 class PrefixCondition(ContentCondition):
 
+    __slots__ = ()
     name = "prefix"
 
     def match(self, data: bytes, is_exception:bool) -> bool:
@@ -78,6 +88,10 @@ class MetaConditionTypedDict(TypedDict):
     conditions: Required[list[dict]]
 
 class MetaCondition(Condition):
+
+    __slots__ = (
+        "conditions",
+    )
 
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("conditions", True, ListTypeVerifier(dict, list))
@@ -93,6 +107,7 @@ class MetaCondition(Condition):
 
 class AndCondition(MetaCondition):
 
+    __slots__ = ()
     name = "and"
 
     def match(self, data: bytes, is_exception:bool) -> bool:
@@ -100,6 +115,7 @@ class AndCondition(MetaCondition):
 
 class OrCondition(MetaCondition):
 
+    __slots__ = ()
     name = "or"
 
     def match(self, data:bytes, is_exception:bool) -> bool:
@@ -123,6 +139,7 @@ def parse_condition(data:dict[Any,Any], trace:list[Any]|None=None) -> Condition:
 
 class Action():
 
+    __slots__ = ()
     name:str
     type_verifier:TypeVerifier = TypedDictTypeVerifier()
 
@@ -136,6 +153,10 @@ class ContentActionTypedDict(TypedDict):
 
 class ContentAction(Action):
 
+    __slots__ = (
+        "content",
+    )
+
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("content", True, str),
     )
@@ -146,6 +167,7 @@ class ContentAction(Action):
 
 class ReplaceAction(ContentAction):
 
+    __slots__ = ()
     name = "replace"
 
     def do(self, data: bytes) -> bytes:
@@ -153,6 +175,7 @@ class ReplaceAction(ContentAction):
 
 class AppendAction(ContentAction):
 
+    __slots__ = ()
     name = "append"
 
     def do(self, data:bytes) -> bytes:
@@ -160,6 +183,7 @@ class AppendAction(ContentAction):
 
 class PrependAction(ContentAction):
 
+    __slots__ = ()
     name = "prepend"
 
     def do(self, data: bytes) -> bytes:
@@ -167,6 +191,7 @@ class PrependAction(ContentAction):
 
 class RemoveSuffixAction(ContentAction):
 
+    __slots__ = ()
     name = "remove_suffix"
 
     def do(self, data: bytes) -> bytes:
@@ -174,6 +199,7 @@ class RemoveSuffixAction(ContentAction):
 
 class RemovePrefixAction(ContentAction):
 
+    __slots__ = ()
     name = "remove_prefix"
 
     def do(self, data: bytes) -> bytes:
@@ -185,6 +211,12 @@ class ReplaceSomeActionTypedDict(TypedDict):
     new_content: Required[str]
 
 class ReplaceSomeAction(Action):
+
+    __slots__ = (
+        "count",
+        "new_content",
+        "old_content",
+    )
 
     name = "replace_some"
     type_verifier = TypedDictTypeVerifier(
@@ -206,6 +238,10 @@ class SequenceActionTypedDict(TypedDict):
     actions: Required[list[dict]]
 
 class SequenceAction(Action):
+
+    __slots__ = (
+        "actions",
+    )
 
     name = "sequence"
     type_verifier = TypedDictTypeVerifier(
@@ -244,6 +280,13 @@ class RulesTypedDict(TypedDict):
 
 class Rule():
 
+    __slots__ = (
+        "action",
+        "condition",
+        "index",
+        "serializer_name",
+    )
+
     def __init__(self, serializer_name:str, index:int, condition:Condition, action:Action) -> None:
         self.serializer_name = serializer_name
         self.index = index
@@ -263,6 +306,11 @@ class Rule():
         return self.condition.has_exception_condition()
 
 class RepairableJsonSerializer(JsonSerializer):
+
+    __slots__ = (
+        "empty_okay",
+        "rules",
+    )
 
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("empty_okay", False, bool),

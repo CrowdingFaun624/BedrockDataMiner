@@ -6,6 +6,12 @@ from _domains.minecraft_common.scripts.Nbt.NbtExceptions import SnbtParseError
 
 class Reader():
 
+    __slots__ = (
+        "data",
+        "position",
+        "stack",
+    )
+
     def __init__(self, data:str) -> None:
         self.data = data
         self.position = 0

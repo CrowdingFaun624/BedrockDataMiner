@@ -8,6 +8,8 @@ DataPathJsonTypedDict = TypedDict("DataPathJsonTypedDict", {"$special_type": Lit
 
 class DataPathCoder(Coder[DataPathJsonTypedDict, "DataPath"]):
 
+    __slots__ = ()
+
     special_type_name = "data_path"
 
     @classmethod

@@ -24,6 +24,7 @@ __all__ = ("BaseDelegate",)
 
 class BaseDelegate(Delegate[Any, Any, StructureBase[dict[str,dict[Any,Any]], Any, str], Any, Any, str, Any]):
 
+    __slots__ = ()
     type_verifier = TypedDictTypeVerifier()
 
     applies_to = (StructureBase,)

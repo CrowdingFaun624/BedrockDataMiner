@@ -7,6 +7,12 @@ from Utilities.TypeVerifier import TypeVerifier
 
 class Serializer[a]():
 
+    __slots__ = (
+        "domain",
+        "full_name",
+        "name",
+    )
+
     type_verifier:TypeVerifier = TypeVerifier()
     '''
     TypeVerifier for verifying the arguments of this Serializer

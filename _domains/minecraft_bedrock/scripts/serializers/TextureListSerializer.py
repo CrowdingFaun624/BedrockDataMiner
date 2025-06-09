@@ -10,6 +10,8 @@ class TextureListSerializer(Serializer):
     be squeezed into the same Serializer. oops.
     '''
 
+    __slots__ = ()
+
     def deserialize(self, data: bytes) -> list[str]:
         data_str = data.decode()
         if data_str[0] == "[":

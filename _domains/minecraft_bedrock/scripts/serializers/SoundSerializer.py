@@ -85,6 +85,7 @@ def serialize(data:Any) -> Any:
 
 class SoundSerializer(Serializer[dict[str,dict[str,SoundFilesTypedDict]],]):
 
+    __slots__ = ()
     can_contain_subfiles = True
 
     def deserialize(self, data: bytes) -> dict[str,SoundFilesTypedDict]:

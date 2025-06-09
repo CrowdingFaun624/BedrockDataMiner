@@ -33,6 +33,7 @@ class SoundsDelegate(Delegate[
     str, Any, str, Any,
 ]):
 
+    __slots__ = ()
     type_verifier = TypedDictTypeVerifier()
 
     applies_to = (IterableStructure,)

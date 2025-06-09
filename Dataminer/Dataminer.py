@@ -11,6 +11,8 @@ from Version.Version import Version
 
 class Dataminer():
 
+    __slots__ = ()
+
     parameters:TypeVerifier|None = TypedDictTypeVerifier()
     '''TypeVerifier for verifying the json arguments of this Dataminer'''
 

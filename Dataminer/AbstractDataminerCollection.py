@@ -22,6 +22,15 @@ from Version.Version import Version
 
 class AbstractDataminerCollection():
 
+    __slots__ = (
+        "comparing_disabled",
+        "domain",
+        "file_name",
+        "full_name",
+        "name",
+        "structure",
+    )
+
     def __init__(self, file_name:str, name:str, full_name:str, domain:"Domain.Domain", comparing_disabled:bool) -> None:
         self.name = name
         self.file_name = file_name

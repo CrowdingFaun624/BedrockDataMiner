@@ -14,6 +14,10 @@ class PackTypedDict(TypedDict):
 
 class PacksDataminer(Dataminer):
 
+    __slots__ = (
+        "location",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("location", True, str, location_value_function),
     )

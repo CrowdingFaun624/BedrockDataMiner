@@ -18,6 +18,8 @@ class ElementTypedDict(TypedDict):
 
 class XmlSerializer(Serializer):
 
+    __slots__ = ()
+
     def encode_xml_element(self, data:"Element") -> ElementTypedDict:
         output:ElementTypedDict = {
             "tag": data.tag,

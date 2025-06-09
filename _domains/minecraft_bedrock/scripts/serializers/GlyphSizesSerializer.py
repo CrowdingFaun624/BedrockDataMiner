@@ -11,6 +11,8 @@ class RangeTypedDict(TypedDict):
 
 class GlyphSizesSerializer(Serializer[dict[str,RangeTypedDict]]):
 
+    __slots__ = ()
+
     def deserialize(self, data: bytes) -> dict[str,RangeTypedDict]:
         output:dict[str,RangeTypedDict] = {}
         for index, byte in enumerate(bytearray(data)):

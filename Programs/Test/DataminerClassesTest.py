@@ -19,6 +19,9 @@ type DataminerClass = type[Dataminer]
 class DataminerClassPlan(Plan[DataminerClass]):
 
     label = "Dataminer classes"
+    __slots__ = (
+        "dataminer_classes",
+    )
 
     def __init__(
         self,

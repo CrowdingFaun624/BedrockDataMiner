@@ -14,6 +14,8 @@ normal_categories = {"weather", "block", "bucket", "bottle", "ui", "player", "ho
 
 class CategoryDelegate(PrimitiveDelegate):
 
+    __slots__ = ()
+
     def print_branch(self, data: SCon[Any], trace: Trace, environment: PrinterEnvironment) -> str | EllipsisType:
         is_valid = data.data in normal_categories
         output = super().print_branch(data, trace, environment)

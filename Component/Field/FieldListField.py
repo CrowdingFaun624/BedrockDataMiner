@@ -9,6 +9,8 @@ class FieldListField[a: Field](FieldContainer[a]):
     Field that contains other Fields.
     '''
 
+    __slots__ = ()
+
     def __init__(self, fields:MutableSequence[a], path:tuple[str,...]) -> None:
         super().__init__(fields, path)
 

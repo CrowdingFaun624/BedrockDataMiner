@@ -6,6 +6,8 @@ from Utilities.FileManager import get_hash_hexdigest
 
 class AllFilesDataminer(Dataminer):
 
+    __slots__ = ()
+
     def activate(self, environment:DataminerEnvironment) -> dict[str,str]:
         accessor = self.get_accessor(DirectoryAccessor)
         return {file: get_hash_hexdigest(accessor.read(file)) for file in accessor.file_list}

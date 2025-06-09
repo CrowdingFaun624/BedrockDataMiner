@@ -6,6 +6,11 @@ __all__ = ("ManifestSerializer",)
 
 class LineReader():
 
+    __slots__ = (
+        "lines",
+        "offset",
+    )
+
     def __init__(self, lines:list[str]) -> None:
         self.lines = lines
         self.offset = 0
@@ -22,6 +27,8 @@ class LineReader():
         return self.offset < len(self.lines)
 
 class ManifestSerializer(Serializer):
+
+    __slots__ = ()
 
     def parse_clump(self, line_reader:LineReader) -> dict[str,str]:
         lines:list[str] = []

@@ -18,6 +18,11 @@ __all__ = ("NbtSerializer",)
 
 class NbtSerializer(Serializer[TAG]):
 
+    __slots__ = (
+        "endianness",
+        "gzipped",
+    )
+
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("endianness", True, EnumTypeVerifier([endianness.name.lower() for endianness in End])),
         TypedDictKeyTypeVerifier("gzipped", True, bool),

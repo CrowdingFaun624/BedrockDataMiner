@@ -11,6 +11,11 @@ from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifi
 
 class GrabReFilesDataminer(GrabMultipleFilesDataminer):
 
+    __slots__ = (
+        "directory",
+        "pattern",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("directory", True, str, function=FileDataminer.location_value_function),
         TypedDictKeyTypeVerifier("pattern", True, str)

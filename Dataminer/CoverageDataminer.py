@@ -14,6 +14,15 @@ from Version.Version import Version
 
 class CoverageDataminer(AbstractDataminerCollection):
 
+    __slots__ = (
+        "file_list_dataminer",
+        "remove_files",
+        "remove_prefixes",
+        "remove_regex",
+        "remove_suffixes",
+        "structure_info",
+    )
+
     def __init__(
         self,
         file_name:str,

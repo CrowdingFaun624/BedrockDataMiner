@@ -20,8 +20,8 @@ class DefinedInDelegate(Delegate[
     str, Any, str, Any,
 ]):
 
+    __slots__ = ()
     type_verifier = TypedDictTypeVerifier()
-
     applies_to = (IterableStructure,)
 
     def print_comparison(self, data: IDon[Diff[SDon[int]], Diff[SDon[str]], list[str], SCon[int], SCon[str]], bundle:tuple[int,...], trace: Trace, environment: ComparisonEnvironment) -> str | EllipsisType:

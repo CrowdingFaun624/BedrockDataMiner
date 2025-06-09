@@ -48,6 +48,12 @@ class Plan[a: Hashable]():
     Plural string labeling this Plan's object.
     '''
 
+    __slots__ = (
+        "domain",
+        "items_to_test",
+        "versions",
+    )
+
     def __init__(self, versions:list[Version], all_dataminer_collections:list[AbstractDataminerCollection], version_objects:dict[Version,set[a]], domain:"Domain.Domain") -> None:
         '''
         :versions: The Versions which support all of the same objects.

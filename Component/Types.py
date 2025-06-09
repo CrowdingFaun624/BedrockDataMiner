@@ -15,6 +15,9 @@ class NoCoder():
     '''
     Used to annotate that a type specifically has no JSON Coder.
     '''
+
+    __slots__ = ()
+
     # does nothing otherwise.
     ...
 

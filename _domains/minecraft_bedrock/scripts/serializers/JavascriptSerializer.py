@@ -31,6 +31,8 @@ def fix_indent(line:str) -> str:
 
 class JavascriptSerializer(Serializer):
 
+    __slots__ = ()
+
     def deserialize(self, data: bytes) -> str:
         beautified_js = beautify(data.decode())
         lines = beautified_js.split("\n")

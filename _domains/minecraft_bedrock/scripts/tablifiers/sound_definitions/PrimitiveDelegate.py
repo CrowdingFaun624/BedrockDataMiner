@@ -53,6 +53,9 @@ class PrimitiveDelegate(Delegate[
     str, Any, str, Any,
 ]):
 
+    __slots__ = (
+        "code",
+    )
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("code", False, bool),
     )

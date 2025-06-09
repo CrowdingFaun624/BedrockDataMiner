@@ -13,6 +13,12 @@ __all__ = ("PiecesDataminer",)
 
 class PiecesDataminer(Dataminer):
 
+    __slots__ = (
+        "base_directory",
+        "ignore_directories",
+        "subdirectories",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("base_directory", True, str, function=FileDataminer.location_value_function),
         TypedDictKeyTypeVerifier("subdirectories", False, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)),

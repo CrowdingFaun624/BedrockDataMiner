@@ -11,6 +11,8 @@ FileJsonTypedDict = TypedDict("FileJsonTypedDict", {"$special_type": Literal["fi
 
 class FileCoder(Coder[FileJsonTypedDict, "File"]):
 
+    __slots__ = ()
+
     special_type_name = "file"
 
     @classmethod

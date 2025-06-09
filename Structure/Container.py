@@ -33,7 +33,7 @@ class ACon[A]():
 
 class Con[A](ACon[A]):
 
-    data: A # NOTE: `data` is not necessarily accurate when the Container comes from comparison.
+    data: A
 
     __slots__ = (
         "__weakref__",

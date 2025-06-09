@@ -29,6 +29,11 @@ unary_operator_letters = [operator.value for operator in UnaryOperator]
 
 class DataReader():
 
+    __slots__ = (
+        "data",
+        "position",
+    )
+
     def __init__(self, data:str) -> None:
         self.data = data
         self.position = 0
@@ -142,6 +147,14 @@ def parse(string:str) -> tuple[Callable[[dict[str, set[DataPath|Any]]], set[Data
 
 
 class TagSearcherDataminer(Dataminer):
+
+    __slots__ = (
+        "none_okay",
+        "sort_output",
+        "tag_function",
+        "tag_names",
+        "tags",
+    )
 
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("tags", True, str),

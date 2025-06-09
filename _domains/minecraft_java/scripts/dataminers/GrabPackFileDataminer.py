@@ -18,6 +18,13 @@ __all__ = ("GrabPackFileDataminer",)
 
 class GrabPackFileDataminer(FileDataminer):
 
+    __slots__ = (
+        "find_none_okay",
+        "insert_file_name",
+        "location",
+        "pack_type",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("location", True, UnionTypeVerifier(str, ListTypeVerifier(str, list))),
         TypedDictKeyTypeVerifier("pack_type", True, str),

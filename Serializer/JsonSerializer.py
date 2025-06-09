@@ -10,5 +10,7 @@ class JsonSerializer(Serializer[Any]):
     Serializer for JSON files.
     '''
 
+    __slots__ = ()
+
     def deserialize(self, data: bytes) -> Any:
         return pyjson5.loads(data.decode())

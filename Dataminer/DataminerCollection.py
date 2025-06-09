@@ -12,6 +12,9 @@ from Version.Version import Version
 
 class DataminerCollection(AbstractDataminerCollection):
 
+    __slots__ = (
+        "dataminer_settings",
+    )
 
     def link_subcomponents(self, structure:StructureBase, dataminer_settings:list["DataminerSettings"]) -> None:
         super().link_subcomponents(structure)

@@ -14,6 +14,16 @@ from Utilities.TypeVerifier import (
 
 class GrabMultipleFilesDataminer(FileDataminer.FileDataminer):
 
+    __slots__ = (
+        "find_none_okay",
+        "ignore_files",
+        "ignore_subdirectories",
+        "ignore_suffixes",
+        "location",
+        "suffixes",
+        "unrecognized_suffix_okay",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("ignore_suffixes", False, ListTypeVerifier(str, list, item_function=FileDataminer.suffix_function)),
         TypedDictKeyTypeVerifier("location", True, str, function=FileDataminer.location_value_function),

@@ -23,6 +23,15 @@ pack_order = collapse_resource_packs.resource_pack_order
 
 class PacksDataminer(Dataminer):
 
+    __slots__ = (
+        "care_about_packs_existing",
+        "directory",
+        "name_starts_with",
+        "pack_type",
+        "require_subdirectory",
+        "subdirectory",
+    )
+
     parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("directory", True, UnionTypeVerifier(str, ListTypeVerifier(str, list, item_function=FileDataminer.location_item_function)), function=lambda key, value: FileDataminer.location_value_function(key, value) if isinstance(value, str) else (True, "")),
         TypedDictKeyTypeVerifier("pack_type", True, EnumTypeVerifier({"resource", "behavior", "skin", "emote", "piece"})),

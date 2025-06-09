@@ -5,6 +5,10 @@ from Version.Version import Version
 
 class VersionProvider():
 
+    __slots__ = (
+        "domain",
+    )
+
     def __init__(self, domain:"Domain.Domain") -> None:
         self.domain = domain
 

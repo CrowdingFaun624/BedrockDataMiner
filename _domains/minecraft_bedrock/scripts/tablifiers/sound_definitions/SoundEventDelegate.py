@@ -38,6 +38,7 @@ class SoundEventDelegate(Delegate[
     str, Any, tuple[list[str],str,str], Any,
 ]):
 
+    __slots__ = ()
     type_verifier = TypedDictTypeVerifier()
 
     applies_to = (KeymapStructure,)

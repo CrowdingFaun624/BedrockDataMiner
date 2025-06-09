@@ -14,6 +14,9 @@ if TYPE_CHECKING:
 class DataminerCollectionPlan(Plan[AbstractDataminerCollection]):
 
     label = "DataminerCollections"
+    __slots__ = (
+        "dataminer_collections",
+    )
 
     def __init__(
         self,

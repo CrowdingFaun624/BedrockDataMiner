@@ -4,6 +4,10 @@ from Utilities.TypeVerifier import TypedDictKeyTypeVerifier, TypedDictTypeVerifi
 
 class DummySerializer(Serializer):
 
+    __slots__ = (
+        "empty_okay",
+    )
+
     type_verifier = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("empty_okay", False, bool),
     )

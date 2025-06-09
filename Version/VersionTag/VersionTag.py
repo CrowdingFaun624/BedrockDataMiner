@@ -1,5 +1,17 @@
 class VersionTag():
 
+    __slots__ = (
+        "development_name",
+        "full_name",
+        "is_development_tag",
+        "is_fork_tag",
+        "is_order_tag",
+        "is_major_tag",
+        "is_unreleased_tag",
+        "latest_slot",
+        "name",
+    )
+
     def __init__(self, name:str, full_name:str, development_name:str, is_development_tag:bool, is_fork_tag:bool, is_order_tag:bool, is_major_tag:bool, is_unreleased_tag:bool) -> None:
         self.name = name
         self.full_name = full_name

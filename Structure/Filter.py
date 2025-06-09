@@ -75,10 +75,14 @@ class KeyFilter(Filter):
 
 class KeyPresentFilter(KeyFilter):
 
+    __slots__ = ()
+
     def filter(self, structure_info: StructureInfo) -> bool:
         return self.key in structure_info
 
 class KeyNotPresentFilter(KeyFilter):
+
+    __slots__ = ()
 
     def filter(self, structure_info: StructureInfo) -> bool:
         return self.key not in structure_info
