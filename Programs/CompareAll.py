@@ -1,11 +1,11 @@
+import time
 import traceback
-from itertools import chain
 
 import Domain.Domain as Domain
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Structure.StructureEnvironment import EnvironmentType, StructureEnvironment
 from Utilities.Exceptions import StructuresCompareFailureError
-from Utilities.UserInput import input_multi
+from Utilities.UserInput import input_integer, input_multi, input_single
 from Version.Version import Version
 
 
@@ -31,19 +31,20 @@ def compare_all_of(
         domain:Domain.Domain,
         dataminer_collection:AbstractDataminerCollection,
         versions:list[Version],
-        exception_holder:dict[str,tuple[Exception,Version|None,Version|None]|bool],
-    ) -> None:
-    previous_successful_version = None; version = None
+        *,
+        previous_successful_version:Version|None=None, # The last Version that can be datamined for this file.
+        destroy_previous:bool=True,
+    ) -> tuple[Exception, Version|None, Version|None]|None:
+    version = None
     try:
-        version = None
-        previous_successful_version = None # The last Version that can be datamined for this file.
         undataminable_versions_between:list[Version] = []
         domain.comparisons_directory.mkdir(exist_ok=True)
         comparison_parent = domain.comparisons_directory.joinpath(dataminer_collection.name)
         if not comparison_parent.exists():
             comparison_parent.mkdir()
-        for already_existing_comparison_file in comparison_parent.iterdir():
-            already_existing_comparison_file.unlink()
+        if destroy_previous:
+            for already_existing_comparison_file in comparison_parent.iterdir():
+                already_existing_comparison_file.unlink()
         for version in versions:
             if dataminer_collection.supports_version(version):
                 if previous_successful_version is not None:
@@ -61,46 +62,61 @@ def compare_all_of(
             print(f"{dataminer_collection.name} failed.")
         else:
             print(f"{dataminer_collection.name} failed at version {version.name}.")
-        exception_holder[dataminer_collection.name] = (e, previous_successful_version, version)
+        output = (e, previous_successful_version, version)
     else:
+        output = None
         print(f"Compared all of {dataminer_collection.name}.")
-        exception_holder[dataminer_collection.name] = True
     finally:
         dataminer_collection.clear_all_caches()
+    return output
 
 def main(domain:Domain.Domain) -> None:
+    versions = domain.versions
+    latest_versions = [version for version in versions.values() if version.latest]
     selected_dataminers = input_multi(
         {dataminer_name: dataminer_collection for dataminer_name, dataminer_collection in domain.dataminer_collections.items() if not dataminer_collection.comparing_disabled},
-        "dataminer", allow_select_all=True, show_options_first_time=True, close_enough=True)
-    versions = domain.versions
-    version_tags = domain.version_tags
-    version_tags_order = domain.version_tags_order
-    major_tags = {tag for tag in version_tags.values() if tag.is_major_tag}
-    minor_tags_before = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.tags_before_top_level_tag}
-    minor_tags_after  = {tag for tag in version_tags.values() if not tag.is_major_tag and tag in version_tags_order.tags_after_top_level_tag}
-    major_versions:dict[Version,list[Version]] = {version: [] for version in versions.values() if version.order_tag in major_tags}
-    for major_version, child_versions in major_versions.items():
-        child_versions.extend(child for child in major_version.children if child.order_tag in minor_tags_before)
-        child_versions.append(major_version)
-        child_versions.extend(child for child in major_version.children if child.order_tag in minor_tags_after)
+        "dataminer", allow_select_all=True, show_options_first_time=True, close_enough=True,
+        alternative_selectors={"^": lambda: [dataminer_collection.name for dataminer_collection in domain.dataminer_collections.values() if any(dataminer_collection.supports_version(version) for version in latest_versions)]})
+    sorted_versions = list(versions.values())
 
-    sorted_versions = list(chain.from_iterable(child_versions for child_versions in major_versions.values()))
-    exception_holder:dict[str,bool|tuple[Exception,Version|None,Version|None]] = {dataminer_collection.name: False for dataminer_collection in selected_dataminers}
+    exceptions:dict[AbstractDataminerCollection,tuple[Exception,Version|None,Version|None]] = {}
+    start_time = time.time()
     for dataminer_collection in selected_dataminers:
-        compare_all_of(domain, dataminer_collection, sorted_versions, exception_holder)
+        exception_tuple = compare_all_of(domain, dataminer_collection, sorted_versions)
+        if exception_tuple is not None:
+            exceptions[dataminer_collection] = exception_tuple
+    finish_time = time.time()
 
-    excepted = False
-    excepted_threads:list[tuple[str,Version|None,Version|None]] = []
-    for dataminer_name, completion in exception_holder.items():
-        if isinstance(completion, tuple):
-            excepted_threads.append((dataminer_name, completion[1], completion[2]))
-            excepted = True
-            print(dataminer_name)
-            traceback.print_exception(completion[0])
-            print()
-    if excepted:
-        for structure_name, previous_version, version in excepted_threads:
-            print(f"\"{structure_name}\" excepted between Versions \"{previous_version}\" and \"{version}\"")
-        raise StructuresCompareFailureError([structure_name for structure_name, previous_version, version in excepted_threads])
+    for dataminer_collection, (exception, version1, version2) in exceptions.items():
+        print(f"\"{dataminer_collection.name}\" excepted between Versions \"{version1}\" and \"{version2}\"")
+        traceback.print_exception(exception)
+        print()
+    if len(exceptions) > 0:
+        raise StructuresCompareFailureError([dataminer_collection.name for dataminer_collection in exceptions.keys()])
     else:
-        print("Compared all versions.")
+        print(f"Compared all versions in {finish_time - start_time:.3f} seconds.")
+
+def compare_some(domain:Domain.Domain) -> None:
+    versions = domain.versions
+    selected_dataminer = input_single({dataminer_name: dataminer_collection for dataminer_name, dataminer_collection in domain.dataminer_collections.items() if not dataminer_collection.comparing_disabled},
+        "dataminer", show_options_first_time=True, close_enough=True)
+    start_version = input_single(versions, "start Version")
+    print("The previous viable Version is the latest Version before the start Version that supports the dataminer_collection")
+    previous_successful_version = input_single(versions, "previous viable Version")
+    start_id = input_integer("starting file", may_be_negative=False, may_be_zero=True)
+    domain.comparison_file_counts[selected_dataminer.name] = start_id - 1 # -1 because the next id will be the stored one + 1.
+    all_versions = list(versions.values())
+    start_index = all_versions.index(start_version)
+    sorted_versions = all_versions[start_index:]
+
+    start_time = time.time()
+    exception_tuple = compare_all_of(domain, selected_dataminer, sorted_versions, previous_successful_version=previous_successful_version, destroy_previous=False)
+    finish_time = time.time()
+
+    if exception_tuple is not None:
+        exception, version1, version2 = exception_tuple
+        print(f"\"{selected_dataminer.name}\" excepted between Versions \"{version1}\" and \"{version2}\"")
+        traceback.print_exception(exception)
+        raise StructuresCompareFailureError([selected_dataminer.name])
+    else:
+        print(f"Compared all versions after {start_version.name} in {finish_time - start_time:.3f} seconds.")

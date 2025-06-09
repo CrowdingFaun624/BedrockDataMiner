@@ -120,6 +120,7 @@ def input_multi[a](
     close_enough_threshold:int=3,
     prompt_function:Callable[[str, list[str]|None],str]=default_prompt_multi,
     aliases:Mapping[str,Iterable[str]]|None=None,
+    alternative_selectors:dict[str,Callable[[],list[str]]]|None=None,
     behavior_on_eof:Callable[[],NoReturn]|None=None,
 ) -> list[a]:
     '''
@@ -136,6 +137,7 @@ def input_multi[a](
     :close_enough_threshold: The maximum distance the guesses can have.
     :prompt_function: Can be overridden to create a custom prompt.
     :aliases: Hidden shortcuts to another action.
+    :alternative_selectors: A dictionary of single-character strings that maps to a function that returns options.
     :behavior_on_eof: Function that is called when input() raises an EOFError.
     '''
     user_inputs:list[str] = []
@@ -161,6 +163,8 @@ def input_multi[a](
             break
         if allow_select_all and user_input == "*":
             user_inputs = options.copy()
+        elif alternative_selectors is not None and user_input in alternative_selectors:
+            user_inputs = alternative_selectors[user_input]()
         pop_indices:list[int] = []
         for index, item in enumerate(user_inputs):
             if item in items:
@@ -190,3 +194,43 @@ def input_multi[a](
         if len(user_inputs) > 0:
             print(f"Cannot recognize {user_inputs}.")
     return [items[item] for item in successful_inputs]
+
+def input_integer(
+    label:str,
+    *,
+    may_be_negative:bool=True,
+    may_be_zero:bool=True,
+    prompt_function:Callable[[str, list[str]|None],str]=default_prompt_single,
+    behavior_on_eof:Callable[[],NoReturn]|None=None,
+) -> int:
+    '''
+    Returns an integer.
+
+    By default, uses the prompt "Choose a &lt;label&gt;: "
+
+    :label: The simple label to be given to the prompt function.
+    :may_be_negative: If True, negative inputs are allowed.
+    :may_be_zero: If True, an input of 0 is allowed.
+    :prompt_function: Can be overridden to create a custom prompt.
+    :behavior_on_eof: Function that is called when input() raises an EOFError.
+    '''
+    while True:
+        try:
+            user_input:str = input(prompt_function(label, None))
+        except EOFError:
+            if behavior_on_eof is None:
+                raise
+            else:
+                behavior_on_eof()
+        try:
+            user_integer = int(user_input)
+        except ValueError:
+            continue
+        if not may_be_negative and user_integer < 0:
+            print("Integer may not be negative!")
+            continue
+        if not may_be_zero and user_integer == 0:
+            print("Integer may not be 0!")
+            continue
+        break
+    return user_integer
