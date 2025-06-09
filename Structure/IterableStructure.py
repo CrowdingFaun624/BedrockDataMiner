@@ -110,9 +110,13 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
 
             data, pre_data_identity_changed = self.normalizer_pass(self.normalizers, data, trace, environment)
 
+            if not isinstance(data, self.this_types):
+                trace.exception(StructureTypeError(self.this_types, type(data), "Data"))
+                return ...
+
             setitem_function = environment.domain.type_stuff.setitem_table.get(type(data))
             popitem_function = environment.domain.type_stuff.popitem_table.get(type(data))
-            for key, value in environment.domain.type_stuff.iterate_data(data):
+            for key, value in list(environment.domain.type_stuff.iterate_data(data)): # wrapped with list because of modifications to iterator.
                 key: K; value: V
                 with trace.enter_key(key, value):
                     key_structure = self.get_key_structure(key, value, trace, environment)
@@ -122,6 +126,10 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                     self.normalize_set_item(data, key, value, normalized_key, normalized_value, setitem_function, popitem_function, trace)
 
             data, post_data_identity_changed = self.normalizer_pass(self.post_normalizers, data, trace, environment)
+
+            if not isinstance(data, self.this_types):
+                trace.exception(StructureTypeError(self.this_types, type(data), "Data", "(post-normalized)"))
+                return ...
 
             return data if pre_data_identity_changed or post_data_identity_changed else ...
         return ...
@@ -158,6 +166,9 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
 
     def containerize(self, data: D, trace: Trace, environment: PrinterEnvironment) -> ICon[Con[K], Con[V], D]|EllipsisType:
         with trace.enter(self, self.name, data):
+            if not isinstance(data, self.this_types):
+                trace.exception(StructureTypeError(self.this_types, type(data), "Data"))
+                return ...
             containers:list[tuple[Con[K], Con[V]]] = []
             for key, value in environment.domain.type_stuff.iterate_data(data):
                 with trace.enter_key(key, value):
@@ -279,9 +290,15 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                     value_types = self.get_value_types(key.data, value.data, trace, environment)
                     self.type_check_item(key.data, self.key_types, "Key", trace)
                     self.type_check_item(value.data, value_types, "Value", trace)
+                    key_structure = self.get_key_structure(key.data, value.data, trace, environment)
+                    value_structure = self.get_value_structure(key.data, value.data, trace, environment)
+                    if key_structure is not None:
+                        key_structure.type_check(key, trace, environment)
+                    if value_structure is not None:
+                        value_structure.type_check(value, trace, environment)
                     required_keys.discard(self.key_function(key.data))
             if len(required_keys) != 0:
-                trace.exception(StructureRequiredKeyMissingError(self, key))
+                trace.exceptions(StructureRequiredKeyMissingError(self, key) for key in sorted(required_keys))
 
     def type_check_item(self, item:object, types:tuple[type,...], label:str, trace:Trace) -> None:
         if not isinstance(item, types):

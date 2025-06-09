@@ -44,6 +44,9 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
                 trace.exception(StructureTypeError(self.pre_normalized_types, type(data), "Data", "(pre-normalized)"))
                 return ...
             data, data_identity_changed = self.normalizer_pass(self.normalizers, data, trace, environment)
+            if not isinstance(data, self.this_types):
+                trace.exception(StructureTypeError(self.this_types, type(data), "Data"))
+                return ...
             return data if data_identity_changed else ...
         return ...
 
@@ -59,8 +62,8 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
 
     def type_check(self, data: SCon[D], trace: Trace, environment: PrinterEnvironment) -> None:
         with trace.enter(self, self.name, data):
-            if not isinstance(data, self.this_types):
-                trace.exception(StructureTypeError(self.this_types, type(data), "Data"))
+            if not isinstance(data.data, self.this_types):
+                trace.exception(StructureTypeError(self.this_types, type(data.data), "Data"))
 
     def get_tag_paths(self, data: SCon[D], tag: StructureTag, data_path: DataPath, trace: Trace, environment: PrinterEnvironment) -> Sequence[DataPath]:
         with trace.enter(self, self.name, data):
