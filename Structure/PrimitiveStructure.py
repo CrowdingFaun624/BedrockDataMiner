@@ -67,7 +67,7 @@ class PrimitiveStructure[D, BO, CO](Structure[D, SCon[D], SDon[D], Diff[SDon[D]]
             if tag not in self.children_tags:
                 return ()
             if tag in self.tags:
-                return (data_path.copy(...).embed(data),)
+                return (data_path.copy(...).embed(data.data),)
         return ()
 
     def get_referenced_files(self, data: SCon[D], trace: Trace, environment: PrinterEnvironment) -> set[int]:

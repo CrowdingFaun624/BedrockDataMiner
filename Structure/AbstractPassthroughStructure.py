@@ -106,7 +106,7 @@ class AbstractPassthroughStructure[C, D, BO, CO](Structure[C, Con[D], Don[D], Do
                 return ()
             output:list[DataPath] = []
             if tag in self.tags:
-                output.append(data_path.copy(...).embed(data))
+                output.append(data_path.copy(...).embed(data.data))
             structure = self.get_structure(data.data, trace, environment)
             if structure is not None:
                 output.extend(structure.get_tag_paths(data, tag, data_path, trace, environment))

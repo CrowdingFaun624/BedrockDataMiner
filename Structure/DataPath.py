@@ -1,4 +1,4 @@
-from types import EllipsisType
+from types import EllipsisType, TracebackType
 from typing import Any, Hashable, Literal, Self, TypedDict
 
 from Component.Types import register_decorator
@@ -75,11 +75,19 @@ class DataPath():
         self.embedded_data = item
         return self
 
+    def __enter__(self) -> Self:
+        return self
+
+    def __exit__(self, exc_type:type[BaseException]|None, exc_value:BaseException, traceback:TracebackType) -> Self:
+        self.path_items.pop()
+        self.hash = None
+        return self
+
     def __str__(self) -> str:
         return "".join(f"[{item}]" for item in self.path_items)
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} len {len(self.path_items)}; {self.last_key()}>"
+        return f"<{self.__class__.__name__} len {len(self.path_items)}; {"empty" if len(self.path_items) == 0 else self.last_key()}>"
 
     def __getitem__(self, index:int) -> Hashable:
         return self.path_items[index]

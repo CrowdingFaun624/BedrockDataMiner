@@ -293,9 +293,9 @@ class IterableStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](Structure[
                 return ()
             output:list[DataPath] = []
             if tag in self.tags:
-                output.extend(data_path.copy(key).embed(value) for key, value in data.items())
+                output.extend(data_path.copy(key.data).embed(value.data) for key, value in data.items())
             for key, value in data.items():
-                with trace.enter_key(key, value):
+                with trace.enter_key(key, value), data_path.append(key.data):
                     key_structure = self.get_key_structure(key.data, value.data, trace, environment)
                     value_structure = self.get_value_structure(key.data, value.data, trace, environment)
                     if key_structure is not None:
