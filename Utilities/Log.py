@@ -19,14 +19,16 @@ class Log[T]():
 
     __slots__ = (
         "file",
+        "full_name",
         "log_type",
         "name",
         "reset_on_reload",
     )
 
-    def __init__(self, name:str, file:Path, log_type:LogType, reset_on_reload:bool) -> None:
+    def __init__(self, name:str, file:Path, full_name:str, log_type:LogType, reset_on_reload:bool) -> None:
         self.name:str = name
         self.file:Path = file
+        self.full_name = full_name
         self.log_type = log_type
         self.reset_on_reload:bool = reset_on_reload
         self.file.touch()
@@ -34,7 +36,7 @@ class Log[T]():
             self.file.write_text("")
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.name} {self.log_type.value}>"
+        return f"<{self.__class__.__name__} {self.full_name} {self.log_type.value}>"
 
     def supports_type[A](self, log:"Log[Any]", _type:type[A]) -> TypeGuard["Log[A]"]:
         return any(issubclass(_type, allowed_type) for allowed_type in ALLOWED_TYPES[self.log_type])

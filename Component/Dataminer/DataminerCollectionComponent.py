@@ -65,6 +65,7 @@ class DataminerCollectionComponent(AbstractDataminerCollectionComponent[Datamine
         return DataminerCollection(
             file_name=self.file_name,
             name=self.name,
+            full_name=self.full_name,
             domain=self.domain,
             comparing_disabled=self.comparing_disabled,
         )

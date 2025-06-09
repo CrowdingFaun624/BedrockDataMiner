@@ -36,7 +36,7 @@ class SerializerComponent(Component[Serializer]):
         return (self.serializer_class_field,)
 
     def create_final(self, trace:Trace) -> Serializer:
-        return self.serializer_class_field.object_class(self.name, self.domain, **self.arguments)
+        return self.serializer_class_field.object_class(self.name, self.full_name, self.domain, self.arguments)
 
     def check(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):

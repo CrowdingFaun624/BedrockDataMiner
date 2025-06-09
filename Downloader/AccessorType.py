@@ -13,20 +13,22 @@ class AccessorType():
     __slots__ = (
         "accessor_class",
         "class_arguments",
+        "full_name",
         "linked_accessor_types",
         "name",
         "propagated_arguments",
     )
 
-    def __init__(self, name:str, class_arguments:dict[str,Any], propagated_arguments:dict[str,Any]) -> None:
+    def __init__(self, name:str, full_name:str, class_arguments:dict[str,Any], propagated_arguments:dict[str,Any]) -> None:
         self.name = name
+        self.full_name = full_name
         self.class_arguments = class_arguments
         self.propagated_arguments = propagated_arguments
         self.accessor_class:type[Accessor]
         self.linked_accessor_types:dict[str,AccessorType]
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.name}>"
+        return f"<{self.__class__.__name__} {self.full_name}>"
 
     def link_finals(
         self,
@@ -38,6 +40,7 @@ class AccessorType():
 
     def create_accessor(
         self,
+        full_name:str,
         trace:Trace,
         version:"Version",
         domain:"Domain.Domain",
@@ -54,7 +57,7 @@ class AccessorType():
             linked_accessors:dict[str,Accessor] = {}
             for key, accessor_type in self.linked_accessor_types.items():
                 with trace.enter_key(key, accessor_type):
-                    subaccessor = accessor_type.create_accessor(trace, version, domain, file_type, instance_arguments, propagated_arguments)
+                    subaccessor = accessor_type.create_accessor(full_name + f"({key})", trace, version, domain, file_type, instance_arguments, propagated_arguments)
                     if subaccessor is not None:
                         linked_accessors[key] = subaccessor
                     else:
@@ -70,4 +73,4 @@ class AccessorType():
             if accessor_type.propagated_parameters.verify(local_propagated_arguments, trace):
                 return None
 
-            return accessor_type(self.name, version, domain, local_instance_arguments, self.class_arguments, propagated_arguments, linked_accessors)
+            return accessor_type(full_name, version, domain, local_instance_arguments, self.class_arguments, propagated_arguments, linked_accessors)

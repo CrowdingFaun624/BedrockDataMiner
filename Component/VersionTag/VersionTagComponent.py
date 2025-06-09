@@ -63,6 +63,7 @@ class VersionTagComponent(Component[VersionTag]):
     def create_final(self, trace:Trace) -> VersionTag:
         return VersionTag(
             name=self.name,
+            full_name=self.full_name,
             development_name=self.development_name,
             is_development_tag=self.is_development_tag,
             is_fork_tag=self.is_fork_tag,

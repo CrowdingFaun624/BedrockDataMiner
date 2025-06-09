@@ -64,7 +64,9 @@ class VersionTagOrderComponent(Component[VersionTagOrder]):
         return fields
 
     def create_final(self, trace:Trace) -> VersionTagOrder:
-        return VersionTagOrder()
+        return VersionTagOrder(
+            full_name=self.full_name,
+        )
 
     def link_finals(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):

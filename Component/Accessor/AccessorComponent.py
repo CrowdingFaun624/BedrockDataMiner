@@ -28,18 +28,21 @@ class AccessorCreator():
         "accessor_type_field",
         "arguments",
         "domain",
+        "full_name",
         "version_component",
         "version_file_component",
     )
 
     def __init__(
         self,
+        full_name:str,
         domain:"Domain.Domain",
         version_file_component:"VersionFileComponent",
         version_component:"VersionComponent",
         accessor_type_field:ComponentField["AccessorTypeComponent"],
         arguments:dict[str,Any],
     ) -> None:
+        self.full_name = full_name
         self.domain = domain
         self.version_file_component = version_file_component
         self.version_component = version_component
@@ -50,7 +53,8 @@ class AccessorCreator():
     def create_accessor(self, trace:Trace) -> Accessor|None:
         if self.accessor is None:
             self.accessor = self.accessor_type_field.subcomponent.final.create_accessor(
-                trace,
+                full_name=self.full_name,
+                trace=trace,
                 version=self.version_component.final,
                 domain=self.domain,
                 file_type=self.version_file_component.version_file_type_field.subcomponent.final,
@@ -86,6 +90,7 @@ class AccessorComponent(Component[AccessorCreator]):
 
     def create_final(self, trace:Trace) -> AccessorCreator:
         return AccessorCreator(
+            self.full_name,
             self.domain,
             cast("VersionFileComponent", self.get_inline_parent()), cast("VersionComponent", self.get_inline_parent().get_inline_parent()),
             self.accessor_type_field, self.arguments

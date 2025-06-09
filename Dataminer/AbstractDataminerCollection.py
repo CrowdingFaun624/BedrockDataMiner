@@ -22,9 +22,10 @@ from Version.Version import Version
 
 class AbstractDataminerCollection():
 
-    def __init__(self, file_name:str, name:str, domain:"Domain.Domain", comparing_disabled:bool) -> None:
+    def __init__(self, file_name:str, name:str, full_name:str, domain:"Domain.Domain", comparing_disabled:bool) -> None:
         self.name = name
         self.file_name = file_name
+        self.full_name = full_name
         self.domain = domain
         self.comparing_disabled = comparing_disabled
 
@@ -120,10 +121,10 @@ class AbstractDataminerCollection():
         self.structure.type_check_from_raw(data, version, environment)
 
     def __hash__(self) -> int:
-        return hash(self.name)
+        return hash(self.full_name)
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__} {self.name}>"
+        return f"<{self.__class__.__name__} {self.full_name}>"
 
     def clear_all_caches(self) -> None:
         '''Clears all caches of this DataminerCollection's Structure.'''

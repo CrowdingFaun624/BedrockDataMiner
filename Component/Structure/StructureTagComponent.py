@@ -31,5 +31,6 @@ class StructureTagComponent(Component[StructureTag]):
     def create_final(self, trace:Trace) -> StructureTag:
         return StructureTag(
             name=self.name,
+            full_name=self.full_name,
             is_file=self.is_file,
         )

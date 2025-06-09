@@ -14,10 +14,14 @@ class VersionFile():
     __slots__ = (
         "_accessors",
         "accessor_creators",
+        "full_name",
         "name",
         "version",
         "version_file_type",
     )
+
+    def __init__(self, full_name:str) -> None:
+        self.full_name = full_name
 
     def link_finals(
         self,
@@ -40,7 +44,7 @@ class VersionFile():
         return self._accessors
 
     def __repr__(self) -> str:
-        return f"<VersionFile {self.name} of {self.version}>"
+        return f"<{self.__class__.__name__} {self.full_name}>"
 
     def has_accessors(self) -> bool:
         "Returns True if this VersionFile has at least one Accessor."

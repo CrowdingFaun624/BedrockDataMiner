@@ -68,6 +68,7 @@ class CoverageDataminerCollectionComponent(AbstractDataminerCollectionComponent[
         return CoverageDataminer(
             file_name=self.file_name,
             name=self.name,
+            full_name=self.full_name,
             domain=self.domain,
             comparing_disabled=self.comparing_disabled,
             remove_files=self.remove_files,

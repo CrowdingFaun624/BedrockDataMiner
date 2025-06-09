@@ -1,6 +1,5 @@
 from typing import Any, Iterable
 
-import Domain.Domain as Domain
 from Dataminer.AbstractDataminerCollection import AbstractDataminerCollection
 from Dataminer.Dataminer import Dataminer, NullDataminer
 from Dataminer.DataminerEnvironment import DataminerEnvironment
@@ -13,14 +12,10 @@ from Version.Version import Version
 
 class DataminerCollection(AbstractDataminerCollection):
 
-    def __init__(self, file_name:str, name:str, domain:"Domain.Domain", comparing_disabled:bool) -> None:
-        super().__init__(file_name, name, domain, comparing_disabled)
-
-        self.dataminer_settings:list["DataminerSettings"]
 
     def link_subcomponents(self, structure:StructureBase, dataminer_settings:list["DataminerSettings"]) -> None:
         super().link_subcomponents(structure)
-        self.dataminer_settings = dataminer_settings
+        self.dataminer_settings:list["DataminerSettings"] = dataminer_settings
 
     def get_structure_info(self, version: Version) -> StructureInfo:
         return self.get_dataminer_settings(version).structure_info

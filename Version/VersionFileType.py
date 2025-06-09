@@ -8,6 +8,7 @@ class VersionFileType():
     __slots__ = (
         "allowed_accessor_types",
         "available_when_unreleased",
+        "full_name",
         "must_exist",
         "name",
     )
@@ -15,10 +16,12 @@ class VersionFileType():
     def __init__(
         self,
         name:str,
+        full_name:str,
         must_exist:bool,
         available_when_unreleased:bool,
     ) -> None:
         self.name = name
+        self.full_name = full_name
         self.must_exist = must_exist
         self.available_when_unreleased = available_when_unreleased
 
@@ -29,7 +32,7 @@ class VersionFileType():
         self.allowed_accessor_types = allowed_accessor_types
 
     def __hash__(self) -> int:
-        return hash(self.name)
+        return hash(self.full_name)
 
     def __repr__(self) -> str:
-        return f"<VersionFileType {self.name}>"
+        return f"<{self.__class__.__name__} {self.full_name}>"

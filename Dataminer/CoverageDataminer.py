@@ -18,6 +18,7 @@ class CoverageDataminer(AbstractDataminerCollection):
         self,
         file_name:str,
         name:str,
+        full_name:str,
         domain:"Domain.Domain",
         comparing_disabled:bool,
         remove_files:set[str],
@@ -25,13 +26,11 @@ class CoverageDataminer(AbstractDataminerCollection):
         remove_prefixes:list[str],
         remove_suffixes:list[str],
     ) -> None:
-        super().__init__(file_name, name, domain, comparing_disabled)
+        super().__init__(file_name, name, full_name, domain, comparing_disabled)
         self.remove_files = remove_files
         self.remove_regex = remove_regex
         self.remove_prefixes = remove_prefixes
         self.remove_suffixes = remove_suffixes
-
-        self.file_list_dataminer:AbstractDataminerCollection|None = None
 
     def link_subcomponents(
         self,
@@ -56,7 +55,6 @@ class CoverageDataminer(AbstractDataminerCollection):
         )
 
     def supports_version(self, version: Version) -> bool:
-        assert self.file_list_dataminer is not None
         return self.file_list_dataminer.supports_version(version)
 
     def do_dataminer_collection(
@@ -86,7 +84,6 @@ class CoverageDataminer(AbstractDataminerCollection):
         version_files_covered_dict[dataminer] = dataminer_files_covered
 
     def datamine(self, version: Version, environment: DataminerEnvironment) -> list[str]:
-        assert self.file_list_dataminer is not None
         file_set_list:dict[str,str] = self.file_list_dataminer.get_data_file(version)
         file_set_set = set(file_set_list)
         file_set = FileSet(file_set_list)

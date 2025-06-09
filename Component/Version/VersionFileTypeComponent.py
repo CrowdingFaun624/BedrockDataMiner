@@ -43,6 +43,7 @@ class VersionFileTypeComponent(Component[VersionFileType]):
     def create_final(self, trace:Trace) -> VersionFileType:
         return VersionFileType(
             name=self.name,
+            full_name=self.full_name,
             must_exist=self.must_exist,
             available_when_unreleased=self.available_when_unreleased,
         )

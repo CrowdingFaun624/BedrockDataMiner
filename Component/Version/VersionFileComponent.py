@@ -44,7 +44,9 @@ class VersionFileComponent(Component[VersionFile]):
         return (self.version_file_type_field, self.accessors_field)
 
     def create_final(self, trace:Trace) -> VersionFile:
-        return VersionFile()
+        return VersionFile(
+            full_name=self.full_name,
+        )
 
     def link_finals(self, trace:Trace) -> None:
         with trace.enter(self, self.name, ...):

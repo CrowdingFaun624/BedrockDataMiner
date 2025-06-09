@@ -5,6 +5,7 @@ class VersionTagOrder():
 
     __slots__ = (
         "allowed_children",
+        "full_name",
         "initialized",
         "order",
         "tags_after_top_level_tag",
@@ -12,7 +13,8 @@ class VersionTagOrder():
         "top_level_tag",
     )
 
-    def __init__(self) -> None:
+    def __init__(self, full_name:str) -> None:
+        self.full_name = full_name
         self.initialized:bool = False
 
     def link_finals(
@@ -32,8 +34,6 @@ class VersionTagOrder():
 
     def __repr__(self) -> str:
         if not self.initialized:
-            return f"<{self.__class__.__name__} uninitialized>"
-        elif self.top_level_tag is None:
-            return f"<{self.__class__.__name__} empty>"
+            return f"<{self.__class__.__name__} {self.full_name}, uninitialized>"
         else:
-            return f"<{self.__class__.__name__} top: {self.top_level_tag}>"
+            return f"<{self.__class__.__name__} {self.full_name}>"

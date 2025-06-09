@@ -47,6 +47,7 @@ class AccessorTypeComponent(Component[AccessorType]):
     def create_final(self, trace:Trace) -> AccessorType:
         return AccessorType(
             name=self.name,
+            full_name=self.full_name,
             class_arguments=self.class_arguments,
             propagated_arguments=self.propagated_arguments,
         )

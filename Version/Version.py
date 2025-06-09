@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 class Version():
 
     __slots__ = (
+        "full_name",
         "name",
         "time",
         "index",
@@ -29,8 +30,9 @@ class Version():
         "order_tag",
     )
 
-    def __init__(self, name:str, domain:"Domain.Domain", time:datetime|None, index:int) -> None:
+    def __init__(self, name:str, full_name:str, domain:"Domain.Domain", time:datetime|None, index:int) -> None:
         self.name = name
+        self.full_name = full_name
         self.time = time
         self.index = index
 
@@ -78,10 +80,10 @@ class Version():
         return self.name
 
     def __repr__(self) -> str:
-        return f"<Version {self.name}>"
+        return f"<{self.__class__.__name__} {self.full_name}>"
 
     def __hash__(self) -> int:
-        return hash(self.name)
+        return hash(self.full_name)
 
     def __lt__(self, other:"Version") -> bool:
         return self.index < other.index

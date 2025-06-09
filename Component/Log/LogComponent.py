@@ -44,6 +44,7 @@ class LogComponent(Component[Log]):
         return Log(
             name=self.name,
             file=self.file,
+            full_name=self.full_name,
             log_type=self.log_type,
             reset_on_reload=self.reset_on_reload,
         )

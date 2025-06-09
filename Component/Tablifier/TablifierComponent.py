@@ -45,6 +45,7 @@ class TablifierComponent(Component[Tablifier]):
     def create_final(self, trace:Trace) -> Tablifier:
         return Tablifier(
             name=self.name,
+            full_name=self.full_name,
             file_name=self.file_name,
         )
 

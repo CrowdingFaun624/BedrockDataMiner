@@ -257,16 +257,21 @@ class Tablifier():
     __slots__ = (
         "dataminer_collection",
         "file_name",
+        "full_name",
         "name",
         "path",
         "structure",
         "version_provider",
     )
 
-    def __init__(self, name:str, file_name:str) -> None:
+    def __init__(self, name:str, file_name:str, full_name:str) -> None:
         self.name = name
         self.file_name = file_name
+        self.full_name = full_name
         self.path = OUTPUT_DIRECTORY.joinpath(self.file_name)
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} {self.full_name}>"
 
     def link_finals(
         self,

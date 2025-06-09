@@ -23,8 +23,9 @@ class Serializer[a]():
     If True, will call get_referenced_files during garbage collection.
     '''
 
-    def __init__(self, name:str, domain:"Domain.Domain", kwargs:dict[str,Any]) -> None:
+    def __init__(self, name:str, full_name:str, domain:"Domain.Domain", kwargs:dict[str,Any]) -> None:
         self.name = name
+        self.full_name = full_name
         self.domain = domain
         self.initialize(**kwargs)
 

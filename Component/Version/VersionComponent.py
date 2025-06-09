@@ -76,6 +76,7 @@ class VersionComponent(Component[Version]):
     def create_final(self, trace:Trace) -> Version:
         return Version(
             name=self.name,
+            full_name=self.full_name,
             domain=self.domain,
             time=self.time,
             index=self.get_index(),

@@ -79,6 +79,7 @@ class DataminerSettingsComponent(Component[DataminerSettings]):
 
     def create_final(self, trace:Trace) -> DataminerSettings:
         return DataminerSettings(
+            full_name=self.full_name,
             kwargs=self.arguments,
             domain=self.domain
         )

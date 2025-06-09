@@ -21,27 +21,18 @@ class DataminerSettings():
         "dependencies",
         "domain",
         "file_name",
+        "full_name",
         "name",
         "structure",
         "structure_info",
         "version_file_types",
-        "version_file_types_str",
         "version_range",
     )
 
-    def __init__(self, kwargs:dict[str,Any], domain:"Domain.Domain") -> None:
+    def __init__(self, full_name:str, kwargs:dict[str,Any], domain:"Domain.Domain") -> None:
+        self.full_name = full_name
         self.arguments = kwargs
         self.domain = domain
-
-        self.version_range:VersionRange
-        self.version_file_types:list[VersionFileType]
-        self.version_file_types_str:list[str]|None
-        self.file_name:str
-        self.name:str
-        self.structure:StructureBase
-        self.dataminer_class:type["Dataminer"]|None
-        self.dependencies:list["AbstractDataminerCollection"]
-        self.structure_info: StructureInfo
 
     def link_subcomponents(
         self,
@@ -57,15 +48,14 @@ class DataminerSettings():
         version_file_types:list[VersionFileType],
     ) -> None:
         with trace.enter(self, name, ...):
-            self.file_name = file_name
-            self.name = name
-            self.structure = structure
-            self.dataminer_class = dataminer_class
-            self.dependencies = dependencies
-            self.version_range = VersionRange(start_version, end_version)
-            self.structure_info = structure_info
-            self.version_file_types = version_file_types
-            self.version_file_types_str = [version_file_type.name for version_file_type in self.version_file_types]
+            self.file_name:str = file_name
+            self.name:str = name
+            self.structure:StructureBase = structure
+            self.dataminer_class:type["Dataminer"]|None = dataminer_class
+            self.dependencies:list["AbstractDataminerCollection"] = dependencies
+            self.version_range:VersionRange = VersionRange(start_version, end_version)
+            self.structure_info:StructureInfo = structure_info
+            self.version_file_types:list[VersionFileType] = version_file_types
             if dataminer_class is not None and dataminer_class.parameters is not None:
                 dataminer_class.parameters.verify(self.arguments, trace)
             if dataminer_class is not None:
@@ -77,8 +67,4 @@ class DataminerSettings():
         return self.dataminer_class
 
     def __repr__(self) -> str:
-        if self.name is None:
-            return f"<{self.__class__.__name__} id {id(self)}>"
-        else:
-            version_range = self.version_range
-            return f"<DataminerSettings {self.name} \"{str(version_range.start)}\"–\"{str(version_range.stop)}\">"
+        return f"<{self.__class__.__name__} {self.full_name} \"{str(self.version_range.start)}\"–\"{str(self.version_range.stop)}\">"
