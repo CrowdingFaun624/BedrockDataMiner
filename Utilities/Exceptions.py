@@ -250,10 +250,27 @@ class ComponentDuplicateTypeError(ComponentException):
     def __str__(self) -> str:
         return f"Type \"{self.type_str}\" is duplicate{message(self.message)}"
 
-class ComponentInvalidNameError(ComponentException):
-    "A Component's name is invalid."
+class ComponentInvalidNameCharacterError(ComponentException):
+    "A Component has a name with an illegal character."
 
-    def __init__(self, component:"Component", invalid_names:Optional[list[str]]=None, message:Optional[str]=None) -> None:
+    def __init__(self, component:"Component", invalid_characters:list[str], message:Optional[str]=None) -> None:
+        '''
+        :component: The Component with an invalid character.
+        :invalid_characters: A list of characters this Component cannot have.
+        :message: Additional text to place after the main message.
+        '''
+        super().__init__(component, invalid_characters, message)
+        self.component = component
+        self.invalid_characters = invalid_characters
+        self.message = message
+
+    def __str__(self) -> str:
+        return f"The name of {self.component} cannot have any characters within {"".join(self.invalid_characters)}{message(self.message)}"
+
+class ComponentInvalidNameError(ComponentException):
+    "A Component has an illegal name."
+
+    def __init__(self, component:"Component", invalid_names:list[str], message:Optional[str]=None) -> None:
         '''
         :component: The Component with an invalid name.
         :invalid_names: A list of names that this Component cannot have.
@@ -265,7 +282,7 @@ class ComponentInvalidNameError(ComponentException):
         self.message = message
 
     def __str__(self) -> str:
-        return f"The name of {self.component} {f"cannot be one of {self.invalid_names}" if self.invalid_names is not None else "is invalid"}{message(self.message)}"
+        return f"The name of {self.component} cannot be one of {self.invalid_names}{message(self.message)}"
 
 class ComponentInvalidVersionRangeException(ComponentException):
     "Abstract exception class for errors relating to invalid VersionRanges."

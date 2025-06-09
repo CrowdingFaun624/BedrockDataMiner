@@ -9,6 +9,7 @@ class AbstractDataminerCollectionComponent[a: AbstractDataminerCollection](Compo
 
     class_name = "AbstractDataminerCollection"
     my_capabilities = Capabilities(is_dataminer_collection=True)
+    restrict_to_file_names = True
 
     disabled:bool = False
 

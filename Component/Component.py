@@ -1,9 +1,12 @@
-import re
 from types import EllipsisType
 from typing import TYPE_CHECKING, Any, Mapping, Sequence
 
 import Domain.Domain as Domain
-from Utilities.Exceptions import AttributeNoneError, ComponentInvalidNameError
+from Utilities.Exceptions import (
+    AttributeNoneError,
+    ComponentInvalidNameCharacterError,
+    ComponentInvalidNameError,
+)
 from Utilities.Trace import Trace
 
 if TYPE_CHECKING:
@@ -13,7 +16,12 @@ if TYPE_CHECKING:
     from Component.ScriptImporter import ScriptSetSetSet
     from Utilities.TypeVerifier import TypedDictTypeVerifier
 
-INVALID_NAME_REGEXP = re.compile(r"[\@\\\/\s\{\}\[\]\(\)\"\!]")
+INVALID_NAME_CHARS = set("@\\/ \t\r\n\f\v{}[]()\"!")
+INVALID_NAME_CHARS_DISPLAY = list("@\\/{}[]()\"!")
+INVALID_NAMES:set[str] = {"*", "type", "inherit", "^"}
+
+INVALID_NAME_CHARS_FILE = set("<>:\"\\/|?*")
+INVALID_NAMES_FILE:set[str] = {"CON", "PRN", "AUX", "NUL"} | {f"COM{i}" for i in range(0, 10)} | {f"LPT{i}" for i in range(0, 10)}
 
 class Component[a]():
 
@@ -21,6 +29,7 @@ class Component[a]():
     my_capabilities:"Capabilities"
     type_verifier:"TypedDictTypeVerifier"
     script_referenceable:bool = False
+    restrict_to_file_names:bool = False
     '''
     If the final of this Component may be accessed directly by Scripts.
     '''
@@ -45,9 +54,6 @@ class Component[a]():
         self.domain = domain
         self.component_group = component_group
         self.index = index
-        if INVALID_NAME_REGEXP.match(name):
-            trace.exception(ComponentInvalidNameError(self))
-            return
 
         self.links_to_other_components:list[Component] = []
         self.parents:list[Component] = []
@@ -55,6 +61,23 @@ class Component[a]():
         self.inline_components:list[Component]
         self.inline_parent:Component|None = None
         self.variable_bools, self.variable_sets = self.get_propagated_variables()
+
+        name_exception:bool = False
+        if index is not None and any(char in INVALID_NAME_CHARS for char in name):
+            trace.exception(ComponentInvalidNameCharacterError(self, INVALID_NAME_CHARS_DISPLAY, "and whitespace characters"))
+            name_exception = True
+        elif index is not None and name in INVALID_NAMES:
+            trace.exception(ComponentInvalidNameError(self, sorted(INVALID_NAMES)))
+            name_exception = True
+        elif index is not None and self.restrict_to_file_names and any(char in INVALID_NAME_CHARS_FILE for char in name):
+            trace.exception(ComponentInvalidNameCharacterError(self, list(INVALID_NAME_CHARS_FILE), "(must be a valid file name)"))
+            name_exception = True
+        elif index is not None and self.restrict_to_file_names and name.upper() in INVALID_NAMES_FILE:
+            trace.exception(ComponentInvalidNameError(self, sorted(INVALID_NAMES_FILE), "(must be a valid file name; case insensitive)"))
+            name_exception = True
+        if name_exception:
+            self.fields = ()
+            return
 
         self.fields:Sequence["Field"] = self.initialize_fields(data)
         for field in self.fields:
