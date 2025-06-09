@@ -1,6 +1,5 @@
 from typing import Any, NotRequired, Required, TypedDict
 
-import Domain.Domain as Domain
 from Serializer.JsonSerializer import JsonSerializer
 from Utilities.TypeVerifier import (
     ListTypeVerifier,
@@ -273,9 +272,8 @@ class RepairableJsonSerializer(JsonSerializer):
         ), list))
     )
 
-    def __init__(self, name:str, domain:"Domain.Domain", rules:list[RulesTypedDict], empty_okay:bool=False) -> None:
-        super().__init__(name, domain)
-        self.rules = [Rule(name, index, parse_condition(rule["condition"]), parse_action(rule["action"])) for index, rule in enumerate(rules)]
+    def initialize(self, rules:list[RulesTypedDict], empty_okay:bool=False) -> None:
+        self.rules = [Rule(self.full_name, index, parse_condition(rule["condition"]), parse_action(rule["action"])) for index, rule in enumerate(rules)]
         self.empty_okay = empty_okay
 
     def do_rules(self, data:bytes, is_exception:bool) -> tuple[bool,bytes]:

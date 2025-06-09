@@ -58,8 +58,7 @@ class MediaSerializer(Serializer):
 
     can_contain_subfiles = True
 
-    def __init__(self, name: str, domain:Domain.Domain) -> None:
-        super().__init__(name, domain)
+    def initialize(self) -> None:
         self.cached_data:dict[str,OutputTypedDict]|None = None
 
     def deserialize(self, data: bytes) -> OutputTypedDict:

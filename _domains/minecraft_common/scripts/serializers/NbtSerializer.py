@@ -1,7 +1,6 @@
 import gzip
 from typing import Literal
 
-import Domain.Domain as Domain
 from _domains.minecraft_common.scripts.Nbt.DataReader import DataReader
 from _domains.minecraft_common.scripts.Nbt.NbtTypes import (
     TAG,
@@ -24,13 +23,11 @@ class NbtSerializer(Serializer[TAG]):
         TypedDictKeyTypeVerifier("gzipped", True, bool),
     )
 
-    def __init__(self, name:str, domain:"Domain.Domain", endianness:Literal["big", "little"], gzipped:bool) -> None:
+    def initialize(self, endianness:Literal["big", "little"], gzipped:bool) -> None:
         '''
-        :name: The Component name of this Serializer.
         :endianness: If the content of the nbt file is big-endian or little-endian.
         :gzipped: If True, decompresses the file using gzip.
         '''
-        super().__init__(name, domain)
         self.endianness = End[endianness.upper()]
         self.gzipped = gzipped
 
