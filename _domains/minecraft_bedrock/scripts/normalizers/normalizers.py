@@ -17,6 +17,7 @@ __all__ = (
     "blocks_client_normalize",
     "categories_normalize",
     "commands_normalize_format_string",
+    "delete_variants_if_empty",
     "entities_client_fix_old",
     "item_textures_normalize",
     "items_client_offset_normalize",
@@ -45,6 +46,7 @@ __all__ = (
     "terrain_textures_normalize",
     "texture_list_normalize",
     "textures_split_lines",
+    "tiers_bin_normalize_gpu",
     "ui_separate_variables",
     "uniforms_normalize",
 )
@@ -168,6 +170,10 @@ def commands_normalize_format_string(data:str|FormatStringTypedDict) -> FormatSt
         return None
     else:
         return {"format": data}
+
+def delete_variants_if_empty(data:dict[str,Any]) -> None:
+    if "variants" in data and len(data["variants"]["key"]) == 0 and len(data["variants"]["map"]) == 0:
+        del data["variants"]
 
 entities_client_fix_old_input_type = dict[str,Any]
 
@@ -509,6 +515,10 @@ def texture_list_normalize(data:dict[str,File[list[str]]], serializer:str) -> Fa
 def textures_split_lines(data:list[str]|str) -> list[str]|None:
     if isinstance(data, str):
         return data.splitlines()
+
+def tiers_bin_normalize_gpu(data:int|dict) -> dict|None:
+    if isinstance(data, int):
+        return {"tier": data}
 
 def ui_separate_variables(data:dict[str,Any]) -> None:
     variables:dict[str,Any] = {}

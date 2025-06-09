@@ -60,12 +60,13 @@
         },
         "keys": {
             "description": {"types": "dict", "structure": "description", "similarity_weight": 3, "delegate_arguments": {"always_print": true}},
-            "biome_filters": {"types": "list", "structure": "biome_filters"},
+            "biome_filters": {"types": ["dict", "list"], "structure": "structures/entities/filter_or_filter_list"},
             "step": {"types": "str"},
             "terrain_adaptation": {"types": "str"},
             "start_pool": {"types": "str"},
             "max_depth": {"types": "int"},
-            "start_height": {"types": "int"},
+            "max_distance_from_center": {"types": "int"},
+            "start_height": {"types": ["int", "dict"], "structure": "start_height"},
             "heightmap_projection": {"types": "str"}
         }
     },
@@ -78,17 +79,23 @@
             "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
         }
     },
-    "biome_filters": {
-        "type": "Dict",
-        "key_weight": 0,
-        "key_types": "int",
-        "this_types": "list",
-        "value_types": "dict",
-        "delegate_arguments": {
-            "field": "biome filter",
-            "show_item_key": false,
-            "measure_length": true
-        },
-        "value_structure": "structures/entities/filter"
+    "start_height": {
+        "type": "Union",
+        "substructures": {
+            "int": null,
+            "dict": {
+                "type": "Keymap",
+                "keys": {
+                    "type": {"types": "str"},
+                    "value": {"types": "dict", "structure": "start_height.value"}
+                }
+            }
+        }
+    },
+    "start_height.value": {
+        "type": "Keymap",
+        "keys": {
+            "absolute": {"types": "int"}
+        }
     }
 }

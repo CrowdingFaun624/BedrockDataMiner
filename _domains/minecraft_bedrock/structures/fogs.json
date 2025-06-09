@@ -52,6 +52,20 @@
             "minecraft:fog_settings": {"types": "dict", "structure": "fog_settings", "similarity_weight": 12}
         }
     },
+    "vector_decimal": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_all": true,
+            "print_flat": true
+        },
+        "value_types": "decimal",
+        "value_structure": null
+    },
     "defined_in": {
         "type": "Dict",
         "key_weight": 0,
@@ -70,7 +84,8 @@
         "type": "Keymap",
         "keys": {
             "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
-            "distance": {"types": "dict", "structure": "distance"}
+            "distance": {"types": "dict", "structure": "distance"},
+            "volumetric": {"types": "dict", "structure": "volumetric"}
         }
     },
     "description": {
@@ -114,6 +129,65 @@
             "mid_percent": {"types": "decimal"},
             "mid_seconds": {"types": "int"},
             "min_percent": {"types": "decimal"}
+        }
+    },
+    "volumetric": {
+        "type": "Keymap",
+        "keys": {
+            "density": {"types": "dict", "structure": "volumetric.densities"},
+            "media_coefficients": {"types": "dict", "structure": "volumetric.media_coefficients"},
+            "henyey_greenstein_g": {"types": "dict", "structure": "volumetric.henyey_greenstein_gs"} // 🤓
+        }
+    },
+    "volumetric.densities": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "medium",
+            "measure_length": true
+        },
+        "keys": {
+            "air": {"types": "dict", "structure": "volumetric.density"}
+        }
+    },
+    "volumetric.density": {
+        "type": "Keymap",
+        "keys": {
+            "max_density": {"types": "decimal"},
+            "zero_density_height": {"types": "decimal"},
+            "max_density_height": {"types": "decimal"}
+        }
+    },
+    "volumetric.media_coefficients": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "medium",
+            "measure_length": true
+        },
+        "keys": {
+            "air": {"types": "dict", "structure": "volumetric.media_coefficient"}
+        }
+    },
+    "volumetric.media_coefficient": {
+        "type": "Keymap",
+        "keys": {
+            "scattering": {"types": "list", "structure": "vector_decimal"},
+            "absorption": {"types": "list", "structure": "vector_decimal"}
+        }
+    },
+    "volumetric.henyey_greenstein_gs": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "medium",
+            "measure_length": true
+        },
+        "keys": {
+            "air": {"types": "dict", "structure": "volumetric.henyey_greenstein_g"}
+        }
+    },
+    "volumetric.henyey_greenstein_g": {
+        "type": "Keymap",
+        "keys": {
+            "henyey_greenstein_g": {"types": "decimal"}
         }
     }
 }

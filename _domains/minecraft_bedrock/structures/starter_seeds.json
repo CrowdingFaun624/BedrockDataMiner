@@ -1,0 +1,53 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "this_types": "dict",
+        "delegate_arguments": {
+            "name": "starter_seeds"
+        },
+        "structure": "file"
+    },
+    "file": {
+        "type": "File",
+        "serializer": null,
+        "pre_normalized_types": "dict",
+        "file_types": "fake_file",
+        "content_types": "dict",
+        "normalizers": {
+            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_list2_file",
+            "arguments": {
+                "serializer": "minecraft_bedrock!serializers/lines_serializer"
+            }
+        },
+        "structure": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "value_types": "list",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "value_structure": "starter_seeds"
+    },
+    "starter_seeds": {
+        "type": "Dict",
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "value_types": "int",
+        "value_structure": {
+            "type": "Primitive",
+            "pre_normalized_types": "str",
+            "this_types": "int",
+            "normalizers": {
+                "function_name": "parse_int"
+            }
+        },
+        "delegate_arguments": {
+            "field": "seed",
+            "measure_length": true,
+            "show_item_key": false
+        }
+    }
+}

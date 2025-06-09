@@ -1,0 +1,111 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "delegate_arguments": {
+            "name": "color_grading"
+        },
+        "this_types": "dict",
+        "structure": "color_grading_files"
+    },
+    "color_grading_files": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "color grading file",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "value_structure": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "post_normalizers": {
+            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
+        },
+        "value_structure": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
+            "type": "File",
+            "serializer": "minecraft_common!json",
+            "file_types": "file",
+            "content_types": "dict",
+            "structure": "color_grading_file"
+        }
+    },
+    "color_grading_file": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"types": "str"},
+            "minecraft:color_grading_settings": {"types": "dict", "structure": "color_grading_settings", "similarity_weight": 15}
+        }
+    },
+    "color_grading_settings": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
+            "color_grading": {"types": "dict", "structure": "color_grading"},
+            "tone_mapping": {"types": "dict", "structure": "tone_mapping"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "color_grading": {
+        "type": "Keymap",
+        "keys": {
+            "midtones": {"types": "dict", "structure": "color_grading.midtones"},
+            "temperature": {"types": "dict", "structure": "color_grading.temperature"}
+        }
+    },
+    "color_grading.midtones": {
+        "type": "Keymap",
+        "keys": {
+            "contrast": {"types": "list", "structure": "vector_float"},
+            "gain": {"types": "list", "structure": "vector_float"},
+            "gamma": {"types": "list", "structure": "vector_float"},
+            "offset": {"types": "list", "structure": "vector_float"},
+            "saturation": {"types": "list", "structure": "vector_float"}
+        }
+    },
+    "color_grading.temperature": {
+        "type": "Keymap",
+        "keys": {
+            "enabled": {"types": "bool"},
+            "temperature": {"types": "int"},
+            "type": {"types": "str"}
+        }
+    },
+    "tone_mapping": {
+        "type": "Keymap",
+        "keys": {
+            "operator": {"types": "str"}
+        }
+    },
+    "vector_float": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_all": true,
+            "print_flat": true
+        },
+        "value_types": "float",
+        "value_structure": null
+    }
+}

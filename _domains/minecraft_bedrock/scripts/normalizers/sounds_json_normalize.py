@@ -13,10 +13,15 @@ __all__ = ("sounds_json_normalize",)
 
 # input
 
+
 class SoundTypedDict(TypedDict):
     sound: NotRequired[str]
     volume: NotRequired[float|list[float]]
     pitch: NotRequired[float|list[float]]
+
+class VariantsTypedDict(TypedDict):
+    key: str
+    map: dict[str, "CollectionTypedDict"]
 
 type SoundType = str|SoundTypedDict|dict[str,str|SoundTypedDict]
 # represents the possibility of being a regular collection or an interactive collection
@@ -26,6 +31,7 @@ class CollectionTypedDict(TypedDict):
     volume: NotRequired[float|list[float]]
     pitch: NotRequired[float|list[float]]
     events: NotRequired[dict[str, SoundType]]
+    variants: NotRequired[VariantsTypedDict]
 
 class EntitySoundsTypedDict(TypedDict):
     defaults: CollectionTypedDict
@@ -43,6 +49,10 @@ class SoundsJsonTypedDict(TypedDict):
 
 # output
 
+class MyVariantsTypedDict(TypedDict):
+    key: dict[str,str]
+    map: dict[str, "MyCollectionTypedDict"]
+
 class MyCollectionTypedDict(TypedDict):
     # base, volume, and pitch are each wrapped with a resource pack dict
     base: dict[str,str]
@@ -50,6 +60,8 @@ class MyCollectionTypedDict(TypedDict):
     pitch: dict[str,float|list[float]]
     # each event is wrapped with a resource pack dict
     events: dict[str,dict[str, SoundType]]
+    # key is mapped with a resource pack dict. Map is treated as a collections.
+    variants: MyVariantsTypedDict
 
 class MyEntitySoundsTypedDict(TypedDict):
     defaults: MyCollectionTypedDict
@@ -66,7 +78,8 @@ class MySoundsJsonTypedDict(TypedDict):
     interactive_sounds: MyInteractiveSoundsTypedDict
 
 def merge_collection(pack_name:str, destination:MyCollectionTypedDict, source:CollectionTypedDict) -> None:
-    assert set(source.keys()).issubset({"base", "volume", "pitch", "events"})
+    if not set(source.keys()).issubset({"base", "volume", "pitch", "events", "variants"}):
+        raise KeyError(f"Weird extra key somewhere in {list(source.keys())}!")
     if "base" in source:
         destination["base"][pack_name] = source["base"]
     if "volume" in source:
@@ -78,6 +91,10 @@ def merge_collection(pack_name:str, destination:MyCollectionTypedDict, source:Co
             if event_name not in destination["events"]:
                 destination["events"][event_name] = {}
             destination["events"][event_name][pack_name] = source_event_data
+    if "variants" in source and "key" in source["variants"]:
+        destination["variants"]["key"][pack_name] = source["variants"]["key"]
+    if "variants" in source and "map" in source["variants"]:
+        merge_collections(pack_name, destination["variants"]["map"], source["variants"]["map"])
 
 def merge_collections(pack_name:str, destination:dict[str,MyCollectionTypedDict], source:dict[str,CollectionTypedDict]) -> None:
     for collection_name, source_collection_data in source.items():
@@ -87,6 +104,10 @@ def merge_collections(pack_name:str, destination:dict[str,MyCollectionTypedDict]
                 "volume": {},
                 "pitch": {},
                 "events": {},
+                "variants": {
+                    "key": {},
+                    "map": {},
+                }
             }
         merge_collection(pack_name, destination[collection_name], source_collection_data)
 
@@ -112,6 +133,10 @@ def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]]) -> FakeFile[
             "volume": {}, # must exist to appease pylance
             "pitch": {},
             "events": {},
+            "variants": {
+                "key": {},
+                "map": {},
+            },
         },
         "block_sounds": {},
         "entity_sounds": {
@@ -120,6 +145,10 @@ def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]]) -> FakeFile[
                 "events": {},
                 "volume": {},
                 "pitch": {},
+                "variants": {
+                    "key": {},
+                    "map": {},
+                },
             },
             "entities": {},
         },
@@ -131,6 +160,10 @@ def sounds_json_normalize(data:dict[str,File[SoundsJsonTypedDict]]) -> FakeFile[
                     "events": {},
                     "volume": {},
                     "pitch": {},
+                    "variants": {
+                        "key": {},
+                        "map": {},
+                    },
                 },
                 "entities": {},
             },

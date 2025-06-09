@@ -1,0 +1,111 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "delegate_arguments": {
+            "name": "lighting"
+        },
+        "this_types": "dict",
+        "structure": "lighting_files"
+    },
+    "lighting_files": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "lighting file",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "value_structure": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "post_normalizers": {
+            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
+        },
+        "value_structure": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
+            "type": "File",
+            "serializer": "minecraft_common!json",
+            "file_types": "file",
+            "content_types": "dict",
+            "structure": "lighting_file"
+        }
+    },
+    "lighting_file": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"types": "str"},
+            "minecraft:lighting_settings": {"types": "dict", "structure": "lighting_settings", "similarity_weight": 15}
+        }
+    },
+    "lighting_settings": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
+            "directional_lights": {"types": "dict", "structure": "directional_lights"},
+            "emissive": {"types": "dict", "structure": "emissive"},
+            "ambient": {"types": "dict", "structure": "ambient"},
+            "sky": {"types": "dict", "structure": "sky"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "directional_lights": {
+        "type": "Keymap",
+        "keys": {
+            "chaotic": {"types": "dict", "structure": "directional_light"},
+            "flash": {"types": "dict", "structure": "directional_light"},
+            "sun": {"types": "dict", "structure": "directional_light"},
+            "moon": {"types": "dict", "structure": "directional_light"},
+            "orbital_offset_degrees": {"types": "float"},
+            "orbital": {"types": "dict", "structure": "directional_lights"}
+        }
+    },
+    "directional_light": {
+        "type": "Keymap",
+        "keys": {
+            "illuminance": {"types": ["dict", "float"], "structure": "structures/atmospherics/keyframe_dict"},
+            "color": {"types": ["dict", "list"], "structure": "structures/atmospherics/keyframe_vector_dict"}
+        }
+    },
+    "emissive": {
+        "type": "Keymap",
+        "keys": {
+            "desaturation": {"types": "float"}
+        }
+    },
+    "ambient": {
+        "type": "Keymap",
+        "keys": {
+            "color": {"types": ["str", "list"], "structure": {
+                "type": "Union",
+                "substructures": {
+                    "str": null,
+                    "list": "structures/atmospheric_weather/color"
+                }
+            }},
+            "illuminance": {"types": "float"}
+        }
+    },
+    "sky": {
+        "type": "Keymap",
+        "keys": {
+            "intensity": {"types": "float"}
+        }
+    }
+}

@@ -1,0 +1,59 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "delegate_arguments": {
+            "name": "shadows"
+        },
+        "this_types": "dict",
+        "structure": "shadows_files"
+    },
+    "shadows_files": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "shadows file",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "value_structure": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "post_normalizers": {
+            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
+        },
+        "value_structure": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
+            "type": "File",
+            "serializer": "minecraft_common!json",
+            "file_types": "file",
+            "content_types": "dict",
+            "structure": "shadows_file"
+        }
+    },
+    "shadows_file": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"types": "str"},
+            "minecraft:shadow_settings": {"types": "dict", "structure": "shadow_settings", "similarity_weight": 15}
+        }
+    },
+    "shadow_settings": {
+        "type": "Keymap",
+        "keys": {
+            "shadow_style": {"types": "str"},
+            "texel_size": {"types": "int"}
+        }
+    }
+}

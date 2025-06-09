@@ -1,0 +1,226 @@
+Difference of "feature_rules_behavior_packs" between "1.21.62" and "1.21.70.20" (beta of "1.21.70").
+
+Added feature rule "birch_forest_before_surface_wildflowers_feature_rules.json":
+	behavior pack "experimental":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:birch_forest_before_surface_wildflowers_feature_rules"
+				field "places_feature": "minecraft:scatter_birch_forest_wildflowers_feature"
+			field "conditions":
+				field "placement_pass": "before_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "birch"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "value": "forest"
+					filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "hills"
+			field "distribution":
+				field "iterations": 3
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 2
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Changed feature rule "meadow_after_surface_tall_grass_feature_rules.json":
+	Added behavior pack "experimental":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:meadow_after_surface_tall_grass_feature_rules"
+				field "places_feature": "minecraft:scatter_meadow_tall_grass_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "meadow"
+			field "distribution":
+				field "iterations": "(query.noise((variable.originx + 8) / 200.0, (variable.originz + 8) / 200.0) < -0.8) ? 5 : 10"
+				field "scatter_chance": "variable.is_legacy ? 0.0 : 100.0"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "meadow_before_surface_wildflowers_feature_rules.json":
+	behavior pack "experimental":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:meadow_before_surface_wildflowers_feature_rules"
+				field "places_feature": "minecraft:scatter_meadow_wildflowers_feature"
+			field "conditions":
+				field "placement_pass": "before_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "meadow"
+			field "distribution":
+				field "iterations": "(query.noise((variable.originx + 8) / 200.0, (variable.originz + 8) / 200.0) < -0.8) ? 5 : 10"
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "overworld_after_surface_bush_feature_rules.json":
+	behavior pack "experimental":
+		field "format_version": "1.21.60"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_bush_feature_rules"
+				field "places_feature": "minecraft:scatter_bush_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "taiga"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "!="
+						field "value": "roofed"
+					filter 2:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "plains"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "extreme_hills"
+							filter 2:
+								field "test": "has_biome_tag"
+								field "value": "river"
+							filter 3:
+								field "test": "has_biome_tag"
+								field "value": "forest"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 4
+				field "x":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z":
+					field "distribution": "uniform"
+					field "extent": [0, 16]
+Added feature rule "overworld_after_surface_firefly_bush_water_cluster.json":
+	behavior pack "experimental":
+		field "format_version": "1.21.60"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:overworld_after_surface_firefly_bush_water_cluster"
+				field "places_feature": "minecraft:firefly_bush_water_cluster_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "any_of":
+							filter 0:
+								field "test": "has_biome_tag"
+								field "value": "overworld"
+							filter 1:
+								field "test": "has_biome_tag"
+								field "value": "overworld_generation"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "desert"
+					filter 2:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "swamp"
+					filter 3:
+						field "test": "has_biome_tag"
+						field "operator": "not"
+						field "value": "mesa"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 4
+				field "x": 0
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z": 0
+Removed feature rule "roofed_forest_first_foliage_feature.json":
+	behavior pack "core":
+		field "format_version": "1.13.0"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:roofed_forest_first_foliage_feature"
+				field "places_feature": "minecraft:legacy:roofed_forest_foliage_feature"
+			field "conditions":
+				field "placement_pass": "first_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "operator": "=="
+						field "value": "forest"
+					filter 1:
+						field "test": "has_biome_tag"
+						field "operator": "=="
+						field "value": "roofed"
+			field "distribution":
+				field "iterations": 1
+				field "x": 0
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z": 0
+Added feature rule "swamp_after_surface_firefly_bush_water_cluster.json":
+	behavior pack "experimental":
+		field "format_version": "1.21.60"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_firefly_bush_water_cluster"
+				field "places_feature": "minecraft:firefly_bush_water_cluster_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "swamp"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 2
+				field "x": 0
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z": 0
+Added feature rule "swamp_after_surface_single_firefly_bush_cluster.json":
+	behavior pack "experimental":
+		field "format_version": "1.21.60"
+		field "minecraft:feature_rules":
+			field "description":
+				field "identifier": "minecraft:swamp_after_surface_single_firefly_bush_cluster"
+				field "places_feature": "minecraft:firefly_bush_cluster_feature"
+			field "conditions":
+				field "placement_pass": "after_surface_pass"
+				field "minecraft:biome_filter":
+					filter 0:
+						field "test": "has_biome_tag"
+						field "value": "swamp"
+			field "distribution":
+				field "iterations": 1
+				field "scatter_chance":
+					field "numerator": 1
+					field "denominator": 16
+				field "x": 0
+				field "y": "query.heightmap(variable.worldx, variable.worldz)"
+				field "z": 0

@@ -222,12 +222,15 @@
             "emit_vibration": {"types": "dict", "structure": "event:emit_vibration"},
             "execute_event_on_home_block": {"types": "dict", "structure": "event"},
             "filters": {"types": "dict", "structure": "filter"},
+            "first_valid": {"types": "list", "structure": "event:first_valid"},
             "play_sound": {"types": "dict", "structure": "event:play_sound"},
             "randomize": {"types": "list", "structure": "event:randomize"},
             "remove": {"types": "dict", "structure": "component_groups_add_remove"},
             "reset_target": {"types": "dict", "structure": "empty"},
             "sequence": {"types": "list", "structure": "event:sequence"},
-            "set_property": {"types": "dict", "structure": "event:set_property"}
+            "set_home_position": {"types": "dict", "structure": "empty"},
+            "set_property": {"types": "dict", "structure": "event:set_property"},
+            "stop_movement": {"types": "dict", "structure": "empty"}
         }
     },
     "component_groups_add_remove": {
@@ -289,6 +292,15 @@
         "keys": {
             "vibration": {"types": "str"}
         }
+    },
+    "event:first_valid": {
+        "type": "Dict",
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 2,
+        "value_weight": 8,
+        "value_types": "dict",
+        "value_structure": "events_event"
     },
     "event:play_sound": {
         "type": "Keymap",
@@ -380,6 +392,8 @@
             "minecraft:barter": {"types": "dict", "structure": "component.barter"},
             "minecraft:block_climber": {"types": "dict", "structure": "empty"},
             "minecraft:block_sensor": {"types": "dict", "structure": "component.block_sensor"},
+            "minecraft:body_rotation_always_follows_head": {"types": "dict", "structure": "empty"},
+            "minecraft:body_rotation_axis_aligned": {"types": "dict", "structure": "empty"},
             "minecraft:boostable": {"types": "dict", "structure": "component.boostable"},
             "minecraft:boss": {"types": "dict", "structure": "component.boss"},
             "minecraft:break_blocks": {"types": "dict", "structure": "component.break_blocks"},
@@ -444,6 +458,7 @@
             "minecraft:hurt_on_condition": {"types": "dict", "structure": "component.hurt_on_condition"},
             "minecraft:hurt_when_wet": {"types": "dict", "structure": "component.hurt_when_wet", "tags": ["outdated"]},
             "minecraft:identifier": {"types": "dict", "structure": "component.identifier", "tags": ["outdated"], "delegate_arguments": {"always_print": true}},
+            "minecraft:input_air_controlled": {"types": "dict", "structure": "component.input_air_controlled"},
             "minecraft:input_ground_controlled": {"types": "dict", "structure": "empty"},
             "minecraft:inside_block_notifier": {"types": "dict", "structure": "component.inside_block_notifier"},
             "minecraft:insomnia": {"types": "dict", "structure": "component.insomnia"},
@@ -453,6 +468,7 @@
             "minecraft:is_baby": {"types": "dict", "structure": "empty"},
             "minecraft:is_charged": {"types": "dict", "structure": "empty"},
             "minecraft:is_chested": {"types": "dict", "structure": "empty"},
+            "minecraft:is_collidable": {"types": "dict", "structure": "empty"},
             "minecraft:is_dyeable": {"types": "dict", "structure": "component.is_dyeable"},
             "minecraft:is_hidden_when_invisible": {"types": "dict", "structure": "empty"},
             "minecraft:is_ignited": {"types": "dict", "structure": "empty"},
@@ -473,6 +489,7 @@
             "minecraft:knockback_resistance": {"types": "dict", "structure": "component.knockback_resistance"},
             "minecraft:lava_movement": {"types": "dict", "structure": "component.lava_movement"},
             "minecraft:leashable": {"types": "dict", "structure": "component.leashable"},
+            "minecraft:leashable_to": {"types": "dict", "structure": "empty"},
             "minecraft:looked_at": {"types": "dict", "structure": "component.looked_at"},
             "minecraft:lookat": {"types": "dict", "structure": "component.lookat"},
             "minecraft:loot": {"types": "dict", "structure": "component.loot"},
@@ -532,6 +549,7 @@
             "minecraft:rail_sensor": {"types": "dict", "structure": "component.rail_sensor"},
             "minecraft:ravager_blocked": {"types": "dict", "structure": "component.ravager_blocked"},
             "minecraft:reflect_projectiles": {"types": "dict", "structure": "component.reflect_projectiles", "tags": ["not_in_documentation"]},
+            "minecraft:remove_in_peaceful": {"types": "dict", "structure": "empty"},
             "minecraft:renders_when_invisible": {"types": "dict", "structure": "empty"},
             "minecraft:rideable": {"types": "dict", "structure": "component.rideable"},
             "minecraft:scaffolding_climber": {"types": "dict", "structure": "empty", "tags": ["deprecated"]},
@@ -624,6 +642,7 @@
             "minecraft:behavior.fire_at_target": {"types": "dict", "structure": "behavior.fire_at_target", "tags": ["not_in_documentation"]},
             "minecraft:behavior.flee_sun": {"types": "dict", "structure": "behavior.flee_sun"},
             "minecraft:behavior.float": {"types": "dict", "structure": "behavior.float"},
+            "minecraft:behavior.float_tempt": {"types": "dict", "structure": "behavior.float_tempt"},
             "minecraft:behavior.float_wander": {"types": "dict", "structure": "behavior.float_wander"},
             "minecraft:behavior.follow_caravan": {"types": "dict", "structure": "behavior.follow_caravan"},
             "minecraft:behavior.follow_flock": {"types": "dict", "structure": "behavior.follow_flock", "tags": ["outdated"]},
@@ -1014,6 +1033,8 @@
         "key_weight": 1,
         "value_weight": 5,
         "keys": {
+            "has_biome_tag": {"types": "str"},
+            "has_structure_trail_ruins": {"types": "str"},
             "is_game_rule_false": {"types": "str", "tags": ["outdated"]},
             "is_not_in_caravan": {"types": "str", "tags": ["outdated"]},
             "is_world_difficulty": {"types": "str", "tags": ["outdated"]},
@@ -1941,13 +1962,15 @@
             "cooldown": {"types": "decimal"},
             "event_filters": {"types": "dict", "structure": "filter"},
             "event": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "find_players_only": {"types": "bool"},
             "maximum_count": {"types": "int"},
             "minimum_count": {"types": "int"},
             "range": {"types": ["decimal", "range"], "structure": "range_decimal_or_decimal"},
             "relative_range": {"types": "bool"},
             "require_all": {"types": "bool"},
             "sensor_range": {"types": "decimal"},
-            "subsensors": {"types": "list", "structure": "component.entity_sensor:subsensors"}
+            "subsensors": {"types": "list", "structure": "component.entity_sensor:subsensors"},
+            "y_offset": {"types": "decimal"}
         }
     },
     "component.entity_sensor:subsensors": {
@@ -2433,6 +2456,13 @@
             "id": {"types": "str", "delegate_arguments": {"always_print": true}}
         }
     },
+    "component.input_air_controlled": {
+        "type": "Keymap",
+        "keys": {
+            "strafe_speed_modifier": {"types": "decimal"},
+            "backwards_movement_modifier": {"types": "decimal"}
+        }
+    },
     "component.inside_block_notifier": {
         "type": "Keymap",
         "keys": {
@@ -2531,6 +2561,7 @@
             "cooldown": {"types": "decimal"},
             "cooldown_after_being_attacked": {"types": "decimal"},
             "drop_item_slot": {"types": ["int", "str"]},
+            "drop_item_y_offset": {"types": "decimal"},
             "equip_item_slot": {"types": ["int", "str"]},
             "event": {"types": "str", "tags": ["outdated"]},
             "filters": {"types": "dict", "structure": "filter", "tags": ["outdated"]},
@@ -2586,7 +2617,8 @@
     "component.interact:spawn_items": {
         "type": "Keymap",
         "keys": {
-            "table": {"types": "str", "delegate_arguments": {"always_print": true}}
+            "table": {"types": "str", "delegate_arguments": {"always_print": true}},
+            "y_offset": {"types": "decimal"}
         }
     },
     "component.inventory": {
@@ -2653,7 +2685,32 @@
             "max_distance": {"types": "decimal"},
             "on_leash": {"types": "dict", "structure": "event_target"},
             "on_unleash": {"types": "dict", "structure": "event_target"},
+            "presets": {"types": "list", "structure": "component.leashable:presets"},
             "soft_distance": {"types": "decimal"}
+        }
+    },
+    "component.leashable:presets": {
+        "type": "Dict",
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "delegate_arguments": {
+            "field": "preset",
+            "measure_length": true,
+            "show_item_key": false
+        },
+        "value_types": "dict",
+        "value_structure": "component.leashable:preset"
+    },
+    "component.leashable:preset": {
+        "type": "Keymap",
+        "keys": {
+            "filter": {"types": "dict", "structure": "filter"},
+            "spring_type": {"types": "str"},
+            "rotation_adjustment": {"types": "int"},
+            "soft_distance": {"types": "decimal"},
+            "hard_distance": {"types": "decimal"},
+            "max_distance": {"types": "decimal"}
         }
     },
     "component.looked_at": {
@@ -3237,6 +3294,7 @@
     "component.projectile:on_hit.particle_on_hit": {
         "type": "Keymap",
         "keys": {
+            "particle_item_name": {"types": "str", "delegate_arguments": {"always_print": true}},
             "particle_type": {"types": "str", "delegate_arguments": {"always_print": true}},
             "on_other_hit": {"types": "bool"},
             "on_entity_hit": {"types": "bool"},
@@ -3291,6 +3349,7 @@
             "firstSpawnChance": {"types": "int", "tags": ["outdated"]},
             "firstSpawnCount": {"types": "int", "tags": ["outdated"]},
             "firstSpawnPercentChance": {"types": "decimal", "tags": ["outdated"]},
+            "on_spawn": {"types": ["dict", "list"], "structure": "trigger"},
             "second_spawn_chance": {"types": "decimal"},
             "second_spawn_count": {"types": "int"},
             "secondSpawnChance": {"types": "int", "tags": ["outdated"]},
@@ -3392,8 +3451,11 @@
         "keys": {
             "controlling_seat": {"types": "int"},
             "crouching_skip_interact": {"types": "bool"},
+            "dismount_mode": {"types": "str"},
             "family_types": {"types": "list", "structure": "family_list"},
             "interact_text": {"types": "str"},
+            "on_rider_enter_event": {"types": "str"},
+            "on_rider_exit_event": {"types": "str"},
             "passenger_max_width": {"types": "decimal"},
             "priority": {"types": "int", "tags": ["deprecated"]},
             "pull_in_entities": {"types": "bool"},
@@ -3425,11 +3487,13 @@
     "component.rideable:seats.item": {
         "type": "Keymap",
         "keys": {
+            "camera_relax_distance_smoothing": {"types": "decimal"},
             "lock_rider_rotation": {"types": "decimal"},
             "max_rider_count": {"types": "int"},
             "min_rider_count": {"types": "int"},
             "position": {"types": "list", "structure": "vector_decimal"},
-            "rotate_rider_by": {"types": ["int", "str"]}
+            "rotate_rider_by": {"types": ["int", "str"]},
+            "third_person_camera_radius": {"types": "decimal"}
         }
     },
     "component.scale": {
@@ -4577,16 +4641,34 @@
             "sink_with_passengers": {"types": "bool"}
         }
     },
+    "behavior.float_tempt": {
+        "type": "Keymap",
+        "keys": {
+            "priority": {"types": "int"},
+            "can_tempt_vertically": {"types": "bool"},
+            "items": {"types": "list", "structure": "item_list"},
+            "within_radius": {"types": "int"},
+            "stop_distance": {"types": "int"},
+            "on_tempt_end": {"types": "dict", "structure": "event"}
+        }
+    },
     "behavior.float_wander": {
         "type": "Keymap",
         "allow_key_moves": true,
         "key_weight": 1,
         "value_weight": 5,
         "keys": {
+            "additional_collision_buffer": {"types": "bool"},
+            "allow_navigating_through_liquids": {"types": "bool"},
             "float_duration": {"types": "range", "structure": "range_group_decimal"},
+            "float_wander_has_move_control": {"types": "bool"},
             "must_reach": {"types": "bool"},
+            "navigate_around_surface": {"types": "bool"},
             "priority": {"types": "int"},
             "random_reselect": {"types": "bool"},
+            "surface_xz_dist": {"types": "int"},
+            "surface_y_dist": {"types": "int"},
+            "use_home_position_restriction": {"types": "bool"},
             "xz_dist": {"types": "int"},
             "xz_distance": {"types": "int", "tags": ["outdated"]},
             "y_dist": {"types": "int"},
@@ -4622,9 +4704,12 @@
         "type": "Keymap",
         "keys": {
             "priority": {"types": "int"},
+            "filters": {"types": ["dict", "list"], "structure": "filter_or_filter_list"},
+            "preferred_actor_type": {"types": "str"},
             "search_range": {"types": "int"},
             "speed_multiplier": {"types": "decimal"},
-            "stop_distance": {"types": "decimal"}
+            "stop_distance": {"types": "decimal"},
+            "use_home_position_restriction": {"types": "bool"}
         }
     },
     "behavior.follow_owner": {
@@ -6290,6 +6375,7 @@
             "can_tempt_vertically": {"types": "bool"},
             "can_tempt_while_ridden": {"types": "bool"},
             "items": {"types": "list", "structure": "item_list"},
+            "on_tempt_end": {"types": "dict", "structure": "event"},
             "priority": {"types": "int"},
             "sound_interval": {"types": "range", "structure": "range_group_decimal"},
             "speed_modifier": {"types": "decimal", "tags": ["outdated"]},

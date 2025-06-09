@@ -104,17 +104,23 @@
         "delegate_arguments": {
             "sort": "sort_by_component_order"
         },
-        "normalizers": {
-            "function_name": "delete_key_if_empty",
-            "arguments": {
-                "key": "base"
+        "normalizers": [
+            {
+                "function_name": "delete_key_if_empty",
+                "arguments": {
+                    "key": "base"
+                }
+            },
+            {
+                "function_name": "normalizers/normalizers delete_variants_if_empty"
             }
-        },
+        ],
         "keys": {
             "base": {"types": "dict", "structure": "packs_base"},
             "volume": {"types": "dict", "structure": "packs_volume"},
             "pitch": {"types": "dict", "structure": "packs_pitch"},
-            "events": {"types": "dict", "structure": "events"}
+            "events": {"types": "dict", "structure": "events"},
+            "variants": {"types": "dict", "structure": "variants"}
         }
     },
     "flat_collection": {
@@ -123,7 +129,7 @@
             {
                 "function_name": "delete_required_keys",
                 "arguments": {
-                    "keys": ["volume", "pitch"]
+                    "keys": ["volume", "pitch", "variants"]
                 }
             },
             {
@@ -143,17 +149,23 @@
         "delegate_arguments": {
             "sort": "sort_by_component_order"
         },
-        "normalizers": {
-            "function_name": "delete_key_if_empty",
-            "arguments": {
-                "key": "base"
+        "normalizers": [
+            {
+                "function_name": "delete_key_if_empty",
+                "arguments": {
+                    "key": "base"
+                }
+            },
+            {
+                "function_name": "normalizers/normalizers delete_variants_if_empty"
             }
-        },
+        ],
         "keys": {
             "base": {"types": "dict", "structure": "packs_base"},
             "volume": {"types": "dict", "structure": "packs_volume"},
             "pitch": {"types": "dict", "structure": "packs_pitch"},
-            "events": {"types": "dict", "structure": "interactive_events"}
+            "events": {"types": "dict", "structure": "interactive_events"},
+            "variants": {"types": "dict", "structure": "variants"}
         }
     },
     "packs_base": {
@@ -258,6 +270,34 @@
             "volume": {"types": ["decimal", "list"], "structure": "volume_group"},
             "pitch": {"types": ["decimal", "list"], "structure": "pitch_group"}
         }
+    },
+    "variants": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
+        "keys": {
+            "key": {"types": "dict", "structure": "packs_variants_key", "delegate_arguments": {"always_print": true}},
+            "map": {"types": "dict", "structure": "variants_map"}
+        }
+    },
+    "packs_variants_key": {
+        "type": "Dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "measure_length": true
+        },
+        "value_types": "str",
+        "value_structure": {"type": "String"}
+    },
+    "variants_map": {
+        "type": "Dict",
+        "delegate_arguments": {
+            "field": "variant",
+            "measure_length": true
+        },
+        "value_types": "dict",
+        "value_structure": "collection"
     },
     "volume_group": {
         "type": "Union",

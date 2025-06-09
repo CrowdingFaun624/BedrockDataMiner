@@ -1,0 +1,107 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "delegate_arguments": {
+            "name": "water"
+        },
+        "this_types": "dict",
+        "structure": "water_files"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["float", "int"]
+    },
+    "water_files": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "water file",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "value_structure": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "post_normalizers": {
+            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
+        },
+        "value_structure": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
+            "type": "File",
+            "serializer": "minecraft_common!json",
+            "file_types": "file",
+            "content_types": "dict",
+            "structure": "water_file"
+        }
+    },
+    "water_file": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"types": "str"},
+            "minecraft:water_settings": {"types": "dict", "structure": "water_settings", "similarity_weight": 15}
+        }
+    },
+    "water_settings": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
+            "particle_concentrations": {"types": "dict", "structure": "particle_concentrations"},
+            "caustics": {"types": "dict", "structure": "caustics"},
+            "waves": {"types": "dict", "structure": "waves"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "particle_concentrations": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "field": "particle"
+        },
+        "keys": {
+            "chlorophyll": {"types": "decimal"},
+            "suspended_sediment": {"types": "decimal"},
+            "cdom": {"types": "decimal"}
+        }
+    },
+    "caustics": {
+        "type": "Keymap",
+        "keys": {
+            "enabled": {"types": "bool"},
+            "frame_length": {"types": "float"},
+            "scale": {"types": "float"},
+            "power": {"types": "int"}
+        }
+    },
+    "waves": {
+        "type": "Keymap",
+        "keys": {
+            "enabled": {"types": "bool"},
+            "frequency": {"types": "decimal"},
+            "octaves": {"types": "int"},
+            "depth": {"types": "int"},
+            "sampleWidth": {"types": "float"},
+            "speed": {"types": "int"},
+            "shape": {"types": "float"},
+            "pull": {"types": "float"},
+            "mix": {"types": "float"},
+            "frequency_scaling": {"types": "float"},
+            "speed_scaling": {"types": "float"}
+        }
+    }
+}

@@ -36,11 +36,39 @@
         },
         "imports": "shadow_config",
         "keys": {
+            "format_version": {"types": "str"},
+            "cascades": {"types": "list", "structure": "cascades"},
             "low": {"types": "dict", "structure": "shadow_config"},
             "medium": {"types": "dict", "structure": "shadow_config"},
             "high": {"types": "dict", "structure": "shadow_config"},
             "ultra": {"types": "dict", "structure": "shadow_config"}
         }
+    },
+    "cascades": {
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "list",
+        "delegate_arguments": {
+            "field": "cascade",
+            "show_item_key": false,
+            "measure_length": true
+        },
+        "value_structure": "cascade"
+    },
+    "cascade": {
+        "type": "Dict",
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "item",
+            "show_item_key": false,
+            "measure_length": true
+        },
+        "value_structure": "point_light_shadow"
     },
     "shadow_config": {
         "type": "Keymap",
@@ -90,6 +118,13 @@
         },
         "keys": {
             "bias": {"types": "float"},
+            "has_dynamic_geometry": {"types": "bool"},
+            "has_static_geometry": {"types": "bool"},
+            "pcf_width": {"types": ["int", "float"]},
+            "range": {"types": "float"},
+            "update_frequency": {"types": "int"},
+            "update_offset": {"types": "int"},
+            "light_quantization_steps": {"types": "int"},
             "slope_bias": {"types": "float"},
             "far_plane": {"types": "float"},
             "near_plane": {"types": "float"},

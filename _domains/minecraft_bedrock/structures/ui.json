@@ -238,6 +238,7 @@
             "stack_panel": {"types": "dict", "structure": "element.stack_panel"},
             "tab": {"types": "dict", "structure": "element.tab", "tags": ["outdated"]},
             "toggle": {"types": "dict", "structure": "element.toggle"},
+            "tooltip_trigger": {"types": "dict", "structure": "element.tooltip_trigger"},
             "unknown": {"types": "dict", "structure": "element.unknown"},
             "uv": {"types": "dict", "structure": "animation"},
             "wait": {"types": "dict", "structure": "animation"}
@@ -600,6 +601,7 @@
             "#buttons_visible": {"types": ["bool", "str"]},
             "#category": {"types": "str", "tags": ["outdated"]},
             "#coin_prompt_color": {"types": "str", "tags": ["outdated"]},
+            "#collapsed_show_more_visible_binding": {"types": ["bool", "str"]},
             "#collection_index": {"types": ["int", "str"]},
             "#collection_name": {"types": "str"},
             "#collection_prefix": {"types": "str"},
@@ -635,6 +637,7 @@
             "#item_id_aux": {"types": ["int", "str"]},
             "#item_pickup_time": {"types": ["float", "str"]},
             "#legendary": {"types": ["list", "str"], "structure": "str_or_vector_float"},
+
             "#look_at_cursor": {"types": ["bool", "str"]},
             "#max_upsell_offers": {"types": ["int", "str"], "tags": ["outdated"]},
             "#modal_label_text": {"types": "str"},
@@ -659,6 +662,7 @@
             "#skin_idx": {"types": ["int", "str"]},
             "#skin_rotation": {"types": ["bool", "str"]},
             "#slider_steps": {"types": ["decimal", "str"]},
+            "#slider_timeout": {"types": ["decimal", "str"]},
             "#slider_value": {"types": ["decimal", "str"]},
             "#start_selected": {"types": ["bool", "str"]},
             "#sub_command": {"types": "str"},
@@ -672,6 +676,7 @@
             "#two_buttons_visible": {"types": ["bool", "str"]},
             "#uncommon": {"types": ["list", "str"], "structure": "str_or_vector_float"},
             "#use_heart_offset": {"types": ["bool", "str"]},
+            "#using_ellipses": {"types": ["bool", "str"]},
             "#visible": {"types": ["bool", "str"]},
             "#visible_after_x_ratings": {"types": "str", "tags": ["outdated"]},
             "#x_padding": {"types": ["decimal", "str"]},
@@ -703,6 +708,13 @@
             "round_value": {"types": ["bool", "str"]},
             "skin_pack_collection_name": {"types": "str"},
             "timer_duration": {"types": ["int", "str"]}
+        }
+    },
+    "renderer_properties": {
+        "type": "Keymap",
+        "keys": {
+            "use_factory": {"types": "bool"},
+            "margin": {"types": "decimal"}
         }
     },
     "separate_variables": {
@@ -847,6 +859,8 @@
             "modifications": {"types": "list", "structure": "modifications"},
             "propagate_alpha": {"types": ["bool", "str"]},
             "property_bag": {"types": ["dict", "str"], "structure": "property_bag"},
+            "renderer": {"types": "str"}, // btw I have no idea where these keys go
+            "renderer_properties": {"types": "dict", "structure": "renderer_properties"},
             "scroll_report": {"types": ["list", "str"], "structure": "str_or_control_list", "tags": ["outdated"]},
             "selected": {"types": ["bool", "str"]},
             "use_child_anchors": {"types": ["bool", "str"]},
@@ -868,6 +882,7 @@
             "hover_text_max_width": {"types": "str"},
             "primary_color": {"types": ["list", "str"], "structure": "str_or_vector_float"},
             "renderer": {"types": "str"},
+            "replaced_while_inactive": {"types": "bool"},
             "rotation": {"types": ["int", "str"]},
             "rotation_x": {"types": ["int", "str"]},
             "rotation_y": {"types": ["int", "str"]},
@@ -1218,6 +1233,15 @@
             "unchecked_locked_hover_control": {"types": "str"}
         }
     },
+    "common.tooltip_trigger": {
+        "type": "Keymap",
+        "keys": {
+            "tooltip_top_content_control": {"types": "str"},
+            "tooltip_bottom_content_control": {"types": "str"},
+            "tooltip_area": {"types": "str"},
+            "tooltip_name": {"types": "str"}
+        }
+    },
     "common.tts": {
         "type": "Keymap",
         "keys": {
@@ -1353,6 +1377,7 @@
         "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.tts"],
         "keys": {
+            "debug": {"types": "str"},
             "gamepad_deflection_mode": {"types": ["bool", "str"]}
         }
     },
@@ -1455,6 +1480,11 @@
         "type": "Keymap",
         "normalizers": "separate_variables",
         "imports": ["common.all", "common.control", "common.data_binding", "common.focus", "common.input", "common.layout", "common.sound", "common.toggle", "common.tts"]
+    },
+    "element.tooltip_trigger": {
+        "type": "Keymap",
+        "normalizers": "separate_variables",
+        "imports": ["common.all", "common.control", "common.focus", "common.input", "common.layout", "common.tooltip_trigger", "common.tts"]
     },
     "element.unknown": { // for some reason some elements extend non-existent elements so this has to exist.
         "type": "Keymap",

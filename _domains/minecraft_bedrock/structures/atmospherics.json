@@ -1,0 +1,138 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "delegate_arguments": {
+            "name": "atmospherics"
+        },
+        "this_types": "dict",
+        "structure": "atmospheric_files"
+    },
+    "decimal": {
+        "type": "TypeAlias",
+        "types": ["int", "float"]
+    },
+    "atmospheric_files": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "atmospheric file",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "value_structure": "resource_packs"
+    },
+    "resource_packs": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "resource pack",
+            "sort": "sort_by_key",
+            "measure_length": true
+        },
+        "post_normalizers": {
+            "function_name": "normalizers/collapse_resource_packs collapse_resource_packs_flat"
+        },
+        "value_structure": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
+            "type": "File",
+            "serializer": "minecraft_common!json",
+            "file_types": "file",
+            "content_types": "dict",
+            "structure": "atmospherics"
+        }
+    },
+    "atmospherics": {
+        "type": "Keymap",
+        "keys": {
+            "format_version": {"types": "str"},
+            "minecraft:atmosphere_settings": {"types": "dict", "structure": "atmosphere_settings", "similarity_weight": 15}
+        }
+    },
+    "atmosphere_settings": {
+        "type": "Keymap",
+        "keys": {
+            "description": {"types": "dict", "structure": "description", "delegate_arguments": {"always_print": true}},
+            "horizon_blend_stops": {"types": "dict", "structure": "horizon_blend_stops"},
+            "rayleigh_strength": {"types": ["dict", "float"], "structure": "keyframe_dict"},
+            "sun_mie_strength": {"types": ["dict", "float"], "structure": "keyframe_dict"},
+            "moon_mie_strength": {"types": ["dict", "float"], "structure": "keyframe_dict"},
+            "sun_glare_shape": {"types": ["dict", "float"], "structure": "keyframe_dict"},
+            "sky_zenith_color": {"types": ["dict", "list"], "structure": "keyframe_vector_dict"},
+            "sky_horizon_color": {"types": ["dict", "list"], "structure": "keyframe_vector_dict"}
+        }
+    },
+    "description": {
+        "type": "Keymap",
+        "keys": {
+            "identifier": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}}
+        }
+    },
+    "horizon_blend_stops": {
+        "type": "Keymap",
+        "keys": {
+            "min": {"types": ["dict", "float"], "structure": "keyframe_dict"},
+            "start": {"types": ["dict", "float"], "structure": "keyframe_dict"},
+            "mie_start": {"types": ["dict", "float"], "structure": "keyframe_dict"},
+            "max": {"types": ["dict", "float"], "structure": "keyframe_dict"}
+        }
+    },
+    "keyframe_dict": {
+        "type": "Union",
+        "substructures": {
+            "float": null,
+            "dict": {
+                "type": "Dict",
+                "key_types": "float",
+                "value_types": "float",
+                "key_structure": {
+                    "type": "Primitive",
+                    "pre_normalized_types": "str",
+                    "this_types": "float",
+                    "normalizers": {
+                        "function_name": "parse_float"
+                    }
+                },
+                "value_structure": null
+            }
+        }
+    },
+    "keyframe_vector_dict": {
+        "type": "Union",
+        "substructures": {
+            "list": "vector_decimal",
+            "dict": {
+                "type": "Dict",
+                "key_types": "float",
+                "value_types": "list",
+                "key_structure": {
+                    "type": "Primitive",
+                    "pre_normalized_types": ["str", "float"],
+                    "this_types": "float",
+                    "normalizers": {
+                        "function_name": "parse_float"
+                    }
+                },
+                "value_structure": "vector_decimal"
+            }
+        }
+    },
+    "vector_decimal": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "vector item",
+            "print_all": true,
+            "print_flat": true
+        },
+        "value_types": "decimal",
+        "value_structure": null
+    }
+}

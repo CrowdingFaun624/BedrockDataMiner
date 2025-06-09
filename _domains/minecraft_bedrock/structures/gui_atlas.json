@@ -1,0 +1,64 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "this_types": "list",
+        "pre_normalized_types": "file",
+        "delegate_arguments": {
+            "name": "gui_atlas"
+        },
+        "structure": "file"
+    },
+    "file": {
+        "type": "File",
+        "serializer": "minecraft_common!json",
+        "file_types": "file",
+        "content_types": "list",
+        "structure": "gui_atlas"
+    },
+    "gui_atlas": {
+        "type": "Dict",
+        "this_types": "list",
+        "key_types": "int",
+        "key_weight": 0,
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "atlas file",
+            "measure_length": true
+        },
+        "value_structure": "atlas_file"
+    },
+    "atlas_file": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order"
+        },
+        "keys": {
+            "name": {"types": "str", "structure": {"type": "String"}, "delegate_arguments": {"always_print": true}, "similarity_weight": 3},
+            "width": {"types": "int"},
+            "height": {"types": "int"},
+            "size": {"types": "int"},
+            "coordinates": {"types": "dict", "structure": "coordinates"}
+        }
+    },
+    "coordinates": {
+        "type": "Dict",
+        "key_structure": {
+            "type": "String"
+        },
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "coordinate",
+            "measure_length": true
+        },
+        "value_structure": "coordinate"
+    },
+    "coordinate": {
+        "type": "Keymap",
+        "keys": {
+            "x": {"types": "int"},
+            "y": {"types": "int"},
+            "width": {"types": "int"},
+            "height": {"types": "int"}
+        }
+    }
+}

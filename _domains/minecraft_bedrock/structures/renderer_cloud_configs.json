@@ -1,0 +1,45 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "this_types": "dict",
+        "delegate_arguments": {
+            "name": "renderer_cloud_configs"
+        },
+        "structure": "files"
+    },
+    "files": {
+        "type": "Dict",
+        "value_types": "dict",
+        "delegate_arguments": {
+            "field": "file",
+            "measure_length": true
+        },
+        "value_structure": "file"
+    },
+    "file": {
+        "type": "File",
+        "file_types": "file",
+        "content_types": "dict",
+        "serializer": "minecraft_common!json",
+        "structure": "renderer_cloud_config"
+    },
+    "renderer_cloud_config": {
+        "type": "Keymap",
+        "delegate_arguments": {
+            "sort": "sort_by_component_order",
+            "field": "setting"
+        },
+        "keys": {
+            "low": {"types": "dict", "structure": "file_link"},
+            "medium": {"types": "dict", "structure": "file_link"},
+            "high": {"types": "dict", "structure": "file_link"},
+            "ultra": {"types": "dict", "structure": "file_link"}
+        }
+    },
+    "file_link": {
+        "type": "Keymap",
+        "keys": {
+            "file": {"types": "str"}
+        }
+    }
+}

@@ -1,0 +1,53 @@
+{
+    "base": {
+        "type": "StructureBase",
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "delegate_arguments": {
+            "name": "atmospheric_weather"
+        },
+        "structure": "cache"
+    },
+    "cache": {
+        "type": "Cache",
+        "pre_normalized_types": "file",
+        "this_types": "dict",
+        "structure": {
+            "type": "File",
+            "serializer": "minecraft_common!json",
+            "file_types": "file",
+            "content_types": "dict",
+            "structure": "atmopsheric_weather"
+        }
+    },
+    "atmopsheric_weather": {
+        "type": "Keymap",
+        "keys": {
+            "sky_transition_speed": {"types": "float"},
+            "directional_light_strength": {"types": "float"},
+            "rainy_sky_color": {"types": "list", "structure": "color"},
+            "rainy_cloud_color": {"types": "list", "structure": "color"},
+            "rainy_cloud_contribution": {"types": "float"},
+            "thunder_sky_color": {"types": "list", "structure": "color"},
+            "thunder_sky_contribution": {"types": "float"},
+            "thunder_cloud_color": {"types": "list", "structure": "color"},
+            "thunder_cloud_contribution": {"types": "float"},
+            "lightning_flash_color": {"types": "list", "structure": "color"},
+            "lightning_flash_contribution": {"types": "float"}
+        }
+    },
+    "color": {
+        "type": "Dict",
+        "allow_key_moves": false,
+        "key_weight": 0,
+        "key_types": "int",
+        "this_types": "list",
+        "delegate_arguments": {
+            "field": "channel",
+            "print_all": true,
+            "print_flat": true
+        },
+        "value_types": "int",
+        "value_structure": null
+    }
+}

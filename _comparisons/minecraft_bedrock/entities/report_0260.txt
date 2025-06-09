@@ -1,0 +1,156 @@
+Difference of "entities" between "1.21.90.27" (beta of "1.21.90") and "1.21.90.28" (beta of "1.21.90").
+
+Changed entity "glow_squid.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Moved component group from "minecraft:squid_ault" to "minecraft:squid_adult".
+Changed entity "happy_ghast.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "component_groups":
+				Changed component group "minecraft:adult":
+					Changed component "minecraft:entity_sensor":
+						Changed field "subsensors":
+							Total subsensor: 2 (+0, -2)
+							Changed subsensor:
+								Unchanged field "event": "minecraft:become_mobile".
+								Changed field "y_offset" from 5.0 to 4.5.
+								Changed field "range":
+									Changed range item 0 from 3.0 to 3.5.
+									Changed range item 1 from 1.0 to 2.0.
+								Changed field "event_filters":
+									Changed filter property "all_of":
+										Total filter: 2 (+1, -1)
+										Removed filter:
+											filter property "test": "is_riding_self"
+											filter property "subject": "other"
+											filter property "value": false
+										Added filter:
+											filter property "test": "is_vehicle_family"
+											filter property "subject": "other"
+											filter property "operator": "not"
+											filter property "value": "happy_ghast"
+							Removed subsensor:
+								field "event": "minecraft:become_mobile"
+								field "cooldown": 0.0
+								field "y_offset": 4.0
+								field "range": [2.0, 1.0]
+								field "minimum_count": 0
+								field "maximum_count": 0
+								field "event_filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_riding_self"
+											filter property "subject": "other"
+											filter property "value": false
+										filter:
+											filter property "test": "actor_health"
+											filter property "operator": ">"
+											filter property "value": 0
+							Changed subsensor:
+								Unchanged field "event": "minecraft:become_immobile".
+								Changed field "y_offset" from 5.0 to 4.5.
+								Changed field "range":
+									Unchanged range item 0: 3.0.
+									Changed range item 1 from 1.0 to 1.5.
+								Changed field "event_filters":
+									Changed filter property "all_of":
+										Total filter: 2 (+1, -1)
+										Removed filter:
+											filter property "test": "is_riding_self"
+											filter property "subject": "other"
+											filter property "value": false
+										Added filter:
+											filter property "test": "is_vehicle_family"
+											filter property "subject": "other"
+											filter property "operator": "not"
+											filter property "value": "happy_ghast"
+							Removed subsensor:
+								field "event": "minecraft:become_immobile"
+								field "cooldown": 0.0
+								field "y_offset": 4.0
+								field "range": [2.0, 1.0]
+								field "minimum_count": 1
+								field "event_filters":
+									filter property "all_of":
+										filter:
+											filter property "test": "is_riding_self"
+											filter property "subject": "other"
+											filter property "value": false
+										filter:
+											filter property "test": "actor_health"
+											filter property "operator": ">"
+											filter property "value": 0
+				Moved component group from "minecraft:harnessed" to "minecraft:adult_harnessed".
+				Moved component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+				Moved component group from "minecraft:has_passengers" to "minecraft:adult_with_passengers".
+				Changed component group "minecraft:adult_with_passengers":
+					Total component: 1 (+0, -1)
+					Removed component "minecraft:pushable":
+						field "is_pushable": false
+						field "is_pushable_by_piston": true
+				Moved component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+				Changed component group "minecraft:adult_without_passengers":
+					Total component: 1 (+0, -1)
+					Removed component "minecraft:pushable":
+						field "is_pushable": true
+						field "is_pushable_by_piston": true
+				Changed component group "minecraft:baby":
+					Changed component "minecraft:flying_speed":
+						Changed field "value" from 0.15 to 0.0833333.
+			Changed field "events":
+				Changed event "minecraft:ageable_grow_up":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+							Changed component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+				Changed event "minecraft:on_harnessed":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:harnessed" to "minecraft:adult_harnessed".
+					Changed field "remove":
+						Changed field "component_groups":
+							Changed component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+				Changed event "minecraft:on_passenger_dismount":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Changed component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+							Changed field "remove":
+								Changed field "component_groups":
+									Changed component group from "minecraft:has_passengers" to "minecraft:adult_with_passengers".
+				Changed event "minecraft:on_passenger_mount":
+					Changed field "sequence":
+						Changed sequence item 0:
+							Changed field "add":
+								Changed field "component_groups":
+									Changed component group from "minecraft:has_passengers" to "minecraft:adult_with_passengers".
+							Changed field "remove":
+								Changed field "component_groups":
+									Changed component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+				Changed event "minecraft:on_unharnessed":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+					Changed field "remove":
+						Changed field "component_groups":
+							Changed component group from "minecraft:harnessed" to "minecraft:adult_harnessed".
+				Changed event "minecraft:spawn_adult":
+					Changed field "add":
+						Changed field "component_groups":
+							Changed component group from "minecraft:unharnessed" to "minecraft:adult_unharnessed".
+							Changed component group from "minecraft:has_no_passengers" to "minecraft:adult_without_passengers".
+Changed entity "mule.json":
+	Changed behavior pack "core":
+		Changed field "minecraft:entity":
+			Changed field "components":
+				Changed component "minecraft:leashable":
+					Added field "presets":
+						preset:
+							field "filter":
+								filter property "test": "is_family"
+								filter property "subject": "other"
+								filter property "value": "happy_ghast"
+							field "spring_type": "quad_dampened"

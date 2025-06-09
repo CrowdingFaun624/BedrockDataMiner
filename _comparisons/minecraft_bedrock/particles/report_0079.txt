@@ -1,0 +1,38 @@
+Difference of "particles" between "1.21.62" and "1.21.70.20" (beta of "1.21.70").
+
+Total particle: 179 (+1, -0)
+Added particle "firefly_particle.json":
+	resource pack "experimental":
+		field "format_version": "1.10.0"
+		field "particle_effect":
+			field "description":
+				field "identifier": "minecraft:firefly_particle"
+				field "basic_render_parameters":
+					field "material": "particles_blend"
+					field "texture": "textures/particle/pixel"
+			field "components":
+				field "minecraft:emitter_initialization":
+					field "creation_expression": "v.acceleration_x = math.random( -5, 5 ); v.acceleration_y = math.random( -5, 5 ); v.acceleration_z = math.random( -5, 5 );"
+					field "per_update_expression": "v.should_change = math.random( 0, 1 ) <= 0.05; v.should_change ? ( v.acceleration_x = math.random( -5, 5 ) ); v.should_change ? ( v.acceleration_y = math.random( -5, 5 ) ); v.should_change ? ( v.acceleration_z = math.random( -5, 5 ) );"
+				field "minecraft:emitter_lifetime_once": empty
+				field "minecraft:emitter_rate_instant": field "num_particles": 1
+				field "minecraft:emitter_shape_point": empty
+				field "minecraft:particle_appearance_billboard":
+					field "size": [0.0375, 0.0375]
+					field "facing_camera_mode": "lookat_xyz"
+				field "minecraft:particle_appearance_tinting":
+					field "color":
+						field "interpolant": "v.particle_age / v.particle_lifetime"
+						field "gradient":
+							value "0.0": "#00FFFFEB"
+							value "0.3": "#FFFFFFEB"
+							value "0.5": "#FFFFFFEB"
+							value "1.0": "#00FFFFEB"
+				field "minecraft:particle_initial_speed": 0.5
+				field "minecraft:particle_lifetime_expression": field "max_lifetime": "math.random( 10, 15 )"
+				field "minecraft:particle_motion_collision":
+					field "collision_radius": 0.0375
+					field "coefficient_of_restitution": 2
+				field "minecraft:particle_motion_dynamic":
+					field "linear_acceleration": ["v.acceleration_x", "v.acceleration_y", "v.acceleration_z"]
+					field "linear_drag_coefficient": 3
