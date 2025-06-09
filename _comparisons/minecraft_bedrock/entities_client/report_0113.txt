@@ -1,4 +1,4 @@
-Difference of "entities_client" between "1.20.32" and "1.20.40.20" (beta of "1.20.40").
+Difference of "entities_client" between "1.20.40.21" (beta of "1.20.40") and "1.20.40.22" (beta of "1.20.40").
 
 Changed entity "camel.entity.json":
 	Changed resource pack "core":
@@ -7,15 +7,4 @@ Changed entity "camel.entity.json":
 				Unchanged field "identifier": "minecraft:camel".
 				Changed field "scripts":
 					Changed field "pre_animation":
-						Total script: 8 (+4, -0)
-						Changed script from "variable.xHeadRot = query.dash_cooldown_progress > 0 ? math.clamp(variable.xTargetRot + (45 * (1 - query.dash_cooldown_progress)), -25, 70) : variable.xTargetRot;" to "variable.xHeadRot = variable.dash_cooldown_progress > 0 ? math.clamp(variable.xTargetRot + (45 * (1 - variable.dash_cooldown_progress)), -25, 70) : variable.xTargetRot;".
-						Added script "variable.dash_cooldown = (!(variable.last_dash_cooldown ?? true) && query.has_dash_cooldown) ? 2.75 : ( variable.dash_cooldown ?? 0 );".
-						Added script "variable.dash_cooldown = math.max(0, variable.dash_cooldown-query.delta_time);".
-						Added script "variable.dash_cooldown_progress = (2.75 - variable.dash_cooldown) / 2.75;".
-						Added script "variable.last_dash_cooldown = query.has_dash_cooldown;".
-Changed entity "sniffer.entity.json":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Unchanged field "identifier": "minecraft:sniffer".
-				Removed field "min_engine_version": "1.8.0".
+						Changed script from "variable.moving = query.modified_move_speed > 0 || query.vertical_speed > 0;" to "variable.moving = query.modified_move_speed > 0.05 || query.vertical_speed > 0.05;".

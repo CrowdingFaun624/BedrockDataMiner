@@ -121,7 +121,68 @@ Changed entity "evocation_illager_v1.0.json":
 					locator set "left_hand": locator "leftArm": [6.0, 12.0, 0.0]
 					locator set "right_hand": locator "rightArm": [-6.0, 12.0, 0.0]
 				Added field "particle_effects": particle effect "spell": "minecraft:evoker_spell".
-Added entity "husk.json":
+Changed entity "husk.json":
+	Changed resource pack "core":
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Added field "animation_controllers":
+					animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
+					animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
+					animation controller group animation controller "move": "controller.animation.humanoid.move"
+					animation controller group animation controller "riding": "controller.animation.humanoid.riding"
+					animation controller group animation controller "holding": "controller.animation.humanoid.holding"
+					animation controller group animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear"
+					animation controller group animation controller "charging": "controller.animation.humanoid.charging"
+					animation controller group animation controller "attack": "controller.animation.humanoid.attack"
+					animation controller group animation controller "sneaking": "controller.animation.humanoid.sneaking"
+					animation controller group animation controller "bob": "controller.animation.humanoid.bob"
+					animation controller group animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs"
+					animation controller group animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow"
+					animation controller group animation controller "swimming": "controller.animation.humanoid.swimming"
+					animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
+					animation controller group animation controller "zombie_attack_bare_hand": "controller.animation.zombie.attack_bare_hand"
+					animation controller group animation controller "zombie_swimming": "controller.animation.zombie.swimming"
+				Added field "animations":
+					animation "attack.rotations": "animation.humanoid.attack.rotations"
+					animation "bob": "animation.humanoid.bob"
+					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow"
+					animation "brandish_spear": "animation.humanoid.brandish_spear"
+					animation "charging": "animation.humanoid.charging"
+					animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs"
+					animation "holding": "animation.humanoid.holding"
+					animation "look_at_target_default": "animation.humanoid.look_at_target.default"
+					animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding"
+					animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming"
+					animation "move": "animation.humanoid.move"
+					animation "riding.arms": "animation.humanoid.riding.arms"
+					animation "riding.legs": "animation.humanoid.riding.legs"
+					animation "sneaking": "animation.humanoid.sneaking"
+					animation "swimming": "animation.humanoid.swimming"
+					animation "use_item_progress": "animation.humanoid.use_item_progress"
+					animation "zombie_attack_bare_hand": "animation.zombie.attack_bare_hand"
+					animation "zombie_swimming": "animation.zombie.swimming"
+				Added field "enable_attachables": true.
+				Changed field "geometry":
+					Total geometry: 1 (+0, -2)
+					Removed geometry "armor1": "geometry.humanoid.armor1".
+					Removed geometry "armor2": "geometry.humanoid.armor2".
+					Changed geometry "default" from "geometry.zombie.husk" to "geometry.zombie.husk.v1.8".
+				Unchanged field "identifier": "minecraft:husk".
+				Added field "materials": materials "default": "husk".
+				Added field "render_controllers": render controller "controller.render.husk".
+				Added field "scripts":
+					field "pre_animation":
+						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
+						script "variable.tcos1 = -variable.tcos0;"
+						script "variable.attack_body_rot_y = Math.sin(Math.sqrt(variable.attack_time) * 360) * 11.46;"
+						script "variable.cos_attack_body_rot_y = Math.cos(variable.attack_body_rot_y);"
+						script "variable.sin_attack_body_rot_y = Math.sin(variable.attack_body_rot_y);"
+						script "variable.internal_swim_pos = Math.mod(global.anim_pos, 26.0);"
+						script "variable.attack = Math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3;"
+						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
+						script "variable.z_bob = Math.cos(global.life_time * 103.13244) * 2.865 + 2.865;"
+						script "variable.x_bob = Math.sin(global.life_time * 76.776372) * 2.865;"
+Added entity "husk.v1.0.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "minecraft:client_entity":
@@ -144,68 +205,6 @@ Added entity "husk.json":
 					animation controller group animation controller "zombie_attack_bare_hand": "controller.animation.zombie.attack_bare_hand"
 					animation controller group animation controller "zombie_swimming": "controller.animation.zombie.swimming"
 				field "animations":
-					animation "attack.rotations": "animation.humanoid.attack.rotations"
-					animation "bob": "animation.humanoid.bob"
-					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow"
-					animation "brandish_spear": "animation.humanoid.brandish_spear"
-					animation "charging": "animation.humanoid.charging"
-					animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs"
-					animation "holding": "animation.humanoid.holding"
-					animation "look_at_target_default": "animation.humanoid.look_at_target.default"
-					animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding"
-					animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming"
-					animation "move": "animation.humanoid.move"
-					animation "riding.arms": "animation.humanoid.riding.arms"
-					animation "riding.legs": "animation.humanoid.riding.legs"
-					animation "sneaking": "animation.humanoid.sneaking"
-					animation "swimming": "animation.humanoid.swimming"
-					animation "use_item_progress": "animation.humanoid.use_item_progress"
-					animation "zombie_attack_bare_hand": "animation.zombie.attack_bare_hand"
-					animation "zombie_swimming": "animation.zombie.swimming"
-				field "enable_attachables": true
-				field "geometry": geometry "default": "geometry.zombie.husk.v1.8"
-				field "identifier": "minecraft:husk"
-				field "materials": materials "default": "husk"
-				field "render_controllers": render controller "controller.render.husk"
-				field "scripts":
-					field "pre_animation":
-						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
-						script "variable.tcos1 = -variable.tcos0;"
-						script "variable.attack_body_rot_y = Math.sin(Math.sqrt(variable.attack_time) * 360) * 11.46;"
-						script "variable.cos_attack_body_rot_y = Math.cos(variable.attack_body_rot_y);"
-						script "variable.sin_attack_body_rot_y = Math.sin(variable.attack_body_rot_y);"
-						script "variable.internal_swim_pos = Math.mod(global.anim_pos, 26.0);"
-						script "variable.attack = Math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3;"
-						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
-						script "variable.z_bob = Math.cos(global.life_time * 103.13244) * 2.865 + 2.865;"
-						script "variable.x_bob = Math.sin(global.life_time * 76.776372) * 2.865;"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 28
-				field "textures": texture "default": "textures/entity/zombie/husk"
-Moved entity from "husk.json" to "husk.v1.0.json".
-Changed entity "husk.v1.0.json":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Added field "animation_controllers":
-					animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
-					animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
-					animation controller group animation controller "move": "controller.animation.humanoid.move"
-					animation controller group animation controller "riding": "controller.animation.humanoid.riding"
-					animation controller group animation controller "holding": "controller.animation.humanoid.holding"
-					animation controller group animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear"
-					animation controller group animation controller "charging": "controller.animation.humanoid.charging"
-					animation controller group animation controller "attack": "controller.animation.humanoid.attack"
-					animation controller group animation controller "sneaking": "controller.animation.humanoid.sneaking"
-					animation controller group animation controller "bob": "controller.animation.humanoid.bob"
-					animation controller group animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs"
-					animation controller group animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow"
-					animation controller group animation controller "swimming": "controller.animation.humanoid.swimming"
-					animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
-					animation controller group animation controller "zombie_attack_bare_hand": "controller.animation.zombie.attack_bare_hand"
-					animation controller group animation controller "zombie_swimming": "controller.animation.zombie.swimming"
-				Added field "animations":
 					animation "attack.rotations": "animation.humanoid.attack.rotations.v1.0"
 					animation "bob": "animation.humanoid.bob.v1.0"
 					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow.v1.0"
@@ -225,15 +224,12 @@ Changed entity "husk.v1.0.json":
 					animation "use_item_progress": "animation.humanoid.use_item_progress.v1.0"
 					animation "zombie_attack_bare_hand": "animation.zombie.attack_bare_hand"
 					animation "zombie_swimming": "animation.zombie.swimming"
-				Added field "enable_attachables": true.
-				Changed field "geometry":
-					Total geometry: 1 (+0, -2)
-					Removed geometry "armor1": "geometry.humanoid.armor1".
-					Removed geometry "armor2": "geometry.humanoid.armor2".
-				Unchanged field "identifier": "minecraft:husk".
-				Added field "materials": materials "default": "husk".
-				Added field "render_controllers": render controller "controller.render.husk".
-				Added field "scripts":
+				field "enable_attachables": true
+				field "geometry": geometry "default": "geometry.zombie.husk"
+				field "identifier": "minecraft:husk"
+				field "materials": materials "default": "husk"
+				field "render_controllers": render controller "controller.render.husk"
+				field "scripts":
 					field "pre_animation":
 						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
 						script "variable.tcos1 = -variable.tcos0;"
@@ -245,6 +241,10 @@ Changed entity "husk.v1.0.json":
 						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
 						script "variable.z_bob = Math.cos(global.life_time * 103.13244) * 2.865 + 2.865;"
 						script "variable.x_bob = Math.sin(global.life_time * 76.776372) * 2.865;"
+				field "spawn_egg":
+					field "texture": "spawn_egg"
+					field "texture_index": 28
+				field "textures": texture "default": "textures/entity/zombie/husk"
 Changed entity "iron_golem.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
@@ -719,38 +719,120 @@ Changed entity "vex.json":
 						Changed script from "variable.cosAttackBodyRotY = Math.cos(variable.attackBodyRotY);" to "variable.cos_attack_body_rot_y = Math.cos(variable.attack_body_rot_y);".
 						Changed script from "variable.sinAttackBodyRotY = Math.sin(variable.attackBodyRotY);" to "variable.sin_attack_body_rot_y = Math.sin(variable.attack_body_rot_y);".
 						Changed script from "variable.internalSwimPos = Math.mod(global.anim_pos, 26.0);" to "variable.internal_swim_pos = Math.mod(global.anim_pos, 26.0);".
-Moved entity from "vex_v1.0.json" to "vex.v1.0.json".
-Changed entity "vex.v1.0.json":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Changed field "animations":
-					Changed animation "attack.rotations" from "animation.vex.attack.rotations.v1.0" to "animation.humanoid.attack.rotations.v1.0".
-				Unchanged field "identifier": "minecraft:vex".
-				Changed field "scripts":
-					Changed field "pre_animation":
-						Changed script from "variable.attackBodyRotY = Math.sin(Math.sqrt(variable.attack_time)) * 36.0;" to "variable.attack_body_rot_y = Math.sin(Math.sqrt(variable.attack_time)) * 36.0;".
-						Changed script from "variable.cosAttackBodyRotY = Math.cos(variable.attackBodyRotY);" to "variable.cos_attack_body_rot_y = Math.cos(variable.attack_body_rot_y);".
-						Changed script from "variable.sinAttackBodyRotY = Math.sin(variable.attackBodyRotY);" to "variable.sin_attack_body_rot_y = Math.sin(variable.attack_body_rot_y);".
-						Changed script from "variable.internalSwimPos = Math.mod(global.anim_pos, 26.0);" to "variable.internal_swim_pos = Math.mod(global.anim_pos, 26.0);".
-Added entity "vex_v1.0.json":
+Added entity "vex.v1.0.json":
 	resource pack "core":
 		field "format_version": "1.8.0"
 		field "minecraft:client_entity":
 			field "description":
-				field "animation_controllers": animation controller group animation controller "move": "controller.animation.vex.move"
-				field "animations": animation "move": "animation.vex.move"
+				field "animation_controllers":
+					animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
+					animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
+					animation controller group animation controller "move": "controller.animation.humanoid.move"
+					animation controller group animation controller "riding": "controller.animation.humanoid.riding"
+					animation controller group animation controller "holding": "controller.animation.humanoid.holding"
+					animation controller group animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear"
+					animation controller group animation controller "charging": "controller.animation.humanoid.charging"
+					animation controller group animation controller "attack": "controller.animation.humanoid.attack"
+					animation controller group animation controller "sneaking": "controller.animation.humanoid.sneaking"
+					animation controller group animation controller "bob": "controller.animation.humanoid.bob"
+					animation controller group animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs"
+					animation controller group animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow"
+					animation controller group animation controller "swimming": "controller.animation.humanoid.swimming"
+					animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
+					animation controller group animation controller "vex_move": "controller.animation.vex.move"
+				field "animations":
+					animation "attack.rotations": "animation.humanoid.attack.rotations.v1.0"
+					animation "bob": "animation.humanoid.bob.v1.0"
+					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow.v1.0"
+					animation "brandish_spear": "animation.humanoid.brandish_spear.v1.0"
+					animation "charging": "animation.humanoid.charging.v1.0"
+					animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs.v1.0"
+					animation "holding": "animation.humanoid.holding.v1.0"
+					animation "humanoid_base_pose": "animation.humanoid.base_pose.v1.0"
+					animation "look_at_target_default": "animation.humanoid.look_at_target.default.v1.0"
+					animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding.v1.0"
+					animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming.v1.0"
+					animation "move": "animation.humanoid.move.v1.0"
+					animation "riding.arms": "animation.humanoid.riding.arms.v1.0"
+					animation "riding.legs": "animation.humanoid.riding.legs.v1.0"
+					animation "sneaking": "animation.humanoid.sneaking.v1.0"
+					animation "swimming": "animation.humanoid.swimming.v1.0"
+					animation "use_item_progress": "animation.humanoid.use_item_progress.v1.0"
+					animation "vex_move": "animation.vex.move"
 				field "geometry": geometry "default": "geometry.vex"
 				field "identifier": "minecraft:vex"
 				field "materials": materials "default": "vex"
 				field "render_controllers": render controller "controller.render.vex"
-				field "scripts": field "scale": "0.4"
+				field "scripts":
+					field "pre_animation":
+						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
+						script "variable.tcos1 = -variable.tcos0;"
+						script "variable.attack_body_rot_y = Math.sin(Math.sqrt(variable.attack_time)) * 36.0;"
+						script "variable.cos_attack_body_rot_y = Math.cos(variable.attack_body_rot_y);"
+						script "variable.sin_attack_body_rot_y = Math.sin(variable.attack_body_rot_y);"
+						script "variable.internal_swim_pos = Math.mod(global.anim_pos, 26.0);"
+						script "variable.attack = Math.sin(1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0;"
+						script "variable.attack2 = Math.sin(variable.attack_time * 180.0);"
+					field "scale": "0.4"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
 					field "texture_index": 41
 				field "textures":
 					texture "charging": "textures/entity/vex/vex_charging"
 					texture "default": "textures/entity/vex/vex"
+Changed entity "vex_v1.0.json":
+	Changed resource pack "core":
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Changed field "animation_controllers":
+					Total animation controller group: 1 (+0, -14)
+					Removed animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose".
+					Removed animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target".
+					Removed animation controller group animation controller "move": "controller.animation.humanoid.move".
+					Removed animation controller group animation controller "riding": "controller.animation.humanoid.riding".
+					Removed animation controller group animation controller "holding": "controller.animation.humanoid.holding".
+					Removed animation controller group animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear".
+					Removed animation controller group animation controller "charging": "controller.animation.humanoid.charging".
+					Removed animation controller group animation controller "attack": "controller.animation.humanoid.attack".
+					Removed animation controller group animation controller "sneaking": "controller.animation.humanoid.sneaking".
+					Removed animation controller group animation controller "bob": "controller.animation.humanoid.bob".
+					Removed animation controller group animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs".
+					Removed animation controller group animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow".
+					Removed animation controller group animation controller "swimming": "controller.animation.humanoid.swimming".
+					Removed animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress".
+					Changed animation controller group:
+						Moved animation controller from "vex_move" to "move".
+				Changed field "animations":
+					Total animation: 1 (+0, -17)
+					Removed animation "attack.rotations": "animation.vex.attack.rotations.v1.0".
+					Removed animation "bob": "animation.humanoid.bob.v1.0".
+					Removed animation "bow_and_arrow": "animation.humanoid.bow_and_arrow.v1.0".
+					Removed animation "brandish_spear": "animation.humanoid.brandish_spear.v1.0".
+					Removed animation "charging": "animation.humanoid.charging.v1.0".
+					Removed animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs.v1.0".
+					Removed animation "holding": "animation.humanoid.holding.v1.0".
+					Removed animation "humanoid_base_pose": "animation.humanoid.base_pose.v1.0".
+					Removed animation "look_at_target_default": "animation.humanoid.look_at_target.default.v1.0".
+					Removed animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding.v1.0".
+					Removed animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming.v1.0".
+					Changed animation "move" from "animation.humanoid.move.v1.0" to "animation.vex.move".
+					Removed animation "riding.arms": "animation.humanoid.riding.arms.v1.0".
+					Removed animation "riding.legs": "animation.humanoid.riding.legs.v1.0".
+					Removed animation "sneaking": "animation.humanoid.sneaking.v1.0".
+					Removed animation "swimming": "animation.humanoid.swimming.v1.0".
+					Removed animation "use_item_progress": "animation.humanoid.use_item_progress.v1.0".
+					Removed animation "vex_move": "animation.vex.move".
+				Unchanged field "identifier": "minecraft:vex".
+				Changed field "scripts":
+					Removed field "pre_animation":
+						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
+						script "variable.tcos1 = -variable.tcos0;"
+						script "variable.attackBodyRotY = Math.sin(Math.sqrt(variable.attack_time)) * 36.0;"
+						script "variable.cosAttackBodyRotY = Math.cos(variable.attackBodyRotY);"
+						script "variable.sinAttackBodyRotY = Math.sin(variable.attackBodyRotY);"
+						script "variable.internalSwimPos = Math.mod(global.anim_pos, 26.0);"
+						script "variable.attack = Math.sin(1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0;"
+						script "variable.attack2 = Math.sin(variable.attack_time * 180.0);"
 Changed entity "villager.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
@@ -882,66 +964,7 @@ Removed entity "witch_v1.0.json":
 					field "texture": "spawn_egg"
 					field "texture_index": 17
 				field "textures": texture "default": "textures/entity/witch"
-Added entity "wither_skeleton.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animation_controllers":
-					animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
-					animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
-					animation controller group animation controller "move": "controller.animation.humanoid.move"
-					animation controller group animation controller "riding": "controller.animation.humanoid.riding"
-					animation controller group animation controller "holding": "controller.animation.humanoid.holding"
-					animation controller group animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear"
-					animation controller group animation controller "charging": "controller.animation.humanoid.charging"
-					animation controller group animation controller "attack": "controller.animation.humanoid.attack"
-					animation controller group animation controller "sneaking": "controller.animation.humanoid.sneaking"
-					animation controller group animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs"
-					animation controller group animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow"
-					animation controller group animation controller "swimming": "controller.animation.humanoid.swimming"
-					animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
-					animation controller group animation controller "wither_skeleton_attack": "controller.animation.wither_skeleton.attack"
-				field "animations":
-					animation "attack.rotations": "animation.humanoid.attack.rotations"
-					animation "bob": "animation.humanoid.bob"
-					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow"
-					animation "brandish_spear": "animation.humanoid.brandish_spear"
-					animation "charging": "animation.humanoid.charging"
-					animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs"
-					animation "holding": "animation.humanoid.holding"
-					animation "look_at_target_default": "animation.humanoid.look_at_target.default"
-					animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding"
-					animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming"
-					animation "move": "animation.humanoid.move"
-					animation "riding.arms": "animation.humanoid.riding.arms"
-					animation "riding.legs": "animation.humanoid.riding.legs"
-					animation "sneaking": "animation.humanoid.sneaking"
-					animation "swimming": "animation.humanoid.swimming"
-					animation "use_item_progress": "animation.humanoid.use_item_progress"
-					animation "wither_skeleton_attack": "animation.wither_skeleton.attack"
-				field "geometry": geometry "default": "geometry.skeleton.wither.v1.8"
-				field "identifier": "minecraft:wither_skeleton"
-				field "materials": materials "default": "skeleton"
-				field "render_controllers": render controller "controller.render.wither_skeleton"
-				field "scripts":
-					field "pre_animation":
-						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
-						script "variable.tcos1 = -variable.tcos0;"
-						script "variable.attack_body_rot_y = Math.sin(Math.sqrt(variable.attack_time) * 360) * 11.46;"
-						script "variable.cos_attack_body_rot_y = Math.cos(variable.attack_body_rot_y);"
-						script "variable.sin_attack_body_rot_y = Math.sin(variable.attack_body_rot_y);"
-						script "variable.internal_swim_pos = Math.mod(global.anim_pos, 26.0);"
-						script "variable.attack = Math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3;"
-						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
-						script "variable.z_bob = Math.cos(global.life_time * 103.13244) * 2.865 + 2.865;"
-						script "variable.x_bob = Math.sin(global.life_time * 76.776372) * 2.865;"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 29
-				field "textures": texture "default": "textures/entity/skeleton/wither_skeleton"
-Moved entity from "wither_skeleton.json" to "wither_skeleton.v1.0.json".
-Changed entity "wither_skeleton.v1.0.json":
+Changed entity "wither_skeleton.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
@@ -961,6 +984,64 @@ Changed entity "wither_skeleton.v1.0.json":
 					animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
 					animation controller group animation controller "wither_skeleton_attack": "controller.animation.wither_skeleton.attack"
 				Added field "animations":
+					animation "attack.rotations": "animation.humanoid.attack.rotations"
+					animation "bob": "animation.humanoid.bob"
+					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow"
+					animation "brandish_spear": "animation.humanoid.brandish_spear"
+					animation "charging": "animation.humanoid.charging"
+					animation "damage_nearby_mobs": "animation.humanoid.damage_nearby_mobs"
+					animation "holding": "animation.humanoid.holding"
+					animation "look_at_target_default": "animation.humanoid.look_at_target.default"
+					animation "look_at_target_gliding": "animation.humanoid.look_at_target.gliding"
+					animation "look_at_target_swimming": "animation.humanoid.look_at_target.swimming"
+					animation "move": "animation.humanoid.move"
+					animation "riding.arms": "animation.humanoid.riding.arms"
+					animation "riding.legs": "animation.humanoid.riding.legs"
+					animation "sneaking": "animation.humanoid.sneaking"
+					animation "swimming": "animation.humanoid.swimming"
+					animation "use_item_progress": "animation.humanoid.use_item_progress"
+					animation "wither_skeleton_attack": "animation.wither_skeleton.attack"
+				Changed field "geometry":
+					Total geometry: 1 (+0, -2)
+					Removed geometry "armor1": "geometry.humanoid.armor1".
+					Removed geometry "armor2": "geometry.humanoid.armor2".
+					Changed geometry "default" from "geometry.skeleton.wither" to "geometry.skeleton.wither.v1.8".
+				Unchanged field "identifier": "minecraft:wither_skeleton".
+				Added field "materials": materials "default": "skeleton".
+				Added field "render_controllers": render controller "controller.render.wither_skeleton".
+				Added field "scripts":
+					field "pre_animation":
+						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
+						script "variable.tcos1 = -variable.tcos0;"
+						script "variable.attack_body_rot_y = Math.sin(Math.sqrt(variable.attack_time) * 360) * 11.46;"
+						script "variable.cos_attack_body_rot_y = Math.cos(variable.attack_body_rot_y);"
+						script "variable.sin_attack_body_rot_y = Math.sin(variable.attack_body_rot_y);"
+						script "variable.internal_swim_pos = Math.mod(global.anim_pos, 26.0);"
+						script "variable.attack = Math.sin((1.0 - (1.0 - variable.attack_time) * (1.0 - variable.attack_time)) * 180.0) * 57.3;"
+						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
+						script "variable.z_bob = Math.cos(global.life_time * 103.13244) * 2.865 + 2.865;"
+						script "variable.x_bob = Math.sin(global.life_time * 76.776372) * 2.865;"
+Added entity "wither_skeleton.v1.0.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
+					animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
+					animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
+					animation controller group animation controller "move": "controller.animation.humanoid.move"
+					animation controller group animation controller "riding": "controller.animation.humanoid.riding"
+					animation controller group animation controller "holding": "controller.animation.humanoid.holding"
+					animation controller group animation controller "brandish_spear": "controller.animation.humanoid.brandish_spear"
+					animation controller group animation controller "charging": "controller.animation.humanoid.charging"
+					animation controller group animation controller "attack": "controller.animation.humanoid.attack"
+					animation controller group animation controller "sneaking": "controller.animation.humanoid.sneaking"
+					animation controller group animation controller "damage_nearby_mobs": "controller.animation.humanoid.damage_nearby_mobs"
+					animation controller group animation controller "bow_and_arrow": "controller.animation.humanoid.bow_and_arrow"
+					animation controller group animation controller "swimming": "controller.animation.humanoid.swimming"
+					animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
+					animation controller group animation controller "wither_skeleton_attack": "controller.animation.wither_skeleton.attack"
+				field "animations":
 					animation "attack.rotations": "animation.humanoid.attack.rotations.v1.0"
 					animation "bob": "animation.humanoid.bob.v1.0"
 					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow.v1.0"
@@ -979,14 +1060,11 @@ Changed entity "wither_skeleton.v1.0.json":
 					animation "swimming": "animation.humanoid.swimming.v1.0"
 					animation "use_item_progress": "animation.humanoid.use_item_progress.v1.0"
 					animation "wither_skeleton_attack": "animation.wither_skeleton.attack"
-				Changed field "geometry":
-					Total geometry: 1 (+0, -2)
-					Removed geometry "armor1": "geometry.humanoid.armor1".
-					Removed geometry "armor2": "geometry.humanoid.armor2".
-				Unchanged field "identifier": "minecraft:wither_skeleton".
-				Added field "materials": materials "default": "skeleton".
-				Added field "render_controllers": render controller "controller.render.wither_skeleton".
-				Added field "scripts":
+				field "geometry": geometry "default": "geometry.skeleton.wither"
+				field "identifier": "minecraft:wither_skeleton"
+				field "materials": materials "default": "skeleton"
+				field "render_controllers": render controller "controller.render.wither_skeleton"
+				field "scripts":
 					field "pre_animation":
 						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
 						script "variable.tcos1 = -variable.tcos0;"
@@ -998,12 +1076,15 @@ Changed entity "wither_skeleton.v1.0.json":
 						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
 						script "variable.zBob = Math.cos(global.life_time * 103.13244) * 2.865 + 2.865;"
 						script "variable.xBob = Math.sin(global.life_time * 76.776372) * 2.865;"
-Added entity "zombie.json":
-	resource pack "core":
-		field "format_version": "1.8.0"
-		field "minecraft:client_entity":
-			field "description":
-				field "animation_controllers":
+				field "spawn_egg":
+					field "texture": "spawn_egg"
+					field "texture_index": 29
+				field "textures": texture "default": "textures/entity/skeleton/wither_skeleton"
+Changed entity "zombie.json":
+	Changed resource pack "core":
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Added field "animation_controllers":
 					animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
 					animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
 					animation controller group animation controller "move": "controller.animation.humanoid.move"
@@ -1020,7 +1101,7 @@ Added entity "zombie.json":
 					animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
 					animation controller group animation controller "zombie_attack_bare_hand": "controller.animation.zombie.attack_bare_hand"
 					animation controller group animation controller "zombie_swimming": "controller.animation.zombie.swimming"
-				field "animations":
+				Added field "animations":
 					animation "attack.rotations": "animation.humanoid.attack.rotations"
 					animation "bob": "animation.humanoid.bob"
 					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow"
@@ -1039,12 +1120,16 @@ Added entity "zombie.json":
 					animation "use_item_progress": "animation.humanoid.use_item_progress"
 					animation "zombie_attack_bare_hand": "animation.zombie.attack_bare_hand"
 					animation "zombie_swimming": "animation.zombie.swimming"
-				field "enable_attachables": true
-				field "geometry": geometry "default": "geometry.zombie.v1.8"
-				field "identifier": "minecraft:zombie"
-				field "materials": materials "default": "zombie"
-				field "render_controllers": render controller "controller.render.zombie"
-				field "scripts":
+				Added field "enable_attachables": true.
+				Changed field "geometry":
+					Total geometry: 1 (+0, -2)
+					Removed geometry "armor1": "geometry.humanoid.armor1".
+					Removed geometry "armor2": "geometry.humanoid.armor2".
+					Changed geometry "default" from "geometry.zombie" to "geometry.zombie.v1.8".
+				Unchanged field "identifier": "minecraft:zombie".
+				Added field "materials": materials "default": "zombie".
+				Added field "render_controllers": render controller "controller.render.zombie".
+				Added field "scripts":
 					field "pre_animation":
 						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
 						script "variable.tcos1 = -variable.tcos0;"
@@ -1056,16 +1141,12 @@ Added entity "zombie.json":
 						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
 						script "variable.z_bob = Math.cos(global.life_time * 103.13244) * 2.865 + 2.865;"
 						script "variable.x_bob = Math.sin(global.life_time * 76.776372) * 2.865;"
-				field "spawn_egg":
-					field "texture": "spawn_egg"
-					field "texture_index": 12
-				field "textures": texture "default": "textures/entity/zombie/zombie"
-Moved entity from "zombie.json" to "zombie.v1.0.json".
-Changed entity "zombie.v1.0.json":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Added field "animation_controllers":
+Added entity "zombie.v1.0.json":
+	resource pack "core":
+		field "format_version": "1.8.0"
+		field "minecraft:client_entity":
+			field "description":
+				field "animation_controllers":
 					animation controller group animation controller "humanoid_base_pose": "controller.animation.humanoid.base_pose"
 					animation controller group animation controller "look_at_target": "controller.animation.humanoid.look_at_target"
 					animation controller group animation controller "move": "controller.animation.humanoid.move"
@@ -1082,7 +1163,7 @@ Changed entity "zombie.v1.0.json":
 					animation controller group animation controller "use_item_progress": "controller.animation.humanoid.use_item_progress"
 					animation controller group animation controller "zombie_attack_bare_hand": "controller.animation.zombie.attack_bare_hand"
 					animation controller group animation controller "zombie_swimming": "controller.animation.zombie.swimming"
-				Added field "animations":
+				field "animations":
 					animation "attack.rotations": "animation.humanoid.attack.rotations.v1.0"
 					animation "bob": "animation.humanoid.bob.v1.0"
 					animation "bow_and_arrow": "animation.humanoid.bow_and_arrow.v1.0"
@@ -1101,15 +1182,12 @@ Changed entity "zombie.v1.0.json":
 					animation "swimming": "animation.humanoid.swimming.v1.0"
 					animation "use_item_progress": "animation.humanoid.use_item_progress.v1.0"
 					animation "zombie_swimming": "animation.zombie.swimming"
-				Added field "enable_attachables": true.
-				Changed field "geometry":
-					Total geometry: 1 (+0, -2)
-					Removed geometry "armor1": "geometry.humanoid.armor1".
-					Removed geometry "armor2": "geometry.humanoid.armor2".
-				Unchanged field "identifier": "minecraft:zombie".
-				Added field "materials": materials "default": "zombie".
-				Added field "render_controllers": render controller "controller.render.zombie".
-				Added field "scripts":
+				field "enable_attachables": true
+				field "geometry": geometry "default": "geometry.zombie"
+				field "identifier": "minecraft:zombie"
+				field "materials": materials "default": "zombie"
+				field "render_controllers": render controller "controller.render.zombie"
+				field "scripts":
 					field "pre_animation":
 						script "variable.tcos0 = (Math.cos(global.anim_pos * 38.17) * global.anim_speed / variable.gliding_speed_value) * 57.3;"
 						script "variable.tcos1 = -variable.tcos0;"
@@ -1121,6 +1199,10 @@ Changed entity "zombie.v1.0.json":
 						script "variable.attack2 = Math.sin(variable.attack_time * 180.0) * 57.3;"
 						script "variable.z_bob = Math.cos(global.life_time * 103.13244) * 2.865 + 2.865;"
 						script "variable.x_bob = Math.sin(global.life_time * 76.776372) * 2.865;"
+				field "spawn_egg":
+					field "texture": "spawn_egg"
+					field "texture_index": 12
+				field "textures": texture "default": "textures/entity/zombie/zombie"
 Changed entity "zombie_pigman.json":
 	Changed resource pack "core":
 		Changed field "minecraft:client_entity":

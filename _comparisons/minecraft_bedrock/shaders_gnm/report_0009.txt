@@ -1,24 +1,11 @@
 Difference of "shaders" between "1.11.3" and "1.11.4".
 
 Changed file "ShaderConstantsGNM.h":
-	Total line: 104 (+17, -16)
+	Total line: 104 (+11, -10)
 	          '''
 	  1   1   #ifndef __SHADER_CONSTANTS_GNM_H
 	  2   2   #define __SHADER_CONSTANTS_GNM_H
 	  3   3   
-	      4 + Texture2D TEXTURE_0 : register(t0);
-	      5 + Texture2D TEXTURE_1 : register(t1);
-	      6 + Texture2D TEXTURE_2 : register(t2);
-	      7 + Texture2D TEXTURE_3 : register(t3);
-	      8 + Texture2D TEXTURE_4 : register(t4);
-	      9 + Texture2D TEXTURE_5 : register(t5);
-	     10 + Texture2D TEXTURE_6 : register(t6);
-	     11 + Texture2D TEXTURE_7 : register(t7);
-	     12 + 
-	     13 + SamplerState TextureSampler0 : register(s0);
-	     14 + SamplerState TextureSampler1 : register(s1);
-	     15 + SamplerState TextureSampler2 : register(s2);
-	     16 + SamplerState TextureSampler3 : register(s3);
 	  4     - #define FANCY
 	  5     - #define ALPHA_TEST
 	  6     - #define FOG
@@ -27,123 +14,47 @@ Changed file "ShaderConstantsGNM.h":
 	  9     - #define ALWAYS_LIT
 	 10     - //#define EFFECTS_OFFSET	- Enable this later (to see animating fire) when can turn these on/off based on material.
 	 11     - 
-	     17 + SamplerState TextureSampler4 : register(s4);
-	     18 + SamplerState TextureSampler5 : register(s5);
-	     19 + SamplerState TextureSampler6 : register(s6);
-	     20 + SamplerState TextureSampler7 : register(s7);
-	 12     - Texture2D TEXTURE_0 : register(t0);
-	 13     - Texture2D TEXTURE_1 : register(t1);
-	 14     - Texture2D TEXTURE_2 : register(t2);
-	 15     - Texture2D TEXTURE_3 : register(t3);
-	     21 + 
-	     22 + ConstantBuffer RenderChunkConstants : register(c0) {
-	     23 + 	float4 CHUNK_ORIGIN_AND_SCALE;
+	 12   4   Texture2D TEXTURE_0 : register(t0);
+	 13   5   Texture2D TEXTURE_1 : register(t1);
+	 14   6   Texture2D TEXTURE_2 : register(t2);
+	 15   7   Texture2D TEXTURE_3 : register(t3);
+	 16   8   Texture2D TEXTURE_4 : register(t4);
+	          ...
+	 27  19   SamplerState TextureSampler6 : register(s6);
+	 28  20   SamplerState TextureSampler7 : register(s7);
+	 29  21   
+	 30  22   ConstantBuffer RenderChunkConstants : register(c0) {
+	 31  23   	float4 CHUNK_ORIGIN_AND_SCALE;
 	     24 + 	float RENDER_CHUNK_FOG_ALPHA;
-	     25 + }
-	 16     - Texture2D TEXTURE_4 : register(t4);
-	 17     - Texture2D TEXTURE_5 : register(t5);
-	 18     - Texture2D TEXTURE_6 : register(t6);
-	 19     - Texture2D TEXTURE_7 : register(t7);
-	 20  26   
-	 21     - SamplerState TextureSampler0 : register(s0);
-	     27 + ConstantBuffer ActorConstants : register(c1) {
-	     28 + 	float4 OVERLAY_COLOR;
-	     29 + 	float4 TILE_LIGHT_COLOR;
-	     30 + 	float4 CHANGE_COLOR;
-	     31 + 	float4 GLINT_COLOR;
-	     32 + 	float4 UV_ANIM;
-	     33 + 	float2 UV_OFFSET;
-	     34 + 	float2 UV_ROTATION;
-	     35 + 	float2 GLINT_UV_SCALE;
-	     36 + 	float4 MULTIPLICATIVE_TINT_CHANGE_COLOR;
-	 22     - SamplerState TextureSampler1 : register(s1);
-	 23     - SamplerState TextureSampler2 : register(s2);
-	 24     - SamplerState TextureSampler3 : register(s3);
-	 25     - SamplerState TextureSampler4 : register(s4);
-	 26     - SamplerState TextureSampler5 : register(s5);
-	 27     - SamplerState TextureSampler6 : register(s6);
-	 28     - SamplerState TextureSampler7 : register(s7);
-	 29     - 
-	 30     - ConstantBuffer RenderChunkConstants : register(c0) {
-	 31     - 	float4 CHUNK_ORIGIN_AND_SCALE;
-	 32  37   }
-	     38 + 
-	     39 + ConstantBuffer PerFrameConstants : register(c2) {
-	 33  40   
-	 34     - ConstantBuffer ActorConstants : register(c1) {
-	 35     - 	float4 OVERLAY_COLOR;
-	 36     - 	float4 TILE_LIGHT_COLOR;
-	 37     - 	float4 CHANGE_COLOR;
-	     41 + 	float3 VIEW_POS;
-	     42 + 	float TIME;
-	     43 + 	float4 FOG_COLOR;
-	     44 + 	float2 FOG_CONTROL;
-	     45 + 	float RENDER_DISTANCE;
-	     46 + 	float FAR_CHUNKS_DISTANCE;
-	 38     - 	float4 GLINT_COLOR;
-	 39     - 	float4 UV_ANIM;
-	 40     - 	float2 UV_OFFSET;
-	 41     - 	float2 UV_ROTATION;
-	 42     - 	float2 GLINT_UV_SCALE;
-	 43     - 	float4 MULTIPLICATIVE_TINT_CHANGE_COLOR;
-	 44  47   }
-	 45     - 
-	 46     - ConstantBuffer PerFrameConstants : register(c2) {
-	 47  48   
-	     49 + ConstantBuffer WorldConstants : register(c3) {
-	 48     - 	float3 VIEW_POS;
-	 49     - 	float TIME;
-	     50 + 	column_major float4x4 WORLDVIEWPROJ;
-	     51 + 	column_major float4x4 WORLD;
-	     52 + 	column_major float4x4 WORLDVIEW;
-	     53 + 	column_major float4x4 PROJ;
-	 50     - 	float4 FOG_COLOR;
-	 51     - 	float2 FOG_CONTROL;
-	 52     - 	float RENDER_DISTANCE;
-	 53     - 	float FAR_CHUNKS_DISTANCE;
-	 54  54   }
-	 55  55   
-	     56 + ConstantBuffer ShaderConstants : register(c4) {
-	 56     - ConstantBuffer WorldConstants : register(c3) {
-	     57 + 	float4 CURRENT_COLOR;
-	     58 + 	float4 DARKEN;
-	     59 + 	float3 TEXTURE_DIMENSIONS;
-	     60 + 	float1 HUD_OPACITY;
-	     61 + 	column_major float4x4 UV_TRANSFORM;
-	 57     - 	column_major float4x4 WORLDVIEWPROJ;
-	 58     - 	column_major float4x4 WORLD;
-	 59     - 	column_major float4x4 WORLDVIEW;
-	 60     - 	column_major float4x4 PROJ;
-	 61  62   }
-	 62  63   
-	     64 + ConstantBuffer WeatherConstants : register(c5) {
-	 63     - ConstantBuffer ShaderConstants : register(c4) {
-	 64     - 	float4 CURRENT_COLOR;
-	 65     - 	float4 DARKEN;
+	 32  25   }
+	 33  26   
+	 34  27   ConstantBuffer ActorConstants : register(c1) {
+	 35  28   	float4 OVERLAY_COLOR;
+	 36  29   	float4 TILE_LIGHT_COLOR;
+	          ...
+	 67  60   	float1 HUD_OPACITY;
+	 68  61   	column_major float4x4 UV_TRANSFORM;
+	 69  62   }
+	 70  63   
+	 71  64   ConstantBuffer WeatherConstants : register(c5) {
 	     65 + 	float4	POSITION_OFFSET;
 	     66 + 	float4	VELOCITY;
 	     67 + 	float4	ALPHA;
-	 66     - 	float3 TEXTURE_DIMENSIONS;
-	 67     - 	float1 HUD_OPACITY;
-	 68     - 	column_major float4x4 UV_TRANSFORM;
-	 69     - }
-	 70     - 
 	     68 + 	float4	VIEW_POSITION;
 	     69 + 	float4	SIZE_SCALE;
 	     70 + 	float4	FORWARD;
 	     71 + 	float4	UV_INFO;
 	     72 + 	float4  PARTICLE_BOX;
-	 71     - ConstantBuffer WeatherConstants : register(c5) {
 	 72     - 	float4	POSITION_OFFSET;
 	 73     - 	float4	VELOCITY;
 	 74     - 	float4	ALPHA;
 	 75     - 	float4	VIEW_POSITION;
+	 76     - 	float4	SIZE_SCALE;
 	     73 + }
 	     74 + 
 	     75 + ConstantBuffer FlipbookTextureConstants : register(c6) {
 	     76 + 	float1 V_OFFSET;
 	     77 + 	float1 V_BLEND_OFFSET;
-	 76     - 	float4	SIZE_SCALE;
 	 77     - 	float4	FORWARD;
 	 78     - 	float4	UV_INFO;
 	 79     - 	float4  PARTICLE_BOX;
@@ -175,13 +86,13 @@ Changed file "ShaderConstantsGNM.h":
 	 95  95   
 	     96 + ConstantBuffer AnimationConstants : register(c10) {
 	 96     - ConstantBuffer InterFrameConstants : register(c9) {
-	     97 + #if defined(LARGE_VERTEX_SHADER_UNIFORMS)
 	 97     - 	// in secs. This is reset every 1 hour. so the range is [0, 3600]
+	     97 + #if defined(LARGE_VERTEX_SHADER_UNIFORMS)
 	     98 + 	float4x4 BONES[8];
-	     99 + #else
-	    100 + 	float4x4 BONE;
 	 98     - 	// make sure your shader handles the case when it transitions from 3600 to 0
 	 99     - 	float TOTAL_REAL_WORLD_TIME;
+	     99 + #else
+	    100 + 	float4x4 BONE;
 	100     - 	column_major float4x4 CUBE_MAP_ROTATION;
 	    101 + #endif
 	101 102   }
@@ -276,64 +187,12 @@ Changed file "color_texture_p.pssl":
 	   81 + 	return diffuse;
 	76 82   }
 	        '''
-Changed file "color_uv_vv.pssl":
-	Total line: 66 (+0, -0)
-	        '''
-	        ...
-	 7  7       float2 texCoords : TEXCOORD_0;
-	 8  8   };
-	 9  9    
-	10 10   struct PS_Input
-	11 11   {
-	   12 +     float4 position : S_POSITION;
-	12    -     float4 position : S_Position;
-	13 13       float4 color : COLOR;
-	14 14       float2 texCoords : TEXCOORD_0;
-	15 15   
-	16 16   #ifdef ENABLE_FOG
-	17 17   	float4 fogColor : FOG_COLOR;
-	        ...
-	        '''
 Added file "entity_multitexture_p.pssl":
 	'''
 	#include "SimplePixelGNM.h"
 	'''
-Changed file "entity_p.pssl":
-	Total line: 120 (+0, -0)
-	          '''
-	          ...
-	 21  21   
-	 22  22   	float2 uv : TEXCOORD_0;
-	 23  23   };
-	 24  24   #ifdef USE_EMISSIVE
-	 25  25   #ifdef USE_ONLY_EMISSIVE
-	     26 + #define NEEDS_DISCARD(C) (C.a == 0.0f ||C.a == 1.0f)
-	 26     - #define NEEDS_DISCARD(C) (C.a == 0.0f ||C.a == 1.0f )
-	 27  27   #else
-	     28 + #define NEEDS_DISCARD(C) (C.a + C.r + C.g + C.b == 0.0)
-	 28     - #define NEEDS_DISCARD(C)	(C.a + C.r + C.g + C.b == 0.0)
-	 29  29   #endif
-	 30  30   #else
-	 31  31   	#ifndef USE_COLOR_MASK
-	 32  32   		#define NEEDS_DISCARD(C)	(C.a < 0.5)
-	 33  33   	#else
-	          ...
-	 98  98   	color.rgb = lerp( color, PSInput.overlayColor, PSInput.overlayColor.a ).rgb;
-	 99  99   #endif
-	100 100   
-	101 101   #ifdef USE_EMISSIVE
-	102 102   	//make glowy stuff
-	    103 + 	color *= lerp( float4( 1.0 ), PSInput.light, color.a );
-	103     - 	color *= lerp( float( 1.0 ).xxxx, PSInput.light, color.a );
-	104 104   #else
-	105 105   	color *= PSInput.light;
-	106 106   #endif
-	107 107   
-	108 108   	//apply fog
-	          ...
-	          '''
 Changed file "entity_vv.pssl":
-	Total line: 140 (+39, -29)
+	Total line: 140 (+38, -28)
 	          '''
 	  1   1   #include "ShaderConstantsGNM.h"
 	  2   2   
@@ -392,10 +251,10 @@ Changed file "entity_vv.pssl":
 	     36 + 
 	     37 + static const float AMBIENT = 0.45;
 	 27  38   
-	     39 + static const float XFAC = -0.1;
 	 28     - #ifdef TINTED_ALPHA_TEST
-	 29     - 	float4 alphaTestMultiplier : ALPHA_MULTIPLIER;
+	     39 + static const float XFAC = -0.1;
 	     40 + static const float ZFAC = 0.1;
+	 29     - 	float4 alphaTestMultiplier : ALPHA_MULTIPLIER;
 	 30     - #endif
 	 31  41   
 	 32     - 	float2 uv : TEXCOORD_0;
@@ -417,13 +276,13 @@ Changed file "entity_vv.pssl":
 	 41     - float4 TransformRGBA8_SNORM(const float4 RGBA8_SNORM) {
 	 42     - #ifdef R8G8B8A8_SNORM_UNSUPPORTED
 	 43     - 	return RGBA8_SNORM * float(2.0).xxxx - float(1.0).xxxx;
+	 44     - #else
 	     52 + float lightIntensity(const float4x4 worldMat, const float4 position, const float4 normal) {
 	     53 + #ifdef FANCY
-	     54 + 	float3 N = normalize(mul(worldMat, normal)).xyz;
-	     55 + 	N.y *= TILE_LIGHT_COLOR.a;
-	 44     - #else
 	 45     - 	return RGBA8_SNORM;
 	 46     - #endif
+	     54 + 	float3 N = normalize(mul(worldMat, normal)).xyz;
+	     55 + 	N.y *= TILE_LIGHT_COLOR.a;
 	 47     - }
 	 48     - 
 	 49  56   
@@ -454,30 +313,30 @@ Changed file "entity_vv.pssl":
 	 63  69   #endif
 	     70 + }
 	 64  71   
-	     72 + #ifdef GLINT
 	 65     - 	float yLight = (1.0 + N.y) * 0.5;
+	 66     - 	return yLight * (1.0 - AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
+	     72 + #ifdef GLINT
 	     73 + float2 calculateLayerUV(float2 origUV, float offset, float rotation) {
 	     74 + 	float2 uv = origUV;
 	     75 + 	uv -= 0.5;
-	 66     - 	return yLight * (1.0 - AMBIENT) + N.x*N.x * XFAC + N.z*N.z * ZFAC + AMBIENT;
 	 67     - #else
 	 68     - 	return 1.0;
 	 69     - #endif
+	 70     - }
+	 71     - 
 	     76 + 	float rsin = 0.f;
+	 72     - #ifdef GLINT
+	 73     - float2 calculateLayerUV(float2 origUV, float offset, float rotation) {
 	     77 + 	float rcos = 0.f;
+	 74     - 	float2 uv = origUV;
 	     78 + 	sincos(rotation, rsin, rcos);
 	     79 + 	uv = mul(uv, float2x2(rcos, -rsin, rsin, rcos));
 	     80 + 	uv.x += offset;
 	     81 + 	uv += 0.5;
-	 70     - }
-	 71     - 
-	 72     - #ifdef GLINT
-	 73     - float2 calculateLayerUV(float2 origUV, float offset, float rotation) {
-	 74     - 	float2 uv = origUV;
 	 75     - 	uv -= 0.5;
-	     82 + 
 	 76     - 	float rsin = 0.f;
 	 77     - 	float rcos = 0.f;
+	     82 + 
 	     83 + 	return uv * GLINT_UV_SCALE;
 	     84 + }
 	     85 + #endif
@@ -502,12 +361,12 @@ Changed file "entity_vv.pssl":
 	     94 + 	float L = lightIntensity(BONES[VSInput.boneId], float4(VSInput.position, 1), normal);
 	     95 + #else
 	     96 + 	PSInput.position = mul(WORLDVIEWPROJ, BONE, float4(VSInput.position, 1));
+	     97 + 	float L = lightIntensity(BONE, float4(VSInput.position, 1), normal);
 	 89     - 	PS_Input PSInput = (PS_Input)0;
 	 90     - 
 	 91     - 	PSInput.position = mul(WORLDVIEWPROJ, float4(VSInput.position, 1));
-	     97 + 	float L = lightIntensity(BONE, float4(VSInput.position, 1), normal);
-	     98 + #endif
 	 92     - 	float4 normal = TransformRGBA8_SNORM(VSInput.normal);
+	     98 + #endif
 	     99 + #else
 	    100 + 	float L = lightIntensity(WORLDVIEWPROJ, float4(VSInput.position, 1), normal);
 	 93     - 
@@ -757,36 +616,5 @@ Changed file "renderchunk_p.pssl":
 	68 67   
 	69 68   #ifdef FOG
 	70 69   	diffuse.rgb = lerp( diffuse.rgb, PSInput.fogColor.rgb, PSInput.fogColor.a );
-	        ...
-	        '''
-Changed file "renderchunk_vv.pssl":
-	Total line: 95 (+1, -1)
-	        '''
-	        ...
-	50 50   
-	51 51   ///// find distance from the camera
-	52 52   
-	53 53   #if defined(FOG) || defined(BLEND)
-	54 54   	#ifdef FANCY
-	   55 + 		float3 relPos = -worldPos.xyz;
-	55    - 		float3 relPos = -worldPos;
-	56 56   		float cameraDepth = length(relPos);
-	57 57   	#else
-	58 58   		float cameraDepth = PSInput.position.z;
-	59 59   	#endif
-	60 60   #endif
-	        ...
-	62 62   	///// apply fog
-	63 63   
-	64 64   #ifdef FOG
-	65 65   	float len = cameraDepth / RENDER_DISTANCE;
-	66 66   #ifdef ALLOW_FADE
-	   67 + 	len += RENDER_CHUNK_FOG_ALPHA;
-	67    - 	len += CURRENT_COLOR.r;
-	68 68   #endif
-	69 69   
-	70 70   	PSInput.fogColor.rgb = FOG_COLOR.rgb;
-	71 71   	PSInput.fogColor.a = clamp((len - FOG_CONTROL.x) / (FOG_CONTROL.y - FOG_CONTROL.x), 0.0, 1.0);
-	72 72   
 	        ...
 	        '''

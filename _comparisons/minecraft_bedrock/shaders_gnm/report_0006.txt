@@ -19,13 +19,15 @@ Changed file "renderchunk_p.pssl":
 	20 16   };
 	21 17   
 	        ...
+	39 35   #ifdef ALPHA_TEST
 	40 36   //If we know that all the verts in a triangle will have the same alpha, we should cull there first.
 	41 37   	#ifdef ALPHA_TO_COVERAGE
 	42 38   		float alphaThreshold = .05f;
 	43 39   	#else
-	44 40   		float alphaThreshold = .5f;
+	   40 + 		float alphaThreshold = .5f;
 	   41 + 	#endif
 	   42 + 	if(diffuse.a < alphaThreshold)
+	44    - 		float alphaThreshold = .5f;
 	   43 + 		discard;
 	   44 + #endif
 	45    - 	#endif
@@ -141,10 +143,10 @@ Changed file "renderchunk_vv.pssl":
 	 66     - 		#ifdef NEAR_WATER
 	 67     - 			float3 relPos = -worldPos;
 	 68     - 			float cameraDist = length(relPos);
-	 69     - 			PSInput.cameraDist = cameraDist / FAR_CHUNKS_DISTANCE;
 	     57 + 	#else
-	 70     - 		#endif
+	 69     - 			PSInput.cameraDist = cameraDist / FAR_CHUNKS_DISTANCE;
 	     58 + 		float cameraDepth = PSInput.position.z;
+	 70     - 		#endif
 	 71  59   	#endif
 	 72  60   #endif
 	 73  61   
@@ -157,8 +159,6 @@ Changed file "renderchunk_vv.pssl":
 	 85  73   #endif
 	 86  74   
 	     75 + ///// blended layer (mostly water) magic
-	 87     - 	///// water magic
-	 88     - #ifdef NEAR_WATER
 	     76 + #ifdef BLEND
 	     77 + 	//Mega hack: only things that become opaque are allowed to have vertex-driven transparency in the Blended layer...
 	     78 + 	//to fix this we'd need to find more space for a flag in the vertex format. color.a is the only unused part
@@ -170,11 +170,8 @@ Changed file "renderchunk_vv.pssl":
 	     84 + 			float3 relPos = -worldPos.xyz;
 	     85 + 			float camDist = length(relPos);
 	     86 + 			float cameraDist = camDist / FAR_CHUNKS_DISTANCE;
-	     87 + 		#endif //FANCY
-	     88 + 		
-	     89 + 		float alphaFadeOut = clamp(cameraDist, 0.0, 1.0);
-	     90 + 		PSInput.color.a = lerp(VSInput.color.a, 1.0, alphaFadeOut);
-	     91 + 	}
+	 87     - 	///// water magic
+	 88     - #ifdef NEAR_WATER
 	 89     - #ifdef FANCY  /////enhance water
 	 90     - 	float F = dot(normalize(relPos), UNIT_Y);
 	 91     - 	F = 1.0 - max(F, 0.1);
@@ -186,10 +183,15 @@ Changed file "renderchunk_vv.pssl":
 	 97     - 	float4 traspColor = float4(PSInput.color.rgb * 0.45, 0.8);
 	 98     - 	float4 surfColor = float4(PSInput.color.rgb, 1.0);
 	 99     - 
+	     87 + 		#endif //FANCY
+	     88 + 		
+	     89 + 		float alphaFadeOut = clamp(cameraDist, 0.0, 1.0);
+	     90 + 		PSInput.color.a = lerp(VSInput.color.a, 1.0, alphaFadeOut);
 	100     - 	float4 nearColor = lerp(traspColor, depthColor, PSInput.color.a);
 	101     - 	PSInput.color = lerp(surfColor, nearColor, F);
 	102     - #else
 	103     - 	PSInput.color.a = PSInput.position.z / FAR_CHUNKS_DISTANCE + 0.5;
+	     91 + 	}
 	104     - #endif //FANCY
 	105  92   #endif
 	106  93   	

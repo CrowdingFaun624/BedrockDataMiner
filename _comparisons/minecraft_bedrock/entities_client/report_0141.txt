@@ -1,26 +1,31 @@
-Difference of "entities_client" between "1.21.60.24" (beta of "1.21.60") and "1.21.60.25" (beta of "1.21.60").
+Difference of "entities_client" between "1.21.62" and "1.21.70.20" (beta of "1.21.70").
 
-Changed entity "pig.entity.json":
+Changed entity "cow.entity.json":
 	Total resource pack: 2 (+1, -0)
 	Added resource pack "experimental":
 		field "format_version": "1.10.0"
 		field "minecraft:client_entity":
 			field "description":
 				field "animations":
-					animation "baby_transform": "animation.pig.baby_transform"
+					animation "baby_transform": "animation.cow.baby_transform"
 					animation "look_at_target": "animation.common.look_at_target"
-					animation "setup": "animation.pig.setup"
+					animation "setup": "animation.cow.setup"
 					animation "walk": "animation.quadruped.walk"
-				field "enable_attachables": true
-				field "geometry": geometry "default": "geometry.pig.v3"
-				field "identifier": "minecraft:pig"
-				field "materials": materials "default": "pig_v3"
+				field "geometry":
+					geometry "cold": "geometry.cow.cold"
+					geometry "default": "geometry.cow.v2"
+					geometry "warm": "geometry.cow.warm"
+				field "identifier": "minecraft:cow"
+				field "materials":
+					materials "cold": "cow_cold"
+					materials "default": "cow"
 				field "min_engine_version": "1.8.0"
-				field "render_controllers": render controller "controller.render.pig.v3"
+				field "render_controllers": render controller "controller.render.cow.v2"
 				field "scripts":
 					field "pre_animation":
 						script "t.variant = query.property('minecraft:climate_variant');"
 						script "v.index = (t.variant == 'temperate') ? 0 : ((t.variant == 'warm') ? 1 : 2);"
+						script "v.is_cold = t.variant == 'cold';"
 					field "animate":
 						script "setup"
 						script script item "walk": "query.modified_move_speed"
@@ -28,8 +33,15 @@ Changed entity "pig.entity.json":
 						script script item "baby_transform": "query.is_baby"
 				field "spawn_egg":
 					field "texture": "spawn_egg"
-					field "texture_index": 2
+					field "texture_index": 1
 				field "textures":
-					texture "cold": "textures/entity/pig/pig_cold"
-					texture "temperate": "textures/entity/pig/pig_v3"
-					texture "warm": "textures/entity/pig/pig_warm"
+					texture "cold": "textures/entity/cow/cow_cold"
+					texture "default": "textures/entity/cow/cow_v2"
+					texture "warm": "textures/entity/cow/cow_warm"
+Changed entity "pig.entity.json":
+	Changed resource pack "experimental":
+		Changed field "minecraft:client_entity":
+			Changed field "description":
+				Unchanged field "identifier": "minecraft:pig".
+				Changed field "textures":
+					Moved texture from "temperate" to "default".

@@ -1,23 +1,26 @@
-Difference of "entities_client" between "1.20.70.20" (beta of "1.20.71") and "1.20.70.21" (beta of "1.20.71").
+Difference of "entities_client" between "1.20.70.21" (beta of "1.20.71") and "1.20.70.22" (beta of "1.20.71").
 
 Changed entity "armadillo.entity.json":
 	Changed resource pack "experimental":
 		Changed field "minecraft:client_entity":
 			Changed field "description":
+				Changed field "animations":
+					Total animation: 9 (+2, -0)
+					Added animation "peek": "animation.armadillo.peek".
+					Added animation "unroll_fast": "animation.armadillo.unroll_fast".
 				Unchanged field "identifier": "minecraft:armadillo".
 				Changed field "scripts":
-					Added field "should_update_effects_offscreen": "1.0".
-Changed entity "phantom.entity.json":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Unchanged field "identifier": "minecraft:phantom".
-				Changed field "scripts":
-					Added field "should_update_effects_offscreen": "1.0".
-Changed entity "warden.entity.json":
-	Changed resource pack "core":
-		Changed field "minecraft:client_entity":
-			Changed field "description":
-				Unchanged field "identifier": "minecraft:warden".
-				Changed field "scripts":
-					Added field "should_update_effects_offscreen": "1.0".
+					Changed field "pre_animation":
+						Total script: 10 (+2, -0)
+						Changed script from "variable.is_rolled_up = query.property('minecraft:is_rolled_up');" to "variable.is_rolled_up = query.property('minecraft:armadillo_state') != 'unrolled';".
+						Changed script from "variable.rolled_up_time = variable.is_rolled_up ? ((variable.last_rolled_up_time ?? 0.0) + query.delta_time) : 0.0;" to "variable.rolled_up_time = variable.is_rolled_up ? ((variable.rolled_up_time ?? 0.0) + query.delta_time) : 0.0;".
+						Changed script from "variable.last_rolled_up_time = variable.rolled_up_time;" to "variable.unrolling_time = variable.is_unrolling ? ((variable.unrolling_time ?? 0.0) + query.delta_time) : 0.0;".
+						Changed script from "variable.use_rolled_up_model = variable.rolled_up_time >= 0.2083;" to "variable.use_rolled_up_model = variable.rolled_up_time >= 0.2083 && (variable.unrolling_time == 0.0 || variable.unrolling_time <= 1.25 );".
+						Added script "variable.is_peeking = query.property('minecraft:armadillo_state') == 'rolled_up_peeking';".
+						Added script "variable.is_unrolling = query.property('minecraft:armadillo_state') == 'rolled_up_unrolling';".
+				Changed field "sound_effects":
+					Total sound effect: 5 (+3, -1)
+					Added sound effect "peek": "mob.armadillo.peek".
+					Removed sound effect "unroll": "mob.armadillo.unroll".
+					Added sound effect "unroll_finish": "mob.armadillo.unroll_finish".
+					Added sound effect "unroll_start": "mob.armadillo.unroll_start".
