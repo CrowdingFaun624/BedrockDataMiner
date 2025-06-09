@@ -188,7 +188,7 @@ def get_imports(domains:Sequence["Domain.Domain"]) -> dict[str,Sequence[str]]:
     return {domain.name: domain.dependencies_str for domain in domains}
 
 def set_components(all_components:dict[str,dict[str,dict[str,Component]]], domain_imports:dict[str,Sequence[str]], functions:dict[str,ScriptSetSetSet], domain_list:Sequence["Domain.Domain"], trace:Trace) -> None:
-    domains:dict[str,Domain] = {domain.name: domain for domain in domain_list}
+    domains:dict[str,Domain.Domain] = {domain.name: domain for domain in domain_list}
     for domain_name, domain_components in all_components.items():
         create_inline_component = get_inline_component_function(domains[domain_name], trace)
         script_set_set_set = functions[domain_name]

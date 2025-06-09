@@ -46,7 +46,7 @@ class TypeStuff():
 
     def __init__(
         self,
-        domain:"Domain|None",
+        domain:"Domain.Domain|None",
         linked_type_stuffs:list["TypeStuff"]|None=None,
         default_types:dict[str,type]|None=None,
         requires_subcomponent_types:TypeSet|None=None,
