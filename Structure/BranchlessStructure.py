@@ -46,23 +46,20 @@ class BranchlessStructure[D, BO, CO](PassthroughStructure[D, BO, CO]):
 
     def compare(self, datas: tuple[tuple[int, Con[D]], ...], trace: Trace, environment: ComparisonEnvironment) -> tuple[Don[D]|Diff[Don[D]]|EllipsisType, bool, bool]:
         with trace.enter(self, self.name, datas):
-            consecutive_similarities = self.get_consecutive_similarities(datas, trace, environment)
 
-            if all(consecutive_similarity[4][1] for consecutive_similarity in consecutive_similarities): # if all datas are equal
-                diffized_output = self.diffize(datas[0][1], tuple(branch for branch, _ in datas), trace, environment)
-                return ... if diffized_output is ... else Diff(diffized_output, False), False, False
-
-            elif self.structure is None:
+            if self.structure is None:
+                consecutive_similarities = self.get_consecutive_similarities(datas, trace, environment)
                 return Diff(self.get_without_structure_comparison(consecutive_similarities), False), True, False
 
             else:
-                comparison, internal_changes, _ = self.structure.compare(datas, trace, environment)
+                comparison, any_changes, internal_changes = self.structure.compare(datas, trace, environment)
+
             if comparison is ...:
                 # error has occurred in `structure.compare`
                 return ..., False, False
             elif isinstance(comparison, Diff):
-                return comparison, True, internal_changes
+                return comparison, any_changes, internal_changes
             else:
-                return Diff({tuple(branch for branch, _ in datas): comparison}, internal_changes), True, internal_changes
+                return Diff({tuple(branch for branch, _ in datas): comparison}, internal_changes), any_changes, internal_changes
 
         return ..., False, False

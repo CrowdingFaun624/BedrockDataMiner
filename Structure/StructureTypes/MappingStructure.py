@@ -1,5 +1,5 @@
 from types import EllipsisType
-from typing import Callable, Container, Hashable, Iterable, Mapping, Sequence
+from typing import Callable, Container, Generator, Hashable, Iterable, Mapping, Sequence
 
 from Structure.Container import Con, Don
 from Structure.Difference import Diff
@@ -105,12 +105,28 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                 similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]] = []
                 current_length:int = 0
                 if branch != first_branch:
-                    unassigned_indices:dict[int,tuple[Con[K],Con[V]]] = {} # key-value pairs that were not similar to anything, and will become new additions.
-                    for index, (key, value) in enumerate(data.items()):
-                        with trace.enter_key(key, value):
-                            current_length += 1
-                            unassigned_indices[index] = (key, value)
-                            similarities.extend(self.get_best_key_value_pair(key, value, index, branch, cumulative_items, cumulative_mapping, SELECTION_FUNCTION, SELECTION_FUNCTION, trace, environment))
+
+                    unassigned_indices:dict[int,tuple[Con[K],Con[V]]] = dict(enumerate(data.items())) # key-value pairs that were not similar to anything, and will become new additions.
+                    perfect_matches:set[int] = set() # set of indexes from data1. These should be ignored in get_best_key_value_pair because there can be nothing better than what they already have.
+                    active_generators:dict[Generator[None, None, int|None],None] = {
+                        self.get_best_key_value_pair(similarities, perfect_matches, key, value, index, branch, cumulative_items, cumulative_mapping, SELECTION_FUNCTION, SELECTION_FUNCTION, trace, environment): None
+                        for index, (key, value) in enumerate(data.items())
+                    }
+                    current_length = len(active_generators)
+                    while len(active_generators) != 0:
+                        generators_to_remove:list[Generator[None, None, int|None]] = []
+                        for generator in active_generators:
+                            try:
+                                next(generator)
+                            except StopIteration as stop:
+                                generators_to_remove.append(generator)
+                                index1:int|None = stop.value
+                                if index1 is not None:
+                                    perfect_matches.add(index1)
+                        for generator in generators_to_remove:
+                            del active_generators[generator]
+                    del perfect_matches; del active_generators
+
                     if previous_length is not ... and previous_length != current_length:
                         any_changes = True # other methods of detecting changes do not account for removals.
                     similarities.sort(key=(lambda item: (3 - item[3] * 2 - item[4], 1 - item[0], item[2])) if self.allow_same_key_optimization else (lambda item: (1 - item[0], 3 - item[3] * 2 - item[4], item[2]))) # highest similarities are first
@@ -141,6 +157,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                     cumulative_mapping.update((key, (index, 0)) for index, key in enumerate(data.keys()))
                     current_length = len(cumulative_items)
                 previous_length = current_length
+            del similarities
             assembled_output, any_internal_changes = self.assemble_output(cumulative_items, trace, environment)
             return idon_from_list(assembled_output, {branch: data for branch, data in datas}), any_changes, any_internal_changes
         return ..., False, False
@@ -153,9 +170,28 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
             data1_list = list(data1.items())
             data1_mapping = {key: (index, branch1) for index, (key, _) in enumerate(data1_list)}
             data2_length:int = 0
-            for index2, (key2, value2) in enumerate(data2.items()):
-                data2_length += 1
-                similarities.extend(self.get_best_key_value_pair(key2, value2, index2, branch2, data1_list, data1_mapping, lambda key: (branch1, key), lambda value: (branch1, value), trace, environment))
+            perfect_matches:set[int] = set() # set of indexes from data1. These should be ignored in get_best_key_value_pair because there can be nothing better than what they already have.
+            # dict[something, None] is like a set that maintains insertion order.
+            active_generators:dict[Generator[None, None, int|None],None] = {
+                self.get_best_key_value_pair(similarities, perfect_matches, key2, value2, index2, branch2, data1_list, data1_mapping, lambda key: (branch1, key), lambda value: (branch1, value), trace, environment): None
+                for index2, (key2, value2) in enumerate(data2.items())
+            }
+            data2_length = len(active_generators)
+
+            while len(active_generators) != 0:
+                generators_to_remove:list[Generator[None, None, int|None]] = []
+                for generator in active_generators:
+                    try:
+                        next(generator)
+                    except StopIteration as stop:
+                        generators_to_remove.append(generator)
+                        index1:int|None = stop.value
+                        if index1 is not None:
+                            perfect_matches.add(index1)
+                for generator in generators_to_remove:
+                    del active_generators[generator]
+            del perfect_matches
+
             similarities.sort(key=(lambda item: (3 - item[3] * 2 - item[4], 1 - item[0], item[2])) if self.allow_same_key_optimization else (lambda item: (1 - item[0], 3 - item[3] * 2 - item[4], item[2])))
             used_indices1:set[int] = set()
             used_indices2:set[int] = set()
@@ -175,9 +211,11 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
 
     def get_best_key_value_pair[A, B](
         self,
+        similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]],
+        perfect_matches:set[int],
         key2:Con[K],
         value2:Con[V],
-        index:int,
+        index2:int,
         branch2:int,
         key_value_pairs:list[tuple[A, B]],
         key_value_map:Mapping[Con[K], tuple[int, int]],
@@ -185,7 +223,7 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         value_function:Callable[[B], tuple[int, Con[V]]],
         trace:Trace,
         environment:ComparisonEnvironment,
-    ) -> list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]]:
+    ) -> Generator[None, None, int|None]:
         '''
         :key2: The newest key.
         :value2: The newest value.
@@ -197,13 +235,13 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
         :value_function: Function called on the second item of each item of `key_value_pairs`, returning its branch and value.
         :return: A list of similarity, index1, index2, key similarity, value similarity, key2, and value2.
         '''
-        similarities:list[tuple[float, int, int, bool, bool, int, int, int, Con[K], Con[V]]] = []
+        # return value is an integer iff there is a perfect enough match.
         index_branch = key_value_map.get(key2)
         if (skip_same_key := index_branch is not None):
             # this block is for detecting when a key is the same to avoid the big loop below.
             # key1 == key2 in this block
-            index_diff, key_branch = index_branch
-            value_branch, value1 = value_function(key_value_pairs[index_diff][1])
+            index1, key_branch = index_branch
+            value_branch, value1 = value_function(key_value_pairs[index1][1])
             value_similarity, values_identical = self.get_value_similarity(key2, key2, value1, value2, value_branch, branch2, trace, environment)
             # allow all same-key things no matter how different their values are IF allow_same_key_optimization is true.
             if self.allow_same_key_optimization or value_similarity >= self.min_value_similarity_threshold and (1.0 != self.min_key_similarity_threshold or value_similarity != self.min_value_similarity_threshold):
@@ -212,16 +250,19 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
                 similarity_weight = self.get_similarity_weight(key2, value1, trace, environment) + self.get_similarity_weight(key2, value2, trace, environment)
                 similarities.append((
                     (key_weight + value_similarity * value_weight) / (key_weight + value_weight),
-                    index_diff, index, True, values_identical, key_weight, value_weight, similarity_weight, key2, value2,
+                    index1, index2, True, values_identical, key_weight, value_weight, similarity_weight, key2, value2,
                 ))
             if values_identical or self.allow_same_key_optimization:
-                return similarities
+                return index1
             # if the above block doesn't return, must search for key manually.
         if not self.key_moves_ever_allowed:
             # if the above process does not work, there is no key that gives key_similarity == 1.0.
-            return []
+            return None
+        yield
 
-        for index_diff, (key_object, value_object) in special_enumerate(key_value_pairs, index):
+        for index1, (key_object, value_object) in special_enumerate(key_value_pairs, index2):
+            if index1 in perfect_matches:
+                continue
             key_branch, key1 = key_function(key_object)
             if skip_same_key and key1 == key2: # above if statement can sometimes duplicate the stuff in this for statement.
                 continue
@@ -244,9 +285,10 @@ class MappingStructure[K:Hashable, V, D, KBO, KCO, VBO, VCO, BO, CO](IterableStr
             similarity_weight = self.get_similarity_weight(key1, value1, trace, environment) + self.get_similarity_weight(key2, value2, trace, environment)
             similarities.append((
                 (key_similarity * key_weight + value_similarity * value_weight) / (key_weight + value_weight),
-                index_diff, index, keys_identical, values_identical, key_weight, value_weight, similarity_weight, key2, value2,
+                index1, index2, keys_identical, values_identical, key_weight, value_weight, similarity_weight, key2, value2,
             ))
             if (keys_identical or key_weight == 0) and (values_identical or value_weight == 0 or (keys_identical and self.allow_same_key_optimization)):
                 # cannot get anything better than this.
-                break
-        return similarities
+                return index1
+            yield
+        return None
