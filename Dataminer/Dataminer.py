@@ -11,7 +11,16 @@ from Version.Version import Version
 
 class Dataminer():
 
-    __slots__ = ()
+    __slots__ = (
+        "version",
+        "settings",
+        "domain",
+        "file_name",
+        "name",
+        "files",
+        "files_str",
+        "dependencies",
+    )
 
     parameters:TypeVerifier|None = TypedDictTypeVerifier()
     '''TypeVerifier for verifying the json arguments of this Dataminer'''
