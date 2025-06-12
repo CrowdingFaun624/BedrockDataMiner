@@ -72,7 +72,7 @@ class Cache[T]():
                 if default_content is None:
                     raise Exceptions.CacheFileNotFoundError(self)
                 self.data = default_content
-        assert not isinstance(self.data, EllipsisType)
+        assert self.data is not ...
         return self.data
 
     def write(self, value:T|None=None) -> None:

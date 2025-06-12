@@ -54,6 +54,9 @@ class MediaSerializerCache(LinesCache[dict[str,OutputTypedDict], tuple[str, Outp
         sha1_hash, file_data = data
         return f"{sha1_hash} {json.dumps(file_data, separators=(",", ":"), cls=self.domain.json_encoder)}\n"
 
+    def get_default_content(self) -> dict[str, OutputTypedDict]:
+        return {}
+
 media_serializer_cache = MediaSerializerCache(get_domain_from_module(__name__))
 
 class MediaSerializer(Serializer):

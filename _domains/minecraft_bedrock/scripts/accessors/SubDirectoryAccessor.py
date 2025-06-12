@@ -9,7 +9,7 @@ class LinkedAccessorsTypedDict(TypedDict):
 
 class SubDirectoryAccessor(DirectoryAccessor):
 
-    linked_accessors = {"superdirectory": DirectoryAccessor}
+    linked_accessor_types = {"superdirectory": DirectoryAccessor}
 
     __slots__ = (
         "_file_list",
