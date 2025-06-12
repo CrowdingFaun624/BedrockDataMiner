@@ -10,7 +10,7 @@ class LinkedAccessorsTypedDict(TypedDict):
 
 class ZipAccessor(DirectoryAccessor):
 
-    linked_accessors = {"file": FileAccessor}
+    linked_accessor_types = {"file": FileAccessor}
 
     __slots__ = (
         "_file_list",

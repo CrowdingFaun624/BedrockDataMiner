@@ -14,18 +14,19 @@ def datamine_version(version:Version, domain:Domain.Domain, print_messages:bool=
     if len(needed_files) == 0:
         if print_messages:
             print(f"Skipped \"{version.name}\" due to already being complete.")
-        return # All of this Version's data files are already there.
-    if print_messages:
-        print(f"Started \"{version.name}\".")
-    structure_environment = StructureEnvironment(EnvironmentType.all_datamining, domain)
-    failure_dataminers = Dataminers.run(version, needed_files, structure_environment)
-    if len(failure_dataminers) > 0:
-        for failed_dataminer, exception in failure_dataminers:
-            print(f"\nFailed to datamine \"{failed_dataminer.name}\" for \"{version.name}\":")
-            if exception is not None:
-                traceback.print_exception(exception)
-        print()
-        raise DataminersFailureError(version, [dataminer_tuple[0] for dataminer_tuple in failure_dataminers])
+        # All of this Version's data files are already there.
+    else:
+        if print_messages:
+            print(f"Started \"{version.name}\".")
+        structure_environment = StructureEnvironment(EnvironmentType.all_datamining, domain)
+        failure_dataminers = Dataminers.run(version, needed_files, structure_environment)
+        if len(failure_dataminers) > 0:
+            for failed_dataminer, exception in failure_dataminers:
+                print(f"\nFailed to datamine \"{failed_dataminer.name}\" for \"{version.name}\":")
+                if exception is not None:
+                    traceback.print_exception(exception)
+            print()
+            raise DataminersFailureError(version, [dataminer_tuple[0] for dataminer_tuple in failure_dataminers])
     if not version.latest:
         for version_file in version.version_files:
             for accessor in version_file.accessors:

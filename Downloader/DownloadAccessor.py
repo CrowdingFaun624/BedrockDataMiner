@@ -70,6 +70,7 @@ class DownloadAccessor(FileAccessor):
             self._installed = True
 
     def all_done(self) -> None:
+        super().all_done()
         self._installed = False
         if self.location.exists():
             self.location.unlink()

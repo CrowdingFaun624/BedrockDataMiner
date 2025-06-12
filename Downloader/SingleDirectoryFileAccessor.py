@@ -16,7 +16,7 @@ class SingleDirectoryFileAccessor(FileAccessor):
     instance_parameters = TypedDictTypeVerifier(
         TypedDictKeyTypeVerifier("file_name", True, str),
     )
-    linked_accessors = {"directory": DirectoryAccessor}
+    linked_accessor_types = {"directory": DirectoryAccessor}
 
     __slots__ = (
         "directory_accessor",

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 class Accessor():
 
-    linked_accessors:dict[str, type["Accessor"]] = {}
+    linked_accessor_types:dict[str, type["Accessor"]] = {}
     instance_parameters:TypedDictTypeVerifier = TypedDictTypeVerifier()
     propagated_parameters:TypedDictTypeVerifier = TypedDictTypeVerifier()
     class_parameters:TypeVerifier = TypedDictTypeVerifier()
@@ -16,6 +16,7 @@ class Accessor():
     __slots__ = (
         "domain",
         "full_name",
+        "linked_accessors",
         "version",
     )
 
@@ -32,6 +33,7 @@ class Accessor():
         self.full_name = full_name
         self.version = version
         self.domain = domain
+        self.linked_accessors = linked_accessors
         self.prepare_for_install(instance_arguments, class_arguments, propagated_arguments, linked_accessors)
 
     def __repr__(self) -> str:
@@ -42,8 +44,12 @@ class Accessor():
         ...
 
     def all_done(self) -> None:
-        '''Removes all files that were created as part of the installation of this version.'''
-        ...
+        '''
+        Removes all files that were created as part of the installation of this version.
+        Should only be called on the parent Accessor.
+        '''
+        for linked_accessor in self.linked_accessors.values():
+            linked_accessor.all_done()
 
     def get_referenced_files(self, get_referenced_files:set[int]) -> None:
         ...
