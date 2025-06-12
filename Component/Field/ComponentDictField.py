@@ -114,7 +114,7 @@ class ComponentDictField[a:Component](Field):
             for key, linked_object in linked_objects.items():
                 with trace.enter_key(key, linked_object):
                     if key not in linked_requirements:
-                        Exceptions.LinkedComponentExtraError(key, linked_object, [key for key in linked_requirements if key not in linked_objects])
+                        Exceptions.LinkedComponentExtraError(key, linked_object, [key for key in linked_objects if key not in linked_requirements])
                     required_type = linked_requirements.get(key)
                     if required_type is not None and not isinstance(linked_object, required_type):
                         Exceptions.LinkedComponentTypeError(key, required_type, linked_object)
@@ -133,7 +133,7 @@ class ComponentDictField[a:Component](Field):
             for key, linked_object in linked_objects.items():
                 with trace.enter_key(key, linked_object):
                     if key not in linked_requirements:
-                        trace.exception(Exceptions.LinkedComponentExtraError(key, linked_object, [key for key in linked_requirements if key not in linked_objects]))
+                        trace.exception(Exceptions.LinkedComponentExtraError(key, linked_object, [key for key in linked_objects if key not in linked_requirements]))
                     required_type = linked_requirements.get(key)
                     if required_type is not None and not issubclass(linked_object, required_type):
                         trace.exception(Exceptions.LinkedComponentTypeError(key, required_type, linked_object))
