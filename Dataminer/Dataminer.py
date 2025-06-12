@@ -25,7 +25,6 @@ class Dataminer():
         self.files = set(self.settings.version_file_types)
         self.files_str = {version_file_type.name for version_file_type in self.files}
         self.dependencies = self.settings.dependencies
-        self.dependencies_str = [dependency.name for dependency in self.dependencies]
         if not isinstance(self, NullDataminer) and self.version not in self.settings.version_range:
             raise Exceptions.VersionOutOfRangeError(self.version, self.settings.version_range, f"in Dataminer {self}")
 

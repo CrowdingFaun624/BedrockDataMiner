@@ -41,8 +41,8 @@ class DataminerDependencies():
         :dataminer: The Dataminer attempting to access the dependency.
         :default: The default value to return if the data does not exist for this Version.
         '''
-        if dataminer_name not in dataminer.dependencies_str:
-            raise Exceptions.DataminerUnregisteredDependencyError(dataminer, dataminer_name, dataminer.dependencies_str)
+        if not any(dataminer_name == dependency.name for dependency in dataminer.dependencies):
+            raise Exceptions.DataminerUnregisteredDependencyError(dataminer, dataminer_name, [dependency.name for dependency in dataminer.dependencies])
         output = self.data.get(dataminer_name, default) # Dataminers cannot output None
         return output
 
